@@ -57,6 +57,7 @@ was read. Backticked code paths throughout these pages are repository-relative.
 | 5e | [gateway](gateway.md#constraint-5e) | Opaque return evaluation does not establish custody identity. |
 | 5f | [gateway](gateway.md#constraint-5f) | Every neutral nested sibling retains liveness and alias obligations. |
 | 5g | [gateway](gateway.md#constraint-5g) | W42-INDIRECT-ACCESS adds one route disjoint from the existing unbound scalar-field no-op. |
+| 5h | [gateway](gateway.md#constraint-5h) | A desugared condition applies a call exactly where C evaluates it. |
 | 6 | [gateway](gateway.md#constraint-6) | C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is… |
 | 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 272 across the pinned 185-unit corpus. A change… |
 | 8 | [gateway](gateway.md#constraint-8) | A declared contract must agree with the C the unit declares — in types… |

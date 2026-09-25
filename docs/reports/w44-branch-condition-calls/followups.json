@@ -1,0 +1,72 @@
+[
+ {
+  "id": "W44-CONDITION-CALL-INDIRECT-ARGUMENT",
+  "title": "A controlling expression whose call takes an indirect argument stays refused: 1,686 leaves on 630 Unknown functions, 8 sole-blocked",
+  "why": "Card W44-BRANCH-CONDITION-CALLS desugars a call-bearing condition only when the ordinary statement classifier models every call in it. Measured at its AFTER run (docs/reports/w44-branch-condition-calls/residuals.txt, class call-indirect-argument, all five condition positions): 1,686 leaves in 630 Unknown functions, 8 blocked by that class alone, are conditions whose first refused call carries `indirect memory access is outside the resource projection` from an argument (`cmt_atomic_load(&m->lock)`, `strcmp(p->name, x)`). The desugaring consumes whatever the classifier admits, unchanged. DISCHARGE: re-measure this class with the same script after W44-INDIRECT-CALL-ARGUMENT-ACCESS lands and attribute the moves to that admission.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-UNCONTRACTED",
+  "title": "A controlling expression calling an uncontracted function stays refused: 1,000 leaves on 575 Unknown functions, 11 sole-blocked",
+  "why": "Measured at the W44-BRANCH-CONDITION-CALLS AFTER run (residuals.txt, class call-uncontracted): 1,000 condition leaves in 575 Unknown functions, 11 sole-blocked, whose first refused call is `call to uncontracted function` (a callee with no declared contract and no validated W4 summary, e.g. a local body that is itself Unknown). Uncontracted calls keep their refusal by design (fail-closed). DISCHARGE: re-measure after W44-CORPUS-CALLEE-SUMMARIES and the libc residual cards land; each newly contracted callee reaches condition calls through the normal contract lookup.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-FREE-OPERAND",
+  "title": "A call-bearing condition with a call-free operand no route admits stays refused: 1,211 leaves on 622 Unknown functions",
+  "why": "In a desugared condition each call-free operand must decide through the existing null, validity, distinct, neutral or typed-read route. Measured at the W44-BRANCH-CONDITION-CALLS AFTER run (residuals.txt, class call-free-leaf-refused): 1,211 leaves in 622 Unknown functions, 0 sole-blocked, carry an operand such as `p->a->b == NULL` or `x[i].f` beside modeled calls. These are the chain and untyped classes W43-INDEX-TRAVERSAL-CONDITION-CHAIN and -UNTYPED name, met inside a short-circuit. DISCHARGE: re-measure after W44-INDIRECT-CHAIN-ACCESS extends the condition read; the desugaring consults that read per operand unchanged.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-TYPE-OPERATOR",
+  "title": "A call-bearing condition containing a type operator stays refused: 259 leaves on 113 Unknown functions, 1 sole-blocked",
+  "why": "The desugaring refuses any call-bearing condition with `sizeof`, `_Alignof` or `typeof` anywhere, as the B-series boundary does, because a call inside a type operator is not evaluated and the lexical reader does not separate an operand-free `sizeof(T)` from `sizeof(f(x))` (constraint 5a keeps a type query's marker from being a computed value). Measured at the AFTER run (residuals.txt, class type-operator): 259 leaves, 113 functions, 1 sole-blocked (`len < sizeof(buf) && f(x)`). DISCHARGE: admit a type operator whose operand is a type name or a call-free expression as a neutral residual beside the calls, with a Lean statement that the operand's calls are never applied, and a measured re-pin.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-ASSIGNMENT",
+  "title": "A condition assigning a call result to a place other than a plain declared local stays refused: 196 leaves on 160 Unknown functions",
+  "why": "The desugaring admits one `(NAME = CALL(...))` per operand only for a declared scalar or single-level pointer local that is no formal and no descriptor name, with a resource-free result. Measured at the AFTER run (residuals.txt, classes assignment-destination and assignment-shape): 196 leaves in 160 Unknown functions carry a store through a pointer or member (`*errstr = f()`, `(&G)->str = f()`), a formal or opaque (`void *`, typedef) destination, or a destination read again in the same operand. An owned result assigned in a condition (`if ((p = malloc(n)) == NULL)`) is deliberately outside this class and keeps its refusal. DISCHARGE: admit the destination shapes the statement classifier admits (the typed store routes), each through that classifier, with a measured re-pin.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-RECURSIVE-LOCAL",
+  "title": "A condition calling a callee in the enclosing function's own recursive component stays refused: 31 leaves on 18 Unknown functions",
+  "why": "While a recursive component is validated its members' contracts may be the neutral route's provisional N(m) (constraint 4), so the desugaring does not read a same-component callee's contract as admission evidence; it decides membership from a superset of the derivation's call graph. Measured at the AFTER run (residuals.txt, class recursive-local-callee): 31 leaves on 18 Unknown functions (`pb_encode`, `cJSON_Compare`). DISCHARGE: extend QCore.NeutralPrefixPreservation to ContractCall nodes introduced by the desugaring (they are the same instruction the statement route emits) and admit such callees after the component publishes, with a measured re-pin.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-ERRNO-RESIDUAL",
+  "title": "A condition reading errno through `*__errno_location()` stays refused: 22 leaves on 19 Unknown functions, 2 sole-blocked",
+  "why": "`errno == EAGAIN` preprocesses to `(*__errno_location()) == 11`: the call is modeled, but the residual dereferences the call's result, which no neutral route admits. Measured at the AFTER run (residuals.txt, class residual-refused): 22 leaves, 19 functions, 2 sole-blocked (`msg_write`, `net_plain_send_file`). DISCHARGE: a declared `__errno_location` result that designates a thread-local scalar the program does not own, read as a scalar in a condition, with a Lean statement and a measured re-pin (a libc declaration card may own the contract half).",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-CALL-REFUSED-SHAPES",
+  "title": "Call-bearing conditions of other refused shapes stay refused: 74 leaves on 62 Unknown functions, 3 sole-blocked",
+  "why": "Measured at the AFTER run (residuals.txt): calls through a member or expression (`(*__ctype_b_loc())[c]`, `f->cb(x)`, 29 leaves), GNU statement expressions and braces (22), other classifier refusals (9), increments (8), a connective below an operand (3) and an owned result (3). Each keeps its refusal by design; a call-through-expression or a statement expression needs its own evaluation model. DISCHARGE: split by shape and admit each through its own route with a measured re-pin, or record the class as permanently outside the projection.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-CONDITION-DISCARDED-DERIVED-RESULT",
+  "title": "A discarded derived call result in a condition is lowered as a discarded `None`, not bound to a fresh temporary",
+  "why": "The card brief lists derived results with custody results ('binds a tracked temporary ... or refuses'). Card W44-BRANCH-CONDITION-CALLS instead reuses the statement classifier's own W43-LIBC-RESULT-ALIAS rule that a discarded derived result is exactly a discarded `None` (it owns nothing, and nothing holds it), and binds a derived result only when the program assigns it to its own pointer local. At the AFTER run this reading admits a handful of conditions (`strchr(s, '.') || ...`); an owned result is refused either way. DISCHARGE: an integrator decision that the reading stands, or a change that binds a synthetic temporary with a measured (expected-zero) re-pin.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ },
+ {
+  "id": "W44-B02-RESIDUAL-DESCRIPTOR-READ",
+  "title": "The pre-existing one-call condition route admits a residual that reads a tracked descriptor as data",
+  "why": "Found while testing card W44-BRANCH-CONDITION-CALLS: B02's route (`Parser::condition_call_instruction`) admits `if (k_read(fd, b, 1) > fd)` with the residual `0 > fd` judged custody-neutral, although W43-DESCRIPTOR-RESOURCE-TRACKING makes any value that may carry a tracked descriptor custody, never data. The new desugaring refuses the same read (`descriptor-read`); the older route was not changed by this card. No unsafe verdict is known to rest on it (a comparison stores and passes nothing). DISCHARGE: apply `descriptor_custody::value_carries_descriptor` to the B02/B03 residual with a measured re-pin, or record why a comparison is exempt.",
+  "source": "docs/reports/w44-branch-condition-calls/README.md",
+  "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+ }
+]

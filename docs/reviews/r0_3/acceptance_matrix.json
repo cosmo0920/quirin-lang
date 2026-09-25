@@ -6633,19 +6633,19 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-INDEXED-RESOURCE-COLLECTIONS integration, 2026-09-25. The card (measured against docs/reports/w43-descriptor-resource-tracking/integration/artifacts) composed onto the combined tree docs/reports/w43-descriptor-resource-tracking/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 0 added 0 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Verdict-neutral on the corpus: the diagnostics artifact differs from the previous baseline only in the scope string (no bounds claim for collection ranges); every one of the 27 recognised element operations keeps its original refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/integration/previous-corpus-row.json.",
+   "note": "W44-BRANCH-CONDITION-CALLS, 2026-09-25. BEFORE (base c1e69bb5) and the census-instrumented run reproduce the W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte. Desugaring call-bearing controlling expressions (calls as ContractCall nodes in evaluation order, short-circuit connectives as edges) removes 292 condition leaves (276 forecast on Unknown functions, exact; 16 on provisional-Unsafe functions), exchanges 36 into unknown_alias at the same line (an unresolved identity now null-tested), moves one unknown_alias coordinate and decides one false leak (snappy.c, the null edge of rd_malloc). 0 function moves, 0 unit moves, leak 271 -> 270, 0 violation candidates. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-branch-condition-calls/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
    "unknown": 135,
    "data_only": 4,
    "projected_functions": 4834,
-   "leak_diagnostics": 271,
+   "leak_diagnostics": 270,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
-   "source": "docs/reports/w43-indexed-resource-collections/integration/integration-confirmation.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
-   "unknown_alias_diagnostics": 4358,
-   "unsupported_diagnostics": 45848,
+   "baseline": "docs/reports/w44-branch-condition-calls/artifacts/",
+   "source": "docs/reports/w44-branch-condition-calls/README.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+   "unknown_alias_diagnostics": 4393,
+   "unsupported_diagnostics": 45556,
    "double_release_diagnostics": 0,
    "function_statuses": {
     "safe": 294,
@@ -9035,13 +9035,6 @@
    "recorded_by": "W43-RESULT-ALIAS-RETURNED"
   },
   {
-   "id": "W43-INDEX-TRAVERSAL-CONDITION-CALL",
-   "title": "A controlling expression carrying a call the condition-call route does not isolate stays refused: 4,419 leaves on 1,603 Unknown functions, 28 sole-blocked",
-   "why": "Card W43-INDEX-TRAVERSAL lowers a refused controlling expression to the typed read only when it carries no call. Measured at its AFTER census (docs/reports/w43-index-traversal/residuals.txt, conditions class call): 4,419 condition leaves in 1,603 Unknown functions, 28 of them blocked by that family alone. They are `while (i < rd_list_cnt(l))`, `if (strcmp(a, b) == 0 && *p)`, list and queue macros that call, and conditions the B-series route declines (a short-circuited call, a locally defined callee). Admitting one needs the call's own contract and its short-circuit reading, not a typed read. DISCHARGE: a card that composes the B-series isolated call with the typed read for the residual (both obligations kept), with Lean parity and a measured re-pin; or a recorded decision that the class belongs to the call routes.",
-   "source": "docs/reports/w43-index-traversal/README.md",
-   "recorded_by": "W43-INDEX-TRAVERSAL"
-  },
-  {
    "id": "W43-INDEX-TRAVERSAL-CONDITION-UNTYPED",
    "title": "A controlling expression whose access the declaration reader does not type stays refused: 2,616 leaves on 1,154 Unknown functions, 28 sole-blocked",
    "why": "The typed condition read admits `*B`, `B[I]`, `B->F` and `S.F` only where the reader commits to `SCALAR *B`/`SCALAR B[N]`, a scalar member of a completely read record, or a record object, plus declared pointer names and the null constant as whole operands. Measured at the AFTER census (residuals.txt, conditions class untyped): 2,616 leaves in 1,154 Unknown functions, 28 sole-blocked: a `void *` or `char **` base, a pointer-valued member tested for null (`p->next != NULL` on a record the reader refused), an unread typedef, a member of an incomplete record. The causes are the reader residuals W43-INDIRECT-UNTYPED-SINGLE-ACCESS already names. DISCHARGE: re-measure this class after a reader repair lands and attribute the moves to the reader, or admit pointer-valued member tests in a condition with the base's obligation and a measured re-pin.",
@@ -9278,6 +9271,76 @@
    "why": "Observed by W43-DESCRIPTOR-NATIVE-CHECK Phase B (pinned run engine.event_type_traces_stdin_closed): with descriptor 0 closed at spawn, flb_create's flb_pipe_create(config->ch_data) (src/flb_lib.c:181) returns the pair [0, 3], and flb_config_exit guards its destroy with `if (config->ch_data[0])` (src/flb_config.c:611), so neither end is closed and both are live at exit. Same guard class as ctr_random_get's `fd > 0` and the `ch_event.fd` nonzero guard (W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE). A process launched without standard input is the precondition; the CLI then exits, so the leak outlives nothing there, while an embedding calling flb_destroy and continuing would keep both descriptors (inferred). Native observation, source-confirmed; not a static verdict. Discharge: an upstream `>= 0` guard with the pinned scenario showing no live pipe at exit, or a recorded decision.",
    "source": "docs/reports/w43-descriptor-native-check/README.md",
    "recorded_by": "W43-DESCRIPTOR-NATIVE-CHECK"
+  },
+  {
+   "id": "W44-CONDITION-CALL-INDIRECT-ARGUMENT",
+   "title": "A controlling expression whose call takes an indirect argument stays refused: 1,686 leaves on 630 Unknown functions, 8 sole-blocked",
+   "why": "Card W44-BRANCH-CONDITION-CALLS desugars a call-bearing condition only when the ordinary statement classifier models every call in it. Measured at its AFTER run (docs/reports/w44-branch-condition-calls/residuals.txt, class call-indirect-argument, all five condition positions): 1,686 leaves in 630 Unknown functions, 8 blocked by that class alone, are conditions whose first refused call carries `indirect memory access is outside the resource projection` from an argument (`cmt_atomic_load(&m->lock)`, `strcmp(p->name, x)`). The desugaring consumes whatever the classifier admits, unchanged. DISCHARGE: re-measure this class with the same script after W44-INDIRECT-CALL-ARGUMENT-ACCESS lands and attribute the moves to that admission.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-UNCONTRACTED",
+   "title": "A controlling expression calling an uncontracted function stays refused: 1,000 leaves on 575 Unknown functions, 11 sole-blocked",
+   "why": "Measured at the W44-BRANCH-CONDITION-CALLS AFTER run (residuals.txt, class call-uncontracted): 1,000 condition leaves in 575 Unknown functions, 11 sole-blocked, whose first refused call is `call to uncontracted function` (a callee with no declared contract and no validated W4 summary, e.g. a local body that is itself Unknown). Uncontracted calls keep their refusal by design (fail-closed). DISCHARGE: re-measure after W44-CORPUS-CALLEE-SUMMARIES and the libc residual cards land; each newly contracted callee reaches condition calls through the normal contract lookup.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-FREE-OPERAND",
+   "title": "A call-bearing condition with a call-free operand no route admits stays refused: 1,211 leaves on 622 Unknown functions",
+   "why": "In a desugared condition each call-free operand must decide through the existing null, validity, distinct, neutral or typed-read route. Measured at the W44-BRANCH-CONDITION-CALLS AFTER run (residuals.txt, class call-free-leaf-refused): 1,211 leaves in 622 Unknown functions, 0 sole-blocked, carry an operand such as `p->a->b == NULL` or `x[i].f` beside modeled calls. These are the chain and untyped classes W43-INDEX-TRAVERSAL-CONDITION-CHAIN and -UNTYPED name, met inside a short-circuit. DISCHARGE: re-measure after W44-INDIRECT-CHAIN-ACCESS extends the condition read; the desugaring consults that read per operand unchanged.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-TYPE-OPERATOR",
+   "title": "A call-bearing condition containing a type operator stays refused: 259 leaves on 113 Unknown functions, 1 sole-blocked",
+   "why": "The desugaring refuses any call-bearing condition with `sizeof`, `_Alignof` or `typeof` anywhere, as the B-series boundary does, because a call inside a type operator is not evaluated and the lexical reader does not separate an operand-free `sizeof(T)` from `sizeof(f(x))` (constraint 5a keeps a type query's marker from being a computed value). Measured at the AFTER run (residuals.txt, class type-operator): 259 leaves, 113 functions, 1 sole-blocked (`len < sizeof(buf) && f(x)`). DISCHARGE: admit a type operator whose operand is a type name or a call-free expression as a neutral residual beside the calls, with a Lean statement that the operand's calls are never applied, and a measured re-pin.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-ASSIGNMENT",
+   "title": "A condition assigning a call result to a place other than a plain declared local stays refused: 196 leaves on 160 Unknown functions",
+   "why": "The desugaring admits one `(NAME = CALL(...))` per operand only for a declared scalar or single-level pointer local that is no formal and no descriptor name, with a resource-free result. Measured at the AFTER run (residuals.txt, classes assignment-destination and assignment-shape): 196 leaves in 160 Unknown functions carry a store through a pointer or member (`*errstr = f()`, `(&G)->str = f()`), a formal or opaque (`void *`, typedef) destination, or a destination read again in the same operand. An owned result assigned in a condition (`if ((p = malloc(n)) == NULL)`) is deliberately outside this class and keeps its refusal. DISCHARGE: admit the destination shapes the statement classifier admits (the typed store routes), each through that classifier, with a measured re-pin.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-RECURSIVE-LOCAL",
+   "title": "A condition calling a callee in the enclosing function's own recursive component stays refused: 31 leaves on 18 Unknown functions",
+   "why": "While a recursive component is validated its members' contracts may be the neutral route's provisional N(m) (constraint 4), so the desugaring does not read a same-component callee's contract as admission evidence; it decides membership from a superset of the derivation's call graph. Measured at the AFTER run (residuals.txt, class recursive-local-callee): 31 leaves on 18 Unknown functions (`pb_encode`, `cJSON_Compare`). DISCHARGE: extend QCore.NeutralPrefixPreservation to ContractCall nodes introduced by the desugaring (they are the same instruction the statement route emits) and admit such callees after the component publishes, with a measured re-pin.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-ERRNO-RESIDUAL",
+   "title": "A condition reading errno through `*__errno_location()` stays refused: 22 leaves on 19 Unknown functions, 2 sole-blocked",
+   "why": "`errno == EAGAIN` preprocesses to `(*__errno_location()) == 11`: the call is modeled, but the residual dereferences the call's result, which no neutral route admits. Measured at the AFTER run (residuals.txt, class residual-refused): 22 leaves, 19 functions, 2 sole-blocked (`msg_write`, `net_plain_send_file`). DISCHARGE: a declared `__errno_location` result that designates a thread-local scalar the program does not own, read as a scalar in a condition, with a Lean statement and a measured re-pin (a libc declaration card may own the contract half).",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-CALL-REFUSED-SHAPES",
+   "title": "Call-bearing conditions of other refused shapes stay refused: 74 leaves on 62 Unknown functions, 3 sole-blocked",
+   "why": "Measured at the AFTER run (residuals.txt): calls through a member or expression (`(*__ctype_b_loc())[c]`, `f->cb(x)`, 29 leaves), GNU statement expressions and braces (22), other classifier refusals (9), increments (8), a connective below an operand (3) and an owned result (3). Each keeps its refusal by design; a call-through-expression or a statement expression needs its own evaluation model. DISCHARGE: split by shape and admit each through its own route with a measured re-pin, or record the class as permanently outside the projection.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-CONDITION-DISCARDED-DERIVED-RESULT",
+   "title": "A discarded derived call result in a condition is lowered as a discarded `None`, not bound to a fresh temporary",
+   "why": "The card brief lists derived results with custody results ('binds a tracked temporary ... or refuses'). Card W44-BRANCH-CONDITION-CALLS instead reuses the statement classifier's own W43-LIBC-RESULT-ALIAS rule that a discarded derived result is exactly a discarded `None` (it owns nothing, and nothing holds it), and binds a derived result only when the program assigns it to its own pointer local. At the AFTER run this reading admits a handful of conditions (`strchr(s, '.') || ...`); an owned result is refused either way. DISCHARGE: an integrator decision that the reading stands, or a change that binds a synthetic temporary with a measured (expected-zero) re-pin.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
+  },
+  {
+   "id": "W44-B02-RESIDUAL-DESCRIPTOR-READ",
+   "title": "The pre-existing one-call condition route admits a residual that reads a tracked descriptor as data",
+   "why": "Found while testing card W44-BRANCH-CONDITION-CALLS: B02's route (`Parser::condition_call_instruction`) admits `if (k_read(fd, b, 1) > fd)` with the residual `0 > fd` judged custody-neutral, although W43-DESCRIPTOR-RESOURCE-TRACKING makes any value that may carry a tracked descriptor custody, never data. The new desugaring refuses the same read (`descriptor-read`); the older route was not changed by this card. No unsafe verdict is known to rest on it (a comparison stores and passes nothing). DISCHARGE: apply `descriptor_custody::value_carries_descriptor` to the B02/B03 residual with a measured re-pin, or record why a comparison is exempt.",
+   "source": "docs/reports/w44-branch-condition-calls/README.md",
+   "recorded_by": "W44-BRANCH-CONDITION-CALLS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

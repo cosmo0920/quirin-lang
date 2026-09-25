@@ -1,248 +1,225 @@
 #!/usr/bin/env python3
-"""Attribute every delta between a BEFORE and an AFTER corpus diagnostics run.
+"""Card W44-BRANCH-CONDITION-CALLS: attribute every BEFORE -> AFTER delta, leaf by leaf.
 
-Usage: attribute.py BEFORE_DIAGNOSTICS AFTER_DIAGNOSTICS CENSUS_JSON [--json OUT]
+Usage: attribute.py BEFORE_DIAGNOSTICS AFTER_DIAGNOSTICS CENSUS_FINAL_GZ OUT_JSON OUT_TXT
 
-CENSUS_JSON is `return_census.py --json` output over the BEFORE run: it
-classifies every BEFORE return-expression leaf into a shape family. The card's
-rule lowers exactly the whole-call families A and B *without* a cast.
+CENSUS_FINAL_GZ is the census of record's final records
+(`census/condition-call-census.final.jsonl.gz`, one per controlling expression,
+the rule's own answer while it was not consulted). A leaf is the diagnostic
+`(library, file, function, line, category, description)`; diagnostics are a set
+per function.
 
-A delta is attributed only if it is one of:
+Classes:
 
-* `removed_lowered` — a BEFORE return-expression leaf the census classifies in
-  the lowered families;
-* `added_exchange` — an AFTER `unsupported` leaf at the internal coordinate
-  `(unit, function, line)` of a `removed_lowered` leaf, which that coordinate
-  did not carry BEFORE;
-* `absorbed` — a `removed_lowered` coordinate that gains no new leaf because
-  the classifier's refusal is identical to a leaf the coordinate already had
-  (the diagnostics are a set per function).
+* `removed_admitted` - a removed condition-family leaf whose every census record
+  at that (function, line, position) is `admitted`: the rule lowered it.
+* `exchange_at_admitted_line` - an added leaf at the very line of a
+  `removed_admitted` leaf: the refusal became a modeled branch or call whose
+  own check now reports there.
+* `desugared_function` - any other added or removed leaf in a function carrying
+  at least one admitted census record: the function's CFG changed, and the
+  delta is the flow over the new nodes (a leak exposed on a path no longer
+  flagged unmodeled, a binding no longer poisoned by the refusal, an actual the
+  admitted call now checks). Each is listed with its line and text for review.
+* `summary_neighbour` - a delta in a function with no admitted record, of the
+  one kind a desugared callee can cause: the function calls (per its BEFORE or
+  AFTER leaves naming it) a function whose own status moved. Listed.
+* `unattributed` - anything else; the script then exits 1.
 
-Any other difference — a removed leaf outside the lowered families, an added
-leaf at another coordinate or in another category, a status move, a unit
-field change, a diagnostic-count change the leaves do not explain — is
-reported as UNATTRIBUTED and makes the script exit 1.
+Unit rows are compared field by field, excluding `functions`; a unit status
+move is listed with the function moves it rolls up.
+
+The census join is W43-INDIRECT-ACCESS-GENERAL's `match_units` over the
+BEFORE document.
 """
 
 import collections
 import gzip
 import json
 import pathlib
+import re
 import sys
 
-RETURN = "unmodeled call, aggregate or indirect access in return expression"
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.append(str(HERE))
+sys.path.append(str(HERE.parents[1] / "w43-indirect-access-general" / "scripts"))
 
+import shape_census as census  # noqa: E402
 
-NOT_A_CALLEE = {
-    "sizeof", "_Alignof", "alignof", "__alignof", "__alignof__", "_Generic", "__typeof",
-    "__typeof__", "typeof", "__builtin_offsetof", "__builtin_types_compatible_p",
-    "__builtin_va_arg", "__extension__",
+FAMILY = re.compile(
+    r"unmodeled call, aggregate or indirect access in "
+    r"(branch condition|loop condition|for-loop condition|do-while condition|switch expression)$"
+)
+POSITION = {
+    "branch condition": "if",
+    "loop condition": "while",
+    "for-loop condition": "for",
+    "do-while condition": "do-while",
+    "switch expression": "switch",
 }
+NAMED = re.compile(r"`([^`]*)`")
 
 
-def rule_shape(tokens):
-    """`return_call::whole_expression_call` plus `NOT_A_CALLEE`, over the
-    analyzer's own token view: an identifier, `(`, and the matching `)` as the
-    last token. No parenthesis stripping and no cast skipping, exactly as the
-    Rust rule reads it."""
-    if len(tokens) < 3 or tokens[1] != "(":
-        return False
-    first = tokens[0]
-    if not (first[:1].isalpha() or first[:1] == "_") or first in NOT_A_CALLEE:
-        return False
-    depth = 0
-    for index in range(1, len(tokens)):
-        if tokens[index] == "(":
-            depth += 1
-        elif tokens[index] == ")":
-            depth -= 1
-            if depth == 0:
-                return index == len(tokens) - 1
-    return False
+def load_census(path):
+    stream = collections.defaultdict(lambda: collections.defaultdict(list))
+    for line in gzip.open(path, "rt"):
+        record = json.loads(line)
+        stream[record["unit_seq"]][(record["function"], record["line"], record["position"])].append(record)
+    return stream
 
 
-def lowered_family(leaf):
-    """The census forecast family: A or B without a cast."""
-    return leaf["family"][:2] in ("A.", "B.") and "under a cast" not in leaf["detail"]
-
-
-def index(data):
-    units, functions, leaves = {}, {}, collections.Counter()
-    unit_fields = {}
-    for unit in data["units"]:
-        ukey = (unit["library"], unit["file"])
-        units[ukey] = unit.get("status")
-        unit_fields[ukey] = {k: v for k, v in unit.items() if k not in ("functions", "diagnostic_counts")}
-        for entry in unit.get("functions", []):
-            fkey = (*ukey, entry["function"])
-            functions[fkey] = entry.get("status")
-            for diagnostic in entry.get("diagnostics") or []:
-                leaves[(*fkey, diagnostic["line"], diagnostic["category"], diagnostic["description"],
-                        diagnostic.get("origin"))] += 1
-    return units, unit_fields, functions, leaves
+def leaves_of(document):
+    functions = {}
+    units = {}
+    for unit in document["units"]:
+        ukey = (unit.get("library"), unit["file"])
+        units[ukey] = {k: v for k, v in unit.items() if k != "functions"}
+        for entry in unit["functions"]:
+            functions[ukey + (entry["function"],)] = {
+                "status": entry["status"],
+                "leaves": {
+                    (d["line"], d["category"], d["description"]) for d in entry["diagnostics"]
+                },
+            }
+    return functions, units
 
 
 def main() -> int:
-    def load(path):
-        data = pathlib.Path(path).read_bytes()
-        return json.loads(gzip.decompress(data) if path.endswith(".gz") else data)
+    before_path, after_path, census_path, out_json, out_txt = sys.argv[1:6]
+    before = json.load(open(before_path))
+    after = json.load(open(after_path))
+    before_functions, before_units = leaves_of(before)
+    after_functions, after_units = leaves_of(after)
+    _, _, unit_keys = census.load_document(before_path)
+    stream = load_census(census_path)
+    assignment = census.match_units(
+        [{seq: {(f, l, None): [] for (f, l, _) in keys} for seq, keys in stream.items()}],
+        unit_keys,
+    )
 
-    before = load(sys.argv[1])
-    after = load(sys.argv[2])
-    census = load(sys.argv[3])
-    out = pathlib.Path(sys.argv[sys.argv.index("--json") + 1]) if "--json" in sys.argv else None
+    def records(fkey):
+        return stream.get(assignment.get(fkey[:2]), {})
 
-    bu, bfields, bf, bl = index(before)
-    au, afields, af, al = index(after)
+    def admitted_somewhere(fkey):
+        return any(
+            record["outcome"] == "admitted"
+            for (function, _, _), rows in records(fkey).items()
+            if function == fkey[2]
+            for record in rows
+        )
 
-    # The attribution key is the rule's own shape predicate over the BEFORE
-    # token view; the census family forecast is compared separately.
-    lowered_coordinates = collections.Counter()
-    forecast_coordinates = collections.Counter()
-    for leaf in census["leaves"]:
-        coordinate = (leaf["library"], leaf["file"], leaf["function"], leaf["line"])
-        if rule_shape(leaf["expression"].split(" ")):
-            lowered_coordinates[coordinate] += 1
-        if lowered_family(leaf):
-            forecast_coordinates[coordinate] += 1
+    moved = {
+        fkey: (before_functions[fkey]["status"], after_functions[fkey]["status"])
+        for fkey in before_functions
+        if fkey in after_functions
+        and before_functions[fkey]["status"] != after_functions[fkey]["status"]
+    }
+    moved_names = {fkey[2] for fkey in moved}
 
-    removed = bl - al
-    added = al - bl
-    unattributed = []
-    removed_lowered = collections.Counter()
-    for key, count in removed.items():
-        coordinate = key[:4]
-        if key[5] == RETURN and key[4] == "unsupported" and coordinate in lowered_coordinates:
-            removed_lowered[key] += count
+    classes = collections.defaultdict(list)
+    for fkey in sorted(set(before_functions) | set(after_functions), key=str):
+        if fkey not in before_functions or fkey not in after_functions:
+            classes["unattributed"].append({"function": list(fkey), "why": "function set changed"})
+            continue
+        old = before_functions[fkey]["leaves"]
+        new = after_functions[fkey]["leaves"]
+        for sign, delta in (("removed", old - new), ("added", new - old)):
+            for line, category, description in sorted(delta, key=str):
+                row = {
+                    "unit": list(fkey[:2]),
+                    "function": fkey[2],
+                    "line": line,
+                    "category": category,
+                    "description": description,
+                    "delta": sign,
+                    "status": [before_functions[fkey]["status"], after_functions[fkey]["status"]],
+                }
+                family = FAMILY.match(description)
+                if sign == "removed" and family:
+                    found = records(fkey).get((fkey[2], line, POSITION[family.group(1)]), [])
+                    if found and all(record["outcome"] == "admitted" for record in found):
+                        row["texts"] = [" ".join(record["texts"]) for record in found]
+                        classes["removed_admitted"].append(row)
+                        continue
+                if admitted_somewhere(fkey):
+                    classes["desugared_function"].append(row)
+                    continue
+                named = set(NAMED.findall(description))
+                if named & moved_names:
+                    classes["summary_neighbour"].append(row)
+                    continue
+                classes["unattributed"].append(row)
+
+    # An added leaf at the very line of a removed admitted condition is that
+    # condition's exchange: the refusal became a modeled branch or call whose
+    # own check reports (an unresolved identity tested for null, or an actual
+    # the admitted call now checks).
+    admitted_lines = {
+        (tuple(row["unit"]), row["function"], row["line"]) for row in classes["removed_admitted"]
+    }
+    kept = []
+    for row in classes["desugared_function"]:
+        key = (tuple(row["unit"]), row["function"], row["line"])
+        if row["delta"] == "added" and key in admitted_lines:
+            classes["exchange_at_admitted_line"].append(row)
         else:
-            unattributed.append({"kind": "removed", "leaf": list(key), "count": count})
-    removed_coordinates = {key[:4] for key in removed_lowered}
-    exchange_descriptions = collections.Counter()
-    added_exchange = 0
-    for key, count in added.items():
-        coordinate = key[:4]
-        if key[4] == "unsupported" and coordinate in removed_coordinates:
-            added_exchange += count
-            exchange_descriptions[
-                key[5] if "`" not in key[5] else key[5].split("`")[0] + "`…`" + key[5].split("`")[-1]
-            ] += count
-        else:
-            unattributed.append({"kind": "added", "leaf": list(key), "count": count})
-    coordinates_with_addition = {key[:4] for key in added if key[:4] in removed_coordinates}
-    exchanges = [
-        {
-            "coordinate": list(coordinate),
-            "origin": next(key[6] for key in removed_lowered if key[:4] == coordinate),
-            "added": sorted(key[5] for key in added if key[:4] == coordinate),
+            kept.append(row)
+    classes["desugared_function"] = kept
+
+    unit_moves = []
+    for ukey, row in before_units.items():
+        other = after_units.get(ukey)
+        if other is None:
+            unit_moves.append({"unit": list(ukey), "change": "unit missing"})
+            continue
+        changed = {
+            key: [row.get(key), other.get(key)]
+            for key in set(row) | set(other)
+            if row.get(key) != other.get(key)
         }
-        for coordinate in sorted(removed_coordinates)
-    ]
-    absorbed = []
-    for coordinate in sorted(removed_coordinates - coordinates_with_addition):
-        existing = [key for key in al if key[:4] == coordinate and key[4] == "unsupported"]
-        if existing:
-            absorbed.append({"coordinate": list(coordinate), "kept": [key[5] for key in existing]})
-        else:
-            unattributed.append({"kind": "removed without replacement", "coordinate": list(coordinate)})
+        if changed:
+            unit_moves.append({"unit": list(ukey), "changed": changed})
 
-    census_lowered = sum(lowered_coordinates.values())
-    removed_lowered_total = sum(removed_lowered.values())
-    # A rule-shape leaf that survives is one whose synthetic assignment the
-    # classifier did not refuse; it must be listed, never silently accepted.
-    rule_shape_kept = sorted(
-        list(coordinate) for coordinate in lowered_coordinates if coordinate not in removed_coordinates
-    )
-    forecast = {
-        "forecast_lowered": sum(forecast_coordinates.values()),
-        "measured_lowered": removed_lowered_total,
-        "lowered_but_not_forecast": sorted(
-            list(c) for c in removed_coordinates if c not in forecast_coordinates
-        ),
-        "forecast_but_not_lowered": sorted(
-            list(c) for c in forecast_coordinates if c not in removed_coordinates
-        ),
+    counts = {
+        "before": before["diagnostic_counts"],
+        "after": after["diagnostic_counts"],
     }
-
-    function_moves = [
-        {"function": list(k), "before": bf.get(k), "after": af.get(k)}
-        for k in sorted(bf.keys() | af.keys()) if bf.get(k) != af.get(k)
-    ]
-    unit_moves = [
-        {"unit": list(k), "before": bu.get(k), "after": au.get(k)}
-        for k in sorted(bu.keys() | au.keys()) if bu.get(k) != au.get(k)
-    ]
-    unit_field_changes = [
-        {"unit": list(k), "before": bfields.get(k), "after": afields.get(k)}
-        for k in sorted(bfields.keys() | afields.keys()) if bfields.get(k) != afields.get(k)
-    ]
-    for move in function_moves:
-        unattributed.append({"kind": "function status move", **move})
-    for move in unit_moves:
-        unattributed.append({"kind": "unit status move", **move})
-    other_top = sorted(
-        k for k in before.keys() | after.keys()
-        if k not in ("units", "diagnostic_counts") and before.get(k) != after.get(k)
-    )
-    for key in other_top:
-        unattributed.append({"kind": "top-level field", "field": key})
-
-    functions_touched = {key[:3] for key in removed_lowered}
-    sole_before = set()
-    for leaf in census["leaves"]:
-        if leaf["status"] == "Unknown" and leaf["sole"]:
-            sole_before.add((leaf["library"], leaf["file"], leaf["function"]))
-
-    def distinct_reasons(data, fkey):
-        for unit in data["units"]:
-            if (unit["library"], unit["file"]) != fkey[:2]:
-                continue
-            for entry in unit["functions"]:
-                if entry["function"] == fkey[2]:
-                    return {d["description"] for d in entry.get("diagnostics") or []}
-        return set()
-
-    still_return = sum(1 for f in sole_before if RETURN in distinct_reasons(after, f))
+    by_category = collections.Counter()
+    for name, rows in classes.items():
+        for row in rows:
+            by_category[(name, row.get("delta"), row.get("category"))] += 1
     result = {
-        "diagnostic_counts": {"before": before["diagnostic_counts"], "after": after["diagnostic_counts"]},
-        "function_counts": {
-            "before": dict(collections.Counter(bf.values())),
-            "after": dict(collections.Counter(af.values())),
-        },
-        "unit_counts": {
-            "before": dict(collections.Counter(bu.values())),
-            "after": dict(collections.Counter(au.values())),
-        },
-        "leaves_removed": sum(removed.values()),
-        "leaves_added": sum(added.values()),
-        "removed_lowered": removed_lowered_total,
-        "rule_shape_leaves_before": census_lowered,
-        "rule_shape_kept": rule_shape_kept,
-        "forecast": forecast,
-        "added_exchange": added_exchange,
-        "absorbed_coordinates": len(absorbed),
-        "absorbed": absorbed,
-        "exchange_descriptions": dict(exchange_descriptions.most_common()),
-        "functions_losing_a_return_leaf": len(functions_touched),
-        "function_moves": function_moves,
-        "unit_moves": unit_moves,
-        "unit_field_changes": unit_field_changes,
-        "sole_blocked_before": len(sole_before),
-        "sole_blocked_still_carrying_the_return_refusal": still_return,
-        "unattributed": unattributed,
-        "attribution_complete": not unattributed and not unit_field_changes,
-        "exchanges": exchanges,
+        "diagnostic_counts": counts,
+        "function_moves": [
+            {"function": list(fkey), "before": a, "after": b} for fkey, (a, b) in sorted(moved.items(), key=str)
+        ],
+        "unit_changes": unit_moves,
+        "class_counts": {f"{k[0]}:{k[1]}:{k[2]}": v for k, v in sorted(by_category.items(), key=str)},
+        "classes": classes,
+        "attribution_complete": not classes["unattributed"],
     }
-    text = json.dumps(result, indent=1)
-    if out:
-        out.write_text(text + "\n")
-    summary = {
-        k: v
-        for k, v in result.items()
-        if k not in ("absorbed", "unattributed", "unit_field_changes", "exchanges")
-    }
-    summary["unattributed_count"] = len(unattributed)
-    summary["unit_field_change_count"] = len(unit_field_changes)
-    print(json.dumps(summary, indent=1))
+    pathlib.Path(out_json).write_text(json.dumps(result, indent=1) + "\n")
+    with open(out_txt, "w") as text:
+        text.write("W44-BRANCH-CONDITION-CALLS attribution\n\n")
+        text.write(f"diagnostic counts before {counts['before']}\n")
+        text.write(f"diagnostic counts after  {counts['after']}\n\n")
+        for key, value in sorted(by_category.items(), key=str):
+            text.write(f"  {value:6}  {key[0]:20} {key[1]:8} {key[2]}\n")
+        text.write(f"\nfunction moves: {len(moved)}\n")
+        for fkey, (a, b) in sorted(moved.items(), key=str):
+            text.write(f"  {'/'.join(str(x) for x in fkey)}: {a} -> {b}\n")
+        text.write(f"\nunit changes: {len(unit_moves)}\n")
+        for row in unit_moves:
+            text.write(f"  {json.dumps(row)}\n")
+        for name in ("exchange_at_admitted_line", "desugared_function", "summary_neighbour", "unattributed"):
+            text.write(f"\n{name}: {len(classes[name])}\n")
+            for row in classes[name]:
+                text.write(
+                    f"  {row.get('delta')} {row.get('unit')} {row.get('function')} L{row.get('line')} "
+                    f"{row.get('category')}: {row.get('description')} {row.get('status')}\n"
+                )
+        text.write(f"\nattribution_complete: {result['attribution_complete']}\n")
+    print(pathlib.Path(out_txt).read_text()[:6000])
     return 0 if result["attribution_complete"] else 1
 
 

@@ -3,7 +3,9 @@
 
 Usage: run_gate.py OUT_DIR STEP [STEP ...]
 
-Steps: submodules, clang, test, fmt, clippy, probe, followup, lean, python.
+Steps: submodules, clang, test, fmt, clippy, probe, followup, lean, python,
+census-clippy, census-test. Copied from W43-RETURN-EXPRESSION; card W44-BRANCH-CONDITION-CALLS
+adds --workspace to clippy, the two census-feature steps and CARGO_INCREMENTAL=0.
 Each step's stdout and stderr go to OUT_DIR/<step>.log and its exit to
 OUT_DIR/<step>.exit; OUT_DIR/facts-<step>.json records the command, the
 environment the card sets, UTC start/end and the exit. Exits are captured
@@ -24,7 +26,9 @@ STEPS = {
     "clang": ["clang", "--version"],
     "test": ["cargo", "test", "--workspace", "--no-fail-fast"],
     "fmt": ["cargo", "fmt", "--all", "--", "--check"],
-    "clippy": ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"],
+    "clippy": ["cargo", "clippy", "--workspace", "--all-targets", "--", "-D", "warnings"],
+    "census-clippy": ["cargo", "clippy", "-p", "qcore-c-gateway", "--all-targets", "--features", "indirect-census", "--", "-D", "warnings"],
+    "census-test": ["cargo", "test", "-p", "qcore-c-gateway", "--features", "indirect-census", "--no-fail-fast"],
     "probe": ["cargo", "run", "-p", "qcore-compiler", "--example", "reevaluation_probe"],
     "followup": ["cargo", "run", "-p", "qcore-compiler", "--example", "reevaluation_followup"],
     "lean": ["python3", "scripts/check_lean_audits.py", "--jobs", "4"],
@@ -32,7 +36,8 @@ STEPS = {
 }
 
 CARD_ENVIRONMENT = {
-    "CARGO_BUILD_JOBS": "4",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
     "RUST_TEST_THREADS": "2",
     "CARGO_PROFILE_DEV_DEBUG": "0",
     "CARGO_PROFILE_TEST_DEBUG": "0",
@@ -60,8 +65,8 @@ def main() -> int:
             "end": end,
             "exit": code,
         }
-        if step == "test":
-            text = (out / "test.log").read_text(errors="replace")
+        if step in ("test", "census-test"):
+            text = (out / f"{step}.log").read_text(errors="replace")
             totals = {"passed": 0, "failed": 0, "ignored": 0, "summaries": 0}
             for match in re.finditer(
                 r"test result: \w+\. (\d+) passed; (\d+) failed; (\d+) ignored", text
