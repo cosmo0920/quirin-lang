@@ -21,7 +21,7 @@ probe whose outcome is a contract call or an element store that used a
 candidate, and every W43 indirect record at that key has the same token text
 (so no other statement on the line keeps the refusal).
 
-Usage: call_argument_census.py RUN_DIR OUT_JSON OUT_TXT
+Usage: call_argument_census.py RUN_DIR OUT_JSON OUT_TXT [--union]
 """
 
 import collections
@@ -37,6 +37,7 @@ import residuals  # noqa: E402
 import shape_census as census  # noqa: E402
 
 ADMITTED_OUTCOMES = {"contract-call", "element-store"}
+UNION = "--union" in sys.argv[4:]
 
 
 def load_calls(path):
@@ -122,9 +123,16 @@ def main():
             if seq is not None:
                 records = indirect.get(seq, {}).get(key, []) or statements.get(seq, {}).get(key, [])
             classes = {residuals.classify(r) for r in records} or {"other"}
-            if min(classes, key=residuals.ORDER.index) != "call-argument":
+            call_records = calls.get(seq, {}).get(key, []) if seq is not None else []
+            in_window = min(classes, key=residuals.ORDER.index) == "call-argument"
+            # `--union`: also every leaf whose statement this card's call stream
+            # recorded. W43's shape classifier files some call statements under
+            # `chain` (a typed declaration `T * x = f(s.f)`, measured by
+            # W44-INDIRECT-CHAIN-ACCESS); the frozen forecast used the W43
+            # window, so the default keeps it.
+            if not in_window and not (UNION and call_records):
                 continue
-            family[(fkey, line)] = (records, calls.get(seq, {}).get(key, []) if seq is not None else [])
+            family[(fkey, line)] = (records, call_records)
 
     unknown = {f for f, d in functions.items() if d["status"] == "Unknown"}
 
@@ -213,7 +221,7 @@ def main():
         f"run: {run}",
         f"units matched {len(assignment)} / {len(unit_keys)}",
         "",
-        f"family (W43 residuals.py class call-argument, Unknown functions): {leaves} leaves / {len(touched)} functions / {len(sole)} sole-blocked",
+        f"family ({'W43 class call-argument widened by the call stream' if UNION else 'W43 residuals.py class call-argument'}, Unknown functions): {leaves} leaves / {len(touched)} functions / {len(sole)} sole-blocked",
         "",
         "statement split (leaves, functions):",
     ]

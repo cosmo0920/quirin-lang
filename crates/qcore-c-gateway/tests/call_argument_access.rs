@@ -62,7 +62,7 @@ void x_log(const char *fmt, ...); \
 struct x_lock { int held; }; \
 struct x_rec { int count; char *name; struct x_rec *next; struct x_lock lock; }; \
 struct x_rec *x_record(void); struct x_rec *x_maybe_record(void); \
-void x_record_free(struct x_rec *r); void y_unknown(int n);";
+void x_record_free(struct x_rec *r); void y_unknown(int n); void y_release(void *p);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -419,5 +419,51 @@ fn the_pre_existing_suffix_destination_hole_is_pinned() {
          recs[i].name = x_dup(s); x_free(name); }",
         "Safe",
         &[],
+    );
+}
+
+// -- The pre-existing leak semantics the AFTER run exposed ---------------------
+//
+// `W44-CALL-ARGUMENT-EXPOSED-LEAKS`: the corpus leaves the call argument rule
+// exposed come from three leak semantics the base already has. Each is pinned
+// here on a body with **no** call-argument access, so none of them is this
+// card's rule; a card that models these escapes re-pins them.
+
+#[test]
+fn an_unsanctioned_out_slot_store_is_reported_as_a_leak_at_the_base() {
+    expect(
+        "`*out = p` with no out-parameter contract keeps `p` owed",
+        "int w(char **out, unsigned long n) { char *p = x_alloc(n); if (!p) return -1; \
+         *out = p; return 0; }",
+        "Unsafe",
+        &[
+            "leak",
+            "unsupported:store through `*out` without an out-parameter contract",
+        ],
+    );
+}
+
+#[test]
+fn a_release_through_an_uncontracted_helper_is_reported_as_a_leak_at_the_base() {
+    expect(
+        "`y_release(p)` is refused and discharges nothing",
+        "void w(unsigned long n) { char *p = x_alloc(n); if (!p) return; y_release(p); }",
+        "Unsafe",
+        &["leak", "unsupported:call to uncontracted function `y_release`"],
+    );
+}
+
+#[test]
+fn an_object_linked_into_a_returned_owner_is_reported_as_a_leak_at_the_base() {
+    expect(
+        "`b->name = ub; return b;` with a subscripted fill in between",
+        "struct x_rec *w(char *bk, unsigned long n) { unsigned long i; char *ub; \
+         struct x_rec *b; ub = x_alloc(n); if (!ub) return 0; b = x_record(); \
+         b->name = ub; for (i = 0; i < n; i++) { ub[i] = bk[i]; } return b; }",
+        "Unsafe",
+        &[
+            "leak",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
     );
 }
