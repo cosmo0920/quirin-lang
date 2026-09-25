@@ -449,7 +449,10 @@ fn a_release_through_an_uncontracted_helper_is_reported_as_a_leak_at_the_base() 
         "`y_release(p)` is refused and discharges nothing",
         "void w(unsigned long n) { char *p = x_alloc(n); if (!p) return; y_release(p); }",
         "Unsafe",
-        &["leak", "unsupported:call to uncontracted function `y_release`"],
+        &[
+            "leak",
+            "unsupported:call to uncontracted function `y_release`",
+        ],
     );
 }
 
