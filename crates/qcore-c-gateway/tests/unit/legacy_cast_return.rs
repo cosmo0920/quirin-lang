@@ -18,10 +18,16 @@ fn decide(expression: &str) -> CastReturn {
 fn a_pointer_cast_of_one_place_is_decided_as_that_place() {
     assert_eq!(decide("( char * ) buffer"), CastReturn::Operand(4));
     assert_eq!(decide("( const char * * ) arr"), CastReturn::Operand(6));
-    assert_eq!(decide("( struct k_box * ) ctx - > item"), CastReturn::Operand(5));
+    assert_eq!(
+        decide("( struct k_box * ) ctx - > item"),
+        CastReturn::Operand(5)
+    );
     assert_eq!(decide("( void * ) ( p )"), CastReturn::Operand(4));
     // A chain of pointer casts is one pointer conversion.
-    assert_eq!(decide("( struct k_box * ) ( void * ) p"), CastReturn::Operand(9));
+    assert_eq!(
+        decide("( struct k_box * ) ( void * ) p"),
+        CastReturn::Operand(9)
+    );
 }
 
 #[test]

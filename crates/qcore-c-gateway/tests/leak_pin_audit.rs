@@ -1,15 +1,15 @@
-//! Card W44-LEAK-PIN-AUDIT — the three class (b) leak mechanisms the audit of
-//! the 271 baseline leak leaves repaired, and the ones it deliberately left.
+//! Card W44-LEAK-PIN-AUDIT — the two class (b) leak mechanisms the audit of
+//! the 271 baseline leak leaves repaired, and the one it deliberately left.
 //!
-//! * `RETURN-CAST-PLACE-NOT-ESCAPED`: `return (T *) p;` escapes `p` exactly as
-//!   `return p;` does; a cast moving a possibly tracked value between an integer
+//! * `RETURN-CAST-PLACE-NOT-ESCAPED`: `return (T *) p;` is decided exactly as
+//!   `return p;` is; a cast moving a possibly tracked value between an integer
 //!   and a pointer is refused, never escaped; `(int) fd` keeps a descriptor as
 //!   custody.
 //! * The refused escape: a refused store or return whose value side is a
 //!   tracked identity withdraws the accusation against it, leaving the function
 //!   `Unknown`, never `Safe`.
-//! * The settled report: a leak is reported from the settled exit state, not
-//!   from an intermediate iterate.
+//! * Deliberately left: an identity handed to an uncontracted call keeps its
+//!   accusation (`REFUSED-CALL-ARGUMENT-PREMISE`).
 //!
 //! Each body asserts the **complete** diagnostic vector and the status, so a
 //! rule that silently dropped an unrelated accusation would fail. The fixtures
@@ -233,7 +233,8 @@ fn a_descriptor_through_int_stays_custody_and_other_casts_refuse() {
     if !clang_available() {
         return;
     }
-    let plain = outcome("int w(void) { int fd = k_open(\"p\"); if (fd < 0) return -1; return fd; }");
+    let plain =
+        outcome("int w(void) { int fd = k_open(\"p\"); if (fd < 0) return -1; return fd; }");
     let cast =
         outcome("int w(void) { int fd = k_open(\"p\"); if (fd < 0) return -1; return (int)fd; }");
     assert_eq!(plain, cast);
@@ -253,7 +254,12 @@ fn untracked_scalar_casts_are_unchanged() {
         return;
     }
     expect("scalar", "long w(int n) { return (long)n; }", "Safe", &[]);
-    expect("scalar to pointer", "void *w(long n) { return (void *)n; }", "Safe", &[]);
+    expect(
+        "scalar to pointer",
+        "void *w(long n) { return (void *)n; }",
+        "Safe",
+        &[],
+    );
 }
 
 // -- The refused escape ------------------------------------------------------

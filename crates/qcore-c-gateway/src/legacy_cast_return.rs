@@ -20,8 +20,9 @@
 //!
 //! * a **pointer** target (every type in the chain ends in `*`) over an operand
 //!   that is one place `canonical_place` spells, is not a declared scalar and
-//!   may hold no tracked descriptor is a pointer-to-pointer conversion. The converted pointer designates the same
-//!   object (C11 6.3.2.3p7), so the return is decided **exactly as
+//!   may hold no tracked descriptor is a pointer-to-pointer conversion. The
+//!   converted pointer designates the same object (C11 6.3.2.3p7), so the
+//!   return is decided **exactly as
 //!   `return OPERAND;`** — by every existing rule, the strict escape of a
 //!   canonical place, the pointer-chain widening that escapes nothing, the
 //!   return-position call, or their refusal. The cast adds no admission of its
@@ -45,8 +46,7 @@
 //! `descriptor_custody::admits_descriptor_read` needs no new arm.
 
 use super::{
-    LegacyInstruction, RefusedWrites, Statement, canonical_place, descriptor_custody,
-    is_identifier,
+    LegacyInstruction, RefusedWrites, Statement, canonical_place, descriptor_custody, is_identifier,
 };
 use crate::typed_field_access::FunctionTypes;
 

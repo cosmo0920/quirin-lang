@@ -41,8 +41,9 @@ use std::sync::Mutex;
 
 use super::{
     AbstractState, EntryCustody, LIVE, LegacyCfg, LegacyDiagnostic, LegacyDiagnosticKind,
-    LegacyInstruction, NodeAliasFacts, PointerRefinement, TransferContext, instruction_produced_sites,
-    joined_provenance, refine_collection_edge, refine_edge, refused_operands, transfer,
+    LegacyInstruction, NodeAliasFacts, PointerRefinement, TransferContext,
+    instruction_produced_sites, joined_provenance, refine_collection_edge, refine_edge,
+    refused_operands, transfer,
 };
 
 /// The environment variable naming the witness stream. Read only with the
@@ -192,10 +193,13 @@ pub(super) fn record(
                 .into_iter()
                 .map(move |site| (site, node))
         })
-        .fold(BTreeMap::<usize, Vec<usize>>::new(), |mut map, (site, node)| {
-            map.entry(site).or_default().push(node);
-            map
-        });
+        .fold(
+            BTreeMap::<usize, Vec<usize>>::new(),
+            |mut map, (site, node)| {
+                map.entry(site).or_default().push(node);
+                map
+            },
+        );
     for &(line, acquisition_line) in &reported {
         let sites = acquisition_lines
             .iter()
@@ -423,16 +427,15 @@ fn search(
             let mut next: Option<usize> = None;
             while let Some(current) = cursor {
                 let entry = &settled[current];
-                let edge_unknown = next.is_some_and(|following| {
-                    cfg.nodes[current]
-                        .successors
-                        .iter()
-                        .enumerate()
-                        .any(|(edge, &successor)| {
-                            successor == following
-                                && entry.edge_unknown.get(edge).copied().unwrap_or(false)
-                        })
-                });
+                let edge_unknown =
+                    next.is_some_and(|following| {
+                        cfg.nodes[current].successors.iter().enumerate().any(
+                            |(edge, &successor)| {
+                                successor == following
+                                    && entry.edge_unknown.get(edge).copied().unwrap_or(false)
+                            },
+                        )
+                    });
                 path.push(Step {
                     node: current,
                     line: cfg.nodes[current].line,
@@ -456,8 +459,7 @@ fn search(
             let Some(Some(edge_output)) = settled[node].edges.get(edge) else {
                 continue;
             };
-            if !live(edge_output, site) || previous.contains_key(&successor) || blocked(successor)
-            {
+            if !live(edge_output, site) || previous.contains_key(&successor) || blocked(successor) {
                 continue;
             }
             let arrives = settled[successor]
