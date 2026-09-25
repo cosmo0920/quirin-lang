@@ -342,7 +342,14 @@ fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
     if !clang_available() {
         return;
     }
-    let cases: [(&str, &str); 8] = [
+    // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS. The row
+    // `("a base named in any call argument list is bound",
+    //   "… z_hold(view->head); if (view->head->flag) …")` moved to
+    // `a_borrowed_base_is_admitted_by_the_chain_route_with_its_obligations`.
+    // REACH-GATE still refuses it as a NoOp. The chain route now admits the
+    // condition as a modeled typed read that carries its root's dereference
+    // and C02-P-ALIAS obligations.
+    let cases: [(&str, &str); 7] = [
         (
             "the address of a member is not a read",
             "void subject(struct z_view *view) { void *p; p = q_alloc(); \
@@ -367,11 +374,6 @@ fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
             "a link this reader will not type refuses",
             "void subject(struct z_view *view) { void *p; p = q_alloc(); \
              if (view->head->leaf->opaque) { q_free(p); return; } q_free(p); }",
-        ),
-        (
-            "a base named in any call argument list is bound",
-            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
-             z_hold(view->head); if (view->head->flag) { q_free(p); return; } q_free(p); }",
         ),
         (
             "an assignment could store the pointer this rule only discards",
@@ -457,16 +459,47 @@ fn an_admitted_base_is_never_a_modeled_call_actual() {
          if (view->head->flag) { q_free(p); return; } q_free(p); }",
     );
     assert_eq!(admitted.status, AnalysisStatus::Safe);
+    // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS: the borrowed
+    // half moved to
+    // `a_borrowed_base_is_admitted_by_the_chain_route_with_its_obligations`.
+    // REACH-GATE's NoOp still withdraws every admission through a base named
+    // in a call argument list: `may_bind` is unchanged, and so is this rule's
+    // premise. The branch is now admitted by a different route, which keeps
+    // the obligations this test's comment says a NoOp would skip.
+}
+
+/// Card W44-INDIRECT-CHAIN-ACCESS. `z_hold` borrows `view->head`, so `view`
+/// is a name the body *may* bind by REACH-GATE's blunt reading
+/// (`FunctionTypes::may_bind`: named in a call argument list). It is still
+/// never bound by C02-P premise 4 (`UntrackedBases`), because a `Borrowed`
+/// position changes no custody. The chain route admits the condition as the
+/// typed read. That read is a modeled instruction: `view` keeps its
+/// dereference obligation, its C02-P-ALIAS may-alias obligation and its
+/// `use_after_release` accusation, and the link `view->head` is untracked. It
+/// is not REACH-GATE's NoOp, so the concern in
+/// `an_admitted_base_is_never_a_modeled_call_actual` does not arise.
+#[test]
+fn a_borrowed_base_is_admitted_by_the_chain_route_with_its_obligations() {
+    if !clang_available() {
+        return;
+    }
     let borrowed = run(
         "void subject(struct z_view *view) { void *p; p = q_alloc(); \
          z_hold(view->head); if (view->head->flag) { q_free(p); return; } q_free(p); }",
     );
-    assert_ne!(
+    assert_eq!(
         borrowed.status,
         AnalysisStatus::Safe,
-        "one modeled read of the base withdraws every admission through it"
+        "diagnostics {:?}",
+        borrowed.diagnostics
     );
-    assert!(borrowed.unsupported().contains(&BRANCH.to_owned()));
+    // The same body with the root released first refuses at the condition,
+    // so the admission is the obligation's, not a NoOp's.
+    let released = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         q_free(view); if (view->head->flag) { q_free(p); return; } q_free(p); }",
+    );
+    assert_ne!(released.status, AnalysisStatus::Safe, "{:?}", released.diagnostics);
 }
 
 /// The admission must never manufacture a discharge: a body that acquires and
