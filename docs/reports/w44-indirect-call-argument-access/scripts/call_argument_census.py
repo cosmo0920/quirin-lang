@@ -168,7 +168,7 @@ def main():
 
     def decided(fkey, cleared):
         return all(
-            (fkey, line) in cleared
+            description == census.INDIRECT and (fkey, line) in cleared
             for line, description in functions[fkey]["leaves"]
         )
 
@@ -181,7 +181,7 @@ def main():
         rest = {
             census.normalize(d)
             for line, d in functions[f]["leaves"]
-            if (f, line) not in forecast
+            if not (d == census.INDIRECT and (f, line) in forecast)
         }
         if len(rest) == 1:
             remaining_after[next(iter(rest))] += 1
@@ -204,6 +204,8 @@ def main():
             "decided_upper": ["/".join(str(p) for p in f) for f in decided_functions],
             "decided_without_risk": ["/".join(str(p) for p in f) for f in decided_without_risk],
             "one_family_left_after": dict(remaining_after.most_common(10)),
+            "leaves": sorted(["/".join(str(p) for p in f), line] for f, line in forecast),
+            "exchange_risk_leaves": sorted(["/".join(str(p) for p in f), line] for f, line in exchange_risk),
         },
     }
     pathlib.Path(sys.argv[2]).write_text(json.dumps(result, indent=1) + "\n")
