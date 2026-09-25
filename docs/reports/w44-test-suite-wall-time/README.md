@@ -410,7 +410,40 @@ That workspace keeps plain `cargo test`, and the runner refuses to run it.
 
 ### 8.1 Gate
 
-GATE-PLACEHOLDER
+The gate was measured at `13d902a5` with `docs/reports/w44-test-suite-wall-time/scripts/run_gate.py`.
+It used `CARGO_INCREMENTAL=0` and no profile, thread or job override. Each
+step's exit was captured directly, never through a pipe. Later commits change
+only documents, the ledger, evidence and report scripts; no Rust, Lean or test
+source changed. The Python suite and the docs-index check ran on the final
+tree, after the matrix was regenerated. Logs are in the worktree-private
+`measure/gate/`. The records are `gate.json`, `gate-facts.json` and
+`clang-version.txt`, recorded in this checkout.
+
+| Step | Command | Exit | Result | Wall |
+|---|---|---:|---|---:|
+| submodules | `git submodule update --init --recursive` | 0 | | 0.0 s |
+| runner | `python3 scripts/run_test_binaries.py` | 0 | **5,505 passed, 0 failed, 11 ignored, 292 summaries**; all 8 exclusive binaries ok; no exclusive overlap; equivalent to the base apart from the 2 declared additions | 219.6 s (build included) |
+| test (reference) | `cargo test --workspace --no-fail-fast` | 0 | **5,505 / 0 / 11, 292 summaries**, equal to the runner | 620.9 s (build warm) |
+| fmt | `cargo fmt --all -- --check` | 0 | clean | 2.3 s |
+| clippy | `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | 17.5 s |
+| census | clippy and `--lib` tests of `qcore-c-gateway --features indirect-census` | 0 | clean; 505 passed | 9.9 s |
+| probe / followup | `cargo run -p qcore-compiler --example reevaluation_probe` / `reevaluation_followup` | 0 / 0 | reused the test build | 0.1 / 0.4 s |
+| lean | `python3 scripts/check_lean_audits.py --jobs 4` | 0 | 183 audits passed | 97.3 s |
+| python (after regeneration) | `python3 -m unittest discover -s scripts/tests` | 0 | 346 tests OK (the card adds 16) | |
+| docsindex | `python3 scripts/build_docs_index.py --check` | 0 | | |
+| ptest | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 124 passed, 0 failed, 0 ignored, 39 summaries | 370.3 s |
+| pisolated | `packages::real_packages_preserve_unknown_and_reject_mutations`, isolated | 0 | 1 passed | 48.6 s |
+| pfmt / pclippy | provider fmt and clippy `-D warnings` | 0 / 0 | clean | 2.3 / 10.4 s |
+| pcontracts | `python3 providers/contracts.py check` | 0 | | 0.1 s |
+
+The matrix was regenerated with `python3 docs/reports/remaining-d02/build_matrix.py .
+--gate docs/reports/w44-test-suite-wall-time/gate.json`, after
+`scripts/update_ledger.py` appended this card's three follow-ups
+(`named_followups` 379 → 382). `docs/reports/INDEX.md` was regenerated.
+
+A first Python run before the regeneration failed as expected, with exit 1:
+`dimensions.named_followups` read 379 against 382 entries. It is kept as
+`measure/gate/python-pre.log` and is not gate evidence.
 
 ### 8.2 Measurement hygiene
 
@@ -443,6 +476,13 @@ Registered in `followups.json` and in the acceptance matrix's `named_followups`:
   Discharge: a measured cut of that binary's longest test that keeps every
   row's own evaluation. A shared retained-backend fixture with an equivalence
   argument is one way. Report the new critical path.
+- **`W44-PROVIDER-SUITE-SERIAL`.** On the same tree, the provider workspace's
+  plain `cargo test` took 370.3 s, build included. The root suite took 219.6 s
+  through the runner, so the provider suite is now the gate's longest Rust
+  step. It stays serial by design (§7), and its per-binary split was not
+  measured. Discharge: time it per binary, then either extend the `EXCLUSIVE`
+  audit to that workspace, with the same fail-closed checks and published
+  equivalence, or record why it stays serial.
 
 ## 10. Files
 

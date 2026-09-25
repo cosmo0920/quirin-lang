@@ -32,10 +32,14 @@ to the base:
 
 `docs/agents/validation.md` now names the runner as the gate's Rust step and
 keeps `cargo test --workspace --no-fail-fast` as the reference command. The
-only test additions are the cache's two unit tests. Two measured residuals are
-registered: `W44-CLANG-IDENTITY-RECAPTURE` and
-`W44-TEST-CRITICAL-PATH-ROUTE-PARITY`. The heaviest binary, 53 s alone, sets
-the parallel phase's end. See [the report](../../reports/w44-test-suite-wall-time/README.md).
+only test additions are the cache's two unit tests. Three measured residuals
+are registered:
+
+* `W44-CLANG-IDENTITY-RECAPTURE`;
+* `W44-TEST-CRITICAL-PATH-ROUTE-PARITY`: the heaviest binary, 53 s alone, sets
+  the end of the parallel phase;
+* `W44-PROVIDER-SUITE-SERIAL`: the provider suite's 370 s is now the gate's
+  longest Rust step. See [the report](../../reports/w44-test-suite-wall-time/README.md).
 
 **2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**
 This is a soundness repair. `direct_assignment_destination` named the first

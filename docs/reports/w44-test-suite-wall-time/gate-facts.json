@@ -1,0 +1,499 @@
+{
+  "source_commit": "13d902a5",
+  "private_logs": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/measure/gate",
+  "core": {
+    "census": {
+      "step": "census",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "-p",
+          "qcore-c-gateway",
+          "--features",
+          "indirect-census",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        [
+          "cargo",
+          "test",
+          "-p",
+          "qcore-c-gateway",
+          "--features",
+          "indirect-census",
+          "--lib"
+        ]
+      ],
+      "exits": [
+        0,
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:39:58.665920+00:00",
+      "end": "2026-09-25T08:40:08.545820+00:00",
+      "wall_seconds": 9.9,
+      "load_before": [
+        6.65,
+        14.51,
+        20.66
+      ],
+      "exit": 0,
+      "totals": {
+        "passed": 505,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 1
+      },
+      "failed_tests": []
+    },
+    "clang": {
+      "step": "clang",
+      "commands": [
+        [
+          "clang",
+          "--version"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:25:38.316986+00:00",
+      "end": "2026-09-25T08:25:38.328275+00:00",
+      "wall_seconds": 0.0,
+      "load_before": [
+        8.84,
+        26.09,
+        26.16
+      ],
+      "exit": 0
+    },
+    "clippy": {
+      "step": "clippy",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:39:41.197050+00:00",
+      "end": "2026-09-25T08:39:58.665589+00:00",
+      "wall_seconds": 17.5,
+      "load_before": [
+        6.71,
+        14.92,
+        20.89
+      ],
+      "exit": 0
+    },
+    "fmt": {
+      "step": "fmt",
+      "commands": [
+        [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:39:38.888006+00:00",
+      "end": "2026-09-25T08:39:41.196705+00:00",
+      "wall_seconds": 2.3,
+      "load_before": [
+        7.12,
+        15.13,
+        20.99
+      ],
+      "exit": 0
+    },
+    "followup": {
+      "step": "followup",
+      "commands": [
+        [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_followup"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:40:08.613728+00:00",
+      "end": "2026-09-25T08:40:08.969574+00:00",
+      "wall_seconds": 0.4,
+      "load_before": [
+        7.58,
+        14.46,
+        20.58
+      ],
+      "exit": 0
+    },
+    "lean": {
+      "step": "lean",
+      "commands": [
+        [
+          "python3",
+          "scripts/check_lean_audits.py",
+          "--jobs",
+          "4"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:40:08.969787+00:00",
+      "end": "2026-09-25T08:41:46.276568+00:00",
+      "wall_seconds": 97.3,
+      "load_before": [
+        7.58,
+        14.46,
+        20.58
+      ],
+      "exit": 0
+    },
+    "probe": {
+      "step": "probe",
+      "commands": [
+        [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_probe"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:40:08.546798+00:00",
+      "end": "2026-09-25T08:40:08.613440+00:00",
+      "wall_seconds": 0.1,
+      "load_before": [
+        7.58,
+        14.46,
+        20.58
+      ],
+      "exit": 0
+    },
+    "runner": {
+      "step": "runner",
+      "commands": [
+        [
+          "python3",
+          "scripts/run_test_binaries.py",
+          "--log-dir",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/measure/gate/runner"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:25:38.328583+00:00",
+      "end": "2026-09-25T08:29:17.935713+00:00",
+      "wall_seconds": 219.6,
+      "load_before": [
+        8.84,
+        26.09,
+        26.16
+      ],
+      "exit": 0,
+      "totals": {
+        "passed": 5505,
+        "failed": 0,
+        "ignored": 11,
+        "measured": 0,
+        "filtered": 0,
+        "summaries": 292
+      },
+      "phases_seconds": {
+        "build": 47.019,
+        "capture": 4.798,
+        "run": 167.661
+      },
+      "runner_ok": true,
+      "units_failed": [],
+      "exclusive_units": {
+        "qcore-compiler::test::cycle20_verifier_plugins": true,
+        "qcore-compiler::test::w3_evidence_v2": true,
+        "qcore-verifier-host::test::confined_process_execution": true,
+        "qcore-verifier-host::test::enforced_process_limits": true,
+        "qcore-verifier-host::test::execution_quota": true,
+        "qcore-verifier-host::test::package_identity": true,
+        "qcore-verifier-host::test::standalone_host": true,
+        "qcorec::test::plugin_packages": true
+      }
+    },
+    "submodules": {
+      "step": "submodules",
+      "commands": [
+        [
+          "git",
+          "submodule",
+          "update",
+          "--init",
+          "--recursive"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:25:38.289870+00:00",
+      "end": "2026-09-25T08:25:38.316633+00:00",
+      "wall_seconds": 0.0,
+      "load_before": [
+        8.84,
+        26.09,
+        26.16
+      ],
+      "exit": 0
+    },
+    "test": {
+      "step": "test",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--workspace",
+          "--no-fail-fast"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:29:17.939543+00:00",
+      "end": "2026-09-25T08:39:38.876044+00:00",
+      "wall_seconds": 620.9,
+      "load_before": [
+        26.39,
+        27.83,
+        26.87
+      ],
+      "exit": 0,
+      "totals": {
+        "passed": 5505,
+        "failed": 0,
+        "ignored": 11,
+        "summaries": 292
+      },
+      "failed_tests": []
+    }
+  },
+  "provider": {
+    "pclippy": {
+      "step": "pclippy",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:48:47.532968+00:00",
+      "end": "2026-09-25T08:48:57.926878+00:00",
+      "wall_seconds": 10.4,
+      "load_before": [
+        4.9,
+        12.74,
+        18.58
+      ],
+      "exit": 0
+    },
+    "pcontracts": {
+      "step": "pcontracts",
+      "commands": [
+        [
+          "python3",
+          "providers/contracts.py",
+          "check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:48:57.927128+00:00",
+      "end": "2026-09-25T08:48:58.003343+00:00",
+      "wall_seconds": 0.1,
+      "load_before": [
+        4.45,
+        12.39,
+        18.4
+      ],
+      "exit": 0
+    },
+    "pfmt": {
+      "step": "pfmt",
+      "commands": [
+        [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:48:45.268289+00:00",
+      "end": "2026-09-25T08:48:47.532719+00:00",
+      "wall_seconds": 2.3,
+      "load_before": [
+        5.07,
+        12.91,
+        18.67
+      ],
+      "exit": 0
+    },
+    "pisolated": {
+      "step": "pisolated",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "-p",
+          "qcore-provider-conformance",
+          "--test",
+          "packages",
+          "real_packages_preserve_unknown_and_reject_mutations",
+          "--locked",
+          "--offline",
+          "--",
+          "--exact",
+          "--test-threads=1"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:47:56.621526+00:00",
+      "end": "2026-09-25T08:48:45.267990+00:00",
+      "wall_seconds": 48.6,
+      "load_before": [
+        6.3,
+        14.36,
+        19.4
+      ],
+      "exit": 0,
+      "totals": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 1
+      },
+      "failed_tests": []
+    },
+    "ptest": {
+      "step": "ptest",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--locked",
+          "--offline",
+          "--no-fail-fast"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T08:41:46.276972+00:00",
+      "end": "2026-09-25T08:47:56.620998+00:00",
+      "wall_seconds": 370.3,
+      "load_before": [
+        26.34,
+        20.02,
+        22.01
+      ],
+      "exit": 0,
+      "totals": {
+        "passed": 124,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 39
+      },
+      "failed_tests": []
+    }
+  },
+  "docsindex_exit": 0,
+  "python_tests_after_regeneration": 346
+}

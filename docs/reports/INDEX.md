@@ -848,6 +848,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on |
 
+| [w44-test-suite-wall-time](w44-test-suite-wall-time/README.md) | W44-TEST-SUITE-WALL-TIME: the standing gate's Rust suite, from 22 minutes to about 4½ |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

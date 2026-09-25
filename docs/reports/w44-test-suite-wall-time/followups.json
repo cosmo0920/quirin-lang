@@ -12,5 +12,12 @@
   "why": "Under scripts/run_test_binaries.py (card W44-TEST-SUITE-WALL-TIME), the heaviest binary starts first and finishes last in all three final runs, at 187.4, 183.2 and 153.0 s. The next-longest binary finishes 36-42 s earlier. Changing --jobs between 4 and 16 moves the run phase only between 172 and 219 s. Sharing the CPUs makes the binary run about 3x slower than its serial 53.5 s. The binary's longest test is `both_routes_refuse_the_same_body_mutations`. For each of its 12 rows, the retained route rebuilds the file-backend evidence over the unmutated `backend::SOURCE` with the full Clang pipeline, and so does the moved route's prerequisite derivation (docs/reports/w44-test-suite-wall-time/evidence/per-binary.json). DISCHARGE: a measured cut of this binary's longest test that keeps every forged row's own core evaluation. One option is a shared retained-backend fixture with a stated equivalence argument. Report the new critical path.",
   "source": "docs/reports/w44-test-suite-wall-time/README.md",
   "recorded_by": "W44-TEST-SUITE-WALL-TIME"
+ },
+ {
+  "id": "W44-PROVIDER-SUITE-SERIAL",
+  "title": "The provider workspace's `cargo test` is now the gate's longest Rust step: 370.3 s, against 219.6 s for the root suite through the runner",
+  "why": "In card W44-TEST-SUITE-WALL-TIME's gate, run on the same tree at 1-minute load about 25 on 16 CPUs, `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` took 370.3 s, build included (124 passed over 39 summaries). The root suite took 219.6 s through scripts/run_test_binaries.py, build included (docs/reports/w44-test-suite-wall-time/gate-facts.json). The runner deliberately refuses the provider workspace. Its conformance binaries launch process providers under declared timeouts throughout. `configured_audit::pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter` (a 5 s plugin quota) and constraint 16's `packages` rows are load-sensitive. So every one of them would have to run exclusively, and the per-binary split of the 370 s was not measured. DISCHARGE: time the provider suite per binary. If the time sits in binaries that launch no process provider, extend the runner's EXCLUSIVE audit to that workspace with the same fail-closed checks and publish equivalence. Otherwise record why it stays serial.",
+  "source": "docs/reports/w44-test-suite-wall-time/README.md",
+  "recorded_by": "W44-TEST-SUITE-WALL-TIME"
  }
 ]
