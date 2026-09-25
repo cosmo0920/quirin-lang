@@ -1,10 +1,8 @@
 # Current status and evidence boundaries
 
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-25 from the W44-COLLECTION-ALLOCATION integration arbiter on the combined tree
-(units, unit reasons), and from the W45-RETURN-EXPRESSION-FAMILIES card's arbiter on its
-base `b160d765` (functions, diagnostics, uncontracted-call, indirect-access and
-return-expression rows), with the
+2026-09-26 from the W45-RETURN-EXPRESSION-FAMILIES integration arbiter on the combined tree
+(units, functions, diagnostics, unit reasons, indirect-access and return-expression rows), with the
 condition-call row from W44-BRANCH-CONDITION-CALLS and the leak-classification row from the
 W44-LEAK-PIN-AUDIT card on its base; contract-corpus rows re-derived on 2026-09-25 at the integrations; native-descriptor
 rows from W43-DESCRIPTOR-NATIVE-CHECK; the follow-up count at W44-INDIRECT-CALL-ARGUMENT-ACCESS on that merge. This is the concise status
@@ -67,10 +65,8 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w45-return-expression-families/artifacts/`, the
-W45-RETURN-EXPRESSION-FAMILIES card's AFTER run on main `b160d765` (its predecessor,
-the W44-COLLECTION-ALLOCATION integration's combined-tree run
-`docs/reports/w44-collection-allocation/integration/artifacts/`, is frozen); an arbiter must
+The baseline is `docs/reports/w45-return-expression-families/integration/artifacts/`, the
+combined-tree run of that integration (its predecessor `docs/reports/w44-collection-allocation/integration/artifacts` is frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and

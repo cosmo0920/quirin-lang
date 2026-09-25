@@ -1,0 +1,29 @@
+{
+ "note": "W45-RETURN-EXPRESSION-FAMILIES, 2026-09-25, on main b160d765. The same-checkout BEFORE reproduces the W44-COLLECTION-ALLOCATION integration baseline's diagnostics, chunk-contracts and Monkey source byte for byte (contracts after the root alias; source-effects differ only in checkout-path digests). AFTER admits the scalar-result return read and the cast of a whole call: 405 leaves removed, 40 added, every one attributed (189 direct, 22 exchanges, 4 base obligations, 223 cascade and 7 flow leaves of callers whose callee now validates a summary); 76 functions Unknown -> Safe (72 sole-blocked by the return refusal, 4 by cascade), none to provisional Unsafe; units unchanged; leak 37 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-return-expression-families/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 10,
+ "unknown": 168,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 37,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-return-expression-families/artifacts/",
+ "source": "docs/reports/w45-return-expression-families/README.md; preceding baseline docs/reports/w44-collection-allocation/integration/artifacts/",
+ "unknown_alias_diagnostics": 3517,
+ "unsupported_diagnostics": 43215,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 382,
+  "provisional_unsafe": 12,
+  "unknown": 4440
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 167,
+  "none": 17,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
