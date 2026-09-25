@@ -10,6 +10,10 @@ exit of `scripts/build_docs_index.py --check` on the final tree. The Lean audit
 count is the number of `proof/Audit*.lean` files the audit step checked.
 Adapted from docs/reports/w43-return-expression/scripts/write_gate.py; this
 card also measured the provider gate, so its figures are recorded, not carried.
+Copied from docs/reports/w44-indirect-chain-access/scripts/write_gate.py by card
+W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE, which ran the core and provider steps
+in one directory (pass it twice; the steps are split by name) and words its own
+note.
 """
 
 import json
@@ -28,7 +32,9 @@ def load(directory):
 
 
 def main() -> int:
-    core, provider = load(sys.argv[1]), load(sys.argv[2])
+    PROVIDER_STEPS = {"ptest", "pisolated", "pfmt", "pclippy", "pcontracts", "pbuild", "pverify", "ppython"}
+    core = {k: v for k, v in load(sys.argv[1]).items() if k not in PROVIDER_STEPS}
+    provider = {k: v for k, v in load(sys.argv[2]).items() if k in PROVIDER_STEPS}
     commit, python_tests, docsindex = sys.argv[3], int(sys.argv[4]), int(sys.argv[5])
     (REPORT / "gate-facts.json").write_text(
         json.dumps(
@@ -54,23 +60,27 @@ def main() -> int:
     complete = all(code == 0 for code in [*exits.values(), *pexits.values(), docsindex])
     record = {
         "note": (
-            f"W44-INDIRECT-CHAIN-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the "
-            f"census-feature step measured at {commit} with CARGO_INCREMENTAL=0; later commits change "
-            "documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), "
-            "and the Python suite ran after the final matrix regeneration. "
+            f"W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: core Rust, fmt, clippy (--workspace), probes, "
+            f"Lean and the provider gate measured at {commit} with CARGO_INCREMENTAL=0 and "
+            "QCORE_CLANG=/usr/bin/clang. The census-feature step's first attempt at that commit failed "
+            "feature-on clippy (manual_pattern_char_comparison in the feature-gated census module; "
+            "measure/gate/census-first-attempt.log, exit 101, its 467 tests passing); it was fixed at "
+            "95ae39ff, which changes only that compiled-out module, and the step was rerun clean there "
+            "together with fmt. Later commits change documents, the ledger, report scripts and evidence "
+            "only (no Rust, Lean or test source), and the Python suite ran after the final matrix "
+            "regeneration. "
             f"{tests['passed']} core Rust passed / {tests['failed']} failed / {tests['ignored']} ignored "
-            f"over {tests['summaries']} summaries (the card adds 12 module tests and the 14-test "
-            "indirect_chain_access binary, and four new tests where six existing pins moved "
-            f"deliberately); {audits} Lean audits (1 added: AuditIndirectChainAccess); census step: "
-            f"clippy -p qcore-c-gateway --features indirect-census clean and {census['passed']} "
-            f"feature-on library tests passed; {python_tests} root Python tests after the final "
-            f"matrix regeneration; docs index check exit {docsindex}. Step exits: {exits}. Provider "
-            f"workspace on the same tree: {ptests['passed']} passed / {ptests['failed']} failed / "
-            f"{ptests['ignored']} ignored over {ptests['summaries']} summaries; provider step exits: "
-            f"{pexits}. A first core gate run (private/gate) failed to compile "
-            "alias_aggregate_probe and is not evidence. Logs: worktree-private private/gate2 and "
-            "private/provider-gate. Clang recorded in this checkout. Corpus: 0 function and 0 unit "
-            "moves, leak 271 unchanged, 0 violation candidates."
+            f"over {tests['summaries']} summaries (the card adds the 11-test assignment_destination_suffix "
+            "binary, three library unit tests and two census unit tests; no existing pin moved); "
+            f"{audits} Lean audits (1 added: AuditAssignmentDestinationSuffix); census step: clippy -p "
+            f"qcore-c-gateway --features indirect-census clean and {census['passed']} feature-on library "
+            f"tests passed; {python_tests} root Python tests after the final matrix regeneration; docs "
+            f"index check exit {docsindex}. Step exits: {exits}. Provider workspace on the same tree: "
+            f"{ptests['passed']} passed / {ptests['failed']} failed / {ptests['ignored']} ignored over "
+            f"{ptests['summaries']} summaries; provider step exits: {pexits}. Logs: worktree-private "
+            "measure/gate. Clang recorded in this checkout. Corpus: LZ4_write16 and LZ4_write32 Safe -> "
+            "Unknown, unpack_basic_type provisional Unsafe -> Unknown, 0 unit moves, leak 271 -> 269, 0 "
+            "violation candidates, every delta attributed."
         ),
         "workspace_tests": tests["passed"],
         "provider_tests": ptests["passed"],

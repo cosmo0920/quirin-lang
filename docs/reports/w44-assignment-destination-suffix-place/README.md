@@ -381,7 +381,35 @@ runner, copied), in this worktree (`agent-a663627263bbedb07`), with
 `CARGO_INCREMENTAL=0` and `QCORE_CLANG=/usr/bin/clang`. Logs are in the private
 `measure/gate/` directory. Every exit was captured directly from the process.
 
-GATE_TABLE
+Every step except the census rerun was measured at `92b3d9e2`. The records are
+[gate.json](gate.json) and [gate-facts.json](gate-facts.json).
+
+| Step | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,434 passed / 0 failed / 11 ignored**, 289 summaries. The chain card had 5,420 over 288; this card adds 11 integration, 3 library and 2 feature-gated tests. No existing test moved. |
+| `cargo fmt --all -- --check` | 0 | clean. It was also rerun at `95ae39ff`. |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **179** audits; this card adds `AuditAssignmentDestinationSuffix` |
+| census feature: `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test … --lib` | **101**, then **0** | See below. |
+| `python3 -m unittest discover -s scripts/tests`, after matrix regeneration | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate …/gate.json` | 0 | 179 Lean audits, 111 contract modules. `clang-version.txt` is recorded in this worktree. |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| isolated `real_packages_preserve_unknown_and_reject_mutations` (`--exact --test-threads=1`) | 0 | 1 passed |
+| provider `fmt --check` / `clippy -D warnings` | 0 / 0 | clean |
+| `python3 providers/contracts.py check` | 0 | |
+| `python3 providers/package.py build --output …`, then `verify` for chunkio, cmetrics, ctraces, libevent and librdkafka | 0; 0, 0, 0, 0, 0 | |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**The census-feature step.** The first attempt at `92b3d9e2` exited 101 with
+all 467 of its tests passing. The failure was clippy's
+`manual_pattern_char_comparison` in the feature-gated census module; the log is
+kept as `measure/gate/census-first-attempt.log`. Commit `95ae39ff` fixed it. It
+changes only that module, which neither the default build nor the AFTER
+binary compiles. The step was rerun there, with clippy clean and 467 passed.
 
 ## 6. Ledger and follow-ups
 

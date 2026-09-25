@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 352
+  "named_followups": 355
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,15 +6731,16 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-INDIRECT-CHAIN-ACCESS on merge 06dff404 (onto main c1e69bb5, after the wave-43 close), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5420 core Rust passed / 0 failed / 11 ignored over 290 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 178 Lean audits; 330 root Python tests after regenerating this section (08-python exit 0 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-indexed-resource-collections/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5420,
+  "note": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: core Rust, fmt, clippy (--workspace), probes, Lean and the provider gate measured at 92b3d9e2 with CARGO_INCREMENTAL=0 and QCORE_CLANG=/usr/bin/clang. The census-feature step's first attempt at that commit failed feature-on clippy (manual_pattern_char_comparison in the feature-gated census module; measure/gate/census-first-attempt.log, exit 101, its 467 tests passing); it was fixed at 95ae39ff, which changes only that compiled-out module, and the step was rerun clean there together with fmt. Later commits change documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration. 5434 core Rust passed / 0 failed / 11 ignored over 289 summaries (the card adds the 11-test assignment_destination_suffix binary, three library unit tests and two census unit tests; no existing pin moved); 179 Lean audits (1 added: AuditAssignmentDestinationSuffix); census step: clippy -p qcore-c-gateway --features indirect-census clean and 467 feature-on library tests passed; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pbuild': 0, 'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ppython': 0, 'ptest': 0, 'pverify': 0}. Logs: worktree-private measure/gate. Clang recorded in this checkout. Corpus: LZ4_write16 and LZ4_write32 Safe -> Unknown, unpack_basic_type provisional Unsafe -> Unknown, 0 unit moves, leak 271 -> 269, 0 violation candidates, every delta attributed.",
+  "workspace_tests": 5434,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 178,
+  "lean_audits": 179,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditAssignmentDestinationSuffix.lean",
    "AuditAtomicPublication.lean",
    "AuditBitfieldSourceConcurrency.lean",
    "AuditBitwise.lean",
@@ -6922,7 +6923,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-chain-access/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-assignment-destination-suffix-place/gate.json)"
  },
  "named_followups": [
   {
