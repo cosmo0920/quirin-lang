@@ -41,11 +41,13 @@
 //! keeps exactly the refusal it has today.
 //!
 //! The one written temporary is the C program's own: `(NAME = CALL(…))`, with
-//! `NAME` a declared scalar that is no descriptor name, lowers to the statement
-//! `NAME = CALL(…)` — the classifier's `ContractCall` with destination `NAME` —
-//! and the leaf then decides on `NAME` exactly as a following `if (NAME …)`
-//! would. `NAME` may not be read elsewhere in the leaf (C leaves that
-//! unsequenced).
+//! `NAME` a declared scalar or single-level pointer local that is no formal and
+//! no descriptor name, lowers to the statement `NAME = CALL(…)` — the
+//! classifier's `ContractCall` with destination `NAME`, binding whatever that
+//! statement binds (an untracked value, or a derived pointer tracked by its
+//! base) — and the leaf then decides on `NAME` exactly as a following
+//! `if (NAME …)` would. `NAME` may not be read elsewhere in the leaf (C leaves
+//! that unsequenced). An owned result assigned this way is custody and refuses.
 //!
 //! # Refusals (fail-closed)
 //!
@@ -279,7 +281,8 @@ fn parse(texts: &[&str], start: usize, end: usize) -> Result<Tree, Refusal> {
             }
         }
         let comma = comma.ok_or(Refusal::Unparsed)?;
-        let constant = &texts[comma + 1..end - 1];
+        let (constant_start, constant_end) = strip(texts, comma + 1, end - 1);
+        let constant = &texts[constant_start..constant_end];
         if !matches!(constant, [literal] if literal.bytes().all(|byte| byte.is_ascii_digit())) {
             return Err(Refusal::Unparsed);
         }
@@ -636,13 +639,15 @@ impl Parser<'_> {
                             "unexpected destination".to_owned(),
                         ));
                     }
-                    let resource_free = match destination {
-                        Some(_) => contract.result == ResourceReturnMode::None,
-                        None => matches!(
-                            contract.result,
-                            ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
-                        ),
-                    };
+                    // An owned, reallocated or descriptor result is custody
+                    // and refuses. A derived result owns nothing: discarded,
+                    // it is exactly a discarded `None` (the classifier's own
+                    // W43-LIBC-RESULT-ALIAS rule); written to the program's
+                    // own pointer, that binding tracks it.
+                    let resource_free = matches!(
+                        contract.result,
+                        ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
+                    );
                     if !resource_free {
                         return Err(Refusal::CustodyResult(callee.to_owned()));
                     }
@@ -786,7 +791,11 @@ impl Parser<'_> {
             }
             (open, call.close + 2, name_index)
         };
-        if !self.typed_types.declared_is_scalar(name)
+        // A declared scalar, or a single-level pointer the reader committed
+        // to; the classifier decides what the call's result binds to it.
+        let declared = self.typed_types.declared_is_scalar(name)
+            || self.typed_types.pointer_kind(name).is_some();
+        if !declared
             || self.descriptor_names.contains(name)
             || self.formal_parameters.contains(name)
         {
@@ -1242,7 +1251,7 @@ mod tests {
                 Box::new(Tree::Leaf(8, 9))
             )
         );
-        assert_eq!(tree("f ( a & & b )").unwrap(), Tree::Leaf(0, 6));
+        assert_eq!(tree("f ( a & & b )").unwrap(), Tree::Leaf(0, 7));
     }
 
     #[test]
@@ -1271,7 +1280,7 @@ mod tests {
     #[test]
     fn an_assignment_or_a_comma_keeps_the_whole_operand_a_leaf() {
         assert_eq!(tree("x = a & & b").unwrap(), Tree::Leaf(0, 6));
-        assert_eq!(tree("a , b & & c").unwrap(), Tree::Leaf(0, 7));
+        assert_eq!(tree("a , b & & c").unwrap(), Tree::Leaf(0, 6));
     }
 
     #[test]
@@ -1279,8 +1288,8 @@ mod tests {
         assert_eq!(
             tree("__builtin_expect ( ! ! ( a & & b ) , 0 )").unwrap(),
             Tree::Not(Box::new(Tree::Not(Box::new(Tree::And(
-                Box::new(Tree::Leaf(6, 7)),
-                Box::new(Tree::Leaf(9, 10))
+                Box::new(Tree::Leaf(5, 6)),
+                Box::new(Tree::Leaf(8, 9))
             )))))
         );
         assert!(tree("__builtin_expect ( a , k )").is_err());
