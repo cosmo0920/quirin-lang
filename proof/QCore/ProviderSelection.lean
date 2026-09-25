@@ -12,8 +12,16 @@ choose the audit's contract source; `qcore_audit::evidence` fixes what a
 contracts-only run admits. This module models:
 
 * expansion: every selected module is owned by a crate on the load path; an
-  unknown crate, an unowned module, a crate with no module and an empty
-  selection refuse, and a module selected twice refuses;
+  unknown crate, an unowned module and an empty selection refuse, and a
+  module selected twice refuses;
+* the resource view (card W44-PROVIDER-RESOURCE-VIEW): a whole-crate entry
+  selects exactly the crate's declared view, a subset of its modules; a crate
+  that declares none refuses as a whole-crate entry, and a selection that
+  resolves to no module refuses;
+* all loaded: with no selection, a contracts-only run selects every crate on
+  the load path whole, which resolves to the concatenation of every view in
+  load-path order; this default exists only in contracts-only mode, needs the
+  load path, and an explicit selection or manifest narrows it;
 * the dependency closure: a worklist walk over declared dependency edges,
   total-or-refuse (fuel exhaustion is itself a refusal), whose result contains
   every selected crate and is closed under dependencies, and names only crates
@@ -50,6 +58,10 @@ structure Crate where
   quirin : Bool
   deps : List Name
   modules : List Module
+  /-- The declared resource view (`resource_view` in the load path), if any.
+  `providers/contracts.py` generates it from the loader and checks it; the
+  load-path reader admits only a view of owned modules (`ViewsOwned`). -/
+  view : Option (List Module)
   deriving DecidableEq, Repr
 
 inductive Entry where
@@ -69,6 +81,9 @@ inductive Refusal where
   | mixedEvidence
   | exhausted
   | zeroJobs
+  | noView
+  | noModules
+  | noLoadPath
   deriving DecidableEq, Repr
 
 /-- The crate with this name on the load path (the load path itself has
@@ -76,14 +91,21 @@ already refused duplicate names, cycles and missing dependencies). -/
 def findCrate (lp : List Crate) (n : Name) : Option Crate :=
   lp.find? (fun k => k.name == n)
 
+/-- Every declared view names only modules its crate owns: the load-path
+reader's check (`QI014`). -/
+def ViewsOwned (lp : List Crate) : Prop :=
+  ∀ k ∈ lp, ∀ v, k.view = some v → ∀ m ∈ v, m ∈ k.modules
+
 /-! ## 1. Expansion -/
 
 def expand (lp : List Crate) : Entry → Except Refusal (List (Name × Module))
   | .whole c =>
     match findCrate lp c with
     | none => .error .unknownProvider
-    | some k => if k.modules = [] then .error .missingModule
-      else .ok (k.modules.map (fun m => (c, m)))
+    | some k =>
+      match k.view with
+      | none => .error .noView
+      | some v => .ok (v.map (fun m => (c, m)))
   | .one c m =>
     match findCrate lp c with
     | none => .error .unknownProvider
@@ -103,7 +125,12 @@ def expandAll (lp : List Crate) : List Entry → Except Refusal (List (Name × M
 def Owned (lp : List Crate) (p : Name × Module) : Prop :=
   ∃ k, findCrate lp p.1 = some k ∧ p.2 ∈ k.modules
 
-theorem expand_sound {lp : List Crate} {e : Entry} {ms : List (Name × Module)}
+theorem findCrate_mem {lp : List Crate} {n : Name} {k : Crate}
+    (h : findCrate lp n = some k) : k ∈ lp :=
+  List.mem_of_find?_eq_some h
+
+theorem expand_sound {lp : List Crate} (hv : ViewsOwned lp) {e : Entry}
+    {ms : List (Name × Module)}
     (h : expand lp e = .ok ms) : ∀ p ∈ ms, Owned lp p := by
   intro p hp
   cases e with
@@ -114,9 +141,10 @@ theorem expand_sound {lp : List Crate} {e : Entry} {ms : List (Name × Module)}
     · rename_i k hk
       split at h
       · cases h
-      · cases h
+      · rename_i v hkv
+        cases h
         rcases List.mem_map.mp hp with ⟨m, hm, rfl⟩
-        exact ⟨k, hk, hm⟩
+        exact ⟨k, hk, hv k (findCrate_mem hk) v hkv m hm⟩
   | one c m =>
     simp only [expand] at h
     split at h
@@ -130,7 +158,7 @@ theorem expand_sound {lp : List Crate} {e : Entry} {ms : List (Name × Module)}
         exact ⟨k, hk, hm⟩
       · cases h
 
-theorem expandAll_sound {lp : List Crate} :
+theorem expandAll_sound {lp : List Crate} (hv : ViewsOwned lp) :
     ∀ {es : List Entry} {ms : List (Name × Module)},
       expandAll lp es = .ok ms → ∀ p ∈ ms, Owned lp p := by
   intro es
@@ -151,8 +179,20 @@ theorem expandAll_sound {lp : List Crate} :
       · rename_i rest hrest
         cases h
         rcases List.mem_append.mp hp with hp | hp
-        · exact expand_sound hfirst p hp
+        · exact expand_sound hv hfirst p hp
         · exact ih hrest p hp
+
+/-- A whole-crate entry selects exactly the crate's declared view. -/
+theorem expand_whole_is_view {lp : List Crate} {c : Name} {k : Crate} {v : List Module}
+    (hc : findCrate lp c = some k) (hv : k.view = some v) :
+    expand lp (.whole c) = .ok (v.map (fun m => (c, m))) := by
+  simp [expand, hc, hv]
+
+/-- A crate that declares no view cannot be selected whole. -/
+theorem expand_whole_without_view_refused {lp : List Crate} {c : Name} {k : Crate}
+    (hc : findCrate lp c = some k) (hv : k.view = none) :
+    expand lp (.whole c) = .error .noView := by
+  simp [expand, hc, hv]
 
 /-! ## 2. The dependency closure -/
 
@@ -314,7 +354,8 @@ def resolve (lp : List Crate) (fuel : Nat) (entries : List Entry) (guard : Bool)
     match expandAll lp entries with
     | .error r => .error r
     | .ok mods =>
-      if mods.Nodup then
+      if mods = [] then .error .noModules
+      else if mods.Nodup then
         match closure lp fuel (mods.map Prod.fst) [] with
         | .error r => .error r
         | .ok cl =>
@@ -323,9 +364,11 @@ def resolve (lp : List Crate) (fuel : Nat) (entries : List Entry) (guard : Bool)
       else .error .duplicateModule
 
 /-- The facts every admitted resolution carries. -/
-theorem resolve_sound {lp : List Crate} {fuel : Nat} {entries : List Entry} {guard : Bool}
+theorem resolve_sound {lp : List Crate} (hv : ViewsOwned lp) {fuel : Nat}
+    {entries : List Entry} {guard : Bool}
     {r : Resolved} (h : resolve lp fuel entries guard = .ok r) :
     entries ≠ [] ∧
+    r.modules ≠ [] ∧
     (∀ p ∈ r.modules, Owned lp p) ∧
     r.modules.Nodup ∧
     (∀ p ∈ r.modules, p.1 ∈ r.closure) ∧
@@ -340,25 +383,28 @@ theorem resolve_sound {lp : List Crate} {fuel : Nat} {entries : List Entry} {gua
     · cases h
     · rename_i mods hmods
       split at h
-      · rename_i hnodup
+      · cases h
+      · rename_i hnil
         split at h
-        · cases h
-        · rename_i cl hcl
+        · rename_i hnodup
           split at h
           · cases h
-          · rename_i hguard
-            cases h
-            refine ⟨hne, expandAll_sound hmods, hnodup, ?_, ?_, ?_, ?_⟩
-            · intro p hp
-              exact closure_contains fuel _ [] cl hcl p.1
-                (Or.inl (List.mem_map_of_mem hp))
-            · exact closure_closed fuel _ [] cl hcl (by intro n hn; simp at hn)
-            · exact closure_known fuel _ [] cl hcl (by intro n hn; simp at hn)
-            · intro hg
-              subst hg
-              apply quirinOnly_sound
-              simpa using hguard
-      · cases h
+          · rename_i cl hcl
+            split at h
+            · cases h
+            · rename_i hguard
+              cases h
+              refine ⟨hne, hnil, expandAll_sound hv hmods, hnodup, ?_, ?_, ?_, ?_⟩
+              · intro p hp
+                exact closure_contains fuel _ [] cl hcl p.1
+                  (Or.inl (List.mem_map_of_mem hp))
+              · exact closure_closed fuel _ [] cl hcl (by intro n hn; simp at hn)
+              · exact closure_known fuel _ [] cl hcl (by intro n hn; simp at hn)
+              · intro hg
+                subst hg
+                apply quirinOnly_sound
+                simpa using hguard
+        · cases h
 
 theorem resolve_empty_refused (lp : List Crate) (fuel : Nat) (guard : Bool) :
     resolve lp fuel [] guard = .error .empty := by
@@ -385,6 +431,34 @@ theorem resolve_duplicate_refused {lp : List Crate} {fuel : Nat} {c : Name}
     resolve lp fuel [.one c m, .one c m] guard = .error .duplicateModule := by
   simp [resolve, expandAll, expand, hc, hm]
 
+/-- A crate whose view is empty contributes no module; selected alone, it
+resolves to nothing and refuses. -/
+theorem resolve_empty_view_refused {lp : List Crate} {fuel : Nat} {c : Name}
+    {k : Crate} {guard : Bool} (hc : findCrate lp c = some k) (hv : k.view = some []) :
+    resolve lp fuel [.whole c] guard = .error .noModules := by
+  simp [resolve, expandAll, expand, hc, hv]
+
+/-- An admitted resolution's modules are the expansion of its entries. -/
+theorem resolve_modules {lp : List Crate} {fuel : Nat} {entries : List Entry}
+    {guard : Bool} {r : Resolved} (h : resolve lp fuel entries guard = .ok r) :
+    expandAll lp entries = .ok r.modules := by
+  unfold resolve at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · rename_i mods hmods
+      split at h
+      · cases h
+      · split at h
+        · split at h
+          · cases h
+          · split at h
+            · cases h
+            · cases h
+              exact hmods
+        · cases h
+
 /-- A guarded selection whose closure reaches a `qcore-provider-*` crate
 refuses. -/
 theorem resolve_guard_refuses {lp : List Crate} {fuel : Nat} {entries : List Entry}
@@ -399,6 +473,9 @@ theorem resolve_guard_refuses {lp : List Crate} {fuel : Nat} {entries : List Ent
     | error e => simp [hmods] at h
     | ok mods =>
       simp only [hmods] at h ⊢
+      by_cases hnil : mods = []
+      · simp [hnil] at h
+      simp only [hnil, ite_false] at h ⊢
       by_cases hnodup : mods.Nodup
       · simp only [hnodup, ite_true] at h ⊢
         cases hcl : closure lp fuel (mods.map Prod.fst) [] with
@@ -410,6 +487,69 @@ theorem resolve_guard_refuses {lp : List Crate} {fuel : Nat} {entries : List Ent
           simp at hq
           simp [hq]
       · simp [hnodup] at h
+
+/-! ## 4b. All loaded (card W44-PROVIDER-RESOURCE-VIEW) -/
+
+/-- The contracts-only default: every crate on the load path, whole, in
+load-path order. -/
+def allLoaded (lp : List Crate) : List Entry :=
+  lp.map (fun k => .whole k.name)
+
+/-- Every view, concatenated in load-path order. -/
+def allViews (lp : List Crate) : List (Name × Module) :=
+  lp.flatMap (fun k => (k.view.getD []).map (fun m => (k.name, m)))
+
+/-- With distinct crate names, a crate's own name finds it. -/
+theorem findCrate_self : ∀ {lp : List Crate} {k : Crate},
+    (lp.map Crate.name).Nodup → k ∈ lp → findCrate lp k.name = some k := by
+  intro lp
+  induction lp with
+  | nil => intro k _ hk; simp at hk
+  | cons a rest ih =>
+    intro k hnd hk
+    rw [List.map_cons, List.nodup_cons] at hnd
+    unfold findCrate
+    rcases List.mem_cons.mp hk with rfl | hk
+    · simp
+    · have hne : a.name ≠ k.name := by
+        intro heq
+        exact hnd.1 (heq ▸ List.mem_map_of_mem hk)
+      rw [List.find?_cons_of_neg (by simpa using hne)]
+      exact ih hnd.2 hk
+
+theorem expandAll_whole_crates {lp : List Crate} (hnd : (lp.map Crate.name).Nodup) :
+    ∀ {ks : List Crate}, (∀ k ∈ ks, k ∈ lp ∧ k.view.isSome) →
+      expandAll lp (ks.map (fun k => .whole k.name)) =
+        .ok (ks.flatMap (fun k => (k.view.getD []).map (fun m => (k.name, m)))) := by
+  intro ks
+  induction ks with
+  | nil => intro _; rfl
+  | cons k rest ih =>
+    intro hks
+    have ⟨hk, hsome⟩ := hks k (by simp)
+    obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hsome
+    have hrest := ih (fun k' hk' => hks k' (List.mem_cons_of_mem _ hk'))
+    simp only [List.map_cons, expandAll, List.flatMap_cons]
+    rw [expand_whole_is_view (findCrate_self hnd hk) hv, hrest]
+    simp [hv]
+
+/-- The all-loaded default resolves to every crate's view, in load-path
+order: nothing more, nothing less. -/
+theorem resolve_allLoaded_is_allViews {lp : List Crate} {fuel : Nat} {guard : Bool}
+    {r : Resolved} (hnd : (lp.map Crate.name).Nodup) (hviews : ∀ k ∈ lp, k.view.isSome)
+    (h : resolve lp fuel (allLoaded lp) guard = .ok r) : r.modules = allViews lp := by
+  have hexp := resolve_modules h
+  unfold allLoaded at hexp
+  rw [expandAll_whole_crates hnd (fun k hk => ⟨hk, hviews k hk⟩)] at hexp
+  simp only [Except.ok.injEq] at hexp
+  rw [← hexp]
+  rfl
+
+/-- All-loaded is exactly naming every crate whole, in load-path order. -/
+theorem allLoaded_is_every_crate_whole (lp : List Crate) :
+    (allLoaded lp).map (fun e => match e with | .whole c => some c | .one _ _ => none) =
+      lp.map (fun k => some k.name) := by
+  simp [allLoaded, List.map_map, Function.comp_def]
 
 /-! ## 5. Lowering -/
 
@@ -464,6 +604,7 @@ inductive Source where
   | providers
   | manifest
   | profileDefault
+  | allLoaded
   deriving DecidableEq, Repr
 
 def chooseSource (providers explicitManifest profileManifest : Bool) : Except Refusal Source :=
@@ -494,6 +635,49 @@ theorem chooseSource_providers_only_when_selected {p e d : Bool}
 
 /-! ## 8. Contracts-only -/
 
+inductive Mode where
+  | configured
+  | contractsOnly
+  deriving DecidableEq, Repr
+
+/-- The contract source per mode (card W44-PROVIDER-RESOURCE-VIEW): the full
+mode is `chooseSource`, unchanged; a contracts-only run with no selection and
+no explicit manifest loads all (`allLoaded`), which needs the load path, and
+supersedes the profile default. -/
+def chooseSourceIn (mode : Mode) (providers explicitManifest profileManifest loadPath : Bool) :
+    Except Refusal Source :=
+  match mode with
+  | .configured => chooseSource providers explicitManifest profileManifest
+  | .contractsOnly =>
+    if providers || explicitManifest then chooseSource providers explicitManifest profileManifest
+    else if loadPath then .ok .allLoaded
+    else .error .noLoadPath
+
+theorem full_mode_unchanged (p e d l : Bool) :
+    chooseSourceIn .configured p e d l = chooseSource p e d := rfl
+
+theorem contracts_only_default_is_all_loaded (d : Bool) :
+    chooseSourceIn .contractsOnly false false d true = .ok .allLoaded := by
+  simp [chooseSourceIn]
+
+theorem contracts_only_all_loaded_needs_load_path (d : Bool) :
+    chooseSourceIn .contractsOnly false false d false = .error .noLoadPath := by
+  simp [chooseSourceIn]
+
+/-- An explicit selection or manifest narrows the all-loaded default. -/
+theorem contracts_only_explicit_narrows (d l : Bool) :
+    chooseSourceIn .contractsOnly true false d l = .ok .providers ∧
+    chooseSourceIn .contractsOnly false true d l = .ok .manifest := by
+  simp [chooseSourceIn, chooseSource]
+
+/-- All-loaded is chosen only in contracts-only mode, only with no selection
+and no explicit manifest, and only with a load path. -/
+theorem allLoaded_only_when_contracts_only {m : Mode} {p e d l : Bool}
+    (h : chooseSourceIn m p e d l = .ok .allLoaded) :
+    m = .contractsOnly ∧ p = false ∧ e = false ∧ l = true := by
+  cases m <;> cases p <;> cases e <;> cases d <;> cases l <;>
+    simp [chooseSourceIn, chooseSource] at h ⊢
+
 inductive Evidence where
   | contract
   | package
@@ -501,11 +685,6 @@ inductive Evidence where
   | plugin
   | native
   | pinned
-  deriving DecidableEq, Repr
-
-inductive Mode where
-  | configured
-  | contractsOnly
   deriving DecidableEq, Repr
 
 def admitRun (mode : Mode) (requested : List Evidence) : Except Refusal (List Evidence) :=
