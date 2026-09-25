@@ -362,3 +362,68 @@ fn a_leak_beside_an_admitted_chain_is_still_reported() {
         q->item->count = n; }";
     assert_eq!(outcome(body), ("Unsafe", vec!["leak".to_owned()]));
 }
+
+/// Composition with card W43-DESCRIPTOR-RESOURCE-TRACKING: a value that may
+/// carry a tracked descriptor is custody, never data. The chain route adds no
+/// instruction variant; its store is W43's `IndirectScalarAccess`, which
+/// `descriptor_custody::admits_descriptor_read` refuses by name, exactly as for
+/// a single selection. The same store of an ordinary integer is admitted.
+#[test]
+fn a_tracked_descriptor_stored_through_a_chain_is_refused_by_name() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load_resource_contract_sources(&BTreeMap::from([(
+        "descriptor_generic.qcore".to_owned(),
+        include_str!("fixtures/contracts/descriptor_generic.qcore").to_owned(),
+    )]))
+    .expect("the descriptor fixture loads");
+    let declarations = "int k_open(const char *path); int k_close(int fd); \
+                        struct d_conn { int fd; }; struct d_pool { struct d_conn *conn; };";
+    let run = |body: &str| {
+        let source = format!("{declarations}\n{body}");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "w",
+            &contracts,
+        )
+        .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{source}"));
+        if let UnrestrictedLegacyResult::Safe(certificate) = &result {
+            check_legacy_safety_certificate(certificate).expect("the certificate rechecks");
+        }
+        let status = match &result {
+            UnrestrictedLegacyResult::Safe(_) => "Safe",
+            UnrestrictedLegacyResult::Unsafe(_) => "Unsafe",
+            UnrestrictedLegacyResult::Unknown { .. } => "Unknown",
+        };
+        let unsupported = program(&result).functions["w"]
+            .diagnostics
+            .iter()
+            .filter_map(|diagnostic| match &diagnostic.kind {
+                LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        (status, unsupported)
+    };
+    let (status, unsupported) = run(
+        "void w(struct d_pool *p) { int fd = k_open(\"p\"); if (fd < 0) return; \
+         p->conn->fd = fd; k_close(fd); }",
+    );
+    assert_eq!(status, "Unknown");
+    assert!(
+        unsupported.contains(
+            &"tracked descriptor `fd` read by a custody-neutral scalar route is outside the \
+              resource projection"
+                .to_owned()
+        ),
+        "{unsupported:?}"
+    );
+    assert_eq!(
+        run("void w(struct d_pool *p, int n) { p->conn->fd = n; }"),
+        ("Safe", Vec::new())
+    );
+}
