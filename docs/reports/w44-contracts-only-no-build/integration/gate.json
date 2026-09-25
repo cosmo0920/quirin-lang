@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W44-CONTRACTS-ONLY-NO-BUILD on merge b2159cc5 (onto main b160d765, after all wave-44 cards through W44-PROVIDER-RESOURCE-VIEW, plus the wave-45 record opening), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5655 core Rust passed / 0 failed / 11 ignored over 302 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 190 Lean audits; 351 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The card adds a separate `quirin-audit contracts` route and must not move the configured corpus: the arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 165 s and baseline_identity.py against docs/reports/w44-collection-allocation/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move.",
+ "workspace_tests": 5655,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 190,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
