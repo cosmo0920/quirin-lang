@@ -838,6 +838,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 
+| [w44-assignment-destination-suffix-place](w44-assignment-destination-suffix-place/README.md) | W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side |
+
 | [w44-indirect-chain-access](w44-indirect-chain-access/README.md) | W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |

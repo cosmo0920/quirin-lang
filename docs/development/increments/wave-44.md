@@ -7,6 +7,35 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**
+This is a soundness repair. `direct_assignment_destination` named the first
+place-spelling suffix of a left-hand side, so `recs[i].name = x_dup(s);
+x_free(name);` bound the local `name` and certified `Safe`. A destination is now
+named only when the suffix is the whole left-hand side or follows a declarator
+prefix (identifiers, `*`, `,`). Every other such left-hand side is a store into
+a sub-object, and the lexical gate refuses it.
+
+The reach census of the base found 10,979 distinct suffix-named records:
+
+* 7,853 declarations, whose names are unchanged;
+* 3,126 sub-object stores, of which 1,450 had been admitted under a misnamed
+  destination, in 173 functions.
+
+Only two Safe functions relied on it, `LZ4_write16` and `LZ4_write32`, and
+both move to Unknown. `unpack_basic_type` moves from provisional Unsafe to
+Unknown when its two false leaks, accusations about the misnamed `opts`, are
+withdrawn. Leak 271 → 269, `unknown_alias` −1,116, no unit moves, and every
+delta is attributed. The forecast missed only nine caller leaves of the two
+functions that lost their W4 summaries.
+
+The descriptor guard's missed index read is fixed by the same reader. The
+protected-formal closure keeps the old over-approximating reader. Lean
+`QCore.AssignmentDestinationSuffix` (17 theorems, including "the repair never
+promotes") is audited by `AuditAssignmentDestinationSuffix.lean`. The card
+registers three residuals; its own ledger name lives on the call-argument
+branch, for the integrator to retire. See
+[the report](../../reports/w44-assignment-destination-suffix-place/README.md).
+
 **2026-09-25 — W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains.**
 W43's typed statement route and typed condition read now accept a member chain
 `r->l1->…->f`, `(*r).l1->…->f` or `s.l1->…->f` as an access. A chain has two

@@ -1,0 +1,23 @@
+[
+ {
+  "id": "W44-SUB-OBJECT-STORE-REFUSED",
+  "title": "Stores into a sub-object the destination reader used to misname are now refused: 1,450 statements in 173 functions (1,353 through a parenthesised base, 97 through a subscripted aggregate)",
+  "why": "Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE stops `direct_assignment_destination` from naming the first place-spelling suffix of a left-hand side (`recs[i].name` named `name`) and refuses every such store at the lexical indirect-access gate. Measured at the BEFORE census (docs/reports/w44-assignment-destination-suffix-place/census/): 1,450 distinct statements the old classifier had admitted under a misnamed destination (1,148 Alias, 295 Clear, 6 ForgetScalar, 1 ContractCall), in 173 functions (168 Unknown, 3 provisional Unsafe, 2 Safe: LZ4_write16 and LZ4_write32, which move to Unknown). 1,353 have a parenthesised base, which is macro-expanded C: `(rkbuf)->rkbuf_err = E`, `((LZ4_unalign *) p)->u16 = v`, `(&s)->str = NULL`, `(*map)->opts = calloc(...)`. 97 have a subscripted aggregate: `result[index].label = NULL`, `opt[pos].mlen = 1`. The typed routes consulted after the refusal admit none of them. DISCHARGE: a card that lowers these as the store they are, with Lean parity and a measured re-pin. One way is to read `( NAME ) -> f` as the whole place `NAME->f`, a typed store through a cast or `&` base, and a typed `a[i].f` scalar store. No such store may bind any name but its real destination.",
+  "source": "docs/reports/w44-assignment-destination-suffix-place/README.md",
+  "recorded_by": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE"
+ },
+ {
+  "id": "W44-AGGREGATE-PREMISE3-MEMBER-NAME",
+  "title": "O04-B08's store-base premise 3 reads a member name before `=` as a binding of the same-named local",
+  "why": "`aggregate_store::store_bases` counts, for premise 3, the name immediately before a simple `=` as an assignment to BASE, and `acquired_bindings` takes it as an acquisition when the right-hand side calls something. Neither excludes a member name, so `hs[i].rec = x_record();` makes a local `struct x_rec *rec` an admissible store base. Before card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE this certified `Safe` together with the misnamed destination (`hs[i].rec = x_record(); rec->count = 1; x_record_free(rec);`). The classifier now refuses that store, so `rec` is never bound and the flow-sensitive owner check at `rec->count` fails closed (pinned: `a_misnamed_binding_no_longer_feeds_the_aggregate_store`, Unknown). The syntactic premise still over-approximates in the admitting direction, and its soundness now rests on the flow check alone. Reach unmeasured. DISCHARGE: exclude a name after `.` or `->` from `acquired_bindings`. That is the refusing direction. Do not change the assignment count, which only refuses. Measure the re-pin.",
+  "source": "docs/reports/w44-assignment-destination-suffix-place/README.md",
+  "recorded_by": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE"
+ },
+ {
+  "id": "W44-FIRST-EQUAL-IS-A-COMPARISON",
+  "title": "The statement classifier takes the first `=` token as the assignment, even inside `==`: 683 census statements",
+  "why": "`Parser::classify_simple_base` sets `assignment` to the first `=` token. The lexer spells `==` as `=` `=`, so in a statement such as `f(a, i == 0)` or `(void) sizeof(... x == y ...)` the slice handed to `direct_assignment_destination` is not a left-hand side. Before card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE the suffix reader named `i`. Such a slice now names nothing and the gate refuses the statement. Measured at the BEFORE census: 683 distinct records, none of them admitted. 452 are unchanged pre-gate refusals, 214 were already gate refusals, and 17 change their refusal description (`call to uncontracted function ...` becomes the gate's). No verdict depends on them. DISCHARGE: read the top-level simple assignment, as `publication::simple_assignment` does, so a statement with none reaches the call and expression routes. Measure the re-pin.",
+  "source": "docs/reports/w44-assignment-destination-suffix-place/README.md",
+  "recorded_by": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE"
+ }
+]
