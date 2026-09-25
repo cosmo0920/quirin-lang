@@ -1,0 +1,24 @@
+{
+ "stream": "docs/reports/w45-parenthesised-callee/census/census-1-rewrites.jsonl.gz",
+ "stream_present": true,
+ "records": 8650,
+ "distinct_rewrites": 6931,
+ "units": 46,
+ "functions": 4681,
+ "by_callee": {
+  "__v2di": 1395,
+  "__m128i": 1305,
+  "__v2si": 1215,
+  "__m64": 1035,
+  "__v4si": 585,
+  "__v8hi": 450,
+  "__m128d": 360,
+  "__m128": 360,
+  "__v16qi": 135,
+  "__v4sf": 90,
+  "ssize_t": 1
+ },
+ "by_depth": {
+  "1": 6931
+ }
+}

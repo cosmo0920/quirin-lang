@@ -1,0 +1,114 @@
+{
+ "added_leaves": 5,
+ "categories": {
+  "after": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3567,
+   "unsupported": 42699
+  },
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3568,
+   "unsupported": 42694
+  }
+ },
+ "function_moves": [],
+ "functions": {
+  "after": {
+   "Safe": 390,
+   "Unknown": 4432,
+   "Unsafe": 12
+  },
+  "before": {
+   "Safe": 390,
+   "Unknown": 4432,
+   "Unsafe": 12
+  }
+ },
+ "leaves_by_function": [
+  {
+   "added": [
+    [
+     21960,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "balance",
+   "removed": [],
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "added": [
+    [
+     22317,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "removed": [],
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "added": [
+    [
+     3038,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_map_copy",
+   "removed": [],
+   "unit": "rdmap.c"
+  },
+  {
+   "added": [
+    [
+     3569,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "unittest_untyped_map",
+   "removed": [],
+   "unit": "rdmap.c"
+  },
+  {
+   "added": [
+    [
+     20324,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "ut_tq_find_prev_pos",
+   "removed": [
+    [
+     20324,
+     "unknown_alias",
+     "unresolved resource identity `e`"
+    ]
+   ],
+   "unit": "rdunittest.c"
+  }
+ ],
+ "removed_leaves": 1,
+ "unit_moves": [],
+ "units": {
+  "after": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  }
+ }
+}

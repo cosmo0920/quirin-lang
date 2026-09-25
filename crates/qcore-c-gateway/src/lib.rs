@@ -107,6 +107,8 @@ pub fn census_sink_variables() -> Vec<&'static str> {
         legacy_c::call_argument_access::census::CALL_ARGUMENT_CENSUS_PATH,
         // Card W45-SUB-OBJECT-STORES.
         sub_object_store_census::SUB_OBJECT_STORE_CENSUS_PATH,
+        // Card W45-PARENTHESISED-CALLEE.
+        legacy_c::parenthesised_callee::census::PARENTHESISED_CALLEE_CENSUS_PATH,
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);

@@ -668,3 +668,40 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `joined-provenance-round-bound`.
 
 <!-- preserved:constraint-10b:end -->
+
+<a id="constraint-10c"></a>
+
+10c. **An expression statement is a classified effect or a refusal, never an
+    unrecorded no-op, and a callee is read as C reads it.** Every lexical call
+    reader keys on the pair `NAME (`; a callee spelled any other way was
+    invisible to all of them, and the classifier's last arm lowered the
+    statement to `NoOp` (`q_free(p); (q_free)(p);` certified `Safe`). Card
+    W45-PARENTHESISED-CALLEE (`legacy_parenthesised_callee.rs`) keeps three
+    rules. (1) In every function body, `(`ᵏ`NAME`)ᵏ followed by `(` is rewritten
+    to `NAME` right after tokenizing, **before** the review hold, both contract
+    withdrawals and W4 read a call: a later rewrite would let `(f)(x)` escape a
+    withdrawal that keys on `f (`. Only a callee is rewritten: `NAME` is not a
+    keyword or a typedef name the function trusts (`(T)(x)` is a cast; a
+    typedef name the function may also use as an object is not trusted), and
+    the group is not a call's argument list (`g (f) (x)` calls `g(f)`'s result).
+    (2) After it, a `(` that applies a call to anything but a name — after `]`,
+    or after a `)` closing an argument list or a parenthesised expression rather
+    than a cast or a control header — refuses its position (statement,
+    condition, desugared condition, return) wherever that position would
+    otherwise be admitted, with `call through a callee expression that is not
+    a name`; a position already refused keeps its refusal byte for byte. A
+    declaration's own declarators are exempt outside initialisers and array
+    bounds. (3) A `for` init or increment clause reaches the classifier with
+    its grouping tokens stripped (`split_for_clauses`,
+    `W45-FOR-CLAUSE-ORIGINAL-SPELLING`), so `q_free(p)` there was the names
+    `q_free p`; a clause whose stripping is not faithful (a bracket, or a group
+    that is an argument list, a callee, a cast or wraps more than one name) is
+    refused unless its stripped classification already was. Only (1) admits,
+    and exactly what the plain spelling admits;
+    (2) and (3) only replace an admission by a refusal. **Do not** add a call
+    reader that keys on `NAME (` without the rewrite ahead of it, and do not
+    let a new admission route bypass the rule-2 hook in `classify_simple`.
+    Premises stated, not proved: the lexical reader tells a cast, a header, an
+    argument list and a declarator from a callee (trust boundary 28), and the
+    typedef reader over-approximates object uses. `QCore.ParenthesisedCallee`;
+    [report](../reports/w45-parenthesised-callee/README.md).

@@ -1,0 +1,29 @@
+{
+  "note": "W45-SUB-OBJECT-STORES integration, 2026-09-25. The card (measured against docs/reports/w44-collection-allocation/integration/artifacts) composed onto the combined tree docs/reports/w45-callee-summary-cascade/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 230 added 0 functions 1 units 0); functions moved (combined): [('destroy_id', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 1 function moved Unknown to Safe (destroy_id) and 230 unsupported leaves were removed, with no unit, leak, or violation changes. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-sub-object-stores/integration/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 4,
+  "provisional_unsafe": 10,
+  "unknown": 167,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 37,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w45-sub-object-stores/integration/artifacts/",
+  "source": "docs/reports/w45-sub-object-stores/integration/integration-confirmation.md; preceding baseline docs/reports/w45-callee-summary-cascade/integration/artifacts",
+  "unknown_alias_diagnostics": 3568,
+  "unsupported_diagnostics": 42694,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 390,
+    "provisional_unsafe": 12,
+    "unknown": 4432
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 166,
+    "none": 18,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

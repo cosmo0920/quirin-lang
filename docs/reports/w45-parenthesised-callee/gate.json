@@ -1,0 +1,13 @@
+{
+  "note": "W45-PARENTHESISED-CALLEE: the standing gate measured at ecedc357 (code as 776131eb; later commits change the report, the index and evidence only) with CARGO_INCREMENTAL=0 and QCORE_CLANG=/usr/bin/clang, every step's output and exit in the private private/gate/. Step exits: submodules 0 (`git submodule update --init third_party/libevent`: the `--recursive` form was refused by the session's permission classifier; the repository's one submodule has none of its own); scripts/run_test_binaries.py 0 (297 units, 307 summaries; 5781 passed, 0 failed, 11 ignored; private/test-binaries/20260925T191907Z-1030790); cargo clean --profile dev 0; cargo fmt --check 0; cargo clippy --all-targets -D warnings 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0 (195 audits; 1 added: AuditParenthesisedCallee); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets -D warnings 0 and 578 feature-on library tests passed (exit 0); cargo clean --profile dev 0; python -m unittest discover -s scripts/tests 0 (358) after build_matrix.py . (exit 0; named_followups 414 -> 417); build_docs_index.py --check 0. providers/ is untouched, so the provider gate was not run and provider_tests is carried from the preceding gate. Clang recorded in this checkout. Corpus: 0 function or unit moves, leak 37 unchanged, 0 violation candidates, 5 for-clause refusals added and 1 unknown_alias removed in 5 functions already Unknown, every delta attributed.",
+  "workspace_tests": 5781,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 358,
+  "lean_audits": 195,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

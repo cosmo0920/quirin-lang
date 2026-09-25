@@ -1,0 +1,10 @@
+{
+ "stream": "measure/census2-rewrites.jsonl",
+ "stream_present": false,
+ "records": 0,
+ "distinct_rewrites": 0,
+ "units": 0,
+ "functions": 0,
+ "by_callee": {},
+ "by_depth": {}
+}
