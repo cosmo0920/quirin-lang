@@ -80,6 +80,7 @@ import QCore.TypedefProjection
 import QCore.PointerQualifierReader
 import QCore.DerivedResult
 import QCore.DerivedResultInference
+import QCore.CalleeSummaryScope
 import QCore.KindedCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
