@@ -812,7 +812,8 @@ assembler flags. The gateway transports four explicit flags through preprocessin
 syntax and typed AST; they require a matching Clang C executable and explicit
 dialect. The original GCC command rejects rather than inheriting Clang defaults.
 An independent pinned source clone absorbs upstream configure-time writes, and
-`prepare_cmetrics_clang_audit.py` persists the build, database and provenance.
+its preparation step (since W44, `quirin-audit prepare clang-build`) persists the
+build, database and provenance.
 The native CMetrics static library builds in the normal and fresh output trees;
 both audits retain one checked function/six Unknown and a provisional Unsafe
 raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lean

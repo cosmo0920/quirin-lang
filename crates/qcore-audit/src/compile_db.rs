@@ -564,7 +564,7 @@ pub fn require_clang_driver(entry: &CompileEntry) -> Result<(), String> {
     let actual = executable_path(actual, &std::env::current_dir().map_err(|e| e.to_string())?)?;
     if executable_path(driver, &entry.directory)? != actual {
         return Err(format!(
-            "audit requires the configured Clang executable ({}); compilation database selects {driver}. Prepare an explicit Clang build (scripts/prepare_cmetrics_clang_audit.py, scripts/prepare_cycle19_monkey.py) and run quirin-audit current over it; GCC compiler equivalence is unproven",
+            "audit requires the configured Clang executable ({}); compilation database selects {driver}. Prepare an explicit Clang build with quirin-audit prepare and run quirin-audit current over it (prepare --run chains both); GCC compiler equivalence is unproven",
             actual.display()
         ));
     }

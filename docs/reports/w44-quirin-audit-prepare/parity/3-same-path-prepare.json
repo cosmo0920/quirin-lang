@@ -1,0 +1,129 @@
+{
+  "argv": [
+    "quirin-audit",
+    "prepare",
+    "--fluent-bit",
+    "/home/cosmo/Documents/GitHub/fluent-bit",
+    "--revision",
+    "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "--output",
+    "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "--clang",
+    "/usr/lib/llvm-21/bin/clang",
+    "--clangxx",
+    "/usr/lib/llvm-21/bin/clang++",
+    "--run",
+    "--jobs",
+    "16"
+  ],
+  "build_profile": "release",
+  "clang_build": {
+    "build": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production",
+    "compile_database": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production/compile_commands.json",
+    "compile_database_sha256": "ecb612c46f145579711a805d48c35de5b805211e02d52b096bcf01c3b669d827",
+    "configuration": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production/cmetrics-audit.json.config",
+    "configuration_sha256": "c3a80bdf75f7790514269eeaf18527e7ad8ae36924108d8b8a8fd8cd9cd0151d",
+    "configure_command": [
+      "cmake",
+      "-S",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-source",
+      "-B",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production",
+      "-DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang",
+      "-DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++",
+      "-DCMAKE_C_STANDARD=17",
+      "-DCMAKE_C_FLAGS:STRING=-std=gnu17",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+      "-DFLB_DEV=ON",
+      "-DFLB_EXAMPLES=ON"
+    ],
+    "provenance": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production/build-provenance.json",
+    "provenance_sha256": "6bc6d1a5e204fc366edce6c014b47577794f5ad5ffe9faf874914805fa00f36f",
+    "source": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-source"
+  },
+  "cmake": {
+    "program": "cmake",
+    "version": "cmake version 4.2.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake)."
+  },
+  "compilers": {
+    "c": {
+      "path": "/usr/lib/llvm-21/bin/clang",
+      "requested": "/usr/lib/llvm-21/bin/clang",
+      "resolved": "/usr/lib/llvm-21/bin/clang",
+      "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+    },
+    "cxx": {
+      "path": "/usr/lib/llvm-21/bin/clang++",
+      "requested": "/usr/lib/llvm-21/bin/clang++",
+      "resolved": "/usr/lib/llvm-21/bin/clang",
+      "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+    }
+  },
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0ab5a53f8a82118c",
+  "monkey": {
+    "cmake_command": [
+      "cmake",
+      "-S",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey/monkey-source",
+      "-B",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey/monkey-build",
+      "-DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang",
+      "-DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++",
+      "-DCMAKE_C_STANDARD=17",
+      "-DCMAKE_C_FLAGS:STRING=-std=gnu17",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+      "-DMK_EVENT_LOOP_LIBEVENT=ON",
+      "-DMK_EVENT_LOOP_EPOLL=OFF",
+      "-DMK_EVENT_LOOP_KQUEUE=OFF",
+      "-DMK_EVENT_LOOP_POLL=OFF",
+      "-DMK_EVENT_LOOP_SELECT=OFF",
+      "-DMK_WITHOUT_BIN=ON",
+      "-DMK_WITHOUT_CONF=ON",
+      "-DMK_TLS=OFF",
+      "-DMK_TESTS=OFF",
+      "-DMK_PLUGIN_AUTH=OFF",
+      "-DMK_PLUGIN_CGI=OFF",
+      "-DMK_PLUGIN_CHEETAH=OFF",
+      "-DMK_PLUGIN_DIRLISTING=OFF",
+      "-DMK_PLUGIN_FASTCGI=OFF",
+      "-DMK_PLUGIN_LOGGER=OFF",
+      "-DMK_PLUGIN_MANDRIL=OFF"
+    ],
+    "compile_database": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey/monkey-build/compile_commands.json",
+    "compile_database_sha256": "fcd5a2af49b65c42a9d50ce8443c8852f4cb82d3042e29baac320357760640c7",
+    "marker": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey/qcore-monkey-inputs.json",
+    "marker_sha256": "d5f5e7e343d6cbac99491e0b2391db89e3536584cc2db23305d04292ebee7a6a",
+    "output": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey"
+  },
+  "output": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "repository": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0ab5a53f8a82118c",
+  "requested_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "run": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "current_argv": [
+      "current",
+      "--checkout",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-source",
+      "--profile-directory",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0ab5a53f8a82118c/contract/profiles/fluent-bit",
+      "--compile-database",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/fluent-bit-clang-production/compile_commands.json",
+      "--monkey-database",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/monkey/monkey-build/compile_commands.json",
+      "--monkey-source-report",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/reports/monkey-source.json",
+      "--report",
+      "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/same/clang/864c3d97f3589515285a19396ed8dfc85cda08ae/reports/resource-diagnostics.json",
+      "--jobs",
+      "16"
+    ],
+    "requested": true
+  },
+  "schema_version": 1,
+  "scope": "provenance of the preparation only; not an input to any verdict. The Clang CMake build is CMake's unmodified output of an independent clone and proves no GCC, code-generation or whole-library equivalence; the C++ compiler is used by preparation only, never by the audit",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "tool": "quirin-audit prepare",
+  "tool_version": "0.1.0",
+  "upstream": "/home/cosmo/Documents/GitHub/fluent-bit"
+}

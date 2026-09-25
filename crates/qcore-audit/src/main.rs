@@ -6,8 +6,24 @@ fn main() -> ExitCode {
     let Some(path) = arguments.next() else {
         eprintln!("usage: quirin-audit CONFIG.json");
         eprintln!("       {}", qcore_audit::current_cli::USAGE);
+        eprintln!("       {}", qcore_audit::prepare::USAGE);
         return ExitCode::FAILURE;
     };
+    if path == "prepare" {
+        // Card W44-QUIRIN-AUDIT-PREPARE: the Clang CMake build and the Monkey
+        // inputs, formerly two Python scripts; `--run` chains into `current`.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::prepare::main(rest);
+    }
     if path == "current" {
         // Card W44-QUIRIN-AUDIT-PROVIDERS: the configured current-revision
         // route, with contracts selected by provider crate or manifest.

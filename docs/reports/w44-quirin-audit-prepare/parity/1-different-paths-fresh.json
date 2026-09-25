@@ -1,0 +1,164 @@
+{
+  "left": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/py/clang/864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "right": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/rs/clang/864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "normalisation": "replace /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/py/clang/864c3d97f3589515285a19396ed8dfc85cda08ae with /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/rs/clang/864c3d97f3589515285a19396ed8dfc85cda08ae in LEFT bytes",
+  "only_left": [],
+  "only_right": [
+    "prepare.json"
+  ],
+  "different": [
+    {
+      "file": "fluent-bit-clang-production/CMakeFiles/CMakeConfigureLog.yaml",
+      "left_sha256": "bd26d725c84b2ec857264b6a300b41b83e303db287e8a3d40b1fdba977ba5d98",
+      "right_sha256": "156405e37e079aec1829f6fb9aa473a4ef8199f9ad1dc3c87080f5799beb48b0",
+      "normalised_left_sha256": "415acc9c6914ad1cf2f208fb06118c45a9f52f11f2aefe5f6d38bea8e20a34d4",
+      "size": [
+        3081764,
+        3081764
+      ],
+      "explained_by": "CMake try-compile names (random cmTC_*, TryCompile-*) and step timings"
+    },
+    {
+      "file": "fluent-bit-clang-production/CMakeFiles/CMakeRuleHashes.txt",
+      "left_sha256": "27dd5311cfe3fd74712e91af6030eef29df996edbe2c15a2a2c630e0b04d0183",
+      "right_sha256": "63e3d9ebce6e9850dc930f957f55fd510af60ceb151505c03940c6776a925be3",
+      "normalised_left_sha256": "27dd5311cfe3fd74712e91af6030eef29df996edbe2c15a2a2c630e0b04d0183",
+      "size": [
+        4648,
+        4648
+      ],
+      "explained_by": "same rules; each MD5 digests rule text that contains the output path"
+    },
+    {
+      "file": "fluent-bit-clang-production/build-provenance.json",
+      "left_sha256": "613847eae855ea23a6db21645216527980a399b11c21730ae305368ddcc46390",
+      "right_sha256": "cc7feed2905037fa672b724b6babc2ba94cf8d3868e23acd523b992855243920",
+      "normalised_left_sha256": "faeadb6a3c9ddc9fca14fecbff0d491c7f7a093c7f79329825664a0b30bfd7a0",
+      "size": [
+        12570,
+        12570
+      ],
+      "explained_by": "digests of path-bearing files; each equals the digest of the normalised LEFT file"
+    },
+    {
+      "file": "fluent-bit-clang-production/lib/cmetrics/cmt_decode_prometheus_parser.h",
+      "left_sha256": "a9821099d068ac06401e056514beff7abac15ad2df753a730d50c503618a01ba",
+      "right_sha256": "0ff0b9a1b757a7af42b0059a97ebccb467566a43be182be4c44b93357e085539",
+      "normalised_left_sha256": "a2a46bc63614a32188375305a46c344598668df9fe80f227fdd14cc8e22dda28",
+      "size": [
+        4792,
+        4792
+      ],
+      "explained_by": "bison include guard spells the output path in upper case"
+    },
+    {
+      "file": "fluent-bit-clang-production/native-build.log",
+      "left_sha256": "219ca174c5f3720609df07c476b0eb0f26e41e34f275a45e08244e515c4eace7",
+      "right_sha256": "8be71608be10226cd734a309f83e7cf6a78aa25d9aab47d3ffd717183d5f1e8d",
+      "normalised_left_sha256": "ffde8f6f59560edd8e64b0f5d54e8180af88c3c82ab11ff80eea867bf7e1b6bb",
+      "size": [
+        10728,
+        10728
+      ],
+      "explained_by": "same lines in another order, progress percentages aside (-j2 parallel make)"
+    },
+    {
+      "file": "monkey/configure.log",
+      "left_sha256": "4c8ddd36dcd040deb2bbb8e51a2bd5ae69417f9b4f63d4c0a2f405f16ccb8a69",
+      "right_sha256": "9587fc219edaacfa9764b57a70acfa5a088bd1437415eab5d61127ceabfb031b",
+      "normalised_left_sha256": "e77ea8524a9d52ba6a19b5f4fab4c16ab56fa17952b15699da0ffa9e9d899ccf",
+      "size": [
+        20726,
+        20726
+      ],
+      "explained_by": "CMake try-compile names (random cmTC_*, TryCompile-*) and step timings"
+    },
+    {
+      "file": "monkey/monkey-build/CMakeFiles/CMakeConfigureLog.yaml",
+      "left_sha256": "318914f312cf2904c35428c77f53603ed458cf637244fd2af0cfc85b5b0903a5",
+      "right_sha256": "c094d0de80fecf8974d2bc07c70357991e6790584e2477d7fdc1f5305ac67264",
+      "normalised_left_sha256": "5d4976525d1c508f91577ff9d188293baa6c30563a4badffeffb18b23e196161",
+      "size": [
+        1085359,
+        1085359
+      ],
+      "explained_by": "CMake try-compile names (random cmTC_*, TryCompile-*) and step timings"
+    },
+    {
+      "file": "monkey/monkey-build/CMakeFiles/CMakeError.log",
+      "left_sha256": "8a8908ccc479cd2dfdf035b9f56eb556914dfd09e6144041272855e5d71bc21d",
+      "right_sha256": "813339f17059e839a0ed2e076120c4d133008cd7b7a5c887873e1683e3cc4aea",
+      "normalised_left_sha256": "e4f00aadfdd683cfb0287793ae3cfbe0136a9db554d21c116145cbe77ce853d1",
+      "size": [
+        8158,
+        8158
+      ],
+      "explained_by": "CMake try-compile names (random cmTC_*, TryCompile-*) and step timings"
+    },
+    {
+      "file": "monkey/monkey-build/CMakeFiles/CMakeOutput.log",
+      "left_sha256": "f4f1d5ec2f5ef6e6c03b947820f42965940b714db5d999e230ad39ac5301ca6e",
+      "right_sha256": "04b7a162b2cca70bd821acda74993cce1f1e3ba080badbcf82ca4a9acc654331",
+      "normalised_left_sha256": "6d82bccb0966f9eae1b174a0e23e7d4cae974fb664495d98a323005b5aae2695",
+      "size": [
+        3182,
+        3182
+      ],
+      "explained_by": "CMake try-compile names (random cmTC_*, TryCompile-*) and step timings"
+    },
+    {
+      "file": "monkey/monkey-build/CMakeFiles/CMakeRuleHashes.txt",
+      "left_sha256": "d19eefcb10261a141c35a245a2a07b01fe9c1f997c81306077c6a10b17566a7b",
+      "right_sha256": "ea32debc7a77c7f3848ab28244fb3555b9d079e42c7d387be2cdf339afa02fed",
+      "normalised_left_sha256": "d19eefcb10261a141c35a245a2a07b01fe9c1f997c81306077c6a10b17566a7b",
+      "size": [
+        106,
+        106
+      ],
+      "explained_by": "same rules; each MD5 digests rule text that contains the output path"
+    },
+    {
+      "file": "monkey/qcore-monkey-inputs.json",
+      "left_sha256": "15a42a26433fdc5eb79b74fba0e21df9d9b27ed227cdfd129e3c0a5a575cc710",
+      "right_sha256": "429b14a63dd4e12d3658e589409024f117299e30d50714f8fcf1b1b463cfb22c",
+      "normalised_left_sha256": "ff768954fca679bdddf1a3dc908fec6fcbc8cec8fa393a300cd1f7f2986ff6e8",
+      "size": [
+        89047,
+        89047
+      ],
+      "explained_by": "digests of path-bearing files; each equals the digest of the normalised LEFT file"
+    }
+  ],
+  "counts": {
+    "only_left": 0,
+    "only_right": 1,
+    "identical": 15472,
+    "identical_after_normalisation": 2046,
+    "different": 11,
+    "different_unexplained": 0
+  },
+  "key_files": {
+    "fluent-bit-clang-production/compile_commands.json": "identical_after_normalisation",
+    "fluent-bit-clang-production/cmetrics-audit.json.config": "identical_after_normalisation",
+    "fluent-bit-clang-production/CMakeCache.txt": "identical_after_normalisation",
+    "fluent-bit-clang-production/build-provenance.json": "different: digests of path-bearing files; each equals the digest of the normalised LEFT file",
+    "fluent-bit-clang-production/library/libcmetrics.a": "identical_after_normalisation",
+    "monkey/monkey-build/compile_commands.json": "identical_after_normalisation",
+    "monkey/monkey-build/CMakeCache.txt": "identical_after_normalisation",
+    "monkey/qcore-monkey-inputs.json": "different: digests of path-bearing files; each equals the digest of the normalised LEFT file"
+  },
+  "clones": {
+    "fluent-bit-clang-source": {
+      "left": {
+        "head": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+        "status": ""
+      },
+      "right": {
+        "head": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+        "status": ""
+      },
+      "equal": true
+    }
+  },
+  "note": "first pass: fresh preparations into two different output roots, before any audit; condensed from the private full comparison (per-file identical lists omitted)."
+}

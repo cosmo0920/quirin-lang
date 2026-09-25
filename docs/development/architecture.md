@@ -64,8 +64,9 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
   contracts selected by provider crate (`--provider NAME[:MODULE]` or a JSON
   `providers` array) or by manifest, and an opt-in contracts-only mode
   (`crates/qcore-audit/README.md`). Inputs are prepared by
-  `scripts/prepare_cmetrics_clang_audit.py` (the Clang CMake build),
-  `scripts/prepare_cycle19_monkey.py` (the Monkey inputs) and
+  `quirin-audit prepare` (`crates/qcore-audit/src/prepare.rs`: the Clang
+  CMake build and the Monkey inputs, as the steps `prepare clang-build` and
+  `prepare monkey`; `prepare --run` chains `quirin-audit current`) and
   `scripts/prepare_libevent_core_audit.py`.
 - Bounded native composition: `quirin-audit observed-wait CONFIG.json` joins
   selected Monkey QCore contracts, imported C source, independently loaded

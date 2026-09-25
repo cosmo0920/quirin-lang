@@ -122,7 +122,7 @@ pub fn run(
         let database = fs::read_to_string(path)
             .map_err(|error| format!("could not read Monkey compile database {}: {error}", path.display()))?;
         if database.trim().is_empty() {
-            return Err(format!("Monkey compile database {} is empty; generate persistent inputs with scripts/prepare_cycle19_monkey.py", path.display()));
+            return Err(format!("Monkey compile database {} is empty; generate persistent inputs with quirin-audit prepare monkey", path.display()));
         }
         let entries = compile_entries(&database)
             .map_err(|error| format!("invalid Monkey compile database {}: {error}", path.display()))?;

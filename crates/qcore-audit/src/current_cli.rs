@@ -426,7 +426,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             },
             "clang": qcore_c_gateway::ClangIdentity::capture()?,
             "gateway_failures": failures,
-            "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by scripts/prepare_cmetrics_clang_audit.py and scripts/prepare_cycle19_monkey.py beside their outputs; resource analysis does not establish GCC equivalence or whole-library safety",
+            "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
         });
         crate::current_route::write_invocation(report, &invocation)?;
     }

@@ -1,0 +1,40 @@
+{
+  "normalisation": "replace /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/py/clang/864c3d97f3589515285a19396ed8dfc85cda08ae with /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/parity/rs/clang/864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "reports": {
+    "monkey-source.json": {
+      "state": "identical",
+      "right_sha256": "b48a9d4947cc1fe87fced6e116e87d3f4696b050391a08240912d7a9f0f13dd3",
+      "bytes": 385
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "state": "identical",
+      "right_sha256": "b48a9d4947cc1fe87fced6e116e87d3f4696b050391a08240912d7a9f0f13dd3",
+      "bytes": 385
+    },
+    "resource-diagnostics.contracts.json": {
+      "state": "identical",
+      "right_sha256": "7ce61179ecb580eb46bf180e13da265a5ed093ccb62852059a65750743e38d86",
+      "bytes": 310432
+    },
+    "resource-diagnostics.invocation.json": {
+      "state": "different",
+      "right_sha256": "41d601f5284ad1a1b350c5bf708e2f5791f99f6334be200f6ae2d666418bdc2d",
+      "bytes": 4705
+    },
+    "resource-diagnostics.json": {
+      "state": "different",
+      "right_sha256": "32840f8e7ba3beeb762a3b524f855c0d17a9be6aae13643a4c84ce4d8b2cc0a1",
+      "bytes": 20035450
+    },
+    "resource-diagnostics.source-effects.json": {
+      "state": "identical",
+      "right_sha256": "b48a9d4947cc1fe87fced6e116e87d3f4696b050391a08240912d7a9f0f13dd3",
+      "bytes": 385
+    }
+  },
+  "right_console_preparation_lines": 3,
+  "console": "identical_after_normalisation",
+  "summary": [
+    "current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures"
+  ]
+}
