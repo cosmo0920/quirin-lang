@@ -1,0 +1,16 @@
+W43-INDEX-TRAVERSAL residual traversal shapes (Unknown functions)
+
+conditions: class leaves functions sole
+  address           976    594     1
+  call             4416   1602    28
+  chain            1248    632     1
+  untyped          2616   1154    28
+  write             271    166     0
+
+steps: class leaves functions sole
+  computed          102     63     1
+  formal             48     37     1
+  other             102     76     0
+  unreadable        493    173     1
+  untyped-name      166    101     0
+
