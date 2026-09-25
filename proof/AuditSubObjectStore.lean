@@ -27,7 +27,9 @@ base, to a store whose custody effect is decided on the state at the node.
 -- Scalar and untracked values.
 #print axioms QCore.SubObjectStore.a_neutral_store_changes_no_status
 #print axioms QCore.SubObjectStore.an_admitted_store_forgets_the_member
+#print axioms QCore.SubObjectStore.poisonAliases_targets
 #print axioms QCore.SubObjectStore.an_admitted_store_rebinds_no_other_name
+#print axioms QCore.SubObjectStore.a_neutral_store_rebinds_nothing_else
 
 -- Base premises.
 #print axioms QCore.SubObjectStore.an_unresolved_base_refuses
@@ -41,6 +43,8 @@ base, to a store whose custody effect is decided on the state at the node.
 #print axioms QCore.SubObjectStore.a_descriptor_is_never_stored
 #print axioms QCore.SubObjectStore.a_derived_pointer_is_never_escaped
 #print axioms QCore.SubObjectStore.an_unknown_value_refuses
+#print axioms QCore.SubObjectStore.an_escaped_identity_is_named_only_unknown
+#print axioms QCore.SubObjectStore.a_formal_value_keeps_the_refusal
 
 -- The fallback hands on.
 #print axioms QCore.SubObjectStore.the_fallback_changes_no_status

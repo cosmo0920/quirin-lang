@@ -201,13 +201,33 @@ fn a_null_store_into_a_pointer_member_is_admitted() {
 }
 
 #[test]
-fn a_borrowed_pointer_stored_into_a_member_is_custody_neutral() {
+fn an_untracked_local_pointer_stored_into_a_member_is_custody_neutral() {
     expect(
-        "`r->next = r` and `h->name = (char *) s` store pointers this function never bound",
-        "void w(struct x_rec *r, struct x_holder *h, const char *s) { \
-         r->next = r; h->name = (char *) s; }",
+        "`h->name = t` with `t` bound to no identity",
+        "void w(struct x_holder *h) { char *t = 0; h->name = t; }",
         "Safe",
         &[],
+    );
+}
+
+/// A formal's pointer is the caller's object. Storing it into a record hands
+/// that object on in a way no summary mode states: a derived summary would
+/// call the formal borrowed, and a caller would then claim a leak of an
+/// object its callee linked into a list (`cfl_list_add`, `mk_list_init`).
+/// So the store keeps its refusal.
+#[test]
+fn a_formal_pointer_stored_into_a_member_keeps_its_refusal() {
+    expect(
+        "`r->next = r` stores the caller's own object",
+        "void w(struct x_rec *r) { r->next = r; }",
+        "Unknown",
+        &[GATE],
+    );
+    expect(
+        "`h->name = (char *) s` stores the caller's string",
+        "void w(struct x_holder *h, const char *s) { h->name = (char *) s; }",
+        "Unknown",
+        &[GATE],
     );
 }
 
@@ -247,14 +267,19 @@ fn an_owned_call_result_stored_into_a_caller_visible_record_escapes() {
     );
 }
 
+/// A release after the escape is not `Safe`, and not an accusation either:
+/// the record now holds the object, and whether the code clears the member
+/// before releasing (`ch->backend = cf; … ch->backend = NULL; free(cf);`) is
+/// a protocol this projection does not follow. Every name of the escaped
+/// identity is unknown after the store, so the release reports it unresolved.
 #[test]
 fn releasing_an_identity_after_storing_it_into_the_callers_record_is_not_safe() {
     expect(
-        "`h->name = n; x_free(n);` leaves the caller's record dangling",
+        "`h->name = n; x_free(n);`",
         "void w(struct x_holder *h, const char *s) { char *n = x_dup(s); h->name = n; \
          x_free(n); }",
-        "Unsafe",
-        &["release_after_escape"],
+        "Unknown",
+        &["unknown_alias:n"],
     );
 }
 

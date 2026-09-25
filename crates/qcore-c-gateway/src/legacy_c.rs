@@ -6031,6 +6031,13 @@ impl Parser<'_> {
             sub_object_store::ValueSyntax::Untracked => {
                 (sub_object_store::StoredValue::Untracked, Vec::new())
             }
+            // A formal's pointer is the caller's object: storing it into a
+            // record hands that object on in a way no summary mode states
+            // (the derived summary would call the formal borrowed), so the
+            // store keeps its refusal.
+            sub_object_store::ValueSyntax::Name(name) if self.formal_parameters.contains(&name) => {
+                return None;
+            }
             sub_object_store::ValueSyntax::Name(name) => {
                 (sub_object_store::StoredValue::Name(name), Vec::new())
             }

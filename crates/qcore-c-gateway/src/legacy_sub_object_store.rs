@@ -531,15 +531,13 @@ pub(super) fn transfer(
         StoredValue::Scalar { .. } | StoredValue::Untracked => {}
         StoredValue::Name(name) => match decide(&state, name, destination.caller_visible, context) {
             Decision::Neutral => {}
-            Decision::Escape => super::apply_resource_action(
+            Decision::Escape => escape(
                 function,
                 node.line,
                 name,
                 &mut state,
                 acquisition_lines,
                 diagnostics,
-                true,
-                true,
             ),
             Decision::Refuse => return refuse(state, diagnostics),
         },
@@ -552,15 +550,13 @@ pub(super) fn transfer(
                 context,
             ) {
                 Decision::Neutral => {}
-                Decision::Escape => super::apply_resource_action(
+                Decision::Escape => escape(
                     function,
                     node.line,
                     STORE_TEMPORARY,
                     &mut state,
                     acquisition_lines,
                     diagnostics,
-                    true,
-                    true,
                 ),
                 Decision::Refuse => {
                     // The call's result reached a store this rule refuses. The
@@ -605,6 +601,44 @@ pub(super) fn call_runs(instruction: &super::LegacyInstruction, state: &super::A
     }) && value_bases
         .iter()
         .all(|read| super::indirect_scalar_base_resolves(state, read))
+}
+
+/// The escape of a stored identity into the caller's record. Custody leaves
+/// with the record, as through a return; and since the record now holds the
+/// object, a later use or release through a name of this body is a protocol
+/// this projection does not follow (`ch->backend = cf; … free(cf);` may well
+/// clear the member first). So every binding that denotes the escaped identity
+/// is made unknown: a later release through it reports an unresolved alias
+/// and never a `release_after_escape` accusation.
+fn escape(
+    function: &str,
+    line: usize,
+    name: &str,
+    state: &mut super::AbstractState,
+    acquisition_lines: &std::collections::BTreeMap<usize, usize>,
+    diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>,
+) {
+    let escaped = state
+        .pointers
+        .get(name)
+        .map(|pointer| pointer.targets.clone())
+        .unwrap_or_default();
+    super::apply_resource_action(
+        function,
+        line,
+        name,
+        state,
+        acquisition_lines,
+        diagnostics,
+        true,
+        true,
+    );
+    for pointer in state.pointers.values_mut() {
+        if !pointer.targets.is_disjoint(&escaped) {
+            pointer.unknown = true;
+            pointer.may_be_null = true;
+        }
+    }
 }
 
 enum Decision {

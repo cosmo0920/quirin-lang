@@ -103,10 +103,24 @@ def decide (e : Env) (s : State) (visible : Bool) (n : Nat) : Decision :=
       | [site] => if escapable e s visible b site then .escape site else .refuse
       | _ => .refuse
 
+/-- Every binding that denotes `site` is made unknown and possibly null: the
+record now holds the object, so a later use or release through a name of this
+body follows a protocol the projection does not (`escape` in the Rust). -/
+def poisonAliases (s : State) (site : Nat) (x : Nat) : Option Binding :=
+  match s.binding x with
+  | some b => if b.targets.contains site then some (poison b) else some b
+  | none => none
+
 /-- Custody leaves with the caller's record: the site is escaped, no longer
-live. -/
+live, and every name of it unknown. -/
 def escapeSite (s : State) (site : Nat) : State :=
-  { s with status := fun x => if x = site then some ⟨false, false, true⟩ else s.status x }
+  { s with
+    status := fun x => if x = site then some ⟨false, false, true⟩ else s.status x
+    binding := poisonAliases s site }
+
+/-- The classifier's value premise: a formal's pointer is the caller's object
+and is never read as a stored value (`sub_object_store_statement`). -/
+def admitsName (formal : Nat → Bool) (n : Nat) : Bool := !formal n
 
 def forget (s : State) (place : Nat) : State :=
   { s with binding := fun x => if x = place then none else s.binding x }
@@ -203,12 +217,57 @@ theorem an_admitted_store_forgets_the_member (e : Env) (s s' : State) (d : Desti
     (v : Value) (h : store e s d v = .admitted s') : s'.binding d.place = none := by
   rcases store_admitted e s s' d v h with ⟨_, rfl | ⟨_, _, _, _, rfl⟩⟩ <;> simp [forget]
 
-/-- Constraint 5i: the store writes the member's place and no other name. -/
+/-- Poisoning keeps every binding's targets. -/
+theorem poisonAliases_targets (s : State) (site x : Nat) :
+    (poisonAliases s site x).map Binding.targets = (s.binding x).map Binding.targets := by
+  unfold poisonAliases
+  split
+  · rename_i b hb
+    rw [hb]
+    split <;> rfl
+  · rename_i hb
+    rw [hb]
+
+/-- Constraint 5i: the store binds the member's place and no other name; every
+other binding keeps exactly its targets (an escape only makes its identity's
+names unknown). -/
 theorem an_admitted_store_rebinds_no_other_name (e : Env) (s s' : State) (d : Destination)
     (v : Value) (x : Nat) (hx : x ≠ d.place) (h : store e s d v = .admitted s') :
+    (s'.binding x).map Binding.targets = (s.binding x).map Binding.targets := by
+  rcases store_admitted e s s' d v h with ⟨_, rfl | ⟨_, site, _, _, rfl⟩⟩
+  · simp [forget, hx]
+  · simp only [forget, escapeSite, hx, ite_false]
+    exact poisonAliases_targets s site x
+
+/-- A store that escapes nothing leaves every other binding exactly as it was. -/
+theorem a_neutral_store_rebinds_nothing_else (e : Env) (s s' : State) (d : Destination)
+    (x : Nat) (hx : x ≠ d.place) (hv : store e s d .scalar = .admitted s') :
     s'.binding x = s.binding x := by
-  rcases store_admitted e s s' d v h with ⟨_, rfl | ⟨_, _, _, _, rfl⟩⟩ <;>
-    simp [forget, escapeSite, hx]
+  rcases store_admitted e s s' d _ hv with ⟨_, rfl | ⟨_, _, hn, _, _⟩⟩
+  · simp [forget, hx]
+  · cases hn
+
+/-- After an escape every name of the escaped identity is unknown, so a later
+release through it is an unresolved alias, never a `release_after_escape`. -/
+theorem an_escaped_identity_is_named_only_unknown (s : State) (site x : Nat) (b : Binding)
+    (hb : (escapeSite s site).binding x = some b) (hmem : site ∈ b.targets) :
+    b.unknown = true := by
+  simp only [escapeSite, poisonAliases] at hb
+  cases h : s.binding x with
+  | none => simp [h] at hb
+  | some b' =>
+    simp only [h] at hb
+    by_cases hc : b'.targets.contains site
+    · simp only [hc, ite_true, Option.some.injEq] at hb
+      subst hb; rfl
+    · simp only [hc, Bool.false_eq_true, ite_false, Option.some.injEq] at hb
+      subst hb
+      simp_all
+
+/-- A formal's pointer is never read as a stored value. -/
+theorem a_formal_value_keeps_the_refusal (formal : Nat → Bool) (n : Nat)
+    (h : formal n = true) : admitsName formal n = false := by
+  simp [admitsName, h]
 
 /-! ## The base premises -/
 
