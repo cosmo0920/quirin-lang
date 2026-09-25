@@ -134,9 +134,6 @@ pub enum StoredValue {
 /// forgotten after the store.
 pub const STORE_TEMPORARY: &str = "__qcore_sub_object_value__";
 
-/// Census commit only: whether the classifier consults the rule.
-pub const WIRED: bool = false;
-
 /// Why [`read_destination`] or [`read_value`] refused, for the census.
 pub type Refusal = &'static str;
 

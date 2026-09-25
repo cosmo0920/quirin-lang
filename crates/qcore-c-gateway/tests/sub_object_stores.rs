@@ -279,7 +279,7 @@ fn an_owned_pointer_stored_through_a_rebound_formal_keeps_its_refusal() {
         "void w(struct x_holder *h, struct x_holder *other, const char *s) { \
          char *n = x_dup(s); h = other; h->name = n; }",
         "Unknown",
-        &[GATE],
+        &[GATE, "unknown_alias:other"],
     );
 }
 
@@ -324,14 +324,30 @@ fn the_member_store_through_a_callers_array_binds_no_local() {
 }
 
 /// Counterexample 2: a descriptor stored into a member stays custody. The
-/// statement reads a tracked descriptor, so the rule declines it and the
-/// gate's refusal stands; the refused hand-on rule withdraws the leak claim.
+/// statement reads a tracked descriptor, so this rule declines it; W43's
+/// typed scalar route reads it as data and the descriptor guard refuses that,
+/// exactly as before the card; the refused hand-on rule withdraws the leak
+/// claim, so `fd` is neither leaked nor discharged.
 #[test]
 fn a_descriptor_stored_into_a_member_stays_custody() {
     expect(
         "`h->fd = fd` with `fd` a tracked descriptor",
         "void w(struct x_holder *h, const char *p) { int fd = k_open(p); \
          if (fd < 0) { return; } h->fd = fd; }",
+        "Unknown",
+        &["unsupported:tracked descriptor `fd` read by a custody-neutral scalar route is \
+           outside the resource projection"],
+    );
+}
+
+/// The same descriptor through a parenthesised base, which only this rule
+/// reads: the rule declines it and the gate's refusal stands.
+#[test]
+fn a_descriptor_stored_through_a_parenthesised_base_keeps_the_gate() {
+    expect(
+        "`(h)->fd = fd` with `fd` a tracked descriptor",
+        "void w(struct x_holder *h, const char *p) { int fd = k_open(p); \
+         if (fd < 0) { return; } (h)->fd = fd; }",
         "Unknown",
         &[GATE],
     );

@@ -5983,10 +5983,6 @@ impl Parser<'_> {
         tokens: &[Token],
         instruction: &LegacyInstruction,
     ) -> Option<LegacyInstruction> {
-        // Census commit: the reader exists, no route calls it yet.
-        if !sub_object_store::WIRED {
-            return None;
-        }
         let LegacyInstruction::Unknown { description, .. } = instruction else {
             return None;
         };
