@@ -17,8 +17,8 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use qcore_audit::providers::{
-    ContractInput, SelectionKind, SelectionSource, agree, probe_resource_views,
-    resolve_all_loaded, resolve_providers,
+    ContractInput, SelectionKind, SelectionSource, agree, probe_resource_views, resolve_all_loaded,
+    resolve_providers,
 };
 use qcore_contract::contract_loader::{inclusion_provenance, load_resource_contract_manifest};
 use qcore_schemas::sha256_hex;
@@ -317,10 +317,7 @@ fn with_policy() -> Fixture {
         Crate {
             name: "quirin-provider-alpha",
             dependencies: &[],
-            modules: vec![
-                ("alpha/heap.qcore", HEAP),
-                ("alpha/policy.qcore", POLICY),
-            ],
+            modules: vec![("alpha/heap.qcore", HEAP), ("alpha/policy.qcore", POLICY)],
             published: &[],
         },
         Crate {
@@ -378,7 +375,10 @@ fn a_whole_crate_selects_its_resource_view_not_every_owned_module() {
 fn an_empty_view_contributes_nothing_and_a_selection_of_nothing_refuses() {
     let fixture = with_policy();
     let error = fixture.resolve(&["quirin-provider-policy"]).unwrap_err();
-    assert!(error.contains("resolves to no resource contract module"), "{error}");
+    assert!(
+        error.contains("resolves to no resource contract module"),
+        "{error}"
+    );
     let both = fixture
         .resolve(&["quirin-provider-alpha", "quirin-provider-policy"])
         .unwrap();
@@ -747,7 +747,10 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
             // quirin-provider-shared owns only views for other checkers.
             assert_eq!(name, "quirin-provider-shared");
             let error = resolved.unwrap_err();
-            assert!(error.contains("resolves to no resource contract module"), "{error}");
+            assert!(
+                error.contains("resolves to no resource contract module"),
+                "{error}"
+            );
             continue;
         }
         let resolved = resolved.unwrap();
@@ -771,7 +774,8 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     let repository = repository();
     let load_path = repository.join("providers/contract-load-path.json");
     let crates = real_crates(&repository);
-    let whole = resolve_providers(&load_path, &crates, false, SelectionSource::CommandLine).unwrap();
+    let whole =
+        resolve_providers(&load_path, &crates, false, SelectionSource::CommandLine).unwrap();
     let all = resolve_all_loaded(&load_path, false).unwrap();
     assert_eq!(whole.manifest_text(), all.manifest_text());
     assert_eq!(all.record(None)["selection"], "all-loaded");

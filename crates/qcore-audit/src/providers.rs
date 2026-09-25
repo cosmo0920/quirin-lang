@@ -356,7 +356,8 @@ pub fn resolve_all_loaded(
     load_path: &Path,
     quirin_providers_only: bool,
 ) -> Result<ResolvedProviders, String> {
-    let manifest = load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
+    let manifest =
+        load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
     let entries: Vec<String> = manifest.contract_roots.keys().cloned().collect();
     let mut resolved = resolve_providers(
         load_path,
@@ -379,12 +380,12 @@ pub fn resolve_all_loaded(
 /// `providers/contracts.py` writes (`sync`) or compares (`check`) the result.
 pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
     let load_path = &std::path::absolute(load_path).map_err(|error| error.to_string())?;
-    let manifest = load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
+    let manifest =
+        load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
     // Resolution must succeed (a failure is the probe's, never a module's);
     // only the loader's verdict on the resolved selection is recorded.
-    let resolve = |entries: &[String]| {
-        resolve_providers(load_path, entries, false, SelectionSource::Default)
-    };
+    let resolve =
+        |entries: &[String]| resolve_providers(load_path, entries, false, SelectionSource::Default);
     let load = |entries: &[String]| -> Result<Result<(), String>, String> {
         Ok(ContractInput::providers(&resolve(entries)?, None)
             .load()
