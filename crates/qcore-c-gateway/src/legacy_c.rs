@@ -2717,7 +2717,7 @@ fn build_function_cfg_with(
         let start = function_parameter_range(tokens, function, body_start)
             .map_or(body_start, |(open, _)| open);
         let end = matching(tokens, body_start, "{", "}").map_or(tokens.len(), |end| end + 1);
-        parenthesised_callee::TypeNames::read(&typed_model, &texts, start..end)
+        parenthesised_callee::TypeNames::read(&texts, start..end)
     };
     let collection_types = collection_types(tokens, function, body_start, &typed_model);
     // Card W44-COLLECTION-ALLOCATION: names whose `sizeof` dereference operand

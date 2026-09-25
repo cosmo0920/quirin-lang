@@ -48,7 +48,6 @@
 use std::collections::BTreeSet;
 
 use super::{ConditionalMark, LegacyInstruction, Token};
-use crate::typed_field_access::TypedAccessModel;
 
 /// The refusal of a call whose callee expression is not a name.
 pub(crate) const REFUSAL: &str =
@@ -180,12 +179,12 @@ fn is_keyword(text: &str) -> bool {
 
 /// The typedef names one function trusts as types.
 ///
-/// A name is a type here when this unit's declaration reader read it as a
-/// typedef name ([`TypedAccessModel::declares_typedef`]) **and** nothing in
-/// the function's parameters or body could be an object of the same name
-/// ([`object_use`]). A typedef name the function may shadow with an object is
-/// not trusted: `(T)(x)` there may call through the object, and it is read as
-/// a call, the refusing reading.
+/// A name is a type here when a file-scope typedef declaration of the unit
+/// declares it ([`typedef_declarators`]) **and** nothing in the function's
+/// parameters or body could be an object of the same name ([`object_use`]).
+/// A typedef name the function may shadow with an object is not trusted:
+/// `(T)(x)` there may call through the object, and it is read as a call, the
+/// refusing reading.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct TypeNames {
     names: BTreeSet<String>,
@@ -194,19 +193,14 @@ pub(crate) struct TypeNames {
 impl TypeNames {
     /// Read the trusted type names over `texts[range]`, one function's
     /// parameter list and body, with the whole unit's typedef declarators
-    /// read afresh ([`typedef_declarators`]).
-    pub(crate) fn read(
-        model: &TypedAccessModel,
-        texts: &[&str],
-        range: std::ops::Range<usize>,
-    ) -> Self {
-        Self::read_with(&typedef_declarators(texts), model, texts, range)
+    /// read afresh.
+    pub(crate) fn read(texts: &[&str], range: std::ops::Range<usize>) -> Self {
+        Self::read_with(&typedef_declarators(texts), texts, range)
     }
 
     /// [`Self::read`] with the unit's typedef declarators already read.
     pub(crate) fn read_with(
         declared: &BTreeSet<String>,
-        model: &TypedAccessModel,
         texts: &[&str],
         range: std::ops::Range<usize>,
     ) -> Self {
@@ -215,10 +209,7 @@ impl TypeNames {
         let mut shadowed = BTreeSet::new();
         for index in range {
             let text = texts[index];
-            if !is_name(text)
-                || is_keyword(text)
-                || !(model.declares_typedef(text) || declared.contains(text))
-            {
+            if !is_name(text) || is_keyword(text) || !declared.contains(text) {
                 continue;
             }
             candidates.insert(text);
@@ -239,9 +230,10 @@ impl TypeNames {
     }
 }
 
-/// The names typedef declarations of the unit declare, read by declarator
-/// position. [`TypedAccessModel::declares_typedef`] reads only a name that is
-/// a typedef's last token, so it misses a function-pointer typedef
+/// The names file-scope typedef declarations of the unit declare, read by
+/// declarator position. The declaration model's typedef reader
+/// (`TypedAccessModel::declares_typedef`) reads only a name that is a
+/// typedef's last token, at any depth, so it misses a function-pointer typedef
 /// (`typedef void (*rel_t)(void *);`) and a typedef with a trailing attribute
 /// (`typedef long long __v2di __attribute__ ((__vector_size__ (16)));`, the
 /// vector types of the compiler's intrinsic headers, whose bodies cast with
@@ -259,8 +251,16 @@ impl TypeNames {
 /// the refusing direction.
 pub(crate) fn typedef_declarators(texts: &[&str]) -> BTreeSet<String> {
     let mut names = BTreeSet::new();
+    let mut depth = 0usize;
     for start in 0..texts.len() {
-        if texts[start] != "typedef" {
+        match texts[start] {
+            "{" => depth += 1,
+            "}" => depth = depth.saturating_sub(1),
+            _ => {}
+        }
+        // Only a file-scope typedef: a block-scope one names a type in its
+        // own block alone, and elsewhere the name may be a function.
+        if texts[start] != "typedef" || depth != 0 {
             continue;
         }
         let Some(end) = crate::typed_field_access::statement_end(texts, start) else {
@@ -325,7 +325,10 @@ fn object_use(texts: &[&str], index: usize) -> bool {
         return false;
     }
     match texts.get(index + 1).copied() {
-        Some("=" | ";" | "," | "[" | "." | "(") => true,
+        Some("=" | ";" | "," | "[" | ".") => true,
+        // `T (*fp)(…)` declares `fp`; an object named `T` would also have a
+        // declaration of its own, which one of the other arms reads.
+        Some("(") => texts.get(index + 2) != Some(&"*"),
         Some("-") => matches!(texts.get(index + 2).copied(), Some(">" | "-")),
         Some("+") => texts.get(index + 2) == Some(&"+"),
         Some(")") => !matches!(previous, Some("(")) && !previous.is_some_and(|p| QUALIFIERS.contains(&p)),
@@ -590,7 +593,6 @@ pub(crate) fn normalise_unit(
     }) {
         return None;
     }
-    let model = TypedAccessModel::read(&texts);
     let declared = typedef_declarators(&texts);
     let mut removed = vec![false; tokens.len()];
     let mut rewrites = Vec::new();
@@ -607,7 +609,7 @@ pub(crate) fn normalise_unit(
         }
         let start = super::function_parameter_range(tokens, &function, body_start)
             .map_or(body_start, |(open, _)| open);
-        let types = TypeNames::read_with(&declared, &model, &texts, start..body_end + 1);
+        let types = TypeNames::read_with(&declared, &texts, start..body_end + 1);
         for (at, depth) in callee_sites(&texts, body_start + 1..body_end, &types) {
             for offset in 1..=depth {
                 removed[at - offset] = true;

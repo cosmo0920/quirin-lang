@@ -1,6 +1,5 @@
 use super::super::{Token, tokenize, tokenize_with_conditionals};
 use super::{TypeNames, normalise_owned, normalise_tokens, opaque_call, typedef_declarators};
-use crate::typed_field_access::TypedAccessModel;
 
 fn texts(tokens: &[Token]) -> Vec<String> {
     tokens.iter().map(|token| token.text.clone()).collect()
@@ -19,11 +18,10 @@ fn opaque(unit: &str, statement: &str) -> bool {
     let tokens = tokenize(unit);
     let all = texts(&tokens);
     let all = all.iter().map(String::as_str).collect::<Vec<_>>();
-    let model = TypedAccessModel::read(&all);
     let statement = texts(&tokenize(statement));
     let statement = statement.iter().map(String::as_str).collect::<Vec<_>>();
     let declared = typedef_declarators(&all);
-    let types = TypeNames::read_with(&declared, &model, &statement, 0..statement.len());
+    let types = TypeNames::read_with(&declared, &statement, 0..statement.len());
     opaque_call(&statement, &types)
 }
 
@@ -45,6 +43,23 @@ fn typedef_declarators_are_read_by_position() {
         names.iter().map(String::as_str).collect::<Vec<_>>(),
         expected
     );
+}
+
+#[test]
+fn a_block_scope_typedef_is_not_a_type_elsewhere() {
+    // `T` is a type only inside `g`; in `f` it is the function `T`.
+    assert_eq!(
+        normalised("void g(void) { typedef int T; } void f(void *p) { (T)(p); }"),
+        "void g ( void ) { typedef int T ; } void f ( void * p ) { T ( p ) ; }"
+    );
+}
+
+#[test]
+fn a_function_pointer_parameter_does_not_shadow_its_result_type() {
+    let source = "typedef long word_t; \
+                  long f(word_t (*render)(void), int n) { return (word_t)(n); }";
+    let tokens = tokenize(source);
+    assert!(normalise_tokens(&tokens).is_none());
 }
 
 #[test]
