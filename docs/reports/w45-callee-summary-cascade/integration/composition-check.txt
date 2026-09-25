@@ -1,0 +1,8 @@
+card delta:     removed 295 added 55 functions 7 units 1
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 295 added 55
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('cio_error_set', ('Unknown', 'Safe')), ('cmt_histogram_buckets_destroy', ('Unknown', 'Safe')), ('mk_config_sanity_check', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupListing_destroy', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupListing_free', ('Unknown', 'Safe')), ('rd_kafka_consumer_group_metadata_destroy', ('Unknown', 'Safe')), ('rd_kafka_q_consumer_propagate', ('Unknown', 'Safe'))]
+COMPOSES

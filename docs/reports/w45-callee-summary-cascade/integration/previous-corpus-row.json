@@ -1,0 +1,29 @@
+{
+ "note": "W45-RETURN-EXPRESSION-FAMILIES integration, 2026-09-25. The card (measured against docs/reports/w44-collection-allocation/integration/artifacts) composed onto the combined tree docs/reports/w44-collection-allocation/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 405 added 40 functions 76 units 0); functions moved (combined): [('LZ4_read16', ('Unknown', 'Safe')), ('LZ4_read32', ('Unknown', 'Safe')), ('LZ4_read_ARCH', ('Unknown', 'Safe')), ('LZ4_sizeofState', ('Unknown', 'Safe')), ('LZ4_sizeofStateHC', ('Unknown', 'Safe')), ('LZ4_sizeofStreamState', ('Unknown', 'Safe')), ('LZ4_sizeofStreamStateHC', ('Unknown', 'Safe')), ('XXH32_createState', ('Unknown', 'Safe')), ('XXH64_createState', ('Unknown', 'Safe')), ('available', ('Unknown', 'Safe')), ('cJSON_IsArray', ('Unknown', 'Safe')), ('cJSON_IsBool', ('Unknown', 'Safe')), ('cJSON_IsFalse', ('Unknown', 'Safe')), ('cJSON_IsInvalid', ('Unknown', 'Safe')), ('cJSON_IsNull', ('Unknown', 'Safe')), ('cJSON_IsNumber', ('Unknown', 'Safe')), ('cJSON_IsObject', ('Unknown', 'Safe')), ('cJSON_IsRaw', ('Unknown', 'Safe')), ('cJSON_IsString', ('Unknown', 'Safe')), ('cJSON_IsTrue', ('Unknown', 'Safe')), ('crc32c_shift', ('Unknown', 'Safe')), ('get_available_size', ('Unknown', 'Safe')), ('mk_http_parser_content_length', ('Unknown', 'Safe')), ('mk_http_parser_is_content_chunked', ('Unknown', 'Safe')), ('mk_stream_size', ('Unknown', 'Safe')), ('mykey_hash', ('Unknown', 'Safe')), ('rd_hdr_getSubBucketIdx', ('Unknown', 'Safe')), ('rd_hdr_valueFromIndex', ('Unknown', 'Safe')), ('rd_http_req_get_code', ('Unknown', 'Safe')), ('rd_kafka_AclBinding_operation', ('Unknown', 'Safe')), ('rd_kafka_AclBinding_permission_type', ('Unknown', 'Safe')), ('rd_kafka_AclBinding_resource_pattern_type', ('Unknown', 'Safe')), ('rd_kafka_AclBinding_restype', ('Unknown', 'Safe')), ('rd_kafka_ConfigEntry_is_default', ('Unknown', 'Safe')), ('rd_kafka_ConfigEntry_is_read_only', ('Unknown', 'Safe')), ('rd_kafka_ConfigEntry_is_sensitive', ('Unknown', 'Safe')), ('rd_kafka_ConfigEntry_is_synonym', ('Unknown', 'Safe')), ('rd_kafka_ConfigEntry_source', ('Unknown', 'Safe')), ('rd_kafka_ConfigResource_error', ('Unknown', 'Safe')), ('rd_kafka_ConfigResource_type', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupDescription_member_count', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupDescription_state', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupDescription_type', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupListing_state', ('Unknown', 'Safe')), ('rd_kafka_ConsumerGroupListing_type', ('Unknown', 'Safe')), ('rd_kafka_Node_id', ('Unknown', 'Safe')), ('rd_kafka_Node_port', ('Unknown', 'Safe')), ('rd_kafka_ScramCredentialInfo_mechanism', ('Unknown', 'Safe')), ('rd_kafka_Uuid_least_significant_bits', ('Unknown', 'Safe')), ('rd_kafka_Uuid_most_significant_bits', ('Unknown', 'Safe')), ('rd_kafka_admin_describe_consumer_group_do_fallback_to_classic', ('Unknown', 'Safe')), ('rd_kafka_assignment_in_progress', ('Unknown', 'Safe')), ('rd_kafka_broker_addresses_exhausted', ('Unknown', 'Safe')), ('rd_kafka_broker_id', ('Unknown', 'Safe')), ('rd_kafka_cgrp_awaiting_response', ('Unknown', 'Safe')), ('rd_kafka_error_code', ('Unknown', 'Safe')), ('rd_kafka_error_is_fatal', ('Unknown', 'Safe')), ('rd_kafka_error_is_retriable', ('Unknown', 'Safe')), ('rd_kafka_error_txn_requires_abort', ('Unknown', 'Safe')), ('rd_kafka_event_error', ('Unknown', 'Safe')), ('rd_kafka_event_error_is_fatal', ('Unknown', 'Safe')), ('rd_kafka_event_type', ('Unknown', 'Safe')), ('rd_kafka_header_cnt', ('Unknown', 'Safe')), ('rd_kafka_message_broker_id', ('Unknown', 'Safe')), ('rd_kafka_message_delivery_count', ('Unknown', 'Safe')), ('rd_kafka_message_status', ('Unknown', 'Safe')), ('rd_kafka_op_matches_toppar', ('Unknown', 'Safe')), ('rd_kafka_prop2idx', ('Unknown', 'Safe')), ('rd_kafka_share_ack_batch_leader_stale', ('Unknown', 'Safe')), ('rd_kafka_timer_scheduled', ('Unknown', 'Safe')), ('rd_kafka_timer_started', ('Unknown', 'Safe')), ('rd_kafka_topic_partition_has_absolute_offset', ('Unknown', 'Safe')), ('rd_kafka_topic_result_error', ('Unknown', 'Safe')), ('rd_kafka_type', ('Unknown', 'Safe')), ('rd_map_cnt', ('Unknown', 'Safe')), ('rd_map_is_empty', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 76 functions moved Unknown to Safe, matching the card's own 306->382 corpus movement from scalar-result return reads and casts of whole calls in return position. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-return-expression-families/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 4,
+ "provisional_unsafe": 10,
+ "unknown": 167,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 37,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-return-expression-families/integration/artifacts/",
+ "source": "docs/reports/w45-return-expression-families/integration/integration-confirmation.md; preceding baseline docs/reports/w44-collection-allocation/integration/artifacts",
+ "unknown_alias_diagnostics": 3517,
+ "unsupported_diagnostics": 43215,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 382,
+  "provisional_unsafe": 12,
+  "unknown": 4440
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 166,
+  "none": 18,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
