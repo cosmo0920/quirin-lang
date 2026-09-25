@@ -339,3 +339,31 @@ fn the_unit_reason_names_the_held_calls_under_their_own_code() {
     forged.contracts.set_pending_review(BTreeMap::new());
     assert!(check_legacy_safety_certificate(&forged).is_err());
 }
+
+/// Card W45-PARENTHESISED-CALLEE: `(k_close)(h, 0)` calls `k_close`, so it is
+/// held exactly as `k_close(h, 0)` is. Before that card the parenthesised
+/// callee was invisible to the hold rewrite and to the classifier, the
+/// statement lowered to nothing and the handle was reported leaked
+/// (provisional `Unsafe`).
+#[test]
+fn a_parenthesised_call_of_a_pending_callee_is_held() {
+    let parenthesised = BALANCED.replace("k_close(h, 0)", "(k_close)(h, 0)");
+    assert_ne!(parenthesised, BALANCED);
+    // Under the bare contracts the parenthesised release is the release.
+    let bare = analyse(&parenthesised, &load(BARE));
+    assert_eq!(function(&bare, "w").status, AnalysisStatus::Safe);
+    assert_eq!(bare, analyse(BALANCED, &load(BARE)));
+    // Deferred, it is held under the review reason, never a leak.
+    let deferred = analyse(&parenthesised, &load(&close_deferred()));
+    let w = function(&deferred, "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown);
+    assert_eq!(held(w), ["k_close"]);
+    assert!(
+        !w.diagnostics
+            .iter()
+            .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Leak { .. })),
+        "{:?}",
+        w.diagnostics
+    );
+    assert_eq!(deferred, analyse(BALANCED, &load(&close_deferred())));
+}
