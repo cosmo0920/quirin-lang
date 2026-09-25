@@ -30,6 +30,7 @@ pub mod report;
 mod source_audit;
 pub mod source_contract;
 pub mod timeout_teardown;
+pub mod unit_selection;
 pub mod wait_failures;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 

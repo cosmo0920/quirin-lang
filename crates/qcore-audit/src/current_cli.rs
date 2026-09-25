@@ -35,7 +35,10 @@ use qcore_contract::profile_loader::{load_profile_directory, sha256_hex};
 use serde::Deserialize;
 use serde_json::{Value, json};
 
-use crate::current_route::{CurrentRoute, historical_reference_revision, run_current_route};
+use crate::current_route::{
+    CurrentRoute, historical_reference_revision, historical_reference_revision_of,
+    run_current_route,
+};
 use crate::evidence::EvidenceMode;
 use crate::providers::{
     ContractInput, SelectionSource, agree, resolve_all_loaded, resolve_providers,
@@ -46,7 +49,7 @@ pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout
 [--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--report PATH] \
 [--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
 [--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
-[--jobs N]";
+[--selection FILE] [--jobs N]";
 
 /// The JSON configuration of `quirin-audit current`. Relative paths resolve
 /// against the configuration file's directory.
@@ -80,6 +83,10 @@ struct CurrentConfig {
     quirin_providers_only: Option<bool>,
     #[serde(default)]
     jobs: Option<usize>,
+    /// Card W45-FB-SYSTEM-SELECTION: an explicit unit selection file that
+    /// replaces the profile's `audit.json` groups.
+    #[serde(default)]
+    selection: Option<PathBuf>,
     /// Named only to be refused with a reason: this route admits no process
     /// package or source-contract evidence.
     #[serde(default)]
@@ -104,6 +111,7 @@ struct Settings {
     mode: Option<EvidenceMode>,
     quirin_providers_only: Option<bool>,
     jobs: Option<usize>,
+    selection: Option<PathBuf>,
 }
 
 pub(crate) fn anchor(base: &Path, path: PathBuf) -> PathBuf {
@@ -147,6 +155,7 @@ fn parse_command_line(
             "--binding-directory" => set_path(&mut settings.binding_directory, flag, value)?,
             "--load-path" => set_path(&mut settings.load_path, flag, value)?,
             "--contract-manifest" => set_path(&mut settings.contract_manifest, flag, value)?,
+            "--selection" => set_path(&mut settings.selection, flag, value)?,
             "--provider" => {
                 providers.push(
                     value
@@ -217,6 +226,7 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
             mode: config.mode,
             quirin_providers_only: config.quirin_providers_only,
             jobs: config.jobs,
+            selection: anchor_all(config.selection),
         },
         bytes,
     ))
@@ -393,6 +403,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         configuration.quirin_providers_only,
     )?
     .unwrap_or(false);
+    let selection_path = one("selection", command_line.selection, configuration.selection)?;
     let jobs_source = if command_line.jobs.is_some() {
         "command_line"
     } else if configuration.jobs.is_some() {
@@ -415,11 +426,39 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         quirin_providers_only,
         profile_manifest: profile_manifest.as_deref(),
     })?;
-    let historical = historical_reference_revision(&profile)?;
-    let source_set = profile_directory
-        .file_name()
-        .map(|name| name.to_string_lossy().into_owned())
-        .unwrap_or_else(|| "source set".into());
+    let selection = selection_path
+        .as_deref()
+        .map(crate::unit_selection::UnitSelection::load)
+        .transpose()?;
+    if let Some(selection) = &selection {
+        for group in &selection.groups {
+            if profile.library(&group.library).is_none() {
+                return Err(format!(
+                    "unit selection `{}` names library `{}`, which the source profile does not \
+                     declare",
+                    selection.name, group.library
+                ));
+            }
+        }
+    }
+    let historical = match &selection {
+        Some(selection) => historical_reference_revision_of(
+            &profile,
+            &selection
+                .groups
+                .iter()
+                .map(|group| group.library.clone())
+                .collect::<Vec<_>>(),
+        )?,
+        None => historical_reference_revision(&profile)?,
+    };
+    let source_set = match &selection {
+        Some(selection) => selection.name.clone(),
+        None => profile_directory
+            .file_name()
+            .map(|name| name.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "source set".into()),
+    };
     let failures = run_current_route(&CurrentRoute {
         checkout: &checkout,
         profile: &profile,
@@ -434,6 +473,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         historical_note: "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence",
         historical_reference_revision: &historical,
         jobs: effective_jobs,
+        selection: selection.as_ref(),
     })?;
     if let Some(report) = &report {
         let digest = |path: &Option<PathBuf>| -> Result<Value, String> {
@@ -448,7 +488,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         };
         let default_database = checkout.join("build/compile_commands.json");
         let database = compile_database.clone().unwrap_or(default_database);
-        let invocation = json!({
+        let mut invocation = json!({
             "schema_version": 1,
             "tool": "quirin-audit current",
             "tool_version": env!("CARGO_PKG_VERSION"),
@@ -484,6 +524,11 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             "gateway_failures": failures,
             "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
         });
+        // Card W45-FB-SYSTEM-SELECTION: named only when given, so a run over
+        // the profile's own groups keeps its record byte for byte.
+        if let Some(selection) = &selection {
+            invocation["selection"] = selection.record();
+        }
         crate::current_route::write_invocation(report, &invocation)?;
     }
     Ok(failures)

@@ -232,6 +232,77 @@ impl CurrentAudit {
         EntryOutcome { output, result }
     }
 
+    /// Card **W45-FB-SYSTEM-SELECTION**: name the explicit unit selection in
+    /// the `.contracts.json` assumptions sidecar. It is not a dependency of any
+    /// unit's identity: the selection chooses units, it does not change them.
+    pub fn record_selection(&mut self, selection: Value) {
+        self.assumptions["unit_selection"] = selection;
+    }
+
+    /// Card **W45-FB-SYSTEM-SELECTION**: a selected file with no compilation
+    /// record stays in the denominator as one `Unknown` unit, with an
+    /// environment reason, its checkout definitions as `not_projected`, and a
+    /// configuration record whose `compile_record` is null. It is never
+    /// dropped and never analysed under a guessed command.
+    pub fn evaluate_absent(&self, library: &str, relative: &str) -> EntryOutcome {
+        let mut output = String::new();
+        let mut products = EntryProducts {
+            source: None,
+            report: self.report.fragment(),
+            counts: AuditCounts::default(),
+        };
+        let path = self.checkout.join(relative);
+        let bytes = fs::read(&path);
+        let refusal = match &bytes {
+            Ok(bytes) => {
+                match crate::verify_pinned_bytes(&self.checkout, &self.revision, &path, bytes) {
+                    Ok(()) => {
+                        products.source = path.canonicalize().ok();
+                        UnitRefusal::environment(format!(
+                            "selected source has no compilation database record: {relative}"
+                        ))
+                    }
+                    Err(refusal) => refusal,
+                }
+            }
+            Err(error) => UnitRefusal::environment(format!(
+                "selected source is absent from the checkout: {relative}: {error}"
+            )),
+        };
+        let functions = bytes
+            .as_ref()
+            .ok()
+            .and_then(|bytes| std::str::from_utf8(bytes).ok())
+            .map(legacy_c_source_functions)
+            .unwrap_or_default();
+        products.counts.units += 1;
+        products.counts.unknown_units += 1;
+        products.counts.source_functions += functions.len();
+        products
+            .report
+            .record_unknown(library, relative, &functions, &refusal);
+        let reason = refusal.reason();
+        {
+            use std::fmt::Write as _;
+            let _ = writeln!(output, "  {library}/{relative}: Unknown: {reason}");
+        }
+        let mut configuration = json!({
+            "source_revision": self.revision, "file": Value::Null, "expected_source": path,
+            "directory": Value::Null, "command": Value::Null, "compile_record": Value::Null,
+            "raw_source_sha256": bytes.as_ref().ok().map(|bytes| sha256_hex(bytes)),
+            "compiler": self.compiler, "dependencies": self.dependencies,
+            "unresolved": reason,
+        });
+        let result = serde_json::to_vec(&configuration)
+            .map_err(|error| error.to_string())
+            .map(|bytes| {
+                configuration["inventory_sha256"] = json!(sha256_hex(&bytes));
+                products.report.record_configuration(configuration);
+                products
+            });
+        EntryOutcome { output, result }
+    }
+
     /// Fold one [`Self::evaluate_entry`] result into the audit.
     pub fn absorb_entry(&mut self, products: EntryProducts) -> Result<(), String> {
         let EntryProducts {

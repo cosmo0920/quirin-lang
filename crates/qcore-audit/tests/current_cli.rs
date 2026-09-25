@@ -1006,3 +1006,186 @@ fn jobs_resolve_by_precedence_and_never_change_an_output() {
         6
     );
 }
+
+/// Card W45-FB-SYSTEM-SELECTION: `--selection FILE` replaces the profile's
+/// `audit.json` groups with exact files, in the selection's order; a selected
+/// file the database does not compile, or the checkout does not hold, stays in
+/// the denominator as one environment `Unknown` unit; both sidecars name the
+/// selection; and a unit keeps its configuration identity under either route.
+#[test]
+fn an_explicit_selection_keeps_every_selected_file_in_the_denominator() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    // A committed source the database never compiles.
+    let checkout = fixture.0.join("checkout");
+    fs::create_dir_all(checkout.join("plugins/p")).unwrap();
+    fs::write(
+        checkout.join("plugins/p/unbuilt.c"),
+        "int unbuilt_one(void) { return 1; }\nint unbuilt_two(void) { return 2; }\n",
+    )
+    .unwrap();
+    git(&checkout, &["add", "plugins"]);
+    git(
+        &checkout,
+        &[
+            "-c",
+            "user.name=Audit Fixture",
+            "-c",
+            "user.email=audit@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "Unbuilt plugin",
+        ],
+    );
+    let selection = fixture.config(
+        "selection.json",
+        &json!({"schema_version": 1, "name": "slice", "groups": [{
+            "library": "sample", "label": "sample-slice",
+            "files": ["src/extra_3.c", "plugins/p/unbuilt.c", "src/unit.c", "src/missing.c"],
+        }]}),
+    );
+    let mut args = fixture.base_args("selected");
+    args.extend(strings(&["--selection", &selection]));
+    let output = fixture.run(&args);
+    succeeded(&output);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.starts_with("slice "), "{stdout}");
+    assert!(
+        stdout.contains("3 source file(s), 4 configuration(s)"),
+        "{stdout}"
+    );
+    let report = fixture.read("selected/report.json");
+    let units = report["units"].as_array().unwrap();
+    let files: Vec<&str> = units
+        .iter()
+        .map(|unit| unit["file"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        files,
+        [
+            "src/extra_3.c",
+            "plugins/p/unbuilt.c",
+            "src/unit.c",
+            "src/missing.c"
+        ]
+    );
+    assert!(units.iter().all(|unit| unit["library"] == "sample-slice"));
+    let unbuilt = &units[1];
+    assert_eq!(unbuilt["status"], "Unknown");
+    assert_eq!(unbuilt["reason_code"], "environment-unavailable");
+    assert!(
+        unbuilt["reason"]
+            .as_str()
+            .unwrap()
+            .contains("no compilation database record")
+    );
+    assert_eq!(
+        unbuilt["not_projected"],
+        json!(["unbuilt_one", "unbuilt_two"])
+    );
+    assert_eq!(
+        unbuilt["compile_configuration"]["compile_record"],
+        Value::Null
+    );
+    let missing = &units[3];
+    assert_eq!(missing["status"], "Unknown");
+    assert_eq!(missing["reason_code"], "environment-unavailable");
+    assert!(
+        missing["reason"]
+            .as_str()
+            .unwrap()
+            .contains("absent from the checkout")
+    );
+    assert_eq!(missing["source_functions"], json!([]));
+    // Both sidecars name the selection by path, digest and contents.
+    let digest = sha256_hex(&fs::read(fixture.0.join(&selection)).unwrap());
+    for sidecar in [
+        fixture.read("selected/report.invocation.json")["selection"].clone(),
+        fixture.read("selected/report.contracts.json")["unit_selection"].clone(),
+    ] {
+        assert_eq!(sidecar["sha256"], json!(digest));
+        assert_eq!(sidecar["name"], "slice");
+        assert_eq!(sidecar["groups"][0]["files"][1], "plugins/p/unbuilt.c");
+    }
+    // The profile's own groups: no selection record, and the same unit
+    // analysed with the same configuration identity under either route.
+    succeeded(&fixture.run(&fixture.base_args("profile")));
+    assert!(
+        fixture.read("profile/report.invocation.json")["selection"].is_null()
+            && fixture.read("profile/report.contracts.json")["unit_selection"].is_null()
+    );
+    let profile = fixture.read("profile/report.json");
+    let profile_unit = profile["units"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|unit| unit["file"] == "src/unit.c")
+        .unwrap()
+        .clone();
+    let mut selected_unit = units[2].clone();
+    assert_eq!(profile_unit["library"], "sample");
+    selected_unit["library"] = json!("sample");
+    assert_eq!(selected_unit, profile_unit);
+}
+
+/// The selection is one setting like any other: the command line and the
+/// configuration must agree, and a malformed selection or one naming a library
+/// the profile does not declare refuses before any report.
+#[test]
+fn a_selection_is_declared_once_and_refuses_when_malformed() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let one = fixture.config(
+        "one.json",
+        &json!({"schema_version": 1, "name": "one", "groups": [
+            {"library": "sample", "files": ["src/unit.c"]}]}),
+    );
+    let two = fixture.config(
+        "two.json",
+        &json!({"schema_version": 1, "name": "two", "groups": [
+            {"library": "sample", "files": ["src/extra_0.c"]}]}),
+    );
+    // Configuration only, relative to the configuration file.
+    let config = fixture.config(
+        "current.json",
+        &json!({"schema_version": 1, "selection": "one.json"}),
+    );
+    let mut args = fixture.base_args("config");
+    args.extend(strings(&["--config", &config]));
+    succeeded(&fixture.run(&args));
+    assert_eq!(
+        fixture.read("config/report.json")["units"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    // Both forms, the same file: accepted; different files: refused.
+    let mut args = fixture.base_args("both");
+    args.extend(strings(&["--selection", &one, "--config", &config]));
+    succeeded(&fixture.run(&args));
+    let mut args = fixture.base_args("conflict");
+    args.extend(strings(&["--selection", &two, "--config", &config]));
+    refused(&fixture.run(&args), "`selection` conflicts");
+    // A library the profile does not declare.
+    let foreign = fixture.config(
+        "foreign.json",
+        &json!({"schema_version": 1, "name": "foreign", "groups": [
+            {"library": "elsewhere", "files": ["src/unit.c"]}]}),
+    );
+    let mut args = fixture.base_args("foreign");
+    args.extend(strings(&["--selection", &foreign]));
+    refused(&fixture.run(&args), "does not declare");
+    assert!(!fixture.0.join("foreign").exists());
+    // A path outside the checkout.
+    let escape = fixture.config(
+        "escape.json",
+        &json!({"schema_version": 1, "name": "escape", "groups": [
+            {"library": "sample", "files": ["../outside.c"]}]}),
+    );
+    let mut args = fixture.base_args("escape");
+    args.extend(strings(&["--selection", &escape]));
+    refused(&fixture.run(&args), "plain relative path");
+    assert!(!fixture.0.join("escape").exists());
+}

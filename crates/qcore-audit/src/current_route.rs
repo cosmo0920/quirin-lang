@@ -26,6 +26,7 @@ use crate::current::{CurrentAudit, EntryOutcome, distinct_configurations, select
 use crate::evidence::EvidenceMode;
 use crate::parallel::run_ordered;
 use crate::providers::ContractInput;
+use crate::unit_selection::UnitSelection;
 
 /// Everything the configured current-revision route reads and writes.
 pub struct CurrentRoute<'a> {
@@ -55,6 +56,9 @@ pub struct CurrentRoute<'a> {
     pub historical_reference_revision: &'a str,
     /// Translation units analysed concurrently (already resolved).
     pub jobs: usize,
+    /// Card W45-FB-SYSTEM-SELECTION: an explicit unit selection replacing the
+    /// profile's `audit.json` groups, or `None` for the profile's own groups.
+    pub selection: Option<&'a UnitSelection>,
 }
 
 /// One configured-route compilation configuration, in selection order.
@@ -62,8 +66,26 @@ struct ConfiguredTask<'a> {
     group: usize,
     library: &'a str,
     expected_source: Result<PathBuf, String>,
-    entry: &'a CompileEntry,
+    input: TaskInput<'a>,
     unresolved: Option<&'a str>,
+}
+
+/// What a task analyses: a compilation record, or a selected file the
+/// database has no record for (card W45-FB-SYSTEM-SELECTION), which stays in
+/// the denominator as an `Unknown` unit.
+#[derive(Clone, Copy)]
+enum TaskInput<'a> {
+    Configured(&'a CompileEntry),
+    Absent(&'a str),
+}
+
+/// One selected group: its report label, its configured units in order (a
+/// file without a record is `Absent` at its own position), and its refusal.
+type Group<'a> = (String, Vec<Selected<'a>>, Option<&'static str>);
+
+enum Selected<'a> {
+    Configured(CompileEntry),
+    Absent(&'a str),
 }
 
 /// Run the route; `Ok(true)` when any unit hit a gateway failure.
@@ -74,6 +96,9 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
         .map_err(|error| error.to_string())?;
     let profile = route.profile;
     let mut audit = CurrentAudit::with_contracts(&root, profile, route.contracts, route.mode)?;
+    if let Some(selection) = route.selection {
+        audit.record_selection(selection.record());
+    }
     let revision = audit.revision().to_owned();
     println!("{} {revision} (current checkout)", route.label);
     println!("{}", route.historical_note);
@@ -89,27 +114,52 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
     )?;
     // Select all groups before auditing; missing groups cannot disappear from
     // the denominator. Different commands for one file remain separate tasks.
-    let mut groups = Vec::new();
-    for selection in crate::load_library_selections(&profile.directory().join("audit.json"))? {
-        let library = profile
-            .library(&selection.library)
-            .ok_or("selected library is absent from profile")?;
-        let selected = select_configurations(&entries, &root, library);
-        if selected.is_empty() {
-            return Err(format!(
-                "compile database contains no selected {} sources",
-                selection.library
+    let mut groups: Vec<Group<'_>> = Vec::new();
+    let unresolved_for = |library: &qcore_schemas::profile::LibraryProfile| {
+        (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection")
+    };
+    if let Some(selection) = route.selection {
+        for group in &selection.groups {
+            let library = profile.library(&group.library).ok_or_else(|| {
+                format!(
+                    "unit selection `{}` names library `{}`, which the source profile does not declare",
+                    selection.name, group.library
+                )
+            })?;
+            let mut selected = Vec::new();
+            for file in &group.files {
+                let configurations = select_file_configurations(&entries, &root, file);
+                if configurations.is_empty() {
+                    selected.push(Selected::Absent(file.as_str()));
+                }
+                for entry in configurations {
+                    crate::compile_db::require_clang_driver(&entry)?;
+                    selected.push(Selected::Configured(entry));
+                }
+            }
+            groups.push((group.label().to_owned(), selected, unresolved_for(library)));
+        }
+    } else {
+        for selection in crate::load_library_selections(&profile.directory().join("audit.json"))? {
+            let library = profile
+                .library(&selection.library)
+                .ok_or("selected library is absent from profile")?;
+            let selected = select_configurations(&entries, &root, library);
+            if selected.is_empty() {
+                return Err(format!(
+                    "compile database contains no selected {} sources",
+                    selection.library
+                ));
+            }
+            for entry in &selected {
+                crate::compile_db::require_clang_driver(entry)?;
+            }
+            groups.push((
+                selection.label.unwrap_or(selection.library),
+                selected.into_iter().map(Selected::Configured).collect(),
+                unresolved_for(library),
             ));
         }
-        for entry in &selected {
-            crate::compile_db::require_clang_driver(entry)?;
-        }
-        let unresolved = (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection");
-        groups.push((
-            selection.label.unwrap_or(selection.library),
-            selected,
-            unresolved,
-        ));
     }
     let monkey = route
         .monkey_database
@@ -147,12 +197,18 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
             "{library}: {} selected compilation configuration(s)",
             selected.len()
         ));
-        for entry in selected {
+        for selected in selected {
+            let (expected_source, input) = match selected {
+                Selected::Configured(entry) => {
+                    (Ok(entry.file.clone()), TaskInput::Configured(entry))
+                }
+                Selected::Absent(file) => (Ok(root.join(file)), TaskInput::Absent(file)),
+            };
             tasks.push(ConfiguredTask {
                 group: headers.len() - 1,
                 library: library.as_str(),
-                expected_source: Ok(entry.file.clone()),
-                entry,
+                expected_source,
+                input,
                 unresolved: *unresolved,
             });
         }
@@ -172,7 +228,7 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
                 group: headers.len() - 1,
                 library: "monkey-libevent",
                 expected_source,
-                entry,
+                input: TaskInput::Configured(entry),
                 unresolved: unresolved.as_deref(),
             });
         }
@@ -182,7 +238,10 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
     let dispatch = crate::parallel::heaviest_first(
         &tasks
             .iter()
-            .map(|task| source_weight(task.entry))
+            .map(|task| match task.input {
+                TaskInput::Configured(entry) => source_weight(entry),
+                TaskInput::Absent(_) => 0,
+            })
             .collect::<Vec<_>>(),
     );
     run_ordered(
@@ -191,11 +250,12 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
         Some(dispatch),
         |task| {
             let group = task.group;
-            let outcome = match &task.expected_source {
-                Ok(expected_source) => {
-                    audit.evaluate_entry(task.library, expected_source, task.entry, task.unresolved)
+            let outcome = match (&task.expected_source, task.input) {
+                (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
+                (Ok(expected_source), TaskInput::Configured(entry)) => {
+                    audit.evaluate_entry(task.library, expected_source, entry, task.unresolved)
                 }
-                Err(error) => EntryOutcome {
+                (Err(error), TaskInput::Configured(_)) => EntryOutcome {
                     output: String::new(),
                     result: Err(error.clone()),
                 },
@@ -253,14 +313,50 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
 /// The historical reference revision of a profile's audited groups: the pin
 /// commit their libraries share, or every distinct pin commit joined by `,`.
 pub fn historical_reference_revision(profile: &LoadedProfile) -> Result<String, String> {
+    let libraries = crate::load_library_selections(&profile.directory().join("audit.json"))?
+        .into_iter()
+        .map(|selection| selection.library)
+        .collect::<Vec<_>>();
+    historical_reference_revision_of(profile, &libraries)
+}
+
+/// [`historical_reference_revision`] over named libraries: the groups of an
+/// explicit unit selection (card W45-FB-SYSTEM-SELECTION).
+pub fn historical_reference_revision_of(
+    profile: &LoadedProfile,
+    libraries: &[String],
+) -> Result<String, String> {
     let mut commits = std::collections::BTreeSet::new();
-    for selection in crate::load_library_selections(&profile.directory().join("audit.json"))? {
+    for library in libraries {
         let pin = profile
-            .pin_for(&selection.library)
-            .ok_or_else(|| format!("selected library `{}` has no pin", selection.library))?;
+            .pin_for(library)
+            .ok_or_else(|| format!("selected library `{library}` has no pin"))?;
         commits.insert(pin.git_commit.clone());
     }
     Ok(commits.into_iter().collect::<Vec<_>>().join(","))
+}
+
+/// Every distinct configuration of one exact selected file (card
+/// W45-FB-SYSTEM-SELECTION): `select_configurations`' exact-file arm, with
+/// the static and shared variants kept as separate units.
+fn select_file_configurations(
+    entries: &[CompileEntry],
+    checkout: &Path,
+    file: &str,
+) -> Vec<CompileEntry> {
+    let target = checkout.join(file);
+    crate::current::distinct_configurations(
+        entries
+            .iter()
+            .filter(|entry| {
+                entry
+                    .file
+                    .canonicalize()
+                    .unwrap_or_else(|_| entry.file.clone())
+                    == target
+            })
+            .cloned(),
+    )
 }
 
 /// A unit's scheduling weight: its source size in bytes, which ranks analysis
