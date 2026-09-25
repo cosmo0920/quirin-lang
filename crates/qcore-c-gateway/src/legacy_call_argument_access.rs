@@ -21,7 +21,14 @@
 //!   every declaration and `I` a scalar value with no access
 //!   (`strdup(src[i])`); `B->F` with `B` declared `struct T *` and `F` a
 //!   pointer member of a completely read, single-definition, non-union
-//!   `struct T`; `S.F` with `S` declared `struct T` and `F` such a member.
+//!   `struct T`; `S.F` with `S` declared `struct T` and `F` such a member;
+//! * a **typed sub-object address**: `&B->F` or `&S.F` with `F` declared with
+//!   no `*`, or `&B[I]` over a scalar array or pointer (`mtx_lock(&rk->lock)`,
+//!   `snprintf(&buf[n], …)`), under O04-B09B10's premise that no field link is
+//!   reachable through such an address.
+//!
+//! A `sizeof` whose operand is a type name is an integer constant to the scalar
+//! walker ([`fold_type_sizes`]); `sizeof (*v)` is never folded.
 //!
 //! ## Premises
 //!
@@ -296,6 +303,104 @@ fn pointer_read(
     }
 }
 
+/// Type keywords a `sizeof` operand may spell besides typedef names.
+const TYPE_KEYWORDS: &[&str] = &[
+    "struct", "union", "enum", "const", "signed", "unsigned", "char", "short", "int", "long",
+    "float", "double", "void", "_Bool",
+];
+
+/// Replace every `sizeof ( TYPE-NAME )` of `argument` by the literal `1`.
+///
+/// The operand is a type name only when every token is a type keyword, `*`, or
+/// a name this function does not declare as a variable (a typedef or a tag):
+/// no `[` (so never a variable-length array type, the one operand C evaluates,
+/// C11 6.5.3.4p2), no `(`, no member access. Its size is an integer constant,
+/// which is all the scalar walker needs to know. Every other `sizeof` is left
+/// in place and refuses there; `sizeof (*v)` and `sizeof (x)` over a declared
+/// variable are never folded.
+fn fold_type_sizes<'a>(argument: &[&'a str], types: &FunctionTypes) -> Vec<&'a str> {
+    let mut folded = Vec::with_capacity(argument.len());
+    let mut index = 0usize;
+    while index < argument.len() {
+        if argument[index] == "sizeof"
+            && argument.get(index + 1) == Some(&"(")
+            && let Some(close) = argument[index + 1..]
+                .iter()
+                .position(|text| *text == ")")
+                .map(|offset| index + 1 + offset)
+        {
+            let operand = &argument[index + 2..close];
+            let type_name = !operand.is_empty()
+                && operand.iter().all(|text| {
+                    *text == "*"
+                        || TYPE_KEYWORDS.contains(text)
+                        || (is_name(text) && types.declared_type(text).is_none())
+                });
+            if type_name {
+                folded.push("1");
+                index = close + 1;
+                continue;
+            }
+        }
+        folded.push(argument[index]);
+        index += 1;
+    }
+    folded
+}
+
+/// The address of a typed **non-pointer** sub-object: `& B -> F` (`B` declared
+/// `struct T *`), `& S . F` (`S` declared `struct T`) with `F` declared with no
+/// `*` ([`TypedAccessModel::addressable_field`]), or `& B [ I ]` with `B`
+/// declared `SCALAR *` or `SCALAR [N]` and `I` a scalar value with no access.
+///
+/// The value is a pointer into `B`'s object that no field link can be reached
+/// through: C's object model keeps a non-pointer member's storage disjoint from
+/// every linkable member (card O04-B09B10's premise 4), and a scalar element
+/// holds no pointer. What it keeps is `B`'s dereference obligation, as a read.
+fn member_address(
+    argument: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<ArgumentRead> {
+    let texts = strip_parentheses(argument);
+    let mut read = ArgumentRead::default();
+    match texts {
+        ["&", base, "-", ">", field] if is_name(base) && is_name(field) => {
+            let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
+                return None;
+            };
+            model.addressable_field(tag, field).then_some(())?;
+            read.add_base(base, true);
+            Some(read)
+        }
+        ["&", object, ".", field] if is_name(object) && is_name(field) => {
+            let Some(DeclaredType::Record(tag)) = types.declared_type(object) else {
+                return None;
+            };
+            model.addressable_field(tag, field).then_some(read)
+        }
+        ["&", base, "[", .., "]"] if is_name(base) => {
+            types.scalar_element(base)?;
+            let close = closing_bracket(texts, 2)?;
+            if close + 1 != texts.len() {
+                return None;
+            }
+            let index = &texts[3..close];
+            if index.contains(&"=")
+                || index
+                    .windows(2)
+                    .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
+                || !crate::typed_field_access::is_scalar_value_expression(index, model, types)
+            {
+                return None;
+            }
+            read.add_base(base, false);
+            Some(read)
+        }
+        _ => None,
+    }
+}
+
 /// Recognise one whole actual, or say why not.
 pub(super) fn recognise(
     argument: &[&str],
@@ -313,15 +418,24 @@ pub(super) fn recognise(
     {
         return Err(Refusal::Call);
     }
-    if argument.contains(&"&") && !argument.windows(2).any(|pair| pair == ["&", "&"]) {
-        return Err(Refusal::Address);
-    }
-    if let Some(plan) = crate::typed_field_access::typed_scalar_value(argument, model, types) {
+    let folded = fold_type_sizes(argument, types);
+    if let Some(plan) = crate::typed_field_access::typed_scalar_value(&folded, model, types) {
         return Ok(ArgumentRead {
             bases: plan.bases,
             record_bases: plan.record_bases,
             pointer_valued: false,
         });
+    }
+    // `sizeof (T) * n`: the lexical gate reads a `*` after `)` as a possible
+    // dereference; once the type size is folded the actual is a scalar value
+    // with no memory access at all, and carries no obligation.
+    if folded.len() != argument.len()
+        && crate::typed_field_access::is_scalar_value_expression(&folded, model, types)
+    {
+        return Ok(ArgumentRead::default());
+    }
+    if let Some(read) = member_address(argument, model, types) {
+        return Ok(read);
     }
     match pointer_read(argument, model, types, collections) {
         Ok(read) => Ok(read),
@@ -329,6 +443,9 @@ pub(super) fn recognise(
             // Classify the most common refusals for the census; every one of
             // them refuses.
             let stripped = strip_parentheses(argument);
+            if stripped.first() == Some(&"&") {
+                return Err(Refusal::Address);
+            }
             if stripped.first() == Some(&"(") {
                 return Err(Refusal::Cast);
             }
@@ -855,13 +972,47 @@ mod tests {
     fn everything_else_refuses() {
         let facts = facts(PARAMETERS, BODY);
         assert_eq!(answer(&facts, "p -> next -> len"), Err(Refusal::Chain));
-        assert_eq!(answer(&facts, "& p -> len"), Err(Refusal::Address));
+        assert_eq!(answer(&facts, "& p -> name"), Err(Refusal::Address));
+        assert_eq!(answer(&facts, "& src [ i ]"), Err(Refusal::Address));
+        assert_eq!(answer(&facts, "& p -> len + 1"), Err(Refusal::Address));
         assert_eq!(answer(&facts, "g ( p -> len )"), Err(Refusal::Call));
         assert_eq!(answer(&facts, "src [ i ++ ]"), Err(Refusal::Write));
         assert_eq!(answer(&facts, "( char * ) p -> name"), Err(Refusal::Cast));
         assert_eq!(answer(&facts, "* p"), Err(Refusal::UntypedBase));
         assert_eq!(answer(&facts, "src [ n [ 0 ] ]"), Err(Refusal::Other));
         assert!(answer(&facts, "p -> missing").is_err());
+    }
+
+    #[test]
+    fn sub_object_addresses_are_recognised() {
+        let facts = facts(PARAMETERS, BODY);
+        let read = answer(&facts, "& p -> len").expect("member address");
+        assert_eq!(read.record_bases, vec!["p"]);
+        assert!(!read.pointer_valued);
+        assert!(
+            answer(&facts, "& s . len")
+                .expect("object member")
+                .bases
+                .is_empty()
+        );
+        assert_eq!(
+            answer(&facts, "& buf [ i ]").expect("element").bases,
+            vec!["buf"]
+        );
+    }
+
+    #[test]
+    fn a_type_size_is_a_constant_and_an_expression_size_is_not() {
+        let facts = facts(PARAMETERS, BODY);
+        let read = answer(&facts, "sizeof ( struct rec * ) * p -> len").expect("type size");
+        assert_eq!(read.bases, vec!["p"]);
+        assert_eq!(
+            answer(&facts, "sizeof ( char * ) * i"),
+            Ok(ArgumentRead::default())
+        );
+        assert!(answer(&facts, "sizeof ( * p ) * i").is_err());
+        assert!(answer(&facts, "sizeof ( i ) * p -> len").is_err());
+        assert!(answer(&facts, "sizeof ( int [ 4 ] ) * p -> len").is_err());
     }
 
     #[test]
