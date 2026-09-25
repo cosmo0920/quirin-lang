@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-CONTRACT-DEFERRED-REVIEW on merge 145e3854 (onto main 2e6ae8f9, after all wave-45 cards through W45-FB-BACKLOG-FAULT-INJECTION), measured by the integrator in its own worktree; every step's exit captured to a file, not piped. 5746 core Rust passed / 0 failed / 11 ignored over 308 summaries; 124 provider Rust passed / 0 failed / 0 ignored over 39 summaries; 194 Lean audits; fmt, clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The first Python run on the merge failed 1 of 358 (test_the_derived_facts_are_recomputed_rather_than_carried: committed validation.lean_audits 193 vs recomputed 194) because the matrix had not yet been regenerated against this gate; 15 package Python tests passed separately. baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true (the additive contracts.pending_human_review key is the only non-identical artifact field; the corpus does not move). MOVES=no: no composition, no corpus movement.",
+ "workspace_tests": 5746,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 194,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
