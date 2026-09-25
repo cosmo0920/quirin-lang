@@ -1,0 +1,34 @@
+cmt_encode_opentelemetry_batch.c batches_append (Unknown) L6557 Alias `payload` formal later=0 arg=False: entries [ count ] . payload = payload
+cmt_encode_opentelemetry_batch.c batches_append (Unknown) L6558 Alias `data_point_count` formal later=0 arg=False: entries [ count ] . data_point_count = data_point_count
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1570 ForgetScalar `mlen` local later=9 arg=True: opt [ rPos ] . mlen = 1
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1572 ForgetScalar `litlen` local later=7 arg=False: opt [ rPos ] . litlen = llen + rPos
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1573 Alias `price` local later=8 arg=False: opt [ rPos ] . price = cost
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1582 Alias `mlen` local later=3 arg=False: opt [ mlen ] . mlen = mlen
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1584 Alias `litlen` local later=7 arg=False: opt [ mlen ] . litlen = llen
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1585 Alias `price` local later=8 arg=False: opt [ mlen ] . price = cost
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1591 ForgetScalar `mlen` local later=0 arg=False: opt [ last_match_pos + addLit ] . mlen = 1
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1593 Alias `litlen` local later=7 arg=False: opt [ last_match_pos + addLit ] . litlen = addLit
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1628 ForgetScalar `mlen` local later=0 arg=False: opt [ pos ] . mlen = 1
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1630 ForgetScalar `litlen` local later=0 arg=False: opt [ pos ] . litlen = baseLitlen + litlen
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1631 Alias `price` local later=5 arg=False: opt [ pos ] . price = price
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1659 Alias `mlen` local later=0 arg=False: opt [ pos ] . mlen = ml
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1661 Alias `litlen` local later=0 arg=False: opt [ pos ] . litlen = ll
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1662 Alias `price` local later=0 arg=False: opt [ pos ] . price = price
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1666 ForgetScalar `mlen` local later=0 arg=False: opt [ last_match_pos + addLit ] . mlen = 1
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1668 Alias `litlen` local later=0 arg=False: opt [ last_match_pos + addLit ] . litlen = addLit
+lz4hc.c LZ4HC_compress_optimal (Unknown) L1688 Alias `mlen` local later=0 arg=False: opt [ candidate_pos ] . mlen = selected_matchLength
+rdkafka_fetcher.c rd_kafkap_Fetch_reply_tags_set_topic (Unknown) L20414 Alias `TopicId` formal later=0 arg=False: reply_tags - > Topics [ TopicIdx ] . TopicId = TopicId
+rdkafka_fetcher.c rd_kafkap_Fetch_reply_tags_set_topic (Unknown) L20415 Alias `PartitionCnt` formal later=1 arg=True: reply_tags - > Topics [ TopicIdx ] . PartitionCnt = PartitionCnt
+rdkafka_metadata.c rd_kafka_parse_Metadata0 (Unknown) L20590 Clear `topic` local later=3 arg=True: md - > topics [ i ] . topic = ( ( void * ) 0 )
+rdkafka_mock.c rd_kafka_mock_cluster_io_add (Unknown) L22058 Alias `fd` formal later=0 arg=False: mcluster - > fds [ mcluster - > fd_cnt ] . fd = fd
+rdkafka_mock.c rd_kafka_mock_cluster_io_add (Unknown) L22059 Alias `events` formal later=0 arg=False: mcluster - > fds [ mcluster - > fd_cnt ] . events = events
+rdkafka_mock.c rd_kafka_mock_cluster_io_add (Unknown) L22062 Alias `opaque` formal later=0 arg=False: mcluster - > handlers [ mcluster - > fd_cnt ] . opaque = opaque
+rdkafka_msg.c rd_kafka_produce_batch (Unknown) L20218 Alias `err` local later=3 arg=False: rkmessages [ i ] . err = all_err
+rdkafka_msg.c rd_kafka_produce_batch (Unknown) L20249 Alias `err` local later=0 arg=False: rkmessages [ i ] . err = err
+rdkafka_msg.c rd_kafka_produce_batch (Unknown) L20267 Alias `err` local later=0 arg=False: rkmessages [ i ] . err = RD_KAFKA_RESP_ERR_NO_ERROR
+rdkafka_partition.c rd_kafka_topic_partition_list_reset_offsets (Unknown) L22182 Alias `offset` formal later=0 arg=False: rktparlist - > elems [ i ] . offset = offset
+rdkafka_partition.c rd_kafka_topic_partition_list_set_err (Unknown) L22690 Alias `err` formal later=0 arg=False: rktparlist - > elems [ i ] . err = err
+rdkafka_queue.c rd_kafka_q_purge0 (Unknown) L19792 Clear `tqh_first` local later=0 arg=False: ( & rkq - > rkq_q ) - > tqh_first = ( ( ( void * ) 0 ) )
+rdkafka_queue.c rd_kafka_q_purge0 (Unknown) L19792 Clear `tqh_first` local later=0 arg=False: ( & tmpq ) - > tqh_first = ( ( ( void * ) 0 ) )
+rdkafka_telemetry_encode.c set_attributes (Unknown) L20769 Alias `value` local later=0 arg=False: attributes [ attr_idx ] . value = value
+mk_server/mk_utils.c mk_utils_gmt_cache_add (Unknown) L5914 Alias `time` formal later=0 arg=False: gcache [ min ] . time = time

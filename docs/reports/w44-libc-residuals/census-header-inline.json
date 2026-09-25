@@ -1,0 +1,357 @@
+{
+ "distinct_units": 185,
+ "names": {
+  "__bswap_16": {
+   "calling_units": 13,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "main_source_call_sites": 253,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return ( ( __uint16_t ) ( ( ( ( __bsx ) >> 8 ) & 0xff ) | ( ( ( __bsx ) & 0xff ) << 8 ) ) ) ; }",
+     "signature": "static __inline __uint16_t __bswap_16 ( __uint16_t __bsx )",
+     "units": 174
+    }
+   ]
+  },
+  "__bswap_32": {
+   "calling_units": 16,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "main_source_call_sites": 287,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return ( ( ( ( __bsx ) & 0xff000000u ) >> 24 ) | ( ( ( __bsx ) & 0x00ff0000u ) >> 8 ) | ( ( ( __bsx ) & 0x0000ff00u ) << 8 ) | ( ( ( __bsx ) & 0x000000ffu ) << 24 ) ) ; }",
+     "signature": "static __inline __uint32_t __bswap_32 ( __uint32_t __bsx )",
+     "units": 174
+    }
+   ]
+  },
+  "__bswap_64": {
+   "calling_units": 8,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "main_source_call_sites": 80,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return ( ( ( ( __bsx ) & 0xff00000000000000ull ) >> 56 ) | ( ( ( __bsx ) & 0x00ff000000000000ull ) >> 40 ) | ( ( ( __bsx ) & 0x0000ff0000000000ull ) >> 24 ) | ( ( ( __bsx ) & 0x000000ff00000000ull ) >> 8 ) | ( ( ( __bsx ) & 0x00000000ff000000ull ) << 8 ) | ( ( ( __bsx ) & 0x0000000000ff0000ull ) << 24 ) | ( ( ( __bsx ) & 0x000000000000ff00ull ) << 40 ) | ( ( ( __bsx ) & 0x00000000000000ffull ) << 56 ) ) ; }",
+     "signature": "__extension__ static __inline __uint64_t __bswap_64 ( __uint64_t __bsx )",
+     "units": 174
+    }
+   ]
+  },
+  "__uint16_identity": {
+   "calling_units": 1,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h"
+   ],
+   "main_source_call_sites": 1,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return __x ; }",
+     "signature": "static __inline __uint16_t __uint16_identity ( __uint16_t __x )",
+     "units": 174
+    }
+   ]
+  },
+  "__uint32_identity": {
+   "calling_units": 2,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h"
+   ],
+   "main_source_call_sites": 3,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return __x ; }",
+     "signature": "static __inline __uint32_t __uint32_identity ( __uint32_t __x )",
+     "units": 174
+    }
+   ]
+  },
+  "__uint64_identity": {
+   "calling_units": 1,
+   "defining_units": 174,
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h"
+   ],
+   "main_source_call_sites": 1,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ return __x ; }",
+     "signature": "static __inline __uint64_t __uint64_identity ( __uint64_t __x )",
+     "units": 174
+    }
+   ]
+  },
+  "lh_CONF_VALUE_comp_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/conf.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ int ( * cfn_conv ) ( const CONF_VALUE * , const CONF_VALUE * ) = ( int ( * ) ( const CONF_VALUE * , const CONF_VALUE * ) ) cfn ; return cfn_conv ( ( const CONF_VALUE * ) da , ( const CONF_VALUE * ) db ) ; }",
+     "signature": "static inline int lh_CONF_VALUE_comp_thunk ( const void * da , const void * db , OPENSSL_LH_COMPFUNC cfn )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_CONF_VALUE_doall_arg_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/conf.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( CONF_VALUE * , void * ) = ( void ( * ) ( CONF_VALUE * , void * ) ) doall ; doall_conv ( ( CONF_VALUE * ) node , arg ) ; }",
+     "signature": "static inline void lh_CONF_VALUE_doall_arg_thunk ( void * node , void * arg , OPENSSL_LH_DOALL_FUNCARG doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_CONF_VALUE_doall_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/conf.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( CONF_VALUE * ) = ( void ( * ) ( CONF_VALUE * ) ) doall ; doall_conv ( ( CONF_VALUE * ) node ) ; }",
+     "signature": "static inline void lh_CONF_VALUE_doall_thunk ( void * node , OPENSSL_LH_DOALL_FUNC doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_CONF_VALUE_hash_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/conf.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ unsigned long ( * hfn_conv ) ( const CONF_VALUE * ) = ( unsigned long ( * ) ( const CONF_VALUE * ) ) hfn ; return hfn_conv ( ( const CONF_VALUE * ) data ) ; }",
+     "signature": "static inline unsigned long lh_CONF_VALUE_hash_thunk ( const void * data , OPENSSL_LH_HASHFUNC hfn )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_ERR_STRING_DATA_comp_thunk": {
+   "calling_units": 0,
+   "defining_units": 64,
+   "headers": [
+    "/usr/include/openssl/err.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ int ( * cfn_conv ) ( const ERR_STRING_DATA * , const ERR_STRING_DATA * ) = ( int ( * ) ( const ERR_STRING_DATA * , const ERR_STRING_DATA * ) ) cfn ; return cfn_conv ( ( const ERR_STRING_DATA * ) da , ( const ERR_STRING_DATA * ) db ) ; }",
+     "signature": "static inline int lh_ERR_STRING_DATA_comp_thunk ( const void * da , const void * db , OPENSSL_LH_COMPFUNC cfn )",
+     "units": 64
+    }
+   ]
+  },
+  "lh_ERR_STRING_DATA_doall_arg_thunk": {
+   "calling_units": 0,
+   "defining_units": 64,
+   "headers": [
+    "/usr/include/openssl/err.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( ERR_STRING_DATA * , void * ) = ( void ( * ) ( ERR_STRING_DATA * , void * ) ) doall ; doall_conv ( ( ERR_STRING_DATA * ) node , arg ) ; }",
+     "signature": "static inline void lh_ERR_STRING_DATA_doall_arg_thunk ( void * node , void * arg , OPENSSL_LH_DOALL_FUNCARG doall )",
+     "units": 64
+    }
+   ]
+  },
+  "lh_ERR_STRING_DATA_doall_thunk": {
+   "calling_units": 0,
+   "defining_units": 64,
+   "headers": [
+    "/usr/include/openssl/err.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( ERR_STRING_DATA * ) = ( void ( * ) ( ERR_STRING_DATA * ) ) doall ; doall_conv ( ( ERR_STRING_DATA * ) node ) ; }",
+     "signature": "static inline void lh_ERR_STRING_DATA_doall_thunk ( void * node , OPENSSL_LH_DOALL_FUNC doall )",
+     "units": 64
+    }
+   ]
+  },
+  "lh_ERR_STRING_DATA_hash_thunk": {
+   "calling_units": 0,
+   "defining_units": 64,
+   "headers": [
+    "/usr/include/openssl/err.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ unsigned long ( * hfn_conv ) ( const ERR_STRING_DATA * ) = ( unsigned long ( * ) ( const ERR_STRING_DATA * ) ) hfn ; return hfn_conv ( ( const ERR_STRING_DATA * ) data ) ; }",
+     "signature": "static inline unsigned long lh_ERR_STRING_DATA_hash_thunk ( const void * data , OPENSSL_LH_HASHFUNC hfn )",
+     "units": 64
+    }
+   ]
+  },
+  "lh_OPENSSL_CSTRING_comp_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ int ( * cfn_conv ) ( const OPENSSL_CSTRING * , const OPENSSL_CSTRING * ) = ( int ( * ) ( const OPENSSL_CSTRING * , const OPENSSL_CSTRING * ) ) cfn ; return cfn_conv ( ( const OPENSSL_CSTRING * ) da , ( const OPENSSL_CSTRING * ) db ) ; }",
+     "signature": "static inline int lh_OPENSSL_CSTRING_comp_thunk ( const void * da , const void * db , OPENSSL_LH_COMPFUNC cfn )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_CSTRING_doall_arg_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( OPENSSL_CSTRING * , void * ) = ( void ( * ) ( OPENSSL_CSTRING * , void * ) ) doall ; doall_conv ( ( OPENSSL_CSTRING * ) node , arg ) ; }",
+     "signature": "static inline void lh_OPENSSL_CSTRING_doall_arg_thunk ( void * node , void * arg , OPENSSL_LH_DOALL_FUNCARG doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_CSTRING_doall_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( OPENSSL_CSTRING * ) = ( void ( * ) ( OPENSSL_CSTRING * ) ) doall ; doall_conv ( ( OPENSSL_CSTRING * ) node ) ; }",
+     "signature": "static inline void lh_OPENSSL_CSTRING_doall_thunk ( void * node , OPENSSL_LH_DOALL_FUNC doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_CSTRING_hash_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ unsigned long ( * hfn_conv ) ( const OPENSSL_CSTRING * ) = ( unsigned long ( * ) ( const OPENSSL_CSTRING * ) ) hfn ; return hfn_conv ( ( const OPENSSL_CSTRING * ) data ) ; }",
+     "signature": "static inline unsigned long lh_OPENSSL_CSTRING_hash_thunk ( const void * data , OPENSSL_LH_HASHFUNC hfn )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_STRING_comp_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ int ( * cfn_conv ) ( const OPENSSL_STRING * , const OPENSSL_STRING * ) = ( int ( * ) ( const OPENSSL_STRING * , const OPENSSL_STRING * ) ) cfn ; return cfn_conv ( ( const OPENSSL_STRING * ) da , ( const OPENSSL_STRING * ) db ) ; }",
+     "signature": "static inline int lh_OPENSSL_STRING_comp_thunk ( const void * da , const void * db , OPENSSL_LH_COMPFUNC cfn )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_STRING_doall_arg_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( OPENSSL_STRING * , void * ) = ( void ( * ) ( OPENSSL_STRING * , void * ) ) doall ; doall_conv ( ( OPENSSL_STRING * ) node , arg ) ; }",
+     "signature": "static inline void lh_OPENSSL_STRING_doall_arg_thunk ( void * node , void * arg , OPENSSL_LH_DOALL_FUNCARG doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_STRING_doall_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ void ( * doall_conv ) ( OPENSSL_STRING * ) = ( void ( * ) ( OPENSSL_STRING * ) ) doall ; doall_conv ( ( OPENSSL_STRING * ) node ) ; }",
+     "signature": "static inline void lh_OPENSSL_STRING_doall_thunk ( void * node , OPENSSL_LH_DOALL_FUNC doall )",
+     "units": 65
+    }
+   ]
+  },
+  "lh_OPENSSL_STRING_hash_thunk": {
+   "calling_units": 0,
+   "defining_units": 65,
+   "headers": [
+    "/usr/include/openssl/lhash.h"
+   ],
+   "main_source_call_sites": 0,
+   "shape_unique": true,
+   "shapes": [
+    {
+     "body": "{ unsigned long ( * hfn_conv ) ( const OPENSSL_STRING * ) = ( unsigned long ( * ) ( const OPENSSL_STRING * ) ) hfn ; return hfn_conv ( ( const OPENSSL_STRING * ) data ) ; }",
+     "signature": "static inline unsigned long lh_OPENSSL_STRING_hash_thunk ( const void * data , OPENSSL_LH_HASHFUNC hfn )",
+     "units": 65
+    }
+   ]
+  }
+ }
+}

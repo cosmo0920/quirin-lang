@@ -1,0 +1,37 @@
+{
+ "b_only_leaves": [
+  [
+   "mk_core/mk_string.c",
+   "mk_string_copy_substr",
+   "leak",
+   2453,
+   "live obligation acquired at mk_core/mk_string.c:655"
+  ]
+ ],
+ "status_moves": [
+  [
+   "mk_core/mk_string.c",
+   "mk_string_copy_substr",
+   "Unsafe",
+   "Unknown"
+  ],
+  [
+   "rdkafka_admin.c",
+   "rd_kafka_TopicDescription_partitions",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "rdkafka_admin.c",
+   "rd_kafka_TopicPartitionInfo_isr",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "rdkafka_admin.c",
+   "rd_kafka_TopicPartitionInfo_replicas",
+   "Unknown",
+   "Safe"
+  ]
+ ]
+}

@@ -65,6 +65,25 @@ mod call_argument_access;
 
 pub use descriptor_custody::ValidityFact;
 
+// Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
+// controlling expression into calls and branch edges. Every hook below that
+// names `condition_desugar` is consulted only where the position's existing
+// lowering is its refusal.
+#[path = "legacy_condition_desugar.rs"]
+mod condition_desugar;
+
+// Card W44-LEAK-PIN-AUDIT: the refused-escape rule, the cast return
+// (`RETURN-CAST-PLACE-NOT-ESCAPED`) and the leak-witness census.
+#[path = "legacy_refused_operands.rs"]
+pub(crate) mod refused_operands;
+
+#[path = "legacy_cast_return.rs"]
+pub(crate) mod cast_return;
+
+#[cfg(feature = "indirect-census")]
+#[path = "legacy_leak_witness.rs"]
+mod leak_witness;
+
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
 };
@@ -291,6 +310,13 @@ pub enum LegacyInstruction {
         /// and field-link maps are untouched. `None` for a read or a member
         /// store, which writes one scalar and nothing else.
         frame: Option<RefusedWrites>,
+        /// Card **W44-INDIRECT-CHAIN-ACCESS**: the record-pointer member
+        /// chains the statement or condition reads or writes through, each
+        /// with its per-link obligation
+        /// ([`crate::indirect_chain_access::chain_resolves`]). A dereferenced
+        /// chain root is also in `bases`. Empty for every access the
+        /// single-selection route admits.
+        chains: Vec<crate::indirect_chain_access::AccessChain>,
     },
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `BASE[INDEX] = CALL(...)`
     /// or `BASE[INDEX] = NULL`, where `BASE` is declared `T **BASE` and the
@@ -2295,10 +2321,14 @@ pub(crate) fn recursive_component_census(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
+    let definitions = names.clone();
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
+    let names =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
     // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
     // census must read the components the analysis reads, over the stream the
     // analysis reads.
@@ -2313,6 +2343,10 @@ pub(crate) struct PartialTranslationUnitAnalysis {
     /// Validated interprocedural custody summaries used at call sites.
     pub(crate) summaries: Vec<ResourceSummaryRecord>,
 }
+
+// Card W44-CORPUS-CALLEE-SUMMARIES: which definitions W4 derives summaries for.
+#[path = "legacy_callee_scope.rs"]
+pub(crate) mod callee_scope;
 
 fn analyze_legacy_c_translation_unit_selected_partial(
     source: &str,
@@ -2335,6 +2369,9 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
+    // selection narrows `names`, for the derivation scope below.
+    let definitions = names.clone();
     let requested_was_selected =
         selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
     if let Some(selected) = selected_functions {
@@ -2367,7 +2404,17 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // defining function `Unknown`, so keeping it is strictly more refusing.
     // The gate hands back the derivation it settled on, so a unit with no
     // contradiction derives exactly once, as before this card.
-    let gate = declared_modes::ModeGate::apply(&tokens, &names, contracts);
+    // Card W44-CORPUS-CALLEE-SUMMARIES census (feature-gated, verdict-neutral).
+    #[cfg(feature = "indirect-census")]
+    if selected_functions.is_some() {
+        callee_scope::census::record(&tokens, &names, &definitions, contracts);
+    }
+    // Card W44-CORPUS-CALLEE-SUMMARIES: W4 derives over the selection plus the
+    // unselected internal-linkage definitions it reaches (`callee_scope`); the
+    // rows analysed and reported below stay `names` alone.
+    let scope =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let gate = declared_modes::ModeGate::apply(&tokens, &scope, contracts);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
@@ -2615,6 +2662,7 @@ fn build_function_cfg_with(
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
+        desugar: condition_desugar::DesugarState::new(function),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -2911,7 +2959,18 @@ fn protected_resource_formals(
         let Some(equal) = statement.iter().position(|token| *token == "=") else {
             continue;
         };
-        let Some(destination) = direct_assignment_destination(&statement[..equal]) else {
+        // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: this closure is a
+        // flow-insensitive candidate inventory in which a larger set only
+        // protects more, so it keeps the pre-card suffix reader: a sub-object
+        // store `recs [ i ] . name = src` still relates `name` and `src`,
+        // over-approximating as it always did, and no name loses protection.
+        let left = &statement[..equal];
+        let destination = if left.first() == Some(&"*") {
+            direct_assignment_destination(left)
+        } else {
+            first_suffix_place(left).map(|(_, place)| place)
+        };
+        let Some(destination) = destination else {
             continue;
         };
         let Some(source) = canonical_place(&statement[equal + 1..]) else {
@@ -3667,6 +3726,9 @@ enum Statement {
         /// refused condition expresses, when its premises hold. Consulted only
         /// when the condition is otherwise refused.
         element_condition: Option<(String, crate::indexed_collection::IndexSpelling, bool)>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
@@ -3683,6 +3745,9 @@ enum Statement {
         condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     For {
@@ -3703,6 +3768,9 @@ enum Statement {
         condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
         body: Vec<Statement>,
     },
@@ -3725,6 +3793,9 @@ enum Statement {
         condition_is_literal_zero: bool,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     Switch {
@@ -3739,6 +3810,9 @@ enum Statement {
         /// existing lowering would have been the refusal.
         expression_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls of a
+        /// call-bearing switch expression every route above refused.
+        expression_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     Case {
@@ -3895,6 +3969,9 @@ struct Parser<'a> {
     /// argument rule admitted while it classifies one statement again. Empty
     /// otherwise, which makes every hook reading it the identity.
     argument_probe: call_argument_access::ArgumentProbe,
+    /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
+    /// unit call graph the condition desugaring reads lazily.
+    desugar: condition_desugar::DesugarState,
 }
 
 impl Parser<'_> {
@@ -4054,6 +4131,168 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         );
+        // Card W44-INDIRECT-CHAIN-ACCESS: the member-chain census.
+        crate::indirect_chain_census::record_condition(
+            &self.chain_census_context(),
+            line,
+            position,
+            contains_call(condition) || contains_braces(condition),
+            &texts,
+        );
+    }
+
+    /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: record one clause
+    /// whose left-hand side's first place-spelling suffix starts after index
+    /// 0. Compiled out with the feature off; it reads the instruction after it
+    /// was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_destination_suffix(
+        &self,
+        line: usize,
+        clause: &'static str,
+        tokens: &[Token],
+        texts: &[&str],
+        instruction: &LegacyInstruction,
+    ) {
+        use crate::destination_suffix_census as census;
+        if !census::collecting() {
+            return;
+        }
+        let Some((equal, start, place)) = census::strict_suffix(texts) else {
+            return;
+        };
+        let prefix = &texts[..start];
+        let declarator_prefix = is_declarator_prefix(prefix);
+        let (outcome, description) = match instruction {
+            LegacyInstruction::Unknown { description, .. } => {
+                ("Unknown".to_owned(), Some(description.clone()))
+            }
+            other => {
+                let debug = format!("{other:?}");
+                let name = debug
+                    .split(|character: char| !character.is_ascii_alphanumeric())
+                    .next()
+                    .unwrap_or_default()
+                    .to_owned();
+                (name, None)
+            }
+        };
+        let (named_root, forecast) = if declarator_prefix {
+            (None, None)
+        } else {
+            let root = census::place_root(&place).to_owned();
+            let body = find_function_body(self.tokens, &self.census_function).and_then(
+                |(body_start, _)| {
+                    matching(self.tokens, body_start, "{", "}")
+                        .map(|body_end| &self.tokens[body_start + 1..body_end])
+                },
+            );
+            let body_texts = body
+                .map(|body| {
+                    body.iter()
+                        .map(|token| (token.text.as_str(), token.line))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default();
+            let plain = body_texts.iter().map(|(text, _)| *text).collect::<Vec<_>>();
+            let kind = if self.formal_parameters.contains(&root) {
+                "formal"
+            } else if crate::publication::body_declarations(&plain)
+                .0
+                .contains(&root)
+            {
+                "local"
+            } else {
+                let unit = self
+                    .tokens
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
+                if crate::publication::file_scope_objects(&unit).contains(&root) {
+                    "file-scope"
+                } else {
+                    "undeclared"
+                }
+            };
+            let (later_mentions, later_call_argument) =
+                census::later_mentions(&body_texts, &root, line);
+            let contains_call = contains_call(tokens) || contains_braces(tokens);
+            let refusal = LegacyInstruction::Unknown {
+                description: "indirect memory access is outside the resource projection".into(),
+                writes: self.refused_writes(texts),
+            };
+            let forecast = census::Forecast {
+                contains_call,
+                scalar_field_noop: !contains_call
+                    && crate::typed_field_access::is_scalar_field_noop(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    ),
+                scalar_member_store: !contains_call
+                    && crate::typed_field_access::scalar_member_store_base(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    )
+                    .is_some(),
+                typed_scalar: !contains_call
+                    && crate::typed_field_access::typed_scalar_statement(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    )
+                    .is_some(),
+                chain: !contains_call
+                    && crate::indirect_chain_access::chain_statement(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                        &self.typed_bases,
+                    )
+                    .is_some(),
+                stepped: clause == "statement" && self.stepped_access(tokens, &refusal).is_some(),
+            };
+            (
+                Some(census::NamedRoot {
+                    root,
+                    kind,
+                    later_mentions,
+                    later_call_argument,
+                }),
+                Some(forecast),
+            )
+        };
+        census::record(census::SuffixRecord {
+            unit_seq: crate::indirect_census::unit_seq(),
+            function: self.census_function.clone(),
+            line,
+            clause,
+            texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+            equal,
+            start,
+            place,
+            prefix: prefix.iter().map(|text| (*text).to_owned()).collect(),
+            declarator_prefix,
+            admitted: !matches!(instruction, LegacyInstruction::Unknown { .. }),
+            outcome,
+            description,
+            named_root,
+            forecast,
+        });
+    }
+
+    /// Card **W44-INDIRECT-CHAIN-ACCESS**: the declaration facts the
+    /// member-chain census reads. Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn chain_census_context(&self) -> crate::indirect_chain_census::ChainContext<'_> {
+        crate::indirect_chain_census::ChainContext {
+            function: &self.census_function,
+            formal_parameters: &self.formal_parameters,
+            model: &self.typed_model,
+            types: &self.typed_types,
+            bases: &self.typed_bases,
+        }
     }
 
     /// Card **W43-INDEX-TRAVERSAL**: hand one already-classified statement or
@@ -4081,6 +4320,24 @@ impl Parser<'_> {
             }
             _ => None,
         };
+        // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: the destination-suffix
+        // census, for every clause whatever its outcome.
+        self.census_destination_suffix(line, clause, tokens, &texts, instruction);
+        // Card W44-INDIRECT-CHAIN-ACCESS: the member-chain census, for the
+        // refusals the typed route is consulted for and every other one.
+        if let Some(outcome) = &outcome {
+            let consulted = !matches!(instruction, LegacyInstruction::Unknown { .. })
+                || TYPED_SCALAR_CONSULTED.contains(&outcome.as_str());
+            crate::indirect_chain_census::record_statement(
+                &self.chain_census_context(),
+                line,
+                clause,
+                outcome.clone(),
+                consulted,
+                contains_call(tokens) || contains_braces(tokens),
+                &texts,
+            );
+        }
         let copy = match instruction {
             LegacyInstruction::Alias {
                 destination,
@@ -4342,11 +4599,21 @@ impl Parser<'_> {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        let plan = crate::typed_field_access::typed_scalar_condition(
+        let Some(plan) = crate::typed_field_access::typed_scalar_condition(
             &texts,
             &self.typed_model,
             &self.typed_types,
-        )?;
+        ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed read with
+            // record-pointer member chains as accesses.
+            let chained = crate::indirect_chain_access::chain_condition(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            )?;
+            return Some(Box::new(self.chain_access_instruction(chained, false)));
+        };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .record_bases
@@ -4356,6 +4623,7 @@ impl Parser<'_> {
             bases: plan.bases,
             destination: None,
             frame: None,
+            chains: Vec::new(),
         }))
     }
 
@@ -4616,6 +4884,19 @@ impl Parser<'_> {
                     #[cfg(feature = "indirect-census")]
                     self.census_element_condition(line, &condition, _base);
                 }
+                // Card W44-BRANCH-CONDITION-CALLS: asked only where every
+                // route above refused the condition.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::Branch,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && element_condition.is_none()
+                        && self.null_condition(&condition).is_none()
+                        && self.distinct_condition(&condition).is_none(),
+                );
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -4632,6 +4913,7 @@ impl Parser<'_> {
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     element_condition,
+                    condition_plan,
                     then_body,
                     else_body,
                 })
@@ -4657,6 +4939,16 @@ impl Parser<'_> {
                         && condition_call.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::Loop,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
@@ -4665,6 +4957,7 @@ impl Parser<'_> {
                     condition_call,
                     condition_access,
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     body,
                 })
             }
@@ -4710,6 +5003,16 @@ impl Parser<'_> {
                     &condition,
                     !condition_supported
                         && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::ForLoop,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
                 let body = self.parse_statement_body()?;
@@ -4758,6 +5061,7 @@ impl Parser<'_> {
                     condition_call,
                     condition_access,
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     increment,
                     body,
                 })
@@ -4792,6 +5096,17 @@ impl Parser<'_> {
                         && condition_call.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS. The body was parsed first,
+                // as C writes it; its sites precede the condition's.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::DoWhile,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
@@ -4800,6 +5115,7 @@ impl Parser<'_> {
                     condition_access,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     body,
                 })
             }
@@ -4822,6 +5138,15 @@ impl Parser<'_> {
                     &expression,
                     !expression_supported && expression_call.is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let expression_plan = self.planned_condition(
+                    line,
+                    &expression,
+                    condition_desugar::Position::Switch,
+                    !expression_supported
+                        && expression_call.is_none()
+                        && expression_access.is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
@@ -4829,6 +5154,7 @@ impl Parser<'_> {
                     expression_supported,
                     expression_call,
                     expression_access,
+                    expression_plan,
                     body,
                 })
             }
@@ -4891,6 +5217,28 @@ impl Parser<'_> {
             Some("return") => {
                 self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
+                let texts = expression
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
+                // Card W44-LEAK-PIN-AUDIT (`RETURN-CAST-PLACE-NOT-ESCAPED`): a
+                // carrier-preserving cast of one place is decided below as the
+                // return of that place, and a carrier-crossing one is refused;
+                // see `cast_return`.
+                let expression = match cast_return::classify(
+                    &texts,
+                    &self.descriptor_names,
+                    &self.typed_types,
+                ) {
+                    cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
+                    cast_return::CastReturn::Refuse => {
+                        return Ok(cast_return::refusal(
+                            line,
+                            self.expression_writes(&expression),
+                        ));
+                    }
+                    cast_return::CastReturn::PreCard => expression,
+                };
                 let texts = expression
                     .iter()
                     .map(|token| token.text.as_str())
@@ -5325,6 +5673,17 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed route with
+            // record-pointer member chains as accesses, in the same position
+            // and for the same refusals. See `crate::indirect_chain_access`.
+            if let Some(chained) = crate::indirect_chain_access::chain_statement(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            ) {
+                return self.chain_access_instruction(chained, true);
+            }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
             // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
             // position and for the same refusals, after the typed access route.
@@ -5363,6 +5722,32 @@ impl Parser<'_> {
             frame: plan
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: Vec::new(),
+        }
+    }
+
+    /// Card **W44-INDIRECT-CHAIN-ACCESS**: the typed access an admitted chain
+    /// statement or condition lowers to — card W43-INDIRECT-ACCESS-GENERAL's
+    /// instruction, built exactly as `classify_simple_unguarded` builds it,
+    /// with the chains' link obligations attached. `statement` selects the
+    /// write frame, which a condition never has.
+    fn chain_access_instruction(
+        &self,
+        chained: crate::indirect_chain_access::ChainPlan,
+        statement: bool,
+    ) -> LegacyInstruction {
+        let plan = chained.plan;
+        LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.bases,
+            destination: plan.destination,
+            frame: (statement && plan.writes_through_pointer)
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: chained.chains,
         }
     }
 
@@ -5427,6 +5812,7 @@ impl Parser<'_> {
             frame: plan
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: Vec::new(),
         }];
         sequence.extend(effects.into_iter().map(|effect| match effect {
             crate::index_traversal::TraversalEffect::Step(step) => LegacyInstruction::PointerStep {
@@ -6009,10 +6395,12 @@ impl Parser<'_> {
         // must never disappear into scalar NoOp or borrowed-call argument erasure.
         let unsupported_access = if let Some(equal) = assignment {
             let destination = direct_assignment_destination(&texts[..equal]);
+            // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a store into a
+            // sub-object the reader no longer names is refused here too.
             (admitted_store.is_none()
-                && destination.as_deref().is_some_and(|place| {
+                && (destination.as_deref().is_some_and(|place| {
                     place.contains('.') || place.contains('[') || place.contains("->")
-                }))
+                }) || names_a_sub_object(&texts[..equal])))
                 || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
         } else if declaration_like
             && texts
@@ -6080,11 +6468,12 @@ impl Parser<'_> {
                 // same locals it was computed from. Measurement only.
                 let position = if let Some(equal) = assignment {
                     if admitted_store.is_none()
-                        && direct_assignment_destination(&texts[..equal])
+                        && (direct_assignment_destination(&texts[..equal])
                             .as_deref()
                             .is_some_and(|place| {
                                 place.contains('.') || place.contains('[') || place.contains("->")
                             })
+                            || names_a_sub_object(&texts[..equal]))
                     {
                         crate::indirect_census::Position::AssignmentDestination
                     } else {
@@ -7140,6 +7529,21 @@ fn interior_extent(mut contract: ResourceFunctionContract) -> ResourceFunctionCo
     contract
 }
 
+/// The place an assignment's left-hand side `tokens` writes, when this
+/// importer can name it.
+///
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: a left-hand side not
+/// headed by `*` is named only when its first place-spelling suffix
+/// ([`first_suffix_place`]) **is** the whole left-hand side, or when the tokens
+/// before that suffix are a declaration's specifiers and declarator stars
+/// ([`is_declarator_prefix`]). Before the card the suffix was named wherever it
+/// started, so `recs [ i ] . name` was named `name`: the analyzer bound the
+/// stored identity to the local `name`, a different object, and certified a
+/// body that leaks one object and frees another. Such a left-hand side is a
+/// store into a sub-object; [`names_a_sub_object`] recognises it and the
+/// lexical indirect-access gate refuses it. Every left-hand side named before
+/// and still named is named identically
+/// (`QCore.AssignmentDestinationSuffix.the_repair_names_nothing_new`).
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
     if tokens.first() == Some(&"*") {
         // A single dereference of a plain identifier is the only indirect
@@ -7155,7 +7559,50 @@ fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
             _ => None,
         };
     }
-    (0..tokens.len()).find_map(|start| canonical_place(&tokens[start..]))
+    let (start, place) = first_suffix_place(tokens)?;
+    (start == 0 || is_declarator_prefix(&tokens[..start])).then_some(place)
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: whether a left-hand side
+/// ends with a place-spelling suffix that [`direct_assignment_destination`]
+/// does not name — a store into a sub-object (`recs [ i ] . name`,
+/// `( * p ) - > name`, `f ( ) - > name`) whose last member name the reader
+/// used to name. Such a store is refused by the lexical indirect-access gate
+/// exactly as a named `a.b`, `a[0]` or `p->f` destination is.
+fn names_a_sub_object(tokens: &[&str]) -> bool {
+    tokens.first() != Some(&"*")
+        && first_suffix_place(tokens).is_some()
+        && direct_assignment_destination(tokens).is_none()
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: the first suffix of a
+/// left-hand side that spells a place, with the index it starts at.
+///
+/// This is the reader [`direct_assignment_destination`] has always used for a
+/// left-hand side not headed by `*`. A suffix that starts after index 0 is the
+/// declared object of a declaration (`struct T * p`) **or** the last member
+/// name of a store into a sub-object (`recs [ i ] . name`), and only
+/// [`is_declarator_prefix`] tells the two apart.
+pub(crate) fn first_suffix_place(tokens: &[&str]) -> Option<(usize, String)> {
+    (0..tokens.len())
+        .find_map(|start| canonical_place(&tokens[start..]).map(|place| (start, place)))
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: whether `prefix`, the
+/// tokens of a left-hand side before the place it ends with, is a
+/// declaration's specifiers and declarator stars — so that the place is the
+/// object the statement declares and initializes.
+///
+/// Positive and fail-closed: a nonempty run of identifiers (type names,
+/// keywords, qualifiers, storage classes, a comma operand), `*` and `,` only.
+/// Every token that could select, subscript, call or dereference into another
+/// object (`.`, `-` `>`, `[` `]`, `(` `)`) is outside the set, so a prefix
+/// carrying one names a sub-object and never the suffix it ends with.
+pub(crate) fn is_declarator_prefix(prefix: &[&str]) -> bool {
+    !prefix.is_empty()
+        && prefix
+            .iter()
+            .all(|text| is_identifier(text) || matches!(*text, "*" | ","))
 }
 
 /// Whether `place` denotes a store through a pointer rather than a variable.
@@ -7348,11 +7795,17 @@ impl CfgBuilder {
                 null_condition,
                 distinct_condition,
                 element_condition,
+                condition_plan,
                 then_body,
                 else_body,
             } => {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
+                // Card W44-BRANCH-CONDITION-CALLS: present only where the arm
+                // below would have pushed the refusal.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_if(plan, *line, then_entry, else_entry);
+                }
                 let instruction = if let Some((base, index, true_is_null)) = element_condition {
                     // W43-INDEXED-RESOURCE-COLLECTIONS: the condition was
                     // refused (see its parse), so the fallback is exactly the
@@ -7406,8 +7859,13 @@ impl CfgBuilder {
                 condition_call,
                 condition_access,
                 null_condition,
+                condition_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_while(plan, *line, body, continuation);
+                }
                 let instruction = if let Some(condition) = null_condition {
                     condition.branch()
                 } else if let Some(call) = condition_call {
@@ -7446,9 +7904,22 @@ impl CfgBuilder {
                 condition_call,
                 condition_access,
                 null_condition,
+                condition_plan,
                 increment,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS. A counted loop requires a
+                // supported condition, so it never carries a plan.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_for(
+                        plan,
+                        *line,
+                        init.as_deref(),
+                        increment.as_deref(),
+                        body,
+                        continuation,
+                    );
+                }
                 let instruction = condition_call.as_ref().map_or_else(
                     || {
                         branch_instruction(
@@ -7511,8 +7982,14 @@ impl CfgBuilder {
                 condition_access,
                 condition_is_literal_zero,
                 null_condition,
+                condition_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS. A call-bearing condition is
+                // never the literal `0`, so the constant rule never applies.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_do_while(plan, *line, body, continuation);
+                }
                 let instruction = condition_call.as_ref().map_or_else(
                     || {
                         branch_instruction(
@@ -7558,8 +8035,13 @@ impl CfgBuilder {
                 expression_supported,
                 expression_call,
                 expression_access,
+                expression_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS.
+                if let Some(plan) = expression_plan {
+                    return self.compile_planned_switch(plan, *line, body, continuation);
+                }
                 self.break_targets.push(continuation);
                 self.switch_cases.push(SwitchTargets::default());
                 let _body_entry = self.compile_sequence(body, continuation);
@@ -9511,6 +9993,9 @@ pub(crate) fn analyze_cfg_with_entry(
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
+        // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
+        // on, read from the state it runs in (`refused_operands`).
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -9524,6 +10009,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // Recorded before the local diagnostics are merged, so the flag tracks
         // *this* node rather than anything reported elsewhere in the function.
         joined_provenance::finish_release(conditional_release, &mut output, &local);
+        refused_operands::apply(&mut output, &handed, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -9690,6 +10176,18 @@ pub(crate) fn analyze_cfg_with_entry(
         &context.collection_owners(),
         &mut diagnostics,
     );
+    // Card W44-LEAK-PIN-AUDIT: the leak-witness census (a measurement only).
+    #[cfg(feature = "indirect-census")]
+    leak_witness::record(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context,
+        &alias,
+        &joined,
+        entry_custody,
+        &diagnostics,
+    );
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -9706,6 +10204,8 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let mut ignored = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
+        // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -9716,6 +10216,7 @@ pub(crate) fn analyze_cfg_with_entry(
             &mut ignored,
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
+        refused_operands::apply(&mut output, &handed, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
         // this settled exit.
@@ -11003,6 +11504,7 @@ fn transfer_base(
         bases,
         destination,
         frame,
+        chains,
         ..
     } = &node.instruction
     {
@@ -11015,6 +11517,18 @@ fn transfer_base(
                     kind: LegacyDiagnosticKind::UnknownAlias {
                         variable: base.clone(),
                     },
+                });
+            }
+        }
+        // Card W44-INDIRECT-CHAIN-ACCESS: every pointer a member chain reads
+        // through keeps its own obligation; the decision is
+        // `indirect_chain_access::chain_resolves`, over this state read-only.
+        for chain in chains {
+            if let Err(variable) = crate::indirect_chain_access::chain_resolves(&state, chain) {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UnknownAlias { variable },
                 });
             }
         }
@@ -11725,6 +12239,32 @@ fn indirect_scalar_base_resolves(state: &AbstractState, base: &str) -> bool {
     !state.nullable_sites.contains(site)
         && !state.unresolved_effect_sites.contains(site)
         && state.resources.get(site) == Some(&LIVE)
+}
+
+/// Card **W44-INDIRECT-CHAIN-ACCESS**: the read-only view of one state the
+/// chain obligation decides on. It reads bindings, statuses, markers and field
+/// links and changes nothing.
+impl crate::indirect_chain_access::ChainView for AbstractState {
+    fn binding(&self, place: &str) -> Option<crate::indirect_chain_access::LinkBinding<'_>> {
+        self.pointers
+            .get(place)
+            .map(|pointer| crate::indirect_chain_access::LinkBinding {
+                targets: &pointer.targets,
+                unknown: pointer.unknown,
+                may_be_null: pointer.may_be_null,
+                identity: pointer.derivation.is_identity(),
+            })
+    }
+
+    fn exactly_live(&self, site: usize) -> bool {
+        !self.nullable_sites.contains(&site)
+            && !self.unresolved_effect_sites.contains(&site)
+            && self.resources.get(&site) == Some(&LIVE)
+    }
+
+    fn field_link(&self, owner: usize, field: &str) -> Option<&BTreeSet<usize>> {
+        self.field_links.get(&owner)?.get(field)
+    }
 }
 
 #[allow(clippy::too_many_arguments)]

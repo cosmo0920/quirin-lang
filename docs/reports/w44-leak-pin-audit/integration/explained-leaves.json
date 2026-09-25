@@ -1,0 +1,10 @@
+[
+ {
+  "function": "rd_kafka_snappy_java_uncompress",
+  "description_prefix": "live obligation acquired at snappy.c:1705",
+  "removal_optional": true,
+  "added_prefixes": ["live obligation acquired at snappy.c:1705"],
+  "status_kept": true,
+  "why": "The card withdrew this function's four leaks (exits snappy.c:1648, 1660, 1701, 1712) through the refused hand-on rule, and its only handing statement was the refused condition `if (unlikely(!outbuf))` at snappy.c:1706 (handoff-classification.json). On main, W44-BRANCH-CONDITION-CALLS desugars that condition: its null refinement already removed the 1712 leak (overlap), and snappy.c:1706 is no longer a refused statement, so the rule, which acts only where a refusal was reported, correctly does not act. The three remaining leaks are main's own, unchanged; the audit classifies them (c) path-insensitive correlation on the `pass` counter (LEAK-PATH-SCALAR-CORRELATION). The function keeps main's provisional Unsafe; not an upstream defect claim."
+ }
+]

@@ -838,7 +838,17 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 
-| [w44-indirect-call-argument-access](w44-indirect-call-argument-access/README.md) | W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in call actuals |
+| [w44-assignment-destination-suffix-place](w44-assignment-destination-suffix-place/README.md) | W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side |
+
+| [w44-branch-condition-calls](w44-branch-condition-calls/README.md) | W44-BRANCH-CONDITION-CALLS: calls in controlling expressions |
+
+| [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |
+
+| [w44-indirect-chain-access](w44-indirect-chain-access/README.md) | W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains |
+
+| [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on |
+
+| [w44-libc-residuals](w44-libc-residuals/README.md) | W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

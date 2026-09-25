@@ -31,7 +31,9 @@ module contract;
 //   four by card W43-LIBC-PRINTF-FAMILY once card W43-LIBC-RESULT-ALIAS had
 //   repaired the reader: see the section at the end of this module.]
 //   `vprintf`/`vsnprintf` take a `va_list` (`__builtin_va_list`), for which
-//   this vocabulary has no ABI spelling.
+//   this vocabulary has no ABI spelling. [Superseded for these two by card
+//   W44-LIBC-RESIDUALS, which added the `va_list` spelling: see the section at
+//   the end of this module.]
 //   `fopen`/`fclose` open and close a STREAM: a v1 owned/released pair would
 //   put `FILE *` custody in the one kind-less pointer class `malloc`/`free`
 //   use, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge.
@@ -127,7 +129,8 @@ contract {
 //   read: the census withdraws each with `abi-unreadable-declaration` in all
 //   168 units, so a declaration would decide nothing and only rename leaves
 //   (`LIBC-PRINTF-VA-LIST`). `dprintf` agrees everywhere, but no analysed unit
-//   calls it, so it is not declared.
+//   calls it, so it is not declared. [Superseded for `vsnprintf` and `vprintf`
+//   by card W44-LIBC-RESIDUALS: see the section at the end of this module.]
 
 extern fn printf(format: ptr<const, u8>) -> i32
 contract {
@@ -212,5 +215,57 @@ extern fn fileno(stream: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(stream);
+    ensures normal resource_return_none();
+};
+
+// ## The `va_list` members (card W44-LIBC-RESIDUALS)
+//
+// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes the
+// analysed units declare (`/usr/include/stdio.h`, glibc, x86-64, LP64):
+//
+//   extern int vsnprintf (char *__restrict __s, size_t __maxlen,
+//                         const char *__restrict __format, __gnuc_va_list __arg)
+//     __THROWNL __attribute__ ((__format__ (__printf__, 3, 0)));
+//   extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
+//
+// `__gnuc_va_list` is `typedef __builtin_va_list __gnuc_va_list;`. Since this
+// card the declared-ABI reader reads the builtin at a parameter as the
+// `va_list` spelling (contract spec §C04.1), which is not a pointer spelling,
+// so `resource_borrowed` is the only mode it can carry. The census agrees for
+// both in all 168 units that declare them.
+//
+// * `s`, `maxlen` and `format` read exactly as `snprintf`'s and `printf`'s
+//   above: the destination is written through and stays the caller's.
+// * `arg` is the caller's variable-argument list. The call reads the arguments
+//   it reaches and renders them as text; it frees none and retains no pointer
+//   to one, which is the tail premise `resource_variadic_data_tail()` states
+//   for the fixed-arity members, stated here for the list that carries them.
+//   The list object itself is used up (its value in the caller is indeterminate
+//   afterwards, C11 7.16p3); that is not custody, and nothing here says the
+//   caller may reuse it.
+//
+// `vfprintf` and `vsprintf` agree as well, but no analysed unit calls either,
+// so neither is declared.
+//
+// ## What no declaration here says
+//
+// Everything the printf section above lists, and nothing about `va_start`/
+// `va_end` pairing, which is the caller's and is not modelled.
+
+extern fn vsnprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>, arg: va_list) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(maxlen);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn vprintf(format: ptr<const, u8>, arg: va_list) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_borrowed(arg);
     ensures normal resource_return_none();
 };

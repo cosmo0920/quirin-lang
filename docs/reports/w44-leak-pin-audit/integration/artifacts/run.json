@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/gate-integrate-lpa/arbiter-run/monkey-source.json",
+    "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-hungry-thompson-1740da/4e877459-f647-4ada-9799-501505fa7da8/scratchpad/gate-integrate-lpa/arbiter-run/resource-diagnostics.json"
+  ],
+  "source_commit": "d227adc5544f35a30e4accba8f59d35dd19b424b",
+  "binary_sha256": "7942a2227c9ca0e90d4a48449bbece91365448b58f431d8acee83b1c0bcb23e9",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset"
+  },
+  "start": "2026-09-25T04:34:12.078008+00:00",
+  "exit": 0,
+  "end": "2026-09-25T04:43:22.934139+00:00"
+}

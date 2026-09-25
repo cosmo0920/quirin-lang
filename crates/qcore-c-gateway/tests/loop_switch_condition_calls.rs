@@ -167,18 +167,40 @@ fn every_loop_keeps_its_exit_successor_after_modeling_the_call() {
     }
 }
 
+/// Card W44-BRANCH-CONDITION-CALLS replaces the conditionally evaluated half of
+/// this pin, deliberately: `ready && r_release_code(p)` is now desugared, the
+/// release sitting on `ready`'s true edge (`legacy_condition_desugar.rs`). The
+/// replacement asserts what the refusal protected: the path that skips the
+/// release still leaks, and the back edge that re-evaluates it double-releases.
+/// The post-release access keeps its refusal.
 #[test]
-fn conditionally_evaluated_and_post_release_accesses_stay_refused() {
+fn conditionally_evaluated_calls_are_desugared_and_post_release_accesses_stay_refused() {
     if !clang_available() {
         return;
     }
-    for body in [
+    let desugared = run(
         "void subject(int ready) { void *p = q_alloc(); while (ready && r_release_code(p)) { } }",
+    );
+    assert!(
+        !desugared.unsupported().contains(&LOOP.to_owned()),
+        "{desugared:?}"
+    );
+    assert_eq!(desugared.status, AnalysisStatus::Unsafe, "{desugared:?}");
+    assert!(
+        desugared
+            .diagnostics
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        "{desugared:?}"
+    );
+    assert!(desugared.double_releases() > 0, "{desugared:?}");
+    let refused = run(
         "struct cell { int value; }; void subject(struct cell *p) { while (r_release_code(p) + p->value) { } }",
-    ] {
-        let run = run(body);
-        assert!(run.unsupported().contains(&LOOP.to_owned()), "{run:?}");
-    }
+    );
+    assert!(
+        refused.unsupported().contains(&LOOP.to_owned()),
+        "{refused:?}"
+    );
 }
 
 #[test]

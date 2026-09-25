@@ -1,0 +1,13 @@
+{
+  "note": "W44-INDIRECT-CHAIN-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured at 6e0bced6 with CARGO_INCREMENTAL=0; later commits change documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration. 5420 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds 12 module tests and the 14-test indirect_chain_access binary, and four new tests where six existing pins moved deliberately); 178 Lean audits (1 added: AuditIndirectChainAccess); census step: clippy -p qcore-c-gateway --features indirect-census clean and 462 feature-on library tests passed; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pbuild': 0, 'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ppython': 0, 'ptest': 0, 'pverify': 0}. A first core gate run (private/gate) failed to compile alias_aggregate_probe and is not evidence. Logs: worktree-private private/gate2 and private/provider-gate. Clang recorded in this checkout. Corpus: 0 function and 0 unit moves, leak 271 unchanged, 0 violation candidates.",
+  "workspace_tests": 5420,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 178,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

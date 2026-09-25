@@ -50,7 +50,7 @@ import QCore.NativeLibraryHeader
 -- §C04.1 spellings a manifest entry cannot write; collapsing them into
 -- "unreadable" would report a vocabulary gap as a reader gap, and the two have
 -- different follow-ons.
-#print axioms QCore.NativeLibraryHeader.the_manifest_vocabulary_excludes_exactly_three_spellings
+#print axioms QCore.NativeLibraryHeader.the_manifest_vocabulary_excludes_exactly_the_unspellable_spellings
 #print axioms QCore.NativeLibraryHeader.an_unspellable_position_never_agrees
 #print axioms QCore.NativeLibraryHeader.unreadable_and_unspellable_are_different_refusals
 

@@ -78,9 +78,14 @@ import QCore.SymbolicClassAdmission
 import QCore.DeclaredAbiAgreement
 import QCore.TypedefProjection
 import QCore.PointerQualifierReader
+import QCore.GnuBuiltinReader
+import QCore.LiteralTailActual
 import QCore.DerivedResult
 import QCore.DerivedResultInference
+import QCore.CalleeSummaryScope
 import QCore.KindedCustody
+import QCore.CastReturnEscape
+import QCore.RefusedHandOnCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow
@@ -150,6 +155,8 @@ import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.CallArgumentAccess
+import QCore.IndirectChainAccess
+import QCore.AssignmentDestinationSuffix
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress
@@ -188,6 +195,7 @@ import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
 import QCore.LoopSwitchCallEvaluation
+import QCore.ConditionCallDesugar
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat

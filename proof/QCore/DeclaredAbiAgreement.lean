@@ -56,7 +56,13 @@ namespace QCore.DeclaredAbiAgreement
 deliberately not one of the three pointer spellings: the loader's custody gates
 key on the leading word `ptr`, so keeping it apart is what makes every custody
 mode on a function pointer a load-time rejection. `QCore.TypedefProjection`
-proves that half. -/
+proves that half.
+
+`vaList` (`VA_LIST_ABI_TYPE`, spelled `va_list`) was added by card
+**W44-LIBC-RESIDUALS**: the projection of the compiler's `__builtin_va_list` at
+a parameter. It is kept apart from the pointer spellings for the same reason
+`fnptr` is, and it is a parameter type only. `QCore.GnuBuiltinReader` proves
+both halves. -/
 inductive AbiType where
   | unit
   | bool
@@ -64,6 +70,7 @@ inductive AbiType where
   | f32 | f64
   | ptrMut | ptrConst | ptrMutMut
   | fnptr
+  | vaList
   deriving DecidableEq, BEq, Repr
 
 /-- The C side of one type position, projected into that vocabulary.

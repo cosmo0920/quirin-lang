@@ -406,66 +406,64 @@ fn a_misnamed_destination_keeps_the_refusal() {
     );
 }
 
-/// `W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE`, measured at the base and not
-/// repaired by this card: with an actual no rule refuses, the classifier
-/// names `recs[i].name`'s destination `name` and certifies a body whose
-/// `x_free(name)` releases a different object. Pinned so the repair is a
-/// deliberate re-pin.
+/// `W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE`, found by this card and repaired
+/// on main by that card (gateway constraint 5i): `recs[i].name` is a store
+/// into a sub-object, refused at the lexical gate, and no longer binds the
+/// local `name`. Re-pinned from `Safe` at the merge of main `70ce6b44`, to the
+/// answer main's `a_member_store_no_longer_binds_the_same_named_local` pins.
 #[test]
 fn the_pre_existing_suffix_destination_hole_is_pinned() {
     expect(
-        "`recs[i].name = x_dup(s)` binds the local `name`",
+        "`recs[i].name = x_dup(s)` no longer binds the local `name`",
         "void w(const char *s, int i) { struct x_rec recs[4]; char *name = 0; \
          recs[i].name = x_dup(s); x_free(name); }",
-        "Safe",
-        &[],
+        "Unknown",
+        &[GATE, "unknown_alias:name"],
     );
 }
 
 // -- The pre-existing leak semantics the AFTER run exposed ---------------------
 //
 // `W44-CALL-ARGUMENT-EXPOSED-LEAKS`: the corpus leaves the call argument rule
-// exposed come from three leak semantics the base already has. Each is pinned
-// here on a body with **no** call-argument access, so none of them is this
-// card's rule; a card that models these escapes re-pins them.
+// exposed on its base came from three leak semantics that base already had,
+// each pinned here on a body with **no** call-argument access. W44-LEAK-PIN-AUDIT's
+// refused hand-on rule (on main, `legacy_refused_operands.rs`) withdraws all
+// three: a live site handed on by a refused statement carries an unresolved
+// effect and no leak is claimed. Re-pinned at the merge of main `70ce6b44`
+// from `Unsafe` + `leak` to `Unknown` with the refusal kept; main's own
+// fixtures are `tests/exposed_leak_mechanisms.rs`.
 
 #[test]
-fn an_unsanctioned_out_slot_store_is_reported_as_a_leak_at_the_base() {
+fn an_unsanctioned_out_slot_store_is_withdrawn_by_the_hand_on_rule() {
     expect(
         "`*out = p` with no out-parameter contract keeps `p` owed",
         "int w(char **out, unsigned long n) { char *p = x_alloc(n); if (!p) return -1; \
          *out = p; return 0; }",
-        "Unsafe",
-        &[
-            "leak",
-            "unsupported:store through `*out` without an out-parameter contract",
-        ],
+        "Unknown",
+        &["unsupported:store through `*out` without an out-parameter contract"],
     );
 }
 
 #[test]
-fn a_release_through_an_uncontracted_helper_is_reported_as_a_leak_at_the_base() {
+fn a_release_through_an_uncontracted_helper_is_withdrawn_by_the_hand_on_rule() {
     expect(
         "`y_release(p)` is refused and discharges nothing",
         "void w(unsigned long n) { char *p = x_alloc(n); if (!p) return; y_release(p); }",
-        "Unsafe",
-        &[
-            "leak",
-            "unsupported:call to uncontracted function `y_release`",
-        ],
+        "Unknown",
+        &["unsupported:call to uncontracted function `y_release`"],
     );
 }
 
 #[test]
-fn an_object_linked_into_a_returned_owner_is_reported_as_a_leak_at_the_base() {
+fn an_object_linked_into_a_returned_owner_is_withdrawn_by_the_hand_on_rule() {
     expect(
         "`b->name = ub; return b;` with a subscripted fill in between",
         "struct x_rec *w(char *bk, unsigned long n) { unsigned long i; char *ub; \
          struct x_rec *b; ub = x_alloc(n); if (!ub) return 0; b = x_record(); \
          b->name = ub; for (i = 0; i < n; i++) { ub[i] = bk[i]; } return b; }",
-        "Unsafe",
+        "Unknown",
         &[
-            "leak",
+            "unknown_alias:ub",
             "unsupported:indirect memory access is outside the resource projection",
         ],
     );

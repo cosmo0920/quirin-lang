@@ -1,0 +1,9 @@
+{
+ "exit": 0,
+ "files": {
+  "cycle19-resource-contracts.json": "801afee7e39da835c0ae4d8c2def301cd55fa3795c3f5b8fbd909104c93d9151",
+  "providers/quirin-provider-libc/contracts/libc/errno.qcore": "a62bdc4cfbfa84d76580ec0f95776aa677a702bef91f4d9002454571e2abe233",
+  "providers/quirin-provider-libc/contracts/libc/stdio.qcore": "4d2b9b46374f9f48cf792e3d30d3cfd48a30e78f3face7e3994da2a50916b327"
+ },
+ "unchanged_during_run": true
+}

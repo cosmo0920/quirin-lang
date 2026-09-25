@@ -1008,6 +1008,23 @@ made**: an index or offset is never evaluated beyond whether a step is a
 positive literal, and the published scope string says so. See
 [the implementation record](reports/w43-index-traversal/README.md).
 
+Both typed routes also admit a **member chain** of two to four selections,
+`r->l1->…->f`, `(*r).l1->…->f` or `s.l1->…->f`, as an access, where every
+member selected and then dereferenced is declared exactly `struct T *` over a
+complete, unambiguous, non-union record and the final member is scalar. A
+pointer-valued final member, a nested aggregate sub-object, a subscript and a
+`void *` or other pointer link are not admitted by this route. Every pointer
+the chain reads through keeps an obligation. The root MUST be a name the body
+never binds whose binding is absent or non-null with no tracked target, or
+exactly one known, non-null, live identity. A link of an object no reaching
+path bound is itself untracked. A link of a tracked object MUST be the member
+place an admitted aggregate store bound either to one live identity equal to
+the field link it recorded, or to no target with no field link; a tracked
+object deeper than the first link, and every other link, refuses. The chain
+changes no binding, and its property is the typed access's: custody only, with
+the nullness and liveness of an untracked object outside it. See
+[the implementation record](reports/w44-indirect-chain-access/README.md).
+
 An indexed resource collection is a heap array a body acquired, declared
 `T **v`, whose elements hold owned resources. Its element obligations are a
 partition of the index line into half-open segments `[lo, hi)` over symbolic
@@ -1068,6 +1085,25 @@ calls, deeper nesting and other shapes outside these additional rules retain
 Unknown unless an existing independently justified rule already models them.
 See the [exact boundaries and measured reach](reports/b-series-integration/README.md)
 and [gateway constraints 5d–5f](agents/gateway.md#constraint-5d).
+
+A call-bearing controlling expression that every rule above refused is
+**desugared** when each of its calls is modeled. It is read as a Boolean tree
+over `&&`, `||`, `!` and a top-level `?:` (`__builtin_expect(E, K)` with a
+literal `K` read as `E`). Every call of an operand is lowered, in C evaluation
+order, to the ordinary statement classifier's contracted call with a
+resource-free result (none, or derived); each operand then decides through one
+branch — a neutral residual, or for a call-free operand the existing null,
+validity, distinct or typed-read test; and the connectives are edges, so a
+later operand's calls are applied exactly on the paths where C evaluates them.
+One `(NAME = CALL(...))` per operand into a declared scalar or single-level
+pointer local that is no formal and no descriptor is the statement followed by
+the test of `NAME`. An uncontracted or refused call, a custody result
+(owned, reallocated or descriptor), a local callee in the function's own
+recursive component, two effectful calls of one operand, a type operator,
+braces, an increment, a call through an expression, or an operand no rule
+decides MUST keep the position's refusal byte for byte, including its site
+numbering. See [the implementation record](reports/w44-branch-condition-calls/README.md)
+and [gateway constraint 5h](agents/gateway.md#constraint-5h).
 
 External resource declarations are assumptions. W4 may infer an internal summary, but a candidate is published only after body re-analysis validates its entry assumptions, every modeled exit, formal disposition, result custody, and absence of unmodeled escape. The certificate checker re-derives summaries instead of trusting serialized labels.
 

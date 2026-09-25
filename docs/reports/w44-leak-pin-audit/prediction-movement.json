@@ -1,0 +1,141 @@
+{
+ "leaves_withdrawn": 31,
+ "functions_unsafe_to_unknown": [
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_counter_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_exp_histogram_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_gauge_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_histogram_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_summary_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_untyped_instance",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_resource",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_scope",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_metric_to_timeseries",
+   "leaks": 1
+  },
+  {
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_to_explicit",
+   "leaks": 2
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "metric_index_resize",
+   "leaks": 1
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "leaks": 2
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_status",
+   "leaks": 1
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata_write",
+   "leaks": 1
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "leaks": 2
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafka_handle_OffsetFetch",
+   "leaks": 1
+  },
+  {
+   "unit": "rdkafka_zstd.c",
+   "function": "rd_kafka_zstd_decompress",
+   "leaks": 1
+  },
+  {
+   "unit": "cio_file.c",
+   "function": "cio_file_content_copy",
+   "leaks": 1
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_direct_routes",
+   "leaks": 1
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "input_chunk_collect_output_references",
+   "leaks": 1
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_copy_substr",
+   "leaks": 1
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "mk_http_parser_chunked_decode",
+   "leaks": 1
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_api_init",
+   "leaks": 1
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_init",
+   "leaks": 1
+  }
+ ],
+ "units_unsafe_to_unknown": [
+  "ctr_encode_opentelemetry.c",
+  "rdkafka_cgrp.c",
+  "rdkafka_conf.c",
+  "rdkafka_request.c",
+  "rdkafka_zstd.c",
+  "cio_file.c",
+  "mk_core/mk_string.c",
+  "mk_server/mk_http_parser.c",
+  "mk_server/mk_plugin.c"
+ ]
+}

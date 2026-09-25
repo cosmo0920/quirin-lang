@@ -676,6 +676,11 @@ impl Parser<'_> {
                 bases,
                 destination: None,
                 frame: None,
+                // W44-INDIRECT-CHAIN-ACCESS composition: this recogniser
+                // refuses every member chain (and `typed_scalar_value` uses
+                // the unextended walker), so no admitted actual carries a
+                // chain whose link obligations would be dropped here.
+                chains: Vec::new(),
             });
         }
         if !names.is_empty() || !pointer_bases.is_empty() || !pointer_places.is_empty() {
@@ -813,17 +818,24 @@ impl Parser<'_> {
 /// Whether the destination the classifier named for this statement is exactly
 /// its left-hand side.
 ///
-/// `direct_assignment_destination` names the *first suffix* of the left-hand
-/// side that spells a place, so `result [ index ] . label = CALL ( … )` is
-/// named `label`. Before this card such a statement was refused whenever an
-/// actual read memory; admitting the actual must not also admit a destination
-/// the classifier misnamed (measured: `flb_input_chunk_get_direct_routes`).
+/// On this card's base, `direct_assignment_destination` named the *first
+/// suffix* of the left-hand side that spells a place, so
+/// `result [ index ] . label = CALL ( … )` was named `label`; admitting the
+/// actual must not also admit a destination the classifier misnamed (measured:
+/// `flb_input_chunk_get_direct_routes`). Card
+/// W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE (gateway constraint 5i) repaired the
+/// naming itself: a sub-object store is now refused at the lexical gate before
+/// a call is ever classified, so on the combined tree this check is
+/// **redundant** — measured: the corpus run with it disabled is byte-identical.
+/// It is kept as this route's own statement of the premise it relies on, so the
+/// admission does not rest silently on another module's invariant; it can only
+/// refuse.
+///
 /// The accepted left-hand sides are those with no memory access at all (a
 /// plain name or a declaration), `* name` (the out-slot place `*name`, which
 /// transfer sanctions or refuses), and one whose whole spelling is the named
 /// place (the admitted aggregate store `p->f`). Everything else keeps the
-/// refusal. `W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE` records the classifier's
-/// own naming.
+/// refusal.
 fn destination_is_exact(texts: &[&str], destination: Option<&str>) -> bool {
     let Some(destination) = destination else {
         return true;

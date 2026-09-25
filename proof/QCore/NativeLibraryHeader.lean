@@ -60,15 +60,21 @@ open QCore.NativeLibrary (HeaderIdentity)
 
 The manifest's ABI table is `qcore_core::extern_call::AbiType`, which §C04.1's
 `fnptr`, `f32` and `f64` are **not** in. A header type that projects to one of
-those is *read*; what is missing is a manifest spelling for it. -/
+those is *read*; what is missing is a manifest spelling for it.
+
+Card W44-LIBC-RESIDUALS added `va_list` to §C04.1's parameter vocabulary. The
+manifest table has no spelling for it either, so it is the fourth entry here.
+(This header reader has no builtin arm and never produces it; the entry keeps
+the model's vocabulary equal to the Rust table rather than calling `va_list`
+spellable by default.) -/
 def manifestSpellable : AbiType → Bool
-  | .f32 | .f64 | .fnptr => false
+  | .f32 | .f64 | .fnptr | .vaList => false
   | _ => true
 
-/-- The three spellings §C04.1 has and a manifest entry does not. -/
-def unspellableSpellings : List AbiType := [.f32, .f64, .fnptr]
+/-- The four spellings §C04.1 has and a manifest entry does not. -/
+def unspellableSpellings : List AbiType := [.f32, .f64, .fnptr, .vaList]
 
-theorem the_manifest_vocabulary_excludes_exactly_three_spellings (t : AbiType) :
+theorem the_manifest_vocabulary_excludes_exactly_the_unspellable_spellings (t : AbiType) :
     manifestSpellable t = false ↔ t ∈ unspellableSpellings := by
   cases t <;> simp [manifestSpellable, unspellableSpellings]
 

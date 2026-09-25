@@ -1,0 +1,695 @@
+{
+ "leaf_totals": {
+  "before": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4358,
+   "unsupported": 45848
+  },
+  "after": {
+   "leak": 240,
+   "summary_conflict": 1,
+   "unknown_alias": 4359,
+   "unsupported": 45844
+  }
+ },
+ "removed_by_category": {
+  "leak": 31,
+  "unsupported": 4
+ },
+ "added_by_category": {
+  "unknown_alias": 1
+ },
+ "removed_leaks_by_mechanism": {
+  "b:cast-return": 1,
+  "b:refused-escape": 30
+ },
+ "collateral_leak_removals": [],
+ "functions": {
+  "before": {
+   "Safe": 294,
+   "Unknown": 4455,
+   "Unsafe": 85
+  },
+  "after": {
+   "Safe": 297,
+   "Unknown": 4477,
+   "Unsafe": 60
+  }
+ },
+ "units": {
+  "before": {
+   "Safe": 3,
+   "Unknown": 135,
+   "Unsafe": 43,
+   "data_only": 4
+  },
+  "after": {
+   "Safe": 3,
+   "Unknown": 144,
+   "Unsafe": 34,
+   "data_only": 4
+  }
+ },
+ "function_moves": [
+  {
+   "unit": "cio_file.c",
+   "function": "cio_file_content_copy",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_counter_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_exp_histogram_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_gauge_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_histogram_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_summary_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_untyped_instance",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_resource",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_scope",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_metric_to_timeseries",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_to_explicit",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "metric_index_resize",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_status",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_direct_routes",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "input_chunk_collect_output_references",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_copy_substr",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "mk_http_parser_chunked_decode",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_api_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_partitions",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_isr",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_replicas",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata_write",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafka_handle_OffsetFetch",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_zstd.c",
+   "function": "rd_kafka_zstd_decompress",
+   "before": "Unsafe",
+   "after": "Unknown"
+  }
+ ],
+ "unit_moves": [
+  {
+   "unit": "cio_file.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_zstd.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  }
+ ],
+ "rows": [
+  {
+   "direction": "removed",
+   "unit": "cio_file.c",
+   "function": "cio_file_content_copy",
+   "category": "leak",
+   "line": 3196,
+   "origin": "cio_file.c:557",
+   "description": "live obligation acquired at cio_file.c:539",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_counter_instance",
+   "category": "leak",
+   "line": 7069,
+   "origin": "cmt_decode_msgpack.c:56",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:46",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_exp_histogram_instance",
+   "category": "leak",
+   "line": 7139,
+   "origin": "cmt_decode_msgpack.c:160",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:151",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_gauge_instance",
+   "category": "leak",
+   "line": 7083,
+   "origin": "cmt_decode_msgpack.c:77",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:67",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_histogram_instance",
+   "category": "leak",
+   "line": 7125,
+   "origin": "cmt_decode_msgpack.c:140",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:130",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_summary_instance",
+   "category": "leak",
+   "line": 7111,
+   "origin": "cmt_decode_msgpack.c:119",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:109",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_untyped_instance",
+   "category": "leak",
+   "line": 7097,
+   "origin": "cmt_decode_msgpack.c:98",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:88",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric",
+   "category": "leak",
+   "line": 8015,
+   "origin": "cmt_decode_msgpack.c:1298",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:1230",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_resource",
+   "category": "leak",
+   "line": 6597,
+   "origin": "cmt_encode_opentelemetry_batch.c:202",
+   "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:170",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "batch_add_scope",
+   "category": "leak",
+   "line": 6639,
+   "origin": "cmt_encode_opentelemetry_batch.c:253",
+   "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:224",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_metric_to_timeseries",
+   "category": "leak",
+   "line": 6977,
+   "origin": "cmt_encode_prometheus_remote_write.c:704",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:687",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_to_explicit",
+   "category": "leak",
+   "line": 6006,
+   "origin": "cmt_exp_histogram.c:345",
+   "description": "live obligation acquired at cmt_exp_histogram.c:265",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_to_explicit",
+   "category": "leak",
+   "line": 6006,
+   "origin": "cmt_exp_histogram.c:345",
+   "description": "live obligation acquired at cmt_exp_histogram.c:271",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_map.c",
+   "function": "metric_index_resize",
+   "category": "leak",
+   "line": 5532,
+   "origin": "cmt_map.c:83",
+   "description": "live obligation acquired at cmt_map.c:63",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at ctr_encode_opentelemetry.c:778",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at ctr_encode_opentelemetry.c:785",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_status",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at ctr_encode_opentelemetry.c:752",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_direct_routes",
+   "category": "leak",
+   "line": 19544,
+   "origin": "flb_input_chunk.c:2480",
+   "description": "live obligation acquired at flb_input_chunk.c:2267",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "flb_input_chunk.c",
+   "function": "input_chunk_collect_output_references",
+   "category": "leak",
+   "line": 18713,
+   "origin": "flb_input_chunk.c:1451",
+   "description": "live obligation acquired at flb_input_chunk.c:1401",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_copy_substr",
+   "category": "leak",
+   "line": 2453,
+   "origin": "mk_core/mk_string.c:665",
+   "description": "live obligation acquired at mk_core/mk_string.c:655",
+   "count": 1,
+   "class": "b",
+   "mechanism": "cast-return"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "mk_http_parser_chunked_decode",
+   "category": "leak",
+   "line": 5946,
+   "origin": "mk_server/mk_http_parser.c:761",
+   "description": "live obligation acquired at mk_server/mk_http_parser.c:745",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_api_init",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_plugin.c:281",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_add_connection",
+   "category": "leak",
+   "line": 6576,
+   "origin": "mk_server/mk_scheduler.c:210",
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:201",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_init",
+   "category": "leak",
+   "line": 6732,
+   "origin": "mk_server/mk_scheduler.c:501",
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:474",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "category": "leak",
+   "line": 6318,
+   "origin": "mk_server/mk_server.c:253",
+   "description": "live obligation acquired at mk_server/mk_server.c:205",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "category": "leak",
+   "line": 6324,
+   "origin": "mk_server/mk_server.c:261",
+   "description": "live obligation acquired at mk_server/mk_server.c:205",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_partitions",
+   "category": "unsupported",
+   "line": 26090,
+   "origin": "rdkafka_admin.c:9112",
+   "description": "unmodeled call, aggregate or indirect access in return expression",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_isr",
+   "category": "unsupported",
+   "line": 26078,
+   "origin": "rdkafka_admin.c:9098",
+   "description": "unmodeled call, aggregate or indirect access in return expression",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_replicas",
+   "category": "unsupported",
+   "line": 26084,
+   "origin": "rdkafka_admin.c:9105",
+   "description": "unmodeled call, aggregate or indirect access in return expression",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata_write",
+   "category": "leak",
+   "line": 24667,
+   "origin": "rdkafka_cgrp.c:7890",
+   "description": "live obligation acquired at rdkafka_cgrp.c:7862",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "category": "leak",
+   "line": 25305,
+   "origin": "rdkafka_conf.c:3488",
+   "description": "live obligation acquired at rdkafka_conf.c:3469",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "category": "leak",
+   "line": 25305,
+   "origin": "rdkafka_conf.c:3488",
+   "description": "live obligation acquired at rdkafka_conf.c:3478",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "category": "unsupported",
+   "line": 25305,
+   "origin": "rdkafka_conf.c:3488",
+   "description": "unmodeled call, aggregate or indirect access in return expression",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafka_handle_OffsetFetch",
+   "category": "leak",
+   "line": 21228,
+   "origin": "rdkafka_request.c:1383",
+   "description": "live obligation acquired at rdkafka_request.c:1335",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_zstd.c",
+   "function": "rd_kafka_zstd_decompress",
+   "category": "leak",
+   "line": 19832,
+   "origin": "rdkafka_zstd.c:86",
+   "description": "live obligation acquired at rdkafka_zstd.c:70",
+   "count": 1,
+   "class": "b",
+   "mechanism": "refused-escape"
+  },
+  {
+   "direction": "added",
+   "unit": "rdbuf.c",
+   "function": "rd_buf_get_segment_at_offset",
+   "category": "unknown_alias",
+   "line": 3482,
+   "origin": "rdbuf.c:230",
+   "description": "unresolved resource identity `seg`",
+   "count": 1
+  }
+ ]
+}

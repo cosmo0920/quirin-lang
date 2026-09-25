@@ -1,0 +1,10 @@
+{
+ "before": 302,
+ "after": 299,
+ "left": {
+  "librdkafka/rdunittest_msgset_errors.c::ut_put_be16": "__bswap_16",
+  "librdkafka/rdunittest_msgset_errors.c::ut_put_be32": "__bswap_32",
+  "librdkafka/rdunittest_msgset_errors.c::ut_put_be64": "__bswap_64"
+ },
+ "entered": {}
+}

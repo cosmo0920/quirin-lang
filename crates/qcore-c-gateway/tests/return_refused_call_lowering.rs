@@ -265,8 +265,8 @@ fn an_owned_resource_handed_to_an_uncontracted_call_is_not_escaped() {
     }
     // The discharging direction invariant 1 forbids: were the lowering to
     // escape `p` through the call's result, the live obligation would vanish
-    // and the body could certify. It is accused exactly as the return
-    // refusal accused it (the cast spelling keeps that refusal), and the
+    // and the body could certify. It is decided exactly as the return
+    // refusal decides it (the cast spelling keeps that refusal), and the
     // function stays non-`Safe` with the call's refusal.
     let lowered = lowering_agrees(
         "int subject(void) { void *p = q_alloc(); return z_take(p); }",
@@ -277,7 +277,12 @@ fn an_owned_resource_handed_to_an_uncontracted_call_is_not_escaped() {
         lowered.leaks(),
         old_answer_leaks("int subject(void) { void *p = q_alloc(); return (int) z_take(p); }")
     );
-    assert_eq!(lowered.leaks(), 1, "{lowered:?}");
+    // It was accused (1 leak) until card W44-LEAK-PIN-AUDIT: the refused call
+    // hands `p` to `z_take`, so the refused hand-on rule withdraws the
+    // accusation on both spellings. The obligation is still never discharged:
+    // the body does not certify.
+    assert_eq!(lowered.leaks(), 0, "{lowered:?}");
+    assert!(!lowered.certified, "{lowered:?}");
 }
 
 #[test]

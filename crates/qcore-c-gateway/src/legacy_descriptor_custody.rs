@@ -297,7 +297,9 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::ScalarMemberStore { .. }
         // Card W43-INDIRECT-ACCESS-GENERAL's typed scalar store or read
         // through `*B`, `B[I]`, `B->F` or `S.F`: its value is custody-neutral
-        // data by construction, which a tracked descriptor is not.
+        // data by construction, which a tracked descriptor is not. Card
+        // W44-INDIRECT-CHAIN-ACCESS adds no variant: its member chains ride
+        // on this one (`chains`), and are refused here by the same decision.
         | LegacyInstruction::IndirectScalarAccess { .. }
         // Card W43-INDEX-TRAVERSAL's pointer step (`P++`, `P += E`,
         // `P = Q ± E`): it derives a pointer and never states what a tracked
@@ -656,5 +658,21 @@ mod tests {
         assert_eq!(reads("int g , fd"), None);
         assert_eq!(reads("ssize_t fd"), None);
         assert_eq!(reads("int a [ fd ]"), Some("fd".to_owned()));
+    }
+
+    /// Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: the destination reader
+    /// used to name `conns [ fd ] . flags` as `flags`, which this guard read as
+    /// a plain-name write, so the index read of `fd` went unseen. A member
+    /// store's last name is not a written variable.
+    #[test]
+    fn an_index_read_under_a_member_store_is_a_read() {
+        let set = names(&["fd"]);
+        let reads = |source: &str| {
+            let texts = source.split_whitespace().collect::<Vec<_>>();
+            statement_reads_descriptor(&texts, &set).map(str::to_owned)
+        };
+        assert_eq!(reads("conns [ fd ] . flags = 0"), Some("fd".to_owned()));
+        assert_eq!(reads("( * fds ) . fd = 0"), None);
+        assert_eq!(reads("struct k_conn * fd = 0"), None);
     }
 }

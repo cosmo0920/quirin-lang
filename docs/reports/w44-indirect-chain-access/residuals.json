@@ -1,0 +1,102 @@
+{
+ "W44-CHAIN-NESTED-AGGREGATE": {
+  "leaves": 1287,
+  "functions": 517,
+  "sole": 35,
+  "statement_leaves": 776,
+  "condition_leaves": 511,
+  "by_reader": {
+   "dot-link": 1287
+  }
+ },
+ "W44-CHAIN-TYPEDEF-ROOT": {
+  "leaves": 580,
+  "functions": 300,
+  "sole": 17,
+  "statement_leaves": 482,
+  "condition_leaves": 98,
+  "by_reader": {
+   "root-untyped": 580
+  }
+ },
+ "W44-CHAIN-UNDECLARED-ROOT": {
+  "leaves": 396,
+  "functions": 122,
+  "sole": 4,
+  "statement_leaves": 272,
+  "condition_leaves": 124,
+  "by_reader": {
+   "root-undeclared": 396
+  }
+ },
+ "W44-CHAIN-SUBSCRIPT": {
+  "leaves": 296,
+  "functions": 136,
+  "sole": 6,
+  "statement_leaves": 163,
+  "condition_leaves": 133,
+  "by_reader": {
+   "subscript": 296
+  }
+ },
+ "W44-CHAIN-INCOMPLETE-RECORD": {
+  "leaves": 195,
+  "functions": 151,
+  "sole": 10,
+  "statement_leaves": 111,
+  "condition_leaves": 84,
+  "by_reader": {
+   "incomplete-record": 195
+  }
+ },
+ "W44-CHAIN-CALL": {
+  "leaves": 383,
+  "functions": 253,
+  "sole": 13,
+  "statement_leaves": 380,
+  "condition_leaves": 3,
+  "by_reader": {
+   "call": 383
+  }
+ },
+ "W44-CHAIN-NON-SCALAR-MEMBER": {
+  "leaves": 48,
+  "functions": 33,
+  "sole": 1,
+  "statement_leaves": 23,
+  "condition_leaves": 25,
+  "by_reader": {
+   "pointer-member": 29,
+   "other-member": 14,
+   "non-pointer-link": 5
+  }
+ },
+ "W44-CHAIN-CLASS-NOT-A-CHAIN": {
+  "leaves": 3564,
+  "functions": 1534,
+  "sole": 156,
+  "statement_leaves": 3315,
+  "condition_leaves": 249,
+  "by_reader": {
+   "no-member-chain": 1899,
+   "declarator-not-a-chain": 1522,
+   "unexplained": 143
+  }
+ },
+ "W44-CHAIN-BOUND-ROOT": {
+  "leaves": 49,
+  "functions": 35,
+  "note": "unresolved resource identity leaves the flow half added at an admitted chain"
+ },
+ "family_total": {
+  "chain_only_functions": 123,
+  "functions": 2186,
+  "leaves": 6749,
+  "sole": 214,
+  "unexplained_leaves": {
+   "declarator-not-a-chain": 1522,
+   "unexplained": 143
+  }
+ },
+ "uncovered_readers": {}
+}

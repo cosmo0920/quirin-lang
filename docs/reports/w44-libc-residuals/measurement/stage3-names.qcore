@@ -1,0 +1,4 @@
+module contract;
+// Attribution input only: the declarations stage 3 adds.
+extern fn vsnprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>, arg: va_list) -> i32
+extern fn vprintf(format: ptr<const, u8>, arg: va_list) -> i32

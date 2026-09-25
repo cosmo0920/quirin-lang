@@ -1,0 +1,309 @@
+{
+ "summary": {
+  "callers": 26,
+  "with_builtin_va_leaf": 24,
+  "builtin_va_leaves": 50,
+  "blocked_only_by_builtin_va": 1,
+  "leaf_shapes": {
+   "indirect memory access is outside the resource projection": 127,
+   "call to uncontracted function `_`": 88,
+   "unmodeled call, aggregate or indirect access in branch condition": 78,
+   "unresolved resource identity `_`": 23,
+   "unrecognized assignment destination": 5,
+   "arguments beyond the declared parameters of `_` are outside the resource projection": 5,
+   "C operator `_` requires type/operand analysis": 5,
+   "unmodeled increment or decrement expression": 3,
+   "unsupported assignment expression": 2,
+   "braced initializer, expression, or declaration is not modeled": 2,
+   "resource call with a formal embedded in an unmodeled expression": 1
+  }
+ },
+ "callers": [
+  {
+   "function": [
+    "cmetrics",
+    "cmt_log.c",
+    "cmt_log_print"
+   ],
+   "status": "Unknown",
+   "leaves": 7,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "ctraces",
+    "ctr_log.c",
+    "ctr_log_print"
+   ],
+   "status": "Unknown",
+   "leaves": 7,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhttp.c",
+    "rd_http_error_new"
+   ],
+   "status": "Unknown",
+   "leaves": 10,
+   "builtin_va_leaves": 4,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_log0"
+   ],
+   "status": "Unknown",
+   "leaves": 12,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_set_fatal_error0"
+   ],
+   "status": "Unknown",
+   "leaves": 23,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_set_thread_name"
+   ],
+   "status": "Unknown",
+   "leaves": 2,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": true
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_set_thread_sysname"
+   ],
+   "status": "Unknown",
+   "leaves": 3,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_admin_result_set_err0"
+   ],
+   "status": "Unknown",
+   "leaves": 6,
+   "builtin_va_leaves": 0,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_set_error"
+   ],
+   "status": "Unknown",
+   "leaves": 32,
+   "builtin_va_leaves": 0,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_assignment_clear_lost"
+   ],
+   "status": "Unknown",
+   "leaves": 6,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_assignment_set_lost"
+   ],
+   "status": "Unknown",
+   "leaves": 6,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_consumer_rejoin"
+   ],
+   "status": "Unknown",
+   "leaves": 13,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_rejoin"
+   ],
+   "status": "Unknown",
+   "leaves": 13,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_new_v"
+   ],
+   "status": "Unknown",
+   "leaves": 11,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_idempotence.c",
+    "rd_kafka_idemp_drain_epoch_bump0"
+   ],
+   "status": "Unknown",
+   "leaves": 13,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_offset.c",
+    "rd_kafka_offset_reset"
+   ],
+   "status": "Unknown",
+   "leaves": 33,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_offset.c",
+    "rd_kafka_offset_validate"
+   ],
+   "status": "Unknown",
+   "leaves": 33,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_op.c",
+    "rd_kafka_consumer_err"
+   ],
+   "status": "Unknown",
+   "leaves": 11,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_op.c",
+    "rd_kafka_q_op_err"
+   ],
+   "status": "Unknown",
+   "leaves": 6,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_op.c",
+    "rd_kafka_share_msgset_err_ops"
+   ],
+   "status": "Unknown",
+   "leaves": 13,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_decode.c",
+    "unit_test_telemetry_decode_error"
+   ],
+   "status": "Unknown",
+   "leaves": 4,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_txnmgr.c",
+    "rd_kafka_txn_coord_set"
+   ],
+   "status": "Unknown",
+   "leaves": 16,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_txnmgr.c",
+    "rd_kafka_txn_set_abortable_error0"
+   ],
+   "status": "Unknown",
+   "leaves": 19,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_txnmgr.c",
+    "rd_kafka_txn_set_fatal_error"
+   ],
+   "status": "Unknown",
+   "leaves": 12,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "chunkio",
+    "cio_log.c",
+    "cio_log_print"
+   ],
+   "status": "Unknown",
+   "leaves": 7,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  },
+  {
+   "function": [
+    "monkey-libevent",
+    "mk_core/mk_utils.c",
+    "mk_print"
+   ],
+   "status": "Unknown",
+   "leaves": 21,
+   "builtin_va_leaves": 2,
+   "only_builtin_va": false
+  }
+ ]
+}

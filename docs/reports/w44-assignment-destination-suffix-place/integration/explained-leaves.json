@@ -1,0 +1,21 @@
+[
+ {
+  "function": "mk_iov_create",
+  "description_prefix": "call to uncontracted function `mk_iov_init`",
+  "removal_optional": true,
+  "added_prefixes": ["call to uncontracted function `mk_iov_init`"],
+  "why": "mk_iov_init is a static inline in monkey's mk_iov.h whose loop stores `iov->io[i].iov_base = NULL; iov->io[i].iov_len = 0;`. Before this card direct_assignment_destination read each store as a binding of the undeclared names `iov_base`/`iov_len`, so the body validated and W44-CORPUS-CALLEE-SUMMARIES' reached-static-helper route published a summary for it (PREV has no uncontracted-call leaf here). This card refuses those sub-object stores, the body no longer validates, the summary is withdrawn and the call is uncontracted again, exactly as on the card's own base. Same mechanism as the card's LZ4_write16/32 caller leaves; the withdrawn summary was resting on the misreading. No function status depended on it."
+ },
+ {
+  "function": "mk_header_response_reset",
+  "description_prefix": "indirect memory access is outside the resource projection",
+  "removal_optional": true,
+  "added_prefixes": ["indirect memory access is outside the resource projection"],
+  "why": "mk_header.c:450 is `mk_iov_init(&header->headers_iov, MK_HEADER_IOV, 0);`. With mk_iov_init summarized (combined tree before this card) the call was lowered through the summary; with the summary withdrawn (see mk_iov_create) the member-address argument is refused again as on the card's own base. Same mechanism."
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "unit_move": ["Unsafe", "Unknown"],
+  "why": "Combined-only, fail-closed. On main the W44-LEAK-PIN-AUDIT refused hand-on rule had already withdrawn the leaks of this unit's other provisional-Unsafe functions (unpack_label, unpack_metric, unpack_static_label), leaving unpack_basic_type as its only provisional Unsafe function. This card withdraws unpack_basic_type's two leaks, which accused the misnamed binding `opts` for `(*map)->opts = calloc(...)` (the audit's DESTINATION-SUFFIX-PLACE-SPELLING evidence), so no Unsafe function remains and the unit is Unknown. The card alone keeps the unit Unsafe through the other nine functions."
+ }
+]

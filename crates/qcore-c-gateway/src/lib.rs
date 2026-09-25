@@ -17,11 +17,18 @@ pub mod call_use_source;
 mod clang;
 pub mod cleanup_replay_source;
 pub mod composition_source;
+#[cfg(feature = "indirect-census")]
+pub mod condition_call_census;
 pub mod counter_source;
+#[cfg(feature = "indirect-census")]
+pub mod destination_suffix_census;
 mod index_traversal;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;
+mod indirect_chain_access;
+#[cfg(feature = "indirect-census")]
+pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;

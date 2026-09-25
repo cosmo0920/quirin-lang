@@ -1,0 +1,4 @@
+changed /manifest: <3596 chars> -> <3664 chars>
+added /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/byteswap.qcore
+changed /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qcore: <3701 chars> -> <5424 chars>
+changed /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qcore: <9931 chars> -> <12603 chars>

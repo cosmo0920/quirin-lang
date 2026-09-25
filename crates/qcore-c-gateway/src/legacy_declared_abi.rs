@@ -165,10 +165,19 @@
 //! refuse. glibc's `regexec` (`regmatch_t __pmatch[__restrict __nmatch]` after
 //! preprocessing) was the measured witness. `QCore.PointerQualifierReader`
 //! models this step too.
+//!
+//! # What card W44-LIBC-RESIDUALS widened
+//!
+//! `__builtin_va_list`, the compiler's variable-argument list type that
+//! glibc's `__gnuc_va_list` names, projects to the loader's parameter-only
+//! `va_list` spelling (see [`BUILTIN_VA_LIST`]). `QCore.GnuBuiltinReader`
+//! models the step.
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_contract::contract_loader::{self, DeclaredAbiSignature, FUNCTION_POINTER_ABI_TYPE};
+use qcore_contract::contract_loader::{
+    self, DeclaredAbiSignature, FUNCTION_POINTER_ABI_TYPE, VA_LIST_ABI_TYPE,
+};
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::reason::ReasonCategory;
 
@@ -1448,6 +1457,32 @@ fn project_arithmetic(core: &[&str], result: bool) -> Option<BTreeSet<&'static s
     }
 }
 
+/// The compiler's variable-argument list type (card **W44-LIBC-RESIDUALS**,
+/// `LIBC-PRINTF-VA-LIST`).
+///
+/// glibc's `vsnprintf`, `vprintf`, `vfprintf` and `vsprintf` end in
+/// `__gnuc_va_list __arg`, and `typedef __builtin_va_list __gnuc_va_list;` is
+/// the only definition the unit carries: the builtin itself is the compiler's,
+/// never a `typedef` in the token stream, so [`resolve_typedef`] stopped at it
+/// and every such declaration was withdrawn with `abi-unreadable-declaration`
+/// in all 168 units that declare one.
+///
+/// It is now read as [`VA_LIST_ABI_TYPE`], exactly and only:
+///
+/// * as a **parameter** of no pointer level, reached directly or through any
+///   typedef chain the reader already follows. The spelling names the type,
+///   not its target-dependent representation (`__va_list_tag[1]`, an object
+///   pointer after adjustment, on x86-64; a structure on AArch64), so no
+///   target is assumed beyond the LP64 caveat the reader already carries;
+/// * never as a result, and never under a pointer (`va_list *`) or as an array
+///   element, all of which still refuse;
+/// * never where the unit itself `typedef`s the name: a recorded typedef is
+///   followed as every other one is, so the builtin reading cannot shadow a
+///   definition the token stream contains.
+///
+/// `QCore.GnuBuiltinReader` is the Lean model.
+const BUILTIN_VA_LIST: &str = "__builtin_va_list";
+
 fn project_scalar(
     core: &[&str],
     typedefs: &BTreeMap<String, TypedefTarget>,
@@ -1461,6 +1496,11 @@ fn project_scalar(
         return Some(projection);
     }
     match core {
+        // Card W44-LIBC-RESIDUALS: the compiler's variable-argument list type
+        // has its own spelling, at a parameter only. See [`BUILTIN_VA_LIST`].
+        [name] if *name == BUILTIN_VA_LIST && !typedefs.contains_key(*name) => {
+            (!result).then(|| BTreeSet::from([VA_LIST_ABI_TYPE]))
+        }
         [name]
             if !ARITHMETIC_WORDS.contains(name)
                 && !matches!(*name, "struct" | "union" | "enum") =>
