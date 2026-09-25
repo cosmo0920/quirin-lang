@@ -6731,10 +6731,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE on merge 5aea8197 (onto main b8fc7eae, after W44-CORPUS-CALLEE-SUMMARIES, W44-BRANCH-CONDITION-CALLS and W44-LEAK-PIN-AUDIT), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5503 core Rust passed / 0 failed / 11 ignored over 294 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 183 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-leak-pin-audit/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "note": "W44-AGENT-GUIDANCE-OPUS55: core gate measured at 337b15b1 (the Python suite and docs-index check after the final matrix regeneration). 5503 core Rust passed / 0 failed / 11 ignored over 292 summaries; 183 Lean audits; 333 Python tests. Step exits: submodules 0, clang 0, test 0, fmt 0, clippy 0 (cargo clippy --workspace --all-targets -- -D warnings), probe 0, followup 0, lean 0, python 0, docsindex 0. The first clippy attempt was stopped unfinished for a coordinator disk request (cargo clean --profile dev after the test step) and rerun at the same tip; the interrupted attempt is not evidence. Provider gate not run: nothing under providers/ changed, so provider_tests 124 is CARRIED from the base's integration gate (validation section at 94502987, merge 5aea8197), not re-measured here. Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae556412cf2e605d6/private/w44-agent-guidance/run1. Documentation and task-context tooling only; no verdict, pin or count moves.",
   "workspace_tests": 5503,
   "provider_tests": 124,
-  "python_evidence_validator_tests": 330,
+  "python_evidence_validator_tests": 333,
   "lean_audits": 183,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6927,7 +6927,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-assignment-destination-suffix-place/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-agent-guidance-opus55/gate.json)"
  },
  "named_followups": [
   {

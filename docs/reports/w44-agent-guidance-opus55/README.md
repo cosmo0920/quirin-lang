@@ -176,7 +176,29 @@ Gate records are in [gate.json](gate.json), with [clang-version.txt](clang-versi
 recorded in this worktree. Raw logs are private under
 `private/w44-agent-guidance/`.
 
-GATE_RESULTS
+All steps ran at `337b15b1`, the tip that carries every guidance change. Each
+exit was captured to its own file, with no pipes.
+
+| Step | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo test --workspace --no-fail-fast` (`CARGO_INCREMENTAL=0`) | 0 | 5,503 passed / 0 failed / 11 ignored, 292 summaries |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | Second attempt (see below) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 183 audits |
+| `build_matrix.py . --gate gate.json` | 0 | Validation section only (3 lines) |
+| `python3 -m unittest discover -s scripts/tests`, after regeneration | 0 | 333 tests (330 + 3 new) |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| `checkpoint.py --check 337b15b1` | 0 | 27 ranges verbatim; coverage complete |
+| `measure.py 94502987 337b15b1` | 0 | Every rule id, section and command kept |
+
+The workspace count equals the base's integration gate. The first clippy run
+was stopped before it finished, to meet a coordinator disk request
+(`cargo clean --profile dev` after the test step), and was rerun at the same
+tip. The stopped run is not evidence. The provider gate was not run because
+nothing under `providers/` changed. Its figure, 124, is carried from the base's
+integration gate, as `gate.json` says.
 
 ## Integrator notes
 
