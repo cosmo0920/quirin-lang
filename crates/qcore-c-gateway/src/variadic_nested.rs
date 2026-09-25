@@ -37,10 +37,10 @@
 //! is read from the callee, never from the actual. See
 //! [`is_admitted_tail_access`] for the argument and for what stays refused.
 //!
-//! Card **W44-LIBC-RESIDUALS** adds **T6**, the one admission made when the
-//! enclosing function's typed declarations are unreadable: a tail whose every
-//! actual is only literals and C11 6.4.2.2 predefined identifiers is data,
-//! because no declaration can bind either. See
+//! Card **W44-LIBC-RESIDUALS** adds **T6**, the one admission that needs
+//! neither the enclosing function's typed declarations nor C02-P's closure: a
+//! tail actual that is only literals and C11 6.4.2.2 predefined identifiers is
+//! data, because no declaration or binding can reach either. See
 //! [`is_literal_or_predefined_actual`]; `QCore.LiteralTailActual` is the Lean
 //! model.
 //!
@@ -392,8 +392,9 @@ pub(crate) fn tail_arguments_are_data_with_nested(
     bases: &UntrackedBases,
 ) -> bool {
     if !types.is_readable() {
-        // T6, card W44-LIBC-RESIDUALS: the one readability-independent
-        // admission. See [`is_literal_or_predefined_actual`].
+        // T6, card W44-LIBC-RESIDUALS: the one admission that needs neither
+        // the declarations nor the closure. See
+        // [`is_literal_or_predefined_actual`].
         return nested.is_empty()
             && arguments
                 .iter()
@@ -406,6 +407,7 @@ pub(crate) fn tail_arguments_are_data_with_nested(
         .skip(named)
         .all(|(index, argument)| {
             nested.iter().any(|nested| nested.argument == index)
+                || is_literal_or_predefined_actual(argument)
                 || is_data_only_actual(argument, model, types, bases)
                 || is_admitted_tail_access(argument, model, types, bases)
         })
@@ -425,23 +427,33 @@ const PREDEFINED_IDENTIFIERS: &[&str] = &["__func__", "__FUNCTION__", "__PRETTY_
 /// predefined identifier ([`PREDEFINED_IDENTIFIERS`]) is data **whatever the
 /// function's declarations say**.
 ///
-/// T1-T5 read the enclosing function's typed declaration facts, and the
-/// readability premise refuses every tail when those facts are unreadable
-/// (`FunctionTypes::is_readable`, the total-or-reject local reader), a literal
-/// included. That premise protects the *names* a tail may carry: without the
-/// declarations nothing says whether a name is a scalar, an enumeration
-/// constant or a pointer the body may bind. A literal and a predefined
-/// identifier are not names any declaration can bind: a literal denotes a value
-/// or a static array, and `__func__` a static array (C11 6.4.2.2p1), neither
-/// of which is a resource identity this projection tracks. So this admission
-/// is the only one made without readable declarations, and it is exactly as
-/// wide as that argument.
+/// T1-T5 read the enclosing function's typed declaration facts and C02-P's
+/// closure, and two of their premises refused a literal:
 ///
-/// Measured before it was built (the card's `tail_nested_lines.py`): up to
-/// 1,091 of the 1,200 tail refusals at the base are literal-only, 1,081 on
-/// librdkafka `RDUT:` macro lines (`fprintf(stderr, "…", __FILE__, __LINE__,
-/// __FUNCTION__)`), and **no** function has only such refusals, so it moves
-/// leaves, not functions.
+/// * the readability premise refuses every tail when those facts are
+///   unreadable (`FunctionTypes::is_readable`, the total-or-reject local
+///   reader), a literal included;
+/// * T4 admits an identifier only if the closure says the body never binds it,
+///   and the closure's `seed_call_arguments` marks every root *name* passed to
+///   an uncontracted call as risky. The tokenizer delivers a string literal as
+///   the identifier-shaped [`LITERAL_TOKEN`], so one literal passed to an
+///   uncontracted call — `__assert_fail ("…", "<stdin>", 1349, __PRETTY_FUNCTION__)`
+///   inside librdkafka's `RD_UT_ASSERT` — made every string literal and every
+///   predefined identifier of the function risky.
+///
+/// Both premises protect the *names* a tail may carry: without the
+/// declarations nothing says whether a name is a scalar, an enumeration
+/// constant or a pointer the body may bind, and the closure answers exactly
+/// that. A literal and a predefined identifier are not names any declaration
+/// or binding can reach: a literal denotes a value or a static array, and
+/// `__func__` a static array (C11 6.4.2.2p1), neither of which is a resource
+/// identity this projection tracks. So this admission needs neither the
+/// declarations nor the closure, and it is exactly as wide as that argument.
+///
+/// Measured before it was built (the card's `tail_nested_lines.py`): no
+/// function has only tail refusals it could remove, so it moves leaves, not
+/// functions. Its first, unreadable-only form removed 86 of the 1,200 tail
+/// refusals at the base; the closure half is what the `RDUT:` lines needed.
 ///
 /// # What stays refused
 ///
@@ -449,8 +461,8 @@ const PREDEFINED_IDENTIFIERS: &[&str] = &["__func__", "__FUNCTION__", "__PRETTY_
 /// (a name is exactly what the declarations must decide), a negated or cast
 /// literal, a floating literal (it carries `.`), a prefixed string literal
 /// (`L"…"`: the prefix is a name here), an empty actual, and any statement
-/// carrying a nested call. Readable functions are unchanged: T1-T5 decide
-/// them exactly as before.
+/// carrying a nested call. In a readable function every actual T6 does not
+/// admit is decided by T1-T5 exactly as before.
 fn is_literal_or_predefined_actual(argument: &[&str]) -> bool {
     !argument.is_empty()
         && argument.iter().all(|text| {
@@ -721,6 +733,32 @@ mod tests {
             "log ( __qcore_literal__ , count , KIND_TWO , 7 , label )",
             1
         ));
+    }
+
+    /// **T6, card W44-LIBC-RESIDUALS**, the readable half. A body that passes a
+    /// literal and `__PRETTY_FUNCTION__` to an uncontracted call — librdkafka's
+    /// `RD_UT_ASSERT` does, through `__assert_fail` — made the closure mark the
+    /// literal token and the predefined identifier risky, so T4 refused every
+    /// literal tail of the function. T6 admits them whatever the closure says;
+    /// a name the closure marked risky in the same way still refuses.
+    #[test]
+    fn a_literal_tail_is_data_even_where_the_closure_marked_literals_risky() {
+        const ASSERTING: &str = "int count ; char * label ; \
+             fail ( __qcore_literal__ , 7 , __PRETTY_FUNCTION__ , __FUNCTION__ , label ) ;";
+        for admitted in [
+            "log ( __qcore_literal__ , __qcore_literal__ , 42 , __FUNCTION__ )",
+            "log ( __qcore_literal__ , __PRETTY_FUNCTION__ )",
+            "log ( __qcore_literal__ , __qcore_literal__ , count )",
+        ] {
+            assert!(tail_ok(ASSERTING, admitted, 1), "admitted: {admitted}");
+        }
+        for refused in [
+            "log ( __qcore_literal__ , label )",
+            "log ( __qcore_literal__ , __qcore_literal__ , label )",
+            "log ( __qcore_literal__ , __qcore_literal__ + 1 )",
+        ] {
+            assert!(!tail_ok(ASSERTING, refused, 1), "refused: {refused}");
+        }
     }
 
     #[test]
