@@ -1,0 +1,29 @@
+{
+ "note": "W45-PARENTHESISED-CALLEE, 2026-09-26. BEFORE (base 1db9a569) reproduces the W45-SUB-OBJECT-STORES integration diagnostics byte for byte. A parenthesised name callee `(f)(x)` is rewritten to `f(x)` in every function body before any reader runs; every other callee expression that is not a name refuses where its position would otherwise be admitted; a `for` init or increment clause whose original spelling it strips unfaithfully refuses unless its stripped classification already did (gateway constraint 10c). Every delta is attributed: 5 for-clause refusals added (4 `RD_MAP_FOREACH_ELEM` headers whose `rd_map_iter_begin`/`rd_map_iter_next` calls the stripped spelling dropped, 1 `TAILQ_FOREACH` increment) and 1 `unresolved resource identity` report of that increment removed, all in functions already Unknown; rule 1 rewrites no site of the pinned corpus (census), and rules 1 and 2 move no leaf. Functions: 0 moves; 0 unit moves; leak 37 unchanged, every leak and violation leaf identical. No bounds claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-parenthesised-callee/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 4,
+ "provisional_unsafe": 10,
+ "unknown": 167,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 37,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-parenthesised-callee/artifacts/",
+ "source": "docs/reports/w45-parenthesised-callee/README.md; preceding baseline docs/reports/w45-sub-object-stores/integration/artifacts/",
+ "unknown_alias_diagnostics": 3567,
+ "unsupported_diagnostics": 42699,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 390,
+  "provisional_unsafe": 12,
+  "unknown": 4432
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 166,
+  "none": 18,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

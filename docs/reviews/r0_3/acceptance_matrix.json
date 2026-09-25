@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-PARENTHESISED-CALLEE, 2026-09-26. BEFORE (base 1db9a569) reproduces the W45-SUB-OBJECT-STORES integration diagnostics byte for byte. A parenthesised name callee `(f)(x)` is rewritten to `f(x)` in every function body before any reader runs; every other callee expression that is not a name refuses where its position would otherwise be admitted; a `for` init or increment clause whose original spelling it strips unfaithfully refuses unless its stripped classification already did (gateway constraint 10c). Every delta is attributed: 5 for-clause refusals added (4 `RD_MAP_FOREACH_ELEM` headers whose `rd_map_iter_begin`/`rd_map_iter_next` calls the stripped spelling dropped, 1 `TAILQ_FOREACH` increment) and 1 `unresolved resource identity` report of that increment removed, all in functions already Unknown; rule 1 rewrites no site of the pinned corpus (census), and rules 1 and 2 move no leaf. Functions: 0 moves; 0 unit moves; leak 37 unchanged, every leak and violation leaf identical. No bounds claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-parenthesised-callee/previous-corpus-row.json.",
+   "note": "W45-PARENTHESISED-CALLEE integration, 2026-09-25. The card (measured against docs/reports/w45-sub-object-stores/integration/artifacts) composed onto the combined tree docs/reports/w45-sub-object-stores/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1 added 5 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card's delta moves 6 unknown_alias leaves to 5 for-clause-refusal unsupported leaves (net +5 unsupported, unknown_alias 3,568 to 3,567) with no function or unit status change: 0 corrections. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-parenthesised-callee/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 4,
    "provisional_unsafe": 10,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 37,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-parenthesised-callee/artifacts/",
-   "source": "docs/reports/w45-parenthesised-callee/README.md; preceding baseline docs/reports/w45-sub-object-stores/integration/artifacts/",
+   "baseline": "docs/reports/w45-parenthesised-callee/integration/artifacts/",
+   "source": "docs/reports/w45-parenthesised-callee/integration/integration-confirmation.md; preceding baseline docs/reports/w45-sub-object-stores/integration/artifacts",
    "unknown_alias_diagnostics": 3567,
    "unsupported_diagnostics": 42699,
    "double_release_diagnostics": 0,
@@ -6731,8 +6731,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-CONTRACT-DEFERRED-REVIEW on merge 145e3854 (onto main 2e6ae8f9, after all wave-45 cards through W45-FB-BACKLOG-FAULT-INJECTION), measured by the integrator in its own worktree; every step's exit captured to a file, not piped. 5746 core Rust passed / 0 failed / 11 ignored over 308 summaries; 124 provider Rust passed / 0 failed / 0 ignored over 39 summaries; 194 Lean audits; fmt, clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The first Python run on the merge failed 1 of 358 (test_the_derived_facts_are_recomputed_rather_than_carried: committed validation.lean_audits 193 vs recomputed 194) because the matrix had not yet been regenerated against this gate; 15 package Python tests passed separately. baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true (the additive contracts.pending_human_review key is the only non-identical artifact field; the corpus does not move). MOVES=no: no composition, no corpus movement.",
-  "workspace_tests": 5746,
+  "note": "Integration gate for W45-PARENTHESISED-CALLEE on merge 83e6e497 (onto main 1db9a569, after all wave-45 cards through W45-CONTRACT-DEFERRED-REVIEW), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The core test step's first attempt (02-test.log, 02-test.exit) exited 101: one failure, qcore-compiler::test::task_route_tsan::removing_the_join_edge_is_reported_under_every_schedule (compiler/tests/task_route_tsan.rs:746), a ThreadSanitizer join-edge row that reported a thread leak instead of the planted race while another card was building elsewhere on the host — not a registered constraint-16 (EXCLUSIVE) row. It passed 5/5 isolated reruns (02-tsan-rerun-{1..5}.log, each exit 0) and a full rerun of the test step on the same tree (02-test-rerun.log, 02-test-rerun.exit) was clean: 5781 core Rust passed / 0 failed / 11 ignored over 307 summaries, exit 0, from test-binaries-rerun/. Both attempts are recorded; the first exit is kept as measured, not replaced, and the core counts below are taken from the clean rerun. 124 provider Rust passed / 0 / 0 over 39 summaries; 195 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-sub-object-stores/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5781,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
   "lean_audits": 195,
@@ -6939,7 +6939,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-parenthesised-callee/integration/gate.json)"
  },
  "named_followups": [
   {
