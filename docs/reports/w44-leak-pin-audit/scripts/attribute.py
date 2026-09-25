@@ -10,7 +10,9 @@ class (a) or (c) leak is reported as collateral. Every other delta is listed by
 category and description for the report to attribute by reading. Function and
 unit status moves are listed with the leaf deltas of the function or unit.
 Exits 1 when a removed leak is not class (b), so collateral cannot pass
-silently.
+silently. Given the refused hand-on overlay (`handoff-classification.json`), a
+removed leak must be one the overlay marks `withdrawn`, its `attribution` is
+its mechanism, and a leaf marked `withdrawn` that stays is listed as missed.
 """
 
 import collections
@@ -70,10 +72,16 @@ def main() -> int:
         }
         if category == "leak":
             entry = by_key.get((unit, function, line, acquired(description)))
-            row["class"] = entry["class"] if entry else "?"
-            row["mechanism"] = entry["mechanism"] if entry else "?"
-            if not entry or entry["class"] != "b":
-                collateral.append(row)
+            if entry and "attribution" in entry:
+                row["class"], row["mechanism"] = entry["attribution"].split(":", 1)
+                row["prior"] = f"{entry['prior_class']}:{entry['prior_mechanism']}"
+                if not entry["withdrawn"]:
+                    collateral.append(row)
+            else:
+                row["class"] = entry["class"] if entry else "?"
+                row["mechanism"] = entry["mechanism"] if entry else "?"
+                if not entry or entry["class"] != "b":
+                    collateral.append(row)
         rows.append(row)
     for (unit, function, category, line, origin, description), count in sorted(added.items()):
         rows.append(
@@ -88,6 +96,18 @@ def main() -> int:
                 "count": count,
             }
         )
+    remaining = collections.Counter(
+        (unit, function, line, acquired(description))
+        for (unit, function, category, line, origin, description), count in after.items()
+        if category == "leak"
+        for _ in range(count)
+    )
+    missed = [
+        {"unit": e["unit"], "function": e["function"], "line": e["line"], "acquired": e["acquired"],
+         "attribution": e.get("attribution")}
+        for e in classification
+        if e.get("withdrawn") and remaining[(e["unit"], e["function"], e["line"], e["acquired"])] > 0
+    ]
     moves = [
         {"unit": u, "function": f, "before": before_status.get((u, f)), "after": after_status.get((u, f))}
         for (u, f) in sorted(set(before_status) | set(after_status))
@@ -120,6 +140,7 @@ def main() -> int:
             )
         ),
         "collateral_leak_removals": collateral,
+        "predicted_withdrawals_missed": missed,
         "functions": {"before": status_counts(before_status), "after": status_counts(after_status)},
         "units": {"before": status_counts(before_units), "after": status_counts(after_units)},
         "function_moves": moves,
@@ -133,7 +154,10 @@ def main() -> int:
             indent=1,
         )
     )
-    print(f"function moves {len(moves)}, unit moves {len(unit_moves)}, collateral {len(collateral)}")
+    print(
+        f"function moves {len(moves)}, unit moves {len(unit_moves)}, collateral {len(collateral)}, "
+        f"missed {len(missed)}"
+    )
     return 1 if collateral else 0
 
 

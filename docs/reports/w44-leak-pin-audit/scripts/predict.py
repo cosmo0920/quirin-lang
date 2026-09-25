@@ -3,7 +3,9 @@
 
 Usage: predict.py BASELINE_DIAGNOSTICS.json.gz CLASSIFICATION.json OUT.json
 
-Assumes exactly the class (b) leaves are withdrawn and nothing else moves. A
+Assumes exactly the class (b) leaves are withdrawn and nothing else moves (or,
+given the refused hand-on overlay `handoff-classification.json`, exactly the
+leaves it marks `withdrawn`). A
 function every one of whose leak leaves is class (b), and which carries no
 other accusation, moves provisional Unsafe -> Unknown (it keeps the refusal the
 withdrawing rule fired on). A unit moves Unsafe -> Unknown when every one of its
@@ -23,7 +25,9 @@ def main() -> int:
     baseline = json.loads(gzip.decompress(pathlib.Path(sys.argv[1]).read_bytes()))
     classification = json.loads(pathlib.Path(sys.argv[2]).read_text())["classification"]
     withdrawn = collections.Counter(
-        (entry["unit"], entry["function"]) for entry in classification if entry["class"] == "b"
+        (entry["unit"], entry["function"])
+        for entry in classification
+        if entry.get("withdrawn", entry.get("class") == "b")
     )
     functions = []
     units = []

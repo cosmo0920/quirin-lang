@@ -16,7 +16,7 @@ lines of one body are monotone in each other.
 Every published leaf must join, and every joined invocation must agree on the
 settled-exit fields; the script exits 1 otherwise. Witness paths may differ
 between invocations (a different entry custody binds formals differently), so
-for each of `path`, `clean_path` and `strict_path` the output records whether
+for each of `path`, `clean_path`, `strict_path` and `handed_path` the output records whether
 one exists in every joined invocation and in some; a class that rests on a
 path's existence or absence reads those flags.
 """
@@ -29,7 +29,7 @@ import re
 import sys
 
 FIELDS = ("settled", "status", "unresolved", "exempt", "exit_unmodeled", "exit_widened")
-PATHS = ("path", "clean_path", "strict_path")
+PATHS = ("path", "clean_path", "strict_path", "handed_path")
 
 
 def load(path: str):
