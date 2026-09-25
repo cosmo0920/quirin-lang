@@ -16,7 +16,7 @@ The run used the integrator's own worktree, `CARGO_INCREMENTAL=0` and Clang
 
 | Step | Exit | Result |
 |---|---|---|
-| core `cargo test --workspace --no-fail-fast` | 0 | see [gate.json](gate.json) |
+| core `cargo test --workspace --no-fail-fast` | 0 | **5,505 passed / 0 failed / 11 ignored** |
 | fmt, clippy `-D warnings`, both reevaluation examples, docs index | 0 | clean |
 | `check_lean_audits.py` | 0 | 185 audits (`AuditGnuBuiltinReader`, `AuditLiteralTailActual` added) |
 | Python before matrix regeneration | 1 | only the derived-facts check, on the Lean count |
