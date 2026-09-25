@@ -56,15 +56,51 @@ const PARAMETERS: &str = "struct r *p, struct r *recs, int i, char *s";
 fn each_admitted_destination_shape_names_its_member_place() {
     let body = "struct r l; struct r arr [ 2 ]; t_t * tp; t_alias ta;";
     let cases = [
-        ("arr [ i ] . count", None, "arr[].count", MemberKind::Scalar, false),
+        (
+            "arr [ i ] . count",
+            None,
+            "arr[].count",
+            MemberKind::Scalar,
+            false,
+        ),
         ("tp -> s", Some("tp"), "tp->s", MemberKind::Pointer, false),
         ("ta . n", None, "ta.n", MemberKind::Scalar, false),
-        ("p -> count", Some("p"), "p->count", MemberKind::Scalar, true),
-        ("( p ) -> name", Some("p"), "p->name", MemberKind::Pointer, true),
-        ("recs [ i ] . next", Some("recs"), "recs[].next", MemberKind::Pointer, true),
-        ("( recs ) [ i ] . data", Some("recs"), "recs[].data", MemberKind::Pointer, true),
+        (
+            "p -> count",
+            Some("p"),
+            "p->count",
+            MemberKind::Scalar,
+            true,
+        ),
+        (
+            "( p ) -> name",
+            Some("p"),
+            "p->name",
+            MemberKind::Pointer,
+            true,
+        ),
+        (
+            "recs [ i ] . next",
+            Some("recs"),
+            "recs[].next",
+            MemberKind::Pointer,
+            true,
+        ),
+        (
+            "( recs ) [ i ] . data",
+            Some("recs"),
+            "recs[].data",
+            MemberKind::Pointer,
+            true,
+        ),
         ("l . count", None, "l.count", MemberKind::Scalar, false),
-        ("( & l ) -> name", None, "l.name", MemberKind::Pointer, false),
+        (
+            "( & l ) -> name",
+            None,
+            "l.name",
+            MemberKind::Pointer,
+            false,
+        ),
         ("( l ) . count", None, "l.count", MemberKind::Scalar, false),
     ];
     for (left, base, place, member, visible) in cases {
@@ -115,20 +151,20 @@ fn every_other_destination_keeps_its_refusal() {
 
 #[test]
 fn a_rebound_or_address_taken_formal_is_not_the_callers_record() {
-    for body in [
-        "p = 0;",
-        "p ++ ;",
-        "p += 1 ;",
-        "q = & p ;",
-        "-- p ;",
-    ] {
+    for body in ["p = 0;", "p ++ ;", "p += 1 ;", "q = & p ;", "-- p ;"] {
         let formals = BTreeSet::from(["p".to_owned()]);
         assert!(
             caller_bases(&texts(body), &formals, &formals).is_empty(),
             "{body}"
         );
     }
-    for body in ["x = p ;", "if ( p == q ) { }", "f ( p ) ;", "q -> p = 0 ;", "s . p = 0 ;"] {
+    for body in [
+        "x = p ;",
+        "if ( p == q ) { }",
+        "f ( p ) ;",
+        "q -> p = 0 ;",
+        "s . p = 0 ;",
+    ] {
         let formals = BTreeSet::from(["p".to_owned()]);
         assert_eq!(
             caller_bases(&texts(body), &formals, &formals),
@@ -153,14 +189,20 @@ fn values_are_read_by_the_members_kind() {
     let scalar = |right: &str| read_value(&texts(right), MemberKind::Scalar, &model, &types);
     let pointer = |right: &str| read_value(&texts(right), MemberKind::Pointer, &model, &types);
     assert_eq!(scalar("n + 1"), Ok(ValueSyntax::Scalar(Vec::new())));
-    assert_eq!(scalar("p -> count"), Ok(ValueSyntax::Scalar(vec!["p".to_owned()])));
+    assert_eq!(
+        scalar("p -> count"),
+        Ok(ValueSyntax::Scalar(vec!["p".to_owned()]))
+    );
     assert_eq!(scalar("f ( n )"), Err("value-not-scalar"));
     assert_eq!(scalar("s"), Err("value-not-scalar"));
     assert_eq!(pointer("( ( void * ) 0 )"), Ok(ValueSyntax::Untracked));
     assert_eq!(pointer("0"), Ok(ValueSyntax::Untracked));
     assert_eq!(pointer("__qcore_literal__"), Ok(ValueSyntax::Untracked));
     assert_eq!(pointer("t"), Ok(ValueSyntax::Name("t".to_owned())));
-    assert_eq!(pointer("( char * ) s"), Ok(ValueSyntax::Name("s".to_owned())));
+    assert_eq!(
+        pointer("( char * ) s"),
+        Ok(ValueSyntax::Name("s".to_owned()))
+    );
     assert_eq!(pointer("n"), Err("value-scalar-into-pointer"));
     assert_eq!(pointer("undeclared"), Err("value-undeclared"));
     assert_eq!(pointer("g ( s )"), Ok(ValueSyntax::Call(4)));

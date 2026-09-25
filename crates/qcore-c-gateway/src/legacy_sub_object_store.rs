@@ -21,17 +21,22 @@
 //! **Destination** ([`read_destination`]), one selection of a member `F` of a
 //! complete, unambiguous, non-`union` `struct T`:
 //!
-//! * `R -> F` or `( R ) -> F`, with `R` declared exactly `struct T *` — a
-//!   store through the pointer `R`, which keeps W43's dereference obligation;
-//! * `R [ I ] . F` or `( R ) [ I ] . F`, with `R` declared `struct T *` and
-//!   `I` a scalar-only index that writes nothing — a store through `R` into
-//!   the element `I`, with the same obligation (bounds are not decided);
-//! * `S . F`, `( S ) . F` or `( & S ) -> F`, with `S` declared exactly
-//!   `struct T` — a store into this function's own record object, which
-//!   dereferences nothing.
+//! * `R -> F` or `( R ) -> F`, with `R` declared `T *` — a store through the
+//!   pointer `R`, which keeps W43's dereference obligation;
+//! * `R [ I ] . F` or `( R ) [ I ] . F`, with `R` declared `T *` (or a formal
+//!   `T R [ N ]`) and `I` a scalar-only index that writes nothing — a store
+//!   through `R` into the element `I`, with the same obligation (bounds are
+//!   not decided);
+//! * `S . F`, `( S ) . F`, `( & S ) -> F` or `A [ I ] . F`, with `S` declared
+//!   `T` and `A` a local `T A [ N ]` — a store into this function's own
+//!   record, which dereferences nothing.
 //!
-//! `F` must be a scalar member or a member holding exactly one pointer
-//! (`single_pointer_field`, `void_pointer_field`, `record_pointer_field`).
+//! `T` resolves to one `struct` tag through the unit's typedefs, including a
+//! typedef that defines its own `struct TAG { … }` ([`RecordRoots`], a side
+//! reading that changes no declared type), and every declaration of the root
+//! must agree. `F` must be a scalar member or a member holding exactly one
+//! pointer (`single_pointer_field`, `void_pointer_field`,
+//! `record_pointer_field`) of a complete, unambiguous, non-`union` record.
 //! Casts, `(*R)`, chains, nested aggregates, typedefs the reader will not
 //! resolve and undeclared roots all keep the refusal.
 //!
@@ -41,7 +46,10 @@
 //!   declared scalars, enumeration constants, scalar casts and typed scalar
 //!   accesses, whose bases carry their own obligation);
 //! * into a pointer member, the null constant, a string literal, a declared
-//!   name (optionally cast), or one whole call.
+//!   name (optionally cast) that is **not a formal parameter**, or one whole
+//!   call. A formal's pointer is the caller's object: storing it links that
+//!   object into a record, which a derived summary would misread as a borrow
+//!   (`cfl_list_add`, `mk_list_init`), so it keeps the refusal.
 //!
 //! # The effect ([`super::transfer`], `SubObjectStore` arm)
 //!
@@ -65,8 +73,10 @@
 //!    * exactly one known, exactly-live **heap** identity this body acquired
 //!      (an identity binding, not a caller's site, not nullable-unresolved),
 //!      stored through a base the caller can reach (a formal parameter this
-//!      function never rebinds): the identity **escapes** — custody leaves
-//!      with the caller's record, as it does through a return;
+//!      function never writes or address-takes): the identity **escapes** —
+//!      custody leaves with the caller's record, as it does through a return,
+//!      and every name of it becomes unknown, so a later use or release
+//!      reports an unresolved alias rather than `release_after_escape`;
 //!    * anything else — a derived pointer, a caller's own site, a released or
 //!      unresolved identity, a descriptor, a store of an owned identity into a
 //!      record the caller cannot reach — is the fallback.
@@ -89,8 +99,7 @@
 //!   the function, so it never resolves here; CTWIN-PUBLISH's refusal stands.
 
 use crate::typed_field_access::{
-    FunctionTypes, TypedAccessModel, is_name, is_scalar_value_expression,
-    typed_scalar_value,
+    FunctionTypes, TypedAccessModel, is_name, is_scalar_value_expression, typed_scalar_value,
 };
 
 /// Whether the stored member holds a scalar or exactly one pointer.
@@ -260,13 +269,20 @@ pub fn caller_bases(
             continue;
         }
         let written = (next == Some("=") && after != Some("="))
-            || (matches!(
-                next,
-                Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^")
-            ) && after == Some("="))
-            || matches!((next, after), (Some("+"), Some("+")) | (Some("-"), Some("-")))
-            || matches!((next, after), (Some("<"), Some("<")) | (Some(">"), Some(">")))
-            || matches!((before, previous), (Some("+"), Some("+")) | (Some("-"), Some("-")))
+            || (matches!(next, Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^"))
+                && after == Some("="))
+            || matches!(
+                (next, after),
+                (Some("+"), Some("+")) | (Some("-"), Some("-"))
+            )
+            || matches!(
+                (next, after),
+                (Some("<"), Some("<")) | (Some(">"), Some(">"))
+            )
+            || matches!(
+                (before, previous),
+                (Some("+"), Some("+")) | (Some("-"), Some("-"))
+            )
             || previous == Some("&");
         if written {
             bases.remove(*text);
@@ -438,8 +454,7 @@ pub fn read_value(
                     Ok(ValueSyntax::Name((*name).to_owned()))
                 }
                 [callee, "(", .., ")"]
-                    if is_name(callee)
-                        && close_of(core, 1, "(", ")") == Some(core.len() - 1) =>
+                    if is_name(callee) && close_of(core, 1, "(", ")") == Some(core.len() - 1) =>
                 {
                     Ok(ValueSyntax::Call(core.len()))
                 }
@@ -488,10 +503,11 @@ pub(super) fn transfer(
     else {
         return base(node, state, diagnostics);
     };
-    let refuse = |state: super::AbstractState,
-                  diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>| {
-        base(&super::with_instruction(node, fallback), state, diagnostics)
-    };
+    let refuse =
+        |state: super::AbstractState,
+         diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>| {
+            base(&super::with_instruction(node, fallback), state, diagnostics)
+        };
     if let Some(read) = alias_read {
         super::require_unaliased_reads(
             function,
@@ -529,26 +545,23 @@ pub(super) fn transfer(
     let mut state = state;
     match value {
         StoredValue::Scalar { .. } | StoredValue::Untracked => {}
-        StoredValue::Name(name) => match decide(&state, name, destination.caller_visible, context) {
-            Decision::Neutral => {}
-            Decision::Escape => escape(
-                function,
-                node.line,
-                name,
-                &mut state,
-                acquisition_lines,
-                diagnostics,
-            ),
-            Decision::Refuse => return refuse(state, diagnostics),
-        },
+        StoredValue::Name(name) => {
+            match decide(&state, name, destination.caller_visible, context) {
+                Decision::Neutral => {}
+                Decision::Escape => escape(
+                    function,
+                    node.line,
+                    name,
+                    &mut state,
+                    acquisition_lines,
+                    diagnostics,
+                ),
+                Decision::Refuse => return refuse(state, diagnostics),
+            }
+        }
         StoredValue::Call(call) => {
             state = base(&super::with_instruction(node, call), state, diagnostics);
-            match decide(
-                &state,
-                STORE_TEMPORARY,
-                destination.caller_visible,
-                context,
-            ) {
+            match decide(&state, STORE_TEMPORARY, destination.caller_visible, context) {
                 Decision::Neutral => {}
                 Decision::Escape => escape(
                     function,
@@ -582,7 +595,10 @@ pub(super) fn transfer(
 /// call exactly as they examine any other, so every borrowed actual keeps its
 /// liveness precondition. The out-slot sanction is not visible here; a base
 /// it covers is examined too, which can only report more.
-pub(super) fn call_runs(instruction: &super::LegacyInstruction, state: &super::AbstractState) -> bool {
+pub(super) fn call_runs(
+    instruction: &super::LegacyInstruction,
+    state: &super::AbstractState,
+) -> bool {
     let super::LegacyInstruction::SubObjectStore {
         destination,
         value_bases,

@@ -1190,10 +1190,12 @@ impl TypedAccessModel {
                     let target = target.iter().map(String::as_str).collect::<Vec<_>>();
                     self.record_tag_at(&target, depth + 1)
                 }
-                Some(TypedefTarget::Aggregate(head)) => match head.split(' ').collect::<Vec<_>>()[..] {
-                    ["struct", tag] if is_name(tag) => Some(tag.to_owned()),
-                    _ => None,
-                },
+                Some(TypedefTarget::Aggregate(head)) => {
+                    match head.split(' ').collect::<Vec<_>>()[..] {
+                        ["struct", tag] if is_name(tag) => Some(tag.to_owned()),
+                        _ => None,
+                    }
+                }
                 None => None,
             },
             _ => None,

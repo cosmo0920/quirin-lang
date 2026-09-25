@@ -360,8 +360,10 @@ fn a_descriptor_stored_into_a_member_stays_custody() {
         "void w(struct x_holder *h, const char *p) { int fd = k_open(p); \
          if (fd < 0) { return; } h->fd = fd; }",
         "Unknown",
-        &["unsupported:tracked descriptor `fd` read by a custody-neutral scalar route is \
-           outside the resource projection"],
+        &[
+            "unsupported:tracked descriptor `fd` read by a custody-neutral scalar route is \
+           outside the resource projection",
+        ],
     );
 }
 

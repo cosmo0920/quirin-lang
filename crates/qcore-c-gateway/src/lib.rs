@@ -39,9 +39,9 @@ mod publication;
 // Card W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands.
 mod sizeof_operand;
 // Card W45-SUB-OBJECT-STORES: the sub-object store census.
+pub mod source_call_use;
 #[cfg(feature = "indirect-census")]
 pub mod sub_object_store_census;
-pub mod source_call_use;
 pub mod teardown_source;
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
@@ -102,6 +102,11 @@ pub fn census_sink_variables() -> Vec<&'static str> {
         destination_suffix_census::DESTINATION_SUFFIX_CENSUS_PATH,
         // Card W45-SUB-OBJECT-STORES.
         sub_object_store_census::SUB_OBJECT_STORE_CENSUS_PATH,
+        // Missing on base b160d765, which failed this module's own guard test
+        // (`every_declared_sink_forces_one_job`); listed so the census gate
+        // step is green. Card W44-INDIRECT-CALL-ARGUMENT-ACCESS's stream,
+        // whose constant is private to `legacy_call_argument_access::census`.
+        "QCORE_CALL_ARGUMENT_CENSUS",
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);

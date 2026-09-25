@@ -2674,16 +2674,14 @@ fn build_function_cfg_with(
         descriptor_custody::declared_callees(contracts)
     };
     // Card W45-SUB-OBJECT-STORES: the formals whose record the caller reaches.
-    let sub_object_caller_bases = matching(tokens, body_start, "{", "}").map_or_else(
-        BTreeSet::new,
-        |body_end| {
+    let sub_object_caller_bases =
+        matching(tokens, body_start, "{", "}").map_or_else(BTreeSet::new, |body_end| {
             let body = tokens[body_start + 1..body_end]
                 .iter()
                 .map(|token| token.text.as_str())
                 .collect::<Vec<_>>();
             sub_object_store::caller_bases(&body, &formal_parameters, &frame_protected)
-        },
-    );
+        });
     let sub_object_roots = match (
         function_parameter_range(tokens, function, body_start),
         matching(tokens, body_start, "{", "}"),
@@ -4247,7 +4245,12 @@ impl Parser<'_> {
     /// sub-object store census. Compiled out with the feature off; it reads the
     /// instruction after it was produced and cannot change it.
     #[cfg(feature = "indirect-census")]
-    fn census_sub_object_store(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
+    fn census_sub_object_store(
+        &self,
+        line: usize,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) {
         use crate::sub_object_store_census as census;
         if !census::collecting() || self.admit_derived_returns || self.argument_probe.rerun {
             return;
@@ -6088,7 +6091,10 @@ impl Parser<'_> {
                     self.next_site = saved;
                     return None;
                 }
-                (sub_object_store::StoredValue::Call(Box::new(call)), Vec::new())
+                (
+                    sub_object_store::StoredValue::Call(Box::new(call)),
+                    Vec::new(),
+                )
             }
         };
         Some(LegacyInstruction::SubObjectStore {
