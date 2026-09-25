@@ -1,0 +1,24 @@
+[
+  {
+    "entry": {
+      "id": "W43-INDIRECT-CHAIN-ACCESS",
+      "title": "Member chains of depth two or more stay refused: 5,616 leaves on 2,057 Unknown functions, 188 sole-blocked",
+      "why": "The typed scalar-access route admits one selection per access (`*B`, `B[I]`, `B->F`, `S.F`). `a->b->c`, `a->b.c` and `a[i].f` stay refused. Measured at the AFTER census (residuals.txt, class chain): 5,616 leaves (3,998 indirect-access, 1,306 unsupported-assignment, 199 increment, 113 unrecognized-destination) in 2,057 Unknown functions, 188 sole-blocked. The intermediate member is a pointer loaded from memory, which the projection binds only through a field link; admitting it needs the intermediate dereference's own obligation (the owner's field link live, or the owner untracked) and a member reader that classifies the intermediate (census-2 section 7 measured most chains end Unresolved). DISCHARGE: a card that extends the route to record-pointer member chains with each intermediate dereference checked against field links, Lean parity and a measured re-pin; or a measured decision that the reader classes do not justify it.",
+      "source": "docs/reports/w43-indirect-access-general/README.md",
+      "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+    },
+    "discharged_by": "W44-INDIRECT-CHAIN-ACCESS",
+    "ground": "Its discharge condition: \"a card that extends the route to record-pointer member chains with each intermediate dereference checked against field links, Lean parity and a measured re-pin; or a measured decision that the reader classes do not justify it\". Card W44-INDIRECT-CHAIN-ACCESS extends W43's typed statement route to member chains of two to four selections whose every link is exactly `struct POINTEE *` and whose final member is scalar. Each dereferenced link is checked flow-sensitively: an untracked owner's link is untracked, and a tracked owner's link must be the member place an admitted store bound, with the recorded field link and a live child (`indirect_chain_access::chain_resolves`). It has Lean parity in QCore.IndirectChainAccess and a measured re-pin (docs/reports/w44-indirect-chain-access/README.md): 74 leaves admitted, 24 removed, 50 exchanged for 49 unknown_alias, 0 function moves. The class measured 5,522 / 2,028 / 213 at the AFTER census, of which 3,315 leaves carry no member chain. The remainder is re-registered by measured shape: W44-CHAIN-NESTED-AGGREGATE, W44-CHAIN-TYPEDEF-ROOT, W44-CHAIN-UNDECLARED-ROOT, W44-CHAIN-SUBSCRIPT, W44-CHAIN-INCOMPLETE-RECORD, W44-CHAIN-CALL, W44-CHAIN-NON-SCALAR-MEMBER, W44-CHAIN-BOUND-ROOT and W44-CHAIN-CLASS-NOT-A-CHAIN."
+  },
+  {
+    "entry": {
+      "id": "W43-INDEX-TRAVERSAL-CONDITION-CHAIN",
+      "title": "A controlling expression with a member chain stays refused: 1,248 leaves on 632 Unknown functions, 1 sole-blocked",
+      "why": "The typed condition read admits one selection per access, as the statement route does (W43-INDIRECT-CHAIN-ACCESS). `for (i = 0; i < md->topics[j].partition_cnt; i++)`, `if (a->b->c)` and `x[i].f` stay refused. Measured at the AFTER census (residuals.txt, conditions class chain): 1,248 leaves in 632 Unknown functions, 1 sole-blocked. DISCHARGE: the same card that extends the statement route to record-pointer chains (each intermediate dereference checked against field links) extends the condition read, measured together.",
+      "source": "docs/reports/w43-index-traversal/README.md",
+      "recorded_by": "W43-INDEX-TRAVERSAL"
+    },
+    "discharged_by": "W44-INDIRECT-CHAIN-ACCESS",
+    "ground": "Its discharge condition: \"the same card that extends the statement route to record-pointer chains (each intermediate dereference checked against field links) extends the condition read, measured together\". Card W44-INDIRECT-CHAIN-ACCESS extends W43-INDEX-TRAVERSAL's typed condition read with the same chain reader and the same per-link obligation, measured together with the statement route (26 condition leaves admitted: 2 removed and 24 exchanged). The condition class measured 1,227 / 622 / 1 at the AFTER census, of which 249 leaves carry no member chain. The remainder is re-registered with the statement residuals, each entry giving its condition share."
+  }
+]

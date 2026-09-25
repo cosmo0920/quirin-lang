@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 345
+  "named_followups": 352
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-INDEXED-RESOURCE-COLLECTIONS integration, 2026-09-25. The card (measured against docs/reports/w43-descriptor-resource-tracking/integration/artifacts) composed onto the combined tree docs/reports/w43-descriptor-resource-tracking/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 0 added 0 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Verdict-neutral on the corpus: the diagnostics artifact differs from the previous baseline only in the scope string (no bounds claim for collection ranges); every one of the 27 recognised element operations keeps its original refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/integration/previous-corpus-row.json.",
+   "note": "W44-INDIRECT-CHAIN-ACCESS, 2026-09-25. BEFORE (base c1e69bb5) reproduces the W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte, and the census-instrumented base run reproduces all five BEFORE artifacts. Typed record-pointer member chains in statements and conditions remove 74 unsupported leaves (24 admitted, 50 refused by the chain obligation) and add 49 unknown_alias exchanges, all attributed; 0 downstream, 0 violation candidates. 0 function and 0 unit moves, leak pin 271 unchanged. No bounds claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-chain-access/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
@@ -6642,10 +6642,10 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
-   "source": "docs/reports/w43-indexed-resource-collections/integration/integration-confirmation.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
-   "unknown_alias_diagnostics": 4358,
-   "unsupported_diagnostics": 45848,
+   "baseline": "docs/reports/w44-indirect-chain-access/artifacts/",
+   "source": "docs/reports/w44-indirect-chain-access/README.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+   "unknown_alias_diagnostics": 4407,
+   "unsupported_diagnostics": 45774,
    "double_release_diagnostics": 0,
    "function_statuses": {
     "safe": 294,
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
-  "workspace_tests": 5390,
+  "note": "W44-INDIRECT-CHAIN-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured at 6e0bced6 with CARGO_INCREMENTAL=0; later commits change documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration. 5420 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds 12 module tests and the 14-test indirect_chain_access binary, and four new tests where six existing pins moved deliberately); 178 Lean audits (1 added: AuditIndirectChainAccess); census step: clippy -p qcore-c-gateway --features indirect-census clean and 462 feature-on library tests passed; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pbuild': 0, 'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ppython': 0, 'ptest': 0, 'pverify': 0}. A first core gate run (private/gate) failed to compile alias_aggregate_probe and is not evidence. Logs: worktree-private private/gate2 and private/provider-gate. Clang recorded in this checkout. Corpus: 0 function and 0 unit moves, leak 271 unchanged, 0 violation candidates.",
+  "workspace_tests": 5420,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 177,
+  "lean_audits": 178,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6816,6 +6816,7 @@
    "AuditHttpComputedLength.lean",
    "AuditIndexTraversal.lean",
    "AuditIndexedCollection.lean",
+   "AuditIndirectChainAccess.lean",
    "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
@@ -6921,7 +6922,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-chain-access/gate.json)"
  },
  "named_followups": [
   {
@@ -8944,13 +8945,6 @@
    "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
   },
   {
-   "id": "W43-INDIRECT-CHAIN-ACCESS",
-   "title": "Member chains of depth two or more stay refused: 5,616 leaves on 2,057 Unknown functions, 188 sole-blocked",
-   "why": "The typed scalar-access route admits one selection per access (`*B`, `B[I]`, `B->F`, `S.F`). `a->b->c`, `a->b.c` and `a[i].f` stay refused. Measured at the AFTER census (residuals.txt, class chain): 5,616 leaves (3,998 indirect-access, 1,306 unsupported-assignment, 199 increment, 113 unrecognized-destination) in 2,057 Unknown functions, 188 sole-blocked. The intermediate member is a pointer loaded from memory, which the projection binds only through a field link; admitting it needs the intermediate dereference's own obligation (the owner's field link live, or the owner untracked) and a member reader that classifies the intermediate (census-2 section 7 measured most chains end Unresolved). DISCHARGE: a card that extends the route to record-pointer member chains with each intermediate dereference checked against field links, Lean parity and a measured re-pin; or a measured decision that the reader classes do not justify it.",
-   "source": "docs/reports/w43-indirect-access-general/README.md",
-   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
-  },
-  {
    "id": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS",
    "title": "Single accesses whose base or member the declaration reader does not classify stay refused: 3,136 leaves on 1,212 Unknown functions, 94 sole-blocked",
    "why": "A single `*B`, `B[I]`, `B->F` or `S.F` is admitted only when the reader commits to `SCALAR *B`/`SCALAR B[N]`, `struct T *B` with a scalar member `F` of a completely read `struct T`, or `struct T S`. Measured at the AFTER census (residuals.txt, class untyped-single-access): 3,136 leaves (2,668 indirect-access, 247 unrecognized-destination, 187 store-through, 19 unsupported-assignment, 15 increment) in 1,212 Unknown functions, 94 sole-blocked. The causes are the readers already registered (RECORD-BODY-TOTAL-OR-REJECT, TYPEDEF-ANONYMOUS-AGGREGATE-UNREACHED, BASE-CAUSE-SECOND-DISCOUNT-PARTIAL) plus pointees the rule deliberately excludes (`void *`, `T **`, records). A reader repair now has a consumer: every base it commits to reaches this route. DISCHARGE: re-measure this class after any of those reader repairs lands, and attribute the moves to the reader, not the route; or a recorded decision that the class is closed.",
@@ -9045,13 +9039,6 @@
    "id": "W43-INDEX-TRAVERSAL-CONDITION-UNTYPED",
    "title": "A controlling expression whose access the declaration reader does not type stays refused: 2,616 leaves on 1,154 Unknown functions, 28 sole-blocked",
    "why": "The typed condition read admits `*B`, `B[I]`, `B->F` and `S.F` only where the reader commits to `SCALAR *B`/`SCALAR B[N]`, a scalar member of a completely read record, or a record object, plus declared pointer names and the null constant as whole operands. Measured at the AFTER census (residuals.txt, conditions class untyped): 2,616 leaves in 1,154 Unknown functions, 28 sole-blocked: a `void *` or `char **` base, a pointer-valued member tested for null (`p->next != NULL` on a record the reader refused), an unread typedef, a member of an incomplete record. The causes are the reader residuals W43-INDIRECT-UNTYPED-SINGLE-ACCESS already names. DISCHARGE: re-measure this class after a reader repair lands and attribute the moves to the reader, or admit pointer-valued member tests in a condition with the base's obligation and a measured re-pin.",
-   "source": "docs/reports/w43-index-traversal/README.md",
-   "recorded_by": "W43-INDEX-TRAVERSAL"
-  },
-  {
-   "id": "W43-INDEX-TRAVERSAL-CONDITION-CHAIN",
-   "title": "A controlling expression with a member chain stays refused: 1,248 leaves on 632 Unknown functions, 1 sole-blocked",
-   "why": "The typed condition read admits one selection per access, as the statement route does (W43-INDIRECT-CHAIN-ACCESS). `for (i = 0; i < md->topics[j].partition_cnt; i++)`, `if (a->b->c)` and `x[i].f` stay refused. Measured at the AFTER census (residuals.txt, conditions class chain): 1,248 leaves in 632 Unknown functions, 1 sole-blocked. DISCHARGE: the same card that extends the statement route to record-pointer chains (each intermediate dereference checked against field links) extends the condition read, measured together.",
    "source": "docs/reports/w43-index-traversal/README.md",
    "recorded_by": "W43-INDEX-TRAVERSAL"
   },
@@ -9278,6 +9265,69 @@
    "why": "Observed by W43-DESCRIPTOR-NATIVE-CHECK Phase B (pinned run engine.event_type_traces_stdin_closed): with descriptor 0 closed at spawn, flb_create's flb_pipe_create(config->ch_data) (src/flb_lib.c:181) returns the pair [0, 3], and flb_config_exit guards its destroy with `if (config->ch_data[0])` (src/flb_config.c:611), so neither end is closed and both are live at exit. Same guard class as ctr_random_get's `fd > 0` and the `ch_event.fd` nonzero guard (W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE). A process launched without standard input is the precondition; the CLI then exits, so the leak outlives nothing there, while an embedding calling flb_destroy and continuing would keep both descriptors (inferred). Native observation, source-confirmed; not a static verdict. Discharge: an upstream `>= 0` guard with the pinned scenario showing no live pipe at exit, or a recorded decision.",
    "source": "docs/reports/w43-descriptor-native-check/README.md",
    "recorded_by": "W43-DESCRIPTOR-NATIVE-CHECK"
+  },
+  {
+   "id": "W44-CHAIN-NESTED-AGGREGATE",
+   "title": "A member chain through a nested aggregate sub-object stays refused: 1,287 leaves on 517 Unknown functions, 35 sole-blocked",
+   "why": "Card W44-INDIRECT-CHAIN-ACCESS admits a chain only through links declared exactly `struct POINTEE *`. A `.` after the first selection selects an embedded record sub-object (`a->b.c`, `s.a.b`, `a->b.c->d`). The declaration reader records no tag for a record-valued member, so the chain reader refuses it (`dot-link`). Measured at the AFTER census (residuals.txt, chain-census-after.txt): 1,287 leaves (776 statement, 511 condition) in 517 Unknown functions, 35 sole-blocked. This is the largest real residual of the family. DISCHARGE: a card that types record-valued members (a complete, unambiguous, non-union `struct T m;`) in the declaration reader and admits a `.` selection of one as a same-object step between links (no dereference, so no new obligation). It needs Lean parity with QCore.IndirectChainAccess and a measured re-pin.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-TYPEDEF-ROOT",
+   "title": "A member chain whose root is declared through a typedef stays refused: 580 leaves on 300 Unknown functions, 17 sole-blocked",
+   "why": "The declaration reader answers `Opaque` for a pointer declared through a typedef of a record (`rd_kafka_buf_t *rkbuf`, `rd_kafka_msgset_writer_t *msetw`), so the chain reader refuses the root (`root-untyped`). Measured at the AFTER census: 580 leaves (482 statement, 98 condition) in 300 Unknown functions, 17 sole-blocked. The reader is shared by every typed rule, so widening it moves more than this family. DISCHARGE: a card that resolves `typedef struct T T_t` / `T_t *` to `RecordPointer(T)` in `TypedAccessModel::classify_specifiers` (fail-closed on every other typedef), measured across every typed route, with Lean parity for the reader facts it adds.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-UNDECLARED-ROOT",
+   "title": "A member chain whose root the function does not declare stays refused: 396 leaves on 122 Unknown functions, 4 sole-blocked",
+   "why": "The chain reader types the root from the function's own declaration reader. A root that is a file-scope object, or any name in a function whose declarations the reader refused, has no declared type (`root-undeclared`). Measured at the AFTER census: 396 leaves (272 statement, 124 condition) in 122 Unknown functions, 4 sole-blocked. DISCHARGE: a card that types file-scope record pointers and objects the body does not shadow (with the publication premise of CTWIN-PUBLISH, since such an object outlives the call), or that narrows the unreadable-declaration refusal, measured.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-SUBSCRIPT",
+   "title": "A member path carrying a subscript stays refused: 296 leaves on 136 Unknown functions, 6 sole-blocked",
+   "why": "`a[i].f`, `a->b[i]` and `a->b[i].c` read through an element whose index this route does not type as a link. Measured at the AFTER census: 296 leaves (163 statement, 133 condition) in 136 Unknown functions, 6 sole-blocked. DISCHARGE: a card that admits an array-of-record element (`struct T a[N]` or `struct T *a` indexed by a scalar-only index) as a link, with the dereference obligation of its base and no bounds claim, measured.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-INCOMPLETE-RECORD",
+   "title": "A member chain through an incomplete, ambiguous or union record stays refused: 195 leaves on 151 Unknown functions, 10 sole-blocked",
+   "why": "A record on the chain has no single complete definition the reader read (a bitfield, function-pointer member, nested anonymous aggregate, two definitions, a union), so no link or final member of it can be typed. Measured at the AFTER census: 195 leaves (111 statement, 84 condition) in 151 Unknown functions, 10 sole-blocked. DISCHARGE: a card that narrows the reader's whole-record refusals (for example reading past a bitfield or function-pointer member without typing it), measured across every typed route.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-CALL",
+   "title": "A member chain in a statement carrying a call stays refused: 383 leaves on 253 Unknown functions, 13 sole-blocked",
+   "why": "The chain route is consulted only for a statement or condition with no call, exactly as W43's typed route. These leaves are in W43's chain class, but their statements carry a call: the chain sits in the call's arguments (`x = f(a->b.c)`, `r = cmp(&a->elems[i], ...)`) or is itself a call through a member (`p->cb(...)`). Many also carry a second chain refusal. Measured at the AFTER census: 383 leaves (380 statement, 3 condition) in 253 Unknown functions, 13 sole-blocked. DISCHARGE: the card that admits typed accesses in a modeled call's arguments (W44-INDIRECT-CALL-ARGUMENT-ACCESS or its successor) composes with this chain reader and carries the chains' per-link obligations, with Lean parity and a measured re-pin.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-NON-SCALAR-MEMBER",
+   "title": "A member chain ending in a pointer, array or aggregate member stays refused: 48 leaves on 33 Unknown functions, 1 sole-blocked",
+   "why": "A pointer-valued final member stored from or into a tracked identity is a member-link or escape question. The chain route admits only a scalar final member. A pointer read into a local keeps whatever older route admits it (O04-ARMS opaque read, REACH-GATE F4). Measured at the AFTER census: 48 leaves (29 pointer, 14 array or aggregate, 5 `->` after a non-pointer) in 33 Unknown functions, 1 sole-blocked. DISCHARGE: a card that extends the member-link machinery (O04-B08's field links) past the first selection, or a measured decision that the class does not justify it.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-BOUND-ROOT",
+   "title": "An admitted chain whose root the body may bind is refused by its obligation: 49 unknown_alias leaves on 35 functions (32 Unknown, 3 provisional Unsafe)",
+   "why": "The chain route requires its root to be a name the body never binds (C02-P premise 4, `UntrackedBases::never_bound`) or one known live identity with a bound member place. 50 admitted corpus leaves have a root that premise 4 marks bound (`ch` in chunkio's `cio_chunk_*` and `cio_meta_*`, `decode_context`, `server`, `in`), because the body passes the name at a non-`Borrowed` position or to an uncontracted callee, takes its address, or assigns it (premise 4's syntactic reading). The flow leaves it unbound, so the obligation refuses. These are exchanged for 49 `unresolved resource identity` leaves (two leaves share one line) in 35 functions: 44 leaves in 32 Unknown functions and 5 in 3 provisional-Unsafe ones, whose status they do not change. DISCHARGE: a flow-sensitive replacement for premise 4 (containment facts for `Stored`/`Out` positions, and the refusal of an uncontracted callee's statement standing in for the syntactic mark), with Lean parity and a measured re-pin; or the contracts that make those callees' positions `Borrowed`.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+   "id": "W44-CHAIN-CLASS-NOT-A-CHAIN",
+   "title": "W43's chain classes counted 3,564 leaves that carry no member chain: 1,534 Unknown functions, 156 sole-blocked",
+   "why": "W43-INDIRECT-ACCESS-GENERAL's place reader classes every multi-token place that starts with a name as `chain`, so a typed declarator (`T * x = e`, `size_t n = e`) lands there. W43-INDEX-TRAVERSAL's condition class counts two separate arrows (`a->b && c->d`) as a chain. At the AFTER census, 3,564 leaves of the two classes have no access path of two or more selections in any statement recorded at their key (1,522 declarators, 1,899 single accesses or separate arrows, 143 with no chain-census record). They are other shapes (typed declarations with an initializer, untyped single accesses, conditions with calls), not member chains, and no chain rule can move them. DISCHARGE: a census that re-sizes the indirect-access and condition families under corrected classifiers (a declarator is not a place; a condition chain is one access path), re-homing each leaf to the residual its true shape belongs to, and retiring this entry as a measurement correction.",
+   "source": "docs/reports/w44-indirect-chain-access/README.md",
+   "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

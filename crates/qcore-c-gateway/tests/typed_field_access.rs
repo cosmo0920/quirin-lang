@@ -321,11 +321,12 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             "void subject(struct doc *d, int **o) { void *p = q_alloc(); \
              *o = &d->cursor; q_free(p); }",
         ),
-        // A chained access re-enters an unmodeled pointer.
-        (
-            "chained access",
-            "void subject(struct pane *n) { void *p = q_alloc(); n->doc->cursor = 1; q_free(p); }",
-        ),
+        // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS: the row
+        // `n->doc->cursor = 1` over a never-bound formal moved out of this
+        // table. Its link `doc` is exactly `struct doc *` and its final member
+        // a scalar, so the typed route now admits it with each link's
+        // obligation; it certifies in
+        // `a_typed_member_chain_store_is_admitted_by_the_chain_route` below.
         // A cast names a type, which is never a declared scalar variable.
         (
             "cast operand",
@@ -364,6 +365,22 @@ fn a_subscripted_scalar_read_into_a_scalar_member_is_admitted_by_the_general_rou
     certified(
         "void subject(struct doc *d, int *v) { void *p = q_alloc(); \
          d->cursor = v[0]; q_free(p); }",
+    );
+}
+
+/// Card W44-INDIRECT-CHAIN-ACCESS moved the `chained access` row out of the
+/// ambiguous table, deliberately: `n->doc->cursor = 1` reads through a
+/// never-bound formal `n` (untracked) and the link `n->doc`, a member of an
+/// object no reaching path bound (untracked), and stores a scalar member. It
+/// is admitted by the chain route and certifies; the certificate rechecks
+/// from source.
+#[test]
+fn a_typed_member_chain_store_is_admitted_by_the_chain_route() {
+    if !clang_available() {
+        return;
+    }
+    certified(
+        "void subject(struct pane *n) { void *p = q_alloc(); n->doc->cursor = 1; q_free(p); }",
     );
 }
 

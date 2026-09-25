@@ -1,0 +1,230 @@
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_close:2076:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_down:2396:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_get_content:2163:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_get_content_copy:2187:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_get_content_end_pos:2203:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_get_content_size:2220:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_get_real_size:2237:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  clear chunkio/cio_chunk.c/cio_chunk_hash:2263:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 0
+      chains: ch[never-bound]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_is_up:2357:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_sync:2150:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_tx_begin:2306:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_tx_rollback:2339:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_up:2409:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_up_force:2422:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_write:2136:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_chunk.c/cio_chunk_write_at:2119:indirect memory access is outside the resource projection
+    type = ch - > st - > type
+      chains: ch[may-bind]->st->type
+Unknown  clear chunkio/cio_error.c/cio_error_set:1741:indirect memory access is outside the resource projection
+    ch - > ctx - > last_chunk_error = status
+      chains: ch[never-bound]->ctx->last_chunk_error
+Unknown  clear chunkio/cio_file.c/cio_file_sync:3578:indirect memory access is outside the resource projection
+    desired_size = ( ( ( ( desired_size ) + ( ch - > ctx - > page_size ) - 1 ) / ( ch - > ctx - > page_size ) ) * ( ch - > ctx - > page_size ) )
+      chains: ch[never-bound]->ctx->page_size, ch[never-bound]->ctx->page_size, ch[never-bound]->ctx->page_size
+Unknown  clear chunkio/cio_file.c/cio_file_write:3476:indirect memory access is outside the resource projection
+    new_size = ( ( ( ( new_size ) + ( ch - > ctx - > page_size ) - 1 ) / ( ch - > ctx - > page_size ) ) * ( ch - > ctx - > page_size ) )
+      chains: ch[never-bound]->ctx->page_size, ch[never-bound]->ctx->page_size, ch[never-bound]->ctx->page_size
+Unknown  flow  chunkio/cio_meta.c/cio_meta_cmp:2447:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 1
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_read:2416:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 1
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_read:2425:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 0
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_size:2397:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 1
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_size:2401:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 0
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_write:2377:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 1
+      chains: ch[may-bind]->st->type
+Unknown  flow  chunkio/cio_meta.c/cio_meta_write:2391:unmodeled call, aggregate or indirect access in branch condition
+    ch - > st - > type = = 0
+      chains: ch[may-bind]->st->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8311:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 2
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8326:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 5
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8330:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 3
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8337:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 0
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_negative_buckets:7844:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_negative_count = 0
+      chains: decode_context[may-bind]->metric->exp_hist_negative_count
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_negative_buckets:7851:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_negative_count = count
+      chains: decode_context[may-bind]->metric->exp_hist_negative_count
+Unknown  clear cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_negative_offset:7775:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_negative_offset = ( int32_t ) value
+      chains: decode_context[never-bound]->metric->exp_hist_negative_offset
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_positive_buckets:7820:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_positive_count = 0
+      chains: decode_context[may-bind]->metric->exp_hist_positive_count
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_positive_buckets:7827:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_positive_count = count
+      chains: decode_context[may-bind]->metric->exp_hist_positive_count
+Unknown  clear cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_positive_offset:7756:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_positive_offset = ( int32_t ) value
+      chains: decode_context[never-bound]->metric->exp_hist_positive_offset
+Unknown  clear cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_scale:7717:indirect memory access is outside the resource projection
+    decode_context - > metric - > exp_hist_scale = ( int32_t ) value
+      chains: decode_context[never-bound]->metric->exp_hist_scale
+Unknown  clear cmetrics/cmt_decode_msgpack.c/unpack_histogram_bucket:7652:indirect memory access is outside the resource projection
+    expected_count = histogram - > buckets - > count + 1
+      chains: histogram[never-bound]->buckets->count
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_histogram_buckets:7678:indirect memory access is outside the resource projection
+    expected_count = histogram - > buckets - > count + 1
+      chains: histogram[may-bind]->buckets->count
+Unknown  clear cmetrics/cmt_decode_msgpack.c/unpack_meta_type:8145:indirect memory access is outside the resource projection
+    decode_context - > map - > type = value
+      chains: decode_context[never-bound]->map->type
+Unsafe   flow  cmetrics/cmt_decode_msgpack.c/unpack_metric:7968:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 2
+      chains: decode_context[may-bind]->map->type
+Unsafe   flow  cmetrics/cmt_decode_msgpack.c/unpack_metric:7982:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 3
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8035:indirect memory access is outside the resource projection
+    decode_context - > map - > metric_static_set = 1
+      chains: decode_context[may-bind]->map->metric_static_set
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8036:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 2
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8043:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 3
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8053:unmodeled call, aggregate or indirect access in branch condition
+    decode_context - > map - > type = = 5
+      chains: decode_context[may-bind]->map->type
+Unknown  flow  cmetrics/cmt_decode_msgpack.c/unpack_summary_quantiles:7540:indirect memory access is outside the resource projection
+    expected_count = decode_context - > metric - > sum_quantiles_count
+      chains: decode_context[may-bind]->metric->sum_quantiles_count
+Unknown  clear cmetrics/cmt_decode_opentelemetry.c/decode_counter_entry:7945:indirect memory access is outside the resource projection
+    counter - > map - > metric_static_set = 0
+      chains: counter[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_opentelemetry.c/decode_exponential_histogram_entry:8184:indirect memory access is outside the resource projection
+    exp_histogram - > map - > metric_static_set = 0
+      chains: exp_histogram[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_opentelemetry.c/decode_gauge_entry:7971:indirect memory access is outside the resource projection
+    gauge - > map - > metric_static_set = 0
+      chains: gauge[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_opentelemetry.c/decode_histogram_entry:8005:indirect memory access is outside the resource projection
+    histogram - > map - > metric_static_set = 0
+      chains: histogram[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_opentelemetry.c/decode_summary_entry:7990:indirect memory access is outside the resource projection
+    summary - > map - > metric_static_set = 0
+      chains: summary[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_prometheus_remote_write.c/decode_counter_entry:6673:indirect memory access is outside the resource projection
+    counter - > map - > metric_static_set = 0
+      chains: counter[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_prometheus_remote_write.c/decode_gauge_entry:6688:indirect memory access is outside the resource projection
+    gauge - > map - > metric_static_set = 0
+      chains: gauge[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_prometheus_remote_write.c/decode_histogram_entry:6935:indirect memory access is outside the resource projection
+    histogram - > map - > metric_static_set = 0
+      chains: histogram[never-bound]->map->metric_static_set
+Unsafe   flow  cmetrics/cmt_decode_prometheus_remote_write.c/decode_histogram_points:6834:unmodeled call, aggregate or indirect access in branch condition
+    histogram - > buckets - > count > = 2147483647
+      chains: histogram[may-bind]->buckets->count
+Unknown  clear cmetrics/cmt_decode_prometheus_remote_write.c/decode_untyped_entry:6703:indirect memory access is outside the resource projection
+    untyped - > map - > metric_static_set = 0
+      chains: untyped[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_statsd.c/decode_counter_entry:5780:indirect memory access is outside the resource projection
+    counter - > map - > metric_static_set = 0
+      chains: counter[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_statsd.c/decode_gauge_entry:5794:indirect memory access is outside the resource projection
+    gauge - > map - > metric_static_set = 0
+      chains: gauge[never-bound]->map->metric_static_set
+Unknown  clear cmetrics/cmt_decode_statsd.c/decode_untyped_entry:5808:indirect memory access is outside the resource projection
+    untyped - > map - > metric_static_set = 0
+      chains: untyped[never-bound]->map->metric_static_set
+Unknown  flow  cmetrics/cmt_encode_opentelemetry_batch.c/batch_add_metric:6822:indirect memory access is outside the resource projection
+    metric_count = batch - > active_scope - > n_metrics
+      chains: batch[may-bind]->active_scope->n_metrics
+Unknown  flow  cmetrics/cmt_encode_opentelemetry_batch.c/batch_add_metric:6836:unmodeled increment or decrement expression
+    batch - > active_scope - > n_metrics + +
+      chains: batch[may-bind]->active_scope->n_metrics
+Unsafe   clear cmetrics/cmt_encode_opentelemetry_batch.c/batch_add_scope:6636:unmodeled increment or decrement expression
+    batch - > active_resource - > n_scope_metrics + +
+      chains: batch[never-bound]->active_resource->n_scope_metrics
+Unknown  flow  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_projected_write_size:18368:indirect memory access is outside the resource projection
+    page_size = ( size_t ) chunk - > ctx - > page_size
+      chains: chunk[may-bind]->ctx->page_size
+Unknown  clear fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_storage_overlimit:19868:unmodeled call, aggregate or indirect access in branch condition
+    storage - > cio - > total_chunks_up > = storage - > cio - > max_chunks_up
+      chains: storage[never-bound]->cio->total_chunks_up, storage[never-bound]->cio->max_chunks_up
+Unknown  flow  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_limits:19909:unmodeled call, aggregate or indirect access in branch condition
+    ( mem_limit_cleared = = 1 | | storage_limit_cleared = = 1 ) & & rate_gate_was_paused = = 0 & & in - > rate_gate_status = = 1 & & in - > mem_buf_status = = 1 & & in - > storage_buf_status = = 1 & & in - > config - > is_running = = 1 & & in - > config - > is_ingestion_active = = 1
+      chains: in[may-bind]->config->is_running, in[may-bind]->config->is_ingestion_active
+Unknown  flow  fluent-bit-chunk/flb_input_chunk.c/input_chunk_get:19820:unmodeled call, aggregate or indirect access in branch condition
+    in - > config - > storage_del_bad_chunks
+      chains: in[may-bind]->config->storage_del_bad_chunks
+Unknown  flow  librdkafka/rdkafka.c/rd_kafka_list_groups:25026:unmodeled call, aggregate or indirect access in branch condition
+    state . grplist - > group_cnt = = 0
+      chains: state.[may-bind]->grplist->group_cnt
+Unknown  clear monkey-libevent/mk_server/mk_clock.c/mk_clock_log_set_time:3746:indirect memory access is outside the resource projection
+    server - > clock_context - > log_current_utime = utime
+      chains: server[never-bound]->clock_context->log_current_utime
+Unknown  flow  monkey-libevent/mk_server/mk_lib.c/mk_lib_worker:6520:unmodeled call, aggregate or indirect access in branch condition
+    server - > lib_evl - > n_events > 0
+      chains: server[may-bind]->lib_evl->n_events
+    __i < server - > lib_evl - > n_events
+      chains: server[may-bind]->lib_evl->n_events
+Unknown  flow  monkey-libevent/mk_server/mk_lib.c/mk_lib_worker:6520:unmodeled call, aggregate or indirect access in for-loop condition
+    server - > lib_evl - > n_events > 0
+      chains: server[may-bind]->lib_evl->n_events
+    __i < server - > lib_evl - > n_events
+      chains: server[may-bind]->lib_evl->n_events
+Unknown  flow  monkey-libevent/mk_server/mk_lib.c/mk_start:6552:unmodeled call, aggregate or indirect access in branch condition
+    server - > lib_evl_start - > n_events > 0
+      chains: server[may-bind]->lib_evl_start->n_events
+    __i < server - > lib_evl_start - > n_events
+      chains: server[may-bind]->lib_evl_start->n_events
+Unknown  flow  monkey-libevent/mk_server/mk_lib.c/mk_start:6552:unmodeled call, aggregate or indirect access in for-loop condition
+    server - > lib_evl_start - > n_events > 0
+      chains: server[may-bind]->lib_evl_start->n_events
+    __i < server - > lib_evl_start - > n_events
+      chains: server[may-bind]->lib_evl_start->n_events
+Unsafe   flow  monkey-libevent/mk_server/mk_scheduler.c/mk_sched_add_connection:6583:indirect memory access is outside the resource projection
+    conn - > arrive_time = server - > clock_context - > log_current_utime
+      chains: server[may-bind]->clock_context->log_current_utime

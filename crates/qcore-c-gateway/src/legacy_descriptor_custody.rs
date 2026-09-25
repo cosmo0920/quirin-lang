@@ -297,7 +297,9 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::ScalarMemberStore { .. }
         // Card W43-INDIRECT-ACCESS-GENERAL's typed scalar store or read
         // through `*B`, `B[I]`, `B->F` or `S.F`: its value is custody-neutral
-        // data by construction, which a tracked descriptor is not.
+        // data by construction, which a tracked descriptor is not. Card
+        // W44-INDIRECT-CHAIN-ACCESS adds no variant: its member chains ride
+        // on this one (`chains`), and are refused here by the same decision.
         | LegacyInstruction::IndirectScalarAccess { .. }
         // Card W43-INDEX-TRAVERSAL's pointer step (`P++`, `P += E`,
         // `P = Q ± E`): it derives a pointer and never states what a tracked

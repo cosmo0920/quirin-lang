@@ -1,0 +1,235 @@
+W44-INDIRECT-CHAIN-ACCESS member-chain family (leaves in Unknown functions)
+
+family: 6749 leaves, 2186 functions, 214 sole-blocked (W43's reading), 123 whose every leaf is in the family; unexplained {'declarator-not-a-chain': 1522, 'unexplained': 143}
+
+by_family: key leaves functions sole
+  statement                                                  5522   2028   213
+  condition                                                  1227    622     1
+
+by_kind: key leaves functions sole
+  read                                                       1872   1035    69
+  declarator-not-a-chain                                     1522    652    48
+  condition:if                                               1140    585     1
+  store                                                      1014    445    46
+  declaration                                                 778    506    25
+  increment                                                   160    114     1
+  unexplained                                                 143    135    52
+  condition:for                                                67     51     0
+  compound                                                     33     26     2
+  condition:switch                                             18     17     0
+  condition:while                                               1      1     0
+  condition:do-while                                            1      1     0
+
+by_depth: key leaves functions sole
+  0                                                          3564   1534   156
+  2                                                          1819    793    39
+  3                                                           825    366    15
+  1                                                           385    223    15
+  4                                                           123     76     3
+  5                                                            29     22     5
+  6                                                             4      3     0
+
+by_root: key leaves functions sole
+  no-chain                                                   1899   1012    62
+  declarator-not-a-chain                                     1522    652    48
+  formal:may-bind                                            1220    467     3
+  local:may-bind                                              815    356     9
+  formal:never-bound                                          577    336    57
+  undeclared:may-bind                                         202     80     4
+  subscript-root:may-bind                                     182     60     0
+  unexplained                                                 143    135    52
+  local:never-bound                                           139     98     6
+  formal+local:may-bind                                        36     25     1
+  subscript-root+undeclared:may-bind                            5      3     0
+  local+subscript-root:may-bind                                 4      3     0
+  formal+undeclared:may-bind                                    4      3     0
+  formal+subscript-root:may-bind                                1      1     0
+
+by_reader: key leaves functions sole
+  no-member-chain                                            1899   1012    62
+  declarator-not-a-chain                                     1522    652    48
+  dot-link                                                   1287    517    35
+  root-untyped                                                580    300    17
+  root-undeclared                                             396    122     4
+  call                                                        383    253    13
+  subscript                                                   296    136     6
+  incomplete-record                                           195    151    10
+  unexplained                                                 143    135    52
+  pointer-member                                               29     21     0
+  other-member                                                 14      9     0
+  non-pointer-link                                              5      4     1
+
+by_forecast: key leaves functions sole
+  refused                                                    6749   2186   214
+
+by_family_reader: key leaves functions sole
+  statement / no-member-chain                                1650    930    62
+  statement / declarator-not-a-chain                         1522    652    48
+  statement / dot-link                                        776    386    35
+  condition / dot-link                                        511    227     0
+  statement / root-untyped                                    482    267    17
+  statement / call                                            380    252    13
+  statement / root-undeclared                                 272    101     4
+  condition / no-member-chain                                 249    172     0
+  statement / subscript                                       163     94     5
+  statement / unexplained                                     143    135    52
+  condition / subscript                                       133     74     1
+  condition / root-undeclared                                 124     49     0
+  statement / incomplete-record                               111     91    10
+  condition / root-untyped                                     98     76     0
+  condition / incomplete-record                                84     67     0
+  condition / pointer-member                                   17     14     0
+  statement / pointer-member                                   12     11     0
+  condition / other-member                                      8      8     0
+  statement / other-member                                      6      6     0
+  statement / non-pointer-link                                  5      4     1
+  condition / call                                              3      1     0
+
+by_kind_reader: key leaves functions sole
+  declarator-not-a-chain / declarator-not-a-chain            1522    652    48
+  read / no-member-chain                                     1105    666    46
+  store / dot-link                                            513    239    28
+  condition:if / dot-link                                     494    220     0
+  declaration / no-member-chain                               427    306    15
+  read / call                                                 377    249    13
+  condition:if / no-member-chain                              247    170     0
+  store / root-untyped                                        244    113    12
+  store / root-undeclared                                     159     45     4
+  unexplained / unexplained                                   143    135    52
+  declaration / root-untyped                                  142    107     5
+  declaration / dot-link                                      121    104     5
+  increment / no-member-chain                                 116     77     1
+  condition:if / root-undeclared                              112     43     0
+  read / dot-link                                             103     86     2
+  condition:if / subscript                                    101     62     1
+  read / root-undeclared                                       93     60     0
+  condition:if / incomplete-record                             80     63     0
+  condition:if / root-untyped                                  78     62     0
+  read / root-untyped                                          76     65     1
+  read / subscript                                             60     40     3
+  store / subscript                                            56     33     0
+  read / incomplete-record                                     56     47     8
+  declaration / subscript                                      37     18     2
+  declaration / incomplete-record                              35     34     1
+  condition:for / subscript                                    32     23     0
+  increment / dot-link                                         28     24     0
+  store / incomplete-record                                    19     14     1
+  condition:for / root-untyped                                 19     17     0
+  condition:if / pointer-member                                17     14     0
+  declaration / root-undeclared                                16     12     0
+  store / pointer-member                                       12     11     0
+  condition:for / root-undeclared                              11      8     0
+  increment / root-untyped                                     11     10     0
+  compound / dot-link                                          11      7     2
+  condition:switch / dot-link                                  11     10     0
+  compound / subscript                                          9      7     0
+  compound / root-untyped                                       9      9     0
+  condition:if / other-member                                   8      8     0
+  store / other-member                                          6      6     0
+  condition:for / dot-link                                      5      5     0
+  condition:switch / incomplete-record                          4      4     0
+  increment / call                                              3      3     0
+  store / non-pointer-link                                      3      2     1
+  condition:if / call                                           3      1     0
+  compound / root-undeclared                                    3      2     0
+  read / non-pointer-link                                       2      2     0
+  store / no-member-chain                                       2      1     0
+  condition:switch / no-member-chain                            1      1     0
+  condition:switch / root-untyped                               1      1     0
+  increment / root-undeclared                                   1      1     0
+  compound / incomplete-record                                  1      1     0
+  condition:while / no-member-chain                             1      1     0
+  condition:switch / root-undeclared                            1      1     0
+  condition:do-while / dot-link                                 1      1     0
+  increment / subscript                                         1      1     0
+
+by_depth_reader: key leaves functions sole
+  0 / no-member-chain                                        1899   1012    62
+  0 / declarator-not-a-chain                                 1522    652    48
+  2 / dot-link                                                703    318    19
+  3 / dot-link                                                510    219    11
+  2 / root-untyped                                            376    212    10
+  2 / root-undeclared                                         314    101     2
+  1 / subscript                                               190     92     6
+  2 / call                                                    175    128     5
+  0 / unexplained                                             143    135    52
+  2 / incomplete-record                                       124     95     9
+  1 / root-untyped                                            117     83     3
+  3 / call                                                    110     75     1
+  2 / subscript                                                88     49     0
+  3 / root-untyped                                             72     38     1
+  1 / call                                                     62     50     7
+  3 / root-undeclared                                          55     30     1
+  3 / incomplete-record                                        54     44     1
+  4 / dot-link                                                 53     32     0
+  4 / call                                                     34     21     0
+  2 / pointer-member                                           20     16     0
+  5 / dot-link                                                 19     13     5
+  1 / root-undeclared                                          16     12     1
+  3 / subscript                                                15      9     0
+  2 / other-member                                             14      9     0
+  4 / root-untyped                                             13     11     3
+  4 / incomplete-record                                        11     11     0
+  4 / root-undeclared                                          10      7     0
+  3 / pointer-member                                            9      6     0
+  5 / incomplete-record                                         6      6     0
+  2 / non-pointer-link                                          5      4     1
+  4 / subscript                                                 2      2     0
+  5 / root-untyped                                              2      2     0
+  6 / dot-link                                                  2      1     0
+  6 / root-undeclared                                           1      1     0
+  5 / call                                                      1      1     0
+  6 / call                                                      1      1     0
+  5 / subscript                                                 1      1     0
+
+by_root_reader: key leaves functions sole
+  no-chain / no-member-chain                                 1899   1012    62
+  declarator-not-a-chain / declarator-not-a-chain            1522    652    48
+  formal:may-bind / dot-link                                  591    221     0
+  local:may-bind / dot-link                                   409    172     3
+  local:may-bind / root-untyped                               234    105     3
+  formal:never-bound / dot-link                               217    123    27
+  formal:may-bind / root-undeclared                           210     68     0
+  undeclared:may-bind / root-undeclared                       178     71     4
+  formal:may-bind / call                                      162    102     0
+  subscript-root:may-bind / subscript                         159     59     0
+  formal:never-bound / root-untyped                           159    103    13
+  unexplained / unexplained                                   143    135    52
+  formal:may-bind / root-untyped                              135     95     2
+  formal:may-bind / incomplete-record                          91     71     1
+  local:may-bind / call                                        85     64     1
+  formal:never-bound / call                                    72     55    12
+  formal:never-bound / incomplete-record                       65     55     9
+  formal:never-bound / subscript                               62     36     5
+  local:never-bound / dot-link                                 52     40     5
+  local:never-bound / root-untyped                             38     26     1
+  local:may-bind / subscript                                   37     23     2
+  local:may-bind / incomplete-record                           35     24     0
+  formal:may-bind / subscript                                  27     12     0
+  undeclared:may-bind / call                                   24     13     0
+  subscript-root:may-bind / call                               23     12     0
+  formal+local:may-bind / dot-link                             18     11     0
+  local:never-bound / pointer-member                           16     12     0
+  local:never-bound / call                                     14     11     0
+  local:never-bound / other-member                             11      6     0
+  formal+local:may-bind / root-untyped                         11     10     1
+  local:may-bind / pointer-member                              10      6     0
+  formal+local:may-bind / subscript                             5      3     0
+  local:may-bind / non-pointer-link                             5      4     1
+  subscript-root+undeclared:may-bind / root-undeclared          5      3     0
+  local:never-bound / subscript                                 4      3     0
+  local:never-bound / incomplete-record                         4      4     0
+  formal:may-bind / pointer-member                              3      3     0
+  formal+undeclared:may-bind / root-undeclared                  3      2     0
+  formal:never-bound / other-member                             2      2     0
+  local+subscript-root:may-bind / subscript                     2      2     0
+  formal+local:may-bind / call                                  2      2     0
+  local+subscript-root:may-bind / root-untyped                  2      1     0
+  formal:may-bind / other-member                                1      1     0
+  formal+subscript-root:may-bind / root-untyped                 1      1     0
+  formal+undeclared:may-bind / call                             1      1     0
+
+reach in every status: status / family / arm / in the chain family: leaves
+
+forecast Unknown -> Safe (every leaf clear): 0
+forecast Unknown -> Safe only if flow-dependent leaves admit: 0
