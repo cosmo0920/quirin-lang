@@ -20,6 +20,8 @@ pub mod composition_source;
 #[cfg(feature = "indirect-census")]
 pub mod condition_call_census;
 pub mod counter_source;
+#[cfg(feature = "indirect-census")]
+pub mod destination_suffix_census;
 mod index_traversal;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]

@@ -1,0 +1,72 @@
+{
+ "before": {
+  "functions": {
+   "Unknown": 4455,
+   "Safe": 294,
+   "Unsafe": 85
+  },
+  "units": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  },
+  "kinds": {
+   "unsupported": 45774,
+   "unknown_alias": 4407,
+   "leak": 271,
+   "summary_conflict": 1
+  }
+ },
+ "after": {
+  "functions": {
+   "Unknown": 4458,
+   "Safe": 292,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  },
+  "kinds": {
+   "unsupported": 45703,
+   "unknown_alias": 3291,
+   "leak": 269,
+   "summary_conflict": 1
+  }
+ },
+ "function_moves": [
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_basic_type",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_write16",
+   "before": "Safe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_write32",
+   "before": "Safe",
+   "after": "Unknown"
+  }
+ ],
+ "unit_moves": [],
+ "attributed_leaf_deltas": {
+  "alias-withdrawn:unknown_alias": 1115,
+  "callee-summary-added:unsupported": 5,
+  "callee-summary-removed:unknown_alias": 1,
+  "callee-summary-removed:unsupported": 4,
+  "exchanged:unsupported": 258,
+  "gate-added:unsupported": 186,
+  "leak-withdrawn:leak": 2
+ },
+ "unattributed": [],
+ "attribution_complete": true
+}

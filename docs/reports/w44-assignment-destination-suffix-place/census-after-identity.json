@@ -1,0 +1,82 @@
+{
+  "run": "measure/census-after",
+  "baseline": "docs/reports/w44-assignment-destination-suffix-place/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "631c680df8c02feace4496d531f9cfcf023fb4149d88bc646be3f2dd27c94391",
+      "baseline_raw_sha256": "631c680df8c02feace4496d531f9cfcf023fb4149d88bc646be3f2dd27c94391",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "measure/after/resource-diagnostics.json",
+          "reference_sha256": "631c680df8c02feace4496d531f9cfcf023fb4149d88bc646be3f2dd27c94391",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "measure/after/resource-diagnostics.chunk-contracts.json",
+          "reference_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "b344c9c85bfa1a611d4dcea0e12bbeb74c1430febd52992f01f1b81eef8aeeca",
+      "baseline_raw_sha256": "b344c9c85bfa1a611d4dcea0e12bbeb74c1430febd52992f01f1b81eef8aeeca",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "measure/after/resource-diagnostics.contracts.json",
+          "reference_sha256": "b344c9c85bfa1a611d4dcea0e12bbeb74c1430febd52992f01f1b81eef8aeeca",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "c5a93a5ab4cd2ab73b2b9eb16addeaaa72e30b6828ee74ebb6c6db99ac439032",
+      "baseline_raw_sha256": "c5a93a5ab4cd2ab73b2b9eb16addeaaa72e30b6828ee74ebb6c6db99ac439032",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "measure/after/resource-diagnostics.source-effects.json",
+          "reference_sha256": "c5a93a5ab4cd2ab73b2b9eb16addeaaa72e30b6828ee74ebb6c6db99ac439032",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "measure/after/monkey-source.json",
+          "reference_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    }
+  },
+  "verdict_bearing_identical": true
+}

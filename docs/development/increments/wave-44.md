@@ -7,6 +7,35 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**
+This is a soundness repair. `direct_assignment_destination` named the first
+place-spelling suffix of a left-hand side, so `recs[i].name = x_dup(s);
+x_free(name);` bound the local `name` and certified `Safe`. A destination is now
+named only when the suffix is the whole left-hand side or follows a declarator
+prefix (identifiers, `*`, `,`). Every other such left-hand side is a store into
+a sub-object, and the lexical gate refuses it.
+
+The reach census of the base found 10,979 distinct suffix-named records:
+
+* 7,853 declarations, whose names are unchanged;
+* 3,126 sub-object stores, of which 1,450 had been admitted under a misnamed
+  destination, in 173 functions.
+
+Only two Safe functions relied on it, `LZ4_write16` and `LZ4_write32`, and
+both move to Unknown. `unpack_basic_type` moves from provisional Unsafe to
+Unknown when its two false leaks, accusations about the misnamed `opts`, are
+withdrawn. Leak 271 → 269, `unknown_alias` −1,116, no unit moves, and every
+delta is attributed. The forecast missed only nine caller leaves of the two
+functions that lost their W4 summaries.
+
+The descriptor guard's missed index read is fixed by the same reader. The
+protected-formal closure keeps the old over-approximating reader. Lean
+`QCore.AssignmentDestinationSuffix` (17 theorems, including "the repair never
+promotes") is audited by `AuditAssignmentDestinationSuffix.lean`. The card
+registers three residuals; its own ledger name lives on the call-argument
+branch, for the integrator to retire. See
+[the report](../../reports/w44-assignment-destination-suffix-place/README.md).
+
 **`W44-LEAK-PIN-AUDIT` (2026-09-25).** Audited every one of the 271 baseline leak leaves on base `c1e69bb5`. A feature-gated leak-witness census re-runs each settled CFG and searches the analyzer's own witness paths; its diagnostics stay byte-identical to the baseline, and all 271 leaves join. With source reading ([reading.json](../../reports/w44-leak-pin-audit/reading.json)) the leaves classify as 139 validated (a), 31 projection artifacts (b), 101 premise or approximation gaps (c) and 0 unclassifiable, frozen before any rule. A carrier-preserving cast return is now decided as the uncast return and a carrier-crossing one is refused (`RETURN-CAST-PLACE-NOT-ESCAPED`, retired; `QCore.CastReturnEscape`); a first AFTER run was withdrawn because its cast rule admitted member chains the uncast return refuses. On the coordinator's direction (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`) the card then implemented the refused hand-on rule: a live identity named in a refused statement, as a store value, return operand, call argument, operand or address, carries an unresolved effect, so no leak is claimed through it; it discharges nothing and makes nothing Safe (`QCore.RefusedHandOnCustody`). A rule-off census with the union-join handed path found 252 of the 270 other leaves named in a refused statement before their exit; the overlay and its prediction were committed before the rule. The arbiter withdrew exactly the 253 predicted leaves (leak 271 → 18, 0 collateral, 0 missed): 76 functions and 35 units provisional Unsafe → Unknown, 3 accessor functions Unknown → Safe through the cast return; unknown_alias +19 / −3, the three removals not localised. The cost is 128 withdrawn leaves the reading validated, registered as `REFUSED-HANDOFF-WITHDRAWN-ACCUSATIONS`; 11 class (a) leaves in 3 functions remain. The three leak semantics W44-INDIRECT-CALL-ARGUMENT-ACCESS exposed (an unsanctioned `*out = p`, a link into a returned owner, a release through an uncontracted helper) are pinned and fall under the same rule, and CT43's owned-local control moves from a provisional Unsafe to Unknown (`CT-CTWIN-UNRESOLVED-LEAK` discharged). Eleven residuals registered, three entries amended, ledger 345 → 355. [Report](../../reports/w44-leak-pin-audit/README.md).
 
 **`W44-BRANCH-CONDITION-CALLS` (2026-09-25).** Made calls inside `if`, `while`, `for`, `do`-`while` and `switch` conditions decidable where every call is modeled. A condition every existing route refused is desugared (`legacy_condition_desugar.rs`, a child module of `legacy_c` behind thin hooks): each call becomes its own `ContractCall` from the ordinary statement classifier, in C evaluation order, each operand decides through one branch, and `&&`, `||` and `?:` become edges, so a later operand's calls run only on the edge where C evaluates them; `!` swaps exits and `__builtin_expect(E, K)` reads as `E`. `(NAME = CALL(...))` into a plain declared scalar or pointer local becomes the statement and a test of `NAME`. Uncontracted calls, custody results, same-component local callees, unsequenced effectful pairs, type operators and unadmitted operands keep the refusal, and `if ((p = malloc(n)) == NULL)` keeps today's exact lowering. The census came first (`df5edb61`, rule compiled in and not consulted, byte-identical): most call-bearing conditions fail on a call the classifier refuses (an indirect argument, 1,686 leaves at AFTER; an uncontracted callee, 1,000) or on a call-free operand (1,211), not on a connective. Lean `QCore.ConditionCallDesugar` (25 audited theorems) proves the plan performs exactly C's short-circuit evaluation for every operand valuation. The arbiter removed **292** condition leaves (276 forecast on Unknown functions, exact), exchanged 36 into same-line `unknown_alias` (`unlikely(!x)` on an unresolved name) and decided one false leak on `rd_malloc`'s null edge in `snappy.c`: **0 function or unit moves, leak 271 → 270, 0 violation candidates**. It retired `W43-INDEX-TRAVERSAL-CONDITION-CALL` and registered eight blocker-sized residuals, a derived-result decision and a B02 descriptor-read finding (345 → 354 on the card branch, 358 → 367 on integration). [Report](../../reports/w44-branch-condition-calls/README.md).

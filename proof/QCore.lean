@@ -153,6 +153,7 @@ import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.IndirectChainAccess
+import QCore.AssignmentDestinationSuffix
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress
