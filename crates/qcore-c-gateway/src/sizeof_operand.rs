@@ -148,10 +148,10 @@ fn operand_length(texts: &[&str], types: &OperandTypes) -> Option<usize> {
 /// member selection, or an increment or decrement. Any of them would make the
 /// operand a longer expression than the one recognised, so it is refused.
 fn postfix_follows(texts: &[&str], index: usize) -> bool {
-    match texts.get(index..).unwrap_or_default() {
-        ["[" | "(" | ".", ..] | ["-", ">", ..] | ["+", "+", ..] | ["-", "-", ..] => true,
-        _ => false,
-    }
+    matches!(
+        texts.get(index..).unwrap_or_default(),
+        ["[" | "(" | ".", ..] | ["-", ">", ..] | ["+", "+", ..] | ["-", "-", ..]
+    )
 }
 
 /// The lexical gate's view of `texts` from `from`: every token of an
