@@ -1,0 +1,4 @@
+round 0 unpatched      160.4s exit 0 load 21.0
+round 0 probe-cache     82.8s exit 0 load 15.3
+round 1 unpatched      124.1s exit 0 load 14.8
+round 1 probe-cache     74.2s exit 0 load 10.4

@@ -7,6 +7,36 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**2026-09-25 — W44-TEST-SUITE-WALL-TIME: the gate's Rust suite, from 22 minutes to about 4½.**
+Plain `cargo test --workspace --no-fail-fast` took 22:13 from a clean dev
+profile: 125 s of build and 1,208 s of test binaries run one after another.
+Three changes, each measured on its own, bring it to 3:59–5:35 over three runs
+at 1-minute loads of 8–38, and the executed tests and outcomes stay identical
+to the base:
+
+* `[profile.dev] debug = "line-tables-only"` about halves the build and shrinks
+  `target/` from 62 to 21 GB. Opt-level and the debug assertions are unchanged.
+* The gateway now resolves and probes Clang once per `QCORE_CLANG`/`PATH`
+  environment. Discovery had launched `clang --version` before every Clang
+  run, 5,411 of the heaviest binary's 9,603 launches. The serial test phase
+  falls from 1,345 s to 506 s. A failure is never cached, and no verdict can
+  change.
+* `scripts/run_test_binaries.py` replaces the serial run. It is std-only. It
+  captures cargo's own launch of every test executable (argv, cwd and the
+  complete environment, the same 114 variables strace observes) and runs the
+  executables eight at a time, longest first. Constraint 16's load-sensitive
+  rows, and every binary that launches a process provider under a timeout, run
+  alone afterwards; none ever overlapped another unit. The runner fails closed
+  on a crash, a signal, a missing or unlaunched binary, or an unparsable
+  result.
+
+`docs/agents/validation.md` now names the runner as the gate's Rust step and
+keeps `cargo test --workspace --no-fail-fast` as the reference command. The
+only test additions are the cache's two unit tests. Two measured residuals are
+registered: `W44-CLANG-IDENTITY-RECAPTURE` and
+`W44-TEST-CRITICAL-PATH-ROUTE-PARITY`. The heaviest binary, 53 s alone, sets
+the parallel phase's end. See [the report](../../reports/w44-test-suite-wall-time/README.md).
+
 **2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**
 This is a soundness repair. `direct_assignment_destination` named the first
 place-spelling suffix of a left-hand side, so `recs[i].name = x_dup(s);
