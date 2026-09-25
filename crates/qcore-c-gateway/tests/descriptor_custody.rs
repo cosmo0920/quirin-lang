@@ -571,14 +571,16 @@ fn no_heap_summary_is_inferred_for_a_descriptor_wrapper() {
     expect_function("my_open", body, "my_open", "Safe", &[]);
 }
 
-/// A measured boundary, not a rule of this card: the return route reads
-/// `return (T *)p;` as returning no place, so an acquisition returned through
-/// a cast is reported as a leak — for the heap exactly as for a stream. This is
-/// why the card withholds `dlopen`/`dlclose`: their one corpus function,
-/// `rd_dl_open0`, returns its handle that way, and the resulting candidate is
-/// refuted by reading (`RETURN-CAST-PLACE-NOT-ESCAPED`).
+/// This card measured a boundary here: the return route read `return (T *)p;`
+/// as returning no place, so an acquisition returned through a cast was
+/// reported as a leak — for the heap exactly as for a stream — and the card
+/// withheld `dlopen`/`dlclose` on it (`RETURN-CAST-PLACE-NOT-ESCAPED`). Card
+/// W44-LEAK-PIN-AUDIT discharged that residual: a pointer cast of one place
+/// now escapes it exactly as the uncast return does, for every pointer kind
+/// (`legacy_cast_return.rs`, `QCore.CastReturnEscape`). The pin was flipped
+/// deliberately; `tests/leak_pin_audit.rs` carries the carrier-crossing cases.
 #[test]
-fn a_cast_return_is_not_an_escape_for_any_kind() {
+fn a_cast_return_escapes_for_every_pointer_kind() {
     if !clang_available() {
         return;
     }
@@ -586,7 +588,7 @@ fn a_cast_return_is_not_an_escape_for_any_kind() {
         "void *w(void) { void *p = k_alloc(1); if (!p) return 0; return (char *)p; }",
         "void *w(void) { void *p = k_fopen(\"p\"); if (!p) return 0; return (char *)p; }",
     ] {
-        expect("cast return", body, "Unsafe", &["leak"]);
+        expect("cast return", body, "Safe", &[]);
     }
     // Without the cast the same bodies escape their identity and certify.
     for body in [

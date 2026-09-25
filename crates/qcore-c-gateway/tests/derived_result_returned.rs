@@ -547,7 +547,9 @@ fn a_result_derived_from_a_non_formal_base_is_refused() {
         "char *wlocal(char *d) { char *b; b = d_alloc(8); d_len(d); return d_copy(b, \"x\", 1); }",
         "wlocal",
         "wlocal(s)",
-        &["leak", RETURN_REFUSAL],
+        // Card W44-LEAK-PIN-AUDIT: the refused return hands `b` to `d_copy`,
+        // so the leak it used to accuse is withdrawn (still non-`Safe`).
+        &[RETURN_REFUSAL],
     );
     refused(
         "a string literal",

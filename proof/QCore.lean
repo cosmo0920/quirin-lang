@@ -82,6 +82,8 @@ import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.CalleeSummaryScope
 import QCore.KindedCustody
+import QCore.CastReturnEscape
+import QCore.RefusedHandOnCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow

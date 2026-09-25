@@ -458,12 +458,19 @@ fn a_possibly_null_out_store_without_a_callee_side_test_yields_no_summary() {
 fn an_overwritten_out_slot_leaks_the_first_resource() {
     // Only what the slot holds at the exit is the caller's; the resource the
     // second store displaced is a leak in the callee, and the exemption does
-    // not cover it.
+    // not cover it: no summary is validated for `fill`.
+    //
+    // Card W44-LEAK-PIN-AUDIT: the published analysis of `fill` has no out-slot
+    // contract, so both stores through `*out` are refused, and each refused
+    // store hands its identity on as its value. The refused-escape rule
+    // withdraws the accusation that used to be reported there (it rested on a
+    // store the projection did not model), leaving `fill` `Unknown`, never
+    // `Safe`; the displaced resource still blocks the summary.
     let source = "int fill(void **out) { void *p = q_alloc(); *out = p; void *q = q_alloc(); *out = q; return 0; } \
                   void subject(void) { void *p; int rc = fill(&p); q_free(p); }";
     let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
-    assert_eq!(summary.status, AnalysisStatus::Unsafe);
-    assert!(has(&summary, "fill", |kind| matches!(
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(!has(&summary, "fill", |kind| matches!(
         kind,
         LegacyDiagnosticKind::Leak { .. }
     )));

@@ -35,17 +35,16 @@
       {
         "source": "owned_local.c",
         "contracts": ["contracts.qcore"],
-        "expectation": "unsafe",
-        "reason": null,
+        "expectation": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
         "function_status": {
           "on_complete": "safe",
-          "subject": "unsafe"
+          "subject": "unknown"
         },
         "diagnostics": [
-          "subject:0:leak:7",
           "subject:8:unsupported:call to uncontracted function `q_register`"
         ],
-        "note": "Registering an owned local is not read as a hand-off: the acquisition is reported as a leak beside the unsupported call. That is a provisional Unsafe resting on an unresolved effect — if q_register takes custody there is no leak — and it is pinned here so the reading is visible. Card CT-CTWIN records it as CT-CTWIN-UNRESOLVED-LEAK; nothing was changed to produce it."
+        "note": "Registering an owned local is still not read as a hand-off: the registration never discharges the acquisition. Card CT-CTWIN pinned the leak it used to report beside the unsupported call as a provisional Unsafe resting on an unresolved effect (CT-CTWIN-UNRESOLVED-LEAK). Card W44-LEAK-PIN-AUDIT's refused hand-on rule withdraws that claim: the refused call names `p`, so `p` carries an unresolved effect and no leak is claimed through it. The unit is Unknown, never Safe."
       }
     ]
   }

@@ -1,0 +1,415 @@
+{
+ "about": "The card's source reading of every baseline leak leaf the witness alone does not decide (a clean witness path exists). Read against the pinned sources under build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source at revision 66910c10. A function entry applies to all its leaves unless a leaf entry (FUNCTION@EXIT@ACQUIRED) overrides it. Class (a): reading confirms the witness path is reachable under the stated premises and the resource is really unreleased on it. Class (c): the accusation rests on a named premise or approximation the projection cannot see past; it stays provisional. No class is an upstream defect claim.",
+ "premises": {
+  "REFUSED-CALL-ARGUMENT-PREMISE": "An identity handed, as a value or an interior address, to a call the projection refuses is assumed neither released nor retained by that call. The accusation stands only if that is so; it is false for the destructors and list/TLS/iov/ring-buffer/thread insertions named below.",
+  "MK-LIST-ADD-BORROWED-PUBLICATION": "mk_list_add is declared resource_borrowed on both parameters (providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore). Linking `&obj->_head` into a list reachable from the caller publishes `obj`, which a borrowed position does not state, so the accusation after the insertion rests on the declaration's silence about publication.",
+  "PATH-INSENSITIVE-SCALAR-CORRELATION": "The projection does not correlate branches on scalar values (a flag, a loop pass counter, a re-validation of the same input), so a witness may combine branch outcomes no execution combines.",
+  "NULL-TEST-UNDECIDED-AFTER-POISONED-JOIN": "A null test of a binding that a refused statement on another path poisoned is undecided (UnknownAlias on the test), so its null edge keeps the site live although on that edge the allocation failed.",
+  "DESTINATION-SUFFIX-PLACE-SPELLING": "direct_assignment_destination spells a destination by its first suffix that is a canonical place, so `(*map)->opts = calloc(...)` binds the local-looking place `opts`; the store into the caller's `*map` is not seen.",
+  "CHAINED-ASSIGNMENT-INNER-DESTINATION": "`d = safe = rd_malloc(n)` binds the call's result to the outer destination `d` only; `safe`, which the function returns, stays unbound, so the return escapes nothing."
+ },
+ "functions": {
+  "cmt_counter_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_counter_destroy(counter), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_counter_destroy (counter was also published by cfl_list_add)"
+  },
+  "cmt_gauge_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_gauge_destroy(gauge), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_gauge_destroy"
+  },
+  "cmt_histogram_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_histogram_destroy(h), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_histogram_destroy"
+  },
+  "cmt_exp_histogram_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_exp_histogram_destroy(h), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_exp_histogram_destroy"
+  },
+  "cmt_summary_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_summary_destroy(s), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_summary_destroy"
+  },
+  "cmt_untyped_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_untyped_destroy(counter), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_untyped_destroy"
+  },
+  "cmt_map_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "exits follow cmt_map_destroy(map), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_map_destroy"
+  },
+  "initialize_metric": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "every exit follows destroy_metric(metric), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_metric"
+  },
+  "initialize_metrics_data": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "the exit follows destroy_metrics_data(metrics_data), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_metrics_data"
+  },
+  "initialize_resource_metrics": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "both exits follow destroy_resource_metrics(resource_metrics), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_resource_metrics"
+  },
+  "cmt_encode_opentelemetry_split_payload": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "both exits follow cmt_encode_opentelemetry_destroy_batches(batches), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cmt_encode_opentelemetry_destroy_batches"
+  },
+  "ctr_resource_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "the exit follows ctr_resource_destroy(res), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for ctr_resource_destroy"
+  },
+  "cio_create": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "every exit follows cio_destroy(ctx), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for cio_destroy"
+  },
+  "mk_rconf_open": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "the exit follows mk_rconf_free(conf), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for mk_rconf_free"
+  },
+  "append_to_ring_buffer": {
+   "class": "c",
+   "mechanism": "callee-release",
+   "reason": "the exits at lines 3604 and 3631 follow destroy_chunk_raw(cr), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_chunk_raw"
+  },
+  "unpack_label": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&new_label->_head, target_label_list) links it into the caller's list before the exit; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "unpack_static_label": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "on the witness's success arm cfl_list_add links it into the context's static label list (the failure arm frees it); REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "decode_exponential_histogram_data_point": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&sample->_head, &map->metrics) links it into the caller's map before the exits; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "decode_histogram_data_point": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&sample->_head, &map->metrics) links it into the caller's map before the exits; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "decode_summary_data_point": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&sample->_head, &map->metrics) links it into the caller's map before the exits; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "decode_histogram_points": {
+   "class": "c",
+   "mechanism": "branch-correlation",
+   "reason": "the witness takes the `static_metric_detected != CMT_FALSE` arm that skips cfl_list_del + free, although the site exists only when that flag is CMT_FALSE (PATH-INSENSITIVE-SCALAR-CORRELATION); on the feasible arm the metric is freed, and before that it was linked into the map by cfl_list_add"
+  },
+  "initialize_temporary_metric": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&destination_label->_head, &destination->labels) links it into the caller's destination metric; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "pack_metric_metadata": {
+   "class": "a",
+   "mechanism": "error-path",
+   "reason": "metadata_entry is allocated, not yet linked, and returned over without a free on this error arm; the only call on the witness is prometheus__metric_metadata__init(&metadata_entry->data), which initialises an embedded struct and neither frees nor retains it"
+  },
+  "cmt_labels_add_kv": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&l->_head, &labels->list) links it into the caller's label list; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "unpack_basic_type": {
+   "class": "c",
+   "mechanism": "destination-suffix-spelling",
+   "reason": "the acquisition `(*map)->opts = calloc(...)` is bound to the place `opts` (DESTINATION-SUFFIX-PLACE-SPELLING); the object is stored into the caller's `*map`, destroyed with it by cmt_map_destroy on the failure arm and returned with it on the success arm"
+  },
+  "do_unittest_erase": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "`out` is allocated and, when an RD_UT_ASSERT fails, returned over without rd_free; rd_slice_read and memcmp read and fill it and neither free nor retain it (reachable only when the unit test fails)"
+  },
+  "rd_kafka_assignment_serve_pending": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "req_assignment_version is passed as the opaque of rd_kafka_OffsetFetchRequest, whose reply handler frees it (\"Must be freed by handler\"); REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_OffsetFetchRequest"
+  },
+  "ut_sasl_oauthbearer_oidc_assertion_create": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "payload_part and signature_part are allocated and, when an RD_UT_ASSERT fails, returned over without rd_free; strlen and strchr only read them (reachable only when the unit test fails)"
+  },
+  "ut_sasl_oauthbearer_oidc_should_succeed": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "expected_token_value is allocated and, when an RD_UT_ASSERT fails, returned over without rd_free; rd_snprintf writes into it and rd_buf_write copies from it, neither retaining it (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_all_error_types_with_valid": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT the rkbuf and its buffer are returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_all_errors": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT the rkbuf and its buffer are returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_all_success": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT the rkbuf and its buffer are returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_crc_error_share_consumer": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the message-set buffer is handed to rd_kafka_buf_new_shadow(..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_decompression_error_share_consumer": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the message-set buffer is handed to rd_kafka_buf_new_shadow(..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_mixed_crc_success_decomp": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_mixed_magic_success_crc_success": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_mixed_success_crc_success": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the buffer is handed to rd_kafka_buf_new_shadow(buffer, ..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "unittest_msgset_unsupported_magic_share_consumer": {
+   "class": "a",
+   "mechanism": "test-failure-path",
+   "reason": "the message-set buffer is handed to rd_kafka_buf_new_shadow(..., rd_free), whose rkbuf is destroyed only on the passing path; on this failing RD_UT_ASSERT it is returned over and never freed (reachable only when the unit test fails)"
+  },
+  "rd_kafka_sasl_safe_string": {
+   "class": "c",
+   "mechanism": "chained-assignment",
+   "reason": "`d = safe = rd_malloc(len + 1)` binds the site to `d` only (CHAINED-ASSIGNMENT-INNER-DESTINATION); `return safe;` returns the allocation to the caller"
+  },
+  "rd_kafka_snappy_java_uncompress": {
+   "class": "c",
+   "mechanism": "branch-correlation",
+   "reason": "see the per-leaf entries"
+  },
+  "ctr_random_get": {
+   "class": "a",
+   "mechanism": "descriptor-zero",
+   "reason": "`if (fd > 0)` skips close(fd) when open(\"/dev/urandom\") returns descriptor 0, which happens when standard input is closed; observed natively by W43-DESCRIPTOR-NATIVE-CHECK through a direct driver (W43-DESC-CTR-RANDOM-ZERO-DESCRIPTOR), not through the pinned binary"
+  },
+  "mk_string_copy_substr": {
+   "class": "b",
+   "mechanism": "cast-return",
+   "reason": "`return (char *) buffer;` returns the allocation; the return route read the pointer cast as returning no place (RETURN-CAST-PLACE-NOT-ESCAPED)"
+  },
+  "mk_rconf_meta_add": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&meta->_head, &conf->metas) links it into the caller's configuration (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_rconf_read": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&file->_head, &conf->includes) links it into the caller's configuration (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_rconf_section_entry_add": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&new->_head, &section->entries) links it into the configuration's last section (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_sched_worker_cb_add": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&wcb->_head, &server->sched_worker_callbacks) links it into the server (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_vhost_set_property": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&ha->_head, &vh->server_names) links it into the virtual host (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_vhost_set_single": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "the host is linked into server->hosts and the alias into host->server_names by mk_list_add (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_vhost_create": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "see the per-leaf entries"
+  },
+  "mk_mimetype_add": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "rb_tree_insert(&server->mimetype_rb_head, ..., &new_mime->_rb_head) and mk_list_add link it into the server; REFUSED-CALL-ARGUMENT-PREMISE is false for rb_tree_insert (and MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_http_header": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "mk_iov_add(h->_extra_rows, buf, pos, MK_TRUE) stores buf in the request's iov with its free flag set; REFUSED-CALL-ARGUMENT-PREMISE is false for mk_iov_add"
+  },
+  "mk_cache_worker_init": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "MK_TLS_SET / pthread_setspecific stores the pointer in thread-local storage; REFUSED-CALL-ARGUMENT-PREMISE is false for pthread_setspecific"
+  },
+  "mk_sched_thread_lists_init": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "MK_TLS_SET / pthread_setspecific stores the list in thread-local storage; REFUSED-CALL-ARGUMENT-PREMISE is false for pthread_setspecific"
+  },
+  "mk_server_worker_loop": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "MK_TLS_SET stores server_timeout in thread-local storage and the loop's exit frees it through MK_TLS_GET; REFUSED-CALL-ARGUMENT-PREMISE is false for pthread_setspecific"
+  },
+  "mk_vhost_fdt_worker_init": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "the list is stored in thread-local storage by MK_TLS_SET and each fdt is linked into it by mk_list_add; REFUSED-CALL-ARGUMENT-PREMISE is false for pthread_setspecific (and MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "mk_vhost_read": {
+   "class": "a",
+   "mechanism": "error-path",
+   "reason": "when str_to_regex fails, `return NULL;` abandons host (never freed or returned) and with it the error pages, the handler and its parameters linked into it; the calls on the witness (mk_list_init on embedded lists, mk_string_build into a member) neither free nor retain the object"
+  },
+  "mk_net_conn_create": {
+   "class": "a",
+   "mechanism": "error-path",
+   "reason": "when mk_net_fd_connect returns other than -1 (an immediately completed connect), the function falls through to `return NULL;` without freeing conn (or closing fd); no call on the witness takes conn"
+  },
+  "mk_server_listen_init": {
+   "class": "a",
+   "mechanism": "error-path",
+   "reason": "when mk_socket_server fails, `return NULL;` abandons `listeners` (and every listener already linked into it); mk_list_init(listeners) only initialises the list head"
+  },
+  "mk_sched_launch_thread": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "see the per-leaf entries"
+  },
+  "mk_sched_add_connection": {
+   "class": "c",
+   "mechanism": "undecided-null-test",
+   "reason": "the exit is the `if (!conn)` arm, on which the allocation at line 205 failed; the test is undecided because the other arm's refused cast copy `conn = (struct mk_sched_conn *) data;` poisoned the joined binding (NULL-TEST-UNDECIDED-AFTER-POISONED-JOIN)"
+  }
+ },
+ "leaves": {
+  "pack_metric_metadata@cmt_encode_prometheus_remote_write.c:657@cmt_encode_prometheus_remote_write.c:593": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&metadata_entry->_head, &context->metadata_entries) links it into the caller's context; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "decode_histogram_points@cmt_decode_prometheus_remote_write.c:633@cmt_decode_prometheus_remote_write.c:513": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "cfl_list_add(&metric->_head, &map->metrics) linked it into the caller's map; REFUSED-CALL-ARGUMENT-PREMISE is false for cfl_list_add"
+  },
+  "rd_kafka_snappy_java_uncompress@snappy.c:1648@snappy.c:1705": {
+   "class": "c",
+   "mechanism": "branch-correlation",
+   "reason": "pass 2 re-checks `clen > inlen - of` over the same bytes and offsets pass 1 already accepted, so this pass-2 failure arm is unreachable (PATH-INSENSITIVE-SCALAR-CORRELATION)"
+  },
+  "rd_kafka_snappy_java_uncompress@snappy.c:1660@snappy.c:1705": {
+   "class": "c",
+   "mechanism": "branch-correlation",
+   "reason": "pass 2 re-runs rd_kafka_snappy_uncompressed_length over the same chunk pass 1 already accepted, so this pass-2 failure arm is unreachable (PATH-INSENSITIVE-SCALAR-CORRELATION)"
+  },
+  "rd_kafka_snappy_java_uncompress@snappy.c:1701@snappy.c:1705": {
+   "class": "c",
+   "mechanism": "branch-correlation",
+   "reason": "outbuf is allocated only after this `pass == 1` check, and pass 1 runs once, so no execution reaches it with outbuf live (PATH-INSENSITIVE-SCALAR-CORRELATION on the pass counter)"
+  },
+  "rd_kafka_snappy_java_uncompress@snappy.c:1712@snappy.c:1705": {
+   "class": "c",
+   "mechanism": "undecided-null-test",
+   "reason": "the exit is the `unlikely(!outbuf)` arm, on which the allocation failed; the null test sits inside a __builtin_expect call the projection refuses, so the site is not refined away on that arm"
+  },
+  "mk_sched_launch_thread@mk_server/mk_scheduler.c:449@mk_server/mk_scheduler.c:440": {
+   "class": "a",
+   "mechanism": "error-path",
+   "reason": "when pthread_create fails the new thread never receives thconf, and `return -1;` abandons it"
+  },
+  "mk_sched_launch_thread@mk_server/mk_scheduler.c:461@mk_server/mk_scheduler.c:440": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "pthread_create handed thconf to the worker thread (mk_sched_launch_worker_loop); REFUSED-CALL-ARGUMENT-PREMISE is false for pthread_create"
+  },
+  "mk_vhost_create@mk_server/mk_lib.c:485@mk_server/mk_lib.c:456": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "mk_list_add(&h->_head, &ctx->server->hosts) (refused at line 482) links the host into the server; REFUSED-CALL-ARGUMENT-PREMISE is false there"
+  },
+  "mk_vhost_create@mk_server/mk_lib.c:485@mk_server/mk_lib.c:468": {
+   "class": "c",
+   "mechanism": "borrowed-list-insertion",
+   "reason": "mk_list_add(&halias->_head, &h->server_names) links the alias into the host (MK-LIST-ADD-BORROWED-PUBLICATION)"
+  },
+  "unittest_msgset_all_error_types_with_valid@rdunittest_msgset_errors.c:1488@rdunittest_msgset_errors.c:1315": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_all_errors@rdunittest_msgset_errors.c:1272@rdunittest_msgset_errors.c:1200": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_all_success@rdunittest_msgset_errors.c:1167@rdunittest_msgset_errors.c:1125": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_crc_error_share_consumer@rdunittest_msgset_errors.c:506@rdunittest_msgset_errors.c:445": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_decompression_error_share_consumer@rdunittest_msgset_errors.c:616@rdunittest_msgset_errors.c:551": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_mixed_crc_success_decomp@rdunittest_msgset_errors.c:953@rdunittest_msgset_errors.c:870": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_mixed_magic_success_crc_success@rdunittest_msgset_errors.c:1082@rdunittest_msgset_errors.c:992": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_mixed_success_crc_success@rdunittest_msgset_errors.c:834@rdunittest_msgset_errors.c:751": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "unittest_msgset_unsupported_magic_share_consumer@rdunittest_msgset_errors.c:716@rdunittest_msgset_errors.c:657": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "append_to_ring_buffer@flb_input_chunk.c:3656@flb_input_chunk.c:3579": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "flb_ring_buffer_write(ins->rb, (void *) &cr, sizeof(cr)) copies the pointer into the input ring buffer, whose consumer takes it over; REFUSED-CALL-ARGUMENT-PREMISE is false for flb_ring_buffer_write"
+  }
+ }
+}

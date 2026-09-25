@@ -1,0 +1,13 @@
+{
+  "note": "W44-LEAK-PIN-AUDIT: every step measured at ece0cc98 (the Python suites after the final matrix regeneration). 5425 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 failed; census feature 469 passed; 179 Lean audits; 330 root and 13 provider Python tests. Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0, 'ptest': 0, 'pisolated': 0, 'pfmt': 0, 'pclippy': 0, 'pcontracts': 0, 'pbuild': 0, 'pverify': 0, 'ppython': 0, 'python': 0, 'docsindex': 0}. Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate. No coverage promotion; the arbiter moved 76 functions and 35 units provisional Unsafe -> Unknown and 3 functions Unknown -> Safe.",
+  "workspace_tests": 5425,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 179,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

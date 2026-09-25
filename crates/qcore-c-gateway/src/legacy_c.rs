@@ -66,6 +66,18 @@ pub use descriptor_custody::ValidityFact;
 #[path = "legacy_condition_desugar.rs"]
 mod condition_desugar;
 
+// Card W44-LEAK-PIN-AUDIT: the refused-escape rule, the cast return
+// (`RETURN-CAST-PLACE-NOT-ESCAPED`) and the leak-witness census.
+#[path = "legacy_refused_operands.rs"]
+pub(crate) mod refused_operands;
+
+#[path = "legacy_cast_return.rs"]
+pub(crate) mod cast_return;
+
+#[cfg(feature = "indirect-census")]
+#[path = "legacy_leak_witness.rs"]
+mod leak_witness;
+
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
 };
@@ -5021,6 +5033,28 @@ impl Parser<'_> {
                     .iter()
                     .map(|token| token.text.as_str())
                     .collect::<Vec<_>>();
+                // Card W44-LEAK-PIN-AUDIT (`RETURN-CAST-PLACE-NOT-ESCAPED`): a
+                // carrier-preserving cast of one place is decided below as the
+                // return of that place, and a carrier-crossing one is refused;
+                // see `cast_return`.
+                let expression = match cast_return::classify(
+                    &texts,
+                    &self.descriptor_names,
+                    &self.typed_types,
+                ) {
+                    cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
+                    cast_return::CastReturn::Refuse => {
+                        return Ok(cast_return::refusal(
+                            line,
+                            self.expression_writes(&expression),
+                        ));
+                    }
+                    cast_return::CastReturn::PreCard => expression,
+                };
+                let texts = expression
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
                 // Card C-GATEWAY-RETURN-POSITION. The strict `Returned` rule is
                 // asked first and its answer is never weakened; only when it
                 // refuses does the pointer-leaf widening get a say, and an
@@ -9690,6 +9724,9 @@ pub(crate) fn analyze_cfg_with_entry(
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
+        // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
+        // on, read from the state it runs in (`refused_operands`).
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -9703,6 +9740,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // Recorded before the local diagnostics are merged, so the flag tracks
         // *this* node rather than anything reported elsewhere in the function.
         joined_provenance::finish_release(conditional_release, &mut output, &local);
+        refused_operands::apply(&mut output, &handed, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -9869,6 +9907,18 @@ pub(crate) fn analyze_cfg_with_entry(
         &context.collection_owners(),
         &mut diagnostics,
     );
+    // Card W44-LEAK-PIN-AUDIT: the leak-witness census (a measurement only).
+    #[cfg(feature = "indirect-census")]
+    leak_witness::record(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context,
+        &alias,
+        &joined,
+        entry_custody,
+        &diagnostics,
+    );
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -9885,6 +9935,8 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let mut ignored = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
+        // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -9895,6 +9947,7 @@ pub(crate) fn analyze_cfg_with_entry(
             &mut ignored,
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
+        refused_operands::apply(&mut output, &handed, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
         // this settled exit.
