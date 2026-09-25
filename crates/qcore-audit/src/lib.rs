@@ -11,14 +11,18 @@ pub mod callback_task_handoff;
 pub mod certificate_context;
 pub mod compile_db;
 pub mod current;
+pub mod current_cli;
+pub mod current_route;
 pub mod cycle18_composition;
 mod cycle18_inputs;
 pub mod event_payload;
+pub mod evidence;
 pub mod native_platform_matrix;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod parallel;
 pub mod projection;
+pub mod providers;
 pub mod report;
 mod source_audit;
 pub mod source_contract;
@@ -32,7 +36,6 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
-use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{
     LoadedProfile, load_audited_bundle, load_profile_directory, verify_pin,
 };
@@ -62,6 +65,22 @@ pub struct AuditConfig {
     /// installed configuration byte-identical.
     #[serde(default)]
     pub compile_target: Option<CompileTargetSelection>,
+    /// Card W44-QUIRIN-AUDIT-PROVIDERS: the resource contracts by provider
+    /// crate (`NAME` or `NAME:MODULE`), resolved on `load_path`. A selection
+    /// supersedes the profile's declared manifest, which is recorded as not
+    /// read. Absent means the profile's manifest, exactly as before.
+    #[serde(default)]
+    pub providers: Option<Vec<String>>,
+    /// The contract load path a provider selection resolves on.
+    #[serde(default)]
+    pub load_path: Option<PathBuf>,
+    /// Refuse any `qcore-provider-*` crate in the resolved provider closure.
+    #[serde(default)]
+    pub quirin_providers_only: bool,
+    /// `contracts-only` admits resource projection from contract modules only
+    /// and refuses `source_contracts` (process packages, verifier host).
+    #[serde(default)]
+    pub mode: evidence::EvidenceMode,
 }
 
 /// An explicit, declared narrowing of a multi-target compilation database.
@@ -239,6 +258,9 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             config.schema_version
         ));
     }
+    if config.mode.is_contracts_only() && config.source_contracts.is_some() {
+        return Err("a contracts-only audit admits no source-contract checks: remove `source_contracts` (process packages and verifier-host execution) or drop `mode: contracts-only`".into());
+    }
     if config.source_revision_policy == SourceRevisionPolicy::CheckoutHead
         && config.source_contracts.is_some()
     {
@@ -261,10 +283,38 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         Some(selection) => compile_db::select_object_prefix(entries, &selection.object_prefix)?,
         None => entries,
     };
-    let contract_manifest = profile
-        .resource_contract_manifest_path()
-        .ok_or("source-set profile supplies no resource contracts")?;
-    let contracts = load_resource_contract_manifest(&contract_manifest)?;
+    let contract_input = match &config.providers {
+        Some(entries) => {
+            let load_path = config
+                .load_path
+                .as_ref()
+                .ok_or("a provider selection needs `load_path` (the contract load path)")?;
+            let resolved = providers::resolve_providers(
+                &resolve(base, load_path),
+                entries,
+                config.quirin_providers_only,
+                providers::SelectionSource::Configuration,
+            )?;
+            providers::ContractInput::providers(
+                &resolved,
+                profile.resource_contract_manifest_path().as_deref(),
+            )
+        }
+        None => {
+            if config.load_path.is_some() || config.quirin_providers_only {
+                return Err(
+                    "`load_path` and `quirin_providers_only` apply only to a provider selection"
+                        .into(),
+                );
+            }
+            providers::ContractInput::manifest(
+                &profile
+                    .resource_contract_manifest_path()
+                    .ok_or("source-set profile supplies no resource contracts")?,
+            )?
+        }
+    };
+    let contracts = contract_input.load()?;
     let mut work = Vec::new();
     let mut revisions = BTreeSet::new();
     // Resolve a moving name once. Every unit is checked against this immutable
@@ -318,8 +368,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         .transpose()?;
     // One capture describes the Clang that performs every unit's analysis.
     let compiler = qcore_c_gateway::ClangIdentity::capture()?;
-    let contract_manifest_text =
-        fs::read_to_string(&contract_manifest).map_err(|error| error.to_string())?;
+    let contract_manifest_text = contract_input.manifest_text().to_owned();
     // Every declared input the audit read before analyzing a unit. A change to
     // any of them changes each recorded compile-task identity.
     let mut task_dependencies = BTreeMap::from([
@@ -364,6 +413,13 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         }
     }
     let mut report = AuditReport::new(&revision);
+    let evidence_record = config
+        .mode
+        .is_contracts_only()
+        .then(|| evidence::contracts_only_record(&contracts));
+    if let Some(record) = &evidence_record {
+        report.set_evidence(record.clone());
+    }
     let mut counts = AuditCounts::default();
     let mut source_identities = BTreeMap::new();
     let mut compile_tasks = Vec::new();
@@ -476,6 +532,12 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     // publishes each inheritance chain beside the elaborated sources.
     if let Some(provenance) = qcore_contract::contract_loader::inclusion_provenance(&contracts) {
         assumptions["contract_inclusion"] = provenance;
+    }
+    if let Some(record) = contract_input.provider_record() {
+        assumptions["provider_selection"] = record.clone();
+    }
+    if let Some(record) = evidence_record {
+        assumptions["evidence"] = record;
     }
     if let Some(selection) = &config.compile_target {
         assumptions["compile_target_selection"] = serde_json::json!({

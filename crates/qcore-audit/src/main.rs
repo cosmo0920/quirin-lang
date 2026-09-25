@@ -5,8 +5,24 @@ fn main() -> ExitCode {
     let mut arguments = std::env::args_os().skip(1);
     let Some(path) = arguments.next() else {
         eprintln!("usage: quirin-audit CONFIG.json");
+        eprintln!("       {}", qcore_audit::current_cli::USAGE);
         return ExitCode::FAILURE;
     };
+    if path == "current" {
+        // Card W44-QUIRIN-AUDIT-PROVIDERS: the configured current-revision
+        // route, with contracts selected by provider crate or manifest.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::current_cli::main(rest);
+    }
     if path == "callback-task-handoff" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");

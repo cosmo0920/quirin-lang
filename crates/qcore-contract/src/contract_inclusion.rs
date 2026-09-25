@@ -213,6 +213,16 @@ impl From<ContractInclusionError> for String {
 /// Refuse inclusion syntax at an entry point that has no load path (`QI013`).
 /// Every such entry point in `contract_loader` calls this before parsing, so
 /// an unresolved directive is refused by name rather than reaching the parser.
+/// Whether a module needs a load path to be loaded: exactly the predicate on
+/// which a path entry (no load path) is refused by
+/// [`reject_unresolved_inclusion`]. A module for which this is false loads
+/// identically as a file path and, keyed differently, as a load-path
+/// reference (card **W44-QUIRIN-AUDIT-PROVIDERS**).
+#[must_use]
+pub fn uses_contract_inclusion(source: &str) -> bool {
+    contains_contract_inclusion_syntax(source)
+}
+
 pub(crate) fn reject_unresolved_inclusion(path: &str, source: &str) -> Result<(), String> {
     if contains_contract_inclusion_syntax(source) {
         return Err(ContractInclusionError::new(

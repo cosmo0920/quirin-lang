@@ -1,0 +1,26 @@
+import QCore.ProviderSelection
+
+#print axioms QCore.ProviderSelection.expand_sound
+#print axioms QCore.ProviderSelection.expandAll_sound
+#print axioms QCore.ProviderSelection.closure_contains
+#print axioms QCore.ProviderSelection.closure_closed
+#print axioms QCore.ProviderSelection.closure_known
+#print axioms QCore.ProviderSelection.closure_unknown_refused
+#print axioms QCore.ProviderSelection.quirinOnly_sound
+#print axioms QCore.ProviderSelection.resolve_sound
+#print axioms QCore.ProviderSelection.resolve_empty_refused
+#print axioms QCore.ProviderSelection.resolve_unknown_provider_refused
+#print axioms QCore.ProviderSelection.resolve_missing_module_refused
+#print axioms QCore.ProviderSelection.resolve_duplicate_refused
+#print axioms QCore.ProviderSelection.resolve_guard_refuses
+#print axioms QCore.ProviderSelection.lower_keeps_selection
+#print axioms QCore.ProviderSelection.lower_reference_iff
+#print axioms QCore.ProviderSelection.agree_ok_iff
+#print axioms QCore.ProviderSelection.agree_conflict
+#print axioms QCore.ProviderSelection.no_default_provider_set
+#print axioms QCore.ProviderSelection.providers_and_explicit_manifest_refused
+#print axioms QCore.ProviderSelection.providers_supersede_profile_default
+#print axioms QCore.ProviderSelection.chooseSource_providers_only_when_selected
+#print axioms QCore.ProviderSelection.contractsOnly_admits_only_contracts
+#print axioms QCore.ProviderSelection.contractsOnly_mixed_refused
+#print axioms QCore.ProviderSelection.admitRun_never_narrows

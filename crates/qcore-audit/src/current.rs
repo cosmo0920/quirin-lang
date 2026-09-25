@@ -8,13 +8,14 @@ use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, legacy_c_source_functions, prepare_translation_unit,
 };
-use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, sha256_hex};
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
+use crate::evidence::EvidenceMode;
+use crate::providers::ContractInput;
 use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit_into};
 use crate::report::{AuditReport, UnitRefusal};
 
@@ -102,10 +103,28 @@ pub struct EntryProducts {
 
 impl CurrentAudit {
     pub fn new(checkout: &Path, profile: &LoadedProfile, manifest: &Path) -> Result<Self, String> {
+        Self::with_contracts(
+            checkout,
+            profile,
+            &ContractInput::manifest(manifest)?,
+            EvidenceMode::Configured,
+        )
+    }
+
+    /// Card **W44-QUIRIN-AUDIT-PROVIDERS**: the contracts come from a manifest
+    /// or a lowered provider selection, loaded by one loader, and a
+    /// contracts-only run records its mode. A manifest input with the
+    /// configured mode writes exactly what [`Self::new`] always wrote.
+    pub fn with_contracts(
+        checkout: &Path,
+        profile: &LoadedProfile,
+        input: &ContractInput,
+        mode: EvidenceMode,
+    ) -> Result<Self, String> {
         let checkout = checkout.canonicalize().map_err(|error| error.to_string())?;
         let revision = crate::checkout_head(&checkout)?;
-        let contracts = load_resource_contract_manifest(manifest)?;
-        let manifest_text = fs::read_to_string(manifest).map_err(|error| error.to_string())?;
+        let contracts = input.load()?;
+        let manifest_text = input.manifest_text().to_owned();
         let source_profile_sha256 = profile.manifest_digest().to_owned();
         let dependencies = BTreeMap::from([
             (
@@ -139,8 +158,17 @@ impl CurrentAudit {
         {
             assumptions["contract_inclusion"] = provenance;
         }
+        if let Some(record) = input.provider_record() {
+            assumptions["provider_selection"] = record.clone();
+        }
+        let mut report = AuditReport::new(&revision);
+        if mode.is_contracts_only() {
+            let record = crate::evidence::contracts_only_record(&contracts);
+            assumptions["evidence"] = record.clone();
+            report.set_evidence(record);
+        }
         Ok(Self {
-            report: AuditReport::new(&revision),
+            report,
             checkout,
             revision,
             compiler: ClangIdentity::capture()?,

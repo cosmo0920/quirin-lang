@@ -455,6 +455,20 @@ pub fn load_resource_contract_files(paths: &[PathBuf]) -> Result<ResourceContrac
 /// module selected twice, or two declarations of one function refuse the
 /// whole selection.
 pub fn load_resource_contract_manifest(path: &Path) -> Result<ResourceContracts, String> {
+    let source = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    load_resource_contract_manifest_text(path, &source)
+}
+
+/// [`load_resource_contract_manifest`] over manifest text already in hand
+/// (card **W44-QUIRIN-AUDIT-PROVIDERS**): `path` names where the manifest
+/// sits, and every relative entry resolves against its parent exactly as if
+/// the text had been read from that file. A provider selection is lowered to
+/// such a text and loaded here, so it and an equal hand-written manifest are
+/// one load, not two implementations of it.
+pub fn load_resource_contract_manifest_text(
+    path: &Path,
+    source: &str,
+) -> Result<ResourceContracts, String> {
     #[derive(serde::Deserialize)]
     #[serde(deny_unknown_fields)]
     struct Manifest {
@@ -463,9 +477,8 @@ pub fn load_resource_contract_manifest(path: &Path) -> Result<ResourceContracts,
         load_path: Option<String>,
         modules: Vec<String>,
     }
-    let source = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let manifest: Manifest =
-        serde_json::from_str(&source).map_err(|e| format!("{}: {e}", path.display()))?;
+        serde_json::from_str(source).map_err(|e| format!("{}: {e}", path.display()))?;
     let supported = match manifest.schema_version {
         1 => manifest.load_path.is_none(),
         2 => manifest.load_path.is_some(),

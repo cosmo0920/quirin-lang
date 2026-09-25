@@ -334,3 +334,53 @@ fn shipped_cmetrics_selection_loads_canonical_policy() {
     .unwrap();
     assert_eq!(policies.contract_for_library("cmetrics").unwrap(), expected);
 }
+
+/// Card W44-QUIRIN-AUDIT-PROVIDERS: a `providers/package.py build` output
+/// directory names each package by its provider id, so a configuration may
+/// give that directory instead of listing package paths. The named package is
+/// verified exactly as a listed one is.
+#[test]
+fn a_package_root_selects_each_binding_provider_package_by_id() {
+    let fixture = Fixture::new();
+    fixture.package("built/test.widgets", |_| {});
+    let mut config = fixture.good();
+    config.as_object_mut().unwrap().remove("packages");
+    config["package_root"] = json!("built");
+    let path = fixture.config(&config);
+    let registry = SourceContractRegistry::load(&path).unwrap();
+    assert_eq!(registry.bound_libraries().collect::<Vec<_>>(), ["widgets"]);
+    assert_eq!(
+        SourceContractPolicies::load(&path)
+            .unwrap()
+            .contract_for_library("widgets")
+            .unwrap(),
+        "module contract;\n"
+    );
+    // A package that fails verification under the root still refuses.
+    fixture.package("built/test.widgets", |manifest| {
+        manifest["package_digest"] = json!("0".repeat(64));
+    });
+    assert!(SourceContractRegistry::load(&path).is_err());
+}
+
+#[test]
+fn a_package_root_refuses_a_missing_package_and_an_ambiguous_inventory() {
+    let fixture = Fixture::new();
+    let mut config = fixture.good();
+    config.as_object_mut().unwrap().remove("packages");
+    config["package_root"] = json!("built");
+    // No `built/test.widgets` package: the policies load, the registry refuses.
+    let path = fixture.config(&config);
+    assert!(SourceContractPolicies::load(&path).is_ok());
+    assert!(SourceContractRegistry::load(&path).is_err());
+    // Both inventories, or neither, refuse before any package is read.
+    let mut both = fixture.good();
+    both["package_root"] = json!("built");
+    assert!(SourceContractPolicies::load(fixture.config(&both)).is_err());
+    let mut neither = fixture.good();
+    neither.as_object_mut().unwrap().remove("packages");
+    assert!(SourceContractPolicies::load(fixture.config(&neither)).is_err());
+    let mut empty = config.clone();
+    empty["package_root"] = json!("");
+    assert!(SourceContractPolicies::load(fixture.config(&empty)).is_err());
+}

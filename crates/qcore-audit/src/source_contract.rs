@@ -79,7 +79,15 @@ impl std::error::Error for SourceContractError {}
 #[serde(deny_unknown_fields)]
 struct Configuration {
     schema_version: u32,
-    packages: Vec<PathBuf>,
+    /// Package directories, relative to the configuration.
+    #[serde(default)]
+    packages: Option<Vec<PathBuf>>,
+    /// Card W44-QUIRIN-AUDIT-PROVIDERS: a `providers/package.py build` output
+    /// directory instead of `packages`. Each binding's provider id names its
+    /// package, `<package_root>/<provider id>`, which is then verified exactly
+    /// as a listed package is. Exactly one of the two is required.
+    #[serde(default)]
+    package_root: Option<PathBuf>,
     bindings: Vec<BindingConfiguration>,
 }
 
@@ -207,6 +215,44 @@ fn validate_package_paths(packages: &[PathBuf]) -> Result<(), SourceContractErro
     Ok(())
 }
 
+/// The package directories a configuration names: its `packages` list, or,
+/// under `package_root`, one directory per distinct binding provider id
+/// (`providers/package.py build` names each package directory by its id).
+fn package_inventory(
+    packages: Option<Vec<PathBuf>>,
+    package_root: Option<&Path>,
+    bindings: &[BindingConfiguration],
+) -> Result<Vec<PathBuf>, SourceContractError> {
+    let refuse = |message: &str| Err(SourceContractError::Configuration(message.into()));
+    match (packages, package_root) {
+        (Some(packages), None) => Ok(packages),
+        (None, Some(root)) => {
+            if root.as_os_str().is_empty() {
+                return refuse("empty package root");
+            }
+            let mut ids = BTreeSet::new();
+            for binding in bindings {
+                let id = PluginId::new(binding.provider.clone())
+                    .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
+                let mut parts = Path::new(id.as_str()).components();
+                if !matches!(
+                    (parts.next(), parts.next()),
+                    (Some(std::path::Component::Normal(_)), None)
+                ) {
+                    return Err(SourceContractError::Configuration(format!(
+                        "provider id `{}` cannot name a package directory",
+                        id.as_str()
+                    )));
+                }
+                ids.insert(id.as_str().to_owned());
+            }
+            Ok(ids.into_iter().map(|id| root.join(id)).collect())
+        }
+        (Some(_), Some(_)) => refuse("give either `packages` or `package_root`, not both"),
+        (None, None) => refuse("a package inventory is required: `packages` or `package_root`"),
+    }
+}
+
 fn c_identifier(value: &str) -> bool {
     let mut chars = value.bytes();
     value.len() <= 128
@@ -305,7 +351,8 @@ impl SourceContractPolicies {
             .to_path_buf();
         let config: Configuration = serde_json::from_slice(&read_bounded(&path, 1_048_576)?)
             .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
-        validate_package_paths(&config.packages)?;
+        let packages = package_inventory(config.packages, config.package_root.as_deref(), &config.bindings)?;
+        validate_package_paths(&packages)?;
         if !matches!(config.schema_version, 1 | 2)
             || config.bindings.is_empty()
             || config.bindings.len() > 4096
@@ -382,7 +429,7 @@ impl SourceContractPolicies {
         }
         Ok(Self {
             base,
-            packages: config.packages,
+            packages,
             bindings,
         })
     }
