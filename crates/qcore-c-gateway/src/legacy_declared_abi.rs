@@ -658,6 +658,25 @@ fn read_c_declarations<'a>(
     found
 }
 
+/// Card **W44-C11-GENERIC-SELECTION**: does this unit's own C declaration of
+/// `name` read, unambiguously, as a function returning an object pointer?
+///
+/// The generic-selection reader removes a pointer cast around a call only
+/// when the call yields a pointer, so that the cast converts a pointer to a
+/// pointer and leaves its value unchanged. The answer comes from the same
+/// declaration reader and the same token stream as the ABI gate, so W4
+/// derivation, W4 validation and certificate rechecking reproduce it. An
+/// unreadable, ambiguous or absent declaration, a `void` or scalar result and
+/// a function pointer (`fnptr`) all answer `false`, the refusing direction.
+pub(crate) fn declares_object_pointer_result(texts: &[&str], name: &str) -> bool {
+    let names = BTreeSet::from([name]);
+    matches!(
+        read_c_declarations(texts, &names).get(name),
+        Some(Ok(CDeclaration { result: Some(result), .. }))
+            if !result.is_empty() && result.iter().all(|spelling| spelling.starts_with("ptr<"))
+    )
+}
+
 /// Compose two readings of the same name in one unit.
 fn compose(
     left: Result<CDeclaration, AbiRefusal>,

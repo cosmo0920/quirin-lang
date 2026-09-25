@@ -74,6 +74,12 @@ pub(crate) mod refused_operands;
 #[path = "legacy_cast_return.rs"]
 pub(crate) mod cast_return;
 
+// Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
+// are one expression up to pointer casts is lowered to that expression before
+// a body is parsed; every other selection is left as it was.
+#[path = "legacy_generic_selection.rs"]
+mod generic_selection;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 mod leak_witness;
@@ -2559,6 +2565,12 @@ fn build_function_cfg_with(
     contracts: &ResourceContracts,
     admit_derived_returns: bool,
 ) -> Result<LegacyCfg, LegacyCError> {
+    // Card W44-C11-GENERIC-SELECTION: lower every selection-invariant
+    // `_Generic` in this body to its common expression first, so every reader
+    // below (the literal premises included) sees the call C evaluates. Only
+    // this body's tokens change; a refused selection is untouched.
+    let resolved = generic_selection::resolve_in_body(tokens, function);
+    let tokens = resolved.as_deref().unwrap_or(tokens);
     // Card HASH-CONTRACTS. A declared literal-argument premise restricts a
     // contract to the call sites whose named argument is the named literal;
     // every other call is rewritten to an undeclared callee, so the restriction
