@@ -189,6 +189,7 @@ import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
 import QCore.LoopSwitchCallEvaluation
+import QCore.ConditionCallDesugar
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat

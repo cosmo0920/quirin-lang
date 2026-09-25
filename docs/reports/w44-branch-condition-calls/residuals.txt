@@ -1,0 +1,31 @@
+W44-BRANCH-CONDITION-CALLS residual condition classes (AFTER Unknown functions)
+
+class                         leaves functions  sole
+no-call                         4766      1758    29
+call-indirect-argument          1686       630     8
+call-free-leaf-refused          1211       622     0
+call-uncontracted               1000       575    11
+type-operator                    259       113     1
+assignment-destination           168       142     0
+recursive-local-callee            31        18     0
+indirect-callee                   29        23     2
+assignment-shape                  28        22     0
+braces                            22        21     0
+residual-refused                  22        19     2
+call-other                         9         6     0
+increment-or-decrement             8         7     1
+unexplained                        6         5     0
+nested-connective                  3         3     0
+custody-result                     3         3     0
+
+unexplained leaves: 6
+
+registered follow-ups: leaves functions sole
+  W44-CONDITION-CALL-INDIRECT-ARGUMENT     1686    630    8
+  W44-CONDITION-CALL-UNCONTRACTED          1000    575   11
+  W44-CONDITION-CALL-FREE-OPERAND          1211    622    0
+  W44-CONDITION-CALL-TYPE-OPERATOR          259    113    1
+  W44-CONDITION-CALL-ASSIGNMENT             196    160    0
+  W44-CONDITION-CALL-RECURSIVE-LOCAL         31     18    0
+  W44-CONDITION-CALL-ERRNO-RESIDUAL          22     19    2
+  W44-CONDITION-CALL-REFUSED-SHAPES          74     62    3

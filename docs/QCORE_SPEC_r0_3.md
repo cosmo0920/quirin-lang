@@ -1066,6 +1066,25 @@ Unknown unless an existing independently justified rule already models them.
 See the [exact boundaries and measured reach](reports/b-series-integration/README.md)
 and [gateway constraints 5d–5f](agents/gateway.md#constraint-5d).
 
+A call-bearing controlling expression that every rule above refused is
+**desugared** when each of its calls is modeled. It is read as a Boolean tree
+over `&&`, `||`, `!` and a top-level `?:` (`__builtin_expect(E, K)` with a
+literal `K` read as `E`). Every call of an operand is lowered, in C evaluation
+order, to the ordinary statement classifier's contracted call with a
+resource-free result (none, or derived); each operand then decides through one
+branch — a neutral residual, or for a call-free operand the existing null,
+validity, distinct or typed-read test; and the connectives are edges, so a
+later operand's calls are applied exactly on the paths where C evaluates them.
+One `(NAME = CALL(...))` per operand into a declared scalar or single-level
+pointer local that is no formal and no descriptor is the statement followed by
+the test of `NAME`. An uncontracted or refused call, a custody result
+(owned, reallocated or descriptor), a local callee in the function's own
+recursive component, two effectful calls of one operand, a type operator,
+braces, an increment, a call through an expression, or an operand no rule
+decides MUST keep the position's refusal byte for byte, including its site
+numbering. See [the implementation record](reports/w44-branch-condition-calls/README.md)
+and [gateway constraint 5h](agents/gateway.md#constraint-5h).
+
 External resource declarations are assumptions. W4 may infer an internal summary, but a candidate is published only after body re-analysis validates its entry assumptions, every modeled exit, formal disposition, result custody, and absence of unmodeled escape. The certificate checker re-derives summaries instead of trusting serialized labels.
 
 The current W4 implementation supports bounded direct Out, Stored, Removed,

@@ -238,14 +238,19 @@ fn a_residual_read_through_the_released_pointer_keeps_the_whole_condition_refuse
     assert!(has_branch_refusal(&diagnostics), "{diagnostics:?}");
 }
 
+/// Card W44-BRANCH-CONDITION-CALLS replaces this pin's refusal assertion,
+/// deliberately: the short-circuited release is now desugared onto the edge
+/// on which C evaluates it (`legacy_condition_desugar.rs`). What the pin
+/// protected is kept — the skipped-call path still retains the live resource,
+/// so the leak is reported and the function is not `Safe`.
 #[test]
-fn a_short_circuit_release_stays_refused_and_cannot_hide_the_live_resource() {
+fn a_short_circuit_release_is_desugared_and_cannot_hide_the_live_resource() {
     if !clang_available() {
         return;
     }
     let (status, diagnostics) = analyze("void *p = q_alloc(); if (flag && (q_free(p), 1)) { }");
-    assert_ne!(status, AnalysisStatus::Safe);
-    assert!(has_branch_refusal(&diagnostics), "{diagnostics:?}");
+    assert_eq!(status, AnalysisStatus::Unsafe);
+    assert!(!has_branch_refusal(&diagnostics), "{diagnostics:?}");
     assert!(
         diagnostics
             .iter()
@@ -254,14 +259,22 @@ fn a_short_circuit_release_stays_refused_and_cannot_hide_the_live_resource() {
     );
 }
 
+/// Card W44-BRANCH-CONDITION-CALLS replaces this pin's refusal assertion:
+/// the release runs only on `flag`'s true edge, so the false edge leaks.
 #[test]
-fn a_conditional_release_stays_refused() {
+fn a_conditional_release_is_desugared_and_the_other_arm_leaks() {
     if !clang_available() {
         return;
     }
     let (status, diagnostics) = analyze("void *p = q_alloc(); if (flag ? (q_free(p), 1) : 0) { }");
-    assert_ne!(status, AnalysisStatus::Safe);
-    assert!(has_branch_refusal(&diagnostics), "{diagnostics:?}");
+    assert_eq!(status, AnalysisStatus::Unsafe);
+    assert!(!has_branch_refusal(&diagnostics), "{diagnostics:?}");
+    assert!(
+        diagnostics
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        "{diagnostics:?}"
+    );
 }
 
 #[test]

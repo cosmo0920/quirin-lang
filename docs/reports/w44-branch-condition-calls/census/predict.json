@@ -1,0 +1,1290 @@
+{
+ "run": "measure/census-run",
+ "family_leaves": {
+  "branch condition": 8287,
+  "for-loop condition": 839,
+  "loop condition": 294,
+  "switch expression": 78,
+  "do-while condition": 29
+ },
+ "family_functions": {
+  "branch condition": 2320,
+  "for-loop condition": 537,
+  "loop condition": 187,
+  "switch expression": 75,
+  "do-while condition": 27
+ },
+ "family_sole_blocked": {
+  "branch condition": 49,
+  "loop condition": 5,
+  "switch expression": 1,
+  "for-loop condition": 1
+ },
+ "forecast_admitted_leaves": {
+  "branch condition": 269,
+  "loop condition": 6,
+  "do-while condition": 1
+ },
+ "unexplained_leaves": {
+  "branch condition": 6
+ },
+ "by_outcome": [
+  {
+   "key": [
+    "branch condition",
+    "no-call"
+   ],
+   "leaves": 3900,
+   "functions": 1551
+  },
+  {
+   "key": [
+    "branch condition",
+    "call-refused"
+   ],
+   "leaves": 1780,
+   "functions": 952
+  },
+  {
+   "key": [
+    "branch condition",
+    "call-free-leaf-refused"
+   ],
+   "leaves": 1200,
+   "functions": 616
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "no-call"
+   ],
+   "leaves": 587,
+   "functions": 398
+  },
+  {
+   "key": [
+    "branch condition",
+    "call-refused+no-call"
+   ],
+   "leaves": 555,
+   "functions": 95
+  },
+  {
+   "key": [
+    "branch condition",
+    "admitted"
+   ],
+   "leaves": 269,
+   "functions": 177
+  },
+  {
+   "key": [
+    "branch condition",
+    "type-operator"
+   ],
+   "leaves": 198,
+   "functions": 95
+  },
+  {
+   "key": [
+    "loop condition",
+    "no-call"
+   ],
+   "leaves": 191,
+   "functions": 100
+  },
+  {
+   "key": [
+    "branch condition",
+    "assignment-shape+call-refused+no-call"
+   ],
+   "leaves": 177,
+   "functions": 65
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "call-refused"
+   ],
+   "leaves": 109,
+   "functions": 82
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "assignment-destination"
+   ],
+   "leaves": 87,
+   "functions": 72
+  },
+  {
+   "key": [
+    "switch expression",
+    "no-call"
+   ],
+   "leaves": 78,
+   "functions": 75
+  },
+  {
+   "key": [
+    "branch condition",
+    "assignment-destination"
+   ],
+   "leaves": 67,
+   "functions": 61
+  },
+  {
+   "key": [
+    "loop condition",
+    "call-refused"
+   ],
+   "leaves": 57,
+   "functions": 53
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "type-operator"
+   ],
+   "leaves": 55,
+   "functions": 27
+  },
+  {
+   "key": [
+    "branch condition",
+    "recursive-local-callee"
+   ],
+   "leaves": 31,
+   "functions": 18
+  },
+  {
+   "key": [
+    "branch condition",
+    "assignment-shape"
+   ],
+   "leaves": 27,
+   "functions": 21
+  },
+  {
+   "key": [
+    "branch condition",
+    "indirect-callee"
+   ],
+   "leaves": 23,
+   "functions": 21
+  },
+  {
+   "key": [
+    "branch condition",
+    "braces"
+   ],
+   "leaves": 22,
+   "functions": 21
+  },
+  {
+   "key": [
+    "branch condition",
+    "residual-refused"
+   ],
+   "leaves": 22,
+   "functions": 19
+  },
+  {
+   "key": [
+    "do-while condition",
+    "call-refused"
+   ],
+   "leaves": 14,
+   "functions": 13
+  },
+  {
+   "key": [
+    "loop condition",
+    "assignment-destination"
+   ],
+   "leaves": 14,
+   "functions": 14
+  },
+  {
+   "key": [
+    "do-while condition",
+    "no-call"
+   ],
+   "leaves": 10,
+   "functions": 10
+  },
+  {
+   "key": [
+    "loop condition",
+    "call-free-leaf-refused"
+   ],
+   "leaves": 8,
+   "functions": 8
+  },
+  {
+   "key": [
+    "loop condition",
+    "admitted"
+   ],
+   "leaves": 6,
+   "functions": 4
+  },
+  {
+   "key": [
+    "loop condition",
+    "increment-or-decrement"
+   ],
+   "leaves": 6,
+   "functions": 5
+  },
+  {
+   "key": [
+    "loop condition",
+    "type-operator"
+   ],
+   "leaves": 6,
+   "functions": 6
+  },
+  {
+   "key": [
+    "loop condition",
+    "indirect-callee"
+   ],
+   "leaves": 5,
+   "functions": 3
+  },
+  {
+   "key": [
+    "branch condition",
+    "assignment-destination+assignment-shape+call-refused+no-call"
+   ],
+   "leaves": 3,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "custody-result"
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "do-while condition",
+    "nested-connective"
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "branch condition",
+    "call-free-leaf-refused+no-call"
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "increment-or-decrement"
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "do-while condition",
+    "admitted"
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "do-while condition",
+    "indirect-callee"
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "call-free-leaf-refused"
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "assignment-shape"
+   ],
+   "leaves": 1,
+   "functions": 1
+  }
+ ],
+ "by_shape": [
+  {
+   "key": [
+    "branch condition",
+    "plain",
+    false
+   ],
+   "leaves": 2049,
+   "functions": 946
+  },
+  {
+   "key": [
+    "branch condition",
+    "not",
+    false
+   ],
+   "leaves": 709,
+   "functions": 447
+  },
+  {
+   "key": [
+    "branch condition",
+    "not+plain",
+    false
+   ],
+   "leaves": 439,
+   "functions": 90
+  },
+  {
+   "key": [
+    "branch condition",
+    "not+not+assign+plain",
+    false
+   ],
+   "leaves": 175,
+   "functions": 63
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "assign",
+    false
+   ],
+   "leaves": 143,
+   "functions": 112
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+not",
+    false
+   ],
+   "leaves": 129,
+   "functions": 112
+  },
+  {
+   "key": [
+    "branch condition",
+    "not",
+    true
+   ],
+   "leaves": 124,
+   "functions": 87
+  },
+  {
+   "key": [
+    "branch condition",
+    "not+assign",
+    false
+   ],
+   "leaves": 115,
+   "functions": 89
+  },
+  {
+   "key": [
+    "branch condition",
+    "plain",
+    true
+   ],
+   "leaves": 112,
+   "functions": 83
+  },
+  {
+   "key": [
+    "branch condition",
+    "and",
+    false
+   ],
+   "leaves": 101,
+   "functions": 81
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+not+plain",
+    false
+   ],
+   "leaves": 98,
+   "functions": 42
+  },
+  {
+   "key": [
+    "branch condition",
+    "assign",
+    false
+   ],
+   "leaves": 92,
+   "functions": 76
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "plain",
+    false
+   ],
+   "leaves": 79,
+   "functions": 48
+  },
+  {
+   "key": [
+    "branch condition",
+    "or+not",
+    false
+   ],
+   "leaves": 63,
+   "functions": 58
+  },
+  {
+   "key": [
+    "branch condition",
+    "or",
+    false
+   ],
+   "leaves": 57,
+   "functions": 49
+  },
+  {
+   "key": [
+    "loop condition",
+    "assign",
+    false
+   ],
+   "leaves": 39,
+   "functions": 37
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "and+assign",
+    false
+   ],
+   "leaves": 26,
+   "functions": 20
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or+not",
+    false
+   ],
+   "leaves": 21,
+   "functions": 19
+  },
+  {
+   "key": [
+    "loop condition",
+    "plain",
+    false
+   ],
+   "leaves": 19,
+   "functions": 16
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+not",
+    true
+   ],
+   "leaves": 11,
+   "functions": 6
+  },
+  {
+   "key": [
+    "loop condition",
+    "and+not+assign",
+    false
+   ],
+   "leaves": 11,
+   "functions": 11
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+not+assign",
+    false
+   ],
+   "leaves": 9,
+   "functions": 9
+  },
+  {
+   "key": [
+    "branch condition",
+    "or+not+assign",
+    false
+   ],
+   "leaves": 8,
+   "functions": 8
+  },
+  {
+   "key": [
+    "branch condition",
+    "ternary+assign",
+    false
+   ],
+   "leaves": 8,
+   "functions": 6
+  },
+  {
+   "key": [
+    "branch condition",
+    "or+not",
+    true
+   ],
+   "leaves": 7,
+   "functions": 7
+  },
+  {
+   "key": [
+    "branch condition",
+    "ternary",
+    false
+   ],
+   "leaves": 7,
+   "functions": 5
+  },
+  {
+   "key": [
+    "loop condition",
+    "and",
+    false
+   ],
+   "leaves": 7,
+   "functions": 6
+  },
+  {
+   "key": [
+    "branch condition",
+    "and",
+    true
+   ],
+   "leaves": 6,
+   "functions": 6
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or",
+    false
+   ],
+   "leaves": 6,
+   "functions": 6
+  },
+  {
+   "key": [
+    "branch condition",
+    "or",
+    true
+   ],
+   "leaves": 6,
+   "functions": 6
+  },
+  {
+   "key": [
+    "do-while condition",
+    "plain",
+    false
+   ],
+   "leaves": 6,
+   "functions": 6
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+assign",
+    false
+   ],
+   "leaves": 5,
+   "functions": 5
+  },
+  {
+   "key": [
+    "branch condition",
+    "not+assign+plain",
+    false
+   ],
+   "leaves": 5,
+   "functions": 2
+  },
+  {
+   "key": [
+    "loop condition",
+    "not",
+    false
+   ],
+   "leaves": 5,
+   "functions": 5
+  },
+  {
+   "key": [
+    "loop condition",
+    "not+assign",
+    false
+   ],
+   "leaves": 5,
+   "functions": 5
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+ternary",
+    false
+   ],
+   "leaves": 4,
+   "functions": 4
+  },
+  {
+   "key": [
+    "do-while condition",
+    "not",
+    false
+   ],
+   "leaves": 4,
+   "functions": 4
+  },
+  {
+   "key": [
+    "loop condition",
+    "and+assign",
+    false
+   ],
+   "leaves": 4,
+   "functions": 4
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+ternary+not",
+    false
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "do-while condition",
+    "and+not",
+    false
+   ],
+   "leaves": 3,
+   "functions": 2
+  },
+  {
+   "key": [
+    "do-while condition",
+    "ternary+not+assign",
+    false
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "loop condition",
+    "and+not",
+    false
+   ],
+   "leaves": 3,
+   "functions": 2
+  },
+  {
+   "key": [
+    "loop condition",
+    "not",
+    true
+   ],
+   "leaves": 3,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+not+not+plain",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or+not",
+    true
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or+ternary+not",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "or+ternary",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "ternary+not",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "ternary+not+assign",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "and",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "and+not",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "loop condition",
+    "plain",
+    true
+   ],
+   "leaves": 2,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "ternary+assign",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or+not+assign",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+or+ternary+assign",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+ternary+assign",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "and+ternary+not+assign",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "assign",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "or+ternary+not",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "plain+ternary",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "do-while condition",
+    "and+not+assign",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "do-while condition",
+    "not",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "do-while condition",
+    "or+not",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "and+not",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "and+or+not",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "or",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  }
+ ],
+ "by_callee_status": [
+  {
+   "key": [
+    "branch condition",
+    "some-uncontracted",
+    false
+   ],
+   "leaves": 3926,
+   "functions": 1369
+  },
+  {
+   "key": [
+    "branch condition",
+    "some-uncontracted",
+    true
+   ],
+   "leaves": 219,
+   "functions": 147
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "some-uncontracted",
+    false
+   ],
+   "leaves": 197,
+   "functions": 146
+  },
+  {
+   "key": [
+    "branch condition",
+    "all-contracted-external",
+    false
+   ],
+   "leaves": 142,
+   "functions": 115
+  },
+  {
+   "key": [
+    "loop condition",
+    "some-uncontracted",
+    false
+   ],
+   "leaves": 93,
+   "functions": 84
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "no-call",
+    false
+   ],
+   "leaves": 55,
+   "functions": 27
+  },
+  {
+   "key": [
+    "branch condition",
+    "contracted-with-local",
+    true
+   ],
+   "leaves": 43,
+   "functions": 23
+  },
+  {
+   "key": [
+    "branch condition",
+    "no-call",
+    false
+   ],
+   "leaves": 36,
+   "functions": 25
+  },
+  {
+   "key": [
+    "do-while condition",
+    "some-uncontracted",
+    false
+   ],
+   "leaves": 18,
+   "functions": 17
+  },
+  {
+   "key": [
+    "branch condition",
+    "contracted-with-local",
+    false
+   ],
+   "leaves": 15,
+   "functions": 13
+  },
+  {
+   "key": [
+    "branch condition",
+    "all-contracted-external",
+    true
+   ],
+   "leaves": 7,
+   "functions": 7
+  },
+  {
+   "key": [
+    "loop condition",
+    "some-uncontracted",
+    true
+   ],
+   "leaves": 6,
+   "functions": 4
+  },
+  {
+   "key": [
+    "loop condition",
+    "all-contracted-external",
+    false
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "do-while condition",
+    "some-uncontracted",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "no-call",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  }
+ ],
+ "by_result_kind": [
+  {
+   "key": [
+    "branch condition",
+    "uncontracted",
+    false
+   ],
+   "leaves": 3867,
+   "functions": 1356
+  },
+  {
+   "key": [
+    "branch condition",
+    "uncontracted",
+    true
+   ],
+   "leaves": 218,
+   "functions": 147
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "uncontracted",
+    false
+   ],
+   "leaves": 197,
+   "functions": 146
+  },
+  {
+   "key": [
+    "branch condition",
+    "none",
+    false
+   ],
+   "leaves": 184,
+   "functions": 141
+  },
+  {
+   "key": [
+    "loop condition",
+    "uncontracted",
+    false
+   ],
+   "leaves": 88,
+   "functions": 79
+  },
+  {
+   "key": [
+    "for-loop condition",
+    "none",
+    false
+   ],
+   "leaves": 55,
+   "functions": 27
+  },
+  {
+   "key": [
+    "branch condition",
+    "none",
+    true
+   ],
+   "leaves": 49,
+   "functions": 29
+  },
+  {
+   "key": [
+    "branch condition",
+    "none+uncontracted",
+    false
+   ],
+   "leaves": 31,
+   "functions": 22
+  },
+  {
+   "key": [
+    "branch condition",
+    "derived+uncontracted",
+    false
+   ],
+   "leaves": 23,
+   "functions": 15
+  },
+  {
+   "key": [
+    "do-while condition",
+    "uncontracted",
+    false
+   ],
+   "leaves": 18,
+   "functions": 17
+  },
+  {
+   "key": [
+    "loop condition",
+    "uncontracted",
+    true
+   ],
+   "leaves": 6,
+   "functions": 4
+  },
+  {
+   "key": [
+    "branch condition",
+    "owned",
+    false
+   ],
+   "leaves": 5,
+   "functions": 5
+  },
+  {
+   "key": [
+    "branch condition",
+    "none+uncontracted+uncontracted",
+    false
+   ],
+   "leaves": 4,
+   "functions": 1
+  },
+  {
+   "key": [
+    "loop condition",
+    "none",
+    false
+   ],
+   "leaves": 4,
+   "functions": 4
+  },
+  {
+   "key": [
+    "branch condition",
+    "derived",
+    false
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "loop condition",
+    "none+uncontracted",
+    false
+   ],
+   "leaves": 3,
+   "functions": 3
+  },
+  {
+   "key": [
+    "loop condition",
+    "derived+uncontracted",
+    false
+   ],
+   "leaves": 2,
+   "functions": 2
+  },
+  {
+   "key": [
+    "branch condition",
+    "derived",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "derived+none+uncontracted",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "none+uncontracted",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "branch condition",
+    "reallocated",
+    false
+   ],
+   "leaves": 1,
+   "functions": 1
+  },
+  {
+   "key": [
+    "do-while condition",
+    "none+uncontracted",
+    true
+   ],
+   "leaves": 1,
+   "functions": 1
+  }
+ ],
+ "call_refusal_reasons": [
+  {
+   "key": "indirect memory access is outside the resource projection",
+   "leaves": 2413,
+   "functions": 630
+  },
+  {
+   "key": "call to uncontracted function `_`",
+   "leaves": 1000,
+   "functions": 575
+  },
+  {
+   "key": "local declaration may shadow a formal resource identity",
+   "leaves": 4,
+   "functions": 3
+  },
+  {
+   "key": "nested call `_` inside a modeled call is outside the resource projection",
+   "leaves": 4,
+   "functions": 2
+  },
+  {
+   "key": "call has an unmodeled formal address or borrowed expression",
+   "leaves": 1,
+   "functions": 1
+  }
+ ],
+ "forecast_function_moves_upper_bound": []
+}

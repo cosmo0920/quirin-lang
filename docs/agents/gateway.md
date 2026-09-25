@@ -297,6 +297,24 @@ including cross-topic rules, before editing; the index is not a substitute.
     conjunction retain their prior handling, including the separate unbound
     scalar-field no-op. See [the card report](../reports/w42-indirect-access/README.md).
 
+<a id="constraint-5h"></a>
+
+5h. **A desugared condition applies a call exactly where C evaluates it.**
+    W44-BRANCH-CONDITION-CALLS lowers a refused call-bearing controlling
+    expression to its calls, each the ordinary classifier's `ContractCall`, and
+    one branch per operand, with `&&`, `||` and `?:` as edges
+    (`legacy_condition_desugar.rs`; `QCore.ConditionCallDesugar.the_desugaring_is_c_evaluation`).
+    It is consulted only where the position's lowering would be its refusal,
+    and a declined plan restores `next_site` and the element counter. Keep four
+    premises: a custody result refuses (so `if ((p = malloc(n)) == NULL)` keeps
+    its refusal); a local callee in the enclosing function's own recursive
+    component refuses, because its contract may be constraint 4's provisional
+    `N(m)`; two calls of one operand are admitted only when each is the
+    identity on the abstract state; and in a loop every edge to the exit is a
+    `loop_exit_edge` (constraint 5c's retained exit). An unresolved name the
+    desugaring now null-tests reports `unknown_alias` where the refusal stood;
+    that exchange is expected. [Report](../reports/w44-branch-condition-calls/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->
