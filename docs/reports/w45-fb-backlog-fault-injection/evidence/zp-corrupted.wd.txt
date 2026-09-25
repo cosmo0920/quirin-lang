@@ -1,0 +1,51 @@
+[wd] ENTER cb_queue_chunks entercount=1 interceptsofar=0 retsofar=0
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=1 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=2 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=3 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=4 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=5 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=6 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=7 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=8 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=9 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=10 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=11 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=12 (enter=1 ret=0)
+[wd] INTERCEPT up_force -> CIO_CORRUPTED n=13 (enter=1 ret=0)
+[wd] RETURN cb_queue_chunks retcount=1 entercount=1 intercept=13
+[wd] ENTER cb_queue_chunks entercount=2 interceptsofar=13 retsofar=1
+[wd] RETURN cb_queue_chunks retcount=2 entercount=2 intercept=13
+[wd] ENTER cb_queue_chunks entercount=3 interceptsofar=13 retsofar=2
+[wd] RETURN cb_queue_chunks retcount=3 entercount=3 intercept=13
+[wd] ENTER cb_queue_chunks entercount=4 interceptsofar=13 retsofar=3
+[wd] RETURN cb_queue_chunks retcount=4 entercount=4 intercept=13
+[wd] ENTER cb_queue_chunks entercount=5 interceptsofar=13 retsofar=4
+[wd] RETURN cb_queue_chunks retcount=5 entercount=5 intercept=13
+[wd] ENTER cb_queue_chunks entercount=6 interceptsofar=13 retsofar=5
+[wd] RETURN cb_queue_chunks retcount=6 entercount=6 intercept=13
+[wd] ENTER cb_queue_chunks entercount=7 interceptsofar=13 retsofar=6
+[wd] RETURN cb_queue_chunks retcount=7 entercount=7 intercept=13
+[wd] ENTER cb_queue_chunks entercount=8 interceptsofar=13 retsofar=7
+[wd] RETURN cb_queue_chunks retcount=8 entercount=8 intercept=13
+[wd] ENTER cb_queue_chunks entercount=9 interceptsofar=13 retsofar=8
+[wd] RETURN cb_queue_chunks retcount=9 entercount=9 intercept=13
+[wd] ENTER cb_queue_chunks entercount=10 interceptsofar=13 retsofar=9
+[wd] RETURN cb_queue_chunks retcount=10 entercount=10 intercept=13
+[wd] ENTER cb_queue_chunks entercount=11 interceptsofar=13 retsofar=10
+[wd] RETURN cb_queue_chunks retcount=11 entercount=11 intercept=13
+[wd] ENTER cb_queue_chunks entercount=12 interceptsofar=13 retsofar=11
+[wd] RETURN cb_queue_chunks retcount=12 entercount=12 intercept=13
+[wd] ENTER cb_queue_chunks entercount=13 interceptsofar=13 retsofar=12
+[wd] RETURN cb_queue_chunks retcount=13 entercount=13 intercept=13
+[wd] ENTER cb_queue_chunks entercount=14 interceptsofar=13 retsofar=13
+[wd] RETURN cb_queue_chunks retcount=14 entercount=14 intercept=13
+[wd] ENTER cb_queue_chunks entercount=15 interceptsofar=13 retsofar=14
+[wd] RETURN cb_queue_chunks retcount=15 entercount=15 intercept=13
+[wd] ENTER cb_queue_chunks entercount=16 interceptsofar=13 retsofar=15
+[wd] RETURN cb_queue_chunks retcount=16 entercount=16 intercept=13
+[wd] ENTER cb_queue_chunks entercount=17 interceptsofar=13 retsofar=16
+[wd] RETURN cb_queue_chunks retcount=17 entercount=17 intercept=13
+[wd] ENTER cb_queue_chunks entercount=18 interceptsofar=13 retsofar=17
+[wd] RETURN cb_queue_chunks retcount=18 entercount=18 intercept=13
+[wd] ENTER cb_queue_chunks entercount=19 interceptsofar=13 retsofar=18
+[wd] RETURN cb_queue_chunks retcount=19 entercount=19 intercept=13
