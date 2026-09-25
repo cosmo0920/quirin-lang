@@ -388,6 +388,7 @@ was committed (`c49c053b`) before the rule (`1e5a9bb5`):
 | unsupported −4; unknown_alias +1 and non-decreasing otherwise | −4; **+16 net**: +19 and −3. The three removals in `rd_string_render` break the "non-decreasing" part (§3) |
 | no violation candidate moves | **yes** |
 | the three exposed mechanisms `Unknown`, no `leak` | **yes** |
+| (not predicted) conformance pins | CT43's `owned_local.c` control moved `Unsafe` → `Unknown`, which the gate's workspace tests found; re-pinned (§2.5) |
 
 ## 5. Ledger
 
@@ -424,10 +425,41 @@ was committed (`c49c053b`) before the rule (`1e5a9bb5`):
 
 ## 6. Validation
 
-See [gate.json](gate.json) and the table below. Exits are captured to files,
-never piped; logs are in this worktree's `measure/gate/`.
+See [gate.json](gate.json), [gate-facts.json](gate-facts.json) and the table
+below, all measured at `ece0cc98`. Exits are captured to files, never piped;
+logs are in this worktree's `measure/gate/`.
+* `cargo clean --profile dev` ran after the test step (exit 0, 17.5 GiB).
+* The matrix was regenerated with `--gate gate.json` (exit 0) before the Python
+  suite, which was then run again on the final regeneration.
+* A first gate run at `0abd0b5a` failed only CT43's control. That run is kept
+  privately as `measure/gate-aborted-3`, and the control was re-pinned in
+  `ece0cc98` (§2.5).
 
-GATE_TABLE
+<!-- gate -->
+
+| Step | Exit | Measured |
+|---|---:|---|
+| submodules | 0 |  |
+| clang | 0 | Ubuntu clang version 21.1.8 (6ubuntu1) |
+| test | 0 | 5425 passed / 0 failed / 11 ignored over 289 summaries |
+| fmt | 0 |  |
+| clippy | 0 |  |
+| probe | 0 |  |
+| followup | 0 |  |
+| lean | 0 | 179 audits, no placeholders, no project axioms |
+| census | 0 | 469 passed / 0 failed / 0 ignored over 1 summaries |
+| ptest | 0 | 124 passed / 0 failed / 0 ignored over 39 summaries |
+| pisolated | 0 | 1 passed / 0 failed / 0 ignored over 1 summaries |
+| pfmt | 0 |  |
+| pclippy | 0 |  |
+| pcontracts | 0 |  |
+| pbuild | 0 |  |
+| pverify | 0 |  |
+| ppython | 0 | 13 tests |
+| python | 0 | 330 tests |
+| docsindex | 0 |  |
+
+<!-- /gate -->
 
 ## 7. For the integrator
 

@@ -1,0 +1,584 @@
+{
+  "source_commit": "ece0cc98",
+  "private_logs": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate",
+  "steps": {
+    "census": {
+      "step": "census",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "-p",
+          "qcore-c-gateway",
+          "--features",
+          "indirect-census",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        [
+          "cargo",
+          "test",
+          "-p",
+          "qcore-c-gateway",
+          "--features",
+          "indirect-census",
+          "--lib"
+        ]
+      ],
+      "exits": [
+        0,
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:53:56.714355+00:00",
+      "end": "2026-09-25T03:54:13.592389+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 469,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 1
+      },
+      "failed_tests": []
+    },
+    "clang": {
+      "step": "clang",
+      "commands": [
+        [
+          "clang",
+          "--version"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:25:10.519988+00:00",
+      "end": "2026-09-25T03:25:10.541934+00:00",
+      "exit": 0
+    },
+    "clippy": {
+      "step": "clippy",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:52:39.758471+00:00",
+      "end": "2026-09-25T03:53:11.097016+00:00",
+      "exit": 0
+    },
+    "docsindex": {
+      "step": "docsindex",
+      "commands": [
+        [
+          "python3",
+          "scripts/build_docs_index.py",
+          "--check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:04:06.465299+00:00",
+      "end": "2026-09-25T04:04:06.529087+00:00",
+      "exit": 0
+    },
+    "fmt": {
+      "step": "fmt",
+      "commands": [
+        [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:52:36.185694+00:00",
+      "end": "2026-09-25T03:52:39.758066+00:00",
+      "exit": 0
+    },
+    "followup": {
+      "step": "followup",
+      "commands": [
+        [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_followup"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:53:39.437036+00:00",
+      "end": "2026-09-25T03:53:40.347161+00:00",
+      "exit": 0
+    },
+    "lean": {
+      "step": "lean",
+      "commands": [
+        [
+          "python3",
+          "scripts/check_lean_audits.py",
+          "--jobs",
+          "4"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:53:40.347478+00:00",
+      "end": "2026-09-25T03:53:56.713742+00:00",
+      "exit": 0
+    },
+    "pbuild": {
+      "step": "pbuild",
+      "commands": [
+        [
+          "python3",
+          "providers/package.py",
+          "build",
+          "--output",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:23.622983+00:00",
+      "end": "2026-09-25T04:02:53.516071+00:00",
+      "exit": 0
+    },
+    "pclippy": {
+      "step": "pclippy",
+      "commands": [
+        [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:09.418332+00:00",
+      "end": "2026-09-25T04:02:23.498891+00:00",
+      "exit": 0
+    },
+    "pcontracts": {
+      "step": "pcontracts",
+      "commands": [
+        [
+          "python3",
+          "providers/contracts.py",
+          "check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:23.499268+00:00",
+      "end": "2026-09-25T04:02:23.622591+00:00",
+      "exit": 0
+    },
+    "pfmt": {
+      "step": "pfmt",
+      "commands": [
+        [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:05.840675+00:00",
+      "end": "2026-09-25T04:02:09.418022+00:00",
+      "exit": 0
+    },
+    "pisolated": {
+      "step": "pisolated",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "-p",
+          "qcore-provider-conformance",
+          "--test",
+          "packages",
+          "real_packages_preserve_unknown_and_reject_mutations",
+          "--locked",
+          "--offline",
+          "--",
+          "--exact",
+          "--test-threads=1"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:01:07.373575+00:00",
+      "end": "2026-09-25T04:02:05.840259+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 1
+      },
+      "failed_tests": []
+    },
+    "ppython": {
+      "step": "ppython",
+      "commands": [
+        [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "providers/tests"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:54.005246+00:00",
+      "end": "2026-09-25T04:02:54.162934+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 0,
+        "python_ran": 13
+      },
+      "failed_tests": []
+    },
+    "probe": {
+      "step": "probe",
+      "commands": [
+        [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_probe"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:53:11.097479+00:00",
+      "end": "2026-09-25T03:53:39.436637+00:00",
+      "exit": 0
+    },
+    "ptest": {
+      "step": "ptest",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--locked",
+          "--offline",
+          "--no-fail-fast"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:54:13.594652+00:00",
+      "end": "2026-09-25T04:01:07.371483+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 124,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 39
+      },
+      "failed_tests": []
+    },
+    "pverify": {
+      "step": "pverify",
+      "commands": [
+        [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages/qcore.chunkio"
+        ],
+        [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages/qcore.cmetrics"
+        ],
+        [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages/qcore.ctraces"
+        ],
+        [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages/qcore.libevent"
+        ],
+        [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate/packages/qcore.librdkafka"
+        ]
+      ],
+      "exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:02:53.516455+00:00",
+      "end": "2026-09-25T04:02:54.004816+00:00",
+      "exit": 0
+    },
+    "python": {
+      "step": "python",
+      "commands": [
+        [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/tests"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T04:03:48.640582+00:00",
+      "end": "2026-09-25T04:04:06.464574+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 0,
+        "python_ran": 330
+      },
+      "failed_tests": []
+    },
+    "submodules": {
+      "step": "submodules",
+      "commands": [
+        [
+          "git",
+          "submodule",
+          "update",
+          "--init",
+          "--recursive"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:25:10.489429+00:00",
+      "end": "2026-09-25T03:25:10.519561+00:00",
+      "exit": 0
+    },
+    "test": {
+      "step": "test",
+      "commands": [
+        [
+          "cargo",
+          "test",
+          "--workspace",
+          "--no-fail-fast"
+        ]
+      ],
+      "exits": [
+        0
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "6",
+        "RUST_TEST_THREADS": "2",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-09-25T03:25:10.542356+00:00",
+      "end": "2026-09-25T03:52:16.493707+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 5425,
+        "failed": 0,
+        "ignored": 11,
+        "summaries": 289
+      },
+      "failed_tests": []
+    }
+  }
+}

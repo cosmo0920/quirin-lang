@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 345
+  "named_followups": 355
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
-  "workspace_tests": 5390,
+  "note": "W44-LEAK-PIN-AUDIT: every step measured at ece0cc98 (the Python suites after the final matrix regeneration). 5425 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 failed; census feature 469 passed; 179 Lean audits; 330 root and 13 provider Python tests. Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0, 'ptest': 0, 'pisolated': 0, 'pfmt': 0, 'pclippy': 0, 'pcontracts': 0, 'pbuild': 0, 'pverify': 0, 'ppython': 0, 'python': 0, 'docsindex': 0}. Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/gate. No coverage promotion; the arbiter moved 76 functions and 35 units provisional Unsafe -> Unknown and 3 functions Unknown -> Safe.",
+  "workspace_tests": 5425,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 177,
+  "lean_audits": 179,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6754,6 +6754,7 @@
    "AuditCallUseAdmission.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCapacityBoundary.lean",
+   "AuditCastReturnEscape.lean",
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
@@ -6863,6 +6864,7 @@
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
+   "AuditRefusedHandOnCustody.lean",
    "AuditRefusedWrites.lean",
    "AuditRegionCreditJoins.lean",
    "AuditRegionJoinsDuties.lean",
@@ -6921,7 +6923,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-leak-pin-audit/gate.json)"
  },
  "named_followups": [
   {
