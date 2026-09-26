@@ -2,7 +2,8 @@
 
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
-Per-card history compacted out of rules 5c, 7 and 8 at wave 45 is kept verbatim
+Per-card history compacted out of rules 5c, 7 and 8 at wave 45, and 5l's corrected
+sentence, are kept verbatim
 in the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#gateway),
 which is not a second authority.
 
@@ -410,12 +411,16 @@ which is not a second authority.
     (`C`, `&E->F`) to any call, or `C` or an element bound from it to a
     position its contract does not declare `Borrowed`; a **safe** iteration
     protects its saved successor `N` the same way and admits unlinking and
-    releasing the current element (whose custody then refuses on its own:
-    an element of a borrowed container is untracked). Premises, stated not
-    proved: the body does not write or address `C`/`N` (checked lexically;
-    declined otherwise); an element is not an identity the body tracks (the
-    function is declined when one call receives both `&X->…` of a name `X`
-    that may bind a tracked identity and the iterated head); a callee handed
+    releasing the current element. That unlink is constraint 10f's foreign
+    unlink: where 10f's premises hold it gives the body live custody of the
+    element at a fresh site (an exit that still holds it leaks it, a second
+    release is a double release), and otherwise it refuses on its own.
+    Premises, stated not proved: the body does not write or address `C`/`N`
+    (checked lexically; declined otherwise); an element is not an identity the
+    body tracks until a 10f unlink binds it (the function is declined when one
+    call receives both `&X->…` of a name `X` that may bind a tracked identity
+    and the iterated head; that lexical guard does not see an element 10f has
+    bound, `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`); a callee handed
     the container does not unlink the protected node; a plain body is braced.
     **Do not** admit a header from its stripped clauses, bind an element from
     a cursor of a declined iteration, or widen case (2) to a written name.

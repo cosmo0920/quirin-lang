@@ -1,0 +1,3 @@
+200fdcbe: 69 rule blocks, 6 invariants, 4732 local links, 30 unresolved
+
+[exit 0]

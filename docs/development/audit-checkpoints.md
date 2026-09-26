@@ -132,8 +132,12 @@ results are independent only under one refutation table. A checkpointed run
 first analyses every group under the empty table and composes; when the
 composed rows record a refutation, it analyses every group again under that
 table, whose digest is in every group's identity (so no first-phase checkpoint
-is reused for the second, and a resumed second phase reuses only groups sealed
-under the same table), and composes again. Checkpoints sealed under different
+serves the second), and composes again. Both phases seal to the same
+`<dir>/<label>.qo` paths, so the second overwrites the first's checkpoints: a
+resumed run whose table is not empty finds, in each phase, the other phase's
+digest and recomputes every group, reusing none
+(`CHECKPOINT-TWO-PHASE-RESUME-NEVER-REUSES`). Only a run whose table is empty,
+which has no second phase, reuses on `--resume`. Checkpoints sealed under different
 tables disagree on the contract set and never compose. The run records the
 applied table in its assumptions before any unit, and the composer renders the
 `refuted_contracts` section from it and from the rows.

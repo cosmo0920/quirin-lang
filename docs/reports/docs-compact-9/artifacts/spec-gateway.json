@@ -24,6 +24,19 @@
    "note": "The whole preserved block, markers included. The rule keeps its operative text; the line-number history, superseded ownership sentence and integrator clauses moved. Corrected in the rule: 28 do-while leaves on the baseline (32 at the re-pin)."
   },
   {
+   "start": 425,
+   "end": 431,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_5l.txt",
+   "moved": [
+    [
+     425,
+     431
+    ]
+   ],
+   "title": "Constraint 5l, the element-custody sentence and premise",
+   "note": "Corrected against rule 10f (`GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`): the unlinked element is 10f's, bound at a fresh site, not untracked; the lexical guard does not see it."
+  },
+  {
    "start": 473,
    "end": 547,
    "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_7.txt",

@@ -1,0 +1,215 @@
+//! STABILITY-REEVAL-5 measurement probe. TEMPORARY: run once, never
+//! committed as a test (the audit lands no test). Every case prints its status
+//! and diagnostics; nothing asserts, so the run measures rather than gates.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, CCompilerDialect, LegacyDiagnosticKind, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+fn base_contracts(extra: &[(&str, &str)]) -> ResourceContracts {
+    let mut sources = BTreeMap::from([
+        (
+            "q_base.qcore".to_owned(),
+            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+        ),
+        (
+            "q_nullable.qcore".to_owned(),
+            include_str!("fixtures/contracts/q_nullable.qcore").to_owned(),
+        ),
+        (
+            "r_return_call.qcore".to_owned(),
+            include_str!("fixtures/contracts/r_return_call.qcore").to_owned(),
+        ),
+    ]);
+    for (name, text) in extra {
+        sources.insert((*name).to_owned(), (*text).to_owned());
+    }
+    load_resource_contract_sources(&sources).expect("contracts load")
+}
+
+fn kinds(diagnostics: &[qcore_c_gateway::legacy_c::LegacyDiagnostic]) -> Vec<String> {
+    diagnostics
+        .iter()
+        .map(|d| match &d.kind {
+            LegacyDiagnosticKind::Unsupported { description } => format!("Unsupported({description})"),
+            other => format!("{other:?}").chars().take(160).collect(),
+        })
+        .collect()
+}
+
+fn text_case(label: &str, source: &str, contracts: &ResourceContracts) {
+    match analyze_legacy_c_translation_unit(source, "subject", contracts) {
+        Ok(summary) => {
+            let f = &summary.functions["subject"];
+            println!("PROBE {label}: status={:?} diagnostics={:?}", f.status, kinds(&f.diagnostics));
+        }
+        Err(error) => println!("PROBE {label}: tokenize error {error:?}"),
+    }
+}
+
+fn c11_case(label: &str, source: &str, contracts: &ResourceContracts) {
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            dialect: CCompilerDialect::Gnu17,
+            ..Default::default()
+        },
+        "subject",
+        contracts,
+    );
+    match outcome {
+        Ok(result) => {
+            let verdict = result.verdict();
+            let (status, diagnostics) = match &result {
+                UnrestrictedLegacyResult::Safe(certificate) => (
+                    format!("{:?}", certificate.summary.functions["subject"].status),
+                    kinds(&certificate.summary.functions["subject"].diagnostics),
+                ),
+                UnrestrictedLegacyResult::Unsafe(summary) => (
+                    format!("{:?}", summary.functions["subject"].status),
+                    kinds(&summary.functions["subject"].diagnostics),
+                ),
+                UnrestrictedLegacyResult::Unknown { partial, reason, .. } => (
+                    format!(
+                        "partial={:?} reason={reason}",
+                        partial.as_ref().map(|p| p.status)
+                    ),
+                    partial
+                        .as_ref()
+                        .and_then(|p| p.functions.get("subject"))
+                        .map(|f| kinds(&f.diagnostics))
+                        .unwrap_or_default(),
+                ),
+            };
+            println!("PROBE {label}: unit_verdict={verdict:?} subject={status} diagnostics={diagnostics:?}");
+        }
+        Err(error) => println!("PROBE {label}: refused {error:?}"),
+    }
+}
+
+const DECLS: &str = "void *q_alloc(void); void q_free(void *); void q_nullable_free(void *); \
+int r_release_code(void *p); int c; void zz(void *); \
+void qcore_pin_mismatch__zz(void *); void qcore_review_pending__zz(void *);\n";
+
+const RECORD: &str = "struct inner { int n; };\n\
+     struct node { void *buf; struct node *next; struct inner in; int n; };\n";
+
+const DESTROY: &str = "static void node_destroy(struct node *n) {\n\
+     if (n->buf) q_nullable_free(n->buf);\n\
+     q_nullable_free(n);\n}\n";
+
+const PRELUDE: &str = r#"
+#include <stddef.h>
+#define container_of(ptr, type, member) ({                      \
+      const typeof( ((type *)0)->member ) *__mptr = (ptr);      \
+      (type *)( (char *)__mptr - offsetof(type,member) );})
+struct mk_list { struct mk_list *prev, *next; };
+#define mk_list_entry( ptr, type, member ) container_of( ptr, type, member )
+#define mk_list_entry_first(ptr, type, member) container_of((ptr)->next, type, member)
+void mk_list_add(struct mk_list *entry, struct mk_list *head);
+void mk_list_del(struct mk_list *entry);
+void *q_alloc(void); void q_free(void *); void q_use(void *);
+struct item { int size; void *payload; struct mk_list _head; };
+struct queue { struct mk_list items; struct mk_list done; int total; };
+"#;
+
+const LIST: &str = "module contract;
+extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
+extern fn mk_list_del(entry: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_unpublished(entry); ensures normal resource_return_none(); };
+extern fn q_use(p: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
+";
+
+#[test]
+fn stability_reeval_5_probes() {
+    let plain = base_contracts(&[]);
+    // Rule 10c: a call behind a conditional operator in an expression statement.
+    for (label, body) in [
+        ("10c-control-unconditional", "void *p = q_alloc(); r_release_code(p);"),
+        ("10c-control-if", "void *p = q_alloc(); if (c) r_release_code(p);"),
+        ("10c-ternary", "void *p = q_alloc(); c ? r_release_code(p) : 0;"),
+        ("10c-and", "void *p = q_alloc(); c && r_release_code(p);"),
+        ("10c-or", "void *p = q_alloc(); c || r_release_code(p);"),
+        ("10c-ternary-free", "void *p = q_alloc(); c ? q_free(p) : (void)0;"),
+    ] {
+        text_case(label, &format!("{DECLS}void subject(void) {{ {body} }}\n"), &plain);
+    }
+    // Rule 5k: a member release before a callee whose summary releases it again.
+    for (label, body) in [
+        ("5k-control-destroy", "void subject(struct node *n) { node_destroy(n); }"),
+        (
+            "5k-member-then-destroy",
+            "void subject(struct node *n) { q_nullable_free(n->buf); node_destroy(n); }",
+        ),
+    ] {
+        text_case(label, &format!("{DECLS}{RECORD}{DESTROY}{body}\n"), &plain);
+    }
+    // The held-call prefixes, spelled by the source itself.
+    for (label, body) in [
+        ("held-control-uncontracted", "zz(0);"),
+        ("held-pin-prefix", "qcore_pin_mismatch__zz(0);"),
+        ("held-review-prefix", "qcore_review_pending__zz(0);"),
+    ] {
+        text_case(label, &format!("{DECLS}void subject(void) {{ {body} }}\n"), &plain);
+    }
+    if qcore_c_gateway::clang_command().is_err() {
+        println!("PROBE clang absent: C11 cases not run");
+        return;
+    }
+    // A Pending unit beside a K&R definition the analyzer does not read.
+    for (label, body) in [
+        ("unit-control-if0-safe", "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { }"),
+        (
+            "unit-if0-plus-held",
+            "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { qcore_pin_mismatch__zz(0); }",
+        ),
+        ("unit-control-kr-safe", "int kr(a) int a; { return a; }\nvoid subject(void) { }"),
+        ("unit-control-held-alone", "void subject(void) { qcore_pin_mismatch__zz(0); }"),
+        (
+            "unit-kr-plus-held",
+            "int kr(a) int a; { return a; }\nvoid subject(void) { qcore_pin_mismatch__zz(0); }",
+        ),
+    ] {
+        c11_case(label, &format!("{DECLS}{body}\n"), &plain);
+    }
+    c11_case(
+        "5k-unit-member-then-destroy",
+        &format!("{DECLS}{RECORD}{DESTROY}void subject(struct node *n) {{ q_nullable_free(n->buf); node_destroy(n); }}\n"),
+        &plain,
+    );
+    // Rule 10f: the foreign unlink through two names of one element.
+    let list = base_contracts(&[("list.qcore", LIST)]);
+    for (label, body) in [
+        (
+            "10f-control-double-free-one-name",
+            "void subject(struct queue *q) { struct item *e;
+             e = mk_list_entry_first(&q->items, struct item, _head);
+             mk_list_del(&e->_head); q_free(e); q_free(e); }",
+        ),
+        (
+            "10f-two-names",
+            "void subject(struct queue *q) { struct item *e, *f;
+             e = mk_list_entry_first(&q->items, struct item, _head);
+             f = mk_list_entry_first(&q->items, struct item, _head);
+             mk_list_del(&e->_head); q_free(e); mk_list_del(&f->_head); q_free(f); }",
+        ),
+        (
+            "10d-root-released-after-publication",
+            "void subject(struct queue *q) { struct item *e = q_alloc();
+             mk_list_add(&e->_head, &q->items); q_free(q); }",
+        ),
+        (
+            "10d-control-publication",
+            "void subject(struct queue *q) { struct item *e = q_alloc();
+             mk_list_add(&e->_head, &q->items); }",
+        ),
+    ] {
+        c11_case(label, &format!("{PRELUDE}\n{body}\n"), &list);
+    }
+}

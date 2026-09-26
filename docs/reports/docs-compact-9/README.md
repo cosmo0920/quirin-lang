@@ -1,28 +1,32 @@
 # `DOCS-COMPACT-9` — the ninth documentation compaction (wave 45 close)
 
-**Base:** `8c1f15eb`. **Scope:** the router files (`AGENTS.md`, `CLAUDE.md`,
+**Base:** `8c1f15eb`, merged with `main` `200fdcbe` after `STABILITY-REEVAL-5`
+and re-derived there (§9). **Scope:** the router files (`AGENTS.md`, `CLAUDE.md`,
 `README.md`), the rule topic pages where narrative accreted after the
 2026-09-19 restructuring, `docs/STATUS.md`, and the four increment records over
-32 KiB. Documentation only: no crate source, proof, matrix entry or frozen
-report changed. The ninth firing of the
+32 KiB, and at the merge five prose defects `STABILITY-REEVAL-5` reported in
+this card's region. Documentation and ledger only: no crate source, proof or
+frozen report changed. The ninth firing of the
 [maintenance cadence](../../agents/operations.md#maintenance-cadence), due
 around waves 42–43 and postponed until now.
 
 **Compaction is not deletion.** Every byte that left a current page is in one
-of three checkpoint pages, re-read from `git show 8c1f15eb:<file>` by
-[`checkpoint.py`](scripts/checkpoint.py) and asserted to be a contiguous
-substring of the base file:
-[rule pages](../../development/increments/wave-45-compaction-checkpoints.md)
-(32,143 bytes), [status table](../../development/increments/wave-45-compaction-status.md)
-(29,054) and [status prose](../../development/increments/wave-45-compaction-status-prose.md)
-(10,747). Each says it is history and not a second authority.
+of three checkpoint pages, re-read by [`checkpoint.py`](scripts/checkpoint.py)
+from `git show <revision>:<file>` (`8c1f15eb`, and `200fdcbe` for the one row
+`STABILITY-REEVAL-5` had rewritten) and asserted to be a contiguous substring of
+that file: [rule pages](../../development/increments/wave-45-compaction-checkpoints.md)
+(32,193 bytes), [status part 1](../../development/increments/wave-45-compaction-status.md)
+(22,431) and [status part 2](../../development/increments/wave-45-compaction-status-prose.md)
+(22,254). Each says it is history and not a second authority.
 
-**Headline.** 27,558 bytes net left four current pages: `docs/STATUS.md`
-43,785 → 23,685, `gateway.md` 61,441 → 57,211, `diagnostics.md` 34,348 → 31,060
+**Headline**, against the merged `main` `200fdcbe`: `docs/STATUS.md`
+44,158 → 23,931, `gateway.md` 61,441 → 57,557, `diagnostics.md` 34,348 → 31,060
 (back under the 32 KiB cap the page sets itself), `buffers-records.md`
-32,132 → 32,193 (compacted, then grown by the corrected preamble). All 69 rule blocks keep their numbers, pages and anchors; 65
-are byte-identical. The six hard invariants are byte-identical. **Nine
-corrections**, each measured, two of them the brief's named stale items.
+32,132 → 32,193 (compacted, then grown by the corrected preamble); 27,338 bytes
+net off those four. All 69 rule blocks keep their numbers, pages and anchors;
+64 are byte-identical. The six hard invariants are byte-identical. **Fourteen
+corrections**, each measured: nine from the draft, two of them the brief's
+named stale items, and five the review's findings in this card's region.
 
 ## 1. Inventory before and after
 
@@ -30,18 +34,20 @@ corrections**, each measured, two of them the brief's named stale items.
 `<a id="constraint-…">` anchors and hashes each block, hashes each hard
 invariant, lists every anchor of every tracked Markdown file, and resolves every
 local link outside code fences; [`compare.py`](scripts/compare.py) diffs two
-runs ([result](artifacts/inventory-compare.txt)).
+runs: against the base ([result](artifacts/inventory-compare.txt)) and against the
+merged `main` ([result](artifacts/inventory-compare-vs-main.txt)), which agree on
+every row below.
 
 | Check | Before (`8c1f15eb`) | After |
 |---|---|---|
 | Rule blocks (1–29 with letters, plus the 14 and 15k amendment anchors) | 69 | 69, same ids, labels and pages |
-| Byte-identical rule blocks | — | **65**; changed: 5c, 7, 8 (`gateway.md`) and the 15k amendments (`buffers-records.md`) |
+| Byte-identical rule blocks | — | **64**; changed: 5c, 5l, 7, 8 (`gateway.md`) and the 15k amendments (`buffers-records.md`) |
 | Hard invariants | 6 | 6, byte-identical |
 | Anchors lost, any tracked Markdown file | — | **none** |
-| Local links with a fragment into a changed page | — | 46, all resolve |
+| Local links with a fragment into a changed page | — | 55, all resolve |
 | Unresolved local links, whole tree | 30 | 30, the same set (none into a changed page) |
-| Names (`UPPER-KEBAB`) no longer on a page | — | 103 on `STATUS.md`, all in the status checkpoints; none on a rule page |
-| Report pointers no longer on a page | — | 6 on `STATUS.md`, all in the status checkpoints; none from any rule block |
+| Names (`UPPER-KEBAB`) no longer on a page | — | 106 on `STATUS.md` (against `200fdcbe`), all in the status checkpoints; none on a rule page |
+| Report pointers no longer on a page | — | 7 on `STATUS.md`, all in the status checkpoints; none from any rule block |
 | `§L21` table rows and `Q` codes on `diagnostics.md` | 31 rows | 31 rows, same first column; no code or name lost |
 
 Each changed rule keeps every report pointer and every name it had: the three
@@ -56,17 +62,20 @@ Per block by [`deltas.py`](scripts/deltas.py) ([table](artifacts/byte-deltas.txt
 
 | Page | Blocks | Compaction | Correction | Both |
 |---|---|---:|---:|---:|
-| `docs/STATUS.md` | provenance paragraph; nine coverage rows' parenthetical chains (the follow-up row also carries this card's two registrations) | −14,569 | | |
-| | condition-call row (dated, current figure added); unit-reason row (re-sourced); raw-units paragraph | | +51 | |
-| | uncontracted-call row; latest gate (331 summaries, as `33558c67` corrected it) and provider paragraph; follow-up chronicle | | | −5,582 |
-| `docs/agents/gateway.md` | header pointer; constraint 8's two first-exercise paragraphs | −355 | | |
+| `docs/STATUS.md` | provenance paragraph; nine coverage rows' parenthetical chains (row 48 measured against `STABILITY-REEVAL-5`'s version) | −14,777 | | |
+| | condition-call row; unit-reason row; native descriptor row; raw-units paragraph | | +132 | |
+| | uncontracted-call row; latest gate and provider paragraph; follow-up chronicle | | | −5,582 |
+| `docs/agents/gateway.md` | header pointer; constraint 8's two first-exercise paragraphs | −324 | | |
+| | constraint 5l's element-custody sentence (against 10f) | | +315 | |
 | | constraints 5c and 7 | | | −3,875 |
 | `docs/agents/diagnostics.md` | five `§L21` table rows; the namespaces block's markers | −3,902 | | |
 | | the amendments preamble | | +614 | |
 | `docs/agents/buffers-records.md` | the 15k amendment's opening history | −241 | | |
 | | the amendments preamble, made the same statement as `diagnostics.md`'s | | +302 | |
+| `docs/agents/operations.md` | the integration-gate path; the cadence's page list and firing record | | +229 | |
+| `docs/development/audit-checkpoints.md` | the two-phase resume sentence | | +278 | |
 | `docs/agents/README.md` | rule 7's index sentence | | −1 | |
-| **Total −27,558** | | **−19,067** | **+966** | **−9,457** |
+| **Total −26,832** | | **−19,244** | **+1,869** | **−9,457** |
 
 What each compacted block keeps is stated beside its verbatim copy in the
 checkpoint. In short: every STATUS row keeps its current figure, the card that
@@ -87,7 +96,7 @@ in them is stale, so they are unchanged. Gateway rules 4, 4a, 5–5b, 5d–5l, 6
 authorities. `buffers-records.md`'s preserved 15h and 15k blocks are dense
 must-survive lists (`DOCS-COMPACT-8` §3.5 reached the same view of 15h) and the
 page is under 32 KiB. The other topic pages are under 16 KiB. **`gateway.md`
-stays one page at 57,211 bytes** (integrator decision): what remains is
+stays one page at 57,557 bytes** (integrator decision): what remains is
 operative rule text, and a split would move the `gateway.md#constraint-N`
 anchors that reports link to, so it would need an anchor-redirect plan first.
 
@@ -128,8 +137,8 @@ anchors that reports link to, so it would need an anchor-redirect plan first.
    eleven roots of `contract/corpus.json` hold 72 + 42 = **114** tracked modules
    ([`rederive2.py`](scripts/rederive2.py)), which `qcore_contract_corpus.rs` pins.
 8. **STATUS, follow-up paragraph:** "391 follow-ups are registered"; the matrix
-   carried **472**, carried and derived agreeing (474 after this card's two
-   registrations, §8). The three open Cycle 18
+   carried **472**, carried and derived agreeing (513 after `STABILITY-REEVAL-5`'s
+   forty and this card's ledger edits, §8). The three open Cycle 18
    follow-ups it mentioned are now named, each read from `named_followups`.
 9. **The amendments preambles of `diagnostics.md` and `buffers-records.md`**
    said the preserved blocks are "pinned by `verify.py`" and that `verify.py`
@@ -142,6 +151,34 @@ anchors that reports link to, so it would need an anchor-redirect plan first.
    (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`), and a preserved block is edited
    only to correct or compact the current rule, with its migration text moved
    verbatim, markers included, into a checkpoint.
+
+Five more at the merge, the prose defects `STABILITY-REEVAL-5` registered in
+this card's region:
+
+10. **STATUS, native descriptor row** (`NATIVE-OBSERVATION-UPSTREAM-WORDING`):
+    "two source-confirmed upstream double closes" now reads "two double closes
+    read against the Fluent Bit source: local observations, provisional
+    candidates, not upstream defect claims".
+11. **STATUS, latest gate** (`STATUS-LATEST-GATE-STALE`): correction 6, confirmed
+    at the merge against the gate file: 5,995 / 0 / 11 over 331 summaries,
+    207 Lean audits, 364 Python tests.
+12. **Gateway 5l** (`GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`): "whose
+    custody then refuses on its own: an element of a borrowed container is
+    untracked" was stale since rule 10f, whose foreign unlink binds the element
+    at a fresh site (`take_foreign_custody`). The sentence now says the unlink is
+    10f's, and the premise that an element is not tracked holds only until a 10f
+    unlink binds it, a case its lexical guard does not see. This corrects the
+    text to the code; no rule changed.
+13. **`operations.md`'s integration rule** (`INTEGRATION-GATE-PATH-RULE-DRIFT`)
+    named `docs/reports/<card>/integration-gate.json`; every integration gate
+    since wave 43 is `integration/gate.json`, and the rule now says so.
+14. **`docs/development/audit-checkpoints.md`**
+    (`CHECKPOINT-TWO-PHASE-RESUME-NEVER-REUSES`) said "a resumed second phase
+    reuses only groups sealed under the same table". Both phases seal to
+    `<dir>/<label>.qo` (`checkpoint_run.rs`, the path built per group;
+    `current_route.rs` calls `checkpoint_run::run` twice with the same options),
+    so a resumed run under a non-empty table reuses no group; the page now says
+    that, and that only a run with an empty table reuses.
 
 Two sentences were re-sourced rather than corrected: the unit-reason row
 (167 / 1 / 17 reproduce from the baseline's `reason_code`) and the indirect-access
@@ -160,7 +197,7 @@ corrections above.
 | Functions | 398 / 9 / 4,427 (4,834); 4,921 definitions, 87 not projected | same |
 | Diagnostics | leak 34, unknown_alias 3,571, unsupported 41,314, summary_conflict 1 | same, `diagnostic_counts` |
 | CT | 50/50 mapped; proof 5 (CT01, CT03, CT07, CT37, CT50); sanitized-native 10 | `docs/reevaluation/ct_manifest.json` |
-| Follow-ups | 472 at the base, carried = derived; 474 after §8's registrations | `docs/reviews/r0_3/acceptance_matrix.json` |
+| Follow-ups | 472 at the base; 512 at `main` `200fdcbe`; **513** after §8 (carried = derived) | `docs/reviews/r0_3/acceptance_matrix.json` |
 | Contract corpus | 114 modules; 50 manifest-selected; 174 elaborated v1 declarations | tracked provider sources; `cycle19-resource-contracts.json`; `contract_loader.rs` pin |
 | Lean audits | 207; toolchain `leanprover/lean4:v4.34.0` | `proof/Audit*.lean`; `proof/lean-toolchain` |
 
@@ -260,26 +297,65 @@ Decided by the integrator on the draft, and applied:
    verbatim, markers included, in the rule-page checkpoint, and both pages that
    stated the convention now say the same thing (correction 9).
 2. **`gateway.md` stays one page** (§2): anchors take precedence.
-3. **Two names registered**, `named_followups` 472 → 474, appended by
-   [`update_ledger.py`](scripts/update_ledger.py) from [`followups.json`](followups.json)
-   and the matrix regenerated with this card's [`gate.json`](gate.json)
-   (provider figure carried from the W45-AUDIT-SUBCOMMAND-PLUGINS integration
-   gate and said so). None retired.
+3. **The ledger, re-applied on `main`'s matrix at the merge**:
+   `named_followups` 512 → **513**, by [`update_ledger.py`](scripts/update_ledger.py)
+   (two entries from [`followups.json`](followups.json) registered, one retired
+   into [`retired-followups.json`](retired-followups.json), four amended), then
+   the matrix regenerated with `build_matrix.py . --gate
+   docs/reports/stability-reeval-5/integration/gate.json`, the latest integration
+   gate at equal code, so the validation block stays an integrator measurement.
+   This card's own [`gate.json`](gate.json) records its pre-merge run.
 
 | id | what it records | discharge |
 |---|---|---|
 | `W45-DOCS-PRESERVATION-VERIFIER-DECAYED` | `verify.py` exits 1 at `8c1f15eb` on its architecture row; eight rows were edited before this card and four by it; the script is a frozen report's (constraint 21) | a live check verifying each still-preserved block against its checkpoint copy, or a recorded retirement of the pin listing the blocks it covered |
 | `W45-RECONCILIATION-SUBSTRING-CLAIMS` | the three frozen "STATUS contains `281`" claims of §6, vacuous before this card | the sweep's containment check anchored to a token or field, or the claims marked historical |
 
-Still open for the merge:
+**Retired:** `INTEGRATION-GATE-PATH-RULE-DRIFT`. Its discharge asked the rule
+text and any close tooling to name the path in use; the rule now does
+(correction 13), and no tooling names either path (`git grep integration-gate`
+over `scripts/`, `providers/`, `*.rs` and `*.sh` finds nothing).
 
-* **The cadence bullet.** `operations.md`'s "Due and not yet recorded as run"
-  bullet is `STABILITY-REEVAL-5`'s to update for its own firing; this card
-  records its firing there only after merging that version (§9).
+**Amended, not retired** (an appended `AMENDED (DOCS-COMPACT-9, wave-45 close)`
+sentence saying what was done and what stays open):
+
+| id | done here | still open |
+|---|---|---|
+| `NATIVE-OBSERVATION-UPSTREAM-WORDING` | the STATUS row | the frozen W43 report's sentence and the wave-45 record's `mk_http_error` wording |
+| `STATUS-LATEST-GATE-STALE` | the section names the latest integration gate | a check tying STATUS's figures to a gate file |
+| `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` | 5l's text | the pinned fixture |
+| `CHECKPOINT-TWO-PHASE-RESUME-NEVER-REUSES` | the document | the code defect, kept open at the integrator's direction |
+
+Still open:
+
 * **The Q-space tally was carried, not re-derived.** The amendments put it at
   twenty-four plus one (RESOURCE-HELPER-FUNCTIONS); the compacted `§L21` rows
   keep every card, so it stays derivable.
 
 ## 9. Re-derivation after `main` moved
 
-Pending: this card merges last; this section records what the merge re-derived.
+`main` moved from `8c1f15eb` to `200fdcbe`: `33558c67` (the W45-AUDIT-SUBCOMMAND-PLUGINS
+gate record corrected to 331 summaries) and `STABILITY-REEVAL-5` (its report,
+40 registered findings, a STATUS follow-up row, a wave-45 paragraph and the
+cadence bullet). `git merge main` ran; three files conflicted, all resolved by
+re-deriving rather than by union:
+
+| Region | What `main` had | Re-derived as |
+|---|---|---|
+| `acceptance_matrix.json` | 512 follow-ups, the SR5 gate's validation block | `main`'s file, then this card's ledger script and a regeneration with the SR5 integration gate: 513, carried = derived |
+| STATUS follow-up row | 512 with the SR5 chain | 513 and the last moving card; SR5's row moved verbatim to status part 2, as its own block at `200fdcbe` |
+| STATUS latest gate | (unchanged by SR5; its finding pointed here) | 331 summaries, from the gate file as `33558c67` left it |
+| `wave-45-continuation.md` | SR5's paragraph | `main`'s file with this card's paragraph above it (newest first), asserted to differ from `main`'s only by that paragraph |
+| `operations.md` cadence bullet | SR5's firing-five line | kept, with this compaction's firing and the next due (wave 47–48); the cadence's first bullet names the pages it now covers |
+| `INDEX.md` | SR5's report entry | regenerated |
+
+Nothing SR5 changed touched a rule block, an anchor or an invariant: the
+inventory against `200fdcbe` ([result](artifacts/inventory-compare-vs-main.txt))
+gives the same 69 blocks, the same labels and pages, 64 byte-identical (the
+draft's 65 less 5l, corrected at the merge), six identical invariants, no anchor
+lost and the same 30 unresolved links. Every figure in §4 was re-derived again
+on the merged tree and none moved but the follow-up count.
+
+**Checks after the merge**, all exit 0 (`gate/python-merge.exit`, 364 tests;
+`gate/docs-index-merge.exit`; `gate/task-context-merge.exit`, `--base 200fdcbe`). Only documentation and the matrix changed
+since the full gate of §7; the integrator runs the integration gate.

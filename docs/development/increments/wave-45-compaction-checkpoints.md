@@ -4,9 +4,9 @@
 
 > **Preserved checkpoint text. These blocks are not a current authority.**
 > They are the verbatim text `DOCS-COMPACT-9` compacted out of the rule topic pages at
-> base `8c1f15eb`, kept so that nothing the compaction removed is lost. Each
-> block names its base lines; `git show 8c1f15eb:<file>` reproduces it byte for
-> byte. Where a block and the current page disagree, **the current page wins**;
+> base `8c1f15eb` (one status block at the merged `main`), kept so that nothing
+> the compaction removed is lost. Each block names its revision and lines;
+> `git show <revision>:<file>` reproduces it byte for byte. Where a block and the current page disagree, **the current page wins**;
 > where a block states something the card measured to be false, the correction
 > is in [the card report](../../reports/docs-compact-9/README.md) and is
 > deliberately not applied here. Relative links inside a block keep their

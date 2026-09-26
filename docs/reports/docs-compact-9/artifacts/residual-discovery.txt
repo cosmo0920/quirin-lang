@@ -1,6 +1,6 @@
-before 97 names, after 97 names
+before 97 names, after 98 names
 lost: ['DOCS-COMPACT-9']
-new: ['W43-LIBC-POINTER-QUALIFIER-READER']
+new: ['INTEGRATION-GATE-PATH-RULE-DRIFT', 'W43-LIBC-POINTER-QUALIFIER-READER']
 mention sets changed: 0
 
 [exit 0]

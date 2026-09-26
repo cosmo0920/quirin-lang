@@ -25,8 +25,8 @@ reports own the underlying evidence. Update numbers from those sources, not from
 an older summary. History belongs in the
 [increment records](development/increments/README.md); the per-row chains this
 page carried through wave 45 are in the wave-45 status checkpoints
-([table]({CP}),
-[prose](development/increments/wave-45-compaction-status-prose.md)), not a second authority."""
+([part 1]({CP}),
+[part 2](development/increments/wave-45-compaction-status-prose.md)), not a second authority."""
 
 REPLACE[(25, 25)] = """| Cycle 19 units | **5 Safe / 8 provisional Unsafe / 168 Unknown / 4 data-only**, 185 total; unmoved since W45-FB-BACKLOG-CUSTODY, which moved `cio_stats.c` Unknown → Safe, `mk_server/mk_http.c` Unknown → provisional Unsafe (a descriptor leak its declaration reader exposes, `W45-MK-HTTP-ERROR-FD-LEAK`, not an upstream defect claim) and `mk_core/mk_rconf.c`, `mk_server/mk_lib.c`, `mk_server/mk_vhost.c` provisional Unsafe → Unknown (their `MK-LIST-ADD-BORROWED-PUBLICATION` leaks withdrawn by its refused-call hand-on repair, not discharged); earlier moves are in each card's report | Baseline `diagnostics.json.gz`; [W45-FB-BACKLOG-CUSTODY](reports/w45-fb-backlog-custody/README.md#3-corpus-arbiter-185-units) |"""
 
@@ -50,7 +50,7 @@ REPLACE[(42, 42)] = """| Contract corpus | **114** modules; **174** resource-v1 
 
 REPLACE[(45, 45)] = """| Fluent Bit system slice (current build) | **8 files / 15 units: 0 Safe / 2 provisional Unsafe / 13 Unknown**; **237 functions: 28 Safe / 2 provisional Unsafe / 204 Unknown / 3 not projected**, at `046accf6` (re-pinned by the user) through `--selection contract/profiles/fluent-bit/system-selection.json`; unmoved since W45-FB-BACKLOG-CUSTODY. The obligations OR-1 (`flb_output_task_singleplex_enqueue`, under the synchronous-proxy premise) and OR-7 (`flb_output_task_flush`) are checked Fluent Bit provider contracts, each decided **refuted** by its own body (provisional Unsafe candidates, never upstream defects), and every caller call site is held Unknown (`contract-refuted-by-body`, W45-REFUTED-CONTRACT-WITHDRAWAL); OR-6 is not stated and OR-2 not reached; backlog obligations OB-1 … OB-10 are all Unknown, two custody legs held by pinned checked specifications. A separate audit scope, not counted in the Cycle 19 rows above, and no promotion | [W45-FB-BACKLOG-CUSTODY](reports/w45-fb-backlog-custody/README.md) §4–5, [W45-FB-RETRY-LIFETIME](reports/w45-fb-retry-lifetime/README.md) §4–5, [W45-REFUTED-CONTRACT-WITHDRAWAL](reports/w45-refuted-contract-withdrawal/README.md), [W45-CONTAINER-ROOT-REACH](reports/w45-container-root-reach/README.md) §6–7, [W45-FB-SYSTEM-SELECTION](reports/w45-fb-system-selection/README.md) |"""
 
-REPLACE[(48, 48)] = """| Registered follow-ups | **474**; last moved by DOCS-COMPACT-9 (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`, `W45-RECONCILIATION-SUBSTRING-CLAIMS`), 472 before it. Which card registered or retired which name is in its report and wave record | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |"""
+REPLACE[(48, 48)] = """| Registered follow-ups | **513**; last moved by DOCS-COMPACT-9 (registered `W45-DOCS-PRESERVATION-VERIFIER-DECAYED` and `W45-RECONCILIATION-SUBSTRING-CLAIMS`, retired `INTEGRATION-GATE-PATH-RULE-DRIFT`, amended four STABILITY-REEVAL-5 findings it partly discharged), 512 before it after STABILITY-REEVAL-5 registered forty. Which card registered or retired which name is in its report and wave record | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |"""
 
 REPLACE[(65, 78)] = """**Raw units remain unpromoted.** The unit Safe count is 5; each is a
 function-level roll-up, not a promotion. `flb_input_chunk_create` is
@@ -105,6 +105,12 @@ REPLACE[(141, 189)] = """The three broader Cycle 18 follow-ups remain registered
 task/cancellation/event-generation coverage and current foreign-host
 observations remain outstanding. Callback, CT and full-conformance coverage are
 unchanged."""
+
+OLD44 = "(two source-confirmed upstream double closes)"
+NEW44 = ("(two double closes read against the Fluent Bit source: local observations, "
+         "provisional candidates, not upstream defect claims)")
+assert base[43].count(OLD44) == 1
+REPLACE[(44, 44)] = base[43].replace(OLD44, NEW44)
 
 # Sanity: ranges are disjoint and inside the file.
 spans = sorted(REPLACE)

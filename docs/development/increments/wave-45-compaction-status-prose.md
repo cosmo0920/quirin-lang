@@ -1,12 +1,12 @@
-# Wave 45 compaction checkpoint: status page prose (`DOCS-COMPACT-9`)
+# Wave 45 compaction checkpoint: status page, part 2 (`DOCS-COMPACT-9`)
 
-[Development table of contents](../../../DEVELOPMENT.md) · [History index](README.md) · [Status table checkpoint](wave-45-compaction-status.md) · [Rule-page checkpoints](wave-45-compaction-checkpoints.md) · [Wave 45 records](wave-45-continuation.md)
+[Development table of contents](../../../DEVELOPMENT.md) · [History index](README.md) · [Status part 1](wave-45-compaction-status.md) · [Rule-page checkpoints](wave-45-compaction-checkpoints.md) · [Wave 45 records](wave-45-continuation.md)
 
 > **Preserved checkpoint text. These blocks are not a current authority.**
 > They are the verbatim text `DOCS-COMPACT-9` compacted out of `docs/STATUS.md` at
-> base `8c1f15eb`, kept so that nothing the compaction removed is lost. Each
-> block names its base lines; `git show 8c1f15eb:<file>` reproduces it byte for
-> byte. Where a block and the current page disagree, **the current page wins**;
+> base `8c1f15eb` (one status block at the merged `main`), kept so that nothing
+> the compaction removed is lost. Each block names its revision and lines;
+> `git show <revision>:<file>` reproduces it byte for byte. Where a block and the current page disagree, **the current page wins**;
 > where a block states something the card measured to be false, the correction
 > is in [the card report](../../reports/docs-compact-9/README.md) and is
 > deliberately not applied here. Relative links inside a block keep their
@@ -14,11 +14,51 @@
 
 <a id="status-prose"></a>
 
-## `docs/STATUS.md`: prose sections
+## `docs/STATUS.md`: later coverage rows and prose sections
 
 Current page: [../../STATUS.md](../../STATUS.md).
 
-### 1. The raw-units paragraph
+### 1. Coverage row: Contract corpus
+
+`docs/STATUS.md` lines 42–42 at `8c1f15eb`, 979 bytes. Kept: every current figure and source. Moved: the declaration-count chain.
+
+~~~~~text
+| Contract corpus | **114** modules; **174** resource-v1 declarations (162 before W45-FB-BACKLOG-CUSTODY's twelve checked specifications, `fluent_bit/storage_backlog.qcore`, pinned at `046accf6` and `66910c10`; 155 before W45-FB-RETRY-LIFETIME's two modules and `mk_list_del`; 152 before W44-LIBC-RESIDUALS' `vsnprintf`, `vprintf`, `strerror`); **50** manifest-selected, 4 of them by `crate:module` reference, and exactly the eleven crates' checked resource views (W44-PROVIDER-RESOURCE-VIEW); **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 42 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
+~~~~~
+
+### 2. Coverage row: Native descriptor observation
+
+`docs/STATUS.md` lines 44–44 at `8c1f15eb`, 797 bytes. Corrected, not compacted (`NATIVE-OBSERVATION-UPSTREAM-WORDING`): 'two source-confirmed upstream double closes' now reads as local observations, provisional candidates, not upstream defect claims.
+
+~~~~~text
+| Native descriptor observation | **81 pinned Linux runs** (80 accepted, 36 with injected failures), 7,416 records of the pinned Fluent Bit build, Monkey `mk_socket.c`, ctraces `ctr_random_get` and a libc probe; 8 of 10 lifecycle properties hold on every accepted run; release-at-most-once fails in 13 runs (two source-confirmed upstream double closes) and operand validity in 37 (`close(-1)`); the landed libc descriptor, stream and directory contracts bound to **3,149** executions of 18 declared callees with **0 contradictions**; `ctr_random_get`'s descriptor-0 leak reproduced by a direct driver, not through the binary; **observation, not proof or mapping** | [W43 descriptor native check](reports/w43-descriptor-native-check/README.md), `aggregate.json`, `binding.json`, pinned `records/` |
+~~~~~
+
+### 3. Coverage row: Fluent Bit system slice
+
+`docs/STATUS.md` lines 45–45 at `8c1f15eb`, 2,085 bytes. Kept: the current figures, the refuted OR-1/OR-7 decisions, the held callers and the OR-2/OR-6 and OB-1 … OB-10 status. Moved: the per-card slice chain.
+
+~~~~~text
+| Fluent Bit system slice (current build) | **8 files / 15 units: 0 Safe / 2 provisional Unsafe / 13 Unknown**; **237 functions: 28 Safe / 2 provisional Unsafe / 204 Unknown / 3 not projected**, at `046accf6` (re-pinned by the user) through `--selection contract/profiles/fluent-bit/system-selection.json`; W45-REFUTED-CONTRACT-WITHDRAWAL moved no status: its refutation table is OR-7 (`flb_output_task_flush`) and OR-1 (`flb_output_task_singleplex_enqueue`), both refuted by their own bodies and still provisional Unsafe on their own rows, and every caller call site (10 rows in `flb_engine_dispatch_retry`, `tasks_start`, `flb_output_task_queue_flush_one`, all already Unknown) is now held Unknown (`contract-refuted-by-body`), so no caller applies either declaration ([report](reports/w45-refuted-contract-withdrawal/README.md)); W45-CONTAINER-ROOT-REACH moved no status (18 leaves removed, 3 added: the foreign unlinks of six functions admitted, OB-3/OB-10 lose that blocker and stay Unknown, the OR table identical; [report](reports/w45-container-root-reach/README.md) §6–7); after W45-FB-BACKLOG-CUSTODY: every `sb.c` iteration and element refusal withdrawn, four list traversals Unknown → Safe, backlog obligations OB-1 … OB-10 all Unknown with two custody legs held by pinned checked specifications ([report](reports/w45-fb-backlog-custody/README.md) §4–5); 24 / 2 / 208 / 3 before it, after W45-FB-RETRY-LIFETIME: both publication leaks withdrawn, the obligations OR-1 and OR-7 checked as Fluent Bit provider contracts and each decided **refuted** (provisional Unsafe candidates, never upstream defects; OR-1 under the synchronous-proxy premise), OR-6 not stated, OR-2 not reached; 0 / 3 / 12 units and 25 / 2 / 207 / 3 functions before it at `046accf6` (source change from `864c3d97`'s 0 / 3 / 12 and 25 / 2 / 206 / 3: one new function); a separate audit scope, not counted in the Cycle 19 rows above, and no promotion | [W45-FB-RETRY-LIFETIME](reports/w45-fb-retry-lifetime/README.md) §4–5, [W45-FB-SYSTEM-SELECTION](reports/w45-fb-system-selection/README.md) |
+~~~~~
+
+### 4. Coverage row: Registered follow-ups
+
+`docs/STATUS.md` lines 48–48 at `8c1f15eb`, 2,935 bytes. Kept: the count and the last moving card. Moved: every card's registration list, which each report and wave record carries. The version STABILITY-REEVAL-5 left on `main` is the next block.
+
+~~~~~text
+| Registered follow-ups | **472** (W45-AUDIT-SUBCOMMAND-PLUGINS added four: `W45-SUBCOMMAND-CERTIFICATE-ROUTE`, `W45-SUBCOMMAND-CONFINEMENT`, `W45-SUBCOMMAND-NON-UNIX`, `W45-JSON-TEXT-DUPLICATE`, and its integration added `W45-SUBCOMMAND-HOST-REPORT-TRUST`; 467 before it; W45-FB-ENGINE-PROGRESS added eight: `W45-FB-ENGINE-PROGRESS-MEASURE`, `W45-FB-BACKLOG-TRANSIENT-STICKY-ERROR`, `W45-FB-RETRY-UNSPENT-RESCHEDULE`, `W45-FB-RING-BUFFER-DRAIN-UNBOUNDED`, `W45-FB-SCHED-RANDOM-RANGE`, `W45-FB-ENGINE-REVISITS-UNEXERCISED`, `W45-FB-CIO-MAP-FAILED-STATE`, `W45-FB-BACKLOG-EXIT-WRAPPERS`; 459 before it; W45-TEST-HYGIENE added `W45-PRODUCTION-WALKS-READ-WORKING-TREE`, the production and validation readers its tracked-input rule leaves on the working tree; 458 before it; W45-REFUTED-CONTRACT-WITHDRAWAL retired `W45-FB-SINGLEPLEX-CUSTODY-DECLARED`, re-scoped `W45-FB-CROSS-UNIT-USER-PREMISES` and added three: `W45-CONTAINER-CLAUSE-BODY-CHECK`, `W45-UNCHECKED-DECLARATIONS-TRUSTED`, `W45-REFUTED-HOLD-UNIT-REASON`; 456 before it; W45-CONTAINER-ROOT-REACH retired `W45-FB-BACKLOG-FOREIGN-UNLINK` and added `W45-FORMAL-ENTRY-UNLINK`, `W45-FOREIGN-UNLINK-SUMMARY` and `W45-FOREIGN-UNLINK-RESIDUAL-SHAPES`; 454 before it; W45-USER-CONTRACT-PLUGINS added seven: `W45-CHECKPOINT-COMPOSE-SEMIGROUP`, `W45-PLUGIN-CERTIFICATE-CHECKER`, `W45-PLUGIN-COUNTEREXAMPLE-CHECKER`, `W45-PLUGIN-ROUTE-COVERAGE`, `W45-PLUGIN-LINK-CFG-PREMISE`, `W45-PLUGIN-OBLIGATION-PROPERTY`, `W45-PLUGIN-EXECUTION-PROFILE`; 442 before it; W45-FB-BACKLOG-CUSTODY added eight: `W45-FB-BACKLOG-REFERENCE-VOCABULARY`, `-MAP-ARMS`, `-REACHABLE-RELEASE`, `-CIO-RETURN-CODES`, `-PUBLICATION-BLOCKED`, `-FOREIGN-UNLINK`, `W45-ILI-PREMISES`, `W45-MK-HTTP-ERROR-FD-LEAK`; 434 before it; W45-CONTRACT-REVISION-MODE added `W45-REVISION-PIN-ROUTES`, `W45-REVISION-LOCK-NOT-PACKAGED`, `W45-REVISION-SCANNER-LEXICAL`, `W45-REVISION-HOLD-REPORTING`, `W45-REVIEW-PREFIX-COLLISION-UNPINNED` and `W45-REVISION-COMPARE-MATCHED-IDENTITY`; W45-PARENTHESISED-CALLEE added `W45-FOR-CLAUSE-ORIGINAL-SPELLING`, `W45-CALLEE-EXPRESSION-FORMS` and `W45-CALLEE-CAST-LEXICAL-PREMISE`; W45-RETURN-EXPRESSION-FAMILIES retired `W43-RETURN-CALL-UNDER-CAST` and `W43-RETURN-TYPE-OPERATOR` and added `W45-RETURN-POINTER-RESULT-READS` and `W45-RETURN-BOUND-BASE-POSITIONS`; W44-PROVIDER-RESOURCE-VIEW retired `W44-PROVIDER-RESOURCE-VIEW` and added `W44-CONTRACT-MANIFEST-ORDER-DIGEST` and `W44-RESOURCE-VIEW-REFUSAL-UNCLASSIFIED`; W44-QUIRIN-AUDIT-PROVIDERS added `W44-PROVIDER-RESOURCE-VIEW`, W44-AUDIT-PARALLEL-UNITS added `W44-AUDIT-CRITICAL-UNIT`, W44-C11-GENERIC-SELECTION `W44-BSEARCH-UNDECLARED`, W44-TEST-SUITE-WALL-TIME three, W44-INDIRECT-CALL-ARGUMENT-ACCESS eight, retiring `W43-INDIRECT-CALL-ARGUMENT-ACCESS`, W44-COLLECTION-ALLOCATION three, retiring `W43-COLLECTION-SIZEOF-DEREFERENCE-ALLOCATION`) | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+~~~~~
+
+### 5. Coverage row: Registered follow-ups, as STABILITY-REEVAL-5 left it
+
+`docs/STATUS.md` lines 48–48 at `200fdcbe`, 3,308 bytes. The row on `main` `200fdcbe`, re-derived at the merge rather than union-merged.
+
+~~~~~text
+| Registered follow-ups | **512** (STABILITY-REEVAL-5 added forty, retired none and amended `GATE-SUMMARY-COUNT-LOOSE-GREP-ARTIFACT` with its recurrence; among them `MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE`, a measured `Safe` over a double member release, and `HELD-PREFIX-SOURCE-FORGES-PENDING`; the full list is in its [report](reports/stability-reeval-5/README.md) and `scripts/register.py`; 472 before it; W45-AUDIT-SUBCOMMAND-PLUGINS added four: `W45-SUBCOMMAND-CERTIFICATE-ROUTE`, `W45-SUBCOMMAND-CONFINEMENT`, `W45-SUBCOMMAND-NON-UNIX`, `W45-JSON-TEXT-DUPLICATE`, and its integration added `W45-SUBCOMMAND-HOST-REPORT-TRUST`; 467 before it; W45-FB-ENGINE-PROGRESS added eight: `W45-FB-ENGINE-PROGRESS-MEASURE`, `W45-FB-BACKLOG-TRANSIENT-STICKY-ERROR`, `W45-FB-RETRY-UNSPENT-RESCHEDULE`, `W45-FB-RING-BUFFER-DRAIN-UNBOUNDED`, `W45-FB-SCHED-RANDOM-RANGE`, `W45-FB-ENGINE-REVISITS-UNEXERCISED`, `W45-FB-CIO-MAP-FAILED-STATE`, `W45-FB-BACKLOG-EXIT-WRAPPERS`; 459 before it; W45-TEST-HYGIENE added `W45-PRODUCTION-WALKS-READ-WORKING-TREE`, the production and validation readers its tracked-input rule leaves on the working tree; 458 before it; W45-REFUTED-CONTRACT-WITHDRAWAL retired `W45-FB-SINGLEPLEX-CUSTODY-DECLARED`, re-scoped `W45-FB-CROSS-UNIT-USER-PREMISES` and added three: `W45-CONTAINER-CLAUSE-BODY-CHECK`, `W45-UNCHECKED-DECLARATIONS-TRUSTED`, `W45-REFUTED-HOLD-UNIT-REASON`; 456 before it; W45-CONTAINER-ROOT-REACH retired `W45-FB-BACKLOG-FOREIGN-UNLINK` and added `W45-FORMAL-ENTRY-UNLINK`, `W45-FOREIGN-UNLINK-SUMMARY` and `W45-FOREIGN-UNLINK-RESIDUAL-SHAPES`; 454 before it; W45-USER-CONTRACT-PLUGINS added seven: `W45-CHECKPOINT-COMPOSE-SEMIGROUP`, `W45-PLUGIN-CERTIFICATE-CHECKER`, `W45-PLUGIN-COUNTEREXAMPLE-CHECKER`, `W45-PLUGIN-ROUTE-COVERAGE`, `W45-PLUGIN-LINK-CFG-PREMISE`, `W45-PLUGIN-OBLIGATION-PROPERTY`, `W45-PLUGIN-EXECUTION-PROFILE`; 442 before it; W45-FB-BACKLOG-CUSTODY added eight: `W45-FB-BACKLOG-REFERENCE-VOCABULARY`, `-MAP-ARMS`, `-REACHABLE-RELEASE`, `-CIO-RETURN-CODES`, `-PUBLICATION-BLOCKED`, `-FOREIGN-UNLINK`, `W45-ILI-PREMISES`, `W45-MK-HTTP-ERROR-FD-LEAK`; 434 before it; W45-CONTRACT-REVISION-MODE added `W45-REVISION-PIN-ROUTES`, `W45-REVISION-LOCK-NOT-PACKAGED`, `W45-REVISION-SCANNER-LEXICAL`, `W45-REVISION-HOLD-REPORTING`, `W45-REVIEW-PREFIX-COLLISION-UNPINNED` and `W45-REVISION-COMPARE-MATCHED-IDENTITY`; W45-PARENTHESISED-CALLEE added `W45-FOR-CLAUSE-ORIGINAL-SPELLING`, `W45-CALLEE-EXPRESSION-FORMS` and `W45-CALLEE-CAST-LEXICAL-PREMISE`; W45-RETURN-EXPRESSION-FAMILIES retired `W43-RETURN-CALL-UNDER-CAST` and `W43-RETURN-TYPE-OPERATOR` and added `W45-RETURN-POINTER-RESULT-READS` and `W45-RETURN-BOUND-BASE-POSITIONS`; W44-PROVIDER-RESOURCE-VIEW retired `W44-PROVIDER-RESOURCE-VIEW` and added `W44-CONTRACT-MANIFEST-ORDER-DIGEST` and `W44-RESOURCE-VIEW-REFUSAL-UNCLASSIFIED`; W44-QUIRIN-AUDIT-PROVIDERS added `W44-PROVIDER-RESOURCE-VIEW`, W44-AUDIT-PARALLEL-UNITS added `W44-AUDIT-CRITICAL-UNIT`, W44-C11-GENERIC-SELECTION `W44-BSEARCH-UNDECLARED`, W44-TEST-SUITE-WALL-TIME three, W44-INDIRECT-CALL-ARGUMENT-ACCESS eight, retiring `W43-INDIRECT-CALL-ARGUMENT-ACCESS`, W44-COLLECTION-ALLOCATION three, retiring `W43-COLLECTION-SIZEOF-DEREFERENCE-ALLOCATION`) | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+~~~~~
+
+### 6. The raw-units paragraph
 
 `docs/STATUS.md` lines 65–78 at `8c1f15eb`, 1,143 bytes. Corrected: the unit Safe count is 5, not 3, and `flb_input_chunk_create` has been Unknown since W45-FB-RETRY-LIFETIME.
 
@@ -39,7 +79,7 @@ individual reports, [wave history](development/increments/README.md), and
 [gateway rules](agents/gateway.md#constraint-7).
 ~~~~~
 
-### 2. Latest validated gate, and the provider-contract narrative
+### 7. Latest validated gate, and the provider-contract narrative
 
 `docs/STATUS.md` lines 97–139 at `8c1f15eb`, 3,328 bytes. Corrected: the gate named was the task-context bundle's (5,043 Rust / 165 Lean / 336 Python); the latest merged gate is W45-AUDIT-SUBCOMMAND-PLUGINS' integration gate. The provider paragraph said 39 shared modules and 111 indexed; the tree has 42 and 114. The contract-inheritance chronicle moved here.
 
@@ -89,7 +129,7 @@ every scalar route including the typed indirect one
 Lean `QCore.KindedCustody`).
 ~~~~~
 
-### 3. The follow-up chronicle
+### 8. The follow-up chronicle
 
 `docs/STATUS.md` lines 141–189 at `8c1f15eb`, 4,172 bytes. Corrected: it said 391 follow-ups; the matrix carries 472. Kept: the three open Cycle 18 follow-ups, now by name, and the outstanding coverage. Moved: the card-by-card registration chain from W43 to W44.
 

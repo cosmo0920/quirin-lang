@@ -705,6 +705,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [stability-reeval-4](stability-reeval-4/README.md) | STABILITY-REEVAL #4 — the cadence's fourth firing |
 
+| [stability-reeval-5](stability-reeval-5/README.md) | STABILITY-REEVAL #5 — the cadence's fifth firing (wave 45 close) |
+
 | [string-concat](string-concat/README.md) | STRING-CONCAT — computed text, and the dependency that dissolved (wave 25) |
 
 | [string-slice](string-slice/README.md) | Card `STRING-SLICE` — `source.string.v1`, immutable UTF-8 string views |

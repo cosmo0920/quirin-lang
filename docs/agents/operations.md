@@ -116,7 +116,7 @@ Read this section when merging, closing a wave, retiring tracking entries, or
 editing reconciliation tooling.
 
 - If a merged measurement differs from the card's own gate, publish
-  `docs/reports/<card>/integration-gate.json`, identify the measured tip and the
+  `docs/reports/<card>/integration/gate.json`, identify the measured tip and the
   merge SHA, and state it in the merge message. Equal figures need no duplicate
   gate. A close sweeps every integration gate and remeasures its merged-gate row.
   The recorded Clang source must follow [validation policy](validation.md).
@@ -145,7 +145,9 @@ editing reconciliation tooling.
 
 Read this section for documentation compaction, stability review and wave close.
 
-- Compact AGENTS.md, CLAUDE.md and README.md every 2–3 waves. Re-derive headline
+- Compact AGENTS.md, CLAUDE.md and README.md every 2–3 waves, with the pages
+  where narrative accretes: the rule topic pages, `docs/STATUS.md` and any
+  increment record over 32 KiB. Re-derive headline
   figures from primary sources, inventory every constraint before/after, preserve
   all invariants and evidence pointers, and move unique history verbatim into an
   indexed checkpoint. Retain one current authority. Accuracy can increase size;
@@ -161,9 +163,13 @@ Read this section for documentation compaction, stability review and wave close.
   Name every finding and its discharge condition (proof, exercised behavior, or
   a stated measured boundary). Record postponement explicitly. Never relabel an
   observation as proof or infer stability from green tests.
-- Due and not yet recorded as run: the ninth compaction (due around wave 42–43;
-  the eighth was wave 40) and stability review firing five (due after wave 41). A wave close records each firing or its postponement;
-  neither is discharged silently.
+- Last firings and next due: the ninth compaction ran at the wave-45 close
+  (`DOCS-COMPACT-9`, [report](../reports/docs-compact-9/README.md)), postponed
+  from waves 42–43; the tenth is due around wave 47–48. Stability review firing
+  five ran at the wave-45 close over `6dc484ad..8c1f15eb`
+  ([report](../reports/stability-reeval-5/README.md)); firing six is due after
+  wave 47. A wave close records each firing or its postponement; neither is
+  discharged silently.
 
 ## Task reading protocol
 
