@@ -17,11 +17,6 @@ indirect-census = []
 # rule and moves no verdict; the card publishes the byte-identity measurement
 # that says so.
 provenance-rounds-census = []
-# Card W45-GATEWAY-MEMO-KEY. Off by default and never enabled by any workspace
-# member: with it on, `member_releasing_functions` computes every answer and
-# never consults its per-thread memo. It is the cache-off side of the card's
-# byte-identity measurement and adds no rule.
-member-release-memo-off = []
 
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
