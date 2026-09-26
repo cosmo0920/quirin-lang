@@ -71,13 +71,19 @@ fn a_duplicate_marker_rejects_the_whole_module() {
 #[test]
 fn the_marker_takes_no_argument_and_is_not_a_clause() {
     for broken in [
-        SPEC.replace("requires resource_body_checked;", "requires resource_body_checked(chunk);"),
+        SPEC.replace(
+            "requires resource_body_checked;",
+            "requires resource_body_checked(chunk);",
+        ),
         SPEC.replace(
             "    requires resource_body_checked;\n",
             "    ensures normal resource_body_checked();\n",
         ),
     ] {
-        assert!(load_resource_contract_sources(&sources(&broken)).is_err(), "{broken}");
+        assert!(
+            load_resource_contract_sources(&sources(&broken)).is_err(),
+            "{broken}"
+        );
     }
 }
 

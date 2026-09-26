@@ -51,19 +51,19 @@
 //! # Premises (stated, not proved; `QCore.ListIteration` models the rule)
 //!
 //! * **P-ILI-BODY.** The body does not write, increment or take the address
-//!    of `C` or `N` (checked lexically; a body that does is declined).
+//!   of `C` or `N` (checked lexically; a body that does is declined).
 //! * **P-ILI-UNTRACKED.** An element reached through an admitted iteration
-//!    is not an identity this body tracks. The lexical guard declines every
-//!    iteration of a function that hands a call the member address `&X->…`
-//!    or `&X.…` of a name `X` it may bind to a tracked identity (the spelling
-//!    of linking a tracked object into a list); a link through a wrapper call
-//!    is the `Borrowed` declaration's shallow premise (P-B08-SHALLOW), and the
-//!    liveness of a published object is `MK-LIST-ADD-BORROWED-PUBLICATION`'s.
+//!   is not an identity this body tracks. The lexical guard declines every
+//!   iteration of a function that hands a call the member address `&X->…`
+//!   or `&X.…` of a name `X` it may bind to a tracked identity (the spelling
+//!   of linking a tracked object into a list); a link through a wrapper call
+//!   is the `Borrowed` declaration's shallow premise (P-B08-SHALLOW), and the
+//!   liveness of a published object is `MK-LIST-ADD-BORROWED-PUBLICATION`'s.
 //! * **P-ILI-CALLEE-FRAME.** A call in the body that receives the container
-//!    (not the protected node) does not unlink the current element of a
-//!    plain iteration or the saved successor of a safe one.
+//!   (not the protected node) does not unlink the current element of a
+//!   plain iteration or the saved successor of a safe one.
 //! * **P-ILI-BRACED.** A plain iteration's body is a braced block (an
-//!    unbraced body is declined).
+//!   unbraced body is declined).
 //!
 //! Only the header and element shapes above are admitted; every other shape
 //! keeps its refusal byte for byte, and rule 4 only replaces an admission by
@@ -240,8 +240,8 @@ fn clause_texts<'a, 'b>(header: &'b [&'a str]) -> Option<[&'b [&'a str]; 3]> {
 }
 
 fn recognise_clauses(init: &[&str], condition: &[&str], increment: &[&str]) -> Option<HeaderShape> {
-    let init_parts = top_level_commas(&init);
-    let increment_parts = top_level_commas(&increment);
+    let init_parts = top_level_commas(init);
+    let increment_parts = top_level_commas(increment);
     let cursor = *init.first()?;
     if !is_name(cursor) {
         return None;
@@ -275,7 +275,11 @@ fn recognise_clauses(init: &[&str], condition: &[&str], increment: &[&str]) -> O
         }
         _ => return None,
     };
-    if head.contains(&cursor) || successor.as_deref().is_some_and(|name| head.contains(&name)) {
+    if head.contains(&cursor)
+        || successor
+            .as_deref()
+            .is_some_and(|name| head.contains(&name))
+    {
         return None;
     }
     Some(HeaderShape {
@@ -296,26 +300,26 @@ pub(crate) fn head_read(
     bases: &UntrackedBases,
 ) -> Option<HeadRead> {
     match head {
-        [root] if is_name(root) => {
-            matches!(types.declared_type(root), Some(DeclaredType::RecordPointer(_))).then(|| {
-                HeadRead {
-                    bases: vec![(*root).to_owned()],
-                    chains: Vec::new(),
-                }
-            })
-        }
+        [root] if is_name(root) => matches!(
+            types.declared_type(root),
+            Some(DeclaredType::RecordPointer(_))
+        )
+        .then(|| HeadRead {
+            bases: vec![(*root).to_owned()],
+            chains: Vec::new(),
+        }),
         ["&", root, ".", member] if is_name(root) && is_name(member) => {
             matches!(types.declared_type(root), Some(DeclaredType::Record(_)))
                 .then(HeadRead::default)
         }
-        ["&", root, "-", ">", member] if is_name(root) && is_name(member) => {
-            matches!(types.declared_type(root), Some(DeclaredType::RecordPointer(_))).then(|| {
-                HeadRead {
-                    bases: vec![(*root).to_owned()],
-                    chains: Vec::new(),
-                }
-            })
-        }
+        ["&", root, "-", ">", member] if is_name(root) && is_name(member) => matches!(
+            types.declared_type(root),
+            Some(DeclaredType::RecordPointer(_))
+        )
+        .then(|| HeadRead {
+            bases: vec![(*root).to_owned()],
+            chains: Vec::new(),
+        }),
         ["&", place @ ..] => {
             let chain = crate::indirect_chain_access::parse_chain(place, 0, model, types).ok()?;
             if chain.end != place.len() {
@@ -357,9 +361,7 @@ fn destination_index(texts: &[&str]) -> Option<usize> {
         return None;
     }
     let prefix = &texts[..destination];
-    let declarator = prefix
-        .iter()
-        .all(|text| *text == "*" || is_type_word(text));
+    let declarator = prefix.iter().all(|text| *text == "*" || is_type_word(text));
     declarator.then_some(destination)
 }
 
@@ -429,8 +431,7 @@ pub(crate) fn element_shape(tokens: &[&str]) -> Option<ElementShape> {
     if inner.first() == Some(&"const") {
         index += 1;
     }
-    if !inner.get(index).is_some_and(|text| is_typeof(text)) || inner.get(index + 1) != Some(&"(")
-    {
+    if !inner.get(index).is_some_and(|text| is_typeof(text)) || inner.get(index + 1) != Some(&"(") {
         return None;
     }
     let typeof_close = close_of(inner, index + 1)?;
@@ -544,8 +545,8 @@ fn call_sites(texts: &[&str]) -> Vec<(usize, Vec<(usize, usize)>)> {
         let mut spans = Vec::new();
         let mut start = index + 2;
         let mut depth = 0usize;
-        for at in index + 2..close {
-            match texts[at] {
+        for (at, text) in texts.iter().enumerate().take(close).skip(index + 2) {
+            match *text {
                 "(" | "[" | "{" => depth += 1,
                 ")" | "]" | "}" => depth = depth.saturating_sub(1),
                 "," if depth == 0 => {
@@ -700,11 +701,19 @@ fn written_at(body: &[&str], index: usize) -> bool {
         next,
         Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" | "<" | ">")
     ) && (after == Some("=")
-        || matches!((next, after), (Some("<"), Some("<")) | (Some(">"), Some(">"))));
-    let stepped = matches!((next, after), (Some("+"), Some("+")) | (Some("-"), Some("-")))
-        || matches!((before, previous), (Some("+"), Some("+")) | (Some("-"), Some("-")));
-    let continues = matches!(next, Some("-") if after == Some(">"))
-        || matches!(next, Some(".") | Some("["));
+        || matches!(
+            (next, after),
+            (Some("<"), Some("<")) | (Some(">"), Some(">"))
+        ));
+    let stepped = matches!(
+        (next, after),
+        (Some("+"), Some("+")) | (Some("-"), Some("-"))
+    ) || matches!(
+        (before, previous),
+        (Some("+"), Some("+")) | (Some("-"), Some("-"))
+    );
+    let continues =
+        matches!(next, Some("-") if after == Some(">")) || matches!(next, Some(".") | Some("["));
     let addressed = previous == Some("&") && !continues;
     assigned || compound || stepped || addressed
 }
@@ -726,11 +735,12 @@ pub(crate) fn frame_refusal(
         let contract = contracts.contract(callee);
         for (position, (start, end)) in spans.iter().copied().enumerate() {
             let argument = strip_groups(&texts[start..end]);
-            let borrowed = contract.is_some_and(|contract| match contract.parameters.get(position) {
-                Some(ResourceParameterMode::Borrowed) => true,
-                Some(_) => false,
-                None => variadic_tails.contains(callee),
-            });
+            let borrowed =
+                contract.is_some_and(|contract| match contract.parameters.get(position) {
+                    Some(ResourceParameterMode::Borrowed) => true,
+                    Some(_) => false,
+                    None => variadic_tails.contains(callee),
+                });
             for frame in frames {
                 let description = match frame.kind {
                     IterationKind::Plain => PLAIN_REFUSAL,
@@ -757,94 +767,6 @@ pub(crate) fn frame_refusal(
     None
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn tokens(text: &str) -> Vec<Token> {
-        super::super::tokenize(text)
-    }
-
-    #[test]
-    fn the_plain_header_is_recognised_on_its_original_spelling() {
-        let header = tokens("it = (&q->items)->next; it != (&q->items); it = it->next");
-        let shape = recognise_header(&header).expect("plain header");
-        assert_eq!(shape.kind, IterationKind::Plain);
-        assert_eq!(shape.cursor, "it");
-        assert_eq!(shape.head, ["&", "q", "-", ">", "items"]);
-    }
-
-    #[test]
-    fn the_safe_header_is_recognised() {
-        let header = tokens(
-            "curr = (head)->next, n = curr->next; curr != (head); curr = n, n = curr->next",
-        );
-        let shape = recognise_header(&header).expect("safe header");
-        assert_eq!(shape.kind, IterationKind::Safe);
-        assert_eq!(shape.successor.as_deref(), Some("n"));
-        assert_eq!(shape.head, ["head"]);
-    }
-
-    #[test]
-    fn a_different_head_or_step_is_not_a_list_iteration() {
-        for header in [
-            "it = (&q->items)->next; it != (&q->other); it = it->next",
-            "it = (&q->items)->next; it != (&q->items); it = it->prev",
-            "it = (&q->items)->next; it != (&q->items); it = n",
-            "it = (&q->items)->next, n = it->next; it != (&q->items); it = it->next",
-            "it = q->items.next; it != &q->items; it = it->next",
-            "i = 0; i < n; i++",
-        ] {
-            assert_eq!(recognise_header(&tokens(header)), None, "{header}");
-        }
-    }
-
-    #[test]
-    fn the_element_statement_expression_is_read() {
-        let statement = tokens(
-            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
-             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
-        );
-        let texts = texts(&statement);
-        let shape = element_shape(&texts).expect("element");
-        assert_eq!(shape.destination, "e");
-        assert_eq!(shape.pointer, ["it"]);
-        assert_eq!(shape.member, "_head");
-        let declared = tokens(
-            "struct item *e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = ((&q->items)->next); \
-             (struct item *)( (char *)__mptr - ((size_t) &((struct item *)0)->_head) );})",
-        );
-        let texts = super::texts(&declared);
-        let shape = element_shape(&texts).expect("declared element");
-        assert_eq!(shape.pointer, ["(", "&", "q", "-", ">", "items", ")", "-", ">", "next"]);
-    }
-
-    #[test]
-    fn a_mismatched_member_or_type_is_not_an_element() {
-        for statement in [
-            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
-             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, other) );})",
-            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
-             (struct other *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
-            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); q_free(it); \
-             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
-        ] {
-            let tokens = tokens(statement);
-            assert_eq!(element_shape(&texts(&tokens)), None, "{statement}");
-        }
-    }
-
-    #[test]
-    fn a_written_cursor_declines_the_body() {
-        let body = ["{", "it", "=", "0", ";", "}"];
-        assert!(!body_leaves_cursors(&body, &["it"]));
-        let body = ["{", "q_use", "(", "&", "it", ")", ";", "}"];
-        assert!(!body_leaves_cursors(&body, &["it"]));
-        let body = ["{", "x", "=", "it", "-", ">", "next", ";", "}"];
-        assert!(body_leaves_cursors(&body, &["it"]));
-    }
-}
-
 impl super::Parser<'_> {
     /// Rules 1 and 2: the whole `for` statement whose header `clauses` spell
     /// an admissible list iteration, with its body parsed under the
@@ -862,8 +784,12 @@ impl super::Parser<'_> {
             return Ok(None);
         }
         let head = shape.head.iter().map(String::as_str).collect::<Vec<_>>();
-        let Some(read) = head_read(&head, &self.typed_model, &self.typed_types, &self.typed_bases)
-        else {
+        let Some(read) = head_read(
+            &head,
+            &self.typed_model,
+            &self.typed_types,
+            &self.typed_bases,
+        ) else {
             return Ok(None);
         };
         // P-ILI-BRACED and P-ILI-BODY.
@@ -912,7 +838,12 @@ impl super::Parser<'_> {
                 // `C = N`: `N` is unbound on every path (P-ILI-BODY), so the
                 // copy reads nothing and leaves `C` unbound.
                 read_access(self, Vec::new(), Vec::new(), &cursor),
-                Some(read_access(self, vec![cursor.clone()], Vec::new(), successor)),
+                Some(read_access(
+                    self,
+                    vec![cursor.clone()],
+                    Vec::new(),
+                    successor,
+                )),
             ),
         };
         let protected = match shape.kind {
@@ -947,9 +878,10 @@ impl super::Parser<'_> {
         };
         Ok(Some(match prefix {
             None => statement,
-            Some(prefix) => {
-                super::Statement::Block(vec![super::Statement::Instruction(prefix, line), statement])
-            }
+            Some(prefix) => super::Statement::Block(vec![
+                super::Statement::Instruction(prefix, line),
+                statement,
+            ]),
         }))
     }
 
@@ -963,18 +895,25 @@ impl super::Parser<'_> {
         }
         let pointer = shape.pointer.iter().map(String::as_str).collect::<Vec<_>>();
         let (bases, chains) = match pointer.as_slice() {
-            [name] if self.list_frames.iter().any(|frame| {
-                frame.cursor == *name || frame.successor.as_deref() == Some(*name)
-            }) =>
+            [name]
+                if self.list_frames.iter().any(|frame| {
+                    frame.cursor == *name || frame.successor.as_deref() == Some(*name)
+                }) =>
             {
                 for frame in &mut self.list_frames {
                     if frame.protected_cursor() == *name {
                         frame.protected.insert(shape.destination.clone());
                         frame.links.insert(
-                            ["&", shape.destination.as_str(), "-", ">", shape.member.as_str()]
-                                .iter()
-                                .map(|text| (*text).to_owned())
-                                .collect(),
+                            [
+                                "&",
+                                shape.destination.as_str(),
+                                "-",
+                                ">",
+                                shape.member.as_str(),
+                            ]
+                            .iter()
+                            .map(|text| (*text).to_owned())
+                            .collect(),
                         );
                     }
                 }
@@ -1021,6 +960,101 @@ impl super::Parser<'_> {
 
     /// Rule 4 over one classified statement.
     pub(super) fn list_iteration_refusal(&self, texts: &[&str]) -> Option<&'static str> {
-        frame_refusal(texts, &self.list_frames, self.contracts, &self.variadic_tails)
+        frame_refusal(
+            texts,
+            &self.list_frames,
+            self.contracts,
+            &self.variadic_tails,
+        )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn tokens(text: &str) -> Vec<Token> {
+        super::super::tokenize(text)
+    }
+
+    #[test]
+    fn the_plain_header_is_recognised_on_its_original_spelling() {
+        let header = tokens("it = (&q->items)->next; it != (&q->items); it = it->next");
+        let shape = recognise_header(&header).expect("plain header");
+        assert_eq!(shape.kind, IterationKind::Plain);
+        assert_eq!(shape.cursor, "it");
+        assert_eq!(shape.head, ["&", "q", "-", ">", "items"]);
+    }
+
+    #[test]
+    fn the_safe_header_is_recognised() {
+        let header =
+            tokens("curr = (head)->next, n = curr->next; curr != (head); curr = n, n = curr->next");
+        let shape = recognise_header(&header).expect("safe header");
+        assert_eq!(shape.kind, IterationKind::Safe);
+        assert_eq!(shape.successor.as_deref(), Some("n"));
+        assert_eq!(shape.head, ["head"]);
+    }
+
+    #[test]
+    fn a_different_head_or_step_is_not_a_list_iteration() {
+        for header in [
+            "it = (&q->items)->next; it != (&q->other); it = it->next",
+            "it = (&q->items)->next; it != (&q->items); it = it->prev",
+            "it = (&q->items)->next; it != (&q->items); it = n",
+            "it = (&q->items)->next, n = it->next; it != (&q->items); it = it->next",
+            "it = q->items.next; it != &q->items; it = it->next",
+            "i = 0; i < n; i++",
+        ] {
+            assert_eq!(recognise_header(&tokens(header)), None, "{header}");
+        }
+    }
+
+    #[test]
+    fn the_element_statement_expression_is_read() {
+        let statement = tokens(
+            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
+             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
+        );
+        let texts = texts(&statement);
+        let shape = element_shape(&texts).expect("element");
+        assert_eq!(shape.destination, "e");
+        assert_eq!(shape.pointer, ["it"]);
+        assert_eq!(shape.member, "_head");
+        let declared = tokens(
+            "struct item *e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = ((&q->items)->next); \
+             (struct item *)( (char *)__mptr - ((size_t) &((struct item *)0)->_head) );})",
+        );
+        let texts = super::texts(&declared);
+        let shape = element_shape(&texts).expect("declared element");
+        assert_eq!(
+            shape.pointer,
+            ["(", "&", "q", "-", ">", "items", ")", "-", ">", "next"]
+        );
+    }
+
+    #[test]
+    fn a_mismatched_member_or_type_is_not_an_element() {
+        for statement in [
+            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
+             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, other) );})",
+            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); \
+             (struct other *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
+            "e = ({ const typeof( ((struct item *)0)->_head ) *__mptr = (it); q_free(it); \
+             (struct item *)( (char *)__mptr - __builtin_offsetof(struct item, _head) );})",
+        ] {
+            let tokens = tokens(statement);
+            assert_eq!(element_shape(&texts(&tokens)), None, "{statement}");
+        }
+    }
+
+    #[test]
+    fn a_written_cursor_declines_the_body() {
+        let body = ["{", "it", "=", "0", ";", "}"];
+        assert!(!body_leaves_cursors(&body, &["it"]));
+        let body = ["{", "q_use", "(", "&", "it", ")", ";", "}"];
+        assert!(!body_leaves_cursors(&body, &["it"]));
+        let body = ["{", "x", "=", "it", "-", ">", "next", ";", "}"];
+        assert!(body_leaves_cursors(&body, &["it"]));
     }
 }

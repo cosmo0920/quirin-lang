@@ -425,7 +425,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/storage_backlog.qcore", "sb_allocate_chunk", 6),
     ("fluent_bit/storage_backlog.qcore", "sb_destroy_chunk", 4),
     ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlog", 5),
-    ("fluent_bit/storage_backlog.qcore", "sb_allocate_backlogs", 4),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_allocate_backlogs",
+        4,
+    ),
     ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlogs", 4),
     (
         "fluent_bit/storage_backlog.qcore",

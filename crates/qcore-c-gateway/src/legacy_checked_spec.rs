@@ -88,7 +88,10 @@ pub(crate) fn diagnostic(
         .map(|withdrawal| not_established(function, withdrawal.reason()))
 }
 
-fn reduced(contracts: &ResourceContracts, withdrawn: &BTreeMap<String, Withdrawal>) -> ResourceContracts {
+fn reduced(
+    contracts: &ResourceContracts,
+    withdrawn: &BTreeMap<String, Withdrawal>,
+) -> ResourceContracts {
     let mut reduced = ResourceContracts::default();
     for (name, contract) in contracts.functions() {
         if !withdrawn.contains_key(name) {
@@ -109,7 +112,12 @@ fn recursive_members(tokens: &[Token], scope: &[String]) -> BTreeSet<String> {
     let mut recursive = BTreeSet::new();
     for start in scope {
         let mut seen = BTreeSet::new();
-        let mut work = edges.get(start).cloned().unwrap_or_default().into_iter().collect::<Vec<_>>();
+        let mut work = edges
+            .get(start)
+            .cloned()
+            .unwrap_or_default()
+            .into_iter()
+            .collect::<Vec<_>>();
         while let Some(next) = work.pop() {
             if next == *start {
                 recursive.insert(start.clone());
@@ -125,12 +133,18 @@ fn recursive_members(tokens: &[Token], scope: &[String]) -> BTreeSet<String> {
 
 /// Whether `function`'s body establishes the specification in force for it in
 /// `gate`'s derivation.
-fn establishes(tokens: &[Token], function: &str, gate: &ModeGate, declared: &ResourceContracts) -> bool {
+fn establishes(
+    tokens: &[Token],
+    function: &str,
+    gate: &ModeGate,
+    declared: &ResourceContracts,
+) -> bool {
     let tokens = gate.tokens.as_deref().unwrap_or(tokens);
     let derivation = &gate.derivation;
-    let (Some(contract), Some(specification)) =
-        (derivation.entry_contract(function), declared.contract(function))
-    else {
+    let (Some(contract), Some(specification)) = (
+        derivation.entry_contract(function),
+        declared.contract(function),
+    ) else {
         return false;
     };
     if contract != specification || derivation.conflict(function).is_some() {
@@ -156,7 +170,8 @@ fn establishes(tokens: &[Token], function: &str, gate: &ModeGate, declared: &Res
 /// Settle the checked specifications of one unit and return the mode gate
 /// over the environment that keeps exactly the established ones.
 pub(crate) fn settle(tokens: &[Token], scope: &[String], contracts: &ResourceContracts) -> Settled {
-    let checked = match qcore_contract::contract_loader::declared_checked_specifications(contracts) {
+    let checked = match qcore_contract::contract_loader::declared_checked_specifications(contracts)
+    {
         Ok(checked) => checked,
         // Unreachable for an environment the loader built from the same texts;
         // the fail-closed answer is to withdraw every declaration.

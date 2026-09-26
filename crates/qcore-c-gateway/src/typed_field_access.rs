@@ -1747,7 +1747,10 @@ fn read_locals(
         if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
             continue;
         }
-        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {
+        if skipped
+            .iter()
+            .any(|(open, close)| *open < start && start <= *close)
+        {
             continue;
         }
         if !is_declaration_candidate(body, start) {
@@ -1779,7 +1782,10 @@ pub(crate) fn unique_local_names(model: &TypedAccessModel, body: &[&str]) -> BTr
         if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
             continue;
         }
-        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {
+        if skipped
+            .iter()
+            .any(|(open, close)| *open < start && start <= *close)
+        {
             continue;
         }
         if !is_declaration_candidate(body, start) {

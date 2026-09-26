@@ -754,7 +754,9 @@ pub fn declared_literal_argument_premises(
 /// as a refusal of every declaration it cannot classify, never as an empty
 /// set: an empty set would trust a specification as a declaration, which is
 /// the fail-open direction.
-pub fn checked_specifications(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
+pub fn checked_specifications(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeSet<String>, String> {
     let mut checked = BTreeSet::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;

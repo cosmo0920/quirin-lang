@@ -8,8 +8,8 @@
 //! node; it is not `mk_list_del`, whose custody is card W45-FB-RETRY-LIFETIME's.
 
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyDiagnosticKind,
-    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyDiagnosticKind, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
@@ -61,7 +61,11 @@ fn contracts(extra: &str) -> ResourceContracts {
     load_resource_contract_sources(&sources.into_iter().collect()).unwrap()
 }
 
-fn analyze_with(body: &str, entry: &str, extra: &str) -> (AnalysisStatus, Vec<LegacyDiagnosticKind>) {
+fn analyze_with(
+    body: &str,
+    entry: &str,
+    extra: &str,
+) -> (AnalysisStatus, Vec<LegacyDiagnosticKind>) {
     let source = format!("{PRELUDE}\n{body}");
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -376,7 +380,10 @@ fn a_specification_without_a_body_in_the_unit_is_never_applied() {
                 void caller(void) { struct item *x = q_alloc(); destroy_item(x); }";
     let (status, diagnostics) = analyze_with(unit, "caller", DESTROY_SPEC_NONNULL);
     assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
-    assert!(has(&diagnostics, "call to uncontracted function `destroy_item`"), "{diagnostics:?}");
+    assert!(
+        has(&diagnostics, "call to uncontracted function `destroy_item`"),
+        "{diagnostics:?}"
+    );
 }
 
 #[test]
