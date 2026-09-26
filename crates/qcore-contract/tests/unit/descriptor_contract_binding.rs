@@ -300,6 +300,33 @@ fn injected_failures_are_counted_not_bound_and_undeclared_calls_are_profiled() {
     assert_eq!(report.unbound["fcntl"].argument_1_values[&4], 1);
 }
 
+/// Card W46-EXTERNAL-CALLEE-CONTRACTS: `fcntl` is declared at `F_SETFD` (`2`)
+/// only. An execution at that command binds to the declaration; an execution
+/// at any other command, one that creates a descriptor (`F_DUPFD`, `0`) among
+/// them, and one whose command was not recorded, is of an undeclared callee
+/// and is profiled, never bound (contract spec C04.5).
+#[test]
+fn a_literal_premise_binds_only_the_executions_it_covers() {
+    let mut setfd = row("fcntl", 0, 0, vec![operand("used", "fd", 3, 1)]);
+    setfd["args"] = json!([3, 2, 1]);
+    let mut dupfd = row("fcntl", 4, 0, vec![operand("acquired", "fd", 4, 1)]);
+    dupfd["args"] = json!([3, 0, 0]);
+    let unrecorded = row("fcntl", 0, 0, vec![operand("used", "fd", 3, 1)]);
+    let report = bind(vec![
+        row("open", 3, 0, vec![operand("acquired", "fd", 3, 1)]),
+        setfd,
+        dupfd,
+        unrecorded,
+        row("close", 0, 0, vec![operand("released", "fd", 3, 1)]),
+    ]);
+    assert_eq!(report.bound["fcntl"].executions, 1);
+    assert_eq!(report.bound["fcntl"].contradictions, 0);
+    assert_eq!(report.contradictions, 0);
+    assert_eq!(report.unbound["fcntl"].executions, 2);
+    assert_eq!(report.unbound["fcntl"].argument_1_values[&0], 1);
+    assert_eq!(report.unbound["fcntl"].acquisitions["Fd"], 1);
+}
+
 /// Pinned real executions (Phase A measurement) bound to the landed contracts.
 #[test]
 fn pinned_real_runs_contradict_no_landed_contract() {

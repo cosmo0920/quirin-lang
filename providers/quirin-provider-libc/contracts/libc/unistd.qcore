@@ -192,3 +192,42 @@ contract {
     ensures normal resource_kind(fd, descriptor);
     ensures normal resource_return_none();
 };
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `fcntl` at `F_SETFD` only
+//
+// A TRUSTED ASSUMPTION, read from the prototype the analysed units declare
+// (`/usr/include/fcntl.h:177` on the audited host):
+//
+//   extern int fcntl (int __fd, int __cmd, ...);
+//
+// The decline above stands for `fcntl` as a whole: its effect depends on the
+// command, and `F_DUPFD`/`F_DUPFD_CLOEXEC` create a descriptor. This
+// declaration therefore carries `resource_literal_argument(cmd, 2)` and applies
+// ONLY at call sites whose command is exactly `2`, which is `F_SETFD`
+// (`bits/fcntl-linux.h:169`; the spelling a call site reaches after
+// preprocessing), the `prctl` precedent in `libc/process.qcore`. At every other
+// command, including `F_GETFL`, `F_SETFL` and `F_GETPIPE_SZ`, the callee stays
+// undeclared.
+//
+// For `F_SETFD` the call sets the descriptor's flags (`FD_CLOEXEC`) from the
+// third argument, an `int` read by value, and returns `0` or `-1`. It creates,
+// closes and transfers no descriptor, and allocates, frees or retains nothing.
+// So `fd` is `resource_borrowed` (a tracked descriptor handed here is a use, and
+// a use after its `close` is a violation candidate), the command is a scalar,
+// the tail is exactly `resource_variadic_data_tail()` (the flag, and any extra
+// actual, which `F_SETFD` never reads), and the `int` result is
+// `resource_return_none()`.
+//
+// NOT CLAIMED: which flags are set, whether the call succeeded, and anything
+// about any other command.
+
+extern fn fcntl(fd: i32, cmd: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_literal_argument(cmd, 2);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(cmd);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};

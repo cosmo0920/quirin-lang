@@ -194,3 +194,121 @@ contract {
     ensures normal resource_borrowed(value);
     ensures normal resource_return_none();
 };
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: five more writer primitives
+//
+// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading every
+// vendored copy at both audited revisions. Chosen because, with `cfl_sds_len`
+// (`cfl/sds_lifetime.qcore`), they are the last uncontracted calls of three
+// projected functions: `pack_basic_header_finish`
+// (`lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:86-91`, `mpack_finish_map`
+// and `mpack_finish_array`), `pack_bool`
+// (`lib/ctraces/src/ctr_encode_msgpack.c:25-33`, `mpack_write_true` and
+// `mpack_write_false`) and `pack_bytes` (`:88-96`, `mpack_write_bin`). The
+// other callers of these names keep other blockers and only lose leaves.
+//
+// ## The bodies, read before declaring
+//
+// cmetrics, ctraces and cprofiles copies (`mpack.h:2918-2934`, `mpack.c:1406`,
+// `:1410`, `:2023`; the three are identical):
+//
+//     MPACK_INLINE void mpack_finish_array(mpack_writer_t* writer) {
+//         mpack_writer_track_pop(writer, mpack_type_array);
+//     }
+//     MPACK_INLINE void mpack_finish_map(mpack_writer_t* writer) {
+//         mpack_writer_track_pop(writer, mpack_type_map);
+//     }
+//     void mpack_write_true(mpack_writer_t* writer) {
+//         mpack_write_byte_element(writer, (char)0xc3);
+//     }
+//     void mpack_write_false(mpack_writer_t* writer) {
+//         mpack_write_byte_element(writer, (char)0xc2);
+//     }
+//     void mpack_write_bin(mpack_writer_t* writer, const char* data, uint32_t count) {
+//         mpack_assert(data != NULL, "data pointer for bin of %i bytes is NULL", (int)count);
+//         mpack_start_bin(writer, count);
+//         mpack_write_bytes(writer, data, count);
+//         mpack_finish_bin(writer);
+//     }
+//
+// `mpack_writer_track_pop` is a no-op (`MPACK_UNUSED` of both arguments)
+// unless `MPACK_WRITE_TRACKING` is on, which `mpack.h:283-288` enables only in
+// an `MPACK_DEBUG` build; there it pops the writer's own tracking stack. Either
+// way only state inside the writer changes. The amalgamation copy
+// (`lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h:3759`, `:3775`) adds
+// `mpack_builder_compound_pop(writer)` to both finishers, which closes a
+// builder compound held inside the writer; its `mpack_write_bin` asserts
+// `count == 0 || data != NULL` instead. The bodies therefore DIFFER between
+// copies, and the declarations are nevertheless true of every copy: no copy
+// frees, stores or transfers any argument. This is the "do they agree on the
+// custody effect" test of the module header, not a claim of equal bodies, and
+// the pin records each copy's own body digest.
+//
+//   * `writer` is read and written through (the tag byte, the builder or
+//     tracking state, the buffer) and nothing else happens to it: the caller's
+//     obligation to destroy the writer is unchanged. `resource_borrowed`.
+//   * `data` is copied into the writer's buffer by `mpack_write_bytes` and is
+//     never freed, stored or returned. `resource_borrowed`.
+//   * `count` is a scalar by value. `resource_borrowed`.
+//   * every result is `void`: `resource_return_none()`.
+//
+// NOT CLAIMED, as for the four declarations above: the writer's internal
+// buffer may be flushed or reallocated (`MPACK-WRITER-INTERIOR-REALLOC`);
+// nothing about the encoding, the error flag, balanced start/finish pairs, or
+// `count` matching `data`'s length.
+//
+// ## ABI (constraint 8)
+//
+// Header prototypes, identical in the three library copies (`mpack.h:2830`,
+// `:2833`, `:3037`) and in the amalgamation (`:3639`, `:3642`, `:3955`):
+//
+//     void mpack_write_true(mpack_writer_t* writer);
+//     void mpack_write_false(mpack_writer_t* writer);
+//     void mpack_write_bin(mpack_writer_t* writer, const char* data, uint32_t count);
+//
+// The finishers are defined in the header with `MPACK_INLINE`. No `.c` copy is
+// an analysed unit and no analysed function is one of these names, so no body
+// in the corpus is checked against these declarations and nothing is withdrawn
+// on one.
+
+// --- close a map (a no-op or a builder pop; see above) ---
+extern fn mpack_finish_map(writer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_return_none();
+};
+
+// --- close an array (a no-op or a builder pop; see above) ---
+extern fn mpack_finish_array(writer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_return_none();
+};
+
+// --- the msgpack `true` byte ---
+extern fn mpack_write_true(writer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_return_none();
+};
+
+// --- the msgpack `false` byte ---
+extern fn mpack_write_false(writer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_return_none();
+};
+
+// --- a counted byte range written as an msgpack bin ---
+extern fn mpack_write_bin(writer: ptr<mut, u8>, data: ptr<const, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};

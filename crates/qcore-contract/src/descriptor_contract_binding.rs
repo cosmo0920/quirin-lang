@@ -35,6 +35,7 @@
 //! Injected failures are counted separately and never bound: the harness, not
 //! libc, produced them.
 
+use crate::contract_loader::{DeclaredLiteralArgument, declared_literal_argument_premises};
 use crate::descriptor_observation::{Kind, Record, Role};
 use qcore_schemas::contract::{
     ResourceContracts, ResourceKind, ResourceParameterMode, ResourceReturnMode,
@@ -129,6 +130,22 @@ struct Live {
 }
 
 /// Identity spaces: descriptor numbers, and one shared pointer space.
+/// Whether an execution's recorded arguments meet every declared literal
+/// premise. A literal is canonical decimal token text (`2`, `-` `1`); one that
+/// does not read as an `i64` is an error, never a match.
+fn premises_hold(premises: &[DeclaredLiteralArgument], args: &[i64]) -> Result<bool, String> {
+    for premise in premises {
+        let text = premise.literal.concat();
+        let value: i64 = text
+            .parse()
+            .map_err(|_| format!("literal premise `{text}` is not an integer"))?;
+        if args.get(premise.parameter) != Some(&value) {
+            return Ok(false);
+        }
+    }
+    Ok(true)
+}
+
 fn key(kind: Kind, id: i64) -> (bool, i64) {
     (kind == Kind::Fd, id)
 }
@@ -139,6 +156,9 @@ fn render(contract: &qcore_schemas::contract::ResourceFunctionContract) -> Strin
 
 struct Binder<'a> {
     contracts: &'a ResourceContracts,
+    /// Card W46-EXTERNAL-CALLEE-CONTRACTS: the literal-argument premises
+    /// (contract spec C04.5) rederived from the environment's trusted texts.
+    premises: BTreeMap<String, Vec<DeclaredLiteralArgument>>,
     live: BTreeMap<(bool, i64), Live>,
     report: BindingReport,
 }
@@ -176,6 +196,16 @@ impl<'a> Binder<'a> {
             self.profile(row);
             return Ok(());
         };
+        // A declaration with a literal-argument premise applies only to an
+        // execution whose recorded arguments are exactly its literals; every
+        // other execution (including one whose argument was not recorded) is
+        // of an undeclared callee and is profiled, never bound (C04.5).
+        if let Some(premises) = self.premises.get(&row.call)
+            && !premises_hold(premises, &row.args)?
+        {
+            self.profile(row);
+            return Ok(());
+        }
         let entry = self.report.bound.entry(row.call.clone()).or_default();
         if entry.contract.is_empty() {
             entry.contract = render(contract);
@@ -532,8 +562,10 @@ pub fn bind_descriptor_contracts(
     source: &str,
     contracts: &ResourceContracts,
 ) -> Result<BindingReport, String> {
+    let premises = declared_literal_argument_premises(contracts)?;
     let mut binder = Binder {
         contracts,
+        premises,
         live: BTreeMap::new(),
         report: BindingReport::default(),
     };

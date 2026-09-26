@@ -1,0 +1,5 @@
+current revision: 8 source file(s), 15 configuration(s): 0 Safe / 0 Pending / 2 provisional Unsafe / 13 Unknown / 0 data-only / 0 gateway failures
+preparation: 15 unit(s), 45 Clang invocation(s); -E -P 928106 us / syntax 1860036 us / line markers 951430 us
+pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call site(s) held Pending (awaiting-human-review)
+contract revision: 74 pinned (74 in force, 0 not in force), 0 flexible checked, 0 flexible trusted, 100 libc under the standing assumption; 0 function(s) and 0 call site(s) held Pending (contract-pin-mismatch)
+refuted contracts: 2 declaration(s) refuted by their own bodies, 2 phase(s); 3 function(s) and 10 call site(s) held Unknown (contract-refuted-by-body)

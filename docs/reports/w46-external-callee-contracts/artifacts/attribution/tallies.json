@@ -1,0 +1,44 @@
+{
+ "docs/reports/w45-container-root-reach/integration/artifacts": {
+  "functions": {
+   "Safe": 398,
+   "Unknown": 4427,
+   "Unsafe": 9
+  },
+  "units": {
+   "Safe": 5,
+   "Unknown": 168,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "categories": {
+   "leak": 34,
+   "summary_conflict": 1,
+   "unknown_alias": 3571,
+   "unsupported": 41314
+  },
+  "uncontracted_call_leaves": 9179,
+  "functions_with_uncontracted_call": 2625
+ },
+ "docs/reports/w46-external-callee-contracts/artifacts/arbiter": {
+  "functions": {
+   "Safe": 405,
+   "Unknown": 4420,
+   "Unsafe": 9
+  },
+  "units": {
+   "Safe": 5,
+   "Unknown": 168,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "categories": {
+   "leak": 34,
+   "summary_conflict": 1,
+   "unknown_alias": 3572,
+   "unsupported": 41239
+  },
+  "uncontracted_call_leaves": 9106,
+  "functions_with_uncontracted_call": 2615
+ }
+}

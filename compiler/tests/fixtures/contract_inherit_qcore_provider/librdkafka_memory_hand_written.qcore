@@ -49,3 +49,13 @@ contract {
     ensures normal resource_borrowed(size);
     ensures normal resource_return_reallocated(ptr, nullable);
 };
+
+// Card W46-EXTERNAL-CALLEE-CONTRACTS appended `rd_atomic32_get` to the
+// converted module; it inherits nothing, so its hand-written form is the
+// module's own text and the conversion's parity is unchanged.
+extern fn rd_atomic32_get(ra: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_return_none();
+};

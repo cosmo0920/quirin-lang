@@ -915,3 +915,27 @@ which is not a second authority.
     stated: the lexer yields the identifiers the escape reads (trust boundary
     28). `QCore.ReservedSpelling`, `QCore.Sr5Soundness`;
     [report](../reports/w45-sr5-soundness/README.md).
+
+<a id="constraint-10j"></a>
+
+10j. **An external callee is declared only for the effect its own body has
+    at every audited revision, in its owner's crate, and a command
+    multiplexer only at the command read.** Card W46-EXTERNAL-CALLEE-CONTRACTS
+    (`providers/*/contracts/`, `contracts.lock`; contract specification C04.5,
+    C06.2). An external callee (no definition in any analysed unit) is ranked
+    by the functions it alone would unblock, then read at both `66910c10` and
+    `046accf6`: every vendored copy and configuration arm must agree on the
+    custody effect (bodies may differ), and the declaration goes to the
+    owner's crate, pinned there; libc only to `quirin-provider-libc`,
+    flexible. A callee whose effect depends on a scalar argument is declared
+    for one value only, with `resource_literal_argument` (`fcntl` at
+    `F_SETFD`, as `prctl` at `PR_SET_NAME`); every other value stays
+    undeclared. A `static inline` header body the units carry is not an
+    analysed function, so its declaration is an unchecked premise pinned to
+    the header text (rule 10g checks only an analysed body). **Do not** declare
+    an effect v1 cannot state exactly to obtain a `Safe`: an in-place
+    reallocation through a `T **` (`cfl_sds_cat_safe`), a refcounted keep or
+    release, a retained pointer, a callback, an in-place lifecycle, a
+    no-return call or a handle kind stays undeclared with its reason, and a
+    system library outside the audited source has no pinnable identity.
+    [Report](../reports/w46-external-callee-contracts/README.md).

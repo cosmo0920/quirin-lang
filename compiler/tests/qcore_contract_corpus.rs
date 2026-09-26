@@ -19,6 +19,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // it and nothing else). Read from `lib/cfl/src/cfl_sds.c:249-275`;
     // `nullable` because the body's first statement is `if (!s) { return; }`.
     ("cfl/sds_lifetime.qcore", "cfl_sds_destroy", 3),
+    // Card W46-EXTERNAL-CALLEE-CONTRACTS: the length query
+    // (`lib/cfl/src/cfl_sds.c:193-200`): marker, borrowed string, `none`.
+    ("cfl/sds_lifetime.qcore", "cfl_sds_len", 3),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -653,6 +656,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // released descriptor, its kind and `none` (4).
     ("libc/unistd.qcore", "open", 7),
     ("libc/unistd.qcore", "close", 5),
+    // Card W46-EXTERNAL-CALLEE-CONTRACTS: `fcntl` at `F_SETFD` only: marker,
+    // flexible, the premise `cmd == 2`, two borrowed parameters, the data
+    // tail and `none` (7).
+    ("libc/unistd.qcore", "fcntl", 7),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -765,6 +772,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/memory.qcore", "rd_strndup", 4),
     ("librdkafka/memory.qcore", "rd_free", 3),
     ("librdkafka/memory.qcore", "rd_realloc", 4),
+    // Card W46-EXTERNAL-CALLEE-CONTRACTS: the atomic counter read
+    // (`src/rdatomic.h:100-112`): marker, borrowed counter, `none`.
+    ("librdkafka/memory.qcore", "rd_atomic32_get", 3),
     (
         "librdkafka/queue_destructor.qcore",
         "rd_kafka_q_destroy_final",
@@ -935,6 +945,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `lib/monkey/mk_core/mk_utils.c:200-264`: the tail is consumed by
     // `vprintf` into `stdout` and no pointer to it outlives the call.
     ("monkey/logging.qcore", "mk_print", 5),
+    // Card W46-EXTERNAL-CALLEE-CONTRACTS: the errno reporter
+    // (`mk_core/mk_utils.h:84-96`): marker, three borrowed, `none`.
+    ("monkey/logging.qcore", "mk_utils_libc_error", 5),
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
@@ -1132,6 +1145,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("mpack/writer.qcore", "mpack_write_str", 5),
     ("mpack/writer.qcore", "mpack_write_i64", 4),
     ("mpack/writer.qcore", "mpack_write_double", 4),
+    // Card W46-EXTERNAL-CALLEE-CONTRACTS: five more writer primitives, each
+    // the marker, its borrowed parameters and `none`.
+    ("mpack/writer.qcore", "mpack_finish_map", 3),
+    ("mpack/writer.qcore", "mpack_finish_array", 3),
+    ("mpack/writer.qcore", "mpack_write_true", 3),
+    ("mpack/writer.qcore", "mpack_write_false", 3),
+    ("mpack/writer.qcore", "mpack_write_bin", 5),
     // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. Five clauses: the marker, three
     // borrowed parameters and the `unit` result. The third parameter is the
     // corpus's first `fnptr`, on which `resource_borrowed` is both the only

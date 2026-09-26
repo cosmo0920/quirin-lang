@@ -69,6 +69,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 10g | [gateway](gateway.md#constraint-10g) | A declared contract its own analysed body refutes is withdrawn from every caller, cross-unit through a two-phase refutation table; the held call is Unknown. |
 | 10h | [gateway](gateway.md#constraint-10h) | An external audit subcommand is found only on the declared plugin path, never PATH or a built-in's name; its claims reach a verdict only through the plugin firewall. |
 | 10i | [gateway](gateway.md#constraint-10i) | A held or withdrawn call is only ever tool-minted (a source-spelled reserved prefix is escaped, Unknown); a Pending unit passes every Safe scope gate. |
+| 10j | [gateway](gateway.md#constraint-10j) | An external callee is declared only for its body's effect at every audited revision, in its owner's crate (libc flexible, others pinned); a multiplexer only at one literal command; inexpressible effects stay undeclared. |
 | 11 | [source-identity](source-identity.md#constraint-11) | Do not normalize the spelled input path (that changes __FILE__), do… |
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |

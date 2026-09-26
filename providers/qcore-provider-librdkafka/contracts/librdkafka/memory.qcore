@@ -37,3 +37,58 @@ contract {
     ensures normal resource_borrowed(size);
     ensures normal resource_return_reallocated(ptr, nullable);
 };
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `rd_atomic32_get`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`). It is
+// the last uncontracted call of `rd_kafka_thread_cnt` (`src/rdkafka.c:114-116`,
+// `return rd_atomic32_get(&rd_kafka_thread_cnt_curr);`). It sits in this
+// module because the crate has no atomic-counter module and one declaration
+// does not justify a new resource-view module.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/rdatomic.h:100-112`
+//
+//     static RD_INLINE int32_t RD_UNUSED rd_atomic32_get(rd_atomic32_t *ra) {
+//     #if defined(_WIN32) || defined(__SUNPRO_C)
+//             return ra->val;
+//     #elif !HAVE_ATOMICS_32
+//             int32_t r;
+//             mtx_lock(&ra->lock);
+//             r = ra->val;
+//             mtx_unlock(&ra->lock);
+//             return r;
+//     #else
+//             return ATOMIC_OP32(fetch, add, &ra->val, 0);
+//     #endif
+//     }
+//
+// On every configuration arm the function READS the counter (an atomic
+// fetch-and-add of zero, a plain read, or a read under the counter's own
+// mutex) and returns its `int32_t` value. It allocates, frees, stores and
+// transfers nothing, so `ra` is `resource_borrowed` and the scalar result is
+// `resource_return_none()`.
+//
+// ## Where the body lives
+//
+// `static RD_INLINE` in a header: every unit that includes `rdatomic.h` holds
+// a copy, but no analysed function of the corpus is this function, so no body
+// is checked against this declaration (constraint 8, rule 10g). `RD_INLINE` and
+// `RD_UNUSED` are `inline` and an `__attribute__((unused))` decoration; neither
+// changes a parameter type or the arity.
+//
+// ## ABI (constraint 8)
+//
+// `rd_atomic32_t *` is one object-pointer level, `ptr<mut, u8>`; `int32_t` is
+// `i32`.
+//
+// NOT CLAIMED: memory ordering, the counter's value, or anything about the
+// counter's lifetime.
+
+// --- read a 32-bit atomic counter ---
+extern fn rd_atomic32_get(ra: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_return_none();
+};

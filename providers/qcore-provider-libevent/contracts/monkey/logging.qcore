@@ -170,3 +170,74 @@ contract {
     ensures normal resource_variadic_data_tail();
     ensures normal resource_return_none();
 };
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `mk_utils_libc_error`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`). It is
+// the last uncontracted call of two projected functions,
+// `mk_sched_send_signal` (`lib/monkey/mk_server/mk_scheduler.c:862-883`) and
+// `mk_socket_create` (`lib/monkey/mk_server/mk_socket.c:120-139`); its other
+// eight call sites sit in functions with other blockers.
+//
+// Every call site reaches it through the macro
+// (`lib/monkey/include/monkey/mk_core/mk_macros.h:181`)
+//
+//     #define mk_libc_error(c)    mk_utils_libc_error(c, __FILE__, __LINE__)
+//
+// ## The body, read from `lib/monkey/include/monkey/mk_core/mk_utils.h:84-96`
+//
+//     #define MK_UTILS_LIBC_ERRNO_BUFFER()                       \
+//         char buf[MK_UTILS_ERROR_SIZE];                         \
+//         int  _err;                                             \
+//         _err = errno;                                          \
+//         if (strerror_r(_err, buf, MK_UTILS_ERROR_SIZE) != 0) { \
+//             mk_err("strerror_r() failed");                     \
+//         }
+//
+//     static inline void mk_utils_libc_error(char *caller, char *file, int line)
+//     {
+//         MK_UTILS_LIBC_ERRNO_BUFFER();
+//         mk_err("%s: %s, errno=%i at %s:%i", caller, buf, _err, file, line);
+//     }
+//
+// `mk_err` is `mk_print(MK_ERR, ...)` (declared above).
+//
+//   * `caller` and `file` are `char *`. Each reaches exactly one place, a `%s`
+//     tail position of `mk_print`: READ, never freed, never stored, and no
+//     pointer to either outlives the call. `resource_borrowed`.
+//   * `line` is an `int` by value. `resource_borrowed`.
+//   * `buf` is a local array and `_err` a local `int`; neither leaves.
+//   * the result is `void`: `resource_return_none()`.
+//
+// ## Where the body lives, and what that means for checking
+//
+// The function is `static inline` in a header, so every unit that includes
+// `mk_utils.h` holds a copy, but no analysed function of the corpus IS this
+// function: the analysed units list only their own file's functions. No body
+// in the corpus is therefore checked against this declaration (constraint 8,
+// rule 10g); it is a trusted premise, pinned to the header's text.
+//
+// ## ABI (constraint 8)
+//
+// `char *` projects to one object-pointer level, `ptr<mut, u8>`; `int` to
+// `i32`; the `void` result to `unit`. The arity is three and the C function is
+// not variadic.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about the message. Which `strerror_r` the unit declares (the XSI
+//     `int` form or the GNU `char *` form) decides whether `buf` is written; a
+//     custody projection models custody only and says nothing about the bytes
+//     `%s` reads from `buf`.
+//   * Nothing about `errno` or thread safety.
+
+// --- the errno reporter every `mk_libc_error(...)` expands to ---
+extern fn mk_utils_libc_error(caller: ptr<mut, u8>, file: ptr<mut, u8>, line: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(caller);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_none();
+};
