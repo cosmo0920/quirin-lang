@@ -98,6 +98,20 @@
 //! the entry's `qcore_buffer_new(...)?` takes its error edge. Neither changes
 //! an emitted byte: both arrive at the same `-include` seam as the binding.
 //!
+//! **Load, made deterministic (card `W45-TSAN-ROWS-LOAD-SENSITIVE`, wave
+//! 45).** Two "the race must be reported" rows failed integration gates under
+//! parallel load and passed alone. Neither was the detector: (1) the forcing
+//! header's exit barrier released its spinlock on every poll, and clang
+//! instruments atomics even in a `no_sanitize("thread")` function, so a worker
+//! waiting for a descheduled partner wrote enough trace to evict its own body's
+//! accesses from ThreadSanitizer's history, and TSan v3 drops a race whose
+//! earlier stack it cannot restore; (2) the join-edge-removal stand-in slept
+//! 50 ms and assumed the worker had finished, so a late worker met a freed
+//! start record and TSan reported a `heap-use-after-free`, or nothing. Every
+//! wait in these headers now polls a relaxed atomic inline and the stand-in
+//! waits for completion over a relaxed flag; [`Row::hold`] reproduces the
+//! load on demand. See `docs/reports/w45-tsan-rows-load-sensitive/`.
+//!
 //! Linux only, and gated as such. `run` is `#[cfg(target_os = "linux")]`
 //! because the diagnosis, the binding and every measurement above are
 //! x86-64-Linux/glibc observations; a caller on another platform gets no row
@@ -112,14 +126,42 @@
 /// sites are affected.
 ///
 /// `QCORE_TSAN_DROP_JOIN` (card `TSAN-ROWS-2`) is the **join-edge-removal
-/// mutation's** replacement for `QCORE_TASK_JOIN`: it waits 50 ms and reports
-/// success without joining, so the happens-before edge is gone and nothing
-/// else is. It is defined here so the mutated text is one string under every
-/// schedule; the forcing header redefines the name to a variant that also
-/// opens its gate, because a join that is deleted outright would otherwise
-/// delete the release with it and hide the race rather than expose it.
+/// mutation's** replacement for `QCORE_TASK_JOIN`: it reports success without
+/// joining, so the happens-before edge is gone and nothing else is. It is
+/// defined here so the mutated text is one string under every schedule; the
+/// forcing header redefines the name to a variant that also opens its gate,
+/// because a join that is deleted outright would otherwise delete the release
+/// with it and hide the race rather than expose it.
+///
+/// **It waits for the worker, not for a clock** (card
+/// `W45-TSAN-ROWS-LOAD-SENSITIVE`). Wave 39's stand-in slept 50 ms and
+/// assumed the worker had finished by then. Under parallel load that
+/// assumption failed: a worker still parked or runnable after 50 ms touched
+/// its start record *after* the parent had freed it, so ThreadSanitizer
+/// reported a `heap-use-after-free` instead of the data race the row asserts,
+/// or nothing at all if the process ended first. The stand-in now spins until
+/// the thread's start function has returned, observed through a completion
+/// flag written and read with **relaxed** atomics — which carry no
+/// happens-before edge in C11 or in ThreadSanitizer, so the removed edge stays
+/// removed, and the worker's accesses precede the parent's by construction
+/// rather than by a 50 ms bet. The wait polls inline, without a call and
+/// without a release, so ThreadSanitizer records nothing new per poll.
+///
+/// A worker the forcing header holds behind a gate that has not opened for it
+/// never finishes, and only the waiting creator could open that gate, so the
+/// stand-in asks `QCORE_TSAN_NEVER_RUNS(thread)` once before waiting; its
+/// default here is `0`, and the forcing header redefines it. That is what keeps
+/// `a_join_deleted_is_caught_by_the_cohort_trigger`'s gate-closed control a
+/// program that ends rather than one that hangs.
+///
+/// `QCORE_TSAN_HOLD_ORDINAL` / `QCORE_TSAN_HOLD_MS` are the same card's
+/// **deterministic load**: the `N`-th thread created sleeps that long before
+/// its start function runs (`thrd_sleep`, which ThreadSanitizer does not
+/// intercept, so the hold adds no event of its own). Default `0`: no hold.
 pub const PTHREAD_BINDING: &str = r#"
 #include <pthread.h>
+#include <sched.h>
+#include <stdatomic.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -129,27 +171,65 @@ pub const PTHREAD_BINDING: &str = r#"
  * assumption, and it is checked rather than assumed. */
 _Static_assert(sizeof(thrd_t) == sizeof(pthread_t),
     "the pthread binding requires thrd_t and pthread_t to be one representation");
+_Static_assert(sizeof(thrd_t) == sizeof(unsigned long),
+    "the completion table stores a thrd_t as an unsigned long");
 
-struct qcore_tsan_start { int (*function)(void *); void *argument; };
+#ifndef QCORE_TSAN_HOLD_ORDINAL
+#define QCORE_TSAN_HOLD_ORDINAL 0
+#endif
+#ifndef QCORE_TSAN_HOLD_MS
+#define QCORE_TSAN_HOLD_MS 0
+#endif
+#define QCORE_TSAN_THREAD_CAPACITY 64
+
+/* Card W45-TSAN-ROWS-LOAD-SENSITIVE: one completion flag per created thread.
+ * Every access is a relaxed atomic, so the table synchronizes nothing: it lets
+ * the join-edge-removal stand-in wait for a worker without ordering anything
+ * after it. */
+struct qcore_tsan_thread { atomic_ulong thread; atomic_int done; };
+static struct qcore_tsan_thread qcore_tsan_threads[QCORE_TSAN_THREAD_CAPACITY];
+static atomic_size_t qcore_tsan_thread_count;
+
+struct qcore_tsan_start {
+    int (*function)(void *);
+    void *argument;
+    struct qcore_tsan_thread *slot;
+    size_t ordinal;     /* 1-based creation order */
+};
 
 static void *qcore_tsan_trampoline(void *opaque) {
     struct qcore_tsan_start start = *(struct qcore_tsan_start *)opaque;
+    int result;
     free(opaque);
-    return (void *)(intptr_t)start.function(start.argument);
+    if (QCORE_TSAN_HOLD_ORDINAL != 0 && start.ordinal == (size_t)QCORE_TSAN_HOLD_ORDINAL) {
+        struct timespec hold = {QCORE_TSAN_HOLD_MS / 1000, (QCORE_TSAN_HOLD_MS % 1000) * 1000000L};
+        thrd_sleep(&hold, NULL);
+    }
+    result = start.function(start.argument);
+    atomic_store_explicit(&start.slot->done, 1, memory_order_relaxed);
+    return (void *)(intptr_t)result;
 }
 
 /* Signature-compatible with thrd_create, so no emitted call site changes. */
 __attribute__((unused))
 static int qcore_tsan_thread_create(thrd_t *thread, int (*function)(void *), void *argument) {
     struct qcore_tsan_start *start = malloc(sizeof(*start));
+    struct qcore_tsan_thread *slot;
+    size_t index;
     pthread_t created;
     if (start == NULL) return thrd_error;
+    index = atomic_fetch_add_explicit(&qcore_tsan_thread_count, 1, memory_order_relaxed);
+    if (index >= QCORE_TSAN_THREAD_CAPACITY) abort();
+    slot = &qcore_tsan_threads[index];
     start->function = function;
     start->argument = argument;
+    start->slot = slot;
+    start->ordinal = index + 1;
     if (pthread_create(&created, NULL, qcore_tsan_trampoline, start) != 0) {
         free(start);
         return thrd_error;
     }
+    atomic_store_explicit(&slot->thread, (unsigned long)created, memory_order_relaxed);
     *thread = (thrd_t)created;
     return thrd_success;
 }
@@ -163,15 +243,32 @@ static int qcore_tsan_thread_join(thrd_t thread, int *result) {
 }
 
 /* The join-edge-removal mutation's stand-in for QCORE_TASK_JOIN (card
- * TSAN-ROWS-2): 50 ms, then "joined", with no happens-before edge. */
+ * TSAN-ROWS-2; the wait is card W45-TSAN-ROWS-LOAD-SENSITIVE's): wait until
+ * the thread's start function has returned, then "joined", with no
+ * happens-before edge. The flag is read relaxed and inline — no call, no
+ * release — so however long the wait, ThreadSanitizer records nothing new. */
 __attribute__((unused))
-static int qcore_tsan_drop_join(thrd_t thread, int *status) {
-    struct timespec pause = {0, 50000000};
-    (void)thread;
-    thrd_sleep(&pause, NULL);
+static int qcore_tsan_unordered_join(thrd_t thread, int *status, int never_runs) {
+    size_t count = atomic_load_explicit(&qcore_tsan_thread_count, memory_order_relaxed);
+    struct qcore_tsan_thread *slot = NULL;
+    for (size_t i = 0; i < count && i < QCORE_TSAN_THREAD_CAPACITY; ++i)
+        if (atomic_load_explicit(&qcore_tsan_threads[i].thread, memory_order_relaxed) == (unsigned long)thread)
+            slot = &qcore_tsan_threads[i];
+    if (slot == NULL) abort();
+    if (!never_runs)
+        while (!atomic_load_explicit(&slot->done, memory_order_relaxed)) sched_yield();
     if (status != NULL) *status = 0;
     return thrd_success;
 }
+/* The forcing header redefines this: a worker parked behind a gate that has
+ * not opened for it never finishes while its creator waits. */
+#define QCORE_TSAN_NEVER_RUNS(thread) 0
+/* A macro, not a function, so that QCORE_TSAN_NEVER_RUNS is expanded at the
+ * call site, after the forcing header (when present) has redefined it. The
+ * join-deleted mutation calls this name directly and so still bypasses the
+ * forcing header's gate-opening QCORE_TSAN_DROP_JOIN. */
+#define qcore_tsan_drop_join(thread, status) \
+    qcore_tsan_unordered_join((thread), (status), QCORE_TSAN_NEVER_RUNS(thread))
 #define QCORE_TSAN_DROP_JOIN qcore_tsan_drop_join
 
 /* Call sites only: the task runtime reaches these through its own
@@ -212,10 +309,23 @@ pub const SCHEDULE_FORCING: &str = r#"
  * and TSan saw a release/acquire edge between the two writes. A schedule
  * realised with synchronization TSan can see hides exactly the races the
  * rows exist to detect. So every function here is compiled without TSan
- * instrumentation (no_sanitize), all bookkeeping sits behind an uninstrumented
+ * memory-access instrumentation (no_sanitize), all bookkeeping sits behind a
  * spinlock, and a parked worker spins on its own flag with sched_yield.
- * The only happens-before edges TSan observes are the program's own:
- * thread creation and thread join. */
+ *
+ * What no_sanitize does NOT remove (card W45-TSAN-ROWS-LOAD-SENSITIVE): clang
+ * still instruments ATOMIC operations, and function entry/exit around them, in
+ * a no_sanitize("thread") function. So TSan does see the spinlock — but no
+ * worker acquires anything between its release and its body (parking reads
+ * its flag relaxed), so no edge TSan sees orders one body after another.
+ *
+ * And every wait here must be QUIET: it polls a relaxed atomic inline, with
+ * no call and no release per iteration, taking the lock only when a counter
+ * says something changed. An exit barrier that took and released the lock on
+ * every poll gave TSan a new epoch and ~6 trace events per iteration; ~20,000
+ * polls (a partner delayed ~5 ms under load) recycled the history holding the
+ * waiting worker's own body accesses, and TSan v3 then silently drops a race
+ * whose earlier stack it cannot restore. A quiet wait writes a trace bounded
+ * by the cohort, however long it waits. */
 #include <sched.h>
 #include <stdatomic.h>
 #include <stdio.h>
@@ -237,6 +347,7 @@ pub const SCHEDULE_FORCING: &str = r#"
 struct qcore_forced_worker {
     int (*function)(void *);
     void *argument;
+    thrd_t thread;      /* written by the creator after a successful create */
     size_t ordinal;     /* 1-based creation order */
     size_t generation;  /* the gate count when this worker was created */
     size_t cohort;      /* the gate opening (1-based) that released it; 0 while parked */
@@ -249,12 +360,21 @@ static size_t qcore_forced_created = 0;
 static size_t qcore_forced_gate = 0;
 static size_t qcore_forced_cohort_size[QCORE_FORCED_CAPACITY + 1];
 static size_t qcore_forced_cohort_finished[QCORE_FORCED_CAPACITY + 1];
+/* Card W45-TSAN-ROWS-LOAD-SENSITIVE: bumped, under the lock, on every change
+ * to the two cohort tables above, so the exit barrier can poll it relaxed and
+ * take the lock only when there is something new to read. */
+static atomic_size_t qcore_forced_changes;
 
 QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_lock(void) {
     while (atomic_flag_test_and_set_explicit(&qcore_forced_spin, memory_order_acquire)) sched_yield();
 }
 QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_unlock(void) {
     atomic_flag_clear_explicit(&qcore_forced_spin, memory_order_release);
+}
+
+/* Under the lock: a cohort table changed; wake the exit barrier's poll. */
+QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_changed(void) {
+    atomic_fetch_add_explicit(&qcore_forced_changes, 1, memory_order_relaxed);
 }
 
 /* Under the lock: is a released worker still running its body? */
@@ -288,6 +408,7 @@ QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_release_next_reverse(void) 
             !atomic_load_explicit(&worker->released, memory_order_relaxed)) {
             worker->cohort = qcore_forced_gate;
             qcore_forced_cohort_size[worker->cohort] += 1;
+            qcore_forced_changed();
             atomic_store_explicit(&worker->released, 1, memory_order_relaxed);
             return;
         }
@@ -310,6 +431,7 @@ QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_open_gate(void) {
             !atomic_load_explicit(&worker->released, memory_order_relaxed)) {
             worker->cohort = qcore_forced_gate;
             qcore_forced_cohort_size[worker->cohort] += 1;
+            qcore_forced_changed();
             atomic_store_explicit(&worker->released, 1, memory_order_relaxed);
         }
     }
@@ -321,14 +443,27 @@ QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_park(struct qcore_forced_wo
 
 /* Together: the exit barrier keeps this thread live until every body of its
  * cohort has returned, so "all created before any runs, all live until all
- * have run" holds by construction rather than by luck. */
+ * have run" holds by construction rather than by luck.
+ *
+ * QUIET (card W45-TSAN-ROWS-LOAD-SENSITIVE): the tables are read under the
+ * lock only when qcore_forced_changes has moved since the last read, so the
+ * number of lock round trips is bounded by the cohort's own changes, not by
+ * how long a descheduled partner takes. Between them the poll is one relaxed
+ * load at an unchanged epoch, which ThreadSanitizer deduplicates. */
 QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_exit_barrier(struct qcore_forced_worker *worker) {
+    size_t seen = 0;
+    int checked = 0;
     for (;;) {
-        int complete;
-        qcore_forced_lock();
-        complete = qcore_forced_cohort_finished[worker->cohort] >= qcore_forced_cohort_size[worker->cohort];
-        qcore_forced_unlock();
-        if (complete) return;
+        size_t now = atomic_load_explicit(&qcore_forced_changes, memory_order_relaxed);
+        if (!checked || now != seen) {
+            int complete;
+            checked = 1;
+            seen = now;
+            qcore_forced_lock();
+            complete = qcore_forced_cohort_finished[worker->cohort] >= qcore_forced_cohort_size[worker->cohort];
+            qcore_forced_unlock();
+            if (complete) return;
+        }
         sched_yield();
     }
 }
@@ -337,6 +472,7 @@ QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_finish(struct qcore_forced_
     qcore_forced_lock();
     atomic_store_explicit(&worker->finished, 1, memory_order_relaxed);
     qcore_forced_cohort_finished[worker->cohort] += 1;
+    qcore_forced_changed();
     if (QCORE_FORCED_REVERSE) {
         /* Serialized: this body is done, and the trace says so before the
          * next worker can be released and write its own start line. */
@@ -390,11 +526,14 @@ static int qcore_forced_create(thrd_t *thread, int (*function)(void *), void *ar
         qcore_forced_lock();
         if (atomic_load_explicit(&worker->released, memory_order_relaxed)) {
             qcore_forced_cohort_size[worker->cohort] -= 1;
+            qcore_forced_changed();
             atomic_store_explicit(&worker->released, 0, memory_order_relaxed);
             worker->cohort = 0;
         }
         --qcore_forced_created;
         qcore_forced_unlock();
+    } else {
+        worker->thread = *thread;
     }
     return outcome;
 }
@@ -408,21 +547,40 @@ static int qcore_forced_join(thrd_t thread, int *result) {
     return thrd_join(thread, result);
 }
 
+/* Card W45-TSAN-ROWS-LOAD-SENSITIVE: will this worker stay parked while its
+ * creator waits? Only the creator opens the gate (the create, join and
+ * drop-join hooks all run on it) and the creator is the caller, so a worker
+ * not yet released whose generation no opened gate covers stays parked. Read
+ * without the lock — `gate`, `generation`, `thread` and the table length are
+ * the creator's own writes and `released` is a relaxed atomic — so the query
+ * acquires nothing and orders no worker's body before the caller. */
+__attribute__((unused)) QCORE_FORCED_UNINSTRUMENTED
+static int qcore_forced_never_runs(thrd_t thread) {
+    for (size_t i = 0; i < qcore_forced_created; ++i) {
+        struct qcore_forced_worker *worker = &qcore_forced_workers[i];
+        if (thrd_equal(worker->thread, thread))
+            return !atomic_load_explicit(&worker->released, memory_order_relaxed) &&
+                   worker->generation >= qcore_forced_gate;
+    }
+    return 0;
+}
+#undef QCORE_TSAN_NEVER_RUNS
+#define QCORE_TSAN_NEVER_RUNS(thread) qcore_forced_never_runs(thread)
+
+#ifdef QCORE_TSAN_DROP_JOIN
 /* The join-edge-removal mutation under forcing: open the gate as the real
- * join would, then wait 50 ms and report success without joining. */
+ * join would, then wait — without joining and without an edge — until the
+ * worker's start function has returned, and report success. */
 __attribute__((unused)) QCORE_FORCED_UNINSTRUMENTED
 static int qcore_forced_drop_join(thrd_t thread, int *status) {
-    struct timespec pause = {0, 50000000};
-    (void)thread;
     qcore_forced_lock();
     qcore_forced_open_gate();
     qcore_forced_unlock();
-    thrd_sleep(&pause, NULL);
-    if (status != NULL) *status = 0;
-    return thrd_success;
+    return qcore_tsan_unordered_join(thread, status, qcore_forced_never_runs(thread));
 }
 #undef QCORE_TSAN_DROP_JOIN
 #define QCORE_TSAN_DROP_JOIN qcore_forced_drop_join
+#endif
 
 #define QCORE_TASK_CREATE qcore_forced_create
 #define QCORE_TASK_JOIN qcore_forced_join
@@ -752,6 +910,11 @@ pub struct Row<'a> {
     /// `hook_visible_to_tsan` mutation, which must compile a *different*
     /// forcing header while changing nothing else about the run.
     pub forcing: Option<&'a str>,
+    /// `Some((ordinal, ms))`: the `ordinal`-th thread created sleeps `ms`
+    /// before its start function runs — card `W45-TSAN-ROWS-LOAD-SENSITIVE`'s
+    /// deterministic stand-in for a partner descheduled under load, through
+    /// the binding's `QCORE_TSAN_HOLD_ORDINAL`/`QCORE_TSAN_HOLD_MS`.
+    pub hold: Option<(usize, u32)>,
 }
 
 impl Default for Row<'_> {
@@ -765,6 +928,7 @@ impl Default for Row<'_> {
             failure: Failure::None,
             tsan_options: "halt_on_error=1",
             forcing: None,
+            hold: None,
         }
     }
 }
@@ -790,6 +954,7 @@ fn run_row(row: Row<'_>) -> Result<Sanitized, String> {
         failure,
         tsan_options,
         forcing: forcing_override,
+        hold,
     } = row;
 
     // Run-scoped by tag, schedule, failure arm and pid, so two runs cannot
@@ -840,6 +1005,11 @@ fn run_row(row: Row<'_>) -> Result<Sanitized, String> {
             compiler.arg(format!("-DQCORE_FORCED_COHORT={cohort}"));
             compiler.arg("-include").arg(&forcing);
         }
+    }
+    if let Some((ordinal, ms)) = hold {
+        assert!(bind_threads, "a hold rides the pthread binding");
+        compiler.arg(format!("-DQCORE_TSAN_HOLD_ORDINAL={ordinal}"));
+        compiler.arg(format!("-DQCORE_TSAN_HOLD_MS={ms}"));
     }
     if failure != Failure::None {
         compiler.arg(format!("-DQCORE_TSAN_FAILURE={}", failure.selector()));

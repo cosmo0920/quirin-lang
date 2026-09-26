@@ -85,6 +85,17 @@
 //! `QCORE_BUFFER_MALLOC` — and every failure-arm row asserts **which arm ran**
 //! from the program's own stdout rather than from the harness's intent.
 //!
+//! # Load, made deterministic (wave 45)
+//!
+//! Card `W45-TSAN-ROWS-LOAD-SENSITIVE` found why two "must be reported" rows
+//! failed under parallel load and passed alone, and it was the harness each
+//! time, not the detector: the forcing header's exit barrier wrote TSan trace
+//! on every poll until the waiting worker's own history was recycled (TSan v3
+//! then drops the race), and the join stand-in's 50 ms sleep let a late worker
+//! meet a freed record (a `heap-use-after-free` report instead of a race). Both
+//! waits are now quiet and complete-driven, no assertion moved, and the two
+//! `a_held_…` rows force the load with [`thread_sanitizer::Row::hold`].
+//!
 //! # Honest gating
 //!
 //! Every test here is `#[cfg(target_os = "linux")]`, and that is a real
@@ -492,13 +503,15 @@ fn overlapping_writers_are_reported_which_is_what_makes_the_clean_row_mean_somet
 /// and the parent all read one buffer while the children hold their shares, and
 /// the parent **writes** it after both joins. That write is safe exactly
 /// because the join orders it after the readers. Replacing the emitted
-/// `QCORE_TASK_JOIN` with the harness's 50 ms no-edge stand-in — keeping every
+/// `QCORE_TASK_JOIN` with the harness's no-edge stand-in — keeping every
 /// other statement, so the parent still reads completion data and still writes
 /// afterwards — removes that edge and nothing else, and TSan reports a race.
 ///
-/// Note what this also demonstrates about the instrument: the 50 ms sleep means
-/// the worker has certainly finished before the parent reads, so the accesses
-/// never physically overlap. TSan reports them anyway, because it detects a
+/// Note what this also demonstrates about the instrument: the stand-in waits
+/// until the worker's start function has returned (a relaxed completion flag,
+/// no edge; card `W45-TSAN-ROWS-LOAD-SENSITIVE` replaced wave 39's 50 ms sleep,
+/// which under load let the parent free the start record first), so the
+/// accesses never physically overlap. TSan reports them anyway, because it detects a
 /// *missing happens-before edge* rather than an observed interleaving. That is
 /// the property which makes the clean rows worth more than a timing test, and
 /// it is shown here rather than asserted in the report. (The committed harness
@@ -760,14 +773,129 @@ fn removing_the_join_edge_is_reported_under_every_schedule() {
     }
 }
 
+/// How long a [`Row::hold`] keeps one worker from its body in the rows below:
+/// well past both thresholds card `W45-TSAN-ROWS-LOAD-SENSITIVE` measured on
+/// the pre-card harness — about 5 ms of exit-barrier polling, and wave 39's
+/// 50 ms join stand-in.
+const HOLD_MS: u32 = 100;
+
+/// **Load, made deterministic: a partner the scheduler delays does not hide the
+/// overlap** (card `W45-TSAN-ROWS-LOAD-SENSITIVE`).
+///
+/// Two integration gates failed `overlapping_writers_are_reported_under_every_schedule`
+/// and `removing_the_join_edge_is_reported_under_every_schedule` under
+/// `forced-together` with no race reported. The cause was the forcing
+/// header's exit barrier: the worker that finished first polled it by taking
+/// and releasing the bookkeeping spinlock, and clang instruments atomics even
+/// in a `no_sanitize("thread")` function, so every poll gave ThreadSanitizer a
+/// new epoch and fresh trace events. When the partner was descheduled for a
+/// few milliseconds, some 20,000 polls recycled the waiting worker's own trace
+/// history; its body's write could then no longer be restored as the earlier
+/// stack of the race, and ThreadSanitizer v3 drops such a report without a
+/// word. The barrier now polls quietly.
+///
+/// This row is that load, forced: worker 2 is held [`HOLD_MS`] before its
+/// body, so worker 1 writes first and then waits at the barrier for the whole
+/// hold. The pre-card harness missed the overlap under this hold 10 of 10
+/// times; every assertion here is the one the ordinary row makes.
+#[test]
+fn a_held_partner_still_has_its_overlap_reported_under_forced_together() {
+    for (name, source) in [
+        ("ct07-case", CT07_CASE),
+        ("disjoint-exercise", DISJOINT_EXERCISE),
+    ] {
+        let overlapping = prepared(&with_overlapping_writers(&emitted(source)));
+        let run = Row {
+            tag: &format!("held-overlap-{name}"),
+            source: &overlapping,
+            schedule: Schedule::ForcedTogether,
+            hold: Some((2, HOLD_MS)),
+            ..Row::default()
+        }
+        .execute()
+        .unwrap();
+        assert!(
+            run.races >= 1,
+            "{name} with worker 2 held {HOLD_MS} ms: the overlapping writers should be reported:\n{}",
+            run.stderr
+        );
+        assert!(
+            run.stderr.contains("qcore_buffer_byte_write"),
+            "{name}: the race should be named inside the byte-write helper:\n{}",
+            run.stderr
+        );
+        assert!(
+            !run.schedule.is_empty(),
+            "{name}: the workers must actually have been released"
+        );
+    }
+}
+
+/// **Load, made deterministic: a late worker does not turn the missing join
+/// edge into a different report, or into none** (card
+/// `W45-TSAN-ROWS-LOAD-SENSITIVE`).
+///
+/// Wave 39's join stand-in slept 50 ms and assumed the worker had finished.
+/// A worker still parked or runnable after that touched its start record after
+/// the parent had freed it, and ThreadSanitizer reported a
+/// `heap-use-after-free` — not the data race the row asserts — or nothing if
+/// the process ended first; under `forced-together` the exit-barrier trace
+/// churn above hid it as well. The stand-in now waits for the worker's
+/// completion over a relaxed flag, which carries no edge.
+///
+/// Each subject of `removing_the_join_edge_is_reported_under_every_schedule`,
+/// under every schedule, with one worker held [`HOLD_MS`] — the second writer
+/// under `forced-together` and the first-created elsewhere, the order that
+/// defeated each old mechanism — must still report the race. The pre-card
+/// harness missed every held cell it was measured on.
+#[test]
+fn a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule() {
+    for (name, source) in [("shared_readers", PUBLISHED[2].1), ("ct07-case", CT07_CASE)] {
+        let unjoined = prepared(&with_join_edge_removed(&emitted(source)));
+        for schedule in Schedule::ALL {
+            let held = if schedule == Schedule::ForcedTogether {
+                2
+            } else {
+                1
+            };
+            let run = Row {
+                tag: &format!("held-unjoined-{name}"),
+                source: &unjoined,
+                schedule,
+                hold: Some((held, HOLD_MS)),
+                ..Row::default()
+            }
+            .execute()
+            .unwrap();
+            assert!(
+                run.races >= 1,
+                "{name} under {} with worker {held} held {HOLD_MS} ms: removing the join edge \
+                 should be reported as a data race:\n{}",
+                schedule.tag(),
+                run.stderr
+            );
+            if schedule.is_forced() {
+                assert!(
+                    !run.schedule.is_empty(),
+                    "{name} under {}: the no-edge stand-in must still have opened the gate",
+                    schedule.tag()
+                );
+            }
+        }
+    }
+}
+
 /// **The gate-closed reproduction, and the trigger that now catches it**
 /// (card `TSAN-FAILURE-ARMS`, wave 41; this test replaces wave 39's
 /// `a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing`,
 /// whose measurement it keeps as its own control arm).
 ///
 /// The mutation is wave 39's: delete the join outright, replacing it with the
-/// *unbound* 50 ms stand-in named by its function, so the forcing header's
-/// gate-opening macro does not reach it. Under wave 39's join-only gate that
+/// *unbound* stand-in named by its lower-case name, so the forcing header's
+/// gate-opening macro does not reach it. (Since card
+/// `W45-TSAN-ROWS-LOAD-SENSITIVE` that stand-in waits for the worker to finish
+/// rather than for 50 ms, and returns at once for a worker parked behind a gate
+/// only its waiting creator could open — which is this control's case.) Under wave 39's join-only gate that
 /// removed the release along with the edge — no worker ever ran, TSan reported
 /// nothing, the schedule trace was empty — which is exactly what
 /// `TSAN-FORCED-GATE-OPENED-BY-THE-JOIN` recorded, and is reproduced here as

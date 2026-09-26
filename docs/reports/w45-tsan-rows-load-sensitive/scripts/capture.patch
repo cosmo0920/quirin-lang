@@ -1,0 +1,18 @@
+Temporary, never committed: applied to tests/support/thread_sanitizer.rs at the
+base 5e9630fe to keep each row's compiled program. Run the two rows with
+QCORE_TSAN_KEEP_TMP=<dir> set, then restore the file. mechanism.py reads the
+kept module.c / bind.h / force.h of the pre-card harness.
+
+--- a/tests/support/thread_sanitizer.rs
++++ b/tests/support/thread_sanitizer.rs
+@@ fn run_row
++    if let Ok(keep) = std::env::var("QCORE_TSAN_KEEP_TMP") {
++        let dest = std::path::Path::new(&keep).join(directory.file_name().unwrap());
++        std::fs::create_dir_all(&dest).unwrap();
++        for f in ["module.c", "bind.h", "force.h", "fail.h", "module"] {
++            std::fs::copy(directory.join(f), dest.join(f)).unwrap();
++        }
++        std::fs::write(dest.join("args.txt"), format!("{:?}", compiler)).unwrap();
++    }
+     let output = Command::new(&executable)
+         .env("TSAN_OPTIONS", tsan_options)

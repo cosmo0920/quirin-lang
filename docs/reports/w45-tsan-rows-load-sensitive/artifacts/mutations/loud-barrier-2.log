@@ -1,0 +1,51 @@
+
+running 2 tests
+test a_held_partner_still_has_its_overlap_reported_under_forced_together ... FAILED
+test a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule ... FAILED
+
+failures:
+
+---- a_held_partner_still_has_its_overlap_reported_under_forced_together stdout ----
+
+thread 'a_held_partner_still_has_its_overlap_reported_under_forced_together' (2114097) panicked at compiler/tests/task_route_tsan.rs:817:9:
+ct07-case with worker 2 held 100 ms: the overlapping writers should be reported:
+QCORE_FORCED start 1
+QCORE_FORCED start 2
+QCORE_FORCED leave 2
+QCORE_FORCED leave 1
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule stdout ----
+
+thread 'a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule' (2114098) panicked at compiler/tests/task_route_tsan.rs:870:13:
+shared_readers under forced-together with worker 2 held 100 ms: removing the join edge should be reported as a data race:
+[INFO] 42
+QCORE_FORCED start 1
+QCORE_FORCED start 2
+QCORE_FORCED leave 1
+QCORE_FORCED leave 2
+[INFO] 42
+[INFO] 42
+[INFO] 7
+==================
+WARNING: ThreadSanitizer: thread leak (pid=2114117)
+  Thread T1 (tid=2114119, finished) created by main thread at:
+    #0 pthread_create <null> (module+0x655ee) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+    #1 qcore_tsan_thread_create /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/bind.h:68:9 (module+0xed0cf) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+    #2 qcore_forced_create /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/force.h:214:15 (module+0xebe00) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+    #3 qcore_task_start /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/module.c:551:9 (module+0xea65f) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+    #4 qcore_task_fn_1 /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/module.c:626:22 (module+0xeb1c6) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+    #5 main /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/module.c:694:39 (module+0xea3fa) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686)
+
+SUMMARY: ThreadSanitizer: thread leak (/tmp/qcore-task-route-tsan-held-unjoined-shared_readers-forced-together-no-failure-2114096/module+0x655ee) (BuildId: e9e5a976f8d8777eb8b1e1bad0ec4c4e28c3b686) in pthread_create
+==================
+
+
+
+failures:
+    a_held_partner_still_has_its_overlap_reported_under_forced_together
+    a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.55s
+

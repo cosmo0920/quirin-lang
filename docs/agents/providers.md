@@ -101,6 +101,26 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     that test is identified and measured in isolation, this list is known
     incomplete rather than assumed complete. `w36-corpus-contracts-3` §8.1,
     `c-gateway-indirect-census-2` §10.1.
+    **Two ThreadSanitizer rows, measured and then repaired rather than listed
+    (card `W45-TSAN-ROWS-LOAD-SENSITIVE`, wave 45).**
+    `overlapping_writers_are_reported_under_every_schedule` and
+    `removing_the_join_edge_is_reported_under_every_schedule`
+    (`compiler/tests/task_route_tsan.rs`) each failed one integration gate in
+    the runner's parallel phase and passed 5 of 5 alone. On the base binary the
+    whole file measured red in **0 of 10** runs alone and **1 of 40, 2 of 64,
+    13 of 96 and 42 of 128** at **8, 16, 24 and 32** concurrent copies. Both
+    causes were in the harness, not in the detector. The forcing header's exit
+    barrier took and released an instrumented spinlock on every poll (clang
+    instruments atomics even in `no_sanitize("thread")` code), so a worker
+    waiting a few milliseconds for a descheduled partner wrote enough
+    ThreadSanitizer trace to evict its own body's accesses, and TSan v3 drops a
+    race whose earlier stack it cannot restore. The join stand-in slept 50 ms
+    instead of waiting, so a late worker produced a `heap-use-after-free`
+    report, or none. After the repair: **0 of 10** alone and **0 of 40 / 64 /
+    96 / 128** at the same loads. The binary is **not** in the runner's
+    `EXCLUSIVE` table and these rows are not on this list: two held rows force
+    the load on every run. No assertion was weakened. Retires
+    `TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`. `w45-tsan-rows-load-sensitive`.
 <!-- preserved:constraint-16:end -->
 
 <a id="constraint-17"></a>

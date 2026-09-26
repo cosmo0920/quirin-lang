@@ -1,0 +1,18 @@
+{
+ "binary": "task_route_tsan.before",
+ "runs": 128,
+ "concurrent_copies": 32,
+ "args": [],
+ "failing_runs": 42,
+ "failing_rows": {
+  "removing_the_join_edge_is_reported_under_every_schedule": 42,
+  "a_join_deleted_is_caught_by_the_cohort_trigger": 3
+ },
+ "panics": [
+  "panicked at compiler/tests/task_route_tsan.rs:746:13:\nct07-case under forced-together: removing the join edge should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:746:13:\nshared_readers under forced-reverse: removing the join edge should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:746:13:\nshared_readers under forced-together: removing the join edge should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:836:9:\nunder forced-together the deleted join must now be reported:"
+ ],
+ "seconds": 157.1
+}

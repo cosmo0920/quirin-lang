@@ -1,0 +1,43 @@
+
+running 2 tests
+test a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule ... FAILED
+test a_held_partner_still_has_its_overlap_reported_under_forced_together ... ok
+
+failures:
+
+---- a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule stdout ----
+
+thread 'a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule' (2114249) panicked at compiler/tests/task_route_tsan.rs:870:13:
+shared_readers under unforced with worker 1 held 100 ms: removing the join edge should be reported as a data race:
+[INFO] 42
+[INFO] 0
+==================
+WARNING: ThreadSanitizer: heap-use-after-free (pid=2114258)
+  Read of size 8 at 0x725800000010 by thread T1:
+    #0 qcore_task_trampoline /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:534:22 (module+0xebf41) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #1 qcore_tsan_trampoline /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/bind.h:48:14 (module+0xecf7a) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+
+  Previous write of size 8 at 0x725800000010 by main thread:
+    #0 free <null> (module+0x63d7e) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #1 qcore_task_collect /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:576:5 (module+0xea8a9) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #2 qcore_task_fn_1 /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:653:23 (module+0xeb404) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #3 main /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:694:39 (module+0xea3ea) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+
+  Thread T1 (tid=2114260, running) created by main thread at:
+    #0 pthread_create <null> (module+0x655de) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #1 qcore_tsan_thread_create /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/bind.h:68:9 (module+0xebe5f) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #2 qcore_task_start /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:551:9 (module+0xea64f) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #3 qcore_task_fn_1 /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:626:22 (module+0xeb1b6) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+    #4 main /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:694:39 (module+0xea3ea) (BuildId: 82b1e913df25e3514bcb1b76ed1a62fc64780f44)
+
+SUMMARY: ThreadSanitizer: heap-use-after-free /tmp/qcore-task-route-tsan-held-unjoined-shared_readers-unforced-no-failure-2114247/module.c:534:22 in qcore_task_trampoline
+==================
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.54s
+

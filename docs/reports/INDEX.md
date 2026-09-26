@@ -886,6 +886,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |
 
+| [w45-tsan-rows-load-sensitive](w45-tsan-rows-load-sensitive/README.md) | W45-TSAN-ROWS-LOAD-SENSITIVE: why two TSan rows failed under load, and the fix |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
