@@ -1,0 +1,13 @@
+pin: quirin-provider-fluent-bit: 40 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/providers/quirin-provider-fluent-bit/contracts.lock
+  + cb_queue_chunks
+  + sb_allocate_backlogs
+  + sb_allocate_chunk
+  + sb_append_chunk_to_segregated_backlog
+  + sb_append_chunk_to_segregated_backlogs
+  + sb_destroy_backlog
+  + sb_destroy_backlogs
+  + sb_destroy_chunk
+  + sb_release_output_queue_space
+  + sb_remove_chunk_from_segregated_backlog
+  + sb_remove_chunk_from_segregated_backlogs
+  + sb_segregate_chunks

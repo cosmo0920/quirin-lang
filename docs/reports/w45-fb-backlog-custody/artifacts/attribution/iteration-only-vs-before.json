@@ -1,0 +1,232 @@
+{
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only-6b07bd5d/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-2f9131a8/resource-diagnostics.json",
+ "totals": {
+  "after": {
+   "leak": 33,
+   "summary_conflict": 1,
+   "unknown_alias": 3571,
+   "unsupported": 42700
+  },
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3571,
+   "unsupported": 42702
+  }
+ },
+ "units": {
+  "after": {
+   "Unknown": 170,
+   "Safe": 4,
+   "Unsafe": 7,
+   "data_only": 4
+  },
+  "before": {
+   "Unknown": 167,
+   "Safe": 4,
+   "Unsafe": 10,
+   "data_only": 4
+  }
+ },
+ "functions": {
+  "after": {
+   "Unknown": 4436,
+   "Safe": 390,
+   "Unsafe": 8
+  },
+  "before": {
+   "Unknown": 4433,
+   "Safe": 389,
+   "Unsafe": 12
+  }
+ },
+ "status_transitions": {
+  "Unknown -> Safe": 1,
+  "Unsafe -> Unknown": 4
+ },
+ "functions_with_leaf_changes": 5,
+ "leaves_added": 0,
+ "leaves_removed": 6,
+ "added_by_description": {},
+ "removed_by_description": {
+  "unsupported: indirect memory access is outside the resource projection": {
+   "total": 1,
+   "by_line_shape": {
+    "list-header-line:loop:cfl_list_foreach": 1
+   }
+  },
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": {
+   "total": 1,
+   "by_line_shape": {
+    "list-header-line:loop:cfl_list_foreach": 1
+   }
+  },
+  "leak: live obligation acquired at mk_core/mk_rconf.c:456": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:468": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:493": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_vhost.c:609": {
+   "total": 1,
+   "by_line_shape": {
+    "unclassified": 1
+   }
+  }
+ },
+ "status_moves": [
+  {
+   "unit": "cmt_label.c",
+   "function": "cmt_labels_count",
+   "before": "Unknown",
+   "after": "Safe",
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5329,
+     "cmt_label.c:95"
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     5329,
+     "cmt_label.c:95"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_core/mk_rconf.c:456",
+     2101,
+     "mk_core/mk_rconf.c:465"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_create",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:468",
+     6762,
+     "mk_server/mk_lib.c:485"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_set_property",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:493",
+     6780,
+     "mk_server/mk_lib.c:506"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_vhost.c:609",
+     0,
+     null
+    ]
+   ]
+  }
+ ],
+ "added_leaves": [],
+ "removed_leaves": [
+  [
+   "cmt_label.c",
+   "cmt_labels_count",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5329,
+   "cmt_label.c:95",
+   1
+  ],
+  [
+   "cmt_label.c",
+   "cmt_labels_count",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   5329,
+   "cmt_label.c:95",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_read",
+   "leak",
+   "live obligation acquired at mk_core/mk_rconf.c:456",
+   2101,
+   "mk_core/mk_rconf.c:465",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
+   "mk_vhost_create",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:468",
+   6762,
+   "mk_server/mk_lib.c:485",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
+   "mk_vhost_set_property",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:493",
+   6780,
+   "mk_server/mk_lib.c:506",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_set_single",
+   "leak",
+   "live obligation acquired at mk_server/mk_vhost.c:609",
+   0,
+   null,
+   1
+  ]
+ ],
+ "added_leaks": [],
+ "added_violations": []
+}

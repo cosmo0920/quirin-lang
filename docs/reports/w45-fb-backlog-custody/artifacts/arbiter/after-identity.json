@@ -1,0 +1,45 @@
+{
+  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-6b07bd5d",
+  "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
+      "baseline_raw_sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "d44c36b4e140696e5854657000567db2e4da627dba38b85bb7e36e80887451c0",
+      "baseline_raw_sha256": "b6489afec863a1f30d9481be891b61f02e34163954c205bd89b9ae10555a17e3",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "2ff49ab3f3fee1596436eda035a6f8f77b60280876109d78de22950f446727e8",
+      "baseline_raw_sha256": "f43b5a9c860457a03bc1b88ac64380460b4abecc4da239460804f9750eebcf35",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": false
+}

@@ -504,6 +504,22 @@ The grammar is [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1).
 
 **Boundaries.** The pin is enforced where an audit evaluates it: the four routes above. A caller of the gateway API, the checked extern-call route and the other compiler examples apply the environment they are given, in which no pin was evaluated. The scanner is lexical: it never preprocesses, so a site covers every configuration's text, and it balances braces per conditional group. The Lean model is `QCore.ContractRevisionMode`.
 
+### C06.3. Checked specifications
+
+Card W45-FB-BACKLOG-CUSTODY. A resource-v1 declaration MAY carry the contract-level requirement `requires resource_body_checked;` beside the selector. It marks the declaration as a **specification of a body the audit analyses**, not an assumption about an external implementation. The marker changes no mode and adds nothing to the environment's serialized form; a consumer rederives the marked names from the retained texts (`declared_checked_specifications`), exactly as the variadic tail (C04) and the literal premise (C04.5) are rederived. The grammar is [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1).
+
+**Composition with the other markers.** The marker is an ordinary contract-level requirement, read after the revision (C06.2) and review (C06.1) markers are peeled. A pinned or flexible revision marker and this marker compose independently: the revision mode decides whether the declaration is in force for the analysed revision at all, and this marker then decides, inside a unit, whether its body establishes it; a declaration out of force because unpinned is never a specification in that unit. A review marker withholds the declaration, and a withheld declaration is never a specification. No marker wraps `resource_body_checked`: a clause-level marker around it rejects the module.
+
+**Meaning.** A consumer analysing a translation unit MUST apply a checked specification — at the defining body's entry and at every call site of that unit — only while all of the following hold, and MUST otherwise withdraw it from that unit's environment, as a declaration the ABI or mode gate contradicts is withdrawn (C04.1):
+
+1. the unit defines the body inside its derivation scope (C06, W44-CORPUS-CALLEE-SUMMARIES);
+2. the body is not a member of a recursive component of the unit's direct call graph, so no specification is validated through itself (the constraint-4 rule against an assume-guarantee fixed point);
+3. the body **establishes** the specification: analysed under the specification's entry custody, with exactly the checked specifications still standing in force, it is fully modelled, reports no diagnostic, every reachable exit matches every clause (the W4 gate, `observations_match_contract`), and no validated summary of it conflicts with the declaration (C04.1's `SummaryConflict`).
+
+Withdrawal is a descent: each round withdraws every specification the current set does not establish, until a round withdraws none; a round only ever validates against specifications still standing. A withdrawn specification is never trusted: callers see whatever the ordinary W4 inference validates from the body, or an uncontracted call, and the defining function's row carries the diagnostic `declared specification of `NAME` is not established: REASON`, so it is never `Safe`. A consumer that does not implement the marker applies the declaration as an ordinary trusted declaration, so a provider MUST NOT rely on the marker with a consumer that predates it; the C-gateway and every audit route built on it implement it.
+
+**Verdict contract.** An established specification is a result about that body under the unit's other contracts, never about a revision or a unit the consumer did not analyse. A specification is bound by function name and declared signature only; a revision whose C declaration differs is withdrawn by the ABI gate, which is the fail-closed answer. The Lean model is `QCore.CheckedSpecification`.
+
 ## C07. Observation interpreter
 
 The implementation is `crates/qcore-contract/src/contract_observation.rs`. Its input is source text, the selected function name, and a map of fact names to signed `i128` values. The selected declaration MUST be unique, be an extern function, and have a contract. It accepts `requires` clauses and `ensures normal` clauses only, and requires at least one normal postcondition.

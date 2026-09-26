@@ -878,6 +878,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-contract-revision-mode](w45-contract-revision-mode/README.md) | W45-CONTRACT-REVISION-MODE: pinned and flexible contracts, pinned by default |
 
+| [w45-fb-backlog-custody](w45-fb-backlog-custody/README.md) | W45-FB-BACKLOG-CUSTODY: intrusive-list iteration, element identity and checked backlog specifications |
+
 | [w45-fb-backlog-fault-injection](w45-fb-backlog-fault-injection/README.md) | W45-FB-BACKLOG-FAULT-INJECTION — native fault-injection observations |
 
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |

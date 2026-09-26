@@ -1,0 +1,75 @@
+{
+  "card": "W45-FB-BACKLOG-CUSTODY",
+  "closes": [],
+  "narrows": [
+    {
+      "id": "W45-FOR-CLAUSE-ORIGINAL-SPELLING",
+      "how": "The intrusive-list header family (mk_list/cfl_list foreach, plain and safe, next and prev) is now recognised and lowered from the header's original spelling (gateway 5l). Every other for header keeps rule 10c(3). Not retired."
+    },
+    {
+      "id": "W45-FB-SYSTEM-SLICE-RESIDUALS",
+      "how": "Part (5) W45-FB-P1-SLICES, backlog half: the FB-BACKLOG-CUSTODY slice has been run as a semantic card with Rust and audited Lean against the re-pinned (046accf6) denominator, every delta attributed; its obligations remain Unknown with the measured blockers registered here. The retry half and parts (1)-(4) are unchanged. Not retired."
+    }
+  ],
+  "registers": [
+    {
+      "id": "W45-FB-BACKLOG-REFERENCE-VOCABULARY",
+      "title": "Backlog OB-2/OB-3 need a wrapper-to-chunk reference relation, return-conditioned clauses and per-element identity; v1 states none",
+      "why": "W45-FB-BACKLOG-CUSTODY expressed the storage-backlog obligations as checked specifications (providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore, contract spec C06.3). OB-2 (no chunk closed while a wrapper refers to it; the -3 arm of sb_append_chunk_to_segregated_backlogs, observed natively as the partial fan-out ASan use-after-free) and OB-3 (at most one wrapper per chunk per queue) relate a wrapper, a queue and a chunk; the v1 vocabulary states only argument and result custody. Measured reach of a relation clause alone in this slice is 0: the chunk is an element of stream->chunks (sb_segregate_chunks) or of a wrapper (cb_queue_chunks), both untracked by the projection, and the failing insertion is inside a loop whose callee has no return-conditioned summary. DISCHARGE: a C09 relation clause (wrapper refers to chunk; close requires no outstanding reference), a return-conditioned clause, and per-element abstract identities for admitted list iterations, with loader, gateway and Lean parity, then the slice as arbiter deciding OB-2 on the -3 arm; any refutation stays a provisional Unsafe, never an upstream defect claim.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-FB-BACKLOG-MAP-ARMS",
+      "title": "flb_input_chunk_map's chunk has three dispositions (stored, closed on the routes_mask arm, left open); no v1 mode is faithful, so OB-4/OB-5 stay Unknown",
+      "why": "W45-FB-BACKLOG-CUSTODY left flb_input_chunk_map undeclared: on success the chunk is stored into the returned input chunk, on the routes_mask allocation failure it is closed (BC-1), and on the other NULL arms it is left open. OB-5 (chunk closed exactly once on a NULL map return; cb_queue_chunks closes it again) and OB-4 are therefore not decidable; BC-1 remains a source-reading candidate. Unchanged between 864c3d97 and 046accf6. DISCHARGE: a per-arm (or per-return) disposition clause in C09 with loader/gateway/Lean parity, or a source argument; then the backlog slice deciding OB-5.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-FB-BACKLOG-REACHABLE-RELEASE",
+      "title": "Backlog OB-6/OB-7/OB-10: callees release objects reachable from their arguments (wrappers of a queue); v1 Borrowed states nothing about them",
+      "why": "sb_remove_chunk_from_segregated_backlogs, sb_destroy_backlog(s) and sb_release_output_queue_space free wrappers (and queues) reached through a borrowed context; their checked specifications (all Borrowed) are not established by the bodies, whose element releases refuse as unresolved identities. OB-6 (no wrapper used after a callee frees it), OB-7 (eviction retires every wrapper before the close) and OB-10 (teardown) need a clause for objects released through what an argument reaches (P-B08-SHALLOW is the current premise). DISCHARGE: such a clause with parity, or a container-ownership relation for list elements, then the slice as arbiter.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-FB-BACKLOG-CIO-RETURN-CODES",
+      "title": "Backlog OB-9 needs ChunkIO return-code summaries (cio_chunk_up_force CIO_OK/CIO_ERROR/CIO_CORRUPTED/CIO_RETRY) and the uncontracted cio_chunk_lock/cio_error_get/cio_chunk_get_real_size",
+      "why": "sb_segregate_chunks' end states per chunk (OB-9) depend on ChunkIO return codes; cio_chunk_lock, cio_error_get and cio_chunk_get_real_size are uncontracted in the slice. Facts belong in qcore-provider-chunkio. DISCHARGE: ChunkIO declarations read against their bodies (in qcore-provider-chunkio) and a return-code-conditioned vocabulary, then the slice deciding OB-9.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
+      "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
+      "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-ILI-PREMISES",
+      "title": "Intrusive-list iteration (gateway 5l) rests on stated premises; 43 element and 34 header leaves stay refused",
+      "why": "Gateway constraint 5l admits mk_list/cfl_list headers and container_of element reads under four premises stated, not proved: P-ILI-BODY (checked lexically), P-ILI-UNTRACKED (an element is not an identity the body tracks; the lexical guard declines a function where one call receives both &X->... of a possibly tracked X and the iterated head; linking through a wrapper call is P-B08-SHALLOW), P-ILI-CALLEE-FRAME (a callee handed the container does not unlink the protected node; OB-7 depends on it) and P-ILI-BRACED. Rule 4 added no refusal in the corpus or the slice (17 plain bodies with an unlink or release call; the two read release another object or unlink a second link; 15 not read individually). After the card, 43 element-read braced leaves and 34 list-header for-loop leaves remain in the corpus (from 326 and 269), declined by the guard, an untyped head chain or an unbraced body. DISCHARGE: per premise, a model of the callee frame or a measured guard refinement with its re-pin; per residual leaf class, an admission with its own measurement.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-MK-HTTP-ERROR-FD-LEAK",
+      "title": "mk_http_error: descriptor from open() on the custom-error-page arm is never closed (provisional Unsafe candidate)",
+      "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and neither closed nor stored before the return at :1315 on the custom-error-page arm; the source's own comment reads 'This fd seems to be leaked'. It is the card's one added leak after its refused-call hand-on repair; unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    },
+    {
+      "id": "W45-FB-BACKLOG-FOREIGN-UNLINK",
+      "title": "Rule 10d refuses unlinking an entry this function did not publish; it blocks the backlog's retirement legs (OB-3, OB-7, OB-10) and 17 corpus leaves in 14 teardown functions",
+      "why": "sb_remove_chunk_from_segregated_backlog and sb_destroy_backlogs unlink wrappers (queues) that another function published (sb_append_chunk_to_segregated_backlog, sb_allocate_backlogs); W45-FB-RETRY-LIFETIME's rule 10d refuses 'unlink by mk_list_del of X, which this function has not published'. W45-FB-BACKLOG-CUSTODY's safe-iteration admission makes 17 such element unlinks reachable in 14 corpus teardown functions (mk_rconf_free, mk_vhost_destroy, flb_input_chunk_destroy, ...), each an exchange for an earlier refusal, fail-closed. DISCHARGE: an unlink of an element of a container the caller owns or borrows, stated against the container's membership (a caller-side publication premise or a container-element identity), with parity and a corpus re-pin.",
+      "source": "docs/reports/w45-fb-backlog-custody/README.md",
+      "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+    }
+  ],
+  "notes": [
+    "MK-LIST-ADD-BORROWED-PUBLICATION: the refused-call hand-on repair (gateway 5l clause 5) withdraws its four standing leaves (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) to Unknown; none is discharged. Not retired by this card."
+  ]
+}

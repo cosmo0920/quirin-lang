@@ -80,7 +80,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
     // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
     // `fluent_bit/output_singleplex.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 49);
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // (twelve checked specifications, contract spec C06.3).
+    assert_eq!(contracts.source_assumptions().len(), 50);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -521,6 +523,31 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "fileno",
         ResourceFunctionContract::new([P::Borrowed], R::None),
     );
+    // Card W45-FB-BACKLOG-CUSTODY: the twelve checked specifications of
+    // `fluent_bit/storage_backlog.qcore`; ten borrow every argument and return
+    // no custody (the canonical form below drops their trailing `Borrowed`s).
+    old.insert_contract(
+        "sb_allocate_chunk",
+        ResourceFunctionContract::new([], R::Owned { nullable: true }),
+    );
+    old.insert_contract(
+        "sb_destroy_chunk",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
+    for name in [
+        "sb_destroy_backlog",
+        "sb_allocate_backlogs",
+        "sb_destroy_backlogs",
+        "sb_remove_chunk_from_segregated_backlog",
+        "sb_remove_chunk_from_segregated_backlogs",
+        "sb_append_chunk_to_segregated_backlog",
+        "sb_append_chunk_to_segregated_backlogs",
+        "sb_segregate_chunks",
+        "sb_release_output_queue_space",
+        "cb_queue_chunks",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Card W45-FB-RETRY-LIFETIME: `mk_list_add` keeps its borrowed modes and
     // gains the publication its body performs (contract specification
     // C04.8); `mk_list_del` is its new converse. The Fluent Bit counter
@@ -884,7 +911,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
     // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
     // `fluent_bit/output_singleplex.qcore`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 49);
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // (twelve checked specifications, contract spec C06.3).
+    assert_eq!(certificate.contracts.source_assumptions().len(), 50);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1102,7 +1131,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 111 -> 113: card W45-FB-RETRY-LIFETIME adds `fluent_bit/task_users.qcore`
     // and `fluent_bit/output_singleplex.qcore`, entirely v1 and
     // manifest-selected.
-    assert_eq!(modules.len(), 113, "corpus module count");
+    // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
+    // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
+    // and manifest-selected.
+    assert_eq!(modules.len(), 114, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1246,9 +1278,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 47 -> 49 and 155 -> 162 by card W45-FB-RETRY-LIFETIME: two new
     // `fluent_bit/` modules (six declarations) and `mk_list_del` appended to
     // the already-selected `monkey/intrusive_list.qcore`. Rejected unchanged.
+    // 49 -> 50 and 162 -> 174 by card W45-FB-BACKLOG-CUSTODY: the twelve
+    // checked specifications of `fluent_bit/storage_backlog.qcore`.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (49, 162, 216)
+        (50, 174, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
