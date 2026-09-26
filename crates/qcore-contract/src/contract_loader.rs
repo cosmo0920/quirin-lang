@@ -415,6 +415,10 @@ struct LoadedDeclaration {
     /// Card W45-CONTRACT-DEFERRED-REVIEW: every review marker, in clause
     /// order. Nonempty withholds the whole contract.
     review: Vec<ReviewDeferral>,
+    /// Card W45-FB-BACKLOG-CUSTODY: the declaration carries
+    /// `requires resource_body_checked;` (§C06.2): it is a specification of a
+    /// body the audit analyses, applied only where that body establishes it.
+    body_checked: bool,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -742,6 +746,47 @@ pub fn declared_literal_argument_premises(
     literal_argument_premises(contracts.source_assumptions())
 }
 
+/// The declarations of `sources` that carry `requires resource_body_checked;`
+/// (card W45-FB-BACKLOG-CUSTODY, §C06.2), keyed by function name.
+///
+/// Derived from the same trusted texts [`load_resource_contract_sources`]
+/// reads and total-or-reject in the same way. A consumer must treat an error
+/// as a refusal of every declaration it cannot classify, never as an empty
+/// set: an empty set would trust a specification as a declaration, which is
+/// the fail-open direction.
+pub fn checked_specifications(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
+    let mut checked = BTreeSet::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if loaded.body_checked {
+                checked.insert(decl.name.clone());
+            }
+        }
+    }
+    Ok(checked)
+}
+
+/// The checked specifications of an environment, rederived from its
+/// **retained trusted sources**. An environment with no declared sources has
+/// none: an inferred summary is never a specification.
+pub fn declared_checked_specifications(
+    contracts: &ResourceContracts,
+) -> Result<BTreeSet<String>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeSet::new());
+    }
+    checked_specifications(contracts.source_assumptions())
+}
+
 /// The variadic data tails of an environment, rederived from its **retained
 /// trusted sources**.
 ///
@@ -931,6 +976,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.abi != parent_loaded.abi
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
+            || child_loaded.body_checked != parent_loaded.body_checked
         {
             return Err(refuse(format!(
                 "`{child_name}` would not mean what its parent `{}` means under the resource-v1 \
@@ -1008,6 +1054,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .ok_or("unsupported signature, effects, or declaration suffix")?;
 
     let mut marker = false;
+    let mut body_checked = false;
     let mut variadic_data_tail = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut parameters = vec![None; decl.parameters.len()];
@@ -1066,6 +1113,15 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     ));
                 }
                 marker = true;
+                continue;
+            }
+            // Card W45-FB-BACKLOG-CUSTODY: the checked-specification marker, a
+            // contract-level requirement with no argument, at most once.
+            if token_kinds(expression)? == token_kinds(BODY_CHECKED_MARKER)? {
+                if body_checked {
+                    return Err(format!("duplicate requirement `{expression}`"));
+                }
+                body_checked = true;
                 continue;
             }
             // Card HASH-CLAUSE. The only other admitted precondition: the
@@ -1310,8 +1366,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             variadic_data_tail,
         },
         review,
+        body_checked,
     })
 }
+
+/// The checked-specification marker (card W45-FB-BACKLOG-CUSTODY, §C06.2).
+pub const BODY_CHECKED_MARKER: &str = "resource_body_checked";
 
 /// The clause introducer of a review marker (card W45-CONTRACT-DEFERRED-REVIEW).
 pub const REVIEW_MARKER: &str = "resource_review_pending";

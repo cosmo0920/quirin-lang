@@ -142,6 +142,9 @@ pub(crate) struct FunctionFacts {
     /// P-ILI-UNTRACKED's lexical guard held: no call receives `&X->…` or
     /// `&X.…` for a name `X` this function may bind to a tracked identity.
     pub(crate) guard_holds: bool,
+    /// Every name the body writes, steps or takes the whole address of,
+    /// wherever it does (a `for` header included).
+    pub(crate) written: BTreeSet<String>,
 }
 
 fn texts(tokens: &[Token]) -> Vec<&str> {
@@ -213,9 +216,30 @@ fn cursor_step(clause: &[&str], destination: &str, source: &str, direction: &str
 /// Rule 1's lexical half: the three clauses of a `for` header, groups intact.
 pub(crate) fn recognise_header(clauses: &[Token]) -> Option<HeaderShape> {
     let [init, condition, increment] = super::parenthesised_callee::for_clauses(clauses)?;
-    let init = texts(&init);
-    let condition = texts(&condition);
-    let increment = texts(&increment);
+    recognise_clauses(&texts(&init), &texts(&condition), &texts(&increment))
+}
+
+/// The header's three clauses split at top-level `;`, groups intact.
+fn clause_texts<'a, 'b>(header: &'b [&'a str]) -> Option<[&'b [&'a str]; 3]> {
+    let mut parts = Vec::new();
+    let mut depth = 0usize;
+    let mut start = 0usize;
+    for (index, text) in header.iter().enumerate() {
+        match *text {
+            "(" | "[" | "{" => depth += 1,
+            ")" | "]" | "}" => depth = depth.checked_sub(1)?,
+            ";" if depth == 0 => {
+                parts.push(&header[start..index]);
+                start = index + 1;
+            }
+            _ => {}
+        }
+    }
+    parts.push(&header[start..]);
+    parts.try_into().ok()
+}
+
+fn recognise_clauses(init: &[&str], condition: &[&str], increment: &[&str]) -> Option<HeaderShape> {
     let init_parts = top_level_commas(&init);
     let increment_parts = top_level_commas(&increment);
     let cursor = *init.first()?;
@@ -602,51 +626,87 @@ pub(crate) fn function_facts(body: &[&str], bases: &UntrackedBases) -> FunctionF
         }
     }
     let element_names: BTreeSet<String> = element.difference(&other).cloned().collect();
-    let mut guard_holds = true;
-    for (_, spans) in call_sites(body) {
-        for (start, end) in spans {
-            let argument = strip_groups(&body[start..end]);
-            if let ["&", root, rest @ ..] = argument
-                && is_name(root)
-                && matches!(rest.first(), Some(&"-") | Some(&"."))
-                && !bases.never_bound(root)
-                && !element_names.contains(*root)
+    // The head spelling of every list iteration header of the body.
+    let mut heads: BTreeSet<Vec<&str>> = BTreeSet::new();
+    for index in 0..body.len() {
+        if body[index] != "for" || body.get(index + 1) != Some(&"(") {
+            continue;
+        }
+        let Some(close) = close_of(body, index + 1) else {
+            continue;
+        };
+        if let Some([init, condition, increment]) = clause_texts(&body[index + 2..close])
+            && let Some(shape) = recognise_clauses(init, condition, increment)
+        {
+            let head = shape.head.clone();
+            if let Some(found) = body[index + 2..close]
+                .windows(head.len())
+                .find(|window| window.iter().copied().eq(head.iter().map(String::as_str)))
             {
-                guard_holds = false;
+                heads.insert(found.to_vec());
             }
         }
     }
-    FunctionFacts { guard_holds }
+    // P-ILI-UNTRACKED's guard: no call receives both the member address of a
+    // name that may hold a tracked identity and the head of a list the body
+    // iterates — the spelling of linking a tracked object into that list.
+    let mut guard_holds = true;
+    for (_, spans) in call_sites(body) {
+        let arguments = spans
+            .iter()
+            .map(|(start, end)| strip_groups(&body[*start..*end]))
+            .collect::<Vec<_>>();
+        let links_tracked = arguments.iter().any(|argument| {
+            matches!(argument, ["&", root, rest @ ..]
+                if is_name(root)
+                    && matches!(rest.first(), Some(&"-") | Some(&"."))
+                    && !bases.never_bound(root)
+                    && !element_names.contains(*root))
+        });
+        let names_iterated_head = arguments
+            .iter()
+            .any(|argument| heads.iter().any(|head| head.as_slice() == *argument));
+        if links_tracked && names_iterated_head {
+            guard_holds = false;
+        }
+    }
+    let written = (0..body.len())
+        .filter(|index| is_name(body[*index]) && written_at(body, *index))
+        .map(|index| body[index].to_owned())
+        .collect();
+    FunctionFacts {
+        guard_holds,
+        written,
+    }
 }
 
 /// P-ILI-BODY: the body writes, steps or takes the address of none of `names`.
 pub(crate) fn body_leaves_cursors(body: &[&str], names: &[&str]) -> bool {
-    for index in 0..body.len() {
-        if !names.contains(&body[index]) {
-            continue;
-        }
-        let next = body.get(index + 1).copied();
-        let after = body.get(index + 2).copied();
-        let previous = index.checked_sub(1).map(|at| body[at]);
-        let before = index.checked_sub(2).map(|at| body[at]);
-        if matches!(previous, Some("." | ">")) {
-            continue;
-        }
-        let assigned = next == Some("=") && after != Some("=");
-        let compound = matches!(
-            next,
-            Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" | "<" | ">")
-        ) && (after == Some("=") || matches!((next, after), (Some("<"), Some("<")) | (Some(">"), Some(">"))));
-        let stepped = matches!((next, after), (Some("+"), Some("+")) | (Some("-"), Some("-")))
-            || matches!((before, previous), (Some("+"), Some("+")) | (Some("-"), Some("-")));
-        let continues = matches!(next, Some("-") if after == Some(">"))
-            || matches!(next, Some(".") | Some("["));
-        let addressed = previous == Some("&") && !continues;
-        if assigned || compound || stepped || addressed {
-            return false;
-        }
+    (0..body.len()).all(|index| !names.contains(&body[index]) || !written_at(body, index))
+}
+
+/// Whether the name at `index` is written (`x =`, `x op=`), stepped or has
+/// its whole address taken there. Over-approximates: `x <= y` counts.
+fn written_at(body: &[&str], index: usize) -> bool {
+    let next = body.get(index + 1).copied();
+    let after = body.get(index + 2).copied();
+    let previous = index.checked_sub(1).map(|at| body[at]);
+    let before = index.checked_sub(2).map(|at| body[at]);
+    if matches!(previous, Some("." | ">")) {
+        return false;
     }
-    true
+    let assigned = next == Some("=") && after != Some("=");
+    let compound = matches!(
+        next,
+        Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" | "<" | ">")
+    ) && (after == Some("=")
+        || matches!((next, after), (Some("<"), Some("<")) | (Some(">"), Some(">"))));
+    let stepped = matches!((next, after), (Some("+"), Some("+")) | (Some("-"), Some("-")))
+        || matches!((before, previous), (Some("+"), Some("+")) | (Some("-"), Some("-")));
+    let continues = matches!(next, Some("-") if after == Some(">"))
+        || matches!(next, Some(".") | Some("["));
+    let addressed = previous == Some("&") && !continues;
+    assigned || compound || stepped || addressed
 }
 
 /// Rule 4 over one statement's texts: the description of the refusal, if
@@ -920,7 +980,16 @@ impl super::Parser<'_> {
                 }
                 (Vec::new(), Vec::new())
             }
-            [name] if is_name(name) && self.typed_bases.never_bound(name) => (Vec::new(), Vec::new()),
+            // A formal the body never writes, never binds and never
+            // addresses: the callback idiom `ctx = container_of(arg, …)`.
+            [name]
+                if is_name(name)
+                    && self.formal_parameters.contains(*name)
+                    && !self.list_facts.written.contains(*name)
+                    && self.typed_bases.never_bound(name) =>
+            {
+                (Vec::new(), Vec::new())
+            }
             ["(", ..] => {
                 let close = close_of(&pointer, 0)?;
                 match &pointer[close + 1..] {

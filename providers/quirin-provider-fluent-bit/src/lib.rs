@@ -70,6 +70,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/routes_mask.qcore"),
     ),
     (
+        "fluent_bit/storage_backlog.qcore",
+        include_str!("../contracts/fluent_bit/storage_backlog.qcore"),
+    ),
+    (
         "fluent_bit/time.qcore",
         include_str!("../contracts/fluent_bit/time.qcore"),
     ),

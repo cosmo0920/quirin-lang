@@ -199,6 +199,7 @@
         "fluent_bit/resource_memory.qcore",
         "fluent_bit/resource_string.qcore",
         "fluent_bit/routes_mask.qcore",
+        "fluent_bit/storage_backlog.qcore",
         "fluent_bit/time.qcore"
       ],
       "published": {},
@@ -214,6 +215,7 @@
         "fluent_bit/resource_memory.qcore",
         "fluent_bit/resource_string.qcore",
         "fluent_bit/routes_mask.qcore",
+        "fluent_bit/storage_backlog.qcore",
         "fluent_bit/time.qcore"
       ]
     },

@@ -122,6 +122,10 @@ mod generic_selection;
 // file only carries the hooks marked with the card's name.
 #[path = "legacy_list_iteration.rs"]
 pub(crate) mod list_iteration;
+// Card W45-FB-BACKLOG-CUSTODY: a declaration marked `resource_body_checked` is
+// in force only where its body establishes it (contract spec §C06.2).
+#[path = "legacy_checked_spec.rs"]
+pub(crate) mod checked_spec;
 
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
@@ -2507,14 +2511,34 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // rows analysed and reported below stay `names` alone.
     let scope =
         callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
-    let gate = declared_modes::ModeGate::apply(&tokens, &scope, contracts);
+    // Card W45-FB-BACKLOG-CUSTODY: a checked specification stays in the
+    // environment the gate derives over only while its body establishes it.
+    let checked_spec::Settled {
+        gate,
+        withdrawn: withdrawn_specifications,
+    } = checked_spec::settle(&tokens, &scope, contracts);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
     for name in names {
         match analyze_defined_function(&tokens, &name, &derivation) {
-            Ok(summary) => {
+            Ok(mut summary) => {
+                // Card W45-FB-BACKLOG-CUSTODY: a withdrawn specification keeps
+                // its defining function out of `Safe`.
+                if let Some(description) =
+                    checked_spec::diagnostic(&withdrawn_specifications, &name)
+                {
+                    let line = find_function_body(&tokens, &name).map_or(0, |(_, line)| line);
+                    summary.diagnostics.push(LegacyDiagnostic {
+                        function: name.clone(),
+                        line,
+                        kind: LegacyDiagnosticKind::Unsupported { description },
+                    });
+                    summary.diagnostics.sort();
+                    summary.diagnostics.dedup();
+                    summary.status = classify_diagnostics(&summary.diagnostics);
+                }
                 functions.insert(name, summary);
             }
             Err(error @ LegacyCError::MalformedFunction { .. }) => {
