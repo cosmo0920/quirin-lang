@@ -1,0 +1,10 @@
+{
+ "binary": "task_route_tsan.after",
+ "runs": 96,
+ "concurrent_copies": 24,
+ "args": [],
+ "failing_runs": 0,
+ "failing_rows": {},
+ "panics": [],
+ "seconds": 141.1
+}

@@ -1,0 +1,61 @@
+{
+ "runs": 3,
+ "mutations": {
+  "loud-barrier": [
+   {
+    "run": 1,
+    "exit": 101,
+    "failed": [
+     "a_held_partner_still_has_its_overlap_reported_under_forced_together",
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   },
+   {
+    "run": 2,
+    "exit": 101,
+    "failed": [
+     "a_held_partner_still_has_its_overlap_reported_under_forced_together",
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   },
+   {
+    "run": 3,
+    "exit": 101,
+    "failed": [
+     "a_held_partner_still_has_its_overlap_reported_under_forced_together",
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   }
+  ],
+  "sleep-50ms": [
+   {
+    "run": 1,
+    "exit": 101,
+    "failed": [
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   },
+   {
+    "run": 2,
+    "exit": 101,
+    "failed": [
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   },
+   {
+    "run": 3,
+    "exit": 101,
+    "failed": [
+     "a_held_worker_still_has_the_removed_join_edge_reported_under_every_schedule"
+    ]
+   }
+  ]
+ },
+ "baseline": [
+  {
+   "run": 1,
+   "exit": 0,
+   "failed": []
+  }
+ ]
+}

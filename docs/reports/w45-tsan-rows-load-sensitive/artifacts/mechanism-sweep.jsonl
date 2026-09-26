@@ -1,0 +1,68 @@
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 0, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 1, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 2, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 6}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 3, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 6}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 5, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 100, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 5, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=7", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 10, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=7", "runs": 10, "caught": 3}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=7", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 100, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=7", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 1, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=0", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 2, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=0", "runs": 10, "caught": 8}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 3, "delayed": 2, "tsan_options": "halt_on_error=1:history_size=0", "runs": 10, "caught": 8}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "slow-barrier", "delay_ms": 5, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "slow-barrier", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "slow-barrier", "delay_ms": 100, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 5, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 100, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "quiet-barrier", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "quiet-finish", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "no-start-print", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 1, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 0}
+{"subject": "overlap-ct07-case-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 1, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 10, "caught": 10}
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "count", "delay_ms": 2, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 4}
+['EXPERIMENT spins 0', 'EXPERIMENT spins 23044'] missed
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "count", "delay_ms": 3, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 3}
+['EXPERIMENT spins 0', 'EXPERIMENT spins 36866'] missed
+['EXPERIMENT spins 0', 'EXPERIMENT spins 41775'] missed
+['EXPERIMENT spins 0', 'EXPERIMENT spins 36949'] missed
+['EXPERIMENT spins 0', 'EXPERIMENT spins 39561'] missed
+{"subject": "overlap-ct07-case-forced-together-no-failure-1733662", "variants": "count", "delay_ms": 5, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 0}
+{"subject": "unjoined-shared_readers-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 0, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+['EXPERIMENT spins 38', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 31', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 53', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 25', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 53', 'EXPERIMENT spins 0'] race
+{"subject": "unjoined-shared_readers-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 0, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+{"subject": "unjoined-shared_readers-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 0}
+['EXPERIMENT spins 0', 'EXPERIMENT spins 237071'] race
+['EXPERIMENT spins 0', 'EXPERIMENT spins 193202'] race
+['EXPERIMENT spins 0', 'EXPERIMENT spins 253219'] race
+['EXPERIMENT spins 0', 'EXPERIMENT spins 169530'] race
+['EXPERIMENT spins 0', 'EXPERIMENT spins 205651'] race
+{"subject": "unjoined-shared_readers-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+{"subject": "unjoined-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 0, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+['EXPERIMENT spins 15', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 41', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 39', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 28', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 11', 'EXPERIMENT spins 0'] race
+{"subject": "unjoined-ct07-case-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 0, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+{"subject": "unjoined-ct07-case-forced-together-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 0}
+['EXPERIMENT spins 234459', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 218655', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 244427', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 253408', 'EXPERIMENT spins 0'] race
+['EXPERIMENT spins 0', 'EXPERIMENT spins 191720'] race
+{"subject": "unjoined-ct07-case-forced-together-no-failure-1733662", "variants": "relaxed-barrier", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 5, "caught": 5}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 1, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 4}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 60, "delayed": 1, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 0}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 120, "delayed": 1, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 0}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 20, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 4}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 60, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 0}
+{"subject": "unjoined-shared_readers-forced-reverse-no-failure-1733662", "variants": "shipped", "delay_ms": 120, "delayed": 2, "tsan_options": "halt_on_error=1", "runs": 4, "caught": 0}

@@ -1,0 +1,21 @@
+{
+  "card": "W45-TSAN-ROWS-LOAD-SENSITIVE",
+  "base": "5e9630fe",
+  "note": "Standing gate on the card's tree (scripts/gate.sh), CARGO_INCREMENTAL=0; the Rust suite three times through scripts/run_test_binaries.py; logs in the worktree's private/w45-gate-1/.",
+  "rust_runs": [
+    "test binaries: 297 units, 307 summaries; 5788 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out",
+    "test binaries: 297 units, 307 summaries; 5788 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out",
+    "test binaries: 297 units, 307 summaries; 5788 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out"
+  ],
+  "task_route_tsan": {"phase": "parallel", "exclusive": false, "result_each_run": "20 passed; 0 failed; 1 ignored"},
+  "cargo_fmt": 0,
+  "cargo_clippy": 0,
+  "reevaluation_probe": 0,
+  "reevaluation_followup": 0,
+  "lean_audits": {"exit": 0, "passed": 195},
+  "python_tests": {"exit": 0, "ran": 358},
+  "docs_index_check": 0,
+  "provider_workspace": "not run: no providers/ change",
+  "corpus_arbiter": "not run: no analyser code changed",
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

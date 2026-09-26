@@ -1,0 +1,14 @@
+{
+ "binary": "task_route_tsan.before",
+ "runs": 64,
+ "concurrent_copies": 16,
+ "args": [],
+ "failing_runs": 2,
+ "failing_rows": {
+  "overlapping_writers_are_reported_under_every_schedule": 2
+ },
+ "panics": [
+  "panicked at compiler/tests/task_route_tsan.rs:690:13:\nct07-case under forced-together: the overlapping writers should be reported:"
+ ],
+ "seconds": 79.5
+}

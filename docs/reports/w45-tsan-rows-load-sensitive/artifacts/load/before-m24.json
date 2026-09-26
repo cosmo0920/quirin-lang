@@ -1,0 +1,18 @@
+{
+ "binary": "task_route_tsan.before",
+ "runs": 96,
+ "concurrent_copies": 24,
+ "args": [],
+ "failing_runs": 13,
+ "failing_rows": {
+  "overlapping_writers_are_reported_under_every_schedule": 2,
+  "removing_the_join_edge_is_reported_under_every_schedule": 11
+ },
+ "panics": [
+  "panicked at compiler/tests/task_route_tsan.rs:690:13:\nct07-case under forced-together: the overlapping writers should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:690:13:\ndisjoint-exercise under forced-together: the overlapping writers should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:746:13:\nshared_readers under forced-reverse: removing the join edge should be reported:",
+  "panicked at compiler/tests/task_route_tsan.rs:746:13:\nshared_readers under forced-together: removing the join edge should be reported:"
+ ],
+ "seconds": 119.8
+}
