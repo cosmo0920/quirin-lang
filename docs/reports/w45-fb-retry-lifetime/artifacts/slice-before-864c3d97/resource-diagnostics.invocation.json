@@ -1,0 +1,83 @@
+{
+  "argv": [
+    "quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/slice-before/resource-diagnostics.json",
+    "--selection",
+    "contract/profiles/fluent-bit/system-selection.json",
+    "--jobs",
+    "4"
+  ],
+  "build_profile": "release",
+  "checkout": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/fluent-bit-clang-source",
+  "clang": {
+    "program": "/usr/lib/llvm-21/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+  },
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "8176d9f1a05c0b4e99aaf368b30346659fb368b8e36a5d65abbae5be0f05bb5e",
+  "configuration": null,
+  "configuration_sha256": null,
+  "contracts": {
+    "manifest": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+    "manifest_sha256": "801afee7e39da835c0ae4d8c2def301cd55fa3795c3f5b8fbd909104c93d9151",
+    "selection": null,
+    "source": "profile_manifest"
+  },
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5",
+  "environment": {
+    "QCORE_AUDIT_JOBS": null,
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "gateway_failures": false,
+  "jobs": {
+    "effective": 4,
+    "requested": 4,
+    "source": "command_line"
+  },
+  "mode": "configured",
+  "monkey_database": null,
+  "monkey_database_sha256": null,
+  "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5/contract/profiles/fluent-bit",
+  "reports": {
+    "binding_directory": null,
+    "monkey_source_report": null,
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/slice-before/resource-diagnostics.json"
+  },
+  "schema_version": 1,
+  "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
+  "selection": {
+    "description": "Card W45-FB-SYSTEM-SELECTION: the eight Fluent Bit engine, backlog and retry files of the system-coverage census (docs/plans/fluent-bit-system-coverage/README.md, FB-SYSTEM-CENSUS), audited as a separate slice over the unchanged fluent-bit profile. Every distinct compilation configuration is kept, so the static and shared variants of the core files are separate units. This file does not change the profile's audit.json 185-unit selection.",
+    "groups": [
+      {
+        "files": [
+          "plugins/in_storage_backlog/sb.c",
+          "src/flb_input_chunk.c",
+          "src/flb_storage.c",
+          "src/flb_task.c",
+          "src/flb_engine.c",
+          "src/flb_engine_dispatch.c",
+          "src/flb_scheduler.c",
+          "src/flb_output.c"
+        ],
+        "label": "fluent-bit-system",
+        "library": "fluent_bit"
+      }
+    ],
+    "name": "fluent-bit-system",
+    "path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5/contract/profiles/fluent-bit/system-selection.json",
+    "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
+    "sha256": "d7e8ce764c8c45c8df11d33f3568a7a653c3281985028156229c43ab86cccdde"
+  },
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "tool": "quirin-audit current",
+  "tool_version": "0.1.0"
+}
