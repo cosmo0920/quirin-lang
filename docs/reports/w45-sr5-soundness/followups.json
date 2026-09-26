@@ -1,0 +1,23 @@
+[
+  {
+    "id": "W45-SR5-DECLARED-RELEASE-DOES-NOT-CASCADE",
+    "title": "Rule 5k reads a bodiless declared release as releasing no member (P-B08-SHALLOW); a declared destructor that does is invisible",
+    "why": "MEASURED by card W45-SR5-SOUNDNESS: rule 5k now reads every R(B) of a member-releasing body for what R does to B->F, but only where the unit defines R's body (crates/qcore-c-gateway/src/legacy_member_release.rs, member_effect). A callee with no body here is governed by its declaration, and a declared release is read as not cascading to members (P-B08-SHALLOW, stated not proved): `free(n->buf); lib_node_destroy(n);` with `lib_node_destroy` declared `resource_released(n)` in a provider and defined in another unit stays Safe (pinned as the control in crates/qcore-c-gateway/tests/sr5_soundness.rs, a_declaration_does_not_hide_the_body_this_unit_defines). Size: at most the 7 corpus functions W45-CALLEE-SUMMARY-CASCADE moved to Safe through rule 1, which release through `free`, `rd_free` and `mk_mem_free` (declared releases of one object). DISCHARGE: a contract clause that states which members a declared release releases (or that it releases none), checked where a unit defines the body, and rule 5k reading it.",
+    "source": "docs/reports/w45-sr5-soundness/README.md",
+    "recorded_by": "W45-SR5-SOUNDNESS"
+  },
+  {
+    "id": "W45-SR5-PENDING-INVENTORY-ARM-UNDRIVEN",
+    "title": "The audit's inventory arm that withholds a Pending unit is driven by no fixture",
+    "why": "MEASURED by card W45-SR5-SOUNDNESS: crates/qcore-audit/src/projection.rs now makes a Pending unit Unknown when the enumeration inventory does not support a unit Safe, as it already withheld a Safe one. The audit-route fixture (crates/qcore-audit/tests/sr5_pending_gates.rs) reaches the gateway's unread-definition gate first (its reason names `kr_width`), so this arm, like the Safe arm beside it, turns no test red when deleted. Fail-closed by reading. Size: 1 arm. DISCHARGE: a fixture whose enumeration completeness is refused (an undecided conditional group) beside a held call, asserting the unit Unknown with the inventory's reason.",
+    "source": "docs/reports/w45-sr5-soundness/README.md",
+    "recorded_by": "W45-SR5-SOUNDNESS"
+  },
+  {
+    "id": "W45-SR5-SCALAR-READ-STAR-THROUGH-CAST",
+    "title": "Rule 5j does not count a `*` applied through a cast group before a member or subscript root (`*(T *)q->f`)",
+    "why": "INFERRED by card W45-SR5-SOUNDNESS from crates/qcore-c-gateway/src/legacy_return_family.rs (stars_before stops at the `)` of a cast group): for a name the body may bind, `return *(T *)q->f;` reads `q->f` and dereferences the value, two dereferences, while the reader sees one. Pre-existing (the base reader read the same), found while repairing SCALAR-READ-PARENTHESISED-DOUBLE-DEREF; the first AFTER run showed the neighbouring shape `*(int32_t *)rl->rl_elems[idx]` (rd_list_get_int32) keeps its refusal only through the cast's type name. Size: 4 textual `return *(T *)X->F` or `X[I]` shapes in the pinned Fluent Bit tree (rdlist.c:588, pb_encode.c:257,262,303); no corpus verdict moved at base or after. DISCHARGE: a `*` before a cast group that precedes a may-bind root counts as a dereference of that root's read, with a unit pin.",
+    "source": "docs/reports/w45-sr5-soundness/README.md",
+    "recorded_by": "W45-SR5-SOUNDNESS"
+  }
+]

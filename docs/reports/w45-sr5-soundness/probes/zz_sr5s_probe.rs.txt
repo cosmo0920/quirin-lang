@@ -47,7 +47,13 @@ fn kinds(summary: &LegacyProgramSummary, function: &str) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn text_rows(label: &str, source: &str, entry: &str, functions: &[&str], contracts: &ResourceContracts) {
+fn text_rows(
+    label: &str,
+    source: &str,
+    entry: &str,
+    functions: &[&str],
+    contracts: &ResourceContracts,
+) {
     match analyze_legacy_c_translation_unit(source, entry, contracts) {
         Ok(summary) => {
             for function in functions {
@@ -65,7 +71,11 @@ fn text_rows(label: &str, source: &str, entry: &str, functions: &[&str], contrac
                 println!(
                     "PROBE {label} [{function}]: status={status:?} diagnostics={:?}{}",
                     kinds(&summary, function),
-                    if records.is_empty() { String::new() } else { format!(" clauses={records:?}") }
+                    if records.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" clauses={records:?}")
+                    }
                 );
             }
         }
@@ -104,7 +114,9 @@ fn c11_row(label: &str, source: &str, scope: LegacyFunctionScope, contracts: &Re
                         .collect::<Vec<_>>()
                 })
                 .unwrap_or_default();
-            println!("PROBE {label}: unit_verdict={verdict:?} reason={reason:?} functions={rows:?}");
+            println!(
+                "PROBE {label}: unit_verdict={verdict:?} reason={reason:?} functions={rows:?}"
+            );
         }
         Err(error) => println!("PROBE {label}: refused {error:?}"),
     }
@@ -196,18 +208,73 @@ fn w45_sr5_soundness_probes() {
         );
     };
     k("5k-control-destroy", DESTROY, "node_destroy(n);", &plain);
-    k("5k-control-free", "", "if (n->buf) q_nullable_free(n->buf); q_nullable_free(n);", &plain);
-    k("5k-member-then-destroy", DESTROY, "q_nullable_free(n->buf); node_destroy(n);", &plain);
-    k("5k-tested-member-then-destroy", DESTROY, "if (n->buf) q_nullable_free(n->buf); node_destroy(n);", &plain);
-    k("5k-member-then-wrapper", &format!("{DESTROY}{DROP}"), "q_nullable_free(n->buf); node_drop(n);", &plain);
-    k("5k-destroy-then-member", DESTROY, "node_destroy(n); q_nullable_free(n->buf); q_nullable_free(n);", &plain);
-    k("5k-caller-alias", DESTROY, "void *b = n->buf; q_nullable_free(b); node_destroy(n);", &plain);
-    k("5k-callee-alias", DESTROY_ALIAS, "q_nullable_free(n->buf); node_destroy_alias(n);", &plain);
-    k("5k-callee-alias-control", DESTROY_ALIAS, "node_destroy_alias(n);", &plain);
-    k("5k-other-member", DESTROY_NEXT, "q_nullable_free(n->buf); node_destroy_next(n);", &plain);
-    k("5k-same-member-next", DESTROY_NEXT, "q_nullable_free(n->next); node_destroy_next(n);", &plain);
+    k(
+        "5k-control-free",
+        "",
+        "if (n->buf) q_nullable_free(n->buf); q_nullable_free(n);",
+        &plain,
+    );
+    k(
+        "5k-member-then-destroy",
+        DESTROY,
+        "q_nullable_free(n->buf); node_destroy(n);",
+        &plain,
+    );
+    k(
+        "5k-tested-member-then-destroy",
+        DESTROY,
+        "if (n->buf) q_nullable_free(n->buf); node_destroy(n);",
+        &plain,
+    );
+    k(
+        "5k-member-then-wrapper",
+        &format!("{DESTROY}{DROP}"),
+        "q_nullable_free(n->buf); node_drop(n);",
+        &plain,
+    );
+    k(
+        "5k-destroy-then-member",
+        DESTROY,
+        "node_destroy(n); q_nullable_free(n->buf); q_nullable_free(n);",
+        &plain,
+    );
+    k(
+        "5k-caller-alias",
+        DESTROY,
+        "void *b = n->buf; q_nullable_free(b); node_destroy(n);",
+        &plain,
+    );
+    k(
+        "5k-callee-alias",
+        DESTROY_ALIAS,
+        "q_nullable_free(n->buf); node_destroy_alias(n);",
+        &plain,
+    );
+    k(
+        "5k-callee-alias-control",
+        DESTROY_ALIAS,
+        "node_destroy_alias(n);",
+        &plain,
+    );
+    k(
+        "5k-other-member",
+        DESTROY_NEXT,
+        "q_nullable_free(n->buf); node_destroy_next(n);",
+        &plain,
+    );
+    k(
+        "5k-same-member-next",
+        DESTROY_NEXT,
+        "q_nullable_free(n->next); node_destroy_next(n);",
+        &plain,
+    );
     let declared = load(&[("destroy.qcore", DECLARED_DESTROY)]);
-    k("5k-declared-defined-destroy", DESTROY, "q_nullable_free(n->buf); node_destroy(n);", &declared);
+    k(
+        "5k-declared-defined-destroy",
+        DESTROY,
+        "q_nullable_free(n->buf); node_destroy(n);",
+        &declared,
+    );
     k(
         "5k-declared-undefined-destroy",
         "void node_destroy(struct node *n);\n",
@@ -215,7 +282,10 @@ fn w45_sr5_soundness_probes() {
         &declared,
     );
     // ---- 2. The held prefixes, spelled by the source and minted by the tool. ----
-    let mut pinned = load(&[("k.qcore", "module contract;\nextern fn k_close(h: ptr<mut, u8>) -> unit\ncontract { requires resource_contract_v1; ensures normal resource_released(h, nullable); ensures normal resource_return_none(); };\n")]);
+    let mut pinned = load(&[(
+        "k.qcore",
+        "module contract;\nextern fn k_close(h: ptr<mut, u8>) -> unit\ncontract { requires resource_contract_v1; ensures normal resource_released(h, nullable); ensures normal resource_return_none(); };\n",
+    )]);
     pinned
         .withhold_for_pin_mismatch(
             "k_close",
@@ -242,11 +312,21 @@ fn w45_sr5_soundness_probes() {
     h("held-pin-prefix", "qcore_pin_mismatch__zz(0);", &plain);
     h("held-review-prefix", "qcore_review_pending__zz(0);", &plain);
     h("held-genuine-pin", "k_close(0);", &pinned);
-    h("held-prefix-collides-with-withheld", "qcore_pin_mismatch__k_close(0);", &pinned);
-    h("held-prefix-beside-genuine", "k_close(0); qcore_pin_mismatch__zz(0);", &pinned);
+    h(
+        "held-prefix-collides-with-withheld",
+        "qcore_pin_mismatch__k_close(0);",
+        &pinned,
+    );
+    h(
+        "held-prefix-beside-genuine",
+        "k_close(0); qcore_pin_mismatch__zz(0);",
+        &pinned,
+    );
     text_rows(
         "held-prefix-defined",
-        &format!("{DECLS}static void qcore_pin_mismatch__zz(void *p) {{ }}\nvoid subject(void) {{ qcore_pin_mismatch__zz(0); }}\n"),
+        &format!(
+            "{DECLS}static void qcore_pin_mismatch__zz(void *p) {{ }}\nvoid subject(void) {{ qcore_pin_mismatch__zz(0); }}\n"
+        ),
         "subject",
         &["subject"],
         &plain,
@@ -255,33 +335,41 @@ fn w45_sr5_soundness_probes() {
     let users = load(&[("users.qcore", USERS)]);
     text_rows(
         "cu-conditional-operand",
-        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c ? u_unref(t, 0) : (void)0; return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c ? u_unref(t, 0) : (void)0; return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users,
     );
     text_rows(
         "cu-conditional-and",
-        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c && (u_unref(t, 0), 1); return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c && (u_unref(t, 0), 1); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users,
     );
     text_rows(
         "cu-conditional-control",
-        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users,
     );
     text_rows(
         "cu-call-of-call",
-        &format!("{USERS_PRELUDE}typedef int (*fn_t)(int); fn_t pick(int);\n\
+        &format!(
+            "{USERS_PRELUDE}typedef int (*fn_t)(int); fn_t pick(int);\n\
                   int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); pick(1)(2); return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users,
@@ -295,51 +383,63 @@ fn w45_sr5_soundness_probes() {
     ]);
     text_rows(
         "cu-call-of-contracted-call",
-        &format!("{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *); fn_t pick(int);\n\
+        &format!(
+            "{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *); fn_t pick(int);\n\
                   int hx(struct u_task *t) {{ u_ref(t); pick(1)(t); return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users_pick,
     );
     text_rows(
         "cu-call-of-defined-call",
-        &format!("{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *);\n\
+        &format!(
+            "{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *);\n\
                   static fn_t pick(int n) {{ return 0; }}\n\
                   int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); pick(1)(t); return 0; }}\n\
-                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"
+        ),
         "cx",
         &["hx", "cx"],
         &users,
     );
     text_rows(
         "cu-declared-neutral-loop-writes",
-        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ q->refs++; }} return 0; }}\n\
-                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ q->refs++; }} return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"
+        ),
         "cx",
         &["helper_neutral", "cx"],
         &users,
     );
     text_rows(
         "cu-declared-neutral-loop-op",
-        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ u_ref(q); }} return 0; }}\n\
-                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ u_ref(q); }} return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"
+        ),
         "cx",
         &["helper_neutral", "cx"],
         &users,
     );
     text_rows(
         "cu-declared-neutral-writes",
-        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ q->refs++; return 0; }}\n\
-                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ q->refs++; return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"
+        ),
         "cx",
         &["helper_neutral", "cx"],
         &users,
     );
     text_rows(
         "cu-declared-neutral-control",
-        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ return q->refs; }}\n\
-                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        &format!(
+            "{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ return q->refs; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"
+        ),
         "cx",
         &["helper_neutral", "cx"],
         &users,
@@ -354,14 +454,35 @@ fn w45_sr5_soundness_probes() {
             &plain,
         );
     };
-    s("5j-control-one-deref", "int subject(struct s *q) { return q->len; }");
-    s("5j-control-two-arrows", "int subject(struct s *q) { return q->next->len; }");
-    s("5j-paren-star-arrow", "int subject(struct s **q) { return (*q)->len; }");
-    s("5j-paren-star-index", "int subject(int **q) { return (*q)[0]; }");
+    s(
+        "5j-control-one-deref",
+        "int subject(struct s *q) { return q->len; }",
+    );
+    s(
+        "5j-control-two-arrows",
+        "int subject(struct s *q) { return q->next->len; }",
+    );
+    s(
+        "5j-paren-star-arrow",
+        "int subject(struct s **q) { return (*q)->len; }",
+    );
+    s(
+        "5j-paren-star-index",
+        "int subject(int **q) { return (*q)[0]; }",
+    );
     s("5j-star-star", "int subject(int **q) { return **q; }");
-    s("5j-paren-arrow-arrow", "int subject(struct s *q) { return (q->next)->len; }");
-    s("5j-star-paren-arrow", "int subject(struct s *q) { return *(q->arr); }");
-    s("5j-paren-dot", "int subject(struct s *q) { return (*q).len; }");
+    s(
+        "5j-paren-arrow-arrow",
+        "int subject(struct s *q) { return (q->next)->len; }",
+    );
+    s(
+        "5j-star-paren-arrow",
+        "int subject(struct s *q) { return *(q->arr); }",
+    );
+    s(
+        "5j-paren-dot",
+        "int subject(struct s *q) { return (*q).len; }",
+    );
     s(
         "5j-local-paren-star-arrow",
         "int subject(void) { struct s **q = q_alloc(); int n; q_free(q); return (*q)->len; }",
@@ -373,7 +494,12 @@ fn w45_sr5_soundness_probes() {
     // ---- 3. Publication, then the root released. ----
     let list = load(&[("list.qcore", LIST)]);
     let c = |label: &str, body: &str| {
-        c11_row(label, &format!("{PRELUDE}\n{body}\n"), LegacyFunctionScope::default(), &list);
+        c11_row(
+            label,
+            &format!("{PRELUDE}\n{body}\n"),
+            LegacyFunctionScope::default(),
+            &list,
+        );
     };
     c(
         "10d-root-released-after-publication",
@@ -453,15 +579,21 @@ fn w45_sr5_soundness_probes() {
         "struct mk_list g;\nvoid subject(void) { struct mk_list (g); struct item *e = q_alloc(); mk_list_add(&e->_head, &g); }",
     );
     // ---- 4. Pending against the unit Safe gates. ----
-    let h11 = |label: &str, body: &str, scope: LegacyFunctionScope, contracts: &ResourceContracts| {
-        c11_row(
-            label,
-            &format!("void k_close(void *); void qcore_pin_mismatch__zz(void *);\n{body}\n"),
-            scope,
-            contracts,
-        );
-    };
-    h11("unit-control-held-alone", "void subject(void) { k_close(0); }", LegacyFunctionScope::MainSourceDefinitions, &pinned);
+    let h11 =
+        |label: &str, body: &str, scope: LegacyFunctionScope, contracts: &ResourceContracts| {
+            c11_row(
+                label,
+                &format!("void k_close(void *); void qcore_pin_mismatch__zz(void *);\n{body}\n"),
+                scope,
+                contracts,
+            );
+        };
+    h11(
+        "unit-control-held-alone",
+        "void subject(void) { k_close(0); }",
+        LegacyFunctionScope::MainSourceDefinitions,
+        &pinned,
+    );
     h11(
         "unit-control-if0-safe",
         "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { }",
@@ -488,7 +620,9 @@ fn w45_sr5_soundness_probes() {
     );
     c11_row(
         "5k-unit-member-then-destroy",
-        &format!("{DECLS}{RECORD}{DESTROY}void subject(struct node *n) {{ q_nullable_free(n->buf); node_destroy(n); }}\n"),
+        &format!(
+            "{DECLS}{RECORD}{DESTROY}void subject(struct node *n) {{ q_nullable_free(n->buf); node_destroy(n); }}\n"
+        ),
         LegacyFunctionScope::default(),
         &plain,
     );
