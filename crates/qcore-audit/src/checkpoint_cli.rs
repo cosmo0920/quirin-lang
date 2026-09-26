@@ -140,7 +140,8 @@ fn recompose_command(arguments: &[String]) -> Result<bool, String> {
         .get("--output")
         .ok_or_else(|| format!("recompose needs --output FILE.qo\n{USAGE}"))?;
     let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let checkpoint = parse_text(&text, format).map_err(|error| format!("{}: {error}", path.display()))?;
+    let checkpoint =
+        parse_text(&text, format).map_err(|error| format!("{}: {error}", path.display()))?;
     write(Path::new(output), &checkpoint.to_bytes()?)?;
     Ok(true)
 }
@@ -173,7 +174,10 @@ fn compose_command(arguments: &[String]) -> Result<bool, String> {
 }
 
 fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
-    if let Some(parent) = path.parent().filter(|parent| !parent.as_os_str().is_empty()) {
+    if let Some(parent) = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+    {
         fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
     fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))

@@ -31,7 +31,10 @@ pub const MEANING: &str = "declared contracts, or clauses of them, marked `resou
 /// The `pending_human_review` section for one finished report.
 #[must_use]
 pub fn section(contracts: &ResourceContracts, report: &AuditReport) -> Value {
-    render(&markers(contracts), &HeldCalls::from_rows(report.unit_rows()))
+    render(
+        &markers(contracts),
+        &HeldCalls::from_rows(report.unit_rows()),
+    )
 }
 
 /// The held-call refusals recorded in a set of unit rows: per callee, the call
@@ -64,11 +67,10 @@ impl HeldCalls {
                         continue;
                     };
                     *held.call_sites.entry(callee.to_owned()).or_default() += 1;
-                    held.functions.entry(callee.to_owned()).or_default().insert((
-                        library.to_owned(),
-                        file.to_owned(),
-                        name.to_owned(),
-                    ));
+                    held.functions
+                        .entry(callee.to_owned())
+                        .or_default()
+                        .insert((library.to_owned(), file.to_owned(), name.to_owned()));
                 }
             }
         }

@@ -241,13 +241,7 @@ fn open_members(files: &[PathBuf]) -> Result<Vec<Member>, String> {
     }
     let reference = &members[0];
     for member in &members[1..] {
-        let names = || {
-            format!(
-                "{} and {}",
-                reference.path.display(),
-                member.path.display()
-            )
-        };
+        let names = || format!("{} and {}", reference.path.display(), member.path.display());
         if let Some(field) = disagreement(&reference.identity.run, &member.identity.run) {
             return Err(format!("{} disagree on the {field}", names()));
         }
@@ -388,10 +382,8 @@ impl Totals {
     ) {
         fold_verdicts(&mut self.counts, &result.counts);
         for category in result.diagnostic_counts {
-            *self
-                .diagnostic_counts
-                .entry(category.category)
-                .or_default() += category.count as usize;
+            *self.diagnostic_counts.entry(category.category).or_default() +=
+                category.count as usize;
         }
         self.sources.extend(result.sources);
         let rows = |functions: Vec<crate::checkpoint::HeldFunction>| {

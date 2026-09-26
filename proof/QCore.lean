@@ -244,5 +244,6 @@ import QCore.ContractRevisionMode
 import QCore.ParenthesisedCallee
 import QCore.ContainerPublication
 import QCore.CountedUsers
+import QCore.Checkpoints
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -320,10 +320,16 @@ fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
     let alpha = fixture.path("qo/alpha.qo");
     let alpha_bytes = fs::read(&alpha).unwrap();
     // No change: both groups reused, the outputs unchanged, the files untouched.
-    let again = fixture.run("again", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    let again = fixture.run(
+        "again",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
     succeeded(&again);
     let stderr = String::from_utf8_lossy(&again.stderr);
-    assert!(stderr.contains("checkpoint alpha: reused (identity equal)"), "{stderr}");
+    assert!(
+        stderr.contains("checkpoint alpha: reused (identity equal)"),
+        "{stderr}"
+    );
     assert!(stderr.contains("checkpoint beta-group: reused (identity equal)"));
     assert_eq!(fixture.outputs("again"), fixture.outputs("first"));
     assert_eq!(fs::read(&alpha).unwrap(), alpha_bytes);
@@ -335,10 +341,16 @@ fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
         "void beta_1(void) {}\n",
     )
     .unwrap();
-    let changed = fixture.run("changed", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    let changed = fixture.run(
+        "changed",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
     succeeded(&changed);
     let stderr = String::from_utf8_lossy(&changed.stderr);
-    assert!(stderr.contains("checkpoint alpha: reused (identity equal)"), "{stderr}");
+    assert!(
+        stderr.contains("checkpoint alpha: reused (identity equal)"),
+        "{stderr}"
+    );
     assert!(
         stderr.contains("checkpoint beta-group: recomputed (unit 1 (beta/beta_1.c): compile configuration differs)"),
         "{stderr}"
@@ -360,24 +372,36 @@ fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
     let last = tampered.len() - 1;
     tampered[last] ^= 1;
     fs::write(&alpha, &tampered).unwrap();
-    let repaired = fixture.run("repaired", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    let repaired = fixture.run(
+        "repaired",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
     succeeded(&repaired);
     let stderr = String::from_utf8_lossy(&repaired.stderr);
     assert!(
         stderr.contains("checkpoint alpha: recomputed (checkpoint refused:"),
         "{stderr}"
     );
-    assert_eq!(fixture.outputs("repaired"), fixture.outputs("changed-whole"));
+    assert_eq!(
+        fixture.outputs("repaired"),
+        fixture.outputs("changed-whole")
+    );
     // A different contract set recomputes every group.
     fs::write(fixture.path("contracts/heap.qcore"), format!("{HEAP}\n")).unwrap();
-    let contracts = fixture.run("contracts", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    let contracts = fixture.run(
+        "contracts",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
     succeeded(&contracts);
     let stderr = String::from_utf8_lossy(&contracts.stderr);
     assert!(
         stderr.contains("checkpoint alpha: recomputed (contract set differs)"),
         "{stderr}"
     );
-    refused(&fixture.run("bad", &["--resume"]), "--resume needs --checkpoint-dir");
+    refused(
+        &fixture.run("bad", &["--resume"]),
+        "--resume needs --checkpoint-dir",
+    );
 }
 
 #[test]
@@ -396,7 +420,10 @@ fn a_selection_with_an_unrecorded_file_resumes_and_composes() {
     succeeded(&again);
     let stderr = String::from_utf8_lossy(&again.stderr);
     assert!(stderr.contains("checkpoint alpha: reused"), "{stderr}");
-    assert!(stderr.contains("checkpoint beta-picked: reused"), "{stderr}");
+    assert!(
+        stderr.contains("checkpoint beta-picked: reused"),
+        "{stderr}"
+    );
     assert_eq!(fixture.outputs("again"), fixture.outputs("whole"));
 }
 
@@ -476,7 +503,10 @@ fn a_re_pin_invalidates_every_checkpoint() {
         .output()
         .unwrap();
     succeeded(&pinned);
-    let after = fixture.run("after", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    let after = fixture.run(
+        "after",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
     succeeded(&after);
     let stderr = String::from_utf8_lossy(&after.stderr);
     assert!(

@@ -496,22 +496,25 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         (command_line.checkpoint_dir, configuration.checkpoint_dir),
         (command_line.resume, configuration.resume),
     )?;
-    let failures = run_current_route_with_checkpoints(&CurrentRoute {
-        checkout: &checkout,
-        profile: &profile,
-        contracts: &contracts,
-        mode,
-        compile_database: compile_database.as_deref(),
-        monkey_database: monkey_database.as_deref(),
-        monkey_source_report: monkey_source_report.as_deref(),
-        diagnostic_report: report.as_deref(),
-        binding_directory: binding_directory.as_deref(),
-        label: &source_set,
-        historical_note: "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence",
-        historical_reference_revision: &historical,
-        jobs: effective_jobs,
-        selection: selection.as_ref(),
-    }, checkpoints.as_ref())?;
+    let failures = run_current_route_with_checkpoints(
+        &CurrentRoute {
+            checkout: &checkout,
+            profile: &profile,
+            contracts: &contracts,
+            mode,
+            compile_database: compile_database.as_deref(),
+            monkey_database: monkey_database.as_deref(),
+            monkey_source_report: monkey_source_report.as_deref(),
+            diagnostic_report: report.as_deref(),
+            binding_directory: binding_directory.as_deref(),
+            label: &source_set,
+            historical_note: "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence",
+            historical_reference_revision: &historical,
+            jobs: effective_jobs,
+            selection: selection.as_ref(),
+        },
+        checkpoints.as_ref(),
+    )?;
     if let Some(report) = &report {
         let digest = |path: &Option<PathBuf>| -> Result<Value, String> {
             path.as_ref()

@@ -254,7 +254,11 @@ pub fn run_current_route_with_checkpoints(
         let unresolved = groups
             .iter()
             .map(|(_, _, unresolved)| *unresolved)
-            .chain(monkey.iter().map(|(_, _, unresolved)| unresolved.as_deref()))
+            .chain(
+                monkey
+                    .iter()
+                    .map(|(_, _, unresolved)| unresolved.as_deref()),
+            )
             .collect::<Vec<_>>();
         return crate::checkpoint_run::run(
             route,

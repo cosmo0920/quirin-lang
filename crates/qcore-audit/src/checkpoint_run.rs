@@ -37,10 +37,10 @@ use serde_json::{Value, json};
 use crate::checkpoint::{
     AnalyzerIdentity, CategoryCount, CertificateRecord, CertificatesSection, Checkpoint,
     CheckpointReader, CompilerIdentity, ContractSetIdentity, ContractsSection, CountsRecord,
-    EnvironmentValue, GlobalSection, GroupIdentity, HeldCallRecord, HeldFunction,
-    IdentitySection, LockDigest, ModuleDigest, PendingMarkerRecord, PlanSection, PlannedGroup,
-    PreparationFacts, ProvenanceSection, ResultSection, RowMembers, RowStepSection, RunIdentity,
-    UnitFingerprint, UnitKey, exact_json, json_sha256, split_row,
+    EnvironmentValue, GlobalSection, GroupIdentity, HeldCallRecord, HeldFunction, IdentitySection,
+    LockDigest, ModuleDigest, PendingMarkerRecord, PlanSection, PlannedGroup, PreparationFacts,
+    ProvenanceSection, ResultSection, RowMembers, RowStepSection, RunIdentity, UnitFingerprint,
+    UnitKey, exact_json, json_sha256, split_row,
 };
 use crate::compile_db::{EffectiveInput, compile_task_identity, compiler_options};
 use crate::current::CurrentAudit;
@@ -279,7 +279,13 @@ fn unit_key(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> Result<UnitKey, 
         ),
         (Err(error), TaskInput::Configured(entry)) => (
             String::new(),
-            json!(["unplaced", error, entry.file, entry.directory, entry.command]),
+            json!([
+                "unplaced",
+                error,
+                entry.file,
+                entry.directory,
+                entry.command
+            ]),
         ),
     };
     Ok(UnitKey {
@@ -316,8 +322,12 @@ fn run_identity(
     revision_template: &str,
 ) -> Result<RunIdentity, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
-    let binary = fs::read(&executable)
-        .map_err(|error| format!("could not read the analyzer {}: {error}", executable.display()))?;
+    let binary = fs::read(&executable).map_err(|error| {
+        format!(
+            "could not read the analyzer {}: {error}",
+            executable.display()
+        )
+    })?;
     let dependency = |name: &str| {
         audit
             .dependencies()
@@ -331,9 +341,9 @@ fn run_identity(
         if !name.starts_with("QCORE_") || name == crate::parallel::JOBS_VARIABLE {
             continue;
         }
-        let value = value
-            .into_string()
-            .map_err(|_| format!("environment variable {name} is not UTF-8; checkpoints need it exactly"))?;
+        let value = value.into_string().map_err(|_| {
+            format!("environment variable {name} is not UTF-8; checkpoints need it exactly")
+        })?;
         environment.push(EnvironmentValue {
             name: name.to_owned(),
             value,
@@ -345,7 +355,12 @@ fn run_identity(
         analyzer: AnalyzerIdentity {
             package: env!("CARGO_PKG_NAME").into(),
             version: env!("CARGO_PKG_VERSION").into(),
-            build_profile: if cfg!(debug_assertions) { "dev" } else { "release" }.into(),
+            build_profile: if cfg!(debug_assertions) {
+                "dev"
+            } else {
+                "release"
+            }
+            .into(),
             build_commit: option_env!("QCORE_AUDIT_BUILD_COMMIT").map(str::to_owned),
             binary_sha256: sha256_hex(&binary),
         },
@@ -433,7 +448,8 @@ fn reuse_decision(
     if !path.exists() {
         return Err("no checkpoint".into());
     }
-    let mut reader = CheckpointReader::open(path).map_err(|error| format!("checkpoint refused: {error}"))?;
+    let mut reader =
+        CheckpointReader::open(path).map_err(|error| format!("checkpoint refused: {error}"))?;
     reader
         .verify()
         .map_err(|error| format!("checkpoint refused: {error}"))?;
@@ -513,7 +529,10 @@ fn run_difference(recorded: &RunIdentity, now: &RunIdentity) -> Option<&'static 
 /// A unit's fingerprint without its analysis: the compile configuration and
 /// preparation facts [`CurrentAudit::evaluate_entry`] and
 /// [`CurrentAudit::evaluate_absent`] record, computed the same way.
-fn fingerprint_task(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> Result<UnitFingerprint, String> {
+fn fingerprint_task(
+    audit: &CurrentAudit,
+    task: &ConfiguredTask<'_>,
+) -> Result<UnitFingerprint, String> {
     let checkout = audit.checkout();
     let revision = audit.revision();
     match (&task.expected_source, task.input) {
@@ -569,7 +588,8 @@ fn fingerprint_task(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> Result<U
             let prepared = (|| -> Result<C11TranslationUnit<'_>, UnitRefusal> {
                 let bytes = bytes.as_ref().map_err(Clone::clone)?;
                 crate::verify_pinned_bytes(checkout, revision, &expected_source, bytes)?;
-                let source = source.ok_or_else(|| UnitRefusal::classified("source is not UTF-8"))?;
+                let source =
+                    source.ok_or_else(|| UnitRefusal::classified("source is not UTF-8"))?;
                 if let Some(reason) = task.unresolved {
                     return Err(UnitRefusal::classified(reason));
                 }
@@ -760,7 +780,11 @@ fn compute_group(
                 .call_sites
                 .iter()
                 .map(|(callee, sites)| {
-                    held_record(callee, *sites, held.functions.get(callee).into_iter().flatten())
+                    held_record(
+                        callee,
+                        *sites,
+                        held.functions.get(callee).into_iter().flatten(),
+                    )
                 })
                 .collect(),
             analysed_functions: facts.analysed.iter().cloned().collect(),
@@ -804,9 +828,9 @@ fn compute_group(
             process_peak_rss_kib: None,
             rss_sample_interval_ms: RSS_SAMPLE_INTERVAL.as_millis() as u64,
             jobs: route.jobs as u64,
-            plain_preprocessing_elapsed_us: plain_preprocessing_elapsed_us as u64,
-            syntax_validation_elapsed_us: syntax_validation_elapsed_us as u64,
-            line_marked_preprocessing_elapsed_us: line_marked_preprocessing_elapsed_us as u64,
+            plain_preprocessing_elapsed_us,
+            syntax_validation_elapsed_us,
+            line_marked_preprocessing_elapsed_us,
         },
     })
 }
@@ -880,7 +904,8 @@ impl GroupBuilder {
         self.verdicts.push(verdicts);
         let status = row["status"].as_str().unwrap_or_default();
         let reason = row["reason"].as_str();
-        let refused = reason.filter(|reason| reason.starts_with("certificate context binding refused"));
+        let refused =
+            reason.filter(|reason| reason.starts_with("certificate context binding refused"));
         self.certificates.push(CertificateRecord {
             file,
             outcome: if status == "Safe" {
@@ -899,7 +924,9 @@ impl GroupBuilder {
         });
         self.held.absorb(HeldCalls::from_rows(fragment.unit_rows()));
         self.facts
-            .absorb(crate::contract_revision::ReportFacts::of_rows(fragment.unit_rows()));
+            .absorb(crate::contract_revision::ReportFacts::of_rows(
+                fragment.unit_rows(),
+            ));
         for (category, count) in fragment.diagnostic_count_map() {
             *self.diagnostic_counts.entry(category.clone()).or_default() += count;
         }

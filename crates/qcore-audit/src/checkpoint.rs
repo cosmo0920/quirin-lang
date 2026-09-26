@@ -249,7 +249,9 @@ impl PreparationFacts {
     pub fn of(prepared: &qcore_c_gateway::legacy_c::PreparedTranslationUnit) -> Self {
         Self::Prepared {
             validation_error: prepared.validation_error().map(ToString::to_string),
-            line_marked_sha256: prepared.line_marked_source().map(|text| sha256_hex(text.as_bytes())),
+            line_marked_sha256: prepared
+                .line_marked_source()
+                .map(|text| sha256_hex(text.as_bytes())),
             line_marked_error: prepared.line_marked_error().map(ToString::to_string),
         }
     }
@@ -478,7 +480,8 @@ pub struct Checkpoint {
 }
 
 fn encode<T: Serialize>(name: &str, value: &T) -> Result<Vec<u8>, String> {
-    postcard::to_stdvec(value).map_err(|error| format!("could not encode section `{name}`: {error}"))
+    postcard::to_stdvec(value)
+        .map_err(|error| format!("could not encode section `{name}`: {error}"))
 }
 
 fn decode<T: DeserializeOwned>(name: &str, bytes: &[u8]) -> Result<T, String> {
@@ -570,7 +573,9 @@ impl Checkpoint {
 pub fn assemble(sections: Vec<(&str, Vec<u8>)>) -> Result<Vec<u8>, String> {
     let names = sections.iter().map(|(name, _)| *name).collect::<Vec<_>>();
     if names != SECTIONS {
-        return Err(format!("sections {names:?} are not the schema's {SECTIONS:?}"));
+        return Err(format!(
+            "sections {names:?} are not the schema's {SECTIONS:?}"
+        ));
     }
     let header = Header {
         schema_version: SCHEMA_VERSION,
@@ -604,10 +609,7 @@ pub fn content_sha256(manifest: &[SectionEntry]) -> Result<String, String> {
         .filter(|entry| entry.name != PROVENANCE)
         .cloned()
         .collect::<Vec<_>>();
-    Ok(sha256_hex(&encode(
-        "content",
-        &(SCHEMA_VERSION, content),
-    )?))
+    Ok(sha256_hex(&encode("content", &(SCHEMA_VERSION, content))?))
 }
 
 /// Check the magic, the format version and the header length field; return
@@ -787,7 +789,11 @@ impl CheckpointReader {
 /// verdicts step, never dropped.
 fn step_of(key: &str) -> usize {
     match key {
-        "library" | "file" | "compile_configuration" | "enumeration" | "origin_coordinates"
+        "library"
+        | "file"
+        | "compile_configuration"
+        | "enumeration"
+        | "origin_coordinates"
         | "assumptions" => 0,
         "reason" | "reason_code" | "source_functions" | "not_projected" => 1,
         _ => 2,
@@ -866,7 +872,7 @@ pub fn report_frame(document: &Value) -> Result<(String, String), String> {
     };
     if document
         .as_object()
-        .and_then(|map| map.keys().last())
+        .and_then(|map| map.keys().next_back())
         .is_none_or(|key| key != "units")
     {
         return Err("`units` is not the report's last member".into());
@@ -979,7 +985,10 @@ impl TextCheckpoint {
     /// manifest or versions disagree with its contents (an edited text).
     pub fn into_checkpoint(self) -> Result<Checkpoint, String> {
         if self.format != TEXT_FORMAT_NAME {
-            return Err(format!("`format` is `{}`, not `{TEXT_FORMAT_NAME}`", self.format));
+            return Err(format!(
+                "`format` is `{}`, not `{TEXT_FORMAT_NAME}`",
+                self.format
+            ));
         }
         if self.format_version != FORMAT_VERSION || self.schema_version != SCHEMA_VERSION {
             return Err(format!(
@@ -1158,9 +1167,15 @@ mod tests {
                 revision_template_json: "{\"pinned\":[]}".into(),
                 historical_reference_revision: "h".into(),
             },
-            preparation: RowStepSection { units: vec![preparation] },
-            lowering: RowStepSection { units: vec![lowering] },
-            verdicts: RowStepSection { units: vec![verdicts] },
+            preparation: RowStepSection {
+                units: vec![preparation],
+            },
+            lowering: RowStepSection {
+                units: vec![lowering],
+            },
+            verdicts: RowStepSection {
+                units: vec![verdicts],
+            },
             certificates: CertificatesSection {
                 units: vec![CertificateRecord {
                     file: "a.c".into(),
@@ -1250,7 +1265,11 @@ mod tests {
         }
         let mut empty = String::new();
         render_row(
-            [&RowMembers::default(), &RowMembers::default(), &RowMembers::default()],
+            [
+                &RowMembers::default(),
+                &RowMembers::default(),
+                &RowMembers::default(),
+            ],
             2,
             &mut empty,
         )
@@ -1327,7 +1346,11 @@ mod tests {
         );
         let mut magic = bytes.clone();
         magic[0] = b'X';
-        assert!(Checkpoint::from_bytes(&magic).unwrap_err().contains("bad magic"));
+        assert!(
+            Checkpoint::from_bytes(&magic)
+                .unwrap_err()
+                .contains("bad magic")
+        );
     }
 
     #[test]
@@ -1387,10 +1410,8 @@ mod tests {
 
     #[test]
     fn the_reader_reads_sections_one_at_a_time_and_checks_each() {
-        let directory = std::env::temp_dir().join(format!(
-            "qcore-checkpoint-reader-{}",
-            std::process::id()
-        ));
+        let directory =
+            std::env::temp_dir().join(format!("qcore-checkpoint-reader-{}", std::process::id()));
         std::fs::create_dir_all(&directory).unwrap();
         let path = directory.join("lib.qo");
         let checkpoint = sample();
