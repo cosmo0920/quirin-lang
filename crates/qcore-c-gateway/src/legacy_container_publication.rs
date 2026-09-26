@@ -89,54 +89,119 @@ pub enum Operand {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Operands(pub Vec<Operand>);
 
-/// The formals of one body that no statement rebinds: never the destination
-/// of an assignment, an increment or a decrement, and never address-taken.
+/// The names of one body a container may be reached from.
+///
+/// * `stable`: the formals no statement rebinds — never the destination of an
+///   assignment, an increment or a decrement, and never address-taken;
+/// * `derived`: the locals whose one write is their declaration's initialiser
+///   `L = P` or `L = P->F…` with `P` stable, and which are never address-taken:
+///   they name memory the caller supplied exactly as `P` does;
+/// * `all`: every formal, rebound or not.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct CallerFormals(BTreeSet<String>, BTreeSet<String>);
+pub struct CallerFormals {
+    stable: BTreeSet<String>,
+    derived: BTreeSet<String>,
+    all: BTreeSet<String>,
+}
 
 const WRITES: [&str; 12] = [
     "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=", "++",
 ];
 
+/// The indices at which `name` is written or has its address taken. A token
+/// after `->` or `.` is a member name, never the variable.
+fn writes(body: &[&str], name: &str) -> Vec<usize> {
+    body.iter()
+        .enumerate()
+        .filter(|(index, token)| {
+            let previous = index.checked_sub(1).and_then(|at| body.get(at)).copied();
+            let next = body.get(index + 1).copied();
+            // `&P->F`, `&P.F` and `&P[I]` take a member's address, not `P`'s.
+            let member = matches!(next, Some("->" | "." | "["));
+            **token == name
+                && !matches!(previous, Some("->" | "."))
+                && (next.is_some_and(|next| WRITES.contains(&next) || next == "--")
+                    || matches!(previous, Some("++" | "--"))
+                    || (previous == Some("&") && !member))
+        })
+        .map(|(index, _)| index)
+        .collect()
+}
+
 impl CallerFormals {
     /// Read from the body's own tokens.
     pub fn read(body: &[&str], formals: &BTreeSet<String>) -> Self {
         let fused = fuse(body);
-        let body = fused.iter().map(|(text, _)| text.as_str()).collect::<Vec<_>>();
-        let rebound = |name: &str| {
-            body.iter().enumerate().any(|(index, token)| {
-                let next = body.get(index + 1).copied();
-                // `&P->F`, `&P.F` and `&P[I]` take a member's address, not
-                // `P`'s.
-                let member = matches!(next, Some("->" | "." | "["));
-                *token == name
-                    && (next.is_some_and(|next| WRITES.contains(&next) || next == "--")
-                        || index
-                            .checked_sub(1)
-                            .and_then(|previous| body.get(previous))
-                            .is_some_and(|previous| {
-                                matches!(*previous, "++" | "--") || (*previous == "&" && !member)
-                            }))
-            })
-        };
-        Self(
-            formals
-                .iter()
-                .filter(|name| !rebound(name))
-                .cloned()
-                .collect(),
-            formals.clone(),
-        )
+        let body = fused
+            .iter()
+            .map(|(text, _)| text.as_str())
+            .collect::<Vec<_>>();
+        let stable = formals
+            .iter()
+            .filter(|name| writes(&body, name).is_empty())
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let mut derived = BTreeSet::new();
+        for (index, token) in body.iter().enumerate() {
+            if !is_identifier(token)
+                || formals.contains(*token)
+                || derived.contains(*token)
+                || body.get(index + 1) != Some(&"=")
+            {
+                continue;
+            }
+            // A declarator: preceded by a type word or `*`, not an expression.
+            let declarator = index
+                .checked_sub(1)
+                .and_then(|at| body.get(at))
+                .is_some_and(|previous| {
+                    *previous == "*"
+                        || (is_identifier(previous)
+                            && !matches!(*previous, "return" | "else" | "do" | "case" | "goto"))
+                });
+            // Exactly one write, at this token.
+            if !declarator || writes(&body, token) != [index] {
+                continue;
+            }
+            // `= P ;` or `= P -> F ( -> F )* ;` with `P` stable.
+            let value = &body[index + 2..];
+            let end = value.iter().position(|text| *text == ";");
+            let initialiser = end.map(|end| &value[..end]);
+            let from_stable = initialiser.is_some_and(|value| match value {
+                [root, rest @ ..] => {
+                    stable.contains(*root)
+                        && rest.len() % 2 == 0
+                        && rest
+                            .chunks(2)
+                            .all(|pair| pair[0] == "->" && is_identifier(pair[1]))
+                }
+                [] => false,
+            });
+            if declarator && from_stable {
+                derived.insert((*token).to_owned());
+            }
+        }
+        Self {
+            stable,
+            derived,
+            all: formals.clone(),
+        }
     }
 
     /// Whether `name` is a formal of this function, rebound or not.
     pub fn is_formal(&self, name: &str) -> bool {
-        self.1.contains(name)
+        self.all.contains(name)
     }
 
     /// Whether `name` is an unrebound formal.
     pub fn contains(&self, name: &str) -> bool {
-        self.0.contains(name)
+        self.stable.contains(name)
+    }
+
+    /// Whether a container reached from `name` lives in memory the caller
+    /// supplied.
+    fn reaches_caller(&self, name: &str) -> bool {
+        self.stable.contains(name) || self.derived.contains(name)
     }
 }
 
@@ -149,7 +214,9 @@ pub(crate) fn fuse(texts: &[&str]) -> Vec<(String, usize)> {
         "->", "++", "--", "==", "!=", "<=", ">=", "&&", "||", "+=", "-=", "*=", "/=", "%=", "&=",
         "|=", "^=", "<<", ">>",
     ];
-    let single = |text: &str| text.len() == 1 && !text.chars().all(|c| c == '_' || c.is_ascii_alphanumeric());
+    let single = |text: &str| {
+        text.len() == 1 && !text.chars().all(|c| c == '_' || c.is_ascii_alphanumeric())
+    };
     let mut fused = Vec::with_capacity(texts.len());
     let mut index = 0;
     while index < texts.len() {
@@ -181,7 +248,10 @@ fn is_identifier(token: &str) -> bool {
 
 fn entry(argument: &[&str]) -> Entry {
     let fused = fuse(argument);
-    let argument = fused.iter().map(|(text, _)| text.as_str()).collect::<Vec<_>>();
+    let argument = fused
+        .iter()
+        .map(|(text, _)| text.as_str())
+        .collect::<Vec<_>>();
     match argument.as_slice() {
         ["&", base, "->", field] if is_identifier(base) && is_identifier(field) => {
             Entry::Name((*base).to_owned())
@@ -193,7 +263,10 @@ fn entry(argument: &[&str]) -> Entry {
 
 fn container(argument: &[&str], formals: &CallerFormals) -> Container {
     let fused = fuse(argument);
-    let argument = fused.iter().map(|(text, _)| text.as_str()).collect::<Vec<_>>();
+    let argument = fused
+        .iter()
+        .map(|(text, _)| text.as_str())
+        .collect::<Vec<_>>();
     let root = match argument.as_slice() {
         [root] => Some(*root),
         ["&", root, "->", rest @ ..]
@@ -209,7 +282,7 @@ fn container(argument: &[&str], formals: &CallerFormals) -> Container {
         _ => None,
     };
     match root {
-        Some(root) if formals.0.contains(root) => Container::CallerFormal(root.to_owned()),
+        Some(root) if formals.reaches_caller(root) => Container::CallerFormal(root.to_owned()),
         _ => Container::Other(argument.join(" ")),
     }
 }
@@ -370,6 +443,35 @@ pub(super) fn apply(
                 };
                 match container {
                     Container::CallerFormal(_) => {
+                        // What the object owns through a member or a stored
+                        // child goes into the container with it, but an unlink
+                        // could not hand it back: the owned objects are
+                        // withdrawn in both directions instead, and the call
+                        // is refused, so no exit is certified over them.
+                        let children = state
+                            .field_links
+                            .get(&site)
+                            .into_iter()
+                            .flat_map(|fields| fields.values().flatten().copied())
+                            .chain(state.contained.get(&site).into_iter().flatten().copied())
+                            .collect::<BTreeSet<_>>();
+                        if !children.is_empty() {
+                            diagnostics.insert(LegacyDiagnostic {
+                                function: function.to_owned(),
+                                line,
+                                kind: LegacyDiagnosticKind::Unsupported {
+                                    description: format!(
+                                        "publication by `{called}` of `{name}`, which owns linked objects"
+                                    ),
+                                },
+                            });
+                            let owned = super::AbstractPointer {
+                                targets: children,
+                                ..Default::default()
+                            };
+                            mark_unresolved_effect(state, &owned);
+                            state.unmodeled = true;
+                        }
                         state.resources.insert(site, ESCAPED);
                         state.published.insert(site);
                     }
@@ -479,17 +581,25 @@ mod tests {
 
     #[test]
     fn a_rebound_formal_is_not_a_caller_container() {
-        let body = ["queue", "=", "other", ";", "x", "=", "&", "head", ";", "n", "++"];
+        let body = [
+            "queue", "=", "other", ";", "x", "=", "&", "head", ";", "n", "++",
+        ];
         let read = CallerFormals::read(&body, &formals(&["queue", "head", "n", "keep"]));
-        assert_eq!(read.0, formals(&["keep"]));
+        assert_eq!(read.stable, formals(&["keep"]));
     }
 
     #[test]
     fn entries_and_containers_are_read_from_their_spelling() {
-        let caller = CallerFormals(formals(&["queue"]), formals(&["queue"]));
-        assert_eq!(entry(&["&", "node", "->", "_head"]), Entry::Name("node".into()));
+        let caller = CallerFormals::read(&["return"], &formals(&["queue"]));
+        assert_eq!(
+            entry(&["&", "node", "->", "_head"]),
+            Entry::Name("node".into())
+        );
         assert_eq!(entry(&["node"]), Entry::Name("node".into()));
-        assert!(matches!(entry(&["&", "a", "->", "b", ".", "c"]), Entry::Unnamed(_)));
+        assert!(matches!(
+            entry(&["&", "a", "->", "b", ".", "c"]),
+            Entry::Unnamed(_)
+        ));
         assert_eq!(
             container(&["&", "queue", "->", "pending"], &caller),
             Container::CallerFormal("queue".into())
@@ -498,7 +608,10 @@ mod tests {
             container(&["&", "queue", "->", "q", "->", "pending"], &caller),
             Container::CallerFormal("queue".into())
         );
-        assert!(matches!(container(&["&", "local"], &caller), Container::Other(_)));
+        assert!(matches!(
+            container(&["&", "local"], &caller),
+            Container::Other(_)
+        ));
         assert!(matches!(
             container(&["&", "queue", ".", "pending"], &caller),
             Container::Other(_)

@@ -104,7 +104,11 @@ pub(super) fn parse(words: Option<&[&str]>, expression: &str) -> Result<Option<C
                 | "resource_published"
                 | "resource_unpublished",
                 ..,
-            ] => return Err(format!("malformed counted-user or container clause `{expression}`")),
+            ] => {
+                return Err(format!(
+                    "malformed counted-user or container clause `{expression}`"
+                ));
+            }
             _ => None,
         });
     }
@@ -131,9 +135,11 @@ pub(super) fn parse(words: Option<&[&str]>, expression: &str) -> Result<Option<C
         return Err(malformed());
     };
     let (negative, digits, rest) = match rest {
-        [TokenKind::Symbol(Symbol::Minus), TokenKind::Integer(digits), rest @ ..] => {
-            (true, digits, rest)
-        }
+        [
+            TokenKind::Symbol(Symbol::Minus),
+            TokenKind::Integer(digits),
+            rest @ ..,
+        ] => (true, digits, rest),
         [TokenKind::Integer(digits), rest @ ..] => (false, digits, rest),
         _ => return Err(malformed()),
     };
@@ -175,7 +181,12 @@ pub(super) fn record(
     match clause {
         Clause::Effect(parameter, operation) => {
             let position = index(&parameter)?;
-            if collected.users.effects.insert(position, operation).is_some() {
+            if collected
+                .users
+                .effects
+                .insert(position, operation)
+                .is_some()
+            {
                 return Err(format!("duplicate counted-user effect for {parameter}"));
             }
         }
@@ -209,7 +220,12 @@ pub(super) fn record(
             let container_parameter = index(&container)?;
             if collected
                 .container_effects
-                .insert(position, ContainerEffect::Published { container_parameter })
+                .insert(
+                    position,
+                    ContainerEffect::Published {
+                        container_parameter,
+                    },
+                )
                 .is_some()
             {
                 return Err(format!("duplicate container effect for {entry}"));
@@ -247,7 +263,9 @@ pub(super) fn validate(
     let pointer = |position: usize| parameter_types[position].starts_with("ptr<");
     let borrowed_pointer = |position: usize, what: &str| {
         if parameters[position] != ResourceParameterMode::Borrowed || !pointer(position) {
-            Err(format!("{what} requires a resource_borrowed pointer parameter"))
+            Err(format!(
+                "{what} requires a resource_borrowed pointer parameter"
+            ))
         } else {
             Ok(())
         }
@@ -260,7 +278,9 @@ pub(super) fn validate(
         {
             borrowed_pointer(*container_parameter, "a publication's container")?;
             if *container_parameter == position
-                || collected.container_effects.contains_key(container_parameter)
+                || collected
+                    .container_effects
+                    .contains_key(container_parameter)
             {
                 return Err("a publication's container must be a distinct parameter with no container effect".into());
             }

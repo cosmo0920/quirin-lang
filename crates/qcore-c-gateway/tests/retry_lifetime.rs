@@ -219,8 +219,12 @@ fn kinds(summary: &LegacyFunctionSummary) -> Vec<String> {
         .map(|diagnostic| match &diagnostic.kind {
             LegacyDiagnosticKind::Leak { .. } => "leak".to_owned(),
             LegacyDiagnosticKind::ReleaseAfterEscape { .. } => "release_after_escape".to_owned(),
-            LegacyDiagnosticKind::CountedUser { description } => format!("counted_user:{description}"),
-            LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
+            LegacyDiagnosticKind::CountedUser { description } => {
+                format!("counted_user:{description}")
+            }
+            LegacyDiagnosticKind::Unsupported { description } => {
+                format!("unsupported:{description}")
+            }
             LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown_alias:{variable}"),
             other => format!("{other:?}"),
         })
@@ -231,7 +235,11 @@ fn verdicts(summary: &LegacyFunctionSummary) -> Vec<(String, ClauseVerdict)> {
     summary
         .counted_users
         .iter()
-        .map(|ClauseRecord { clause, verdict, .. }| (clause.clone(), *verdict))
+        .map(
+            |ClauseRecord {
+                 clause, verdict, ..
+             }| (clause.clone(), *verdict),
+        )
         .collect()
 }
 
@@ -263,15 +271,10 @@ int p_enqueue(struct p_queue *queue, int value)
 #[test]
 fn the_borrowed_reading_accused_the_same_body() {
     // Non-vacuity: the same body under the pre-card declaration.
-    let borrowed = CONTRACTS.replace(
-        "    ensures normal resource_published(entry, head);\n",
-        "",
-    );
-    let contracts = load_resource_contract_sources(&BTreeMap::from([(
-        "borrowed.qcore".to_owned(),
-        borrowed,
-    )]))
-    .unwrap();
+    let borrowed = CONTRACTS.replace("    ensures normal resource_published(entry, head);\n", "");
+    let contracts =
+        load_resource_contract_sources(&BTreeMap::from([("borrowed.qcore".to_owned(), borrowed)]))
+            .unwrap();
     let source = format!(
         "{PRELUDE}\nint p_enqueue(struct p_queue *queue)\n{{\n    struct p_node *node;\n    node = p_malloc(sizeof(struct p_node));\n    if (!node) {{\n        return -1;\n    }}\n    p_list_add(&node->_head, &queue->pending);\n    return 0;\n}}\n"
     );
@@ -347,7 +350,11 @@ void p_local(void)
     );
     let local = function(&summary, "p_local");
     assert_eq!(local.status, AnalysisStatus::Unknown, "{:?}", kinds(local));
-    assert!(kinds(local).iter().any(|kind| kind.contains("does not show outlives it")));
+    assert!(
+        kinds(local)
+            .iter()
+            .any(|kind| kind.contains("does not show outlives it"))
+    );
 }
 
 #[test]
@@ -389,7 +396,12 @@ void p_unlink(struct p_node *node)
         "p_unlink",
     );
     let unlink = function(&summary, "p_unlink");
-    assert_eq!(unlink.status, AnalysisStatus::Unknown, "{:?}", kinds(unlink));
+    assert_eq!(
+        unlink.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        kinds(unlink)
+    );
 }
 
 #[test]
@@ -411,7 +423,84 @@ struct p_node *p_publish_and_return(struct p_queue *queue)
         "p_publish_and_return",
     );
     let returned = function(&summary, "p_publish_and_return");
-    assert_eq!(returned.status, AnalysisStatus::Unknown, "{:?}", kinds(returned));
+    assert_eq!(
+        returned.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        kinds(returned)
+    );
+}
+
+#[test]
+fn a_container_reached_through_a_local_copy_of_a_formal_member_is_the_callers() {
+    // `struct sched *sched = config->sched;` names memory the caller supplied,
+    // exactly as `config` does: the helper links the caller's object there,
+    // so it consumes it, and a caller that frees it afterwards is accused.
+    let summary = analyse(
+        r#"
+struct p_config { struct p_queue *sched; };
+
+static int p_wait(struct p_node *node, struct p_config *config)
+{
+    struct p_queue *sched = config->sched;
+
+    p_list_add(&node->_head, &sched->pending);
+    return 0;
+}
+
+void p_wait_then_free(struct p_config *config)
+{
+    struct p_node *node;
+
+    node = p_malloc(sizeof(struct p_node));
+    if (!node) {
+        return;
+    }
+    p_wait(node, config);
+    p_free(node);
+}
+
+void p_wait_only(struct p_config *config)
+{
+    struct p_node *node;
+
+    node = p_malloc(sizeof(struct p_node));
+    if (!node) {
+        return;
+    }
+    p_wait(node, config);
+}
+"#,
+        "p_wait_then_free",
+    );
+    let freed = function(&summary, "p_wait_then_free");
+    assert_ne!(freed.status, AnalysisStatus::Safe, "{:?}", kinds(freed));
+    let kept = function(&summary, "p_wait_only");
+    assert_eq!(kept.status, AnalysisStatus::Safe, "{:?}", kinds(kept));
+}
+
+#[test]
+fn a_publication_of_an_object_that_owns_members_is_refused() {
+    let summary = analyse(
+        r#"
+struct p_owner { char *buffer; struct p_list _head; };
+
+void p_owner_publish(struct p_queue *queue)
+{
+    struct p_owner *owner;
+
+    owner = p_malloc(sizeof(struct p_owner));
+    if (!owner) {
+        return;
+    }
+    owner->buffer = p_malloc(16);
+    p_list_add(&owner->_head, &queue->pending);
+}
+"#,
+        "p_owner_publish",
+    );
+    let owner = function(&summary, "p_owner_publish");
+    assert_ne!(owner.status, AnalysisStatus::Safe, "{:?}", kinds(owner));
 }
 
 // ---- counted users ----
@@ -501,7 +590,12 @@ int c2_undeclared(struct u_queue *q, struct u_task *t)
         ClauseVerdict::Held
     )));
     let undeclared = function(&summary, "c2_undeclared");
-    assert_eq!(undeclared.status, AnalysisStatus::Unsafe, "{:?}", kinds(undeclared));
+    assert_eq!(
+        undeclared.status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        kinds(undeclared)
+    );
 }
 
 #[test]
@@ -537,13 +631,21 @@ int c3_checked(struct u_task *t)
     );
     let c3 = function(&summary, "c3");
     assert_eq!(c3.status, AnalysisStatus::Unsafe, "{:?}", kinds(c3));
-    assert!(kinds(c3).iter().any(|kind| kind.contains("without a release check")));
+    assert!(
+        kinds(c3)
+            .iter()
+            .any(|kind| kind.contains("without a release check"))
+    );
     // The control: the same body with the release check on the failure arm.
     // Its failure arm drops a user it did not add (net -1), which no clause
     // covers, so it is refuted as an uncovered residual rather than the C3
     // shape; the C3 diagnostic itself is gone.
     let checked = function(&summary, "c3_checked");
-    assert!(!kinds(checked).iter().any(|kind| kind.contains("without a release check")));
+    assert!(
+        !kinds(checked)
+            .iter()
+            .any(|kind| kind.contains("without a release check"))
+    );
 }
 
 #[test]
@@ -571,7 +673,11 @@ int n2(struct u_task *t)
         ClauseVerdict::Refuted
     )));
     // A rollback of this path's own addition owes no release check.
-    assert!(!kinds(n2).iter().any(|kind| kind.contains("without a release check")));
+    assert!(
+        !kinds(n2)
+            .iter()
+            .any(|kind| kind.contains("without a release check"))
+    );
 }
 
 #[test]
@@ -594,11 +700,29 @@ void u_opaque(struct u_task *t)
         "u_member",
     );
     let member = function(&summary, "u_member");
-    assert_eq!(member.status, AnalysisStatus::Unknown, "{:?}", kinds(member));
-    assert!(kinds(member).iter().any(|kind| kind.contains("not a formal")));
+    assert_eq!(
+        member.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        kinds(member)
+    );
+    assert!(
+        kinds(member)
+            .iter()
+            .any(|kind| kind.contains("not a formal"))
+    );
     let opaque = function(&summary, "u_opaque");
-    assert_eq!(opaque.status, AnalysisStatus::Unknown, "{:?}", kinds(opaque));
-    assert!(verdicts(opaque).iter().any(|(_, verdict)| *verdict == ClauseVerdict::Undecided));
+    assert_eq!(
+        opaque.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        kinds(opaque)
+    );
+    assert!(
+        verdicts(opaque)
+            .iter()
+            .any(|(_, verdict)| *verdict == ClauseVerdict::Undecided)
+    );
 }
 
 #[test]
@@ -628,7 +752,10 @@ static int helper_neutral(struct u_queue *q)
     );
     let inc = function(&summary, "inc_body");
     assert!(
-        verdicts(inc).contains(&("resource_user_added(t, refs)".to_owned(), ClauseVerdict::Held)),
+        verdicts(inc).contains(&(
+            "resource_user_added(t, refs)".to_owned(),
+            ClauseVerdict::Held
+        )),
         "{:?} {:?}",
         verdicts(inc),
         kinds(inc)
@@ -644,7 +771,9 @@ static int helper_neutral(struct u_queue *q)
         kinds(dec)
     );
     let neutral = function(&summary, "helper_neutral");
-    assert!(verdicts(neutral).contains(&("resource_user_neutral()".to_owned(), ClauseVerdict::Held)));
+    assert!(
+        verdicts(neutral).contains(&("resource_user_neutral()".to_owned(), ClauseVerdict::Held))
+    );
 }
 
 #[test]
@@ -669,7 +798,8 @@ fn an_environment_without_counted_users_is_untouched() {
         "module contract;\nextern fn u_log(n: i32) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_none();\n};\n".to_owned(),
     )]))
     .unwrap();
-    let source = format!("{PRELUDE}\nvoid plain(struct u_task *t)\n{{\n    t->refs++;\n    u_log(1);\n}}\n");
+    let source =
+        format!("{PRELUDE}\nvoid plain(struct u_task *t)\n{{\n    t->refs++;\n    u_log(1);\n}}\n");
     let summary = analyze_legacy_c_translation_unit(&source, "plain", &contracts).unwrap();
     let plain = function(&summary, "plain");
     assert!(plain.counted_users.is_empty());

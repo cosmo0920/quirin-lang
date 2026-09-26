@@ -234,11 +234,30 @@ struct Unit<'a> {
     counters: BTreeSet<String>,
     premises: literal_premise::LiteralPremises,
     derived: std::cell::RefCell<BTreeMap<String, CallEffect>>,
+    /// The declared callees whose bodies this unit defines, and whether their
+    /// clauses hold against them.
+    verified: std::cell::RefCell<BTreeMap<String, Result<(), String>>>,
+    /// The records of every declared callee a verification consulted.
+    consulted: std::cell::RefCell<BTreeMap<String, Vec<ClauseRecord>>>,
 }
 
 const KEYWORDS: [&str; 16] = [
-    "if", "while", "for", "switch", "return", "sizeof", "_Alignof", "__alignof__", "_Generic",
-    "__typeof__", "typeof", "__builtin_offsetof", "__extension__", "__attribute__", "do", "else",
+    "if",
+    "while",
+    "for",
+    "switch",
+    "return",
+    "sizeof",
+    "_Alignof",
+    "__alignof__",
+    "_Generic",
+    "__typeof__",
+    "typeof",
+    "__builtin_offsetof",
+    "__extension__",
+    "__attribute__",
+    "do",
+    "else",
 ];
 
 const TYPE_WORDS: [&str; 18] = [
@@ -277,122 +296,21 @@ pub(super) fn check(
         counters,
         premises,
         derived: std::cell::RefCell::default(),
+        verified: std::cell::RefCell::default(),
+        consulted: std::cell::RefCell::default(),
     };
-    let Some(body) = unit.body(function) else {
+    let Some((mut records, diagnostics)) = unit.evaluate(function) else {
         return;
     };
-    let own = contracts
-        .contract(function)
-        .filter(|contract| !contract.counted_users.is_empty());
-    let (owned, origins) = unit.fused(body);
-    let texts = owned.iter().map(String::as_str).collect::<Vec<_>>();
-    let formals = function_parameters(tokens, function).unwrap_or_default();
-    let stable = stable_formals(&texts, &formals);
-    // The formals a clause names or a body operation attributes.
-    let mut tracked = BTreeSet::new();
-    if let Some(own) = own {
-        for exit in &own.counted_users.exits {
-            if let Some(Some(name)) = formals.get(exit.parameter) {
-                tracked.insert(name.clone());
-            }
-        }
-        for &index in own.counted_users.effects.keys() {
-            if let Some(Some(name)) = formals.get(index) {
-                tracked.insert(name.clone());
-            }
-        }
-    }
-    let operations = unit.operations(&texts, body.0 + 1, &origins);
-    if own.is_none() && operations.is_empty() {
-        return;
-    }
-    for operation in &operations {
-        if let Some(formal) = &operation.formal
-            && stable.contains(formal)
-        {
-            tracked.insert(formal.clone());
-        }
-    }
-    let mut records = Vec::new();
-    let mut diagnostics = Vec::new();
-    let line = |index: usize| unit.tokens.get(index).map_or(0, |token| token.line);
-    let function_line = line(body.0);
-    // Unattributed operations are reported once each, whatever is tracked.
-    for operation in &operations {
-        if operation.formal.as_ref().is_none_or(|formal| !stable.contains(formal)) {
-            diagnostics.push(LegacyDiagnostic {
-                function: function.to_owned(),
-                line: operation.line,
-                kind: LegacyDiagnosticKind::Unsupported {
-                    description: format!(
-                        "counted-user operation {} on `{}`, which is not a formal this function never rebinds",
-                        operation.what, operation.actual
-                    ),
-                },
+    // The declared operations this body relies on, as their own bodies here
+    // decided them.
+    for (callee, callee_records) in unit.consulted.borrow().iter() {
+        for record in callee_records {
+            records.push(ClauseRecord {
+                clause: format!("callee `{callee}`: {}", record.clause),
+                ..record.clone()
             });
         }
-    }
-    // A neutral declaration is checked by the derivation of the body.
-    if let Some(own) = own
-        && own.counted_users.neutral
-    {
-        let derived = unit.derive_body(function, &mut BTreeSet::new());
-        let (verdict, reason) = match derived {
-            CallEffect::Neutral => (ClauseVerdict::Held, String::new()),
-            CallEffect::Opaque(reason) => (ClauseVerdict::Undecided, reason),
-        };
-        records.push(ClauseRecord {
-            clause: "resource_user_neutral()".into(),
-            verdict,
-            line: 0,
-            reason,
-        });
-    }
-    if !tracked.is_empty() {
-        let statements = parse_block(&texts, 0, texts.len());
-        let mut initial = PathState::default();
-        for formal in &tracked {
-            initial.counts.insert(formal.clone(), Count::Known(0));
-        }
-        // A literal premise of this function's own declaration fixes the
-        // formal's value for the body it is checked against.
-        for premise in unit.premises.declared(function) {
-            if let (Some(Some(name)), Some(value)) =
-                (formals.get(premise.index), literal_value(&premise.literal))
-            {
-                initial
-                    .values
-                    .insert(name.clone(), Value::OneOf(BTreeSet::from([value])));
-            }
-        }
-        let walker = Walker {
-            unit: &unit,
-            texts: &texts,
-            offset: body.0 + 1,
-            origins: &origins,
-            stable: &stable,
-        };
-        let mut exits = Vec::new();
-        let mut abandoned = None;
-        walker.run(
-            &statements,
-            vec![initial],
-            &mut exits,
-            &mut abandoned,
-            function_line,
-        );
-        let clauses = own.map(|own| own.counted_users.clone()).unwrap_or_default();
-        decide(
-            function,
-            &formals,
-            &tracked,
-            &clauses,
-            &exits,
-            abandoned.as_deref(),
-            &mut records,
-            &mut diagnostics,
-            function_line,
-        );
     }
     if records.is_empty() && diagnostics.is_empty() {
         return;
@@ -404,6 +322,177 @@ pub(super) fn check(
     records.sort();
     records.dedup();
     summary.counted_users = records;
+}
+
+impl Unit<'_> {
+    /// Evaluate one function's counted-user obligations: its records and
+    /// diagnostics, or `None` when it touches no counted user at all.
+    #[allow(clippy::too_many_lines)]
+    fn evaluate(&self, function: &str) -> Option<(Vec<ClauseRecord>, Vec<LegacyDiagnostic>)> {
+        let unit = self;
+        let tokens = self.tokens;
+        let contracts = self.contracts;
+        let body = unit.body(function)?;
+        let own = contracts
+            .contract(function)
+            .filter(|contract| !contract.counted_users.is_empty());
+        let (owned, origins) = unit.fused(body);
+        let texts = owned.iter().map(String::as_str).collect::<Vec<_>>();
+        let formals = function_parameters(tokens, function).unwrap_or_default();
+        let stable = stable_formals(&texts, &formals);
+        // The formals a clause names or a body operation attributes.
+        let mut tracked = BTreeSet::new();
+        if let Some(own) = own {
+            for exit in &own.counted_users.exits {
+                if let Some(Some(name)) = formals.get(exit.parameter) {
+                    tracked.insert(name.clone());
+                }
+            }
+            for &index in own.counted_users.effects.keys() {
+                if let Some(Some(name)) = formals.get(index) {
+                    tracked.insert(name.clone());
+                }
+            }
+        }
+        let operations = unit.operations(&texts, body.0 + 1, &origins);
+        if own.is_none() && operations.is_empty() {
+            return None;
+        }
+        for operation in &operations {
+            if let Some(formal) = &operation.formal
+                && stable.contains(formal)
+            {
+                tracked.insert(formal.clone());
+            }
+        }
+        let mut records = Vec::new();
+        let mut diagnostics = Vec::new();
+        let line = |index: usize| unit.tokens.get(index).map_or(0, |token| token.line);
+        let function_line = line(body.0);
+        // Unattributed operations are reported once each, whatever is tracked.
+        for operation in &operations {
+            if operation
+                .formal
+                .as_ref()
+                .is_none_or(|formal| !stable.contains(formal))
+            {
+                diagnostics.push(LegacyDiagnostic {
+                function: function.to_owned(),
+                line: operation.line,
+                kind: LegacyDiagnosticKind::Unsupported {
+                    description: format!(
+                        "counted-user operation {} on `{}`, which is not a formal this function never rebinds",
+                        operation.what, operation.actual
+                    ),
+                },
+            });
+            }
+        }
+        // A neutral declaration is checked by the derivation of the body.
+        if let Some(own) = own
+            && own.counted_users.neutral
+        {
+            let derived = unit.derive_body(function, &mut BTreeSet::new());
+            let (verdict, reason) = match derived {
+                CallEffect::Neutral => (ClauseVerdict::Held, String::new()),
+                CallEffect::Opaque(reason) => (ClauseVerdict::Undecided, reason),
+            };
+            records.push(ClauseRecord {
+                clause: "resource_user_neutral()".into(),
+                verdict,
+                line: 0,
+                reason,
+            });
+        }
+        if !tracked.is_empty() {
+            let statements = parse_block(&texts, 0, texts.len());
+            let mut initial = PathState::default();
+            for formal in &tracked {
+                initial.counts.insert(formal.clone(), Count::Known(0));
+            }
+            // A literal premise of this function's own declaration fixes the
+            // formal's value for the body it is checked against.
+            for premise in unit.premises.declared(function) {
+                if let (Some(Some(name)), Some(value)) =
+                    (formals.get(premise.index), literal_value(&premise.literal))
+                {
+                    initial
+                        .values
+                        .insert(name.clone(), Value::OneOf(BTreeSet::from([value])));
+                }
+            }
+            let walker = Walker {
+                unit: &unit,
+                texts: &texts,
+                offset: body.0 + 1,
+                origins: &origins,
+                stable: &stable,
+            };
+            let mut exits = Vec::new();
+            let mut abandoned = None;
+            walker.run(
+                &statements,
+                vec![initial],
+                &mut exits,
+                &mut abandoned,
+                function_line,
+            );
+            let clauses = own.map(|own| own.counted_users.clone()).unwrap_or_default();
+            decide(
+                function,
+                &formals,
+                &tracked,
+                &clauses,
+                &exits,
+                abandoned.as_deref(),
+                &mut records,
+                &mut diagnostics,
+                function_line,
+            );
+        }
+        Some((records, diagnostics))
+    }
+
+    /// Whether the declared counted-user clauses of `callee`, whose body is
+    /// defined in this unit, hold against that body. A declaration is applied
+    /// at a call only when they do: a body here is checked, never replaced.
+    fn verify_declared(&self, callee: &str) -> Result<(), String> {
+        if let Some(known) = self.verified.borrow().get(callee) {
+            return known.clone();
+        }
+        // A cycle through declared operations is not verified.
+        self.verified.borrow_mut().insert(
+            callee.to_owned(),
+            Err(format!("`{callee}` is verified through itself")),
+        );
+        let result = match self.evaluate(callee) {
+            Some((records, _)) => {
+                let result = records
+                    .iter()
+                    .find(|record| record.verdict != ClauseVerdict::Held)
+                    .map_or(Ok(()), |record| {
+                        Err(format!(
+                            "the declaration of `{callee}` does not hold against its body here \
+                             (`{}` {}: {})",
+                            record.clause,
+                            record.verdict.spelling(),
+                            record.reason
+                        ))
+                    });
+                self.consulted
+                    .borrow_mut()
+                    .insert(callee.to_owned(), records);
+                result
+            }
+            None => Err(format!(
+                "`{callee}` states no clause its body can be checked against"
+            )),
+        };
+        self.verified
+            .borrow_mut()
+            .insert(callee.to_owned(), result.clone());
+        result
+    }
 }
 
 fn literal_value(literal: &[String]) -> Option<i64> {
@@ -484,7 +573,13 @@ impl Unit<'_> {
                 .effects
                 .keys()
                 .copied()
-                .chain(contract.counted_users.exits.iter().map(|exit| exit.parameter))
+                .chain(
+                    contract
+                        .counted_users
+                        .exits
+                        .iter()
+                        .map(|exit| exit.parameter),
+                )
                 .collect::<BTreeSet<_>>();
             for position in positions {
                 let actual = arguments.get(position).copied().unwrap_or(&[]);
@@ -594,10 +689,16 @@ struct CounterWrite {
 /// `B -> C ++`, `B -> C --`, `++ B -> C`, `-- B -> C` (a step of one), or any
 /// other assignment to `… -> C` (no step: an undecided write), where `C` is a
 /// declared counter member and the write begins at `index`.
-fn counter_write(texts: &[&str], index: usize, counters: &BTreeSet<String>) -> Option<CounterWrite> {
+fn counter_write(
+    texts: &[&str],
+    index: usize,
+    counters: &BTreeSet<String>,
+) -> Option<CounterWrite> {
     let member = |at: usize| {
         texts.get(at + 1) == Some(&"->")
-            && texts.get(at + 2).is_some_and(|field| counters.contains(*field))
+            && texts
+                .get(at + 2)
+                .is_some_and(|field| counters.contains(*field))
             && is_identifier(texts[at])
             && (at == 0 || !matches!(texts[at - 1], "->" | "."))
     };
@@ -876,12 +977,18 @@ impl Walker<'_> {
         match statement {
             Stmt::Block(inner) => self.block(inner, states, exits, abandoned),
             Stmt::Unsupported(what) => {
-                *abandoned = Some(format!("the body contains {what}, which this pass does not model"));
+                *abandoned = Some(format!(
+                    "the body contains {what}, which this pass does not model"
+                ));
                 Vec::new()
             }
             Stmt::Expression(range) => states
                 .into_iter()
-                .flat_map(|state| self.expression(*range, state).into_iter().map(|(state, _)| state))
+                .flat_map(|state| {
+                    self.expression(*range, state)
+                        .into_iter()
+                        .map(|(state, _)| state)
+                })
                 .collect(),
             Stmt::Return { expression, line } => {
                 for state in states {
@@ -964,7 +1071,11 @@ impl Walker<'_> {
 
     /// Evaluate the calls and writes of one expression, forking where a stored
     /// call result has declared exit values, and read what it returns.
-    fn expression(&self, (start, end): (usize, usize), state: PathState) -> Vec<(PathState, Returned)> {
+    fn expression(
+        &self,
+        (start, end): (usize, usize),
+        state: PathState,
+    ) -> Vec<(PathState, Returned)> {
         let texts = &self.texts[start..end.min(self.texts.len())];
         let texts = texts.strip_suffix(&[";"]).unwrap_or(texts);
         // `NAME = …`: the destination whose value this expression decides.
@@ -975,7 +1086,9 @@ impl Walker<'_> {
                 Some(at)
                     if at >= 2
                         && is_identifier(texts[at - 1])
-                        && texts[..at - 1].iter().all(|text| is_identifier(text) || *text == "*") =>
+                        && texts[..at - 1]
+                            .iter()
+                            .all(|text| is_identifier(text) || *text == "*") =>
                 {
                     (Some(texts[at - 1]), at + 1)
                 }
@@ -987,7 +1100,10 @@ impl Walker<'_> {
         let mut events = Vec::new();
         for index in 0..texts.len() {
             if let Some(write) = counter_write(texts, index, &self.unit.counters) {
-                events.push((index + write.spelling.split(' ').count(), Event::Write(write)));
+                events.push((
+                    index + write.spelling.split(' ').count(),
+                    Event::Write(write),
+                ));
             } else if let Some(reason) = opaque_callee(texts, index) {
                 events.push((index, Event::Opaque(reason)));
             } else if is_identifier(texts[index])
@@ -995,7 +1111,13 @@ impl Walker<'_> {
                 && !KEYWORDS.contains(&texts[index])
                 && let Some(close) = close_of(texts, index + 1)
             {
-                events.push((close, Event::Call { callee: index, close }));
+                events.push((
+                    close,
+                    Event::Call {
+                        callee: index,
+                        close,
+                    },
+                ));
             }
         }
         events.sort_by_key(|(order, _)| *order);
@@ -1013,9 +1135,17 @@ impl Walker<'_> {
                                 } else {
                                     UserEffect::Dropped
                                 };
-                                state.apply(&write.base, effect, self.line(start), "a counter write");
+                                state.apply(
+                                    &write.base,
+                                    effect,
+                                    self.line(start),
+                                    "a counter write",
+                                );
                             }
-                            _ => state.undecide_all(&format!("a direct counter write `{}`", write.spelling)),
+                            _ => state.undecide_all(&format!(
+                                "a direct counter write `{}`",
+                                write.spelling
+                            )),
                         }
                     }
                 }
@@ -1047,9 +1177,10 @@ impl Walker<'_> {
                 for state in &mut states {
                     match literal_of(value) {
                         Some(literal) => {
-                            state
-                                .values
-                                .insert(destination.to_owned(), Value::OneOf(BTreeSet::from([literal])));
+                            state.values.insert(
+                                destination.to_owned(),
+                                Value::OneOf(BTreeSet::from([literal])),
+                            );
                         }
                         None => {
                             state.values.remove(destination);
@@ -1061,7 +1192,10 @@ impl Walker<'_> {
         // Any other write to a name forgets its value.
         for (index, text) in texts.iter().enumerate() {
             if matches!(*text, "++" | "--") {
-                for neighbour in [index.checked_sub(1), Some(index + 1)].into_iter().flatten() {
+                for neighbour in [index.checked_sub(1), Some(index + 1)]
+                    .into_iter()
+                    .flatten()
+                {
                     if let Some(name) = texts.get(neighbour) {
                         for state in &mut states {
                             state.values.remove(*name);
@@ -1104,6 +1238,18 @@ impl Walker<'_> {
         mut states: Vec<PathState>,
     ) -> Vec<PathState> {
         let contract: Option<&ResourceFunctionContract> = self.unit.contracts.contract(name);
+        // A declared counter operation or exit clause whose body this unit
+        // defines is applied only when it holds against that body.
+        if contract.is_some_and(|contract| {
+            !contract.counted_users.effects.is_empty() || !contract.counted_users.exits.is_empty()
+        }) && self.unit.body(name).is_some()
+            && let Err(reason) = self.unit.verify_declared(name)
+        {
+            for state in &mut states {
+                state.undecide_all(&reason);
+            }
+            return states;
+        }
         let attributed = |position: usize| -> Option<String> {
             match arguments.get(position).copied().unwrap_or(&[]) {
                 [actual] if self.stable.contains(*actual) => Some((*actual).to_owned()),
@@ -1131,7 +1277,13 @@ impl Walker<'_> {
         if let Some(contract) = contract
             && !contract.counted_users.exits.is_empty()
         {
-            return self.exit_call(name, &contract.counted_users.exits, destination, &attributed, states);
+            return self.exit_call(
+                name,
+                &contract.counted_users.exits,
+                destination,
+                &attributed,
+                states,
+            );
         }
         if let CallEffect::Opaque(reason) = self.unit.call_effect(name, &mut BTreeSet::new()) {
             for state in &mut states {
@@ -1155,8 +1307,14 @@ impl Walker<'_> {
         attributed: &dyn Fn(usize) -> Option<String>,
         states: Vec<PathState>,
     ) -> Vec<PathState> {
-        let values = exits.iter().map(|exit| exit.returned).collect::<BTreeSet<_>>();
-        let positions = exits.iter().map(|exit| exit.parameter).collect::<BTreeSet<_>>();
+        let values = exits
+            .iter()
+            .map(|exit| exit.returned)
+            .collect::<BTreeSet<_>>();
+        let positions = exits
+            .iter()
+            .map(|exit| exit.parameter)
+            .collect::<BTreeSet<_>>();
         // The clause of `position` for one returned value; a value no clause
         // covers (`None`) leaves the count undecided.
         let delta = |position: usize, returned: Option<i64>| -> Option<i8> {
@@ -1308,11 +1466,19 @@ fn decide(
             .collect::<Vec<_>>();
         if let Some(abandoned) = abandoned {
             let spelled = if let Some(operation) = declared_effects.get(formal) {
-                vec![format!("{:?}({formal}, {})", operation.effect, operation.counter)]
+                vec![format!(
+                    "{:?}({formal}, {})",
+                    operation.effect, operation.counter
+                )]
             } else if formal_exits.is_empty() {
-                vec![format!("implicit: every exit restores the users of `{formal}`")]
+                vec![format!(
+                    "implicit: every exit restores the users of `{formal}`"
+                )]
             } else {
-                formal_exits.iter().map(|clause| spell_exit(formal, clause)).collect()
+                formal_exits
+                    .iter()
+                    .map(|clause| spell_exit(formal, clause))
+                    .collect()
             };
             for clause in spelled {
                 records.push(ClauseRecord {
@@ -1341,7 +1507,9 @@ fn decide(
                     Some(Count::Known(found))
                         if *found == expected
                             && exit.state.pending.contains_key(formal) == pending_expected
-                            && (expected != -1 || pending_expected || exit.state.checked.contains(formal)) => {}
+                            && (expected != -1
+                                || pending_expected
+                                || exit.state.checked.contains(formal)) => {}
                     Some(Count::Known(found)) => {
                         verdict = ClauseVerdict::Refuted;
                         line = exit.line;
@@ -1360,9 +1528,10 @@ fn decide(
                 }
             }
             if verdict == ClauseVerdict::Undecided {
-                diagnostics.push(undecided(function_line, format!(
-                    "declared operation on `{formal}`: {reason}"
-                )));
+                diagnostics.push(undecided(
+                    function_line,
+                    format!("declared operation on `{formal}`: {reason}"),
+                ));
             }
             records.push(ClauseRecord {
                 clause: format!(
@@ -1394,9 +1563,10 @@ fn decide(
                 let (applies, definitely) = match &exit.returned {
                     Returned::Void => (false, false),
                     Returned::Undecided => (true, false),
-                    Returned::Value(value) => {
-                        (value.may_be(clause.returned), value.is_exactly(clause.returned))
-                    }
+                    Returned::Value(value) => (
+                        value.may_be(clause.returned),
+                        value.is_exactly(clause.returned),
+                    ),
                 };
                 if !applies {
                     continue;
@@ -1432,14 +1602,12 @@ fn decide(
             }
             let spelled = spell_exit(formal, clause);
             match verdict {
-                ClauseVerdict::Refuted => diagnostics.push(violation(
-                    line,
-                    format!("`{spelled}` is refuted: {reason}"),
-                )),
-                ClauseVerdict::Undecided => diagnostics.push(undecided(
-                    line,
-                    format!("`{spelled}`: {reason}"),
-                )),
+                ClauseVerdict::Refuted => {
+                    diagnostics.push(violation(line, format!("`{spelled}` is refuted: {reason}")))
+                }
+                ClauseVerdict::Undecided => {
+                    diagnostics.push(undecided(line, format!("`{spelled}`: {reason}")))
+                }
                 ClauseVerdict::Held => {}
             }
             records.push(ClauseRecord {
@@ -1479,9 +1647,8 @@ fn decide(
                 Some(Count::Known(found)) => {
                     verdict = ClauseVerdict::Refuted;
                     line = exit.line;
-                    reason = format!(
-                        "an exit no clause covers has added {found} users of `{formal}`"
-                    );
+                    reason =
+                        format!("an exit no clause covers has added {found} users of `{formal}`");
                     diagnostics.push(violation(exit.line, reason.clone()));
                     break;
                 }
@@ -1490,9 +1657,10 @@ fn decide(
                         verdict = ClauseVerdict::Undecided;
                         line = exit.line;
                         reason = why_of(other);
-                        diagnostics.push(undecided(exit.line, format!(
-                            "an exit no clause covers, for `{formal}`: {reason}"
-                        )));
+                        diagnostics.push(undecided(
+                            exit.line,
+                            format!("an exit no clause covers, for `{formal}`: {reason}"),
+                        ));
                     }
                 }
             }
@@ -1550,7 +1718,13 @@ mod tests {
         let texts = words("f ( t ) ; if ( r == - 1 ) { return - 1 ; } else return 0 ;");
         let statements = parse_block(&texts, 0, texts.len());
         assert_eq!(statements.len(), 2);
-        assert!(matches!(statements[1], Stmt::If { otherwise: Some(_), .. }));
+        assert!(matches!(
+            statements[1],
+            Stmt::If {
+                otherwise: Some(_),
+                ..
+            }
+        ));
         let texts = words("do { f ( t ) ; } while ( 0 ) ; for ( ; ; ) ;");
         let statements = parse_block(&texts, 0, texts.len());
         assert!(matches!(statements[0], Stmt::Block(_)));

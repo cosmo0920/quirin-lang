@@ -13024,7 +13024,12 @@ fn apply_resource_action(
                 diagnostics,
             )
         {
-            state.unresolved_effect_sites.insert(site);
+            let published = AbstractPointer {
+                targets: BTreeSet::from([site]),
+                ..AbstractPointer::default()
+            };
+            mark_unresolved_effect(state, &published);
+            state.unmodeled = true;
             continue;
         }
         if escape && status != LIVE {
