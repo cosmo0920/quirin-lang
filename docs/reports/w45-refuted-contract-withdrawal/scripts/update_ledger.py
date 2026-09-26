@@ -9,7 +9,7 @@ Usage: update_ledger.py
   caller call site in the slice is held (10 held call rows, 0 applying);
 * re-scopes `W45-FB-CROSS-UNIT-USER-PREMISES` (both premises are unchecked,
   not refuted, stay applied, and support only the two refutations);
-* appends every entry of `followups.json`, refusing a duplicate id.
+* appends every entry of `followups.json` (three), refusing a duplicate id.
 
 The corpus row is not rewritten: the corpus diagnostics are byte-identical.
 Derived sections are left to `docs/reports/remaining-d02/build_matrix.py`.

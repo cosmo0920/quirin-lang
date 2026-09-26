@@ -63,19 +63,19 @@ pub struct CurrentRoute<'a> {
 
 /// One configured-route compilation configuration, in selection order.
 #[derive(Clone)]
-struct ConfiguredTask<'a> {
-    group: usize,
-    library: &'a str,
-    expected_source: Result<PathBuf, String>,
-    input: TaskInput<'a>,
-    unresolved: Option<&'a str>,
+pub(crate) struct ConfiguredTask<'a> {
+    pub(crate) group: usize,
+    pub(crate) library: &'a str,
+    pub(crate) expected_source: Result<PathBuf, String>,
+    pub(crate) input: TaskInput<'a>,
+    pub(crate) unresolved: Option<&'a str>,
 }
 
 /// What a task analyses: a compilation record, or a selected file the
 /// database has no record for (card W45-FB-SYSTEM-SELECTION), which stays in
 /// the denominator as an `Unknown` unit.
 #[derive(Clone, Copy)]
-enum TaskInput<'a> {
+pub(crate) enum TaskInput<'a> {
     Configured(&'a CompileEntry),
     Absent(&'a str),
 }
@@ -91,6 +91,18 @@ enum Selected<'a> {
 
 /// Run the route; `Ok(true)` when any unit hit a gateway failure.
 pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
+    run_current_route_with_checkpoints(route, None)
+}
+
+/// Card **W45-AUDIT-CHECKPOINTS**: run the route, or, with `checkpoints`,
+/// analyse it one group at a time, sealing each group into a `.qo` checkpoint
+/// and composing the report from the checkpoints
+/// ([`crate::checkpoint_run`]). Without `checkpoints` this is exactly
+/// [`run_current_route`].
+pub fn run_current_route_with_checkpoints(
+    route: &CurrentRoute<'_>,
+    checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
+) -> Result<bool, String> {
     let root = route
         .checkout
         .canonicalize()
@@ -101,12 +113,17 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
         audit.record_selection(selection.record());
     }
     let revision = audit.revision().to_owned();
-    println!("{} {revision} (current checkout)", route.label);
-    println!("{}", route.historical_note);
+    let mut preamble = vec![
+        format!("{} {revision} (current checkout)", route.label),
+        route.historical_note.to_owned(),
+    ];
     if route.mode.is_contracts_only() {
-        println!(
-            "evidence: contracts-only (resource projection from the selected contract modules; no package, verifier-host, plugin, native or pinned evidence)"
+        preamble.push(
+            "evidence: contracts-only (resource projection from the selected contract modules; no package, verifier-host, plugin, native or pinned evidence)".to_owned()
         );
+    }
+    for line in &preamble {
+        println!("{line}");
     }
     let default_database = root.join("build/compile_commands.json");
     let entries = compile_entries(
@@ -234,17 +251,36 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
             });
         }
     }
+    if let Some(options) = checkpoints {
+        let unresolved = groups
+            .iter()
+            .map(|(_, _, unresolved)| *unresolved)
+            .chain(
+                monkey
+                    .iter()
+                    .map(|(_, _, unresolved)| unresolved.as_deref()),
+            )
+            .collect::<Vec<_>>();
+        let plan = crate::checkpoint_run::RoutePlan {
+            preamble,
+            headers,
+            unresolved,
+            tasks,
+        };
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
+        // contracts; when the composed rows refute a declaration, every group
+        // again under that table, whose digest joins each group's identity.
+        audit.set_refuted_table(&qcore_schemas::contract_refutation::RefutationTable::new());
+        let (failed, found) = crate::checkpoint_run::run(route, &audit, plan.clone(), options)?;
+        if found.is_empty() {
+            return Ok(failed);
+        }
+        audit.set_refuted_table(&found);
+        return crate::checkpoint_run::run(route, &audit, plan, options).map(|(failed, _)| failed);
+    }
     let mut printed_headers = 0;
     let mut products = Vec::with_capacity(tasks.len());
-    let dispatch = crate::parallel::heaviest_first(
-        &tasks
-            .iter()
-            .map(|task| match task.input {
-                TaskInput::Configured(entry) => source_weight(entry),
-                TaskInput::Absent(_) => 0,
-            })
-            .collect::<Vec<_>>(),
-    );
+    let dispatch = task_dispatch(&tasks);
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: every task is analysed under the
     // loaded contracts and, when a body refutes its own declaration, once more
     // under the refutation table; only the published phase is printed and
@@ -257,19 +293,7 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
                 tasks.clone(),
                 route.jobs,
                 Some(dispatch.clone()),
-                |task| {
-                    let group = task.group;
-                    let outcome = match (&task.expected_source, task.input) {
-                        (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
-                        (Ok(expected_source), TaskInput::Configured(entry)) => audit
-                            .evaluate_entry(task.library, expected_source, entry, task.unresolved),
-                        (Err(error), TaskInput::Configured(_)) => EntryOutcome {
-                            output: String::new(),
-                            result: Err(error.clone()),
-                        },
-                    };
-                    (group, outcome)
-                },
+                |task| (task.group, evaluate_task(&audit, &task)),
                 |(group, outcome): (usize, EntryOutcome)| {
                     let failed = outcome.result.is_err();
                     outcomes.push((group, outcome));
@@ -305,35 +329,81 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
         audit.absorb_entry(entry)?;
     }
     let counts = audit.finish(route.diagnostic_report)?;
-    // Replace old sidecars explicitly: success must not leave old Checked
-    // evidence adjacent to a new-revision resource inventory at the same paths.
-    let unknown = serde_json::json!({
+    write_unknown_sidecars(
+        &unknown_sidecar(&revision, route.historical_reference_revision),
+        route.diagnostic_report,
+        route.monkey_source_report,
+        route.binding_directory,
+    )?;
+    Ok(counts.gateway_failures != 0)
+}
+
+/// One task's analysis: exactly what the whole-run fold computes for it.
+pub(crate) fn evaluate_task(audit: &CurrentAudit, task: &ConfiguredTask<'_>) -> EntryOutcome {
+    match (&task.expected_source, task.input) {
+        (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
+        (Ok(expected_source), TaskInput::Configured(entry)) => {
+            audit.evaluate_entry(task.library, expected_source, entry, task.unresolved)
+        }
+        (Err(error), TaskInput::Configured(_)) => EntryOutcome {
+            output: String::new(),
+            result: Err(error.clone()),
+        },
+    }
+}
+
+/// Start the largest units first; dispatch moves wall time only.
+pub(crate) fn task_dispatch(tasks: &[ConfiguredTask<'_>]) -> Vec<usize> {
+    crate::parallel::heaviest_first(
+        &tasks
+            .iter()
+            .map(|task| match task.input {
+                TaskInput::Configured(entry) => source_weight(entry),
+                TaskInput::Absent(_) => 0,
+            })
+            .collect::<Vec<_>>(),
+    )
+}
+
+/// The explicit Unknown record that replaces historical sidecars.
+pub(crate) fn unknown_sidecar(revision: &str, historical_reference_revision: &str) -> Value {
+    serde_json::json!({
         "schema_version": 1, "source_revision": revision, "status": "Unknown",
         "reason": "historical source/native/provider evidence is not admitted by the current-revision resource audit",
-        "historical_reference_revision": route.historical_reference_revision,
+        "historical_reference_revision": historical_reference_revision,
         "results": [], "callbacks": [], "wrappers": [], "backend_teardown": [],
-    });
+    })
+}
+
+/// Replace old sidecars explicitly: success must not leave old Checked
+/// evidence adjacent to a new-revision resource inventory at the same paths.
+pub(crate) fn write_unknown_sidecars(
+    unknown: &Value,
+    diagnostic_report: Option<&Path>,
+    monkey_source_report: Option<&Path>,
+    binding_directory: Option<&Path>,
+) -> Result<(), String> {
     let write = |path: &Path| -> Result<(), String> {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
         }
         fs::write(
             path,
-            serde_json::to_vec_pretty(&unknown).map_err(|error| error.to_string())?,
+            serde_json::to_vec_pretty(unknown).map_err(|error| error.to_string())?,
         )
         .map_err(|error| error.to_string())
     };
-    if let Some(path) = route.diagnostic_report {
+    if let Some(path) = diagnostic_report {
         write(&path.with_extension("chunk-contracts.json"))?;
         write(&path.with_extension("source-effects.json"))?;
     }
-    if let Some(path) = route.monkey_source_report {
+    if let Some(path) = monkey_source_report {
         write(path)?;
     }
-    if let Some(path) = route.binding_directory {
+    if let Some(path) = binding_directory {
         write(&path.join("monkey_binding_result.json"))?;
     }
-    Ok(counts.gateway_failures != 0)
+    Ok(())
 }
 
 /// The historical reference revision of a profile's audited groups: the pin

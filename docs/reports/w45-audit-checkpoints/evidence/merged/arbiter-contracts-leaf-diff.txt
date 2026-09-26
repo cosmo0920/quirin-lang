@@ -1,0 +1,2 @@
+('/contract_revision/meaning', 'value', 'revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is i', 'revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is i')
+('/pending_human_review/meaning', 'value', 'declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each i', 'declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each i')

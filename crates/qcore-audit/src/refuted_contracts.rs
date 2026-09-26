@@ -54,33 +54,38 @@ pub const MEANING: &str = "declared contracts of functions whose bodies this run
 pub fn table(units: &[Value]) -> RefutationTable {
     let mut table = RefutationTable::new();
     for unit in units {
-        let file = unit["file"].as_str().unwrap_or_default();
-        for function in unit["functions"].as_array().into_iter().flatten() {
-            let name = function["function"].as_str().unwrap_or_default();
-            for refutation in function["contract_refutations"]
-                .as_array()
-                .into_iter()
-                .flatten()
-            {
-                let kind = match refutation["kind"].as_str() {
-                    Some("custody_duty") => RefutationKind::CustodyDuty,
-                    _ => RefutationKind::CountedUserClause,
-                };
-                insert_refutation(
-                    &mut table,
-                    name,
-                    ContractRefutation {
-                        unit: file.to_owned(),
-                        kind,
-                        clause: refutation["clause"].as_str().unwrap_or_default().to_owned(),
-                        origin: refutation["origin"].as_str().map(ToOwned::to_owned),
-                        reason: refutation["reason"].as_str().unwrap_or_default().to_owned(),
-                    },
-                );
-            }
-        }
+        absorb_refutations(&mut table, unit);
     }
     table
+}
+
+/// Add one unit row's `contract_refutations` to `table`.
+fn absorb_refutations(table: &mut RefutationTable, unit: &Value) {
+    let file = unit["file"].as_str().unwrap_or_default();
+    for function in unit["functions"].as_array().into_iter().flatten() {
+        let name = function["function"].as_str().unwrap_or_default();
+        for refutation in function["contract_refutations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            let kind = match refutation["kind"].as_str() {
+                Some("custody_duty") => RefutationKind::CustodyDuty,
+                _ => RefutationKind::CountedUserClause,
+            };
+            insert_refutation(
+                table,
+                name,
+                ContractRefutation {
+                    unit: file.to_owned(),
+                    kind,
+                    clause: refutation["clause"].as_str().unwrap_or_default().to_owned(),
+                    origin: refutation["origin"].as_str().map(ToOwned::to_owned),
+                    reason: refutation["reason"].as_str().unwrap_or_default().to_owned(),
+                },
+            );
+        }
+    }
 }
 
 /// The outcome of [`run_two_phases`].
@@ -137,12 +142,20 @@ pub fn with_table(contracts: &ResourceContracts, table: &RefutationTable) -> Res
     contracts
 }
 
-/// The `refuted_contracts` section for one finished report.
-#[must_use]
-pub fn section(applied: &RefutationTable, report: &AuditReport) -> Value {
-    let mut call_sites = BTreeMap::<String, usize>::new();
-    let mut functions = BTreeMap::<String, BTreeSet<(String, String, String)>>::new();
-    for unit in report.unit_rows() {
+/// What the `refuted_contracts` section reads of a run's rows: the held calls
+/// per callee and the rows' own refutations. Rows are absorbed one unit at a
+/// time, so a streaming composer (`crate::compose`) builds exactly what the
+/// whole run builds from its report.
+#[derive(Clone, Debug, Default)]
+pub struct RowTally {
+    call_sites: BTreeMap<String, usize>,
+    functions: BTreeMap<String, BTreeSet<(String, String, String)>>,
+    published: RefutationTable,
+}
+
+impl RowTally {
+    /// Absorb one unit row (`library`, `file`, `functions`).
+    pub fn absorb(&mut self, unit: &Value) {
         let library = unit["library"].as_str().unwrap_or_default();
         let file = unit["file"].as_str().unwrap_or_default();
         for function in unit["functions"].as_array().into_iter().flatten() {
@@ -151,49 +164,95 @@ pub fn section(applied: &RefutationTable, report: &AuditReport) -> Value {
                 let Some(callee) = diagnostic["description"].as_str().and_then(held_call) else {
                     continue;
                 };
-                *call_sites.entry(callee.to_owned()).or_default() += 1;
-                functions.entry(callee.to_owned()).or_default().insert((
-                    library.to_owned(),
-                    file.to_owned(),
-                    name.to_owned(),
-                ));
+                *self.call_sites.entry(callee.to_owned()).or_default() += 1;
+                self.functions
+                    .entry(callee.to_owned())
+                    .or_default()
+                    .insert((library.to_owned(), file.to_owned(), name.to_owned()));
             }
         }
+        absorb_refutations(&mut self.published, unit);
     }
-    // The published run's own refutations: phase one's when only it ran, a
-    // subset of the applied table after phase two (a held call can only make
-    // a refutation undecided, never create one).
-    let published = table(report.unit_rows());
-    let names = applied
-        .keys()
-        .chain(published.keys())
-        .chain(call_sites.keys())
-        .cloned()
-        .collect::<BTreeSet<_>>();
-    let entries = names
-        .iter()
-        .map(|name| {
-            json!({
-                "function": name,
-                "applied": applied.contains_key(name),
-                "refutations": applied.get(name).or_else(|| published.get(name)),
-                "held_functions": functions.get(name).map_or(0, BTreeSet::len),
-                "held_call_sites": call_sites.get(name).copied().unwrap_or(0),
+
+    /// The rows' own refutations: phase one's table when only it ran, a
+    /// subset of the applied table after phase two (a held call can only
+    /// make a refutation undecided, never create one).
+    #[must_use]
+    pub fn published(&self) -> &RefutationTable {
+        &self.published
+    }
+
+    /// The section, given the table the published phase applied.
+    #[must_use]
+    pub fn section(&self, applied: &RefutationTable) -> Value {
+        let names = applied
+            .keys()
+            .chain(self.published.keys())
+            .chain(self.call_sites.keys())
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let entries = names
+            .iter()
+            .map(|name| {
+                json!({
+                    "function": name,
+                    "applied": applied.contains_key(name),
+                    "refutations": applied.get(name).or_else(|| self.published.get(name)),
+                    "held_functions": self.functions.get(name).map_or(0, BTreeSet::len),
+                    "held_call_sites": self.call_sites.get(name).copied().unwrap_or(0),
+                })
             })
+            .collect::<Vec<_>>();
+        let held_functions = self
+            .functions
+            .values()
+            .flatten()
+            .collect::<BTreeSet<_>>()
+            .len();
+        json!({
+            "meaning": MEANING,
+            "reason_code": CONTRACT_REFUTED_BY_BODY,
+            "phases": if applied.is_empty() { 1 } else { 2 },
+            "table_sha256": table_digest(applied),
+            "refuted_declarations": applied.len(),
+            "published_refutations_sha256": table_digest(&self.published),
+            "held_functions": held_functions,
+            "held_call_sites": self.call_sites.values().sum::<usize>(),
+            "entries": entries,
         })
-        .collect::<Vec<_>>();
-    let held_functions = functions.values().flatten().collect::<BTreeSet<_>>().len();
-    json!({
-        "meaning": MEANING,
-        "reason_code": CONTRACT_REFUTED_BY_BODY,
-        "phases": if applied.is_empty() { 1 } else { 2 },
-        "table_sha256": table_digest(applied),
-        "refuted_declarations": applied.len(),
-        "published_refutations_sha256": table_digest(&published),
-        "held_functions": held_functions,
-        "held_call_sites": call_sites.values().sum::<usize>(),
-        "entries": entries,
-    })
+    }
+}
+
+/// The `refuted_contracts` section for one finished report.
+#[must_use]
+pub fn section(applied: &RefutationTable, report: &AuditReport) -> Value {
+    let mut tally = RowTally::default();
+    for unit in report.unit_rows() {
+        tally.absorb(unit);
+    }
+    tally.section(applied)
+}
+
+/// The key under which a run records the table it applies in its
+/// assumptions before any unit is analysed, so a checkpoint's run-wide inputs
+/// carry it to the composer; the finished section replaces it.
+pub const APPLIED_KEY: &str = "refuted_contracts";
+
+/// The applied table a run recorded under [`APPLIED_KEY`], or the empty
+/// table when it recorded none.
+///
+/// # Errors
+///
+/// Refuses a recorded table that does not decode.
+pub fn applied_table(assumptions: &Value) -> Result<RefutationTable, String> {
+    match assumptions
+        .get(APPLIED_KEY)
+        .and_then(|record| record.get("applied"))
+    {
+        None => Ok(RefutationTable::new()),
+        Some(table) => serde_json::from_value(table.clone())
+            .map_err(|error| format!("the recorded refutation table does not decode: {error}")),
+    }
 }
 
 /// The one-line console tally of a [`section`].

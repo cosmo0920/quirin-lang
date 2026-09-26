@@ -570,7 +570,7 @@ type PendingPin = (String, String, Option<String>, Option<PathBuf>, String);
 
 /// Held-call refusals per callee, and the distinct (library, file, function)
 /// rows holding them.
-type HeldCalls = BTreeMap<String, (usize, BTreeSet<(String, String, String)>)>;
+pub type HeldCalls = BTreeMap<String, (usize, BTreeSet<(String, String, String)>)>;
 
 /// One pinned declaration's outcome.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -653,10 +653,12 @@ pub fn apply_pins(
         })
         .map(|(name, ..)| name.clone())
         .collect::<BTreeSet<_>>();
-    let tree = SourceTree::read(source_root)?;
-    evaluation.source_kind = tree.kind.to_owned();
-    evaluation.source_revision.clone_from(&tree.revision);
-    let found = tree.sites(&wanted);
+    // Card W45-AUDIT-CHECKPOINTS: the sites are read one file at a time, so
+    // the evaluation never holds the whole checkout's source.
+    let scan = SourceTree::read_sites(source_root, &wanted)?;
+    evaluation.source_kind = scan.kind.to_owned();
+    evaluation.source_revision = scan.revision;
+    let found = scan.sites;
     for (name, module, owner, lock_path, digest) in pending {
         let lock = lock_path.as_ref().and_then(|path| locks.get(path));
         let entry = lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name));
@@ -727,48 +729,126 @@ fn site_difference(identities: &[ReviewedIdentity], found: &[SourceSite]) -> Str
     )
 }
 
-/// The analysed functions of a finished report, by name.
-fn analysed_functions(report: &AuditReport) -> BTreeSet<String> {
-    report
-        .unit_rows()
-        .iter()
-        .flat_map(|unit| unit["functions"].as_array().into_iter().flatten())
-        .filter_map(|function| function["function"].as_str().map(str::to_owned))
-        .collect()
+/// What the section reads of a finished report: the analysed functions, by
+/// name, and the pin-mismatch held-call refusals per callee with the distinct
+/// (library, file, function) rows holding them.
+///
+/// Card **W45-AUDIT-CHECKPOINTS**: both are per-row folds (a union and a
+/// sum/union), so a whole report's facts are the [`ReportFacts::absorb`] of its
+/// groups' facts, and the section of a composed report is the whole run's.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ReportFacts {
+    pub analysed: BTreeSet<String>,
+    pub held: HeldCalls,
 }
 
-/// Held-call refusals per callee, and the distinct functions holding them.
-fn held_calls(report: &AuditReport) -> HeldCalls {
-    let mut held: BTreeMap<String, (usize, BTreeSet<_>)> = BTreeMap::new();
-    for unit in report.unit_rows() {
-        let library = unit["library"].as_str().unwrap_or_default();
-        let file = unit["file"].as_str().unwrap_or_default();
-        for function in unit["functions"].as_array().into_iter().flatten() {
-            let name = function["function"].as_str().unwrap_or_default();
-            for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
-                let Some(callee) = diagnostic["description"].as_str().and_then(held_call) else {
-                    continue;
-                };
-                let entry = held.entry(callee.to_owned()).or_default();
-                entry.0 += 1;
-                entry
-                    .1
-                    .insert((library.to_owned(), file.to_owned(), name.to_owned()));
+impl ReportFacts {
+    /// The facts of `rows`.
+    #[must_use]
+    pub fn of_rows(rows: &[Value]) -> Self {
+        let mut facts = Self::default();
+        for unit in rows {
+            let library = unit["library"].as_str().unwrap_or_default();
+            let file = unit["file"].as_str().unwrap_or_default();
+            for function in unit["functions"].as_array().into_iter().flatten() {
+                if let Some(name) = function["function"].as_str() {
+                    facts.analysed.insert(name.to_owned());
+                }
+                let name = function["function"].as_str().unwrap_or_default();
+                for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
+                    let Some(callee) = diagnostic["description"].as_str().and_then(held_call)
+                    else {
+                        continue;
+                    };
+                    let entry = facts.held.entry(callee.to_owned()).or_default();
+                    entry.0 += 1;
+                    entry
+                        .1
+                        .insert((library.to_owned(), file.to_owned(), name.to_owned()));
+                }
             }
         }
+        facts
     }
-    held
+
+    /// Unite `other`'s analysed functions and held rows, and add its sites.
+    pub fn absorb(&mut self, other: Self) {
+        self.analysed.extend(other.analysed);
+        for (callee, (sites, rows)) in other.held {
+            let entry = self.held.entry(callee).or_default();
+            entry.0 += sites;
+            entry.1.extend(rows);
+        }
+    }
 }
 
-/// The `contract_revision` section for one finished report.
+/// Everything the section reads of the contract environment and the pin
+/// evaluation (card **W45-AUDIT-CHECKPOINTS**): a function of the run's inputs
+/// alone, published into each checkpoint so a composition can render the
+/// section without the environment.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SectionTemplate {
+    pub source: Value,
+    pub locks: Value,
+    /// Per pinned outcome, in evaluation order: its record without the
+    /// report-dependent keys, and whether it is in force.
+    pub pinned: Vec<PinnedTemplate>,
+    /// Every flexible declaration in force, in name order.
+    pub flexible: Vec<FlexibleTemplate>,
+    /// Every declaration, in name order.
+    pub inventory: Vec<InventoryTemplate>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PinnedTemplate {
+    pub function: String,
+    pub in_force: bool,
+    pub record: Value,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FlexibleTemplate {
+    pub function: String,
+    pub module: String,
+    pub owner: Option<String>,
+    pub contract_sha256: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct InventoryTemplate {
+    pub function: String,
+    pub mode: String,
+    pub module: Option<String>,
+    pub contract_sha256: String,
+    /// The status when it does not depend on the report (pending review, not
+    /// in force, pinned in force); `None` for a flexible declaration.
+    pub fixed_status: Option<String>,
+}
+
+impl PinEvaluation {
+    /// Card W45-AUDIT-CHECKPOINTS: every lock read, by path, with its file's
+    /// SHA-256 — the contract-set identity a checkpoint records.
+    #[must_use]
+    pub fn lock_digests(&self) -> BTreeMap<String, String> {
+        self.locks
+            .iter()
+            .map(|(path, lock)| {
+                (
+                    path.clone(),
+                    lock["sha256"].as_str().unwrap_or_default().to_owned(),
+                )
+            })
+            .collect()
+    }
+}
+
+/// The report-independent part of the section.
 #[must_use]
-pub fn section(
-    contracts: &ResourceContracts,
-    evaluation: &PinEvaluation,
-    report: &AuditReport,
-) -> Value {
-    let analysed = analysed_functions(report);
-    let held = held_calls(report);
+pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> SectionTemplate {
     let module_sha256 = |module: &str| {
         contracts
             .source_assumptions()
@@ -776,44 +856,39 @@ pub fn section(
             .map(|text| sha256_hex(text.as_bytes()))
     };
     let owner_of = |module: &str| evaluation.owners.get(module).cloned().flatten();
-    let mut in_force = Vec::new();
-    let mut mismatches = Vec::new();
-    for outcome in &evaluation.outcomes {
-        let record = json!({
-            "function": outcome.function,
-            "module": outcome.module,
-            "module_sha256": module_sha256(&outcome.module),
-            "owner": outcome.owner,
-            "lock": outcome.lock,
-            "contract_sha256": outcome.contract_sha256,
-        });
-        match outcome.reason {
-            None => {
-                let mut record = record;
-                record["sites"] = json!(outcome.found.len());
-                record["matched_reviewed_at"] = json!(outcome.matched);
-                record["identities"] = json!(outcome.identities.len());
-                record["body_analysed"] = json!(analysed.contains(&outcome.function));
-                in_force.push(record);
+    let pinned = evaluation
+        .outcomes
+        .iter()
+        .map(|outcome| {
+            let mut record = json!({
+                "function": outcome.function,
+                "module": outcome.module,
+                "module_sha256": module_sha256(&outcome.module),
+                "owner": outcome.owner,
+                "lock": outcome.lock,
+                "contract_sha256": outcome.contract_sha256,
+            });
+            match outcome.reason {
+                None => {
+                    record["sites"] = json!(outcome.found.len());
+                    record["matched_reviewed_at"] = json!(outcome.matched);
+                    record["identities"] = json!(outcome.identities.len());
+                }
+                Some(reason) => {
+                    record["reason"] = json!(reason.as_str());
+                    record["detail"] = json!(outcome.detail);
+                    record["identities"] = json!(outcome.identities);
+                    record["found_sites"] = json!(outcome.found);
+                }
             }
-            Some(reason) => {
-                let (sites, functions) = held
-                    .get(&outcome.function)
-                    .map_or((0, 0), |(sites, functions)| (*sites, functions.len()));
-                let mut record = record;
-                record["reason"] = json!(reason.as_str());
-                record["detail"] = json!(outcome.detail);
-                record["identities"] = json!(outcome.identities);
-                record["found_sites"] = json!(outcome.found);
-                record["held_functions"] = json!(functions);
-                record["held_call_sites"] = json!(sites);
-                mismatches.push(record);
+            PinnedTemplate {
+                function: outcome.function.clone(),
+                in_force: outcome.reason.is_none(),
+                record,
             }
-        }
-    }
-    let mut checked = Vec::new();
-    let mut trusted = Vec::new();
-    let mut libc = Vec::new();
+        })
+        .collect();
+    let mut flexible = Vec::new();
     for (name, contract_digest) in &evaluation.contract_sha256 {
         if contracts.revision_mode(name) != RevisionMode::Flexible
             || contracts.contract(name).is_none()
@@ -821,17 +896,79 @@ pub fn section(
             continue;
         }
         let module = evaluation.modules.get(name).cloned().unwrap_or_default();
-        let owner = owner_of(&module);
-        let record = json!({
-            "function": name,
-            "module": module,
-            "owner": owner,
-            "contract_sha256": contract_digest,
+        flexible.push(FlexibleTemplate {
+            function: name.clone(),
+            owner: owner_of(&module),
+            module,
+            contract_sha256: contract_digest.clone(),
         });
-        if analysed.contains(name) {
+    }
+    let inventory = evaluation
+        .contract_sha256
+        .iter()
+        .map(|(name, contract_digest)| {
+            let mode = contracts.revision_mode(name);
+            let fixed_status = if contracts.pending_review().contains_key(name) {
+                Some("pending-review")
+            } else if contracts.pin_mismatch().contains_key(name) {
+                Some("not-in-force")
+            } else if mode == RevisionMode::Pinned {
+                Some("pinned-in-force")
+            } else {
+                None
+            };
+            InventoryTemplate {
+                function: name.clone(),
+                mode: mode.as_str().to_owned(),
+                module: evaluation.modules.get(name).cloned(),
+                contract_sha256: contract_digest.clone(),
+                fixed_status: fixed_status.map(str::to_owned),
+            }
+        })
+        .collect();
+    SectionTemplate {
+        source: json!({"kind": evaluation.source_kind, "revision": evaluation.source_revision}),
+        locks: json!(evaluation.locks),
+        pinned,
+        flexible,
+        inventory,
+    }
+}
+
+/// The section for `template` over the report facts `facts`.
+#[must_use]
+pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
+    let ReportFacts { analysed, held } = facts;
+    let mut in_force = Vec::new();
+    let mut mismatches = Vec::new();
+    for pinned in &template.pinned {
+        let mut record = pinned.record.clone();
+        if pinned.in_force {
+            record["body_analysed"] = json!(analysed.contains(&pinned.function));
+            in_force.push(record);
+        } else {
+            let (sites, functions) = held
+                .get(&pinned.function)
+                .map_or((0, 0), |(sites, functions)| (*sites, functions.len()));
+            record["held_functions"] = json!(functions);
+            record["held_call_sites"] = json!(sites);
+            mismatches.push(record);
+        }
+    }
+    let mut checked = Vec::new();
+    let mut trusted = Vec::new();
+    let mut libc = Vec::new();
+    for flexible in &template.flexible {
+        let record = json!({
+            "function": flexible.function,
+            "module": flexible.module,
+            "owner": flexible.owner,
+            "contract_sha256": flexible.contract_sha256,
+        });
+        if analysed.contains(&flexible.function) {
             checked.push(record);
-        } else if owner.as_deref() == Some(LIBC_CRATE) {
-            libc.push(name.clone());
+        } else if flexible.owner.as_deref() == Some(LIBC_CRATE) {
+            libc.push(flexible.function.clone());
         } else {
             trusted.push(record);
         }
@@ -839,32 +976,24 @@ pub fn section(
     // Every declaration, with its mode and what this run made of it: the
     // inventory `quirin-audit compare` reads.
     let mut inventory = BTreeMap::new();
-    for (name, contract_digest) in &evaluation.contract_sha256 {
-        let mode = contracts.revision_mode(name);
-        let status = if contracts.pending_review().contains_key(name) {
-            "pending-review"
-        } else if contracts.pin_mismatch().contains_key(name) {
-            "not-in-force"
-        } else if mode == RevisionMode::Pinned {
-            "pinned-in-force"
-        } else if analysed.contains(name) {
-            "flexible-checked"
-        } else if libc.contains(name) {
-            "flexible-standing"
-        } else {
-            "flexible-trusted"
+    for entry in &template.inventory {
+        let status = match &entry.fixed_status {
+            Some(status) => status.as_str(),
+            None if analysed.contains(&entry.function) => "flexible-checked",
+            None if libc.contains(&entry.function) => "flexible-standing",
+            None => "flexible-trusted",
         };
         inventory.insert(
-            name.clone(),
+            entry.function.clone(),
             json!({
-                "mode": mode.as_str(),
+                "mode": entry.mode,
                 "status": status,
-                "module": evaluation.modules.get(name),
-                "contract_sha256": contract_digest,
+                "module": entry.module,
+                "contract_sha256": entry.contract_sha256,
             }),
         );
     }
-    let pinned_total = evaluation.outcomes.len();
+    let pinned_total = template.pinned.len();
     let held_functions = held
         .values()
         .flat_map(|(_, functions)| functions)
@@ -885,8 +1014,8 @@ pub fn section(
         "meaning": MEANING,
         "reason_code": CONTRACT_PIN_MISMATCH,
         "default_mode": RevisionMode::Pinned.as_str(),
-        "source": {"kind": evaluation.source_kind, "revision": evaluation.source_revision},
-        "locks": evaluation.locks,
+        "source": template.source,
+        "locks": template.locks,
         "counts": {
             "pinned": pinned_total,
             "pinned_in_force": in_force.len(),
@@ -906,6 +1035,19 @@ pub fn section(
         },
         "contracts": inventory,
     })
+}
+
+/// The `contract_revision` section for one finished report.
+#[must_use]
+pub fn section(
+    contracts: &ResourceContracts,
+    evaluation: &PinEvaluation,
+    report: &AuditReport,
+) -> Value {
+    render(
+        &template(contracts, evaluation),
+        &ReportFacts::of_rows(report.unit_rows()),
+    )
 }
 
 /// The one-line console tally of a [`section`].

@@ -1,0 +1,14 @@
+cmetrics yaml decompose=0 recompose=0 bytes=identical text_bytes=2744004
+cmetrics toml decompose=0 recompose=0 bytes=identical text_bytes=2410895
+ctraces yaml decompose=0 recompose=0 bytes=identical text_bytes=1367590
+ctraces toml decompose=0 recompose=0 bytes=identical text_bytes=1254786
+librdkafka yaml decompose=0 recompose=0 bytes=identical text_bytes=13713365
+librdkafka toml decompose=0 recompose=0 bytes=identical text_bytes=11555878
+chunkio yaml decompose=0 recompose=0 bytes=identical text_bytes=1061673
+chunkio toml decompose=0 recompose=0 bytes=identical text_bytes=996096
+fluent-bit-chunk yaml decompose=0 recompose=0 bytes=identical text_bytes=962415
+fluent-bit-chunk toml decompose=0 recompose=0 bytes=identical text_bytes=889634
+monkey-libevent yaml decompose=0 recompose=0 bytes=identical text_bytes=1716028
+monkey-libevent toml decompose=0 recompose=0 bytes=identical text_bytes=1530390
+checkpoint refused: private/measure-final/roundtrip/edited.yaml: the text's contents do not match its recorded manifest (section(s) ["identity", "plan", "global", "preparation", "lowering", "verdicts", "certificates", "contracts", "result"] differ): it was edited or is incomplete
+edited recompose exit 1

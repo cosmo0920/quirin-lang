@@ -1,0 +1,32 @@
+== whole-j16 11:05:58
+{"exit": 0, "peak_rss_kib": 1200584, "wall_clock": "1:33.93"}
+== ck-j16 11:07:32
+{"exit": 0, "peak_rss_kib": 1122620, "wall_clock": "1:50.00"}
+== compose 11:09:22
+{"exit": 0, "peak_rss_kib": 32800, "wall_clock": "0:00.11"}
+== resume-j16 11:09:22
+{"exit": 0, "peak_rss_kib": 432688, "wall_clock": "0:04.94"}
+== probe 11:09:27
+{"entries": 1415, "changed": 13}
+== probe-resume-j16 11:09:27
+{"exit": 0, "peak_rss_kib": 437776, "wall_clock": "0:06.78"}
+== probe-whole-j16 11:09:34
+{"exit": 0, "peak_rss_kib": 1182756, "wall_clock": "1:35.12"}
+== roundtrip 11:11:09
+roundtrip exit 0
+== arbiter 11:11:10
+arbiter exit 0
+== ck-j1 11:12:50
+{"exit": 0, "peak_rss_kib": 147520, "wall_clock": "7:36.36"}
+== whole-j1 11:20:26
+{"exit": 0, "peak_rss_kib": 175640, "wall_clock": "11:33.24"}
+== identity 11:31:59
+ck-j16 vs current-whole-merged exit 0
+compose vs current-whole-merged exit 0
+resume-j16 vs current-whole-merged exit 0
+ck-j1 vs current-whole-merged exit 0
+whole-j1 vs current-whole-merged exit 0
+probe-resume-j16 vs probe-whole exit 0
+arbiter vs w45-fb-backlog-custody exit 0
+verify exit 0
+== done 11:32:00

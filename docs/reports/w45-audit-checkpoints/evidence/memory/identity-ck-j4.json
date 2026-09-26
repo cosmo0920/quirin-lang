@@ -1,0 +1,42 @@
+{
+  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-mem/ck-j4",
+  "baseline": "docs/reports/w45-audit-checkpoints/artifacts/current-whole",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "3b92dac198dc60839cca9494182e631490da4a77930edc773c0c504cbf07e6ea",
+      "baseline_raw_sha256": "3b92dac198dc60839cca9494182e631490da4a77930edc773c0c504cbf07e6ea",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "a1d98b6ac8514d0ddbd72ec6e76f362e08bb20c9c6cdf2a1091d5aaf5b62abbe",
+      "baseline_raw_sha256": "a1d98b6ac8514d0ddbd72ec6e76f362e08bb20c9c6cdf2a1091d5aaf5b62abbe",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": true
+}

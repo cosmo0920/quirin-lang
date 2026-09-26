@@ -1,12 +1,5 @@
 [
   {
-    "id": "W45-REFUTATION-TABLE-CHECKPOINT-KEY",
-    "title": "A per-group checkpoint must carry each unit's refutations and join the refutation table's digest to its identity",
-    "why": "Card W45-REFUTED-CONTRACT-WITHDRAWAL (contract spec C06.4, gateway constraint 10f) makes every audit route two-phase: phase one's unit results depend on the unit and the environment only, phase two's also on the refutation table (`ResourceContracts::refuted_by_body`). W45-AUDIT-CHECKPOINTS composes per-group `.qo` checkpoints assuming units are independent, which holds for phase one only. The interface is in place (`qcore_audit::refuted_contracts::table` recomputes the table from the rows' `contract_refutations` by union; `qcore_schemas::contract_refutation::table_digest`, defined for the empty table too) but not wired into the checkpoint modules, which this card did not edit. Size: 4 audit routes (current, contracts, configured, corpus arbiter) and one checkpoint identity. DISCHARGE: a checkpoint carries its units' `contract_refutations` rows and the digest of the table it was analysed under in its identity; composition recomputes the union table and refuses to compose phase-two results under different digests; a test composes two groups whose refutations cross them and reproduces the whole run.",
-    "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
-    "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
-  },
-  {
     "id": "W45-CONTAINER-CLAUSE-BODY-CHECK",
     "title": "Declared container clauses are never checked against a body, so they can be unchecked but never refuted",
     "why": "C06.4 withdraws a declaration its own body refutes, and the two refutation arms are a refuted counted-user clause and a contradicted custody duty. `resource_published`/`resource_unpublished` (C04.8) are applied at calls only: no pass checks a declared container clause against the body it names, and W4's conflict check compares the custody projection only. Size: 2 declarations (`mk_list_add`, `mk_list_del` in `providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore`), whose `static inline` bodies every including unit defines. DISCHARGE: a per-path check of a defined body against its declared publication and unlink (the object linked into the named container on every exit, or unlinked), feeding a third refutation arm, with Lean parity and a measured corpus and slice.",

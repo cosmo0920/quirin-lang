@@ -157,20 +157,35 @@ Three further properties hold:
   The premise that a held call can only make a refutation undecided is stated,
   not proved (§6).
 
-**The interface for W45-AUDIT-CHECKPOINTS.** This card does not edit the
-checkpoint modules. The wiring is registered as
-`W45-REFUTATION-TABLE-CHECKPOINT-KEY`. A checkpoint that composes groups must:
+**Checkpoints (W45-AUDIT-CHECKPOINTS, merged from `main` `675e7289` during
+this card; the coordinator asked for option (a)).** The wiring is small and
+local, and it is done:
 
-1. carry each unit's `contract_refutations` rows, so the table can be
-   recomputed by union (`refuted_contracts::table`, or
-   `contract_refutation::union` over group tables);
-2. join `contract_refutation::table_digest(table)` to its identity. The digest
-   is defined for the empty table too, so a phase-one result is keyed as
-   "analysed under the empty table";
-3. refuse to compose phase-two results analysed under different digests.
+1. **Identity.** `ContractSetIdentity` gains `refuted_table_sha256`, the
+   `contract_refutation::table_digest` of the table the group was analysed
+   under. The digest is defined for the empty table too, so a phase-one group
+   is keyed as "analysed under the empty table". The `.qo` schema goes from 1
+   to 2, and `checkpoint_cli`'s schema pin is moved deliberately.
+2. **Compose check.** Compose already refuses members whose contract sets
+   differ ("disagree on the contract set"), so checkpoints sealed under
+   different tables never compose. Resume recomputes a group whose digest
+   changed.
+3. **Two phases.** A checkpointed `current` run first seals and composes every
+   group under the empty table. When the composed rows record a refutation, it
+   seals and composes every group again under that table
+   (`current_route.rs`, `checkpoint_run::run` returns the composed
+   refutations).
+4. **Section.** The run records the applied table in its assumptions before
+   any unit, under `refuted_contracts.applied`, so every checkpoint's `global`
+   section carries it. The composer renders the `refuted_contracts` section and
+   tally from it and from the rows, one unit at a time
+   (`refuted_contracts::RowTally`). The whole run's `finish` replaces the same
+   key, so the two sidecars are byte-identical.
 
-Lean proves that a grouped two-phase run equals the whole run
-(`two_phases_over_groups_equal_the_whole_run`).
+`checkpoint_cli`'s whole-run identity test still holds at schema 2: outputs and
+console match the whole run at `--jobs 1` and `--jobs 4`. The slice measured
+through checkpoints is §5.2. Lean proves that a grouped two-phase run equals
+the whole run (`two_phases_over_groups_equal_the_whole_run`).
 
 ## 3. Mechanism
 
@@ -380,9 +395,8 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
 
   Their only consumers are the two refutations. No Safe rests on either.
 * **Registered** ([followups.json](followups.json)): `named_followups` goes from
-  449 to 452.
-  * `W45-REFUTATION-TABLE-CHECKPOINT-KEY`: the checkpoint wiring; 4 routes and
-    one identity.
+  454 (on `main` `675e7289`) to 456. The checkpoint key first drafted as a
+  follow-up was implemented instead (§2.4).
   * `W45-CONTAINER-CLAUSE-BODY-CHECK`: 2 declarations.
   * `W45-UNCHECKED-DECLARATIONS-TRUSTED`: 22 corpus declarations, a lower bound.
   * `W45-REFUTED-HOLD-UNIT-REASON`: 0 units today.

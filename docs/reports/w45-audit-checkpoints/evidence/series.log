@@ -1,0 +1,25 @@
+== whole-j16 08:26:34
+{"exit": 0, "peak_rss_kib": 952572, "wall_clock": "2:10.75"}
+== ck-j16 08:28:45
+{"exit": 0, "peak_rss_kib": 933600, "wall_clock": "1:55.84"}
+== compose 08:30:41
+{"exit": 0, "peak_rss_kib": 32192, "wall_clock": "0:00.12"}
+== resume-j16 08:30:41
+{"exit": 0, "peak_rss_kib": 494252, "wall_clock": "0:05.12"}
+== probe 08:30:46
+{"entries": 1415, "changed": 13}
+== probe-resume-j16 08:30:46
+{"exit": 0, "peak_rss_kib": 506168, "wall_clock": "0:07.07"}
+== probe-whole-j16 08:30:53
+{"exit": 0, "peak_rss_kib": 944608, "wall_clock": "1:38.84"}
+== whole-j4 08:32:32
+{"exit": 0, "peak_rss_kib": 406108, "wall_clock": "2:21.68"}
+== ck-j4 08:34:54
+{"exit": 0, "peak_rss_kib": 415440, "wall_clock": "4:48.12"}
+== whole-j1 08:39:42
+{"exit": 0, "peak_rss_kib": 185880, "wall_clock": "14:33.17"}
+== ck-j1 08:54:15
+{"exit": 0, "peak_rss_kib": 186528, "wall_clock": "14:35.74"}
+== arbiter 09:08:51
+arbiter exit 0
+== done 09:10:38

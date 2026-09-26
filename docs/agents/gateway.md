@@ -840,8 +840,9 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     of the 24 declarations with an analysed corpus body, on no evidence, and
     every cross-unit application), install a derived summary in a refuted
     declaration's place, hold a call inside the refuted function's own body, or
-    compose phase-two unit results analysed under different table digests (the
-    W45-AUDIT-CHECKPOINTS interface in the report). Premises stated, not
+    compose unit results analysed under different tables: a checkpointed run
+    joins the table's digest to every group's identity (`.qo` schema 2) and
+    runs its second phase over every group. Premises stated, not
     proved: the second pass reads the table only by membership, and a held call
     can only make a refutation undecided, never create one.
     `QCore.RefutedContractWithdrawal`;
