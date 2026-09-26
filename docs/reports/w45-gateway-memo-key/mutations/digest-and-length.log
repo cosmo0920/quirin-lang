@@ -1,0 +1,45 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abb68e99fbe2e85e9/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.28s
+     Running unittests src/lib.rs (target/debug/deps/qcore_c_gateway-1e25e7c22a36abfb)
+
+running 22 tests
+test legacy_c::member_release::tests::a_forced_digest_collision_is_a_miss_and_gives_the_uncached_answer ... FAILED
+test legacy_c::member_release::tests::interleaved_streams_always_get_their_uncached_answer ... ok
+test legacy_c::member_release::tests::a_consuming_position_keeps_the_refusal ... ok
+test legacy_c::member_release::tests::the_guard_precedes_only_undeclared_unit_callees_that_may_release_through_a_formal ... ok
+test legacy_c::member_release::tests::a_non_null_release_keeps_the_refusal ... ok
+test legacy_c::member_release::tests::a_member_address_is_never_released ... ok
+test legacy_c::member_release::tests::a_place_obliges_every_pointer_it_reads_through ... ok
+test legacy_c::member_release::tests::a_member_null_test_is_a_typed_read_of_its_base ... ok
+test legacy_c::member_release::tests::a_member_null_test_over_a_released_base_is_refused ... ok
+test legacy_c::member_release::tests::a_body_that_keeps_its_formal_gets_no_member_release ... ok
+test legacy_c::member_release::tests::the_hook_reaches_the_memo_so_the_collision_test_is_not_vacuous ... ok
+test legacy_c::member_release::tests::the_releasing_set_is_closed_under_calls ... ok
+test legacy_c::member_release::tests::a_member_read_through_a_released_base_is_refused ... ok
+test legacy_c::member_release::tests::a_destructor_body_validates_and_its_caller_certifies ... ok
+test legacy_c::member_release::tests::a_released_member_of_a_linked_owner_is_refused ... ok
+test legacy_c::member_release::tests::the_released_formal_is_still_released_exactly_once ... ok
+test legacy_c::member_release::tests::a_member_null_test_reads_only_single_pointer_members ... ok
+test legacy_c::member_release::tests::the_guard_refuses_a_caller_whose_actual_owns_sub_custody ... ok
+test legacy_c::member_release::tests::an_aggregate_null_test_after_release_is_not_safe ... ok
+test legacy_c::member_release::tests::destructor_shapes_still_certify ... ok
+test legacy_c::member_release::tests::no_second_use_of_a_released_member_is_safe ... ok
+test legacy_c::member_release::tests::a_callee_release_is_never_followed_safely_by_the_caller ... ok
+
+failures:
+
+---- legacy_c::member_release::tests::a_forced_digest_collision_is_a_miss_and_gives_the_uncached_answer stdout ----
+
+thread 'legacy_c::member_release::tests::a_forced_digest_collision_is_a_miss_and_gives_the_uncached_answer' (1715087) panicked at crates/qcore-c-gateway/src/../tests/unit/legacy_member_release.rs:519:5:
+assertion `left == right` failed
+  left: {"bogus"}
+ right: {"node_destroy", "outer"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    legacy_c::member_release::tests::a_forced_digest_collision_is_a_miss_and_gives_the_uncached_answer
+
+test result: FAILED. 21 passed; 1 failed; 0 ignored; 0 measured; 563 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --lib`

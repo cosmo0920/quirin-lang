@@ -740,9 +740,44 @@ fn insert_before(cfg: &mut LegacyCfg, id: usize, instruction: LegacyInstruction,
 }
 
 thread_local! {
-    /// The last token stream's answer, keyed by a hash of every token text:
-    /// W4 builds many CFGs from one unit's tokens.
-    static RELEASING: RefCell<Option<(u64, Rc<BTreeSet<String>>)>> = const { RefCell::new(None) };
+    /// The last token stream's answer, with the whole key it answers: W4
+    /// builds many CFGs from one unit's tokens. The answer is a function of
+    /// every token text and nothing else (`line` is never read), so an entry
+    /// is served only when every text is equal; the digest merely rejects a
+    /// different stream cheaply, and a digest collision is a miss (card
+    /// W45-GATEWAY-MEMO-KEY; `QCore.MemoKey.run_eq_map`).
+    static RELEASING: RefCell<Option<ReleasingEntry>> = const { RefCell::new(None) };
+}
+
+/// One memoised answer and the whole key it was computed from.
+struct ReleasingEntry {
+    digest: u64,
+    texts: Vec<String>,
+    set: Rc<BTreeSet<String>>,
+}
+
+impl ReleasingEntry {
+    /// Whether this entry answers `tokens`: its digest and every token text
+    /// agree. A digest match alone never serves it.
+    fn answers(&self, digest: u64, tokens: &[Token]) -> bool {
+        self.digest == digest
+            && self.texts.len() == tokens.len()
+            && self
+                .texts
+                .iter()
+                .zip(tokens)
+                .all(|(cached, token)| *cached == token.text)
+    }
+}
+
+/// The 64-bit digest of every token text: a cheap reject, never a key.
+fn releasing_digest(tokens: &[Token]) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    tokens.len().hash(&mut hasher);
+    for token in tokens {
+        token.text.hash(&mut hasher);
+    }
+    hasher.finish()
 }
 
 /// The functions this token stream defines whose body may release an object
@@ -752,23 +787,29 @@ thread_local! {
 /// body that calls one of them. It is purely lexical and ignores contracts,
 /// so it is a superset of the bodies that used rule 1 under any environment.
 pub(super) fn member_releasing_functions(tokens: &[Token]) -> Rc<BTreeSet<String>> {
-    let mut hasher = DefaultHasher::new();
-    tokens.len().hash(&mut hasher);
-    for token in tokens {
-        token.text.hash(&mut hasher);
+    // The measurement switch for the cache-off corpus run: never enabled by
+    // any workspace member.
+    if cfg!(feature = "member-release-memo-off") {
+        return Rc::new(compute_member_releasing_functions(tokens));
     }
-    let key = hasher.finish();
+    let digest = releasing_digest(tokens);
     if let Some(found) = RELEASING.with(|cache| {
         cache
             .borrow()
             .as_ref()
-            .filter(|(cached, _)| *cached == key)
-            .map(|(_, set)| Rc::clone(set))
+            .filter(|entry| entry.answers(digest, tokens))
+            .map(|entry| Rc::clone(&entry.set))
     }) {
         return found;
     }
     let set = Rc::new(compute_member_releasing_functions(tokens));
-    RELEASING.with(|cache| *cache.borrow_mut() = Some((key, Rc::clone(&set))));
+    RELEASING.with(|cache| {
+        *cache.borrow_mut() = Some(ReleasingEntry {
+            digest,
+            texts: tokens.iter().map(|token| token.text.clone()).collect(),
+            set: Rc::clone(&set),
+        });
+    });
     set
 }
 
@@ -916,6 +957,19 @@ pub(super) fn guarded_callees(cfg: &LegacyCfg) -> BTreeSet<String> {
                 .map(|(function, _)| function.to_owned())
         })
         .collect()
+}
+
+/// Test hook: replace this thread's memo entry with one filed under `digest`
+/// for the key `texts`, holding `set` (card W45-GATEWAY-MEMO-KEY).
+#[cfg(test)]
+fn inject_releasing_entry(digest: u64, texts: Vec<String>, set: BTreeSet<String>) {
+    RELEASING.with(|cache| {
+        *cache.borrow_mut() = Some(ReleasingEntry {
+            digest,
+            texts,
+            set: Rc::new(set),
+        });
+    });
 }
 
 #[cfg(test)]
