@@ -253,5 +253,8 @@ import QCore.CountedUsers
 import QCore.RefutedContractWithdrawal
 import QCore.Checkpoints
 import QCore.SubcommandPlugins
+import QCore.ReservedSpelling
+import QCore.MemberReleaseCallee
+import QCore.Sr5Soundness
 
 /-! The executable formal core of QCore-C revision 0.1. -/

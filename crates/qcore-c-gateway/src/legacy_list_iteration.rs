@@ -953,6 +953,8 @@ impl super::Parser<'_> {
                     && !self.list_facts.written.contains(*name)
                     && self.typed_bases.never_bound(name) =>
             {
+                // Card W45-SR5-SOUNDNESS: the element is the caller's object.
+                self.element_origins.note_over_formal(&shape.destination);
                 (Vec::new(), Vec::new())
             }
             ["(", ..] => {

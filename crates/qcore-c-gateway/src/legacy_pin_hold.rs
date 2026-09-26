@@ -35,8 +35,9 @@ use super::declared_abi::is_call_position;
 pub const CONTRACT_PIN_MISMATCH: &str = "contract-pin-mismatch";
 
 /// The prefix a held callee's call sites are rewritten with, reserved for this
-/// rewrite. A source that spelled it itself would read as a held call, which
-/// is `Unknown`: the collision can only refuse, never admit.
+/// rewrite. A source that spells it itself is escaped before this rewrite runs
+/// (card W45-SR5-SOUNDNESS, `reserved_spelling`): a held call is `Pending`, so
+/// a source-spelled prefix read as one would forge a human-resolvable reason.
 pub(crate) const HELD_PREFIX: &str = "qcore_pin_mismatch__";
 
 /// The original callee a rewritten name stands for.

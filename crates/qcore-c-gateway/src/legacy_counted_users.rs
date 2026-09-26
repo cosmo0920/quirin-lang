@@ -643,6 +643,16 @@ impl Unit<'_> {
     fn call_effect(&self, callee: &str, visiting: &mut BTreeSet<String>) -> CallEffect {
         let contract = self.contracts.contract(callee);
         if contract.is_some_and(|contract| contract.counted_users.neutral) {
+            // Card W45-SR5-SOUNDNESS (`DECLARED-NEUTRAL-UNVERIFIED-AT-CALL`):
+            // a declared neutrality of a body this unit defines is applied
+            // only when that body verifies it, as every other declared clause
+            // is; before, it was applied before the body was examined.
+            if self.body(callee).is_some() {
+                return match self.verify_declared(callee) {
+                    Ok(()) => CallEffect::Neutral,
+                    Err(reason) => CallEffect::Opaque(reason),
+                };
+            }
             return CallEffect::Neutral;
         }
         if self.body(callee).is_some() {
@@ -771,8 +781,39 @@ fn counter_write(
     })
 }
 
+/// Card W45-SR5-SOUNDNESS: the reason an event behind a conditional operator
+/// undecides the counts.
+const CONDITIONAL_EVENT: &str = "a call or counter write C may skip behind `?:`, `&&` or `||`, which this pass does not fork on";
+
+/// Card W45-SR5-SOUNDNESS: the token indices C may skip in one fused
+/// expression: every token after a `?`, `&&` or `||` up to the end of the
+/// group that operator is in. A superset of the conditionally evaluated
+/// tokens (the second and third operands of `?:` both count).
+fn conditional_positions(texts: &[&str]) -> Vec<bool> {
+    let mut conditional = vec![false; texts.len()];
+    let mut depth = 0usize;
+    let mut starts: Vec<usize> = Vec::new();
+    for (index, text) in texts.iter().enumerate() {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" => {
+                depth = depth.saturating_sub(1);
+                starts.retain(|start| *start <= depth);
+            }
+            _ => {}
+        }
+        if matches!(*text, "?" | "&&" | "||") {
+            starts.push(depth);
+        }
+        conditional[index] = starts.iter().any(|start| *start <= depth);
+    }
+    conditional
+}
+
 /// A call through something that is not a name: `) (` after a group that is
-/// not a cast, or `] (`.
+/// not a cast, or `] (`. Card W45-SR5-SOUNDNESS: a group that is a call's
+/// argument list, followed by `(`, calls the call's result (`f(a)(b)`), which
+/// is not a name either (gateway constraint 10c, rule 2).
 fn opaque_callee(texts: &[&str], index: usize) -> Option<String> {
     if texts.get(index + 1) != Some(&"(") {
         return None;
@@ -786,7 +827,9 @@ fn opaque_callee(texts: &[&str], index: usize) -> Option<String> {
             let argument_list = before.is_some_and(|word| {
                 is_identifier(word) && !KEYWORDS.contains(&word) || word == ")" || word == "]"
             });
-            if TYPE_WORDS.contains(&first) || argument_list {
+            if argument_list {
+                Some("calls through a call's result".into())
+            } else if TYPE_WORDS.contains(&first) {
                 None
             } else {
                 Some("calls through an expression".into())
@@ -1137,10 +1180,22 @@ impl Walker<'_> {
             },
         };
         let mut states = vec![state];
+        // Card W45-SR5-SOUNDNESS (`COUNTED-USER-CONDITIONAL-OPERAND`): C may
+        // skip a call or a counter write behind `?:`, `&&` or `||`, which this
+        // pass does not fork on, so such an event undecides every count
+        // rather than applying on every path.
+        let conditional = conditional_positions(texts);
         // Calls and counter writes, innermost and leftmost first.
         let mut events = Vec::new();
         for index in 0..texts.len() {
-            if let Some(write) = counter_write(texts, index, &self.unit.counters) {
+            if conditional[index]
+                && (counter_write(texts, index, &self.unit.counters).is_some()
+                    || (is_identifier(texts[index])
+                        && texts.get(index + 1) == Some(&"(")
+                        && !KEYWORDS.contains(&texts[index])))
+            {
+                events.push((index, Event::Opaque(CONDITIONAL_EVENT.into())));
+            } else if let Some(write) = counter_write(texts, index, &self.unit.counters) {
                 events.push((
                     index + write.spelling.split(' ').count(),
                     Event::Write(write),
@@ -1750,8 +1805,10 @@ mod tests {
         assert!(opaque_callee(&texts, 4).is_none());
         let texts = words("( f ? g : h ) ( p )");
         assert!(opaque_callee(&texts, 6).is_some());
+        // Card W45-SR5-SOUNDNESS: this pin read `f(a)(b)` as a named call,
+        // against constraint 10c's rule 2; the call of `f`'s result is opaque.
         let texts = words("f ( a ) ( b )");
-        assert!(opaque_callee(&texts, 3).is_none());
+        assert!(opaque_callee(&texts, 3).is_some());
     }
 
     #[test]
