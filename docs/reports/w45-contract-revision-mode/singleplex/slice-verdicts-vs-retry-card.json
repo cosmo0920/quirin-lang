@@ -1,0 +1,71 @@
+{
+  "run": {
+    "units": [
+      0,
+      2,
+      13,
+      0
+    ],
+    "distinct_functions": [
+      24,
+      2,
+      208,
+      3
+    ],
+    "functions": [
+      46,
+      4,
+      398,
+      6
+    ],
+    "diagnostic_counts": {
+      "counted_user": 4,
+      "unknown_alias": 685,
+      "unsupported": 4325
+    },
+    "or": {
+      "flb_output_task_singleplex_enqueue": [
+        "Unsafe"
+      ],
+      "flb_output_task_flush": [
+        "Unsafe"
+      ]
+    }
+  },
+  "archived": {
+    "units": [
+      0,
+      2,
+      13,
+      0
+    ],
+    "distinct_functions": [
+      24,
+      2,
+      208,
+      3
+    ],
+    "functions": [
+      46,
+      4,
+      398,
+      6
+    ],
+    "diagnostic_counts": {
+      "counted_user": 4,
+      "unknown_alias": 685,
+      "unsupported": 4325
+    },
+    "or": {
+      "flb_output_task_singleplex_enqueue": [
+        "Unsafe"
+      ],
+      "flb_output_task_flush": [
+        "Unsafe"
+      ]
+    }
+  },
+  "rows_compared": 463,
+  "differences": [],
+  "verdicts_identical": true
+}

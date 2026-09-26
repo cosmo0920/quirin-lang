@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <regex.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-RESTRICT-PROTOTYPES. TRUSTED ASSUMPTIONS about POSIX regular
@@ -49,6 +55,7 @@ module contract;
 extern fn regexec(preg: ptr<const, u8>, string: ptr<const, u8>, nmatch: usize, pmatch: ptr<mut, u8>, eflags: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(preg);
     ensures normal resource_borrowed(string);
     ensures normal resource_borrowed(nmatch);
@@ -60,6 +67,7 @@ contract {
 extern fn regerror(errcode: i32, preg: ptr<const, u8>, errbuf: ptr<mut, u8>, errbuf_size: usize) -> usize
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(errcode);
     ensures normal resource_borrowed(preg);
     ensures normal resource_borrowed(errbuf);

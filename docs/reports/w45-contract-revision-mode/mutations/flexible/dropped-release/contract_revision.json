@@ -1,0 +1,75 @@
+{
+  "counts": {
+    "flexible_checked": 4,
+    "flexible_trusted": 6,
+    "held_call_sites": 0,
+    "held_functions": 0,
+    "pinned": 0,
+    "pinned_in_force": 0,
+    "pinned_not_in_force": 0,
+    "standing_libc": 0
+  },
+  "pin_mismatches": [],
+  "contracts": {
+    "box_count": {
+      "contract_sha256": "4ddcce70c0738a5a83164ae5ab6ec3cb594e61391f410913c60c0f27fb72f5c6",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-checked"
+    },
+    "box_drop": {
+      "contract_sha256": "60aad8ce1f2c0412c122e9aa25c21da9bd29e348ca27161053d38f39e2010322",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-checked"
+    },
+    "box_keep": {
+      "contract_sha256": "326741d751471b11ac1e942bd0e925513849aa2bf3aa4596962cb83f9db60720",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-checked"
+    },
+    "box_two": {
+      "contract_sha256": "a832035419c308fbc6a69a3dda434bfa0a8e3cf6541d4f999022ab3bb4c950de",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-checked"
+    },
+    "item_free": {
+      "contract_sha256": "a6df3e38702d9aaba1a59f622e83e50c0d268b6f2f0fc84423ff918900678469",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    },
+    "item_new": {
+      "contract_sha256": "6205076344344ef61e1b974d3bd0ac3641d8c50ac16f4da5f69d428f1f566717",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    },
+    "item_touch": {
+      "contract_sha256": "d84c9170b46c41f4b3d4d3b4a9cf073afba4fda3188de04be9d2d98381987e5e",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    },
+    "sink_keep": {
+      "contract_sha256": "e6e2bf08e12906332b404527af9b9b1696c220a81346a7089898b92df9d9e99f",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    },
+    "ticket_return": {
+      "contract_sha256": "fbc50b163917f5890029939c0672ddc8aa932f355738f248a623e85f48992d90",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    },
+    "ticket_take": {
+      "contract_sha256": "ee9124dbe5fab43b2c858bef11251c75eaa7eddebfd35e895cd86b2db00b173c",
+      "mode": "flexible",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/queue.qcore",
+      "status": "flexible-trusted"
+    }
+  }
+}

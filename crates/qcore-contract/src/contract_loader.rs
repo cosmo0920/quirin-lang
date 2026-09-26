@@ -420,9 +420,12 @@ struct LoadedDeclaration {
     /// order. Nonempty withholds the whole contract.
     review: Vec<ReviewDeferral>,
     /// Card W45-FB-BACKLOG-CUSTODY: the declaration carries
-    /// `requires resource_body_checked;` (§C06.2): it is a specification of a
+    /// `requires resource_body_checked;` (§C06.3): it is a specification of a
     /// body the audit analyses, applied only where that body establishes it.
     body_checked: bool,
+    /// Card W45-CONTRACT-REVISION-MODE: the declaration's revision markers,
+    /// validated as a whole; `None` when it carries none (pinned).
+    revision: Option<qcore_schemas::contract_revision::DeclaredRevision>,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -582,6 +585,9 @@ pub fn load_resource_contract_sources(
     }
     let mut contracts = ResourceContracts::default();
     let mut pending = BTreeMap::new();
+    // Card W45-CONTRACT-REVISION-MODE: the markers of every declaration that
+    // carries one, pending declarations included.
+    let mut revisions = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
         reject_unresolved_inclusion(path, source)?;
@@ -596,6 +602,9 @@ pub fn load_resource_contract_sources(
                 return Err(format!("{context}: duplicate function contract"));
             }
             let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if let Some(revision) = loaded.revision {
+                revisions.insert(decl.name.clone(), revision);
+            }
             // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration carrying a
             // review marker is validated in full above and then withheld. It
             // is never an entry of the function map, so a consumer that knows
@@ -617,6 +626,7 @@ pub fn load_resource_contract_sources(
     }
     contracts.set_source_assumptions(sources.clone());
     contracts.set_pending_review(pending);
+    contracts.set_declared_revisions(revisions);
     Ok(contracts)
 }
 
@@ -751,7 +761,7 @@ pub fn declared_literal_argument_premises(
 }
 
 /// The declarations of `sources` that carry `requires resource_body_checked;`
-/// (card W45-FB-BACKLOG-CUSTODY, §C06.2), keyed by function name.
+/// (card W45-FB-BACKLOG-CUSTODY, §C06.3), keyed by function name.
 ///
 /// Derived from the same trusted texts [`load_resource_contract_sources`]
 /// reads and total-or-reject in the same way. A consumer must treat an error
@@ -822,8 +832,9 @@ pub fn declared_variadic_data_tails(
 pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
     if !contracts.source_assumptions().is_empty() {
         let loaded = load_resource_contract_sources(contracts.source_assumptions())?;
-        if loaded.functions() != contracts.functions()
+        if loaded.functions() != &crate::contract_revision::in_force_before_pins(contracts)?
             || loaded.pending_review() != contracts.pending_review()
+            || loaded.declared_revisions() != contracts.declared_revisions()
         {
             return Err("resource contracts differ from their declared source assumptions".into());
         }
@@ -1084,14 +1095,45 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             .ok_or_else(|| format!("unknown parameter {name}"))
     };
     let mut review: Vec<ReviewDeferral> = Vec::new();
+    let mut revision: Vec<qcore_schemas::contract_revision::RevisionMarker> = Vec::new();
     let mut collected = counted_users::Collected::default();
     for clause in clauses {
-        let written = &clause.value.expression_source;
+        let requires = clause.value.kind == SourceContractClauseKind::Requires;
+        // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
+        // requirement) or clause-level (wrapping one `ensures normal` clause,
+        // which is then read exactly as if written bare).
+        let revision_read =
+            crate::contract_revision::revision_marker(requires, &clause.value.expression_source)?;
+        let written: &str = match &revision_read {
+            None => &clause.value.expression_source,
+            Some(crate::contract_revision::RevisionMarkerRead::Contract(mode)) => {
+                revision.push(qcore_schemas::contract_revision::RevisionMarker {
+                    scope: qcore_schemas::contract_revision::RevisionScope::Contract,
+                    mode: *mode,
+                });
+                continue;
+            }
+            Some(crate::contract_revision::RevisionMarkerRead::Clause { inner, mode }) => {
+                revision.push(qcore_schemas::contract_revision::RevisionMarker {
+                    scope: qcore_schemas::contract_revision::RevisionScope::Clause {
+                        clause: format!("ensures normal {inner}"),
+                    },
+                    mode: *mode,
+                });
+                inner
+            }
+        };
         // Card W45-CONTRACT-DEFERRED-REVIEW: a review marker, contract-level
         // (a requirement) or clause-level (wrapping one `ensures normal`
         // clause, which is then read exactly as if written bare).
-        let requires = clause.value.kind == SourceContractClauseKind::Requires;
         let unwrapped = review_marker(requires, written)?;
+        if let Some(ReviewMarker::Clause { inner, .. }) = &unwrapped
+            && crate::contract_revision::starts_with_revision_marker(inner)
+        {
+            return Err(format!(
+                "unsupported review marker `{written}`: a marker cannot wrap another marker"
+            ));
+        }
         let expression: &str = match &unwrapped {
             None => written,
             Some(ReviewMarker::Contract(deferral)) => {
@@ -1388,10 +1430,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         },
         review,
         body_checked,
+        revision: crate::contract_revision::declared_revision(revision)?,
     })
 }
 
-/// The checked-specification marker (card W45-FB-BACKLOG-CUSTODY, §C06.2).
+/// The checked-specification marker (card W45-FB-BACKLOG-CUSTODY, §C06.3).
 pub const BODY_CHECKED_MARKER: &str = "resource_body_checked";
 
 /// The clause introducer of a review marker (card W45-CONTRACT-DEFERRED-REVIEW).

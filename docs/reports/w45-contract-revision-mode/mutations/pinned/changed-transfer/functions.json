@@ -1,0 +1,39 @@
+[
+  {
+    "function": "box_count",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_drop",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_keep",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_two",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_drop",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_keep",
+    "status": "Unknown",
+    "diagnostics": [
+      {
+        "category": "unsupported",
+        "description": "call to `box_keep` whose pinned contract is not in force: the audited source does not match its lock (contract-pin-mismatch)",
+        "line": 58,
+        "origin": "queue.c:68"
+      }
+    ]
+  }
+]

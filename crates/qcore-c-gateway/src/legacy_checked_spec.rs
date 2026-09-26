@@ -1,5 +1,5 @@
 //! Card **W45-FB-BACKLOG-CUSTODY**: checked specifications (contract spec
-//! §C06.2, gateway constraint 5l).
+//! §C06.3, gateway constraint 5l).
 //!
 //! # Why a declaration is not enough for a body the audit reads
 //!

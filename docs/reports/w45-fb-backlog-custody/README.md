@@ -29,7 +29,7 @@ Two user amendments apply:
      reader skips the one declaration inside it instead of refusing the whole
      function. That silent refusal was the dominant "declaration" blocker
      (criterion 2).
-  3. **Checked specifications** (contract spec §C06.2, `legacy_checked_spec.rs`):
+  3. **Checked specifications** (contract spec §C06.3, `legacy_checked_spec.rs`):
      `requires resource_body_checked;` makes a declaration a specification that
      is in force only where its body establishes it.
 * **Contracts**: `providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore`,
@@ -197,7 +197,7 @@ still standing, is not established (the W4 gate
 `observations_match_contract`, and no `SummaryConflict`). A withdrawn
 specification leaves the environment: callers see W4's summary or an
 uncontracted call. The defining row gains `declared specification of `NAME`
-is not established: REASON`. Contract spec §C06.2 and grammar G05 are
+is not established: REASON`. Contract spec §C06.3 and grammar G05 are
 extended.
 
 ### 2.4 The contract module

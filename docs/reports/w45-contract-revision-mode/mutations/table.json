@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "harness": "docs/reports/w45-contract-revision-mode/scripts/mutations.py",
+  "fixture": "crates/qcore-audit/tests/fixtures/revision_mode",
+  "binary_sha256": "57cf0b08fc7e801b237a7c16f91a664d8f7fb81993413efcd4a9c4a5414b1286",
+  "rows": [
+    {
+      "mode": "flexible",
+      "mutation": "base",
+      "kind": "none",
+      "function": null,
+      "outcome": {
+        "box_count": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_keep": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_two": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_keep": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "rename-local",
+      "kind": "harmless",
+      "function": "box_count",
+      "outcome": {
+        "box_count": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "reorder-independent",
+      "kind": "harmless",
+      "function": "box_two",
+      "outcome": {
+        "box_two": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "dropped-release",
+      "kind": "defect",
+      "function": "box_drop",
+      "outcome": {
+        "box_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "summary_conflict"
+          ]
+        },
+        "user_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "unsupported"
+          ]
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "missing-counter-rollback",
+      "kind": "defect",
+      "function": "box_count",
+      "outcome": {
+        "box_count": {
+          "status": "Unsafe",
+          "class": "violation-detected",
+          "reasons": [
+            "leak"
+          ]
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "changed-transfer",
+      "kind": "defect",
+      "function": "box_keep",
+      "outcome": {
+        "box_keep": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "summary_conflict"
+          ]
+        },
+        "user_keep": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "unsupported"
+          ]
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "flexible",
+      "mutation": "premature-destroy",
+      "kind": "defect",
+      "function": "box_drop",
+      "outcome": {
+        "box_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "unknown_alias"
+          ]
+        },
+        "user_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "base",
+      "kind": "none",
+      "function": null,
+      "outcome": {
+        "box_count": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_keep": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "box_two": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_keep": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "rename-local",
+      "kind": "harmless",
+      "function": "box_count",
+      "outcome": {
+        "box_count": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [
+        "box_count"
+      ],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "reorder-independent",
+      "kind": "harmless",
+      "function": "box_two",
+      "outcome": {
+        "box_two": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        }
+      },
+      "not_in_force": [
+        "box_two"
+      ],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "dropped-release",
+      "kind": "defect",
+      "function": "box_drop",
+      "outcome": {
+        "box_drop": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "contract-pin-mismatch"
+          ]
+        }
+      },
+      "not_in_force": [
+        "box_drop"
+      ],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "missing-counter-rollback",
+      "kind": "defect",
+      "function": "box_count",
+      "outcome": {
+        "box_count": {
+          "status": "Unsafe",
+          "class": "violation-detected",
+          "reasons": [
+            "leak"
+          ]
+        }
+      },
+      "not_in_force": [
+        "box_count"
+      ],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "changed-transfer",
+      "kind": "defect",
+      "function": "box_keep",
+      "outcome": {
+        "box_keep": {
+          "status": "Safe",
+          "class": "accepted",
+          "reasons": []
+        },
+        "user_keep": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "contract-pin-mismatch"
+          ]
+        }
+      },
+      "not_in_force": [
+        "box_keep"
+      ],
+      "meets": true
+    },
+    {
+      "mode": "pinned",
+      "mutation": "premature-destroy",
+      "kind": "defect",
+      "function": "box_drop",
+      "outcome": {
+        "box_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "unknown_alias"
+          ]
+        },
+        "user_drop": {
+          "status": "Unknown",
+          "class": "coverage-lost",
+          "reasons": [
+            "contract-pin-mismatch"
+          ]
+        }
+      },
+      "not_in_force": [
+        "box_drop"
+      ],
+      "meets": true
+    }
+  ],
+  "all_met": true
+}

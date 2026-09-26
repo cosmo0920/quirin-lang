@@ -1,5 +1,5 @@
 //! Card W45-FB-BACKLOG-CUSTODY: the checked-specification marker
-//! `requires resource_body_checked;` (contract spec §C06.2).
+//! `requires resource_body_checked;` (contract spec §C06.3).
 //!
 //! The loader admits the marker as a contract-level requirement with no
 //! argument, at most once, and records nothing new in the environment: the
@@ -95,4 +95,55 @@ fn an_environment_with_no_retained_text_declares_no_specification() {
         bare.insert_contract(name, contract.clone());
     }
     assert!(declared_checked_specifications(&bare).unwrap().is_empty());
+}
+
+#[test]
+fn the_marker_composes_with_the_revision_and_review_markers() {
+    let bare = load_resource_contract_sources(&sources(SPEC)).unwrap();
+    // Card W45-CONTRACT-REVISION-MODE's revision marker, before or after: the
+    // declaration loads the same modes and stays a specification.
+    for revision in [
+        "    requires resource_revision(flexible);\n    requires resource_body_checked;\n",
+        "    requires resource_body_checked;\n    requires resource_revision(pinned);\n",
+    ] {
+        let text = SPEC.replace("    requires resource_body_checked;\n", revision);
+        let loaded = load_resource_contract_sources(&sources(&text)).unwrap();
+        assert!(!loaded.declared_revisions().is_empty(), "{text}");
+        assert_eq!(
+            loaded
+                .contract("w_make")
+                .map(|contract| &contract.parameters),
+            bare.contract("w_make").map(|contract| &contract.parameters),
+            "{text}"
+        );
+        assert_eq!(
+            checked_specifications(&sources(&text)).unwrap(),
+            ["w_make".to_owned()].into_iter().collect(),
+            "{text}"
+        );
+    }
+    // A review marker withholds the declaration: it is still read as marked,
+    // but it is not in the function map, so no consumer applies it.
+    let held = SPEC.replace(
+        "    requires resource_body_checked;\n",
+        "    requires resource_body_checked;\n    requires resource_review_pending(\"body unread\");\n",
+    );
+    let loaded = load_resource_contract_sources(&sources(&held)).unwrap();
+    assert!(loaded.contract("w_make").is_none());
+    assert!(
+        declared_checked_specifications(&loaded)
+            .unwrap()
+            .contains("w_make")
+    );
+    // No marker may wrap it.
+    for wrapped in [
+        "    ensures normal resource_revision(resource_body_checked, pinned);\n",
+        "    ensures normal resource_review_pending(resource_body_checked, \"r\");\n",
+    ] {
+        let text = SPEC.replace("    requires resource_body_checked;\n", wrapped);
+        assert!(
+            load_resource_contract_sources(&sources(&text)).is_err(),
+            "{text}"
+        );
+    }
 }

@@ -240,6 +240,7 @@ import QCore.NoBuildScope
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 import QCore.ContractDeferredReview
+import QCore.ContractRevisionMode
 import QCore.ParenthesisedCallee
 import QCore.ListIteration
 import QCore.CheckedSpecification

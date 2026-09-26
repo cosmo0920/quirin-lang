@@ -1,0 +1,11 @@
+pin: qcore-provider-chunkio: 6 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/qcore-provider-chunkio/contracts.lock
+pin: qcore-provider-cmetrics: 4 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/qcore-provider-cmetrics/contracts.lock
+pin: qcore-provider-ctraces: 1 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/qcore-provider-ctraces/contracts.lock
+pin: qcore-provider-libevent: 5 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/qcore-provider-libevent/contracts.lock
+pin: qcore-provider-librdkafka: 10 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/qcore-provider-librdkafka/contracts.lock
+pin: quirin-provider-cfl: 2 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/quirin-provider-cfl/contracts.lock
+pin: quirin-provider-fluent-bit: 22 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/quirin-provider-fluent-bit/contracts.lock
+pin: quirin-provider-libc: 0 pinned, 100 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/quirin-provider-libc/contracts.lock
+pin: quirin-provider-mpack: 4 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/quirin-provider-mpack/contracts.lock
+pin: quirin-provider-msgpack: 1 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote providers/quirin-provider-msgpack/contracts.lock
+exit 0

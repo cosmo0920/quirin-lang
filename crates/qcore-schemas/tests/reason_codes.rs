@@ -37,7 +37,7 @@ use qcore_schemas::reason::{ReasonCategory, ReasonSubject, UnclassifiedReason};
 /// * `compiler/examples/support/cycle19_compatibility.rs` — the two overrides.
 fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
-        AwaitingHumanReview as Review, EnvironmentUnavailable as Env,
+        AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
         IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
         ProviderFailure as Provider, ResidualCustody as Custody, StaleEvidence as Stale,
         UnsupportedSyntax as Syntax,
@@ -167,6 +167,32 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
             "call to `k_close` whose declared contract awaits human review \
              (awaiting-human-review)",
             Review,
+        ),
+        // Card W45-CONTRACT-REVISION-MODE: the pin component follows the
+        // review component, is named only when present, and a pin-held call
+        // is named before every source category.
+        (
+            "resource projection unresolved: 0 unsupported operation(s), \
+             0 unresolved alias(es), 0 custody summary conflict(s), \
+             2 call(s) held for a contract pin mismatch",
+            Pin,
+        ),
+        (
+            "resource projection unresolved: 5 unsupported operation(s), \
+             1 unresolved alias(es), 0 custody summary conflict(s), \
+             1 call(s) held for a contract pin mismatch",
+            Pin,
+        ),
+        (
+            "resource projection unresolved: 0 unsupported operation(s), \
+             0 unresolved alias(es), 0 custody summary conflict(s), \
+             1 call(s) held awaiting human review, 1 call(s) held for a contract pin mismatch",
+            Review,
+        ),
+        (
+            "call to `k_close` whose pinned contract is not in force: the audited source \
+             does not match its lock (contract-pin-mismatch)",
+            Pin,
         ),
         (
             "`k_close`'s declared contract in k.qcore awaits human review \
@@ -463,6 +489,14 @@ fn an_unrecognised_reason_is_refused_and_never_defaulted() {
         "resource projection unresolved: 0 unsupported operation(s), \
          0 unresolved alias(es), 0 custody summary conflict(s), \
          0 call(s) held awaiting human review",
+        // Card W45-CONTRACT-REVISION-MODE: likewise for the pin component,
+        // and the components in the wrong order.
+        "resource projection unresolved: 0 unsupported operation(s), \
+         0 unresolved alias(es), 0 custody summary conflict(s), \
+         0 call(s) held for a contract pin mismatch",
+        "resource projection unresolved: 0 unsupported operation(s), \
+         0 unresolved alias(es), 0 custody summary conflict(s), \
+         1 call(s) held for a contract pin mismatch, 1 call(s) held awaiting human review",
     ] {
         assert_eq!(
             ReasonCategory::classify(reason),

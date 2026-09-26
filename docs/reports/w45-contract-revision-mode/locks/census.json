@@ -1,0 +1,1196 @@
+{
+  "locks": [
+    {
+      "lock": "providers/qcore-provider-chunkio/contracts.lock",
+      "lock_version": 2,
+      "owner": "qcore-provider-chunkio",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 6,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 6
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "cio_chunk_close",
+          "module": "chunkio/resource_open_close.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cio_chunk_down",
+          "module": "chunkio/chunk_residency.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cio_chunk_get_content_size",
+          "module": "chunkio/chunk_sizes.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cio_chunk_is_up",
+          "module": "chunkio/chunk_residency.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cio_chunk_open",
+          "module": "chunkio/resource_open_close.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cio_chunk_up_force",
+          "module": "chunkio/chunk_residency.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/chunkio/include/chunkio/cio_chunk.h",
+                "definition:lib/chunkio/src/cio_chunk.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/qcore-provider-cmetrics/contracts.lock",
+      "lock_version": 2,
+      "owner": "qcore-provider-cmetrics",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 4,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 4
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "cmt_destroy",
+          "module": "cmetrics/context_lifetime.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cmetrics/include/cmetrics/cmetrics.h",
+                "definition:lib/cmetrics/src/cmetrics.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cmt_metric_get_timestamp",
+          "module": "cmetrics/metric_values.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cmetrics/include/cmetrics/cmt_metric.h",
+                "definition:lib/cmetrics/src/cmt_metric.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cmt_metric_set_double",
+          "module": "cmetrics/metric_values.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cmetrics/include/cmetrics/cmt_metric.h",
+                "definition:lib/cmetrics/src/cmt_metric.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cmt_mpack_consume_uint_tag",
+          "module": "cmetrics/mpack_utils.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cmetrics/include/cmetrics/cmt_mpack_utils.h",
+                "definition:lib/cmetrics/src/cmt_mpack_utils.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/qcore-provider-ctraces/contracts.lock",
+      "lock_version": 2,
+      "owner": "qcore-provider-ctraces",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 1,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 | 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 1
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "ctr_destroy",
+          "module": "ctraces/context_lifetime.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736"
+              ],
+              "sites": [
+                "declaration:lib/ctraces/include/ctraces/ctraces.h",
+                "definition:lib/ctraces/src/ctraces.c"
+              ]
+            },
+            {
+              "reviewed_at": [
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/ctraces/include/ctraces/ctraces.h",
+                "definition:lib/ctraces/src/ctraces.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/qcore-provider-libevent/contracts.lock",
+      "lock_version": 2,
+      "owner": "qcore-provider-libevent",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 6,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 6
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "mk_list_add",
+          "module": "monkey/intrusive_list.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/chunkio/deps/monkey/include/monkey/mk_core/mk_list.h",
+                "definition:lib/monkey/include/monkey/mk_core/mk_list.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mk_list_del",
+          "module": "monkey/intrusive_list.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/chunkio/deps/monkey/include/monkey/mk_core/mk_list.h",
+                "definition:lib/monkey/include/monkey/mk_core/mk_list.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mk_mem_alloc",
+          "module": "monkey/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/monkey/include/monkey/mk_core/mk_memory.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mk_mem_alloc_z",
+          "module": "monkey/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/monkey/include/monkey/mk_core/mk_memory.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mk_mem_free",
+          "module": "monkey/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/monkey/include/monkey/mk_core/mk_memory.h",
+                "definition:lib/monkey/include/monkey/mk_core/mk_memory.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mk_print",
+          "module": "monkey/logging.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/monkey/include/monkey/mk_core/mk_utils.h",
+                "definition:lib/monkey/mk_core/mk_utils.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/qcore-provider-librdkafka/contracts.lock",
+      "lock_version": 2,
+      "owner": "qcore-provider-librdkafka",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 10,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 10
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "LZ4_resetStream",
+          "module": "librdkafka/lz4_stream.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/lz4.c",
+                "declaration:lib/librdkafka-2.15.0/src/lz4.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cJSON_Delete",
+          "module": "librdkafka/cjson.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/cJSON.c",
+                "declaration:lib/librdkafka-2.15.0/src/cJSON.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_calloc",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_free",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_kafka_mem_free",
+          "module": "librdkafka/kafka_mem.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/librdkafka-2.15.0/src/lz4.c",
+                "definition:lib/librdkafka-2.15.0/src/rdkafka.c",
+                "declaration:lib/librdkafka-2.15.0/src/rdkafka.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_kafka_topic_partition_list_sort",
+          "module": "librdkafka/topic_partition.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/librdkafka-2.15.0/src/rdkafka.h",
+                "definition:lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_malloc",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_realloc",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_strdup",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "rd_strndup",
+          "module": "librdkafka/memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/librdkafka-2.15.0/src/rd.h"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/quirin-provider-cfl/contracts.lock",
+      "lock_version": 2,
+      "owner": "quirin-provider-cfl",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 2,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 2
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "cfl_sds_destroy",
+          "module": "cfl/sds_lifetime.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cfl/include/cfl/cfl_sds.h",
+                "definition:lib/cfl/src/cfl_sds.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "cfl_time_now",
+          "module": "cfl/time.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/cfl/include/cfl/cfl_time.h",
+                "definition:lib/cfl/src/cfl_time.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/quirin-provider-fluent-bit/contracts.lock",
+      "lock_version": 2,
+      "owner": "quirin-provider-fluent-bit",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 28,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 27,
+        "046accf6aded7906f66a1baf0202da349e521736 | 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 1
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "flb_calloc",
+          "module": "fluent_bit/resource_memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_mem.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_errno_print",
+          "module": "fluent_bit/logging.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_log.h",
+                "definition:src/flb_log.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_free",
+          "module": "fluent_bit/resource_memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_mem.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_hash_table_add",
+          "module": "fluent_bit/hash_table_publication.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_hash_table.h",
+                "definition:src/flb_hash_table.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_destroy",
+          "module": "fluent_bit/input_chunk_destroy.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_destroy_direct_routes",
+          "module": "fluent_bit/input_chunk_destroy_direct_routes.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_get_name",
+          "module": "fluent_bit/input_chunk_name.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_get_real_size",
+          "module": "fluent_bit/input_chunk_sizes.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_get_size",
+          "module": "fluent_bit/input_chunk_sizes.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_input_chunk_total_size",
+          "module": "fluent_bit/input_chunk_total_size.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_input_chunk.h",
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_log_check",
+          "module": "fluent_bit/logging.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_log.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_log_print",
+          "module": "fluent_bit/logging.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_log.h",
+                "definition:src/flb_log.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_malloc",
+          "module": "fluent_bit/resource_memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_mem.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_output_task_flush",
+          "module": "fluent_bit/output_singleplex.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_output.h",
+                "definition:src/flb_output.c"
+              ]
+            },
+            {
+              "reviewed_at": [
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_output.h",
+                "definition:src/flb_output.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_output_task_singleplex_enqueue",
+          "module": "fluent_bit/output_singleplex.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_output.h",
+                "definition:src/flb_output.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_output_thread_pool_flush",
+          "module": "fluent_bit/task_users.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_output_thread.h",
+                "definition:src/flb_output_thread.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_routes_mask_get_size",
+          "module": "fluent_bit/routes_mask.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_routes_mask.h",
+                "definition:src/flb_routes_mask.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_routes_mask_set_by_tag",
+          "module": "fluent_bit/routes_mask.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_routes_mask.h",
+                "definition:src/flb_routes_mask.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_sds_create_len",
+          "module": "fluent_bit/resource_memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_sds.h",
+                "definition:src/flb_sds.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_sds_destroy",
+          "module": "fluent_bit/resource_memory.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_sds.h",
+                "definition:src/flb_sds.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_strdup",
+          "module": "fluent_bit/resource_string.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_str.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_strndup",
+          "module": "fluent_bit/resource_string.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_str.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_task_retry_destroy",
+          "module": "fluent_bit/task_users.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_task.h",
+                "definition:src/flb_task.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_task_users_dec",
+          "module": "fluent_bit/task_users.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_task.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_task_users_inc",
+          "module": "fluent_bit/task_users.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:include/fluent-bit/flb_task.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_time_now",
+          "module": "fluent_bit/time.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:include/fluent-bit/flb_lib.h",
+                "definition:src/flb_lib.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "generate_chunk_name",
+          "module": "fluent_bit/input_chunk_helpers.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "input_chunk_write_header",
+          "module": "fluent_bit/input_chunk_helpers.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:src/flb_input_chunk.c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/quirin-provider-libc/contracts.lock",
+      "lock_version": 2,
+      "owner": "quirin-provider-libc",
+      "reviewed_at": [],
+      "pinned": 0,
+      "flexible": 100,
+      "identity_shapes": {},
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": []
+    },
+    {
+      "lock": "providers/quirin-provider-mpack/contracts.lock",
+      "lock_version": 2,
+      "owner": "quirin-provider-mpack",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 4,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 4
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "mpack_write_cstr",
+          "module": "mpack/writer.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/ctraces/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/ctraces/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+                "declaration:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mpack_write_double",
+          "module": "mpack/writer.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/ctraces/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/ctraces/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+                "declaration:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mpack_write_i64",
+          "module": "mpack/writer.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/ctraces/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/ctraces/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+                "declaration:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h"
+              ]
+            }
+          ]
+        },
+        {
+          "function": "mpack_write_str",
+          "module": "mpack/writer.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "definition:lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/cprofiles/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/cprofiles/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/ctraces/lib/mpack/src/mpack/mpack.c",
+                "declaration:lib/ctraces/lib/mpack/src/mpack/mpack.h",
+                "definition:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c",
+                "declaration:lib/mpack-amalgamation-1.1.1/src/mpack/mpack.h"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "lock": "providers/quirin-provider-msgpack/contracts.lock",
+      "lock_version": 2,
+      "owner": "quirin-provider-msgpack",
+      "reviewed_at": [
+        "046accf6aded7906f66a1baf0202da349e521736",
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      ],
+      "pinned": 1,
+      "flexible": 0,
+      "identity_shapes": {
+        "046accf6aded7906f66a1baf0202da349e521736 + 66910c10a4d7eafa810b84229cf2dcf7b0f26f97": 1
+      },
+      "pinned_without_site": [],
+      "pinned_without_definition": [],
+      "entries": [
+        {
+          "function": "msgpack_packer_init",
+          "module": "msgpack/packer.qcore",
+          "identities": [
+            {
+              "reviewed_at": [
+                "046accf6aded7906f66a1baf0202da349e521736",
+                "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              ],
+              "sites": [
+                "declaration:lib/msgpack-c/include/msgpack/pack.h",
+                "definition:lib/msgpack-c/include/msgpack/pack.h"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pinned": 62,
+  "flexible": 100
+}

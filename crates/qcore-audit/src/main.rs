@@ -8,6 +8,8 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::current_cli::USAGE);
         eprintln!("       {}", qcore_audit::prepare::USAGE);
         eprintln!("       {}", qcore_audit::no_build::USAGE);
+        eprintln!("       {}", qcore_audit::contract_pin::USAGE);
+        eprintln!("       {}", qcore_audit::revision_compare::USAGE);
         return ExitCode::FAILURE;
     };
     if path == "prepare" {
@@ -39,6 +41,25 @@ fn main() -> ExitCode {
             }
         }
         return qcore_audit::current_cli::main(rest);
+    }
+    if path == "pin" || path == "compare" {
+        // Card W45-CONTRACT-REVISION-MODE: write or check contract locks after
+        // human review, and compare two runs.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return if path == "pin" {
+            qcore_audit::contract_pin::main(rest)
+        } else {
+            qcore_audit::revision_compare::main(rest)
+        };
     }
     if path == "contracts" {
         // Card W44-CONTRACTS-ONLY-NO-BUILD: contracts-only with no compilation

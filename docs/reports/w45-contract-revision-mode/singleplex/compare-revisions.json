@@ -1,0 +1,608 @@
+{
+  "after": {
+    "contracts_sha256": "3b3c026d9182d8ec87ccc3ac2e1ca4dc948f206adbacfa9c048e681493885145",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-contract-revision-mode/rev-046accf6/merged-slice/resource-diagnostics.json",
+    "report_sha256": "eace808f2b65824f0829ffdeec0b13ec42fd457ac02cceadcf65e3377427e418",
+    "revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "source": {
+      "kind": "git",
+      "revision": "046accf6aded7906f66a1baf0202da349e521736"
+    }
+  },
+  "assumptions": {
+    "flexible_trusted": {
+      "added": [],
+      "removed": []
+    },
+    "standing": {
+      "after": [
+        {
+          "contracts": 100,
+          "name": "libc-c-standard-abi"
+        }
+      ],
+      "before": [
+        {
+          "contracts": 100,
+          "name": "libc-c-standard-abi"
+        }
+      ]
+    }
+  },
+  "before": {
+    "contracts_sha256": "f3cb84b4013fea12f8479e4b6064d3ea3b76afca69235a41f3e73bab21c922cf",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-contract-revision-mode/rev-864c3d97/merged-slice/resource-diagnostics.json",
+    "report_sha256": "7a44ccfed58abe5f9cdbc55f52b6af841a95951aafd9c1cf5ff71fd4e6deb6d0",
+    "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "source": {
+      "kind": "git",
+      "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+    }
+  },
+  "contracts_in_force": {
+    "added": [],
+    "changed": [],
+    "removed": []
+  },
+  "counts": {
+    "contracts_added": 0,
+    "contracts_changed": 0,
+    "contracts_removed": 0,
+    "coverage_gained": 0,
+    "coverage_lost": 0,
+    "functions_added": 2,
+    "functions_removed": 0,
+    "obligations_added": 70,
+    "obligations_removed": 0,
+    "other_moves": 0,
+    "pin_mismatches_after": 0,
+    "pin_mismatches_before": 0,
+    "units_added": 0,
+    "units_removed": 0,
+    "violation_detected": 0,
+    "violation_withdrawn": 0
+  },
+  "meaning": "change report between two audit runs (card W45-CONTRACT-REVISION-MODE): `violation_detected` lists functions that moved to Unsafe and `coverage_lost` functions that moved from Safe to Unknown; the two are never pooled, and a provisional Unsafe is not a validated upstream defect; obligations are per-function diagnostics compared as (category, description) multisets without lines; contracts are compared by status, mode and normalised text digest from each run's contract_revision section",
+  "obligations": {
+    "added": [
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "C operator `sizeof` requires type/operand analysis",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 2,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unsupported assignment expression",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "C operator `sizeof` requires type/operand analysis",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 2,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unsupported assignment expression",
+        "file": "src/flb_engine.c",
+        "function": "flb_engine_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `flb_task_retry_reschedule`",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "flb_engine_dispatch_retry",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "tasks_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "tasks_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `flb_task_retry_reschedule`",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "flb_engine_dispatch_retry",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "tasks_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_engine_dispatch.c",
+        "function": "tasks_start",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `strnlen`",
+        "file": "src/flb_input_chunk.c",
+        "function": "flb_input_chunk_write_header_v2",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unknown_alias",
+        "configuration": 0,
+        "count": 1,
+        "description": "unresolved resource identity `in`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `strnlen`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unknown_alias",
+        "configuration": 0,
+        "count": 5,
+        "description": "unresolved resource identity `ic`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_get",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_get",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `strnlen`",
+        "file": "src/flb_input_chunk.c",
+        "function": "flb_input_chunk_write_header_v2",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unknown_alias",
+        "configuration": 1,
+        "count": 1,
+        "description": "unresolved resource identity `in`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `strnlen`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_append_raw",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unknown_alias",
+        "configuration": 1,
+        "count": 5,
+        "description": "unresolved resource identity `ic`",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_get",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_get",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_free_properties",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `flb_output_instance_destroy`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 2,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_new",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_set_property",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_output.c",
+        "function": "flb_output_set_property",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `flb_output_task_flush_error`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "call to uncontracted function `flb_task_deactivate_route`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 3,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 0,
+        "count": 1,
+        "description": "unsupported assignment expression",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_free_properties",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `flb_output_instance_destroy`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 2,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_output.c",
+        "function": "flb_output_init_all",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_new",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_set_property",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "file": "src/flb_output.c",
+        "function": "flb_output_set_property",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `flb_output_task_flush_error`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "call to uncontracted function `flb_task_deactivate_route`",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 3,
+        "description": "indirect memory access is outside the resource projection",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      },
+      {
+        "category": "unsupported",
+        "configuration": 1,
+        "count": 1,
+        "description": "unsupported assignment expression",
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system"
+      }
+    ],
+    "removed": []
+  },
+  "pin_mismatches": {
+    "after": [],
+    "before": [],
+    "new": [],
+    "resolved": []
+  },
+  "schema_version": 1,
+  "sources": {
+    "missing": {
+      "after": [],
+      "before": []
+    },
+    "units": {
+      "added": [],
+      "common": 15,
+      "removed": []
+    }
+  },
+  "verdict_moves": {
+    "coverage_gained": [],
+    "coverage_lost": [],
+    "functions_added": [
+      {
+        "after": "Unknown",
+        "before": null,
+        "configuration": 0,
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system",
+        "reasons": [
+          "unsupported"
+        ]
+      },
+      {
+        "after": "Unknown",
+        "before": null,
+        "configuration": 1,
+        "file": "src/flb_output.c",
+        "function": "flb_output_task_flush_error",
+        "library": "fluent-bit-system",
+        "reasons": [
+          "unsupported"
+        ]
+      }
+    ],
+    "functions_removed": [],
+    "other": [],
+    "units": [],
+    "violation_detected": [],
+    "violation_withdrawn": []
+  }
+}

@@ -24,11 +24,17 @@ mod observed_wait_inputs;
 pub mod parallel;
 // Card W45-CONTRACT-DEFERRED-REVIEW: the pending-review report section.
 pub mod pending_review;
+// Card W45-CONTRACT-REVISION-MODE: source identities, contract locks, the pin
+// evaluation and its report section.
+pub mod c_identity;
+pub mod contract_pin;
+pub mod contract_revision;
 pub mod prepare;
 mod prepare_json;
 pub mod projection;
 pub mod providers;
 pub mod report;
+pub mod revision_compare;
 mod source_audit;
 pub mod source_contract;
 pub mod timeout_teardown;
@@ -349,7 +355,17 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             )?
         }
     };
-    let contracts = contract_input.load()?;
+    let mut contracts = contract_input.load()?;
+    // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
+    // its lock over the checkout before any unit is analysed.
+    let pins = contract_revision::apply_pins(
+        &mut contracts,
+        &contract_revision::ModuleOwners::for_manifest(
+            contract_input.manifest_path(),
+            contract_input.manifest_text(),
+        )?,
+        &checkout,
+    )?;
     let mut work = Vec::new();
     let mut revisions = BTreeSet::new();
     // Resolve a moving name once. Every unit is checked against this immutable
@@ -580,6 +596,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             "contract_scope": "declared resource contracts are assumptions at the selected revision, not verified upstream behavior",
         });
     }
+    // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
+    // flexible assumptions, beside the contract sources they are read from.
+    assumptions["contract_revision"] = contract_revision::section(&contracts, &pins, &report);
     report.write(&report_path)?;
     fs::write(
         report_path.with_extension("assumptions.json"),

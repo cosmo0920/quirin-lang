@@ -48,7 +48,7 @@ pub enum ReasonSubject {
     Environment,
 }
 
-/// The closed eight-category vocabulary of §L21.1.
+/// The closed nine-category vocabulary of §L21.1.
 ///
 /// The wire spelling is the spec's kebab-case spelling; it is part of the
 /// schema surface and moving it is a compatibility event.
@@ -86,13 +86,19 @@ pub enum ReasonCategory {
     /// Subject: the analyser — the row says nothing about the analysed source
     /// and never contributes to a provisional `Unsafe`.
     AwaitingHumanReview,
+    /// Card W45-CONTRACT-REVISION-MODE: a pinned contract the row depends on
+    /// is not in force, because the audited source does not match the
+    /// identity its lock records (contract spec §C06.2). Subject: the analyser
+    /// — the row says nothing about the analysed source and never contributes
+    /// to a provisional `Unsafe`.
+    ContractPinMismatch,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 8] = [
+    pub const ALL: [Self; 9] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -101,6 +107,7 @@ impl ReasonCategory {
         Self::ResidualCustody,
         Self::EnvironmentUnavailable,
         Self::AwaitingHumanReview,
+        Self::ContractPinMismatch,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -115,6 +122,7 @@ impl ReasonCategory {
             Self::ResidualCustody => "residual-custody",
             Self::EnvironmentUnavailable => "environment-unavailable",
             Self::AwaitingHumanReview => "awaiting-human-review",
+            Self::ContractPinMismatch => "contract-pin-mismatch",
         }
     }
 
@@ -127,7 +135,8 @@ impl ReasonCategory {
             | Self::IncompleteObligationCoverage
             | Self::StaleEvidence
             | Self::ProviderFailure
-            | Self::AwaitingHumanReview => ReasonSubject::Analyser,
+            | Self::AwaitingHumanReview
+            | Self::ContractPinMismatch => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -179,12 +188,12 @@ impl ReasonCategory {
             // Card W45-CONTRACT-DEFERRED-REVIEW: the summary names its calls
             // held for a pending review only when there is at least one, so
             // every summary written before the card classifies as it did.
+            // Card W45-CONTRACT-REVISION-MODE: a second optional component
+            // names calls held for a pinned contract that is not in force, in
+            // the same way and after the review component.
             let held = match rest.split_once(PROJECTION_HELD_SEPARATOR) {
-                None => Some(0),
-                Some((_, tail)) => tail
-                    .strip_suffix(PROJECTION_HELD_SUFFIX)
-                    .and_then(|n| n.parse::<u64>().ok())
-                    .filter(|n| *n > 0),
+                None => Some((0, 0)),
+                Some((_, tail)) => held_components(tail),
             };
             return match (held, unsupported) {
                 (None, _) | (_, None) => Err(UnclassifiedReason),
@@ -192,7 +201,10 @@ impl ReasonCategory {
                 // whatever the projection then leaves open downstream of it
                 // is not a statement about the source: the held premise is
                 // named first, so no held row reaches a source category.
-                (Some(held), Some(_)) if held > 0 => Ok(Self::AwaitingHumanReview),
+                (Some((review, _)), Some(_)) if review > 0 => Ok(Self::AwaitingHumanReview),
+                // A call held for a pin mismatch withholds a declared contract
+                // in the same way.
+                (Some((_, pinned)), Some(_)) if pinned > 0 => Ok(Self::ContractPinMismatch),
                 // No unmodeled operation: the model ran and left custody open.
                 (Some(_), Some(0)) => Ok(Self::ResidualCustody),
                 // At least one construct the model does not cover.
@@ -217,6 +229,30 @@ const PROJECTION_HELD_SEPARATOR: &str = "custody summary conflict(s), ";
 
 /// The held-call component's suffix.
 const PROJECTION_HELD_SUFFIX: &str = " call(s) held awaiting human review";
+
+/// The suffix of the component naming calls held for a pinned contract that
+/// is not in force (card W45-CONTRACT-REVISION-MODE).
+const PROJECTION_PIN_HELD_SUFFIX: &str = " call(s) held for a contract pin mismatch";
+
+/// The held components after the summary's conflict count: an optional review
+/// component, then an optional pin component, each named only when its count
+/// is positive. `None` for anything else, so a malformed or zero count refuses.
+fn held_components(tail: &str) -> Option<(u64, u64)> {
+    let positive = |text: &str, suffix: &str| {
+        text.strip_suffix(suffix)
+            .and_then(|n| n.parse::<u64>().ok())
+            .filter(|n| *n > 0)
+    };
+    match tail.split_once(", ") {
+        Some((review, pinned)) => Some((
+            positive(review, PROJECTION_HELD_SUFFIX)?,
+            positive(pinned, PROJECTION_PIN_HELD_SUFFIX)?,
+        )),
+        None => positive(tail, PROJECTION_HELD_SUFFIX)
+            .map(|review| (review, 0))
+            .or_else(|| positive(tail, PROJECTION_PIN_HELD_SUFFIX).map(|pinned| (0, pinned))),
+    }
+}
 
 /// The ordered, documented string → category rules used by
 /// [`ReasonCategory::classify`].
@@ -388,6 +424,14 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     // premise, never the analysed source. Sites: `qcore_c_gateway::legacy_c`'s
     // held-call statement, `qcore_verification::driver`'s extern-call route.
     ("awaits human review", ReasonCategory::AwaitingHumanReview),
+    // ---- contract pin mismatch (card W45-CONTRACT-REVISION-MODE): a pinned
+    // contract whose lock the audited source does not match was withheld.
+    // Matched before every source-subject rule for the same reason. Site:
+    // `qcore_c_gateway::legacy_c`'s held-call statement.
+    (
+        "pinned contract is not in force",
+        ReasonCategory::ContractPinMismatch,
+    ),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the
     // declared premise, not the analysed source.
@@ -659,7 +703,7 @@ impl FromStr for ReasonCategory {
     }
 }
 
-/// The text is not one of the eight closed category spellings.
+/// The text is not one of the nine closed category spellings.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct UnknownReasonCategory;
 

@@ -1,5 +1,5 @@
 /-!
-# Checked specifications (card W45-FB-BACKLOG-CUSTODY, contract spec §C06.2)
+# Checked specifications (card W45-FB-BACKLOG-CUSTODY, contract spec §C06.3)
 
 A declaration marked `requires resource_body_checked;` is a specification of a
 body the audit analyses. The gateway (`crates/qcore-c-gateway/src/legacy_checked_spec.rs`)

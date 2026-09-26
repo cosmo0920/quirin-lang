@@ -428,7 +428,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // Card W45-FB-BACKLOG-CUSTODY: the twelve storage-backlog functions of
     // `plugins/in_storage_backlog/sb.c` as CHECKED SPECIFICATIONS (contract
-    // spec §C06.2): each carries `requires resource_body_checked;` beside the
+    // spec §C06.3): each carries `requires resource_body_checked;` beside the
     // marker, so every count below is two requirements, one clause per
     // parameter and the result mode. A specification is in force only in a
     // unit that defines its body and whose body establishes it; the corpus
@@ -504,87 +504,87 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // owned result and its `directory` kind (4); `closedir`: the marker, the
     // released stream, its kind and `none` (4). Deliberate; see
     // `docs/reports/w43-descriptor-resource-tracking/README.md`.
-    ("libc/dirent.qcore", "opendir", 4),
-    ("libc/dirent.qcore", "closedir", 4),
-    ("libc/dlfcn.qcore", "dlerror", 2),
+    ("libc/dirent.qcore", "opendir", 5),
+    ("libc/dirent.qcore", "closedir", 5),
+    ("libc/dlfcn.qcore", "dlerror", 3),
     // Card W43-LIBC-RESTRICT-PROTOTYPES: ten `__restrict` prototypes, each
     // the neutral element (the marker, one borrowed clause per parameter,
     // `none`), in `dlfcn`, `socket`, `sys_stat`, `threads`, `time` and the new
     // `libc/regex.qcore`. Deliberate; see
     // `docs/reports/w43-libc-restrict-prototypes/README.md`.
-    ("libc/dlfcn.qcore", "dlsym", 4),
+    ("libc/dlfcn.qcore", "dlsym", 5),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
-    ("libc/errno.qcore", "__errno_location", 2),
+    ("libc/errno.qcore", "__errno_location", 3),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).
-    ("libc/errno.qcore", "strerror", 3),
-    ("libc/math.qcore", "ceil", 3),
-    ("libc/math.qcore", "floor", 3),
-    ("libc/math.qcore", "fabs", 3),
-    ("libc/math.qcore", "pow", 4),
-    ("libc/memory.qcore", "malloc", 3),
-    ("libc/memory.qcore", "calloc", 4),
-    ("libc/memory.qcore", "free", 3),
-    ("libc/process.qcore", "prctl", 5),
+    ("libc/errno.qcore", "strerror", 4),
+    ("libc/math.qcore", "ceil", 4),
+    ("libc/math.qcore", "floor", 4),
+    ("libc/math.qcore", "fabs", 4),
+    ("libc/math.qcore", "pow", 5),
+    ("libc/memory.qcore", "malloc", 4),
+    ("libc/memory.qcore", "calloc", 5),
+    ("libc/memory.qcore", "free", 4),
+    ("libc/process.qcore", "prctl", 6),
     // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. Three clauses each: the marker,
     // the borrowed mutex pointer and the `int` result. `pthread_mutex_t` is a
     // union the typedef DEFINES, which card LOADER-ABI's reader would not read;
     // this card's widening reads it, and neither function takes custody of the
     // object, so `resource_borrowed` is the whole custody statement.
-    ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 3),
-    ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 3),
+    ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 4),
+    ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qcore`: neutral (2 + 1 per parameter).
-    ("libc/regex.qcore", "regexec", 7),
-    ("libc/regex.qcore", "regerror", 6),
-    ("libc/socket.qcore", "setsockopt", 7),
-    ("libc/socket.qcore", "send", 6),
-    ("libc/socket.qcore", "recv", 6),
-    ("libc/socket.qcore", "listen", 4),
-    ("libc/socket.qcore", "sendfile", 6),
-    ("libc/socket.qcore", "htonl", 3),
-    ("libc/socket.qcore", "ntohl", 3),
-    ("libc/socket.qcore", "gai_strerror", 3),
+    ("libc/regex.qcore", "regexec", 8),
+    ("libc/regex.qcore", "regerror", 7),
+    ("libc/socket.qcore", "setsockopt", 8),
+    ("libc/socket.qcore", "send", 7),
+    ("libc/socket.qcore", "recv", 7),
+    ("libc/socket.qcore", "listen", 5),
+    ("libc/socket.qcore", "sendfile", 7),
+    ("libc/socket.qcore", "htonl", 4),
+    ("libc/socket.qcore", "ntohl", 4),
+    ("libc/socket.qcore", "gai_strerror", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/socket.qcore", "getsockopt", 7),
-    ("libc/socket.qcore", "getpeername", 5),
+    ("libc/socket.qcore", "getsockopt", 8),
+    ("libc/socket.qcore", "getpeername", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: `socket`, appended. The marker,
     // three borrowed scalars, the `sentinel` owned result and its `descriptor`
     // kind (6).
-    ("libc/socket.qcore", "socket", 6),
-    ("libc/stdio.qcore", "perror", 3),
-    ("libc/stdio.qcore", "fflush", 3),
-    ("libc/stdio.qcore", "remove", 3),
+    ("libc/socket.qcore", "socket", 7),
+    ("libc/stdio.qcore", "perror", 4),
+    ("libc/stdio.qcore", "fflush", 4),
+    ("libc/stdio.qcore", "remove", 4),
     // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family, each a
     // trusted assumption read from the prototype the pinned units declare. The
     // marker, one borrowed clause per declared parameter, the variadic data
     // tail and the scalar result: 3 + parameters clauses each. Deliberate; see
     // `docs/reports/w43-libc-printf-family/README.md`.
-    ("libc/stdio.qcore", "printf", 4),
-    ("libc/stdio.qcore", "fprintf", 5),
-    ("libc/stdio.qcore", "snprintf", 6),
-    ("libc/stdio.qcore", "sprintf", 5),
+    ("libc/stdio.qcore", "printf", 5),
+    ("libc/stdio.qcore", "fprintf", 6),
+    ("libc/stdio.qcore", "snprintf", 7),
+    ("libc/stdio.qcore", "sprintf", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the stream pair and `fileno`,
     // appended. `fopen`: marker, two borrowed, owned result, `stream` kind (5);
     // `fclose`: marker, released stream, kind, `none` (4); `fileno`: the
     // neutral element over one parameter (3).
-    ("libc/stdio.qcore", "fopen", 5),
-    ("libc/stdio.qcore", "fclose", 4),
-    ("libc/stdio.qcore", "fileno", 3),
+    ("libc/stdio.qcore", "fopen", 6),
+    ("libc/stdio.qcore", "fclose", 5),
+    ("libc/stdio.qcore", "fileno", 4),
     // Card W44-LIBC-RESIDUALS: the two called `va_list` members, appended.
     // The marker, one borrowed clause per parameter (the `va_list` included)
     // and `none`: `vsnprintf` 6, `vprintf` 4.
-    ("libc/stdio.qcore", "vsnprintf", 6),
-    ("libc/stdio.qcore", "vprintf", 4),
-    ("libc/stdlib.qcore", "atoi", 3),
-    ("libc/stdlib.qcore", "srand", 3),
-    ("libc/stdlib.qcore", "rand_r", 3),
-    ("libc/stdlib.qcore", "system", 3),
-    ("libc/string.qcore", "strcmp", 4),
-    ("libc/string.qcore", "strlen", 3),
-    ("libc/string.qcore", "strdup", 3),
-    ("libc/string.qcore", "strerror_r", 5),
+    ("libc/stdio.qcore", "vsnprintf", 7),
+    ("libc/stdio.qcore", "vprintf", 5),
+    ("libc/stdlib.qcore", "atoi", 4),
+    ("libc/stdlib.qcore", "srand", 4),
+    ("libc/stdlib.qcore", "rand_r", 4),
+    ("libc/stdlib.qcore", "system", 4),
+    ("libc/string.qcore", "strcmp", 5),
+    ("libc/string.qcore", "strlen", 4),
+    ("libc/string.qcore", "strdup", 4),
+    ("libc/string.qcore", "strerror_r", 6),
     // Card W43-LIBC-RESULT-ALIAS: thirteen derived-result declarations, each a
     // trusted assumption read from the prototype the pinned units declare. The
     // shape is the neutral one with a derived result in place of `none`: the
@@ -593,66 +593,66 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // pointers (`resource_return_interior(s, nullable)`) here, two exact
     // aliases in `libc/time.qcore`. Deliberate; see
     // `docs/reports/w43-libc-result-alias/README.md`.
-    ("libc/string.qcore", "strcpy", 4),
-    ("libc/string.qcore", "strncpy", 5),
-    ("libc/string.qcore", "memcpy", 5),
-    ("libc/string.qcore", "memmove", 5),
-    ("libc/string.qcore", "memset", 5),
-    ("libc/string.qcore", "strchr", 4),
-    ("libc/string.qcore", "strrchr", 4),
-    ("libc/string.qcore", "strstr", 4),
-    ("libc/string.qcore", "strcasestr", 4),
-    ("libc/string.qcore", "memchr", 5),
-    ("libc/string.qcore", "memrchr", 5),
+    ("libc/string.qcore", "strcpy", 5),
+    ("libc/string.qcore", "strncpy", 6),
+    ("libc/string.qcore", "memcpy", 6),
+    ("libc/string.qcore", "memmove", 6),
+    ("libc/string.qcore", "memset", 6),
+    ("libc/string.qcore", "strchr", 5),
+    ("libc/string.qcore", "strrchr", 5),
+    ("libc/string.qcore", "strstr", 5),
+    ("libc/string.qcore", "strcasestr", 5),
+    ("libc/string.qcore", "memchr", 6),
+    ("libc/string.qcore", "memrchr", 6),
     // Card CONTRACT-INHERIT-ADOPTION: `strndup`, user-directed; `strdup`'s
     // custody statement plus a borrowed size (2 + 1 per parameter + owned).
-    ("libc/string.qcore", "strndup", 4),
-    ("libc/sys_stat.qcore", "fstat", 4),
-    ("libc/sys_stat.qcore", "mkdir", 4),
-    ("libc/sys_stat.qcore", "umask", 3),
+    ("libc/string.qcore", "strndup", 5),
+    ("libc/sys_stat.qcore", "fstat", 5),
+    ("libc/sys_stat.qcore", "mkdir", 5),
+    ("libc/sys_stat.qcore", "umask", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/sys_stat.qcore", "stat", 4),
-    ("libc/threads.qcore", "mtx_lock", 3),
-    ("libc/threads.qcore", "mtx_unlock", 3),
-    ("libc/threads.qcore", "cnd_wait", 4),
-    ("libc/threads.qcore", "pthread_rwlock_rdlock", 3),
-    ("libc/threads.qcore", "pthread_rwlock_wrlock", 3),
-    ("libc/threads.qcore", "pthread_rwlock_unlock", 3),
-    ("libc/threads.qcore", "pthread_self", 2),
-    ("libc/threads.qcore", "pthread_kill", 4),
-    ("libc/threads.qcore", "pthread_setcancelstate", 4),
-    ("libc/threads.qcore", "pthread_setcanceltype", 4),
-    ("libc/threads.qcore", "pthread_attr_setdetachstate", 4),
-    ("libc/threads.qcore", "sigemptyset", 3),
-    ("libc/threads.qcore", "sigfillset", 3),
-    ("libc/threads.qcore", "sigaddset", 4),
+    ("libc/sys_stat.qcore", "stat", 5),
+    ("libc/threads.qcore", "mtx_lock", 4),
+    ("libc/threads.qcore", "mtx_unlock", 4),
+    ("libc/threads.qcore", "cnd_wait", 5),
+    ("libc/threads.qcore", "pthread_rwlock_rdlock", 4),
+    ("libc/threads.qcore", "pthread_rwlock_wrlock", 4),
+    ("libc/threads.qcore", "pthread_rwlock_unlock", 4),
+    ("libc/threads.qcore", "pthread_self", 3),
+    ("libc/threads.qcore", "pthread_kill", 5),
+    ("libc/threads.qcore", "pthread_setcancelstate", 5),
+    ("libc/threads.qcore", "pthread_setcanceltype", 5),
+    ("libc/threads.qcore", "pthread_attr_setdetachstate", 5),
+    ("libc/threads.qcore", "sigemptyset", 4),
+    ("libc/threads.qcore", "sigfillset", 4),
+    ("libc/threads.qcore", "sigaddset", 5),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/threads.qcore", "cnd_timedwait", 5),
-    ("libc/threads.qcore", "pthread_sigmask", 5),
-    ("libc/time.qcore", "time", 3),
-    ("libc/time.qcore", "timegm", 3),
-    ("libc/time.qcore", "gmtime_r", 4),
-    ("libc/time.qcore", "localtime_r", 4),
+    ("libc/threads.qcore", "cnd_timedwait", 6),
+    ("libc/threads.qcore", "pthread_sigmask", 6),
+    ("libc/time.qcore", "time", 4),
+    ("libc/time.qcore", "timegm", 4),
+    ("libc/time.qcore", "gmtime_r", 5),
+    ("libc/time.qcore", "localtime_r", 5),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/time.qcore", "strftime", 6),
-    ("libc/time.qcore", "gettimeofday", 4),
-    ("libc/unistd.qcore", "sleep", 3),
-    ("libc/unistd.qcore", "usleep", 3),
-    ("libc/unistd.qcore", "sysconf", 3),
-    ("libc/unistd.qcore", "getpagesize", 2),
-    ("libc/unistd.qcore", "geteuid", 2),
-    ("libc/unistd.qcore", "getegid", 2),
-    ("libc/unistd.qcore", "setsid", 2),
-    ("libc/unistd.qcore", "access", 4),
-    ("libc/unistd.qcore", "unlink", 3),
-    ("libc/unistd.qcore", "read", 5),
-    ("libc/unistd.qcore", "write", 5),
+    ("libc/time.qcore", "strftime", 7),
+    ("libc/time.qcore", "gettimeofday", 5),
+    ("libc/unistd.qcore", "sleep", 4),
+    ("libc/unistd.qcore", "usleep", 4),
+    ("libc/unistd.qcore", "sysconf", 4),
+    ("libc/unistd.qcore", "getpagesize", 3),
+    ("libc/unistd.qcore", "geteuid", 3),
+    ("libc/unistd.qcore", "getegid", 3),
+    ("libc/unistd.qcore", "setsid", 3),
+    ("libc/unistd.qcore", "access", 5),
+    ("libc/unistd.qcore", "unlink", 4),
+    ("libc/unistd.qcore", "read", 6),
+    ("libc/unistd.qcore", "write", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the descriptor pair, appended.
     // `open`: marker, two borrowed, the variadic data tail, the `sentinel`
     // owned result and its `descriptor` kind (6); `close`: marker, the `valid`
     // released descriptor, its kind and `none` (4).
-    ("libc/unistd.qcore", "open", 6),
-    ("libc/unistd.qcore", "close", 4),
+    ("libc/unistd.qcore", "open", 7),
+    ("libc/unistd.qcore", "close", 5),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -1240,7 +1240,7 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // and `fluent_bit/output_singleplex.qcore`.
     // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
-    // storage-backlog bodies (contract spec §C06.2).
+    // storage-backlog bodies (contract spec §C06.3).
     assert_eq!(sources.len(), 114, "unexpected contract corpus size");
 
     for (logical, path) in &sources {

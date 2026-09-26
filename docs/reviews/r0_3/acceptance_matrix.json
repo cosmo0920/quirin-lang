@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "15.0.0",
+  "qcore_schemas_rust_api": "16.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 436
+  "named_followups": 434
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 114,
+  "contract_modules": 113,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-FB-RETRY-LIFETIME on merge 4dbab8e7 (onto main 74579af6, after all wave-45 cards through W45-FB-RETRY-FAULT-INJECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5815 core Rust passed / 0 failed / 11 ignored over 310 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 197 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration). The package Python step's first attempt (27-package-python.log, exit 1) failed one test, test_the_real_workspace_manifest_is_current (providers/tests/test_contract_load_path.py): AssertionError 49 != 47, a genuine stale pin — that suite still pinned 47 resource-view modules while this card deliberately grew the Cycle 19 manifest to 49. The integrator committed the pin update to 49 (commit b981c5c4, test-only) on this branch, and the rerun of the full providers Python suite on that tree passed clean: 15 package Python tests (27-package-python-rerun.log, exit 0). Both attempts are recorded; the first exit is kept as measured, not replaced, and the count below is taken from the clean rerun. The isolated package mutation control's first attempt (23-package-mutation.log, exit 101) failed one test, real_packages_preserve_unknown_and_reject_mutations (providers/conformance/tests/packages.rs): a BrokenPipe writing to a spawned provider's stdin, a host-load failure under concurrent cards. It passed 3/3 isolated reruns (23-package-mutation-rerun-{1,2,3}.log, each exit 0). fmt/clippy (core and provider), both reevaluation examples, the docs index, and providers/contracts.py check exit 0, and all five package builds and verifications exit 0. Both fixes are test-only; the arbiter run and its composition against docs/reports/w45-parenthesised-callee/integration/artifacts stand unaffected. The byte-identity step against docs/reports/w45-parenthesised-callee/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5815,
+  "note": "Integration gate for W45-CONTRACT-REVISION-MODE on merge 2f03dee1 (onto main 84ebad57, after all wave-45 cards through W45-FB-RETRY-LIFETIME), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5840 core Rust passed / 0 failed / 11 ignored over 312 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 198 Lean audits; 358 root Python tests (scripts/tests) and 15 package Python tests (providers/tests), each rerun standalone after the gate and OK. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card is MOVES=no: the corpus arbiter ran on the merged tree and 32-identity (baseline_identity.py against docs/reports/w45-fb-retry-lifetime/integration/artifacts) exits 0 with verdict_bearing_identical true. Its per-artifact detail shows diagnostics, chunk-contracts, source-effects and the monkey-source record all byte-identical to PREV; only the contracts sidecar (resource-diagnostics.contracts.json) differs, exactly as this card intends: it adds the contract_revision key, marks the 16 libc contract modules revision flexible, and that changes the retained text and digest of the two included libc parents, memory.qcore and string.qcore. The card's own checker (docs/reports/w45-contract-revision-mode/scripts/contracts_difference.py), run against the arbiter output and PREV with the worktree's own path as both ROOT and CANONICAL, confirms this and nothing more: additive_key_present true, libc_modules_restored 16, included_libc_parents_restored [quirin-provider-libc:libc/memory.qcore, quirin-provider-libc:libc/string.qcore], identical_after_restoring_the_card_edits true, top_level_keys_differing empty (exit 0). So the verdicts do not move, the corpus is not re-archived, and the combined baseline stays docs/reports/w45-fb-retry-lifetime/integration/artifacts. build_matrix.py . --gate <this file> regenerates docs/reviews/r0_3/acceptance_matrix.json's gate block from these counts; the carried named_followups is unaffected by this card.",
+  "workspace_tests": 5840,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 199,
+  "lean_audits": 198,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6761,7 +6761,6 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
-   "AuditCheckedSpecification.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6778,6 +6777,7 @@
    "AuditContractBundle.lean",
    "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
+   "AuditContractRevisionMode.lean",
    "AuditContractViewProjection.lean",
    "AuditCountedUsers.lean",
    "AuditCt01OwnedTransfer.lean",
@@ -6834,7 +6834,6 @@
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
-   "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
@@ -6943,7 +6942,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-contract-revision-mode/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -9883,60 +9882,46 @@
    "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
   {
-   "id": "W45-FB-BACKLOG-REFERENCE-VOCABULARY",
-   "title": "Backlog OB-2/OB-3 need a wrapper-to-chunk reference relation, return-conditioned clauses and per-element identity; v1 states none",
-   "why": "W45-FB-BACKLOG-CUSTODY expressed the storage-backlog obligations as checked specifications (providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore, contract spec C06.2). OB-2 (no chunk closed while a wrapper refers to it; the -3 arm of sb_append_chunk_to_segregated_backlogs, observed natively as the partial fan-out ASan use-after-free) and OB-3 (at most one wrapper per chunk per queue) relate a wrapper, a queue and a chunk; the v1 vocabulary states only argument and result custody. Measured reach of a relation clause alone in this slice is 0: the chunk is an element of stream->chunks (sb_segregate_chunks) or of a wrapper (cb_queue_chunks), both untracked by the projection, and the failing insertion is inside a loop whose callee has no return-conditioned summary. DISCHARGE: a C09 relation clause (wrapper refers to chunk; close requires no outstanding reference), a return-conditioned clause, and per-element abstract identities for admitted list iterations, with loader, gateway and Lean parity, then the slice as arbiter deciding OB-2 on the -3 arm; any refutation stays a provisional Unsafe, never an upstream defect claim.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVISION-PIN-ROUTES",
+   "title": "Pins are evaluated by quirin-audit's routes and the corpus arbiter only",
+   "why": "`qcore_audit::contract_revision::apply_pins` runs in `quirin-audit current`, `quirin-audit contracts`, the configured `quirin-audit CONFIG.json` route and `cycle19_fluent_bit_libraries_audit`. A caller of the gateway API, the checked extern-call route (`source.extern-call.v1`) and the other compiler examples apply the environment they are given, in which no pin was evaluated, so a pinned contract there is applied as loaded. Contract spec C06.2 states the boundary. DISCHARGE: an inventory of every verdict-publishing route, each either evaluating pins against its audited source or refusing a pinned contract it cannot evaluate, with a test per route.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-FB-BACKLOG-MAP-ARMS",
-   "title": "flb_input_chunk_map's chunk has three dispositions (stored, closed on the routes_mask arm, left open); no v1 mode is faithful, so OB-4/OB-5 stay Unknown",
-   "why": "W45-FB-BACKLOG-CUSTODY left flb_input_chunk_map undeclared: on success the chunk is stored into the returned input chunk, on the routes_mask allocation failure it is closed (BC-1), and on the other NULL arms it is left open. OB-5 (chunk closed exactly once on a NULL map return; cb_queue_chunks closes it again) and OB-4 are therefore not decidable; BC-1 remains a source-reading candidate. Unchanged between 864c3d97 and 046accf6. DISCHARGE: a per-arm (or per-return) disposition clause in C09 with loader/gateway/Lean parity, or a source argument; then the backlog slice deciding OB-5.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVISION-LOCK-NOT-PACKAGED",
+   "title": "Contract locks live in the provider crates' source trees and are not packaged",
+   "why": "Audits load resource contracts through the load path, where each crate's `contracts.lock` sits beside its `Cargo.toml`; `providers/contracts.py check` verifies each lock against the current contract texts (`quirin-audit pin --verify-contracts`). The five executable provider packages carry their contracts unchanged and no lock, because no audit loads resource contracts from an installed package today. DISCHARGE: when an audit route loads resource contracts from an installed package, package the crate's lock with a SHA-256 pin in its inventory, verify it in `providers/package.py verify`, and evaluate pins from it.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-FB-BACKLOG-REACHABLE-RELEASE",
-   "title": "Backlog OB-6/OB-7/OB-10: callees release objects reachable from their arguments (wrappers of a queue); v1 Borrowed states nothing about them",
-   "why": "sb_remove_chunk_from_segregated_backlogs, sb_destroy_backlog(s) and sb_release_output_queue_space free wrappers (and queues) reached through a borrowed context; their checked specifications (all Borrowed) are not established by the bodies, whose element releases refuse as unresolved identities. OB-6 (no wrapper used after a callee frees it), OB-7 (eviction retires every wrapper before the close) and OB-10 (teardown) need a clause for objects released through what an argument reaches (P-B08-SHALLOW is the current premise). DISCHARGE: such a clause with parity, or a container-ownership relation for list elements, then the slice as arbiter.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVISION-SCANNER-LEXICAL",
+   "title": "The pinned-source identity is lexical and whole-tree",
+   "why": "`crates/qcore-audit/src/c_identity.rs` reads every `.c` and `.h` blob of the audited HEAD and records every top-level declaration and definition of a pinned name, without preprocessing. Any textual change to any such site, including a renamed local, a moved prototype or a new declaration in an unrelated file, puts the contract out of force (the fail-closed direction), and a conditional group that closes an outer brace makes every body in its file run to the end of the file. A site the scanner does not recognise as top-level (a definition produced by a macro, say) is not part of the identity. DISCHARGE: an identity bound to the preprocessed definitions the audit's own units see, with a measured comparison on the Fluent Bit corpus of false mismatches and of missed sites against this scanner.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-FB-BACKLOG-CIO-RETURN-CODES",
-   "title": "Backlog OB-9 needs ChunkIO return-code summaries (cio_chunk_up_force CIO_OK/CIO_ERROR/CIO_CORRUPTED/CIO_RETRY) and the uncontracted cio_chunk_lock/cio_error_get/cio_chunk_get_real_size",
-   "why": "sb_segregate_chunks' end states per chunk (OB-9) depend on ChunkIO return codes; cio_chunk_lock, cio_error_get and cio_chunk_get_real_size are uncontracted in the slice. Facts belong in qcore-provider-chunkio. DISCHARGE: ChunkIO declarations read against their bodies (in qcore-provider-chunkio) and a return-code-conditioned vocabulary, then the slice deciding OB-9.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVISION-HOLD-REPORTING",
+   "title": "A call held for a pin mismatch is counted as a recorded refusal and listed under the diagnostic category `unsupported`",
+   "why": "As for a pending review (W45-REVIEW-HELD-CALL-SITE-COUNT, W45-REVIEW-HELD-DIAGNOSTIC-CATEGORY), the `contract_revision` section's held counts are recorded held-call refusals, a lower bound on textual call sites, and `diagnostics.json` lists a held call under `category: unsupported`; the unit `reason_code` is `contract-pin-mismatch`. DISCHARGE: discharged together with those two residuals, the pin hold counted and categorised by the same mechanism.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
-   "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
-   "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree (main 84ebad57 + W45-FB-BACKLOG-CUSTODY) rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. The class also still accuses mk_rconf_section_entry_add and mk_vhost_fdt_worker_init in the corpus, whose containers are not reached from a formal (W45-CONTAINER-ROOT-REACH). DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVIEW-PREFIX-COLLISION-UNPINNED",
+   "title": "The review hold's claim that no corpus symbol begins with its rewrite prefix has no test",
+   "why": "`crates/qcore-c-gateway/src/legacy_review_hold.rs` documents its `qcore_review_pending__` prefix as asserted by the tests to occur in no corpus symbol; no test asserts it (found by W45-CONTRACT-REVISION-MODE, whose `qcore_pin_mismatch__` prefix documents the refusing-only consequence of a collision instead). A collision can only make a call read as held, which is `Unknown`, so no verdict moves towards Safe or Unsafe. DISCHARGE: either a test over the corpus inputs asserting neither prefix occurs, or the review hold's comment corrected to the refusing-only argument.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-ILI-PREMISES",
-   "title": "Intrusive-list iteration (gateway 5l) rests on stated premises; 43 element and 34 header leaves stay refused",
-   "why": "Gateway constraint 5l admits mk_list/cfl_list headers and container_of element reads under four premises stated, not proved: P-ILI-BODY (checked lexically), P-ILI-UNTRACKED (an element is not an identity the body tracks; the lexical guard declines a function where one call receives both &X->... of a possibly tracked X and the iterated head; linking through a wrapper call is P-B08-SHALLOW), P-ILI-CALLEE-FRAME (a callee handed the container does not unlink the protected node; OB-7 depends on it) and P-ILI-BRACED. Rule 4 added no refusal in the corpus or the slice (17 plain bodies with an unlink or release call; the two read release another object or unlink a second link; 15 not read individually). After the card, 43 element-read braced leaves and 34 list-header for-loop leaves remain in the corpus (from 326 and 269), declined by the guard, an untyped head chain or an unbraced body. DISCHARGE: per premise, a model of the callee frame or a measured guard refinement with its re-pin; per residual leaf class, an admission with its own measurement.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
-  },
-  {
-   "id": "W45-MK-HTTP-ERROR-FD-LEAK",
-   "title": "mk_http_error: descriptor from open() on the custom-error-page arm is never closed (provisional Unsafe candidate)",
-   "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and not closed or stored before the return at :1315; the source's own comment reads 'This fd seems to be leaked'. Unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
-  },
-  {
-   "id": "W45-FB-BACKLOG-FOREIGN-UNLINK",
-   "title": "Rule 10d refuses unlinking an entry this function did not publish; it blocks the backlog's retirement legs (OB-3, OB-7, OB-10) and 17 corpus leaves in 14 teardown functions",
-   "why": "sb_remove_chunk_from_segregated_backlog and sb_destroy_backlogs unlink wrappers (queues) that another function published (sb_append_chunk_to_segregated_backlog, sb_allocate_backlogs); W45-FB-RETRY-LIFETIME's rule 10d refuses 'unlink by mk_list_del of X, which this function has not published'. W45-FB-BACKLOG-CUSTODY's safe-iteration admission makes 17 such element unlinks reachable in 14 corpus teardown functions (mk_rconf_free, mk_vhost_destroy, flb_input_chunk_destroy, ...), each an exchange for an earlier refusal, fail-closed. DISCHARGE: an unlink of an element of a container the caller owns or borrows, stated against the container's membership (a caller-side publication premise or a container-element identity), with parity and a corpus re-pin.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+   "id": "W45-REVISION-COMPARE-MATCHED-IDENTITY",
+   "title": "`quirin-audit compare` does not report a pinned contract moving between reviewed identities",
+   "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

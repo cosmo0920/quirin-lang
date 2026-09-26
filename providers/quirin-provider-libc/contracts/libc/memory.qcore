@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // Trusted resource-projection assumptions, vocabulary version 1.
 // These preserve the Cycle 19 audit table; they do not verify the C bodies.
 // Borrowed scalar/opaque arguments carry no resource custody requirement.
@@ -8,6 +14,7 @@ module contract;
 extern fn malloc(size: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(size);
     ensures normal resource_return_owned(nullable);
 };
@@ -15,6 +22,7 @@ contract {
 extern fn calloc(count: usize, size: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(count);
     ensures normal resource_borrowed(size);
     ensures normal resource_return_owned(nullable);
@@ -23,6 +31,7 @@ contract {
 extern fn free(ptr: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_released(ptr, nullable);
     ensures normal resource_return_none();
 };

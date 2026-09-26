@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <stdlib.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
@@ -41,6 +47,7 @@ module contract;
 extern fn atoi(nptr: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(nptr);
     ensures normal resource_return_none();
 };
@@ -48,6 +55,7 @@ contract {
 extern fn srand(seed: u32) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(seed);
     ensures normal resource_return_none();
 };
@@ -55,6 +63,7 @@ contract {
 extern fn rand_r(seed: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(seed);
     ensures normal resource_return_none();
 };
@@ -62,6 +71,7 @@ contract {
 extern fn system(command: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(command);
     ensures normal resource_return_none();
 };

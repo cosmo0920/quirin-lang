@@ -1,7 +1,7 @@
 import QCore.CheckedSpecification
 
 /-! Card **W45-FB-BACKLOG-CUSTODY**: checked specifications (contract spec
-§C06.2, `crates/qcore-c-gateway/src/legacy_checked_spec.rs`).
+§C06.3, `crates/qcore-c-gateway/src/legacy_checked_spec.rs`).
 
 Three directions are audited.
 

@@ -3,7 +3,7 @@ module contract;
 // Fluent Bit storage backlog (`plugins/in_storage_backlog/sb.c`): the custody
 // interface of the twelve backlog functions, as CHECKED SPECIFICATIONS.
 // Card W45-FB-BACKLOG-CUSTODY; resource-projection vocabulary version 1 with
-// the checked-specification marker of contract spec §C06.2.
+// the checked-specification marker of contract spec §C06.3.
 //
 // ## What `requires resource_body_checked;` makes of these declarations
 //

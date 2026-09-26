@@ -1,0 +1,12 @@
+contracts-only, no build: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/runs/missing-counter-rollback/src (1 unit(s); no compilation database, build or source profile)
+evidence: contracts-only-no-build (resource projection from the selected contract modules; every verdict relative to the recorded assumed configuration: -std=gnu17, 0 include dir(s), 0 definition(s), each unit's own directory for quoted includes, the host Clang's system headers)
+.: 1 selected unit(s)
+  ./queue.c: Unsafe (6/6)
+    resource diagnostics: leak=1
+    box_count: queue.c:33: leak: live obligation acquired at queue.c:28
+no-build: 1 unit(s), 1 prepared under the assumptions, 0 not prepared: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures (every verdict relative to the recorded assumptions)
+preparation: 1 unit(s), 3 Clang invocation(s); -E -P 41050 us / syntax 41782 us / line markers 38989 us
+pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call site(s) held Unknown (awaiting-human-review)
+contract revision: 0 pinned (0 in force, 0 not in force), 4 flexible checked, 6 flexible trusted, 0 libc under the standing assumption; 0 function(s) and 0 call site(s) held Unknown (contract-pin-mismatch)
+
+exit 0

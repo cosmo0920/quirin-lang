@@ -1,5 +1,5 @@
 //! Card **W45-FB-BACKLOG-CUSTODY**: intrusive-list iteration, element identity
-//! and checked specifications (gateway constraint 5l, contract spec §C06.2).
+//! and checked specifications (gateway constraint 5l, contract spec §C06.3).
 //!
 //! The prelude spells the Monkey/CFL list macros exactly as the pinned headers
 //! do, so every fixture reaches the gateway in the preprocessed form a

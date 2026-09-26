@@ -1,0 +1,82 @@
+module contract;
+
+// Card W45-CONTRACT-REVISION-MODE: the contracts of the generic mutation
+// fixture `queue.c`. Every declaration is `revision flexible` here; the
+// harness derives the pinned variant by removing those requirements.
+
+extern fn item_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn item_free(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(item, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn item_touch(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(item);
+    ensures normal resource_return_none();
+};
+
+extern fn sink_keep(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_consumed(item, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn ticket_take() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn ticket_return(ticket: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(ticket, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn box_drop(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(item, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn box_keep(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_consumed(item, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn box_count(fail: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fail);
+    ensures normal resource_return_none();
+};
+
+extern fn box_two() -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_none();
+};

@@ -433,7 +433,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     **Do not** admit a header from its stripped clauses, bind an element from
     a cursor of a declined iteration, or widen case (2) to a written name.
     (4) A declaration carrying `requires resource_body_checked;` (contract
-    spec C06.2) is in force in a unit only while the unit defines the body,
+    spec C06.3) is in force in a unit only while the unit defines the body,
     outside every recursive component, and the body establishes it under the
     set still standing; otherwise it is withdrawn and the defining row
     carries `declared specification of … is not established`. **Do not**

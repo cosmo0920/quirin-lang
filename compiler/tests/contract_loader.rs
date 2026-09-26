@@ -81,7 +81,7 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
-    // (twelve checked specifications, contract spec C06.2).
+    // (twelve checked specifications, contract spec C06.3).
     assert_eq!(contracts.source_assumptions().len(), 50);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
@@ -912,7 +912,7 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
-    // (twelve checked specifications, contract spec C06.2).
+    // (twelve checked specifications, contract spec C06.3).
     assert_eq!(certificate.contracts.source_assumptions().len(), 50);
     certificate
         .contracts
