@@ -1740,8 +1740,14 @@ fn read_locals(
     elements: &mut BTreeMap<String, Option<ScalarElement>>,
     census: &mut DeclCensus,
 ) -> bool {
+    // Card W45-FB-BACKLOG-CUSTODY: the declaration inside an element
+    // statement expression (`container_of`) is skipped, not read.
+    let skipped = crate::legacy_c::list_iteration::element_expression_spans(body);
     for start in 0..body.len() {
         if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
+            continue;
+        }
+        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {
             continue;
         }
         if !is_declaration_candidate(body, start) {
@@ -1767,8 +1773,13 @@ fn read_locals(
 pub(crate) fn unique_local_names(model: &TypedAccessModel, body: &[&str]) -> BTreeSet<String> {
     let mut seen = BTreeSet::new();
     let mut repeated = BTreeSet::new();
+    // Card W45-FB-BACKLOG-CUSTODY: as in `read_locals`.
+    let skipped = crate::legacy_c::list_iteration::element_expression_spans(body);
     for start in 0..body.len() {
         if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
+            continue;
+        }
+        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {
             continue;
         }
         if !is_declaration_candidate(body, start) {

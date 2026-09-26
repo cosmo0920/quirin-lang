@@ -117,6 +117,12 @@ pub(crate) mod sub_object_store;
 #[path = "legacy_generic_selection.rs"]
 mod generic_selection;
 
+// Card W45-FB-BACKLOG-CUSTODY: intrusive circular-list iteration and element
+// identity (gateway constraint 5l). Everything the card adds lives there; this
+// file only carries the hooks marked with the card's name.
+#[path = "legacy_list_iteration.rs"]
+pub(crate) mod list_iteration;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 pub(crate) mod leak_witness;
@@ -337,7 +343,10 @@ pub enum LegacyInstruction {
         /// The C02-P-ALIAS obligations of the bases read through `->`.
         alias_reads: Vec<AliasPeers>,
         /// The declared scalar variable written, whose old scalar fact is
-        /// forgotten exactly as [`Self::ForgetScalar`] forgets it.
+        /// forgotten exactly as [`Self::ForgetScalar`] forgets it. Card
+        /// W45-FB-BACKLOG-CUSTODY also names here an admitted list cursor or
+        /// element (`list_iteration`): its value is list memory this function
+        /// does not track, so it too is left unbound.
         destination: Option<String>,
         /// For a write through `*B` or `B[I]` only: the bindings it may have
         /// rewritten, bounded exactly as the refusal it replaces bounded them
@@ -2767,6 +2776,18 @@ fn build_function_cfg_with(
         }
         _ => sub_object_store::RecordRoots::default(),
     };
+    // Card W45-FB-BACKLOG-CUSTODY: P-ILI-UNTRACKED's lexical guard, over the
+    // same body the typed bases were read from.
+    let list_facts = matching(tokens, body_start, "{", "}").map_or_else(
+        list_iteration::FunctionFacts::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            list_iteration::function_facts(&body, &typed_bases)
+        },
+    );
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2797,6 +2818,8 @@ fn build_function_cfg_with(
         return_facts,
         sub_object_roots,
         callee_types,
+        list_facts,
+        list_frames: Vec::new(),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -3938,6 +3961,10 @@ enum Statement {
         /// branch edges of a call-bearing condition every route above refused.
         condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
+        /// Card **W45-FB-BACKLOG-CUSTODY**: a second increment node, run after
+        /// `increment` and before the header (a safe list iteration's
+        /// `N = C->next`). `None` for every other loop.
+        list_step: Option<Box<(LegacyInstruction, usize)>>,
         body: Vec<Statement>,
     },
     DoWhile {
@@ -4153,6 +4180,13 @@ struct Parser<'a> {
     /// Card **W45-PARENTHESISED-CALLEE**: the typedef names this function
     /// trusts as types ([`parenthesised_callee::TypeNames`]).
     callee_types: parenthesised_callee::TypeNames,
+    /// Card **W45-FB-BACKLOG-CUSTODY**: the function-level premises of the
+    /// list-iteration rule ([`list_iteration::FunctionFacts`]).
+    list_facts: list_iteration::FunctionFacts,
+    /// Card **W45-FB-BACKLOG-CUSTODY**: the admitted iterations whose bodies
+    /// are being classified, innermost last. Empty outside every one of them,
+    /// which makes rule 4 the identity.
+    list_frames: Vec<list_iteration::Frame>,
 }
 
 impl Parser<'_> {
@@ -5305,6 +5339,12 @@ impl Parser<'_> {
             Some("for") => {
                 self.cursor += 1;
                 let clauses = self.take_parenthesized()?;
+                // Card W45-FB-BACKLOG-CUSTODY: an intrusive-list header the
+                // premises admit is the whole statement; anything else keeps
+                // the lowering below.
+                if let Some(statement) = self.list_iteration_statement(&clauses, line)? {
+                    return Ok(statement);
+                }
                 let Some([init, _stripped_condition, increment]) = split_for_clauses(&clauses)
                 else {
                     return Ok(Statement::Instruction(
@@ -5411,6 +5451,7 @@ impl Parser<'_> {
                     null_condition: self.null_condition(&condition),
                     condition_plan,
                     increment,
+                    list_step: None,
                     body,
                 })
             }
@@ -5919,7 +5960,25 @@ impl Parser<'_> {
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let saved = (self.next_site, self.element_lowerings);
         let instruction = self.classify_simple_descriptors(tokens);
-        self.refuse_opaque_call(tokens, instruction, saved)
+        let instruction = self.refuse_opaque_call(tokens, instruction, saved);
+        // Card W45-FB-BACKLOG-CUSTODY, rule 4: an admission that hands an
+        // iteration's protected node or element to a position that may unlink
+        // or release it is replaced by the refusal; a refusal stays itself.
+        if self.list_frames.is_empty() || matches!(instruction, LegacyInstruction::Unknown { .. }) {
+            return instruction;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let Some(description) = self.list_iteration_refusal(&texts) else {
+            return instruction;
+        };
+        (self.next_site, self.element_lowerings) = saved;
+        LegacyInstruction::Unknown {
+            description: description.to_owned(),
+            writes: self.refused_writes(&texts),
+        }
     }
 
     fn classify_simple_descriptors(&mut self, tokens: &[Token]) -> LegacyInstruction {
@@ -6585,6 +6644,12 @@ impl Parser<'_> {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
+        // Card W45-FB-BACKLOG-CUSTODY: an element statement expression
+        // (`container_of`) over list memory is rule 3's, before the braces
+        // refuse it.
+        if let Some(instruction) = self.list_element_binding(&texts) {
+            return instruction;
+        }
         if contains_braces(tokens) {
             return LegacyInstruction::Unknown {
                 description: "braced initializer, expression, or declaration is not modeled".into(),
@@ -8461,10 +8526,14 @@ impl CfgBuilder {
                 null_condition,
                 condition_plan,
                 increment,
+                list_step,
                 body,
             } => {
                 // Card W44-BRANCH-CONDITION-CALLS. A counted loop requires a
-                // supported condition, so it never carries a plan.
+                // supported condition, so it never carries a plan. Card
+                // W45-FB-BACKLOG-CUSTODY: neither does a list iteration, whose
+                // condition is supported, so a plan never has a `list_step`.
+                debug_assert!(condition_plan.is_none() || list_step.is_none());
                 if let Some(plan) = condition_plan {
                     return self.compile_planned_for(
                         plan,
@@ -8499,7 +8568,13 @@ impl CfgBuilder {
                     None => instruction,
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
-                let increment_entry = increment.as_ref().map_or(header, |clause| {
+                // Card W45-FB-BACKLOG-CUSTODY: the second increment node, when
+                // there is one, leads to the header; the first leads to it.
+                let step_target = list_step.as_ref().map_or(header, |clause| {
+                    let (instruction, line) = clause.as_ref();
+                    self.push(instruction.clone(), vec![header], *line, false)
+                });
+                let increment_entry = increment.as_ref().map_or(step_target, |clause| {
                     let (instruction, line) = clause.as_ref();
                     let instruction = match counted {
                         Some((index, _)) => LegacyInstruction::CountedLoopStep {
@@ -8507,7 +8582,7 @@ impl CfgBuilder {
                         },
                         None => instruction.clone(),
                     };
-                    self.push(instruction, vec![header], *line, false)
+                    self.push(instruction, vec![step_target], *line, false)
                 });
                 self.break_targets.push(continuation);
                 self.continue_targets.push(increment_entry);
