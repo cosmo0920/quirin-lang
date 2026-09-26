@@ -9,13 +9,15 @@ SERIES_DIR holds `measure_variants.py` output directories (each with a
 every run's artifacts are compared byte for byte with the first run of that
 directory: the diagnostics, chunk-contracts, contracts and source-effects
 sidecars and the Monkey source report, and `audit.log` once each run's own
-directory name is replaced. Exits 0 only when every run exited 0 and every
+directory name is replaced and every duration in microseconds (`N us`, which
+`quirin-audit current` prints for its Clang preparation) is masked. Exits 0 only when every run exited 0 and every
 artifact and log is identical to its directory's first run.
 """
 
 import hashlib
 import json
 import pathlib
+import re
 import statistics
 import sys
 
@@ -26,6 +28,7 @@ ARTIFACTS = [
     "resource-diagnostics.source-effects.json",
     "monkey-source.json",
 ]
+DURATION = re.compile(rb"\d+ us\b")
 FIELDS = ["wall_seconds", "user_seconds", "tree_peak_kib", "self_peak_kib"]
 
 
@@ -49,14 +52,15 @@ def main() -> int:
         record = json.loads(timing.read_text())
         runs = record["runs"]
         reference = directory / f"{runs[0]['variant']}-{runs[0]['round']}"
-        reference_log = (reference / "audit.log").read_bytes().replace(
-            str(reference).encode(), b"RUN")
+        reference_log = DURATION.sub(b"N us", (reference / "audit.log").read_bytes().replace(
+            str(reference).encode(), b"RUN"))
         compared = []
         for run in runs:
             path = directory / f"{run['variant']}-{run['round']}"
             identical = {name: digest(path / name) == digest(reference / name)
                          and digest(path / name) is not None for name in ARTIFACTS}
-            log = (path / "audit.log").read_bytes().replace(str(path).encode(), b"RUN")
+            log = DURATION.sub(b"N us", (path / "audit.log").read_bytes().replace(
+                str(path).encode(), b"RUN"))
             row = {"run": path.name, "exit": run["exit"], "artifacts_identical": identical,
                    "audit_log_identical": log == reference_log}
             ok = ok and run["exit"] == 0 and all(identical.values()) and row["audit_log_identical"]

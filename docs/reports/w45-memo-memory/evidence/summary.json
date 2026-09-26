@@ -1,0 +1,629 @@
+{
+ "all_identical_and_exit_0": true,
+ "series": {
+  "arbiter-j1": {
+   "route": "arbiter",
+   "jobs": "1",
+   "reference": "main-1",
+   "diagnostics_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
+   "variants": {
+    "main": {
+     "binary_sha256": [
+      "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274"
+     ],
+     "wall_seconds": {
+      "median": 656.2850000000001,
+      "min": 601.97,
+      "max": 710.6,
+      "runs": [
+       601.97,
+       710.6
+      ]
+     },
+     "user_seconds": {
+      "median": 618.2049999999999,
+      "min": 581.78,
+      "max": 654.63,
+      "runs": [
+       581.78,
+       654.63
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 157992.0,
+      "min": 157972,
+      "max": 158012,
+      "runs": [
+       158012,
+       157972
+      ]
+     },
+     "self_peak_kib": {
+      "median": 158042.0,
+      "min": 158036,
+      "max": 158048,
+      "runs": [
+       158036,
+       158048
+      ]
+     }
+    },
+    "change": {
+     "binary_sha256": [
+      "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace"
+     ],
+     "wall_seconds": {
+      "median": 660.55,
+      "min": 652.06,
+      "max": 669.04,
+      "runs": [
+       652.06,
+       669.04
+      ]
+     },
+     "user_seconds": {
+      "median": 631.6949999999999,
+      "min": 630.34,
+      "max": 633.05,
+      "runs": [
+       630.34,
+       633.05
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 156714.0,
+      "min": 156688,
+      "max": 156740,
+      "runs": [
+       156740,
+       156688
+      ]
+     },
+     "self_peak_kib": {
+      "median": 156714.0,
+      "min": 156688,
+      "max": 156740,
+      "runs": [
+       156740,
+       156688
+      ]
+     }
+    }
+   },
+   "comparison": [
+    {
+     "run": "main-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    }
+   ]
+  },
+  "arbiter-j16": {
+   "route": "arbiter",
+   "jobs": "16",
+   "reference": "main-1",
+   "diagnostics_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
+   "variants": {
+    "main": {
+     "binary_sha256": [
+      "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274"
+     ],
+     "wall_seconds": {
+      "median": 188.02,
+      "min": 142.19,
+      "max": 240.97,
+      "runs": [
+       142.19,
+       240.97,
+       188.02
+      ]
+     },
+     "user_seconds": {
+      "median": 1176.34,
+      "min": 1144.59,
+      "max": 1196.52,
+      "runs": [
+       1176.34,
+       1144.59,
+       1196.52
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 1117572,
+      "min": 1100672,
+      "max": 1120788,
+      "runs": [
+       1100672,
+       1120788,
+       1117572
+      ]
+     },
+     "self_peak_kib": {
+      "median": 1117572,
+      "min": 1100672,
+      "max": 1120788,
+      "runs": [
+       1100672,
+       1120788,
+       1117572
+      ]
+     }
+    },
+    "change": {
+     "binary_sha256": [
+      "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace"
+     ],
+     "wall_seconds": {
+      "median": 194.94,
+      "min": 167.35,
+      "max": 195.16,
+      "runs": [
+       167.35,
+       195.16,
+       194.94
+      ]
+     },
+     "user_seconds": {
+      "median": 1146.8,
+      "min": 1141.38,
+      "max": 1155.87,
+      "runs": [
+       1155.87,
+       1141.38,
+       1146.8
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 868748,
+      "min": 841124,
+      "max": 875456,
+      "runs": [
+       841124,
+       875456,
+       868748
+      ]
+     },
+     "self_peak_kib": {
+      "median": 868748,
+      "min": 841124,
+      "max": 875456,
+      "runs": [
+       841124,
+       875456,
+       868748
+      ]
+     }
+    }
+   },
+   "comparison": [
+    {
+     "run": "main-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-3",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-3",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    }
+   ]
+  },
+  "arbiter-j4": {
+   "route": "arbiter",
+   "jobs": "4",
+   "reference": "main-1",
+   "diagnostics_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
+   "variants": {
+    "main": {
+     "binary_sha256": [
+      "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274"
+     ],
+     "wall_seconds": {
+      "median": 255.24,
+      "min": 186.87,
+      "max": 295.04,
+      "runs": [
+       295.04,
+       186.87,
+       255.24
+      ]
+     },
+     "user_seconds": {
+      "median": 813.52,
+      "min": 716.51,
+      "max": 928.54,
+      "runs": [
+       928.54,
+       716.51,
+       813.52
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 435272,
+      "min": 425832,
+      "max": 435648,
+      "runs": [
+       435272,
+       435648,
+       425832
+      ]
+     },
+     "self_peak_kib": {
+      "median": 435756,
+      "min": 426456,
+      "max": 436148,
+      "runs": [
+       436148,
+       435756,
+       426456
+      ]
+     }
+    },
+    "change": {
+     "binary_sha256": [
+      "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace"
+     ],
+     "wall_seconds": {
+      "median": 232.4,
+      "min": 194.53,
+      "max": 429.27,
+      "runs": [
+       232.4,
+       429.27,
+       194.53
+      ]
+     },
+     "user_seconds": {
+      "median": 880.2,
+      "min": 751.57,
+      "max": 1082.41,
+      "runs": [
+       880.2,
+       1082.41,
+       751.57
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 356124,
+      "min": 354008,
+      "max": 365092,
+      "runs": [
+       356124,
+       354008,
+       365092
+      ]
+     },
+     "self_peak_kib": {
+      "median": 357284,
+      "min": 354352,
+      "max": 366268,
+      "runs": [
+       357284,
+       354352,
+       366268
+      ]
+     }
+    }
+   },
+   "comparison": [
+    {
+     "run": "main-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-3",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-3",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    }
+   ]
+  },
+  "ck-j16": {
+   "route": "current-ck",
+   "jobs": "16",
+   "reference": "main-1",
+   "diagnostics_sha256": "a265464a52e1844f143d92572a373a99b720a7124f9d1cfbe418e9995dcdadf2",
+   "variants": {
+    "main": {
+     "binary_sha256": [
+      "3bfb2366e4f3e966963b80bc5421ff06d7b53eb7d30cdb3fa3e94606880167ea"
+     ],
+     "wall_seconds": {
+      "median": 242.395,
+      "min": 187.49,
+      "max": 297.3,
+      "runs": [
+       297.3,
+       187.49
+      ]
+     },
+     "user_seconds": {
+      "median": 1083.9,
+      "min": 1046.99,
+      "max": 1120.81,
+      "runs": [
+       1120.81,
+       1046.99
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 1134308.0,
+      "min": 1117928,
+      "max": 1150688,
+      "runs": [
+       1117928,
+       1150688
+      ]
+     },
+     "self_peak_kib": {
+      "median": 1134308.0,
+      "min": 1117928,
+      "max": 1150688,
+      "runs": [
+       1117928,
+       1150688
+      ]
+     }
+    },
+    "change": {
+     "binary_sha256": [
+      "8f2094954ae97a62ef5db8d3d5dc465b026b14bdf7109fb210a3d15bf1cbba3b"
+     ],
+     "wall_seconds": {
+      "median": 207.70499999999998,
+      "min": 199.35,
+      "max": 216.06,
+      "runs": [
+       199.35,
+       216.06
+      ]
+     },
+     "user_seconds": {
+      "median": 1136.795,
+      "min": 1120.82,
+      "max": 1152.77,
+      "runs": [
+       1152.77,
+       1120.82
+      ]
+     },
+     "tree_peak_kib": {
+      "median": 900048.0,
+      "min": 882768,
+      "max": 917328,
+      "runs": [
+       917328,
+       882768
+      ]
+     },
+     "self_peak_kib": {
+      "median": 900048.0,
+      "min": 882768,
+      "max": 917328,
+      "runs": [
+       917328,
+       882768
+      ]
+     }
+    }
+   },
+   "comparison": [
+    {
+     "run": "main-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-1",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "main-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    },
+    {
+     "run": "change-2",
+     "exit": 0,
+     "artifacts_identical": {
+      "resource-diagnostics.json": true,
+      "resource-diagnostics.chunk-contracts.json": true,
+      "resource-diagnostics.contracts.json": true,
+      "resource-diagnostics.source-effects.json": true,
+      "monkey-source.json": true
+     },
+     "audit_log_identical": true
+    }
+   ]
+  }
+ }
+}
