@@ -1,0 +1,41 @@
+{
+ "card": "W45-GATEWAY-MEMO-KEY",
+ "base": "2f9131a8",
+ "measured_tip": "cf26c45f",
+ "repaired_tip": "d05a4b4e",
+ "log_directory": "private/memo-key/gate/",
+ "exits": {
+  "submodule": 0,
+  "tests": 101,
+  "clean": 0,
+  "fmt": 1,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean": 0,
+  "python": 1,
+  "docs_index": 0
+ },
+ "rust_suite": {
+  "units": 302,
+  "summaries": 312,
+  "passed": 5842,
+  "failed": 1,
+  "ignored": 11,
+  "failed_row": "qcore-compiler::test::cycle20_verifier_plugins vp04_vp07_vp08_process_lifecycle_and_payload_budgets (exclusive phase; `elapsed < 500 ms` wall-clock budget, constraint 16), host load average 15-35 on 16 CPUs from other cards",
+  "log": "private/test-binaries/20260926T102652Z-1909017/"
+ },
+ "lean_audits_passed": 199,
+ "python_tests": 358,
+ "repairs_at_repaired_tip": {
+  "log_directory": "private/memo-key/regate/",
+  "fmt": 0,
+  "python": 0,
+  "clippy": 0,
+  "member_release_unit_tests": {"exit": 0, "passed": 22},
+  "load_sensitive_row_alone": [0, 0, 0],
+  "note": "cf26c45f -> d05a4b4e changes only rustfmt whitespace in the new tests and the matrix's derived lean_audits 198 -> 199 (with AuditMemoKey.lean listed), regenerated without --gate so its measured numbers stay carried. The failing row passed alone 3/3 and is unchanged (constraint 16: verified in isolation, not weakened)."
+ },
+ "provider_gate": "not run: providers/ untouched",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

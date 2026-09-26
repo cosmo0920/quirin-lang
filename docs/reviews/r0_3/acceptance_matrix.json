@@ -6732,11 +6732,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-USER-CONTRACT-PLUGINS on merge cdd0f8d7 (onto main e90de196, after all wave-45 cards through W45-FB-BACKLOG-CUSTODY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5900 core Rust passed / 0 failed / 11 ignored over 318 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 202 Lean audits; 358 root Python tests (08-python exits 1 before matrix regeneration: the single failure is the stale-derived-facts check on lean_audits, 201 committed vs 202 produced, resolved by build_matrix.py --gate below); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus stays verdict-identical, Pending 0: functions 398 Safe / 9 provisional Unsafe / 4,427 Unknown, units 5 Safe / 8 provisional Unsafe / 168 Unknown / 4 data-only, unchanged from docs/reports/w45-fb-backlog-custody/integration/artifacts. `32-identity` (baseline_identity.py against that PREV) exits 0: `diagnostics`, `chunk-contracts`, `source-effects` and `source` are byte-identical; only `contracts` differs. The card's own disclosure script (`33-contracts-difference.log`, exit 1) is stale for this PREV: it was written against the card's pre-revision-mode CB (w45-fb-retry-lifetime, which predates W45-CONTRACT-REVISION-MODE) and unconditionally undoes that card's edits before comparing; PREV already contains those edits, so the script's restoration instead introduces spurious differences in `contract_inclusion`, `sources` and `contract_revision`. Left untouched as the card's historical record. The integrator's raw leaf diff (`34-contracts-raw-diff.log`, exit 0) shows the true difference is exactly 2 leaves, `contract_revision.meaning` and `pending_human_review.meaning`, both this card's one documented wording change (a held call gives Pending, never Safe, for both `contract-pin-mismatch` and `awaiting-human-review`); no other leaf differs. No new baseline is archived: the combined tree is unchanged from docs/reports/w45-fb-backlog-custody/integration/artifacts.",
-  "workspace_tests": 5900,
+  "note": "Integration gate for W45-GATEWAY-MEMO-KEY on merge def46837 (onto main b22425ec, after all wave-45 cards through W45-USER-CONTRACT-PLUGINS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The card's own gate (docs/reports/w45-gateway-memo-key/gate.json) measured the full Rust suite at its pre-repair tip cf26c45f (5842 passed / 1 failed load-sensitive / 11 ignored / 312 summaries) and never reran it whole at its repaired tip d05a4b4e, which only touched rustfmt and the matrix's derived lean_audits; this gate's 02-test is therefore the first, and authoritative, full-suite run at the merged tip. 5903 core Rust passed / 0 failed / 11 ignored over 320 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries (unchanged from the prior integration: providers/ is untouched by this merge); 203 Lean audits (AuditMemoKey.lean adds 1 over the 202 in the prior integration); 358 root Python tests (08-python exits 1 before matrix regeneration: the single failure is the stale-derived-facts check on lean_audits, 202 committed vs 203 produced, resolved by build_matrix.py --gate below); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus stays verdict-identical: `32-identity` (baseline_identity.py against docs/reports/w45-fb-backlog-custody/integration/artifacts, this integration's PREV) exits 0 with verdict_bearing_identical true; `diagnostics`, `chunk-contracts`, `source-effects` and `source` are byte-identical, only `contracts` differs (not verdict-bearing). No corpus move: this card is a cache-soundness fix in the gateway's memo lookup, not a diagnostic or provider change, so no new baseline is archived and MOVES=no; the combined tree stays docs/reports/w45-fb-backlog-custody/integration/artifacts.",
+  "workspace_tests": 5903,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 202,
+  "lean_audits": 203,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6846,6 +6846,7 @@
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMemberRelease.lean",
+   "AuditMemoKey.lean",
    "AuditMonkeyWaitProjection.lean",
    "AuditMonkeyWaitSourcePolicy.lean",
    "AuditMutexInvariant.lean",
@@ -6947,7 +6948,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-user-contract-plugins/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-gateway-memo-key/integration/gate.json)"
  },
  "named_followups": [
   {
