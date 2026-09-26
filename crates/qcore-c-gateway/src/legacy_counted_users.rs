@@ -422,7 +422,7 @@ impl Unit<'_> {
                 }
             }
             let walker = Walker {
-                unit: &unit,
+                unit,
                 texts: &texts,
                 offset: body.0 + 1,
                 origins: &origins,
