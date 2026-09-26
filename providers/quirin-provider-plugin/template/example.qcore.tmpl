@@ -1,0 +1,16 @@
+module contract;
+
+// A template contract. It is held awaiting review until you replace it: a
+// function whose only unresolved step is a call to it is `Pending`, never
+// `Safe`. Edit the clauses to state what the function really does, then
+// remove the `resource_review_pending` requirement. The contract is pinned
+// (the default): after review, run `quirin-audit pin --load-path LOAD_PATH
+// --source-root SOURCE` to record the reviewed source identity in this
+// crate's `contracts.lock`.
+extern fn {{namespace}}_release(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("template: state what this function does with `item`", "owner");
+    ensures normal resource_released(item, nonnull);
+    ensures normal resource_return_none();
+};

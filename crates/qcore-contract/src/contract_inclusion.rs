@@ -447,6 +447,12 @@ impl ContractLoadPath {
         self.crates.get(name)
     }
 
+    /// Every crate on the load path, by name (card W45-USER-CONTRACT-PLUGINS:
+    /// an extending manifest joins its base's crates to its own).
+    pub fn crates(&self) -> impl Iterator<Item = &PublishedContractCrate> {
+        self.crates.values()
+    }
+
     /// The identity and text of a module a crate owns (published or not).
     pub(crate) fn owned_module(
         &self,

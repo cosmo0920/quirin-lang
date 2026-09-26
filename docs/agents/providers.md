@@ -215,6 +215,18 @@ installs the parents and `verify` accepts them; the real-package mutation test
 refuses a changed and a missing included parent.
 [Report](../reports/contract-inherit-qcore-provider-naming/README.md).
 
+**User contract crates (W45-USER-CONTRACT-PLUGINS).** A user's contract
+crate lives outside this repository on a user load path that `extends`
+`providers/contract-load-path.json`; the core reader validates both together.
+The SDK `providers/quirin-provider-plugin` is a workspace member that owns no
+contracts: `providers/contracts.py` lists it with the conformance harness as a
+non-contract package, so it is not on the load path, and the conformance
+dependency pin admits it with the shared transport as its only first-party
+dependency. Its checker packages are built and verified by the SDK
+(`quirin-plugin package`/`verify`), not by `providers/package.py`, which still
+builds exactly the five first-party packages.
+[Report](../reports/w45-user-contract-plugins/README.md).
+
 **Resource view (W44-PROVIDER-RESOURCE-VIEW).** Each load-path crate record
 also carries `resource_view`: the owned modules the resource-contract loader
 accepts, which `quirin-audit --provider NAME` selects for a whole crate and a

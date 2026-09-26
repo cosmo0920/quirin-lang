@@ -1,0 +1,11 @@
+[package]
+name = "quirin-provider-acme"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Example user-defined Quirin contracts (test fixture of quirin-provider-plugin)"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]

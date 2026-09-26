@@ -26,11 +26,13 @@ use std::path::{Path, PathBuf};
 use serde_json::{Value, json};
 
 use crate::checkpoint::{
-    CheckpointReader, ContractsSection, CountsRecord, GlobalSection, IdentitySection, PlanSection,
+    CheckpointReader, ContractsSection, GlobalSection, IdentitySection, PlanSection,
     ProvenanceSection, ResultSection, RowStepSection, RunIdentity, render_row, report_frame,
+    tallied_verdict,
 };
 use crate::pending_review::{HeldCalls, PendingMarker, PendingMarkers};
 use crate::report::AuditReport;
+use qcore_schemas::verdict::Verdict;
 
 /// Where a composition writes; each output is optional, as in the route.
 pub struct ComposeOutputs<'a> {
@@ -53,6 +55,8 @@ pub enum Console {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ComposeSummary {
     pub groups: usize,
+    /// The join of every group's verdict: the run's verdict.
+    pub verdict: Verdict,
     pub units: u64,
     pub gateway_failures: u64,
 }
@@ -123,7 +127,9 @@ pub fn compose(
                 print!("{output}");
             }
         }
-        totals.absorb(result, contracts, &provenance);
+        totals
+            .absorb(result, contracts, &provenance)
+            .map_err(|error| format!("{}: {error}", member.path.display()))?;
     }
     let evidence = global
         .report_evidence_json
@@ -153,10 +159,11 @@ pub fn compose(
     let revision = crate::contract_revision::render(&template, &totals.revision);
     let counts = &totals.counts;
     println!(
-        "current revision: {} source file(s), {} configuration(s): {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
+        "current revision: {} source file(s), {} configuration(s): {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
         totals.sources.len(),
         counts["units"],
         counts["safe_units"],
+        counts["pending_units"],
         counts["unsafe_units"],
         counts["unknown_units"],
         counts["data_only_units"],
@@ -171,6 +178,16 @@ pub fn compose(
         totals.marked_us,
     );
     println!("{}", crate::pending_review::tally(&pending));
+    // Card W45-USER-CONTRACT-PLUGINS: printed only when a checker ran, as the
+    // whole run prints it.
+    let assumptions: Value =
+        serde_json::from_str(&global.assumptions_json).map_err(|error| error.to_string())?;
+    if assumptions["plugin_checks"].is_object() {
+        println!(
+            "{}",
+            crate::user_plugins::tally(&assumptions["plugin_checks"])
+        );
+    }
     println!("{}", crate::contract_revision::tally(&revision));
     if let Some(report) = outputs.report {
         if let Some(parent) = report.parent() {
@@ -190,8 +207,7 @@ pub fn compose(
             return Err(error);
         }
         fs::rename(&temporary, report).map_err(|error| format!("{}: {error}", report.display()))?;
-        let mut assumptions: Value =
-            serde_json::from_str(&global.assumptions_json).map_err(|error| error.to_string())?;
+        let mut assumptions = assumptions;
         assumptions["pending_human_review"] = pending;
         assumptions["contract_revision"] = revision;
         assumptions["source_file_count"] = json!(totals.sources.len());
@@ -213,6 +229,7 @@ pub fn compose(
     )?;
     Ok(ComposeSummary {
         groups: groups.len(),
+        verdict: totals.verdict,
         units: counts["units"],
         gateway_failures: counts["gateway_failures"],
     })
@@ -327,42 +344,63 @@ fn open_members(files: &[PathBuf]) -> Result<Vec<Member>, String> {
         .collect())
 }
 
-/// The composition's verdict fold: a group's unit verdicts and tallies are
-/// added to the running totals. Unit verdicts are never merged across groups
-/// — every unit keeps its own row — so the whole run's verdict account is
-/// exactly this sum. Kept in one function so that a per-group verdict join
-/// (the four-valued semigroup of card W45-USER-CONTRACT-PLUGINS) can replace
-/// or extend it.
-fn fold_verdicts(totals: &mut BTreeMap<&'static str, u64>, group: &CountsRecord) {
+/// The composition's verdict fold (card W45-USER-CONTRACT-PLUGINS, §L21.2):
+/// the running verdict is joined with the group's verdict, with
+/// `qcore_schemas::verdict::Verdict::join` (`Safe` the identity), and the
+/// group's tallies are added to the running totals. Rows are never merged —
+/// every unit keeps its own — so the tallies are sums, and because the join
+/// is associative the composed verdict is the join of every unit's verdict,
+/// exactly the whole run's. A group whose recorded verdict disagrees with the
+/// verdict its own tallies imply ([`tallied_verdict`]) is refused.
+fn fold_verdicts(
+    verdict: &mut Verdict,
+    totals: &mut BTreeMap<&'static str, u64>,
+    group: &ResultSection,
+) -> Result<(), String> {
+    let recorded = group.verdict.parse::<Verdict>()?;
+    let tallied = tallied_verdict(&group.counts);
+    if recorded != tallied {
+        return Err(format!(
+            "group `{}` records verdict {recorded} but its tallies imply {tallied}",
+            group.header
+        ));
+    }
+    *verdict = verdict.join(recorded);
+    let counts = &group.counts;
     for (name, value) in [
-        ("units", group.units),
-        ("data_only_units", group.data_only_units),
-        ("source_functions", group.source_functions),
-        ("projected_functions", group.projected_functions),
-        ("safe_units", group.safe_units),
-        ("unsafe_units", group.unsafe_units),
-        ("unknown_units", group.unknown_units),
-        ("gateway_failures", group.gateway_failures),
+        ("units", counts.units),
+        ("data_only_units", counts.data_only_units),
+        ("source_functions", counts.source_functions),
+        ("projected_functions", counts.projected_functions),
+        ("safe_units", counts.safe_units),
+        ("pending_units", counts.pending_units),
+        ("unsafe_units", counts.unsafe_units),
+        ("unknown_units", counts.unknown_units),
+        ("gateway_failures", counts.gateway_failures),
         (
             "absent_from_raw_scan_definitions",
-            group.absent_from_raw_scan_definitions,
+            counts.absent_from_raw_scan_definitions,
         ),
-        ("unanalyzable_definitions", group.unanalyzable_definitions),
-        ("enumeration_refused_units", group.enumeration_refused_units),
-        ("withheld_safe_units", group.withheld_safe_units),
-        ("prepared_units", group.prepared_units),
+        ("unanalyzable_definitions", counts.unanalyzable_definitions),
+        (
+            "enumeration_refused_units",
+            counts.enumeration_refused_units,
+        ),
+        ("withheld_safe_units", counts.withheld_safe_units),
+        ("prepared_units", counts.prepared_units),
         (
             "preparation_clang_invocations",
-            group.preparation_clang_invocations,
+            counts.preparation_clang_invocations,
         ),
     ] {
         *totals.entry(name).or_default() += value;
     }
+    Ok(())
 }
 
 /// The merged small results of every group.
-#[derive(Default)]
 struct Totals {
+    verdict: Verdict,
     counts: BTreeMap<&'static str, u64>,
     diagnostic_counts: BTreeMap<String, usize>,
     sources: BTreeSet<String>,
@@ -373,14 +411,30 @@ struct Totals {
     marked_us: u64,
 }
 
+impl Default for Totals {
+    fn default() -> Self {
+        Self {
+            verdict: Verdict::Safe,
+            counts: BTreeMap::new(),
+            diagnostic_counts: BTreeMap::new(),
+            sources: BTreeSet::new(),
+            held: HeldCalls::default(),
+            revision: crate::contract_revision::ReportFacts::default(),
+            plain_us: 0,
+            syntax_us: 0,
+            marked_us: 0,
+        }
+    }
+}
+
 impl Totals {
     fn absorb(
         &mut self,
         result: ResultSection,
         contracts: ContractsSection,
         provenance: &ProvenanceSection,
-    ) {
-        fold_verdicts(&mut self.counts, &result.counts);
+    ) -> Result<(), String> {
+        fold_verdicts(&mut self.verdict, &mut self.counts, &result)?;
         for category in result.diagnostic_counts {
             *self.diagnostic_counts.entry(category.category).or_default() +=
                 category.count as usize;
@@ -413,6 +467,7 @@ impl Totals {
         self.plain_us += provenance.plain_preprocessing_elapsed_us;
         self.syntax_us += provenance.syntax_validation_elapsed_us;
         self.marked_us += provenance.line_marked_preprocessing_elapsed_us;
+        Ok(())
     }
 }
 
@@ -469,4 +524,77 @@ fn write_report(
     }
     writer.write_all(tail.as_bytes()).map_err(io)?;
     writer.flush().map_err(io)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::checkpoint::{CountsRecord, unit_verdict};
+
+    fn group(verdicts: &[&str]) -> ResultSection {
+        let mut counts = CountsRecord::default();
+        for status in verdicts {
+            counts.units += 1;
+            match *status {
+                "Safe" => counts.safe_units += 1,
+                "Pending" => counts.pending_units += 1,
+                "Unknown" => counts.unknown_units += 1,
+                "Unsafe" => counts.unsafe_units += 1,
+                "data_only" => counts.data_only_units += 1,
+                other => panic!("{other}"),
+            }
+        }
+        ResultSection {
+            header: "g".into(),
+            outputs: Vec::new(),
+            counts,
+            diagnostic_counts: Vec::new(),
+            sources: Vec::new(),
+            verdict: Verdict::fold(verdicts.iter().map(|status| unit_verdict(status)))
+                .as_str()
+                .into(),
+        }
+    }
+
+    /// Card W45-USER-CONTRACT-PLUGINS's follow-up W45-CHECKPOINT-COMPOSE-SEMIGROUP:
+    /// a composed run's verdict is the fold of every member unit's verdict,
+    /// however the units are grouped, and a `Pending` member keeps it from `Safe`.
+    #[test]
+    fn a_composed_verdict_is_the_fold_of_its_members() {
+        let units = ["Safe", "data_only", "Pending", "Safe", "Unknown", "Safe"];
+        let whole = Verdict::fold(units.iter().map(|status| unit_verdict(status)));
+        for split in 0..=units.len() {
+            let mut verdict = Verdict::Safe;
+            let mut totals = BTreeMap::new();
+            for part in [&units[..split], &units[split..]] {
+                fold_verdicts(&mut verdict, &mut totals, &group(part)).unwrap();
+            }
+            assert_eq!(verdict, whole, "split at {split}");
+            assert_eq!(totals["units"], units.len() as u64);
+            assert_eq!(totals["pending_units"], 1);
+        }
+        let mut verdict = Verdict::Safe;
+        let mut totals = BTreeMap::new();
+        for part in [&["Safe", "data_only"][..], &["Pending", "Safe"][..]] {
+            fold_verdicts(&mut verdict, &mut totals, &group(part)).unwrap();
+        }
+        assert_eq!(verdict, Verdict::Pending);
+        let mut none = Verdict::fold([]);
+        assert_eq!(none, Verdict::Safe);
+        fold_verdicts(&mut none, &mut BTreeMap::new(), &group(&["Unsafe"])).unwrap();
+        assert_eq!(none, Verdict::Unsafe);
+    }
+
+    #[test]
+    fn a_group_whose_verdict_disagrees_with_its_tallies_is_refused() {
+        let mut forged = group(&["Pending", "Safe"]);
+        forged.verdict = "Safe".into();
+        let error = fold_verdicts(&mut Verdict::Safe, &mut BTreeMap::new(), &forged).unwrap_err();
+        assert!(error.contains("records verdict Safe but its tallies imply Pending"));
+        let mut unspelled = group(&["Safe"]);
+        unspelled.verdict = "Fine".into();
+        assert!(fold_verdicts(&mut Verdict::Safe, &mut BTreeMap::new(), &unspelled).is_err());
+        assert_eq!(unit_verdict("gateway_failure"), Verdict::Unknown);
+        assert_eq!(unit_verdict("something new"), Verdict::Unknown);
+    }
 }

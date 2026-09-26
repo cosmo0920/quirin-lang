@@ -167,8 +167,8 @@ fn compose_command(arguments: &[String]) -> Result<bool, String> {
         Console::Full,
     )?;
     eprintln!(
-        "composed {} group(s), {} configuration(s)",
-        summary.groups, summary.units
+        "composed {} group(s), {} configuration(s); run verdict {} (the join of the group verdicts)",
+        summary.groups, summary.units, summary.verdict
     );
     Ok(summary.gateway_failures == 0)
 }

@@ -3,8 +3,9 @@
 //!
 //! A declared contract, or one clause of it, marked
 //! `resource_review_pending` is withheld by the contract loader, and every
-//! call site that would have applied it is held `Unknown` under the reason
-//! code `awaiting-human-review`. This module makes the pending reviews
+//! call site that would have applied it is held under the reason code
+//! `awaiting-human-review`: a function whose only unresolved diagnostics are
+//! held calls is `Pending` (card W45-USER-CONTRACT-PLUGINS; `Unknown` before). This module makes the pending reviews
 //! visible and countable: one entry per marker, with its declaration, the
 //! module it is written in and that module's retained-text digest, its reason
 //! and owner, and how many analysed functions and call sites it holds.
@@ -26,7 +27,7 @@ use serde_json::{Value, json};
 use crate::report::AuditReport;
 
 /// What the section means, carried in the section itself.
-pub const MEANING: &str = "declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each is loaded and validated but withheld, discharges nothing and accuses nothing, and every call site that would apply it is Unknown with reason code `awaiting-human-review`; a clause-level marker holds exactly the call sites a contract-level one does, because a contract is applied as one conjunction; `held_functions` counts analysed functions with at least one recorded held call of the declaration, and `held_call_sites` counts the held-call refusals the analysis recorded; the analysis of a path stops at its first refused statement, so a later call site on the same path records no refusal of its own and the count is a lower bound on textual call sites";
+pub const MEANING: &str = "declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each is loaded and validated but withheld, discharges nothing and accuses nothing, and every call site that would apply it is held with reason code `awaiting-human-review`, and a function whose only unresolved diagnostics are held calls is Pending, never Safe; a clause-level marker holds exactly the call sites a contract-level one does, because a contract is applied as one conjunction; `held_functions` counts analysed functions with at least one recorded held call of the declaration, and `held_call_sites` counts the held-call refusals the analysis recorded; the analysis of a path stops at its first refused statement, so a later call site on the same path records no refusal of its own and the count is a lower bound on textual call sites";
 
 /// The `pending_human_review` section for one finished report.
 #[must_use]
@@ -183,7 +184,7 @@ pub fn tally(section: &Value) -> String {
     let count = |key: &str| section[key].as_u64().unwrap_or_default();
     format!(
         "pending human review: {} declaration(s), {} marker(s); {} function(s) and {} call \
-         site(s) held Unknown ({AWAITING_HUMAN_REVIEW})",
+         site(s) held Pending ({AWAITING_HUMAN_REVIEW})",
         count("declarations"),
         count("markers"),
         count("held_functions"),
@@ -239,7 +240,7 @@ contract {
         assert_eq!(
             tally(&value),
             "pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call \
-             site(s) held Unknown (awaiting-human-review)"
+             site(s) held Pending (awaiting-human-review)"
         );
     }
 

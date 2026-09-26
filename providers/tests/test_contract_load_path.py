@@ -77,6 +77,7 @@ class Tree:
         self.crate("quirin-provider-app", "app", [], {"app/wrap.qcore": CHILD})
         self.crate("qcore-provider-exe", "exe", [], {"exe/wrap.qcore": CHILD}, binary=True)
         (self.root / "conformance/src").mkdir(parents=True)
+        (self.root / "quirin-provider-plugin/src").mkdir(parents=True)
 
     def crate(self, name, namespace, published, modules, binary=False):
         directory = self.root / name
@@ -102,6 +103,8 @@ class Tree:
             package("qcore-provider-exe", libc, binary=True),
             package("other-provider-x", libc),
             package("qcore-provider-conformance", libc, directory="conformance"),
+            # Card W45-USER-CONTRACT-PLUGINS: the SDK owns no contracts.
+            package("quirin-provider-plugin", [], directory="quirin-provider-plugin"),
         ]}
 
 
@@ -310,6 +313,10 @@ class LoadPathManifest(unittest.TestCase):
         self.assertTrue(all(name.startswith(("quirin-provider-", "qcore-provider-")) for name in names))
         self.assertIn("quirin-provider-fluent-bit", names)
         self.assertNotIn("qcore-provider-conformance", names)
+        # Card W45-USER-CONTRACT-PLUGINS: the SDK is a workspace member that
+        # owns no contracts, so it is not on the load path; 11 crates remain.
+        self.assertNotIn("quirin-provider-plugin", names)
+        self.assertEqual(len(names), 11)
         self.assertEqual(sum(name.startswith("qcore-provider-") for name in names), 5)
         edges = {c["name"]: c["dependencies"] for c in manifest["crates"]}
         self.assertEqual(edges["quirin-provider-fluent-bit"], ["quirin-provider-libc"])
@@ -317,12 +324,13 @@ class LoadPathManifest(unittest.TestCase):
             self.assertIn("quirin-provider-libc", edges[name])
         namespaces = [c["namespace"] for c in manifest["crates"]]
         self.assertEqual(len(namespaces), len(set(namespaces)))
-        # Card W44-PROVIDER-RESOURCE-VIEW: the loader's views, 49 modules in
+        # Card W44-PROVIDER-RESOURCE-VIEW: the loader's views, 50 modules in
         # all (the Cycle 19 manifest's; 47 before W45-FB-RETRY-LIFETIME added
-        # fluent_bit/task_users and fluent_bit/output_singleplex); the shared
+        # fluent_bit/task_users and fluent_bit/output_singleplex, 49 before
+        # W45-FB-BACKLOG-CUSTODY added fluent_bit/storage_backlog); the shared
         # bundle has none.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 49)
+        self.assertEqual(sum(len(view) for view in views.values()), 50)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 16)
         # The real inventories: exactly the two crates that inherit carry pins.

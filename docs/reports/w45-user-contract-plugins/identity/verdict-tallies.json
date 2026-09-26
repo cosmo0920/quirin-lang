@@ -1,0 +1,17 @@
+{
+  "run": "private/ucp-arbiter-1",
+  "commit": "62978cf3",
+  "units": {
+    "Safe": 4,
+    "Unknown": 167,
+    "Unsafe": 10,
+    "data_only": 4
+  },
+  "functions": {
+    "Safe": 389,
+    "Unknown": 4433,
+    "Unsafe": 12
+  },
+  "pending_units": 0,
+  "pending_functions": 0
+}

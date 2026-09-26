@@ -29,8 +29,10 @@
 //! each mismatch — no lock, no entry or no identity, changed contract text
 //! (which voids every identity), sites matching no identity — is withheld
 //! ([`qcore_schemas::contract::ResourceContracts::withhold_for_pin_mismatch`]),
-//! so every call relying on it is `Unknown` with reason code
-//! `contract-pin-mismatch`, never `Safe` or `Unsafe`. A flexible declaration is
+//! so every call relying on it is held with reason code
+//! `contract-pin-mismatch`, never `Safe` or `Unsafe`: a function whose only
+//! unresolved diagnostics are held calls is `Pending`, which a re-pin after
+//! review resolves (card W45-USER-CONTRACT-PLUGINS; `Unknown` before). A flexible declaration is
 //! never compared: it binds by name and declared signature only.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -65,7 +67,7 @@ pub const LIBC_ASSUMPTION: &str = "libc-c-standard-abi";
 pub const LIBC_STATEMENT: &str = "the C library behaves as the C standard and the platform ABI specify for every function the libc provider declares flexible: its custody statements are trusted at any revision of the audited project, and no libc body is analysed; which C library and version is in use is the build's provenance (its compiler identity and system headers), not part of this assumption";
 
 /// What the section means, carried in the section itself.
-pub const MEANING: &str = "revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is in force only where its contract text is the one pinned and the audited source matches one of the identities its lock records, each reviewed at a named revision, and every mismatch is withheld, so each call relying on it is Unknown with reason code `contract-pin-mismatch`; a flexible contract binds by name and declared signature only: on a function whose body this run analysed it is checked against that body as usual, and on a trusted function it is an explicit assumption of this run; every flexible libc contract without an analysed body is one standing assumption; held counts are recorded held-call refusals, a lower bound on textual call sites";
+pub const MEANING: &str = "revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is in force only where its contract text is the one pinned and the audited source matches one of the identities its lock records, each reviewed at a named revision, and every mismatch is withheld, so each call relying on it is held with reason code `contract-pin-mismatch`, and a function whose only unresolved diagnostics are held calls is Pending, never Safe; a flexible contract binds by name and declared signature only: on a function whose body this run analysed it is checked against that body as usual, and on a trusted function it is an explicit assumption of this run; every flexible libc contract without an analysed body is one standing assumption; held counts are recorded held-call refusals, a lower bound on textual call sites";
 
 /// One lock file (format version 2).
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1055,7 +1057,7 @@ pub fn tally(section: &Value) -> String {
     format!(
         "contract revision: {} pinned ({} in force, {} not in force), {} flexible checked, {} \
          flexible trusted, {} libc under the standing assumption; {} function(s) and {} call \
-         site(s) held Unknown ({CONTRACT_PIN_MISMATCH})",
+         site(s) held Pending ({CONTRACT_PIN_MISMATCH})",
         count("pinned"),
         count("pinned_in_force"),
         count("pinned_not_in_force"),

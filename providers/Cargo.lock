@@ -202,7 +202,7 @@ dependencies = [
 
 [[package]]
 name = "qcore-schemas"
-version = "16.0.0"
+version = "17.0.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -255,6 +255,16 @@ version = "0.1.0"
 [[package]]
 name = "quirin-provider-msgpack"
 version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-plugin"
+version = "0.1.0"
+dependencies = [
+ "qcore-schemas",
+ "quirin-provider-shared",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "quirin-provider-shared"

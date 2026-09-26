@@ -1,7 +1,9 @@
 //! Card W45-CONTRACT-REVISION-MODE — a pinned contract the audit withheld for a
-//! pin mismatch holds every call site that would apply it at `Unknown`, under
-//! the dedicated `contract-pin-mismatch` reason
-//! (`docs/reports/w45-contract-revision-mode/README.md`).
+//! pin mismatch holds every call site that would apply it, under the dedicated
+//! `contract-pin-mismatch` reason
+//! (`docs/reports/w45-contract-revision-mode/README.md`). Since card
+//! W45-USER-CONTRACT-PLUGINS a function whose only unresolved diagnostics are
+//! held calls is `Pending`: a re-pin after review resolves it. It was `Unknown`.
 //!
 //! **The family is held out.** A `k_*` API unrelated to every production
 //! library, declared inline: no fixture file and no production contract moves.
@@ -96,12 +98,12 @@ fn held(summary: &LegacyFunctionSummary) -> Vec<String> {
 }
 
 #[test]
-fn safe_in_force_and_unknown_for_a_pin_mismatch() {
+fn safe_in_force_and_pending_for_a_pin_mismatch() {
     let bare = analyse(BALANCED, &load(BARE));
     assert_eq!(function(&bare, "w").status, AnalysisStatus::Safe);
     let summary = analyse(BALANCED, &withheld(&["k_close"]));
     let w = function(&summary, "w");
-    assert_eq!(w.status, AnalysisStatus::Unknown);
+    assert_eq!(w.status, AnalysisStatus::Pending);
     assert_eq!(held(w), ["k_close"]);
     assert!(w.diagnostics.iter().any(|diagnostic| matches!(
         &diagnostic.kind,
@@ -109,7 +111,7 @@ fn safe_in_force_and_unknown_for_a_pin_mismatch() {
     )));
 }
 
-/// A would-be provisional `Unsafe` through a withheld contract is `Unknown`.
+/// A would-be provisional `Unsafe` through a withheld contract is `Pending`.
 #[test]
 fn a_withheld_pin_accuses_nothing() {
     let bare = load(BARE);
@@ -128,7 +130,7 @@ fn a_withheld_pin_accuses_nothing() {
     ] {
         let summary = analyse(body, &withheld(&names));
         let w = function(&summary, "w");
-        assert_eq!(w.status, AnalysisStatus::Unknown, "{body}");
+        assert_eq!(w.status, AnalysisStatus::Pending, "{body}");
         assert_eq!(held(w), [callee], "{body}");
         assert!(
             w.diagnostics.iter().all(|diagnostic| matches!(
@@ -193,7 +195,7 @@ fn a_defined_callee_does_not_lift_the_hold_from_its_callers() {
         )
         .unwrap();
     let summary = analyze_legacy_c_translation_unit(&source, "w", &contracts).unwrap();
-    assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
+    assert_eq!(function(&summary, "w").status, AnalysisStatus::Pending);
     assert_eq!(held(function(&summary, "w")), ["k_close"]);
 }
 
@@ -209,7 +211,12 @@ fn the_unit_reason_names_the_held_calls_under_their_own_code() {
         ..Default::default()
     };
     match analyze_unrestricted_c11(&unit, "w", &withheld(&["k_close"])).unwrap() {
-        UnrestrictedLegacyResult::Unknown { reason, .. } => {
+        result @ UnrestrictedLegacyResult::Unknown { .. } => {
+            // Card W45-USER-CONTRACT-PLUGINS: the unit is `Pending`.
+            assert_eq!(result.verdict(), qcore_schemas::verdict::Verdict::Pending);
+            let UnrestrictedLegacyResult::Unknown { reason, .. } = result else {
+                unreachable!()
+            };
             assert!(
                 reason.ends_with(", 1 call(s) held for a contract pin mismatch"),
                 "{reason}"

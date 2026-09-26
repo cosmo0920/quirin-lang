@@ -181,6 +181,7 @@ pub(crate) fn run(
         "schema_version": 1,
         "scope": "provenance of one checkpointed run: which groups were reused or recomputed and why, with measured wall time and sampled peak memory; not an input to any verdict",
         "jobs": route.jobs,
+        "verdict": summary.verdict,
         "process_peak_rss_kib": status_kib("VmHWM:"),
         "groups": records,
     });
@@ -384,6 +385,11 @@ fn run_identity(
             evidence_sha256: audit.report_evidence().map(json_sha256).transpose()?,
             locks: lock_digests(audit),
             pin_evaluation_sha256: sha256_hex(revision_template.as_bytes()),
+            plugin_checks_sha256: audit
+                .assumptions()
+                .get("plugin_checks")
+                .map(json_sha256)
+                .transpose()?,
         },
         compiler: CompilerIdentity {
             program: audit.compiler().program().to_owned(),
@@ -712,6 +718,7 @@ fn compute_group(
         certificates,
         held,
         facts,
+        unit_verdicts,
         diagnostic_counts,
         counts,
         sources,
@@ -725,6 +732,7 @@ fn compute_group(
         source_functions,
         projected_functions,
         safe_units,
+        pending_units,
         unsafe_units,
         unknown_units,
         gateway_failures,
@@ -803,6 +811,7 @@ fn compute_group(
                 source_functions: count(source_functions),
                 projected_functions: count(projected_functions),
                 safe_units: count(safe_units),
+                pending_units: count(pending_units),
                 unsafe_units: count(unsafe_units),
                 unknown_units: count(unknown_units),
                 gateway_failures: count(gateway_failures),
@@ -821,6 +830,9 @@ fn compute_group(
                 })
                 .collect(),
             sources: sources.into_iter().collect(),
+            verdict: qcore_schemas::verdict::Verdict::fold(unit_verdicts)
+                .as_str()
+                .to_owned(),
         },
         provenance: ProvenanceSection {
             wall_time_ms: started.elapsed().as_millis() as u64,
@@ -851,6 +863,8 @@ struct GroupBuilder {
     counts: AuditCounts,
     sources: BTreeSet<String>,
     outputs: Vec<String>,
+    /// Each unit's verdict, in unit order; the group's is their fold.
+    unit_verdicts: Vec<qcore_schemas::verdict::Verdict>,
 }
 
 /// One callee's held calls as a checkpoint records them.
@@ -935,6 +949,8 @@ impl GroupBuilder {
             self.sources.insert(source.display().to_string());
         }
         self.outputs.push(output);
+        self.unit_verdicts
+            .push(crate::checkpoint::unit_verdict(status));
         Ok(())
     }
 }

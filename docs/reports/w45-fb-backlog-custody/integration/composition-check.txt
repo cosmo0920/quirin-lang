@@ -1,0 +1,8 @@
+card delta:     removed 1480 added 99 functions 14 units 5
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 1480 added 99
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('cio_memfs_scan_dump', ('Unknown', 'Safe')), ('cio_stats_get', ('Unknown', 'Safe')), ('cio_stats_print_summary', ('Unknown', 'Safe')), ('cio_stream_get', ('Unknown', 'Safe')), ('cio_stream_size_chunks_up', ('Unknown', 'Safe')), ('cmt_labels_count', ('Unknown', 'Safe')), ('is_file_included', ('Unknown', 'Safe')), ('mk_http_error', ('Unknown', 'Unsafe')), ('mk_rconf_meta_get', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unsafe', 'Unknown')), ('mk_vhost_create', ('Unsafe', 'Unknown')), ('mk_vhost_lookup', ('Unknown', 'Safe')), ('mk_vhost_set_property', ('Unsafe', 'Unknown')), ('mk_vhost_set_single', ('Unsafe', 'Unknown'))]
+COMPOSES

@@ -1,0 +1,17 @@
+{
+  "contract_revision_additive_key_present": false,
+  "plugin_checks_key_present": false,
+  "pending_human_review_meaning_restored": true,
+  "pending_human_review_counts": {
+    "declarations": 0,
+    "markers": 0,
+    "held_functions": 0,
+    "held_call_sites": 0
+  },
+  "identical_after_restoring_both_cards_edits": false,
+  "top_level_keys_differing": [
+    "contract_inclusion",
+    "contract_revision",
+    "sources"
+  ]
+}

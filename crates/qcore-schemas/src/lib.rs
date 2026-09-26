@@ -16,6 +16,7 @@ pub mod plugin;
 pub mod profile;
 pub mod reactor;
 pub mod reason;
+pub mod verdict;
 
 pub mod witness;
 
@@ -52,6 +53,9 @@ pub use profile::{
     SourceWitness, TypedImportProfile, UnitSelection, WitnessCheck,
 };
 pub use reason::{ReasonCategory, ReasonSubject, UnclassifiedReason, UnknownReasonCategory};
+pub use verdict::{
+    Chain, ChainKind, ChainLink, PendingReason, ReasonedVerdict, Verdict, VerdictReason,
+};
 pub use witness::{
     BoundOperation, ChunkBackendRecord, ChunkLifecycleWitness, ChunkOperationRecord,
     ChunkResidencyRecord, ContractObservationRecord, ContractObservationWitness, NativeRunBinding,

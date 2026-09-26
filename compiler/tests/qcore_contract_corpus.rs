@@ -426,6 +426,50 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_routes_mask_get_size",
         3,
     ),
+    // Card W45-FB-BACKLOG-CUSTODY: the twelve storage-backlog functions of
+    // `plugins/in_storage_backlog/sb.c` as CHECKED SPECIFICATIONS (contract
+    // spec §C06.3): each carries `requires resource_body_checked;` beside the
+    // marker, so every count below is two requirements, one clause per
+    // parameter and the result mode. A specification is in force only in a
+    // unit that defines its body and whose body establishes it; the corpus
+    // units define none of these, so no corpus call site applies them.
+    // Deliberate; see `docs/reports/w45-fb-backlog-custody/README.md`.
+    ("fluent_bit/storage_backlog.qcore", "sb_allocate_chunk", 6),
+    ("fluent_bit/storage_backlog.qcore", "sb_destroy_chunk", 4),
+    ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlog", 5),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_allocate_backlogs",
+        4,
+    ),
+    ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlogs", 4),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_remove_chunk_from_segregated_backlog",
+        6,
+    ),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_remove_chunk_from_segregated_backlogs",
+        5,
+    ),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_append_chunk_to_segregated_backlog",
+        7,
+    ),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_append_chunk_to_segregated_backlogs",
+        6,
+    ),
+    ("fluent_bit/storage_backlog.qcore", "sb_segregate_chunks", 4),
+    (
+        "fluent_bit/storage_backlog.qcore",
+        "sb_release_output_queue_space",
+        5,
+    ),
+    ("fluent_bit/storage_backlog.qcore", "cb_queue_chunks", 6),
     // Card NEIGHBOURS, continued. The FIRST production declaration whose C
     // result is floating-point: `double flb_time_now()` is declared `-> f64`
     // rather than projected onto an integer it does not have, which is why the
@@ -1194,7 +1238,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `vprintf` are appended to existing libc modules.
     // 111 -> 113 by card W45-FB-RETRY-LIFETIME's `fluent_bit/task_users.qcore`
     // and `fluent_bit/output_singleplex.qcore`.
-    assert_eq!(sources.len(), 113, "unexpected contract corpus size");
+    // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
+    // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
+    // storage-backlog bodies (contract spec §C06.3).
+    assert_eq!(sources.len(), 114, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

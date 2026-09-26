@@ -34,6 +34,7 @@ use std::io::{Read, Seek, SeekFrom};
 use std::path::Path;
 
 use qcore_schemas::sha256_hex;
+use qcore_schemas::verdict::Verdict;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -180,6 +181,11 @@ pub struct ContractSetIdentity {
     /// SHA-256 of the pin evaluation's section template (which contracts are
     /// pinned, in force or withheld, over which reviewed sites).
     pub pin_evaluation_sha256: String,
+    /// SHA-256 of the checker-plugin section (card W45-USER-CONTRACT-PLUGINS:
+    /// each binding's package digest, task digest and classified verdict), when
+    /// a checker ran. A plugin's verdict enters every function that applies its
+    /// contract, so it is an input of every group.
+    pub plugin_checks_sha256: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -415,6 +421,42 @@ pub struct ResultSection {
     pub diagnostic_counts: Vec<CategoryCount>,
     /// The canonical checkout sources the group's units stand for.
     pub sources: Vec<String>,
+    /// The group's verdict: the join (`qcore_schemas::verdict::Verdict::fold`)
+    /// of its units' verdicts ([`unit_verdict`]), spelled as in reports.
+    pub verdict: String,
+}
+
+/// A unit row's status as a four-value verdict (card W45-USER-CONTRACT-PLUGINS,
+/// §L21.2): a verdict spelling is itself; a gateway failure, or any status
+/// this build does not know, is `Unknown` (fail-closed); a data-only unit,
+/// which defines no function and so carries no obligation, is `Safe`, the
+/// join's identity.
+#[must_use]
+pub fn unit_verdict(status: &str) -> Verdict {
+    match status.parse::<Verdict>() {
+        Ok(verdict) => verdict,
+        Err(_) if status == "data_only" => Verdict::Safe,
+        Err(_) => Verdict::Unknown,
+    }
+}
+
+/// The verdict a group's tallies imply: the join of one representative verdict
+/// per nonzero category. A group's recorded verdict must equal it; composition
+/// refuses a checkpoint where it does not.
+#[must_use]
+pub fn tallied_verdict(counts: &CountsRecord) -> Verdict {
+    Verdict::fold(
+        [
+            (counts.safe_units, Verdict::Safe),
+            (counts.pending_units, Verdict::Pending),
+            (counts.unknown_units, Verdict::Unknown),
+            (counts.gateway_failures, Verdict::Unknown),
+            (counts.unsafe_units, Verdict::Unsafe),
+        ]
+        .into_iter()
+        .filter(|(count, _)| *count > 0)
+        .map(|(_, verdict)| verdict),
+    )
 }
 
 /// [`crate::projection::AuditCounts`] without its three wall-clock sums,
@@ -427,6 +469,8 @@ pub struct CountsRecord {
     pub source_functions: u64,
     pub projected_functions: u64,
     pub safe_units: u64,
+    /// Card W45-USER-CONTRACT-PLUGINS: units whose verdict is `Pending`.
+    pub pending_units: u64,
     pub unsafe_units: u64,
     pub unknown_units: u64,
     pub gateway_failures: u64,
@@ -1105,6 +1149,7 @@ mod tests {
                             sha256: "a".repeat(64),
                         }],
                         pin_evaluation_sha256: "b".repeat(64),
+                        plugin_checks_sha256: None,
                     },
                     compiler: CompilerIdentity {
                         program: "/usr/bin/clang".into(),
@@ -1213,6 +1258,7 @@ mod tests {
                 outputs: vec!["  lib/a.c: Unknown\n".into()],
                 counts: CountsRecord {
                     units: 1,
+                    unknown_units: 1,
                     ..Default::default()
                 },
                 diagnostic_counts: vec![CategoryCount {
@@ -1220,6 +1266,7 @@ mod tests {
                     count: 1,
                 }],
                 sources: vec!["/c/a.c".into()],
+                verdict: "Unknown".into(),
             },
             provenance: ProvenanceSection {
                 wall_time_ms: 5,

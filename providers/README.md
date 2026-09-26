@@ -37,6 +37,11 @@ See the [unit-provider evidence](../docs/reports/w5-cmetrics-unit-provider/READM
 
 ## Contract ownership
 
+User-defined contracts live in the user's own crates, outside this
+repository; [`quirin-provider-plugin`](quirin-provider-plugin/README.md) is
+their SDK (card W45-USER-CONTRACT-PLUGINS). It owns no contracts and is not on
+the load path.
+
 Provider crates own their supplied Quirin contracts under `contracts/`, beside
 `src/` and `provider-template.json`. `contracts.json` records their package paths
 and SHA-256 values. The ownership map is `providers/contracts.py`.
@@ -80,7 +85,7 @@ shared runtime crate):
 | [`quirin-provider-cfl`](quirin-provider-cfl/README.md) | `cfl/` (4) |
 | [`quirin-provider-mpack`](quirin-provider-mpack/README.md) | `mpack/` (1) |
 | [`quirin-provider-msgpack`](quirin-provider-msgpack/README.md) | `msgpack/` (1) |
-| [`quirin-provider-fluent-bit`](quirin-provider-fluent-bit/README.md) | `fluent_bit/` (13); the first crate with a contract-use Cargo edge (to `quirin-provider-libc`), whose `resource_memory.qcore` and `resource_string.qcore` inherit libc contracts |
+| [`quirin-provider-fluent-bit`](quirin-provider-fluent-bit/README.md) | `fluent_bit/` (16, one of checked specifications); the first crate with a contract-use Cargo edge (to `quirin-provider-libc`), whose `resource_memory.qcore` and `resource_string.qcore` inherit libc contracts |
 | [`quirin-provider-shared`](quirin-provider-shared/README.md) | `language/` (1), `library/` (3); re-exports the five above as one bundle |
 
 Each exposes its modules as `CONTRACTS` (logical path, source text), pinned to

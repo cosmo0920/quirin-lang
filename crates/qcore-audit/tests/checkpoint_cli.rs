@@ -497,6 +497,39 @@ fn a_re_pin_invalidates_every_checkpoint() {
     succeeded(&fixture.run("before", &["--jobs", "2", "--checkpoint-dir", "qo"]));
     let before = Checkpoint::from_bytes(&fs::read(fixture.path("qo/alpha.qo")).unwrap()).unwrap();
     assert!(before.identity.run.contracts.locks.is_empty());
+    // Card W45-USER-CONTRACT-PLUGINS: with no lock every pinned contract is
+    // withheld, so functions relying on them are Pending; the group verdict
+    // is the join of its units' and the run's the join of the groups'.
+    let whole: serde_json::Value =
+        serde_json::from_slice(&fs::read(fixture.path("before/report.json")).unwrap()).unwrap();
+    let statuses = whole["units"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|unit| {
+            (
+                unit["library"].as_str().unwrap().to_owned(),
+                unit["status"].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        statuses.iter().any(|(_, status)| status == "Pending"),
+        "{statuses:?}"
+    );
+    let fold = |library: Option<&str>| {
+        qcore_schemas::verdict::Verdict::fold(
+            statuses
+                .iter()
+                .filter(|(owner, _)| library.is_none_or(|library| owner == library))
+                .map(|(_, status)| qcore_audit::checkpoint::unit_verdict(status)),
+        )
+    };
+    assert_eq!(before.result.verdict, fold(Some("alpha")).as_str());
+    assert_ne!(before.result.verdict, "Safe");
+    let record: serde_json::Value =
+        serde_json::from_slice(&fs::read(fixture.path("qo/checkpoint-run.json")).unwrap()).unwrap();
+    assert_eq!(record["verdict"], fold(None).as_str());
     let pinned = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
         .current_dir(&fixture.0)
         .args(["pin", "--source-root", "checkout", "--modules", "contracts"])

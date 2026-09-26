@@ -275,10 +275,12 @@ fn a_pin_holds_at_every_reviewed_revision_and_nowhere_else() {
         mismatches(&section),
         [("box_drop".to_owned(), "source-changed".to_owned())]
     );
+    // Card W45-USER-CONTRACT-PLUGINS: a caller resting only on the held call
+    // is Pending (it was Unknown).
     assert_eq!(
         tree.status("at-c/r.json", "user_drop"),
         (
-            "Unknown".to_owned(),
+            "Pending".to_owned(),
             vec!["contract-pin-mismatch".to_owned()]
         )
     );

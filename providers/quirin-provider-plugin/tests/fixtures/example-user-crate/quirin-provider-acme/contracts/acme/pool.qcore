@@ -1,0 +1,19 @@
+module contract;
+
+// A fictional pool: `acme_pool_get` hands out an owned item, which may be
+// null, and `acme_pool_put` takes it back. Flexible: these contracts bind by
+// name and declared signature (test fixture; no production library).
+extern fn acme_pool_get() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn acme_pool_put(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(item, nonnull);
+    ensures normal resource_return_none();
+};

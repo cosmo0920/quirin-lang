@@ -124,13 +124,14 @@ fn the_contracts_route_lists_the_pending_review_and_what_it_holds() {
     assert!(
         console.contains(
             "pending human review: 1 declaration(s), 1 marker(s); 1 function(s) and 1 call \
-             site(s) held Unknown (awaiting-human-review)"
+             site(s) held Pending (awaiting-human-review)"
         ),
         "{console}"
     );
     let report = fixture.read("out/report.json");
     let unit = &report["units"][0];
-    assert_eq!(unit["status"], "Unknown");
+    // Card W45-USER-CONTRACT-PLUGINS: the held unit is Pending (it was Unknown).
+    assert_eq!(unit["status"], "Pending");
     assert_eq!(unit["reason_code"], "awaiting-human-review");
     let section = &fixture.read("out/report.contracts.json")["pending_human_review"];
     assert_eq!(section["reason_code"], "awaiting-human-review");

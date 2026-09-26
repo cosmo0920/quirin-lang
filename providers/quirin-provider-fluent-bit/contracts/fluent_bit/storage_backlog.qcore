@@ -1,0 +1,191 @@
+module contract;
+
+// Fluent Bit storage backlog (`plugins/in_storage_backlog/sb.c`): the custody
+// interface of the twelve backlog functions, as CHECKED SPECIFICATIONS.
+// Card W45-FB-BACKLOG-CUSTODY; resource-projection vocabulary version 1 with
+// the checked-specification marker of contract spec §C06.3.
+//
+// ## What `requires resource_body_checked;` makes of these declarations
+//
+// Every function declared here has its body in the audited source. Each
+// declaration is therefore a SPECIFICATION the audit checks that body
+// against, never a premise that replaces it. It is in force in a translation
+// unit — at the body's own entry and at every call site — only while that unit
+// defines the body, outside every recursive component, and the body,
+// analysed under the declared entry custody, is fully modelled, reports
+// nothing and leaves every exit matching every clause. Otherwise it is
+// withdrawn from that unit, callers see whatever the ordinary W4 inference
+// validates from the body (or an uncontracted call), and the defining
+// function's row carries `declared specification of `NAME` is not
+// established`, so it is never `Safe`. A unit that does not define the body
+// never applies the declaration at all.
+//
+// Bound by function name and declared signature only. The source revision,
+// line citations and digests these declarations were read against are in
+// `docs/reports/w45-fb-backlog-custody/`, not here; a revision whose C
+// signature differs is refused by the declared-ABI gate (LOADER-ABI), which
+// is the intended fail-closed answer.
+//
+// ## Which part of each backlog obligation v1 can state
+//
+// The backlog obligations (OB-1 .. OB-10 of the system-coverage inventory)
+// relate THREE identities: a wrapper (`struct sb_out_chunk`), the output queue
+// that links it, and the ChunkIO chunk it refers to. Version 1 states the
+// custody of each ARGUMENT and of the RESULT, and nothing else. So each
+// declaration below is the custody leg of the obligations its function
+// carries:
+//
+//   * `sb_allocate_chunk` creates a wrapper or returns NULL and takes no
+//     custody of the chunk or stream it records (the creation leg of OB-1);
+//   * `sb_destroy_chunk` retires one wrapper (the retirement leg of OB-3 and
+//     OB-10);
+//   * every other function borrows its arguments: it neither releases nor
+//     takes over the queue context, output instance, config or chunk it is
+//     handed.
+//
+// What version 1 cannot state, and is therefore NOT claimed by any clause
+// here (each is a registered residual of the card report):
+//
+//   * that a wrapper, once linked, is reachable from exactly one queue (OB-1,
+//     OB-3) — intrusive-list publication, owned by W45-FB-RETRY-LIFETIME
+//     (`MK-LIST-ADD-BORROWED-PUBLICATION`);
+//   * that a wrapper refers to a live chunk, and that a chunk is closed only
+//     after every wrapper referring to it is retired (OB-2, OB-6, OB-7): a
+//     reference relation between two identities, and objects released
+//     through what an argument reaches;
+//   * which failure arm of `flb_input_chunk_map` closes its chunk (OB-5): a
+//     per-arm disposition;
+//   * byte accounting (OB-8) and teardown ordering across files (OB-10).
+//
+// `flb_input_chunk_map` is DELIBERATELY LEFT UNDECLARED: its `chunk` argument
+// is stored into the result on success, closed on one NULL arm and left open
+// on the others, and no v1 mode is faithful to all three.
+// `flb_input_chunk_destroy` keeps its existing declaration
+// (`fluent_bit/input_chunk_destroy.qcore`), unchanged.
+
+// --- wrapper constructor ----------------------------------------------------
+extern fn sb_allocate_chunk(chunk: ptr<mut, u8>, stream: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(chunk);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+// --- wrapper destructor -----------------------------------------------------
+// `nonnull`: the body also accepts NULL (its release is `flb_free`), but the
+// validated W4 inference over the body reads `nonnull`, and a `nullable`
+// declaration would stand beside it as a nullability-refinement
+// `SummaryConflict` (gateway constraint 8), which a specification never
+// survives. The stronger precondition is the one the body establishes.
+extern fn sb_destroy_chunk(chunk: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_released(chunk, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- one queue's teardown ---------------------------------------------------
+extern fn sb_destroy_backlog(backlog: ptr<mut, u8>, context: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(backlog);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_return_none();
+};
+
+// --- queue allocation, one per output instance ------------------------------
+extern fn sb_allocate_backlogs(context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(context);
+    ensures normal resource_return_none();
+};
+
+// --- every queue's teardown -------------------------------------------------
+extern fn sb_destroy_backlogs(context: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(context);
+    ensures normal resource_return_none();
+};
+
+// --- removal of a chunk's wrapper from one queue ----------------------------
+extern fn sb_remove_chunk_from_segregated_backlog(target_chunk: ptr<mut, u8>, backlog: ptr<mut, u8>, destroy: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(target_chunk);
+    ensures normal resource_borrowed(backlog);
+    ensures normal resource_borrowed(destroy);
+    ensures normal resource_return_none();
+};
+
+// --- removal of a chunk's wrappers from every queue -------------------------
+extern fn sb_remove_chunk_from_segregated_backlogs(target_chunk: ptr<mut, u8>, context: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(target_chunk);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_return_none();
+};
+
+// --- insertion of one wrapper into one queue --------------------------------
+extern fn sb_append_chunk_to_segregated_backlog(target_chunk: ptr<mut, u8>, stream: ptr<mut, u8>, target_chunk_size: usize, backlog: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(target_chunk);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(target_chunk_size);
+    ensures normal resource_borrowed(backlog);
+    ensures normal resource_return_none();
+};
+
+// --- fan-out of one chunk into every routed queue ---------------------------
+extern fn sb_append_chunk_to_segregated_backlogs(target_chunk: ptr<mut, u8>, stream: ptr<mut, u8>, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(target_chunk);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_return_none();
+};
+
+// --- startup segregation of every persisted chunk ---------------------------
+extern fn sb_segregate_chunks(config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(config);
+    ensures normal resource_return_none();
+};
+
+// --- eviction from one output's queue ---------------------------------------
+extern fn sb_release_output_queue_space(output_plugin: ptr<mut, u8>, required_space: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(output_plugin);
+    ensures normal resource_borrowed(required_space);
+    ensures normal resource_return_none();
+};
+
+// --- the collector callback -------------------------------------------------
+extern fn cb_queue_chunks(in: ptr<mut, u8>, config: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    ensures normal resource_borrowed(in);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_none();
+};

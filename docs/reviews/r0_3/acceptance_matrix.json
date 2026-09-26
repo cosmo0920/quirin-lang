@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "16.0.0",
+  "qcore_schemas_rust_api": "17.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 441
+  "named_followups": 455
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 113,
+  "contract_modules": 114,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6633,30 +6633,30 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-FB-RETRY-LIFETIME integration, 2026-09-25. The card (measured against docs/reports/w45-parenthesised-callee/integration/artifacts) composed onto the combined tree docs/reports/w45-parenthesised-callee/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 11 added 18 functions 1 units 0); functions moved (combined): [('flb_input_chunk_create', ('Safe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] functions moved: flb_input_chunk_create Safe -> Unknown (a correction: its Safe relied on reading mk_list_add as a borrow). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/integration/previous-corpus-row.json.",
+   "note": "W45-FB-BACKLOG-CUSTODY integration, 2026-09-25. The card (measured against docs/reports/w45-fb-retry-lifetime/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-retry-lifetime/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1480 added 99 functions 14 units 5); functions moved (combined): [('cio_memfs_scan_dump', ('Unknown', 'Safe')), ('cio_stats_get', ('Unknown', 'Safe')), ('cio_stats_print_summary', ('Unknown', 'Safe')), ('cio_stream_get', ('Unknown', 'Safe')), ('cio_stream_size_chunks_up', ('Unknown', 'Safe')), ('cmt_labels_count', ('Unknown', 'Safe')), ('is_file_included', ('Unknown', 'Safe')), ('mk_http_error', ('Unknown', 'Unsafe')), ('mk_rconf_meta_get', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unsafe', 'Unknown')), ('mk_vhost_create', ('Unsafe', 'Unknown')), ('mk_vhost_lookup', ('Unknown', 'Safe')), ('mk_vhost_set_property', ('Unsafe', 'Unknown')), ('mk_vhost_set_single', ('Unsafe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 9 functions Unknown to Safe (cio_memfs_scan_dump, cio_stats_get, cio_stats_print_summary, cio_stream_get, cio_stream_size_chunks_up, cmt_labels_count, is_file_included, mk_rconf_meta_get, mk_vhost_lookup); 4 provisional Unsafe to Unknown (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single), their MK-LIST-ADD-BORROWED-PUBLICATION leaks withdrawn by the refused-call hand-on fix; 1 Unknown to provisional Unsafe (mk_http_error, an unclosed open() descriptor, not a defect claim). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-backlog-custody/integration/previous-corpus-row.json.",
    "units": 185,
-   "safe": 4,
-   "provisional_unsafe": 10,
-   "unknown": 167,
+   "safe": 5,
+   "provisional_unsafe": 8,
+   "unknown": 168,
    "data_only": 4,
    "projected_functions": 4834,
-   "leak_diagnostics": 37,
+   "leak_diagnostics": 34,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts/",
-   "source": "docs/reports/w45-fb-retry-lifetime/integration/integration-confirmation.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts",
-   "unknown_alias_diagnostics": 3571,
-   "unsupported_diagnostics": 42702,
+   "baseline": "docs/reports/w45-fb-backlog-custody/integration/artifacts/",
+   "source": "docs/reports/w45-fb-backlog-custody/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-retry-lifetime/integration/artifacts",
+   "unknown_alias_diagnostics": 3570,
+   "unsupported_diagnostics": 41325,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 389,
-    "provisional_unsafe": 12,
-    "unknown": 4433
+    "safe": 398,
+    "provisional_unsafe": 9,
+    "unknown": 4427
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
    "unit_reason_codes": {
-    "unsupported-syntax": 166,
-    "none": 18,
+    "unsupported-syntax": 167,
+    "none": 17,
     "incomplete-obligation-coverage": 1
    },
    "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
@@ -6713,7 +6713,7 @@
    "crates/qcore-verifier-host",
    "crates/qcorec"
   ],
-  "provider_workspace_members": 12,
+  "provider_workspace_members": 13,
   "provider_workspace_member_paths": [
    "conformance",
    "qcore-provider-chunkio",
@@ -6726,16 +6726,17 @@
    "quirin-provider-libc",
    "quirin-provider-mpack",
    "quirin-provider-msgpack",
+   "quirin-provider-plugin",
    "quirin-provider-shared"
   ],
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Standing and provider gate for W45-AUDIT-CHECKPOINTS, measured by the card in its own worktree (at 182d4b21, which merges main 2f9131a8) with CARGO_INCREMENTAL=0; every exit captured to a file, not piped (private/gate-final/). scripts/run_test_binaries.py: 303 units, 313 summaries, 5855 passed / 0 failed / 11 ignored. Provider workspace (cargo test --locked --offline): 124 passed / 0 / 0 over 39 summaries. 199 Lean audits (the card adds AuditCheckpoints.lean). scripts/tests: 358 tests, first run 1 failure (test_the_derived_facts_are_recomputed_rather_than_carried: the committed matrix's lean_audits was 198 against 199 on disk), then this matrix was regenerated with this gate file and the suite rerun (see the report's Gate section). providers/tests 15 OK. fmt and clippy (core and provider), both reevaluation examples, package build and verify (qcore.libevent), the offline workspace build and cargo clean --profile dev exit 0. Clang recorded beside this file in the same worktree. MOVES=no: the corpus arbiter's diagnostics are byte-identical to docs/reports/w45-fb-retry-lifetime/integration/artifacts.",
-  "workspace_tests": 5855,
-  "provider_tests": 124,
+  "note": "Integration gate for W45-USER-CONTRACT-PLUGINS on merge cdd0f8d7 (onto main e90de196, after all wave-45 cards through W45-FB-BACKLOG-CUSTODY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5900 core Rust passed / 0 failed / 11 ignored over 318 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 202 Lean audits; 358 root Python tests (08-python exits 1 before matrix regeneration: the single failure is the stale-derived-facts check on lean_audits, 201 committed vs 202 produced, resolved by build_matrix.py --gate below); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus stays verdict-identical, Pending 0: functions 398 Safe / 9 provisional Unsafe / 4,427 Unknown, units 5 Safe / 8 provisional Unsafe / 168 Unknown / 4 data-only, unchanged from docs/reports/w45-fb-backlog-custody/integration/artifacts. `32-identity` (baseline_identity.py against that PREV) exits 0: `diagnostics`, `chunk-contracts`, `source-effects` and `source` are byte-identical; only `contracts` differs. The card's own disclosure script (`33-contracts-difference.log`, exit 1) is stale for this PREV: it was written against the card's pre-revision-mode CB (w45-fb-retry-lifetime, which predates W45-CONTRACT-REVISION-MODE) and unconditionally undoes that card's edits before comparing; PREV already contains those edits, so the script's restoration instead introduces spurious differences in `contract_inclusion`, `sources` and `contract_revision`. Left untouched as the card's historical record. The integrator's raw leaf diff (`34-contracts-raw-diff.log`, exit 0) shows the true difference is exactly 2 leaves, `contract_revision.meaning` and `pending_human_review.meaning`, both this card's one documented wording change (a held call gives Pending, never Safe, for both `contract-pin-mismatch` and `awaiting-human-review`); no other leaf differs. No new baseline is archived: the combined tree is unchanged from docs/reports/w45-fb-backlog-custody/integration/artifacts.",
+  "workspace_tests": 5900,
+  "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 199,
+  "lean_audits": 202,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6761,7 +6762,7 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
-   "AuditCheckpoints.lean",
+   "AuditCheckedSpecification.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6835,6 +6836,7 @@
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
+   "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
@@ -6881,6 +6883,7 @@
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
+   "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
    "AuditRefusedWrites.lean",
    "AuditRegionCreditJoins.lean",
@@ -6931,6 +6934,7 @@
    "AuditTypedefProjection.lean",
    "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
+   "AuditVerdictSemigroup.lean",
    "AuditW4.lean",
    "AuditWaitFailurePaths.lean",
    "AuditWriteLend.lean",
@@ -6943,7 +6947,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-audit-checkpoints/gate/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-user-contract-plugins/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -9923,6 +9927,104 @@
    "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
    "source": "docs/reports/w45-contract-revision-mode/README.md",
    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-FB-BACKLOG-REFERENCE-VOCABULARY",
+   "title": "Backlog OB-2/OB-3 need a wrapper-to-chunk reference relation, return-conditioned clauses and per-element identity; v1 states none",
+   "why": "W45-FB-BACKLOG-CUSTODY expressed the storage-backlog obligations as checked specifications (providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore, contract spec C06.3). OB-2 (no chunk closed while a wrapper refers to it; the -3 arm of sb_append_chunk_to_segregated_backlogs, observed natively as the partial fan-out ASan use-after-free) and OB-3 (at most one wrapper per chunk per queue) relate a wrapper, a queue and a chunk; the v1 vocabulary states only argument and result custody. Measured reach of a relation clause alone in this slice is 0: the chunk is an element of stream->chunks (sb_segregate_chunks) or of a wrapper (cb_queue_chunks), both untracked by the projection, and the failing insertion is inside a loop whose callee has no return-conditioned summary. DISCHARGE: a C09 relation clause (wrapper refers to chunk; close requires no outstanding reference), a return-conditioned clause, and per-element abstract identities for admitted list iterations, with loader, gateway and Lean parity, then the slice as arbiter deciding OB-2 on the -3 arm; any refutation stays a provisional Unsafe, never an upstream defect claim.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-MAP-ARMS",
+   "title": "flb_input_chunk_map's chunk has three dispositions (stored, closed on the routes_mask arm, left open); no v1 mode is faithful, so OB-4/OB-5 stay Unknown",
+   "why": "W45-FB-BACKLOG-CUSTODY left flb_input_chunk_map undeclared: on success the chunk is stored into the returned input chunk, on the routes_mask allocation failure it is closed (BC-1), and on the other NULL arms it is left open. OB-5 (chunk closed exactly once on a NULL map return; cb_queue_chunks closes it again) and OB-4 are therefore not decidable; BC-1 remains a source-reading candidate. Unchanged between 864c3d97 and 046accf6. DISCHARGE: a per-arm (or per-return) disposition clause in C09 with loader/gateway/Lean parity, or a source argument; then the backlog slice deciding OB-5.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-REACHABLE-RELEASE",
+   "title": "Backlog OB-6/OB-7/OB-10: callees release objects reachable from their arguments (wrappers of a queue); v1 Borrowed states nothing about them",
+   "why": "sb_remove_chunk_from_segregated_backlogs, sb_destroy_backlog(s) and sb_release_output_queue_space free wrappers (and queues) reached through a borrowed context; their checked specifications (all Borrowed) are not established by the bodies, whose element releases refuse as unresolved identities. OB-6 (no wrapper used after a callee frees it), OB-7 (eviction retires every wrapper before the close) and OB-10 (teardown) need a clause for objects released through what an argument reaches (P-B08-SHALLOW is the current premise). DISCHARGE: such a clause with parity, or a container-ownership relation for list elements, then the slice as arbiter.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-CIO-RETURN-CODES",
+   "title": "Backlog OB-9 needs ChunkIO return-code summaries (cio_chunk_up_force CIO_OK/CIO_ERROR/CIO_CORRUPTED/CIO_RETRY) and the uncontracted cio_chunk_lock/cio_error_get/cio_chunk_get_real_size",
+   "why": "sb_segregate_chunks' end states per chunk (OB-9) depend on ChunkIO return codes; cio_chunk_lock, cio_error_get and cio_chunk_get_real_size are uncontracted in the slice. Facts belong in qcore-provider-chunkio. DISCHARGE: ChunkIO declarations read against their bodies (in qcore-provider-chunkio) and a return-code-conditioned vocabulary, then the slice deciding OB-9.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
+   "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
+   "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-ILI-PREMISES",
+   "title": "Intrusive-list iteration (gateway 5l) rests on stated premises; 43 element and 34 header leaves stay refused",
+   "why": "Gateway constraint 5l admits mk_list/cfl_list headers and container_of element reads under four premises stated, not proved: P-ILI-BODY (checked lexically), P-ILI-UNTRACKED (an element is not an identity the body tracks; the lexical guard declines a function where one call receives both &X->... of a possibly tracked X and the iterated head; linking through a wrapper call is P-B08-SHALLOW), P-ILI-CALLEE-FRAME (a callee handed the container does not unlink the protected node; OB-7 depends on it) and P-ILI-BRACED. Rule 4 added no refusal in the corpus or the slice (17 plain bodies with an unlink or release call; the two read release another object or unlink a second link; 15 not read individually). After the card, 43 element-read braced leaves and 34 list-header for-loop leaves remain in the corpus (from 326 and 269), declined by the guard, an untyped head chain or an unbraced body. DISCHARGE: per premise, a model of the callee frame or a measured guard refinement with its re-pin; per residual leaf class, an admission with its own measurement.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-MK-HTTP-ERROR-FD-LEAK",
+   "title": "mk_http_error: descriptor from open() on the custom-error-page arm is never closed (provisional Unsafe candidate)",
+   "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and neither closed nor stored before the return at :1315 on the custom-error-page arm; the source's own comment reads 'This fd seems to be leaked'. It is the card's one added leak after its refused-call hand-on repair; unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-FOREIGN-UNLINK",
+   "title": "Rule 10d refuses unlinking an entry this function did not publish; it blocks the backlog's retirement legs (OB-3, OB-7, OB-10) and 17 corpus leaves in 14 teardown functions",
+   "why": "sb_remove_chunk_from_segregated_backlog and sb_destroy_backlogs unlink wrappers (queues) that another function published (sb_append_chunk_to_segregated_backlog, sb_allocate_backlogs); W45-FB-RETRY-LIFETIME's rule 10d refuses 'unlink by mk_list_del of X, which this function has not published'. W45-FB-BACKLOG-CUSTODY's safe-iteration admission makes 17 such element unlinks reachable in 14 corpus teardown functions (mk_rconf_free, mk_vhost_destroy, flb_input_chunk_destroy, ...), each an exchange for an earlier refusal, fail-closed. DISCHARGE: an unlink of an element of a container the caller owns or borrows, stated against the container's membership (a caller-side publication premise or a container-element identity), with parity and a corpus re-pin.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-PLUGIN-CERTIFICATE-CHECKER",
+   "title": "No trusted-core certificate checker exists for a user-contract checker plugin's Safe claim",
+   "why": "The firewall counts a plugin's `Safe` only with a certificate the registry issues from a trusted-core `WitnessChecker` replay. `quirin-audit` registers none for the `quirin.user-contract-check.v1` task, so every plugin `Safe` it sees is `Pending` (`plugin-claim-uncertified`, QP008 or QP016); the certified row is exercised only through the library route with a test double of a checker. DISCHARGE: a versioned trusted-core checker for a precisely scoped user-contract claim, with independently replayable evidence, positive, negative and mutation tests, and the command line registering it.",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-PLUGIN-COUNTEREXAMPLE-CHECKER",
+   "title": "No trusted-core counterexample checker exists, so no plugin Unsafe is validated",
+   "why": "`qcore_verifier_host::plugin_firewall::CounterexampleChecker` is the hook a plugin's `Unsafe` needs; no production implementation exists and `quirin-audit` passes none, so every plugin `Unsafe` is `Pending`. The validated row is exercised only at the host with a test double. DISCHARGE: a trusted-core counterexample checker for a named capability, validating a witness against the core's obligation inventory, with mutation tests, and a report stating how a validated plugin `Unsafe` is presented (provisional, never an upstream defect).",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-PLUGIN-ROUTE-COVERAGE",
+   "title": "Checker plugins and user load paths reach `quirin-audit current` and `contracts` only",
+   "why": "`user_plugins::run` is hooked into `CurrentAudit::with_contracts` and `NoBuildAudit::with_plugin_checkers`. The configured `quirin-audit CONFIG.json` route and the corpus arbiter (`cycle19_fluent_bit_libraries_audit`) select contracts by manifest and never read a user load path, so a checker binding cannot reach them; a caller of the gateway API applies the environment it is given. DISCHARGE: an inventory of the verdict-publishing routes, each running the bindings of the load path it resolves or refusing one it cannot, with a test per route.",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-PLUGIN-LINK-CFG-PREMISE",
+   "title": "The callee chain reads applied contracts from the control-flow graph's contract calls",
+   "why": "`user_plugins::fold_unit` joins a bound contract's verdict into every function whose CFG holds a `LegacyInstruction::ContractCall` (or an admitted nested call) of it. Six call shapes (assignment, initialisation, return, condition, discarded cast, expression operand) were probed to lower to `ContractCall`; a contracted call applied through any other instruction would not carry its link, and a refused call applies no contract and already leaves its function `Unknown`. DISCHARGE: the gateway records the contracts each function applied as part of its summary (or a census proving every applied contract is a `ContractCall`), with a test per lowering route.",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-PLUGIN-OBLIGATION-PROPERTY",
+   "title": "A checker plugin's task borrows `parameter_mode_respected` for a whole-contract claim",
+   "why": "The core-derived task for a binding has one obligation per bound function with property `parameter_mode_respected`, the closest existing `ObligationProperty`; what a user's checker actually checks is not in the closed vocabulary, so the claim's scope is the contract as a whole rather than a named property. DISCHARGE: a dedicated obligation property (a schema change) naming the checked claim, carried into the task digest, with the firewall and the report unchanged otherwise.",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-PLUGIN-EXECUTION-PROFILE",
+   "title": "Checker packages run under the host's default execution profile",
+   "why": "A binding names a package, and `ProcessProvider::from_package` runs it under the default profile (`unenforced-legacy`: process-group containment, deadline and output bound, no declared rlimits or confinement); the sidecar records the profile and limits. A user load path cannot yet request `linux-rlimit-v1` or `linux-confined-v1`. DISCHARGE: a binding field selecting the profile (and a confinement policy), refusing one the host cannot enforce, with the refusal tested.",
+   "source": "docs/reports/w45-user-contract-plugins/README.md",
+   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
   },
   {
    "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",

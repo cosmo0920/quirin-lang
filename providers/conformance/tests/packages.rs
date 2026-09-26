@@ -603,6 +603,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     let packages = metadata["packages"].as_array().unwrap();
     let mut artifacts = 0;
     let mut shared = 0;
+    let mut sdk = 0;
     let mut data_edges: Vec<(String, String)> = Vec::new();
     let mut artifact_contract_edges: Vec<(String, String)> = Vec::new();
     for package in packages {
@@ -613,6 +614,25 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
         // libraries), so the artifact's whole dependency closure stays on it.
         let is_artifact =
             name.starts_with("qcore-provider-") && name != "qcore-provider-conformance";
+        // Card W45-USER-CONTRACT-PLUGINS (deliberate pin update): the SDK for
+        // user contract crates and checker plugins carries the data-crate
+        // prefix but owns no contracts; it links the shared provider transport
+        // for its checker runtime and nothing else first-party.
+        let is_sdk = name == "quirin-provider-plugin";
+        if is_sdk {
+            sdk += 1;
+            for dependency in package["dependencies"].as_array().unwrap() {
+                let dependency_name = dependency["name"].as_str().unwrap();
+                assert!(
+                    matches!(
+                        dependency_name,
+                        "qcore-schemas" | "serde" | "serde_json" | "quirin-provider-shared"
+                    ) && dependency["kind"].is_null(),
+                    "{name}: {dependency}"
+                );
+            }
+            continue;
+        }
         let is_shared = name.starts_with("quirin-provider-");
         if is_shared {
             shared += 1;
@@ -707,6 +727,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     }
     assert_eq!(artifacts, 5);
     assert_eq!(shared, 6);
+    assert_eq!(sdk, 1);
     // Card CONTRACT-INHERIT-ADOPTION: the one contract-use edge among the data
     // crates. Adding another is a deliberate edit here.
     data_edges.sort();

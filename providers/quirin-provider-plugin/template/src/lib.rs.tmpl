@@ -1,0 +1,13 @@
+//! User-defined Quirin contracts for `{{namespace}}`.
+//!
+//! The `.qcore` sources under `contracts/` are this crate's contracts. The
+//! crate is data only: the audit reads them through a user load path
+//! (`quirin-plugin load-path`), never by linking this crate.
+
+/// The crate's contract-inheritance namespace: the package name without
+/// `quirin-provider-`, `-` read as `_`. A parent this crate owns is written
+/// `{{namespace}}::NAME`.
+pub const NAMESPACE: &str = "{{namespace}}";
+
+/// The owned modules another contract module may `#include`, sorted.
+pub const PUBLISHED: &[&str] = &[];

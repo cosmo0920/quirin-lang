@@ -880,6 +880,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-contract-revision-mode](w45-contract-revision-mode/README.md) | W45-CONTRACT-REVISION-MODE: pinned and flexible contracts, pinned by default |
 
+| [w45-fb-backlog-custody](w45-fb-backlog-custody/README.md) | W45-FB-BACKLOG-CUSTODY: intrusive-list iteration, element identity and checked backlog specifications |
+
 | [w45-fb-backlog-fault-injection](w45-fb-backlog-fault-injection/README.md) | W45-FB-BACKLOG-FAULT-INJECTION — native fault-injection observations |
 
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |
@@ -895,6 +897,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |
 
 | [w45-tsan-rows-load-sensitive](w45-tsan-rows-load-sensitive/README.md) | W45-TSAN-ROWS-LOAD-SENSITIVE: why two TSan rows failed under load, and the fix |
+
+| [w45-user-contract-plugins](w45-user-contract-plugins/README.md) | W45-USER-CONTRACT-PLUGINS: user-defined contracts and checker plugins, with a four-value verdict |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

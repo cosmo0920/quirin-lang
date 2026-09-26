@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "W45-CHECKPOINT-COMPOSE-SEMIGROUP",
+      "title": "Checkpoint composition does not yet fold group verdicts with the verdict semigroup",
+      "why": "Card W45-AUDIT-CHECKPOINTS, running concurrently, adds `.qo` checkpoints with divide-and-conquer composition. Language spec §L21.2 states that a group verdict over checkpoints composes with the same join, and `qcore_schemas::verdict` exposes it (`Verdict::fold`, `ReasonedVerdict::fold`, `Chain` with `ChainKind::UnitGroup`); this card did not edit the checkpoint modules. DISCHARGE: the checkpoint compose calls `qcore_schemas::verdict` for every group verdict, with a test that a composed group equals the fold of its members' verdicts and that a `Pending` member keeps the group from `Safe`.",
+      "source": "docs/reports/w45-user-contract-plugins/README.md",
+      "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+    },
+    "discharged_by": "W45-AUDIT-CHECKPOINTS",
+    "ground": "Its discharge condition: \"the checkpoint compose calls `qcore_schemas::verdict` for every group verdict, with a test that a composed group equals the fold of its members' verdicts and that a `Pending` member keeps the group from `Safe`\". Each `.qo` result section now records its group's verdict as `Verdict::fold` of its units' verdicts (`checkpoint::unit_verdict`), and `compose::fold_verdicts` joins the group verdicts with `Verdict::join` (`Safe` the identity) into the run verdict, refusing a group whose recorded verdict disagrees with the verdict its tallies imply. Tests: `compose::tests::a_composed_verdict_is_the_fold_of_its_members` (every two-way split of a unit list folds to the whole list's verdict; a `Pending` member keeps a group from `Safe`), `a_group_whose_verdict_disagrees_with_its_tallies_is_refused`, and the fixture test `a_re_pin_invalidates_every_checkpoint` (unlocked pinned contracts make units `Pending`; the group's and the run's verdicts are the folds of the whole run's unit statuses). Composition stays byte-identical to the whole run (report, section 6)."
+  }
+]

@@ -1,0 +1,21 @@
+# {{name}}
+
+User-defined Quirin contracts for `{{namespace}}`, laid out like the shipped
+`quirin-provider-*` crates.
+
+1. Write contracts under `contracts/{{namespace}}/`. Every rule of the
+   shipped contracts applies: loading is total-or-reject, bodies the audit
+   analyses are checked against their contracts, contracts are pinned by
+   default, and `resource_review_pending` holds a contract for review.
+2. Generate the user load path beside the directory that holds this crate:
+   `quirin-plugin load-path --extends /path/to/providers/contract-load-path.json --output user-load-path.json {{name}}`,
+   then `quirin-audit plugin views --load-path user-load-path.json --write`.
+3. After reviewing the audited source, pin it:
+   `quirin-audit pin --load-path user-load-path.json --source-root SOURCE`.
+4. Audit: `quirin-audit contracts --load-path user-load-path.json --provider {{name}} --source-root SOURCE`.
+
+A contract for a function a shipped crate also declares is refused unless
+`quirin-plugin.json` overrides it explicitly, with a reason; every applied
+override is reported. A checker plugin bound in `quirin-plugin.json` runs out
+of process; its `Safe` counts only with a certificate the audit checks
+itself, and otherwise it is `Pending`.

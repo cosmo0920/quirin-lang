@@ -21,6 +21,11 @@ import QCore.ReasonCategory
 #print axioms QCore.ReasonCategory.every_subject_is_reached
 #print axioms QCore.ReasonCategory.exactly_two_categories_describe_the_analysed_source
 
+-- Card W45-USER-CONTRACT-PLUGINS: the three human-resolvable categories, the
+-- only reasons that may make a row `Pending`, never support `Unsafe`.
+#print axioms QCore.ReasonCategory.a_human_resolvable_category_never_supports_unsafe
+#print axioms QCore.ReasonCategory.exactly_three_categories_are_human_resolvable
+
 -- The mapping over the real reason corpus: total, single-valued, non-vacuous.
 #print axioms QCore.ReasonCategory.the_mapping_is_total
 #print axioms QCore.ReasonCategory.every_category_is_reached

@@ -223,7 +223,8 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
     let before = tree.read("before/r.contracts.json")["contract_revision"].clone();
     assert_eq!(before["counts"]["pinned_in_force"], 10);
     assert_eq!(before["contracts"]["box_drop"]["status"], "pinned-in-force");
-    // A body change: `box_drop` is out of force and its caller is Unknown.
+    // A body change: `box_drop` is out of force and its caller is Pending
+    // (card W45-USER-CONTRACT-PLUGINS; it was Unknown).
     tree.mutate(&edits(&mutation("dropped-release")));
     let check = tree.pin(&["--check"]);
     assert_eq!(check.status.code(), Some(1));
@@ -243,7 +244,7 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
         .iter()
         .find(|(name, ..)| name == "user_drop")
         .unwrap();
-    assert_eq!(user_drop.1, "Unknown");
+    assert_eq!(user_drop.1, "Pending");
     assert_eq!(user_drop.2, ["contract-pin-mismatch"]);
     assert_eq!(
         tree.read("after/r.json")["units"][0]["reason_code"],
@@ -392,23 +393,26 @@ fn the_mutation_table() {
             false,
             &[("box_drop", "Unknown"), ("user_drop", "Safe")],
         ),
+        // Card W45-USER-CONTRACT-PLUGINS: a caller whose only unresolved
+        // diagnostic is the held call is `Pending` (a re-pin after review
+        // resolves it); it was `Unknown`.
         ("rename-local", true, &[("box_count", "Safe")]),
         ("reorder-independent", true, &[("box_two", "Safe")]),
         (
             "dropped-release",
             true,
-            &[("box_drop", "Safe"), ("user_drop", "Unknown")],
+            &[("box_drop", "Safe"), ("user_drop", "Pending")],
         ),
         ("missing-counter-rollback", true, &[("box_count", "Unsafe")]),
         (
             "changed-transfer",
             true,
-            &[("box_keep", "Safe"), ("user_keep", "Unknown")],
+            &[("box_keep", "Safe"), ("user_keep", "Pending")],
         ),
         (
             "premature-destroy",
             true,
-            &[("box_drop", "Unknown"), ("user_drop", "Unknown")],
+            &[("box_drop", "Unknown"), ("user_drop", "Pending")],
         ),
     ];
     for (name, pinned, outcome) in expected {
