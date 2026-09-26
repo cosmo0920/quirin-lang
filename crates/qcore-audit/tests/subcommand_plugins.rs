@@ -34,7 +34,9 @@ fn scratch(name: &str) -> PathBuf {
 /// A plugin `quirin-audit-NAME` in `directory/plugins`: it saves its request
 /// to `request.json` in its working directory, then runs `body`.
 fn plugin(directory: &Path, name: &str, body: &str) -> PathBuf {
-    let path = directory.join("plugins").join(format!("quirin-audit-{name}"));
+    let path = directory
+        .join("plugins")
+        .join(format!("quirin-audit-{name}"));
     std::fs::write(&path, format!("#!/bin/sh\ncat > request.json\n{body}\n")).unwrap();
     std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
     path
@@ -122,7 +124,11 @@ fn an_external_plugin_runs_and_its_artifacts_are_recorded() {
     assert_eq!(report["run"]["outcome"], "completed");
     assert_eq!(report["artifacts"][0]["relative"], "made.txt");
     assert_eq!(report["artifacts"][0]["sha256"], digest);
-    assert_eq!(report["verdict"], Value::Null, "no claim publishes no verdict");
+    assert_eq!(
+        report["verdict"],
+        Value::Null,
+        "no claim publishes no verdict"
+    );
     let request: Value =
         serde_json::from_slice(&std::fs::read(directory.join("out/request.json")).unwrap())
             .unwrap();
@@ -138,7 +144,10 @@ fn an_external_plugin_runs_and_its_artifacts_are_recorded() {
     let invocation = invocation(&directory, "tool");
     let script_digest = qcore_schemas::sha256_hex(&std::fs::read(&script).unwrap());
     assert_eq!(invocation["plugin"]["sha256"], script_digest);
-    assert_eq!(invocation["plugin"]["executable"], script.display().to_string());
+    assert_eq!(
+        invocation["plugin"]["executable"],
+        script.display().to_string()
+    );
     assert_eq!(invocation["plugin"]["protocol_version"], 1);
     assert_eq!(invocation["plugin"]["response_protocol_version"], 1);
     assert_eq!(invocation["plugin"]["exit_code"], 0);
@@ -186,7 +195,11 @@ fn a_builtin_name_is_never_run_externally() {
 #[test]
 fn a_missing_plugin_is_a_usage_error_and_path_is_not_searched() {
     let directory = scratch("missing");
-    plugin(&directory, "onpath", &emit(&response(&json!([]), &json!([]))));
+    plugin(
+        &directory,
+        "onpath",
+        &emit(&response(&json!([]), &json!([]))),
+    );
     let output = Command::new(HOST)
         .args(["--output", "out", "onpath"])
         .current_dir(&directory)
@@ -220,10 +233,8 @@ fn assert_unknown(directory: &Path, name: &str, output: &Output, code: &str) {
 #[test]
 fn a_version_mismatch_is_unknown_with_a_named_reason() {
     let directory = scratch("version");
-    let text = response(&json!([]), &json!([])).replace(
-        "\"protocol_version\":1",
-        "\"protocol_version\":2",
-    );
+    let text = response(&json!([]), &json!([]))
+        .replace("\"protocol_version\":1", "\"protocol_version\":2");
     plugin(&directory, "old", &emit(&text));
     let output = run(&directory, &[], "old", &[]);
     assert_unknown(&directory, "old", &output, "protocol-version-mismatch");
@@ -256,7 +267,11 @@ fn oversize_output_is_unknown() {
     plugin(&directory, "loud", "head -c 200000 /dev/zero | tr '\\0' x");
     let output = run(&directory, &["--stdout-limit-bytes", "1000"], "loud", &[]);
     assert_unknown(&directory, "loud", &output, "plugin-output-limit");
-    plugin(&directory, "noisy", "head -c 200000 /dev/zero | tr '\\0' x >&2; sleep 5");
+    plugin(
+        &directory,
+        "noisy",
+        "head -c 200000 /dev/zero | tr '\\0' x >&2; sleep 5",
+    );
     let output = run(&directory, &["--stderr-limit-bytes", "1000"], "noisy", &[]);
     assert_unknown(&directory, "noisy", &output, "plugin-stderr-limit");
 }
@@ -267,7 +282,10 @@ fn a_nonzero_exit_is_unknown() {
     plugin(
         &directory,
         "crash",
-        &format!("{}\nexit 3", emit(&response(&json!([]), &json!([claim("Safe")])))),
+        &format!(
+            "{}\nexit 3",
+            emit(&response(&json!([]), &json!([claim("Safe")])))
+        ),
     );
     let output = run(&directory, &[], "crash", &[]);
     assert_unknown(&directory, "crash", &output, "plugin-exit");
@@ -304,7 +322,11 @@ fn an_artifact_outside_the_output_is_unknown() {
 fn uncertified_claims_are_pending() {
     let directory = scratch("claims");
     for (name, verdict) in [("says-safe", "Safe"), ("says-unsafe", "Unsafe")] {
-        plugin(&directory, name, &emit(&response(&json!([]), &json!([claim(verdict)]))));
+        plugin(
+            &directory,
+            name,
+            &emit(&response(&json!([]), &json!([claim(verdict)]))),
+        );
         let output = run(&directory, &[], name, &[]);
         assert_eq!(output.status.code(), Some(0), "{}", stderr(&output));
         let report = report(&directory, name);
@@ -323,7 +345,11 @@ fn uncertified_claims_are_pending() {
     // A certificate reference changes nothing without a checker (QP016).
     let mut certified = claim("Safe");
     certified["certificates"] = json!([{"kind": "witness", "path": "w", "sha256": "0".repeat(64)}]);
-    plugin(&directory, "cites", &emit(&response(&json!([]), &json!([certified]))));
+    plugin(
+        &directory,
+        "cites",
+        &emit(&response(&json!([]), &json!([certified]))),
+    );
     let output = run(&directory, &[], "cites", &[]);
     assert_eq!(output.status.code(), Some(0));
     let report = report(&directory, "cites");
@@ -371,7 +397,11 @@ fn no_claim_lowers_an_existing_unsafe() {
     let directory = scratch("unsafe-host");
     let unsafe_report = audit_report(&directory, "Unsafe");
     for (name, verdict) in [("safe-on-bad", "Safe"), ("unknown-on-bad", "Unknown")] {
-        plugin(&directory, name, &emit(&response(&json!([]), &json!([claim(verdict)]))));
+        plugin(
+            &directory,
+            name,
+            &emit(&response(&json!([]), &json!([claim(verdict)]))),
+        );
         let output = run(
             &directory,
             &["--audit-report", unsafe_report.to_str().unwrap()],
@@ -423,13 +453,19 @@ fn the_environment_does_not_leak() {
     assert!(!seen.contains("leaked-value"), "{seen}");
     assert!(!seen.contains("leaked-token"), "{seen}");
     assert!(!seen.contains("CARGO_"), "{seen}");
-    assert!(seen.lines().any(|line| line == "PATH=/usr/bin:/bin"), "{seen}");
+    assert!(
+        seen.lines().any(|line| line == "PATH=/usr/bin:/bin"),
+        "{seen}"
+    );
     for line in seen.lines() {
         let name = line.split('=').next().unwrap();
         // `sh` itself sets PWD, OLDPWD, SHLVL and `_`.
         assert!(
-            ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "LC_CTYPE", "TZ", "PWD", "OLDPWD", "SHLVL", "_"]
-                .contains(&name),
+            [
+                "PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "LC_CTYPE", "TZ", "PWD", "OLDPWD",
+                "SHLVL", "_"
+            ]
+            .contains(&name),
             "unexpected variable {name}"
         );
     }
@@ -451,9 +487,18 @@ fn the_environment_does_not_leak() {
 fn a_provider_needs_a_load_path_and_an_output_is_required() {
     let directory = scratch("inputs");
     plugin(&directory, "tool", &emit(&response(&json!([]), &json!([]))));
-    let output = run(&directory, &["--provider", "quirin-provider-libc"], "tool", &[]);
+    let output = run(
+        &directory,
+        &["--provider", "quirin-provider-libc"],
+        "tool",
+        &[],
+    );
     assert_eq!(output.status.code(), Some(2));
-    assert!(stderr(&output).contains("--load-path"), "{}", stderr(&output));
+    assert!(
+        stderr(&output).contains("--load-path"),
+        "{}",
+        stderr(&output)
+    );
     let output = host(&directory, &["--plugin-path", "plugins", "tool"]);
     assert_eq!(output.status.code(), Some(2));
     assert!(stderr(&output).contains("--output"), "{}", stderr(&output));

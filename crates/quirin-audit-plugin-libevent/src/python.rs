@@ -230,7 +230,10 @@ mod tests {
 
     #[test]
     fn strip_and_decode_follow_text_mode() {
-        assert_eq!(python_strip("\u{1c} clang version 21\n"), "clang version 21");
+        assert_eq!(
+            python_strip("\u{1c} clang version 21\n"),
+            "clang version 21"
+        );
         assert_eq!(decode(b"a\r\nb\rc".to_vec()).unwrap(), "a\nb\nc");
     }
 }

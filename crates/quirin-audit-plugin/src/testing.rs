@@ -33,7 +33,10 @@ impl Invocation {
     ///
     /// A malformed or mismatched response, or an artifact that does not
     /// verify.
-    pub fn verified(&self, request: &Request) -> Result<(&Response, Vec<VerifiedArtifact>), String> {
+    pub fn verified(
+        &self,
+        request: &Request,
+    ) -> Result<(&Response, Vec<VerifiedArtifact>), String> {
         let response = self.response.as_ref().map_err(ToString::to_string)?;
         let output = Path::new(&request.output)
             .canonicalize()

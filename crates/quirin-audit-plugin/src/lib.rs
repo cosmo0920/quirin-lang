@@ -313,12 +313,7 @@ impl Response {
     /// # Errors
     ///
     /// An unreadable file.
-    pub fn push_artifact(
-        &mut self,
-        output: &Path,
-        path: &Path,
-        kind: &str,
-    ) -> Result<(), String> {
+    pub fn push_artifact(&mut self, output: &Path, path: &Path, kind: &str) -> Result<(), String> {
         let absolute = output.join(path);
         let bytes =
             std::fs::read(&absolute).map_err(|error| format!("{}: {error}", absolute.display()))?;
@@ -358,11 +353,14 @@ impl Response {
     pub fn validate(&self) -> Result<(), String> {
         let mut paths = BTreeSet::new();
         for artifact in &self.artifacts {
-            is_sha256(&artifact.sha256)
-                .then_some(())
-                .ok_or_else(|| format!("artifact `{}`: `sha256` is not SHA-256 hex", artifact.path))?;
+            is_sha256(&artifact.sha256).then_some(()).ok_or_else(|| {
+                format!("artifact `{}`: `sha256` is not SHA-256 hex", artifact.path)
+            })?;
             if artifact.path.is_empty() || !paths.insert(artifact.path.as_str()) {
-                return Err(format!("artifact path `{}` is empty or repeated", artifact.path));
+                return Err(format!(
+                    "artifact path `{}` is empty or repeated",
+                    artifact.path
+                ));
             }
         }
         for claim in &self.claims {
@@ -437,8 +435,8 @@ impl std::fmt::Display for ProtocolError {
 
 /// The JSON object, once its protocol and version are this SDK's.
 fn versioned(bytes: &[u8]) -> Result<Value, ProtocolError> {
-    let value: Value =
-        serde_json::from_slice(bytes).map_err(|error| ProtocolError::Malformed(error.to_string()))?;
+    let value: Value = serde_json::from_slice(bytes)
+        .map_err(|error| ProtocolError::Malformed(error.to_string()))?;
     let Some(object) = value.as_object() else {
         return Err(ProtocolError::Malformed("not a JSON object".into()));
     };
@@ -506,7 +504,10 @@ pub fn verify_artifacts(
             ));
         };
         if relative.as_os_str().is_empty() || !canonical.is_file() {
-            return Err(format!("artifact `{}` is not a regular file", artifact.path));
+            return Err(format!(
+                "artifact `{}` is not a regular file",
+                artifact.path
+            ));
         }
         if reserved.contains(&canonical) {
             return Err(format!(
@@ -610,8 +611,14 @@ mod tests {
             "protocol-version-mismatch"
         );
         let bytes = br#"{"protocol": "quirin-audit-plugin", "protocol_version": 1, "outcome": "completed"}"#;
-        assert_eq!(parse_response(bytes).unwrap_err().code(), "malformed-response");
-        assert_eq!(parse_response(b"not json").unwrap_err().code(), "malformed-response");
+        assert_eq!(
+            parse_response(bytes).unwrap_err().code(),
+            "malformed-response"
+        );
+        assert_eq!(
+            parse_response(b"not json").unwrap_err().code(),
+            "malformed-response"
+        );
     }
 
     #[test]
@@ -623,11 +630,17 @@ mod tests {
             "reason": "r", "certificates": []
         }]);
         let bytes = serde_json::to_vec(&value).unwrap();
-        assert_eq!(parse_response(&bytes).unwrap_err().code(), "malformed-response");
+        assert_eq!(
+            parse_response(&bytes).unwrap_err().code(),
+            "malformed-response"
+        );
         let mut value = serde_json::to_value(Response::completed()).unwrap();
         value["extra"] = serde_json::json!(true);
         let bytes = serde_json::to_vec(&value).unwrap();
-        assert_eq!(parse_response(&bytes).unwrap_err().code(), "malformed-response");
+        assert_eq!(
+            parse_response(&bytes).unwrap_err().code(),
+            "malformed-response"
+        );
     }
 
     #[test]

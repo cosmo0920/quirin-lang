@@ -412,7 +412,9 @@ fn identity_of(path: &Path) -> Result<FileIdentity, String> {
 
 /// A report path's canonical spelling (its parent created and resolved).
 fn settle(path: &Path) -> Result<PathBuf, String> {
-    let parent = path.parent().filter(|parent| !parent.as_os_str().is_empty());
+    let parent = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty());
     let name = path
         .file_name()
         .ok_or_else(|| format!("{} names no file", path.display()))?;
@@ -458,7 +460,9 @@ pub fn prepare(
     let load_path = match &options.load_path {
         None => {
             if !options.providers.is_empty() {
-                return Err("--provider selects crates on a load path; pass --load-path FILE".into());
+                return Err(
+                    "--provider selects crates on a load path; pass --load-path FILE".into(),
+                );
             }
             None
         }
@@ -486,8 +490,8 @@ pub fn prepare(
             let identity = identity_of(&path)?;
             let document: Value = serde_json::from_slice(&read(&path)?)
                 .map_err(|error| format!("{}: {error}", path.display()))?;
-            let host = host_verdicts(&document)
-                .map_err(|error| format!("{}: {error}", path.display()))?;
+            let host =
+                host_verdicts(&document).map_err(|error| format!("{}: {error}", path.display()))?;
             (host, Some(identity))
         }
     };
@@ -585,7 +589,9 @@ pub fn host_verdicts(report: &Value) -> Result<BTreeMap<String, ReasonedVerdict>
     let mut host = BTreeMap::<String, ReasonedVerdict>::new();
     for unit in units {
         let file = unit["file"].as_str().ok_or("a unit row has no `file`")?;
-        let status = unit["status"].as_str().ok_or("a unit row has no `status`")?;
+        let status = unit["status"]
+            .as_str()
+            .ok_or("a unit row has no `status`")?;
         let reason = unit["reason"].as_str().unwrap_or("").to_owned();
         let category = unit["reason_code"]
             .as_str()
@@ -796,7 +802,12 @@ fn supervise(prepared: &Prepared, request: &[u8]) -> Supervised {
     command
         .args(&prepared.request.arguments)
         .env_clear()
-        .envs(prepared.environment.iter().map(|(name, value)| (name, value)))
+        .envs(
+            prepared
+                .environment
+                .iter()
+                .map(|(name, value)| (name, value)),
+        )
         .current_dir(&prepared.request.output)
         .process_group(0)
         .stdin(Stdio::piped())
@@ -925,10 +936,7 @@ pub struct RunFailure {
 fn classify_run(
     observed: &Supervised,
     prepared: &Prepared,
-) -> (
-    Option<Response>,
-    Result<Vec<VerifiedArtifact>, RunFailure>,
-) {
+) -> (Option<Response>, Result<Vec<VerifiedArtifact>, RunFailure>) {
     let quotas = prepared.request.quotas;
     let fail = |code, reason: String| Err(RunFailure { code, reason });
     if let Some(error) = &observed.spawn_error {
@@ -996,7 +1004,10 @@ fn classify_run(
         );
         return (
             parsed.ok(),
-            fail("plugin-exit", format!("the plugin ended with {status}{detail}")),
+            fail(
+                "plugin-exit",
+                format!("the plugin ended with {status}{detail}"),
+            ),
         );
     }
     let response = match parsed {
@@ -1172,11 +1183,10 @@ pub fn execute(
         ),
         artifacts.len(),
         claim_rows.len(),
-        aggregate
-            .as_ref()
-            .map_or_else(|| "none (no claim, no host row)".to_owned(), |aggregate| {
-                aggregate.verdict().to_string()
-            })
+        aggregate.as_ref().map_or_else(
+            || "none (no claim, no host row)".to_owned(),
+            |aggregate| { aggregate.verdict().to_string() }
+        )
     );
     for diagnostic in response.iter().flat_map(|response| &response.diagnostics) {
         println!(

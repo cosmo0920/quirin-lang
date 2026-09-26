@@ -22,7 +22,9 @@ fn answer(request: &Request) -> Result<Response, String> {
                     Some("safe") => ProposedVerdict::Safe,
                     Some("unsafe") => ProposedVerdict::Unsafe,
                     Some("unknown") => ProposedVerdict::Unknown,
-                    other => return Err(format!("--claim takes safe|unsafe|unknown, not {other:?}")),
+                    other => {
+                        return Err(format!("--claim takes safe|unsafe|unknown, not {other:?}"));
+                    }
                 });
             }
             other => return Err(format!("unknown argument `{other}`")),

@@ -283,7 +283,8 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
     }
     let cmake = options.cmake.clone().unwrap_or_else(|| "cmake".into());
 
-    let build = resolve(&output, Path::new(&request.invocation_directory)).join("libevent-clang-build");
+    let build =
+        resolve(&output, Path::new(&request.invocation_directory)).join("libevent-clang-build");
     std::fs::create_dir_all(&build).map_err(|error| format!("{}: {error}", build.display()))?;
     let cache = build.join("CMakeCache.txt");
     if cache.exists() {
@@ -297,7 +298,8 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
         };
         let base = Path::new(&request.invocation_directory);
         let same = cached.is_some_and(|cached| {
-            !cached.is_empty() && resolve(Path::new(cached), base) == resolve(Path::new(&clang), base)
+            !cached.is_empty()
+                && resolve(Path::new(cached), base) == resolve(Path::new(&clang), base)
         });
         if !same {
             return Err("build cache uses another compiler; choose a fresh output".into());
@@ -355,7 +357,10 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
             .map(|name| {
                 Ok(PyJson::Object(vec![
                     ("path".into(), PyJson::string(name)),
-                    ("sha256".into(), PyJson::string(digest(&checkout.join(name))?)),
+                    (
+                        "sha256".into(),
+                        PyJson::string(digest(&checkout.join(name))?),
+                    ),
                 ]))
             })
             .collect::<Result<Vec<_>, String>>()?;
