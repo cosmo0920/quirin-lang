@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 513
+  "named_followups": 505
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6736,11 +6736,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for DOCS-COMPACT-9 on merge 0786584a (onto main 200fdcbe, after STABILITY-REEVAL-5 and every earlier wave-45 card), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5995 core Rust passed / 0 failed / 11 ignored over 331 summaries across 319 units (runner totals line: 'test binaries: 319 units, 331 summaries; 5995 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out', matching the strict `^test result: ` count and sums exactly); 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 207 Lean audits; 364 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran and 32-identity.log against docs/reports/w45-container-root-reach/integration/artifacts shows verdict_bearing_identical true with the diagnostics artifact byte_identical true (identity-vs-container-root-reach-baseline.json); this is a documentation-only card (MOVES=no) so the baseline does not move. The contracts artifact alone differs byte-for-byte from the pinned baseline; leaf_diff.py (34-contracts-raw-diff.log) shows the only differing top-level key is refuted_contracts, with entries: [], refuted_declarations: 0 and phases: 1, so it is accepted as non-verdict-bearing.",
-  "workspace_tests": 5995,
+  "note": "PROVISIONAL, replaced by the final gate run: figures from the gate at e4f10653 (run_test_binaries.py 0: 321 units, 333 summaries; 6014 passed; 0 failed; 11 ignored; check_lean_audits.py 0, 210 audits), before the clippy-only fix.",
+  "workspace_tests": 6014,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 207,
+  "lean_audits": 210,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6852,6 +6852,7 @@
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMemberRelease.lean",
+   "AuditMemberReleaseCallee.lean",
    "AuditMemoKey.lean",
    "AuditMonkeyWaitProjection.lean",
    "AuditMonkeyWaitSourcePolicy.lean",
@@ -6898,6 +6899,7 @@
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditReservedSpelling.lean",
    "AuditResourceCalls.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
@@ -6921,6 +6923,7 @@
    "AuditSourceRecord.lean",
    "AuditSourceRootAdmission.lean",
    "AuditSourceValidation.lean",
+   "AuditSr5Soundness.lean",
    "AuditStdBuffer.lean",
    "AuditStdEvent.lean",
    "AuditStdHttp.lean",
@@ -6956,7 +6959,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/docs-compact-9/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-sr5-soundness/gate.json)"
  },
  "named_followups": [
   {
@@ -9917,13 +9920,6 @@
    "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
   {
-   "id": "W45-REVIEW-PREFIX-COLLISION-UNPINNED",
-   "title": "The review hold's claim that no corpus symbol begins with its rewrite prefix has no test",
-   "why": "`crates/qcore-c-gateway/src/legacy_review_hold.rs` documents its `qcore_review_pending__` prefix as asserted by the tests to occur in no corpus symbol; no test asserts it (found by W45-CONTRACT-REVISION-MODE, whose `qcore_pin_mismatch__` prefix documents the refusing-only consequence of a collision instead). A collision can only make a call read as held, which is `Unknown`, so no verdict moves towards Safe or Unsafe. DISCHARGE: either a test over the corpus inputs asserting neither prefix occurs, or the review hold's comment corrected to the refusing-only argument.",
-   "source": "docs/reports/w45-contract-revision-mode/README.md",
-   "recorded_by": "W45-CONTRACT-REVISION-MODE"
-  },
-  {
    "id": "W45-REVISION-COMPARE-MATCHED-IDENTITY",
    "title": "`quirin-audit compare` does not report a pinned contract moving between reviewed identities",
    "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
@@ -10094,7 +10090,7 @@
   {
    "id": "W45-UNCHECKED-DECLARATIONS-TRUSTED",
    "title": "A declaration its analysed body neither establishes nor refutes is still applied as a trusted premise",
-   "why": "C06.4 withdraws only refuted declarations; an unchecked one (an undecided clause, a body that does not validate) keeps constraint 4's and 8's trusted reading, deliberately: making `resource_body_checked` the default would withdraw every cross-unit application and, on the pinned corpus, at least 22 of the 24 declarations with an analysed main-source body, on no evidence (`docs/reports/w45-refuted-contract-withdrawal/artifacts/body-checked-default-census.json`). In the Fluent Bit slice the unchecked premises include `flb_task_retry_destroy` (neutral clause undecided in `src/flb_task.c`) and `flb_output_thread_pool_flush` (no analysed body). Size: 22 corpus declarations (lower bound). DISCHARGE: per declaration, either its body establishes it (validated W4 summary equal to it, every clause held) or it moves behind `resource_body_checked`; or a report status that names every Safe resting on an unchecked declaration of an audited body.",
+   "why": "C06.4 withdraws only refuted declarations; an unchecked one (an undecided clause, a body that does not validate) keeps constraint 4's and 8's trusted reading, deliberately: making `resource_body_checked` the default would withdraw every cross-unit application and, on the pinned corpus, at least 22 of the 24 declarations with an analysed main-source body, on no evidence (`docs/reports/w45-refuted-contract-withdrawal/artifacts/body-checked-default-census.json`). In the Fluent Bit slice the unchecked premises include `flb_task_retry_destroy` (neutral clause undecided in `src/flb_task.c`) and `flb_output_thread_pool_flush` (no analysed body). Size: 22 corpus declarations (lower bound). DISCHARGE: per declaration, either its body establishes it (validated W4 summary equal to it, every clause held) or it moves behind `resource_body_checked`; or a report status that names every Safe resting on an unchecked declaration of an audited body. AMENDED (W45-SR5-SOUNDNESS): inside the defining unit a declared resource_user_neutral() is no longer applied unverified: call_effect verifies it against the body (DECLARED-NEUTRAL-UNVERIFIED-AT-CALL, discharged); the slice at 046accf6 is leaf-identical. Open as before: every cross-unit application, and every other unchecked declaration.",
    "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
    "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
   },
@@ -10204,62 +10200,6 @@
    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS integration"
   },
   {
-   "id": "MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE",
-   "title": "A member release followed by a callee whose summary releases the same member again is Safe (rule 5k)",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): with the unit-test destructor `node_destroy` (`if (n->buf) q_nullable_free(n->buf); q_nullable_free(n);`), `void subject(struct node *n) { q_nullable_free(n->buf); node_destroy(n); }` is Safe at function level AND as the unit verdict of analyze_unrestricted_c11 (probe rows 5k-member-then-destroy, 5k-unit-member-then-destroy) although `n->buf` is released twice. Mechanism (read): P4's R(B) accepts any callee whose contract in force releases its only parameter (crates/qcore-c-gateway/src/legacy_member_release.rs:377 releases_its_only_parameter, used at :423-430 and :473-481), and derived summaries are in that environment (legacy_summary.rs:274-275); the call-site guard (:300-327) refuses only a tracked sub-custody. tests/unit/legacy_member_release.rs:201 pins only the opposite order. Lean MemberRelease.lean:222 is over one body's occurrence list. This is the admitting direction (invariant 1); corpus reach unmeasured. DISCHARGE: the probe's shape pinned != Safe by a test, and P4's R restricted to a callee that does not itself release the member (a declared contract, or a callee outside member_releasing_functions), with the Lean model carrying the interprocedural case.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "PUBLICATION-ROOT-RELEASED",
-   "title": "A body that publishes into a formal's container and then releases that formal is Safe; container teardown is an unstated premise (10d/10f)",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): `void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); q_free(q); }` is Safe (probe row 10d-root-released-after-publication): the element's custody moved into a container whose root the same body then releases. A CallerFormal root is stable only lexically (legacy_container_publication.rs:187-197); Lean ContainerPublication has no lifetime and ContainerRootReach's `lifetime` is true by definition (:57, :81). Whether this is a leak depends on a container-teardown premise no rule states. DISCHARGE: either state the premise in gateway 10d with its ground, or withdraw published sites when a release (direct or by summary) reaches their root, with the probe's shape pinned by a test either way.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "COUNTED-USER-CONDITIONAL-OPERAND",
-   "title": "The counted-user walker applies calls and counter writes behind ?:, && and || on every path, and reads f(a)(b) as non-opaque (10e)",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: Walker::expression (crates/qcore-c-gateway/src/legacy_counted_users.rs:1113-1160, :1162-1215) ignores conditional operators; opaque_callee (:776-795) treats `) (` after an argument list as not opaque and its unit test pins `f ( a ) ( b )` so (:1753-1754), against 10c's rule 2. verify_declared accepts a declaration at callers on records only (:500-540), so a false Held would hide a refutation from 10g. (The custody classifier's expression statements were probed and refuse these operators: probe rows 10c-ternary/-and/-or are Unknown.) DISCHARGE: the walker undecides a call or counter write behind a top-level ?:, && or ||, f(a)(b) is opaque, and a fixture `u_ref(t); c ? u_unref(t,0) : (void)0; return 0;` under resource_user_exit is not Held.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER",
-   "title": "Publishing an element bound by container_of over a formal skips the formal-publication rule (10d with 5l(2))",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: 5l(2) binds `ctx = container_of(arg, ...)` over a never-bound formal and leaves ctx unbound (legacy_list_iteration.rs:947-957); a 10d publication of `&ctx->_head` reaches `Ok(None) => continue` (legacy_container_publication.rs:518-519) because the formal check reads only the entry's own spelling (:405), so the summary can say `arg` Borrowed while it is linked - the launder 10d forbids for a literal formal. DISCHARGE: a publication whose entry 5l bound over a formal is treated as that formal (Consumed/UnknownAlias) or refused, with a fixture (a link helper over `void *arg` and a caller that frees after linking) pinned != Safe.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "DECLARED-NEUTRAL-UNVERIFIED-AT-CALL",
-   "title": "A declared resource_user_neutral() is applied at call sites before, and without, checking the callee's analysed body",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) by reading crates/qcore-c-gateway/src/legacy_counted_users.rs:645-647 (neutral returned before the body is examined) and :1283-1288 (verify_declared runs for effects and exits only); the defining row records Undecided (:432-446), which 10g does not withdraw. Narrower than W45-UNCHECKED-DECLARATIONS-TRUSTED: neutrality is not undecided by the body, it is never compared with it. In the Fluent Bit slice the provider declares neutral for flb_task_retry_destroy and flb_output_thread_pool_flush (task_users.qcore:81-108). DISCHARGE: declared neutrality is routed through verify_declared where the unit defines the body, with a fixture whose body writes the counter and whose caller clause is then not Held.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "SCALAR-READ-PARENTHESISED-DOUBLE-DEREF",
-   "title": "Rule 5j's scalar read may admit (*q)->len, (*q)[0] and **q as one dereference",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: tracing legacy_return_family.rs:402-447, a starred root in parentheses followed by -> or [, or a repeated unary *, passes as one dereference with base q, while the equivalent *q->len, q[0]->len and q->next->len are refused (pinned at tests/unit/legacy_return_family.rs:109-114). DISCHARGE: unit pins asserting None for the three shapes, and the reader refuses them if any is admitted.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK",
-   "title": "Rule 5l's premise that an iterated element is not a tracked identity is stale since the foreign unlink (10f) binds it",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: docs/agents/gateway.md:426-429 reads that an element of a borrowed container is untracked and refuses on its own; W45-CONTAINER-ROOT-REACH's take_foreign_custody binds the element at a fresh site (legacy_container_publication.rs:627-640), which 5l's lexical guard does not see. (The two-name alias of one foreign element was probed and is Unknown, UnknownAlias f/e: probe row 10f-two-names.) DISCHARGE: 5l's text revised to the post-10f state, and a fixture that re-publishes a foreign-unlinked element into the iterated list under a different head spelling pinned != Safe. AMENDED (DOCS-COMPACT-9, wave-45 close): rule 5l's text is revised to the post-10f state: the unlink of the current element is 10f's foreign unlink, which binds it at a fresh site, and the lexical guard is stated as not seeing an element 10f has bound. Open: the fixture that re-publishes a foreign-unlinked element into the iterated list under a different head spelling, pinned != Safe.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "STATIC-ROOT-SHADOW-READER",
-   "title": "10f's static-root set is a lexical reader that skips a shadowing declaration containing '(' (low)",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: statics come from the CTWIN-PUBLISH destination reader (legacy_c.rs:2907; publication.rs:475-489), which skips a block-scope declaration containing '(' (publication.rs:169), so a global shadowed by such a declaration could be read as a static root. Masked today by the classifier refusing __attribute__/_Alignas/typeof. DISCHARGE: a fixture shadowing a global inside a declaration containing '(' pinned != Safe, or the reader refuses the unit.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
    "id": "GATEWAY-W45-REFUSAL-ARMS-UNREACHED",
    "title": "Wave-45 gateway refusal arms that no fixture drives (10d, 10e, 5l) and one test whose premise drifted",
    "why": "Arm table in STABILITY-REEVAL-5's report section 2.3, attributed to its gateway sub-audit and spot-checked (PATH_BOUND at legacy_counted_users.rs:1003-1004 has no test naming it). Undriven by message: 10e 'unattributed counted-user operation' (:1311, :1418), 'an exit no clause covers' (:1692, :1703), clauses 'this position does not apply' (:654), 'recursive call' (:669), 'verified through itself' (:507), PATH_BOUND (:1004), 'a direct counter write' (:1187), the jump/label/switch/unbalanced arms (:877-949, only `for` unit-tested); 10d 'projection cannot name' (legacy_container_publication.rs:487-498) and the four container-effect guards on borrowed-identity routes (neutral_position.rs:376, variadic_nested.rs:213, legacy_condition_desugar.rs:430,443, legacy_c.rs:6411); 5l checked-spec Unreadable (legacy_checked_spec.rs:56). All fail closed by reading; deleting any turns no test red. tests/refused_call_hand_on.rs:113 is named a local-container case but its refusal comes from nullability. DISCHARGE: one fixture per arm asserting its reason text, and the :113 test renamed or re-aimed.",
@@ -10270,20 +10210,6 @@
    "id": "CONDITION-DESUGAR-REFUSAL-ARMS-UNPINNED",
    "title": "Six W44 condition-desugar refusal variants have no test, and six 'unexplained' residual leaves are unreported",
    "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): the variants IndirectCallee, Braces, AssignmentDestination, ResidualRefused, CallFreeLeafRefused and SwitchShape (crates/qcore-c-gateway/src/legacy_condition_desugar.rs:140-184, returned at :538, :554, :589, :718-730, :808) have reason keys named in no file outside that source (rg over crates, compiler, tests). docs/reports/w44-branch-condition-calls/residuals.txt:17-21 lists 6 unexplained leaves in 5 functions that the card's README does not mention. Each falls back to the pre-existing refusal (fail-closed). DISCHARGE: one test per variant, and the 6 leaves explained or registered.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "HELD-PREFIX-SOURCE-FORGES-PENDING",
-   "title": "A source that itself spells a held-call prefix publishes Pending with a human-resolvable reason instead of Unknown",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): `qcore_pin_mismatch__zz(0);` and `qcore_review_pending__zz(0);` are Pending (reasons contract-pin-mismatch, awaiting-human-review) where the control `zz(0);` is Unknown, and a unit holding only the first is a Pending unit verdict (probe rows held-pin-prefix, held-review-prefix, unit-control-held-alone). The held classification is lexical: legacy_c.rs:7156-7171 and :7641-7654 test only the callee prefix (legacy_pin_hold.rs:40, legacy_review_hold.rs:61), and legacy_verdict.rs:76-78 maps the description to Pending; nothing checks membership in the withheld set. The comment at legacy_pin_hold.rs:37-39 ('which is Unknown') and W45-REVIEW-PREFIX-COLLISION-UNPINNED's 'so no verdict moves' became false when W45-USER-CONTRACT-PLUGINS made held calls Pending. Never Safe. DISCHARGE: a source identifier carrying a held prefix the rewrite did not produce is Unknown (or the held description is emitted only for a member of the withheld set), both texts corrected, and the probe's rows pinned.",
-   "source": "docs/reports/stability-reeval-5/README.md",
-   "recorded_by": "STABILITY-REEVAL-5"
-  },
-  {
-   "id": "PENDING-BYPASSES-UNIT-SAFE-GATES",
-   "title": "A Pending unit skips the Safe arm's unread-definition, certificate-scope and inventory gates",
-   "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: crates/qcore-c-gateway/src/legacy_c.rs:2111-2122 publishes Unknown|Pending through the Unknown variant, and legacy_verdict.rs:124-127 reads Pending back from the summary; the unread selected-definition gate (:2153-2170, whose comment :2145-2147 predates Pending), the certificate target scope (:2171-2186) and the audit's inventory withholding (projection.rs:419-429) run on the Safe arm only. A unit with a held call and an unread definition is then Pending although a re-pin could not make it Safe, against spec §L21.1 ('withheld for one of them alone'). The probe could not engage the gate: analyze_unrestricted_c11 without a selection gives Safe for an `#if 0` definition too (probe rows unit-control-if0-safe, unit-if0-plus-held). DISCHARGE: the same gates applied to a Pending unit (any failure Unknown), with a fixture of a held call beside an unread selected definition on the audit route.",
    "source": "docs/reports/stability-reeval-5/README.md",
    "recorded_by": "STABILITY-REEVAL-5"
   },
@@ -10489,6 +10415,27 @@
    "why": "`reconciliation_sweep.py --check` verifies a `{file, contains}` claim by substring containment on normalised text. Three frozen claims assert that docs/STATUS.md contains `281`, their records' follow-up count: `canonical-contract-locations#integrator-reconciliation-list#4` (verify item 1, in docs/reports/canonical-contract-locations/reconciliation.json) and `cycle18-timeout-teardown#integrator-reconciliation-list#5` and `cycle18-wait-failures#integrator-reconciliation-list#5` (verify item 0 each, in docs/reports/cycle18-priority1-integration/reconciliation.json). At base `8c1f15eb` the page carried 472 follow-ups and the three matched only inside `17,281`, an indirect-access leaf count of an unrelated row, so they were vacuous before DOCS-COMPACT-9; its compaction moved that figure to a checkpoint and they now fail. They are not rewritten (frozen records; the integration policy lets a close check its own record against its own tree). No gate or CI step runs them: `.github/workflows/ci.yml` runs no reconciliation check, the standing gate does not, and scripts/tests exercise the sweep only on temporary fixtures; they run only when a close checks its own record by hand (docs/agents/operations.md, Integration and reconciliation). DISCHARGE: the sweep's containment check is anchored to a token or a named field, so a figure cannot match inside another number, or these three claims are marked historical in a way the check honours.",
    "source": "docs/reports/docs-compact-9/README.md",
    "recorded_by": "DOCS-COMPACT-9"
+  },
+  {
+   "id": "W45-SR5-DECLARED-RELEASE-DOES-NOT-CASCADE",
+   "title": "Rule 5k reads a bodiless declared release as releasing no member (P-B08-SHALLOW); a declared destructor that does is invisible",
+   "why": "MEASURED by card W45-SR5-SOUNDNESS: rule 5k now reads every R(B) of a member-releasing body for what R does to B->F, but only where the unit defines R's body (crates/qcore-c-gateway/src/legacy_member_release.rs, member_effect). A callee with no body here is governed by its declaration, and a declared release is read as not cascading to members (P-B08-SHALLOW, stated not proved): `free(n->buf); lib_node_destroy(n);` with `lib_node_destroy` declared `resource_released(n)` in a provider and defined in another unit stays Safe (pinned as the control in crates/qcore-c-gateway/tests/sr5_soundness.rs, a_declaration_does_not_hide_the_body_this_unit_defines). Size: at most the 7 corpus functions W45-CALLEE-SUMMARY-CASCADE moved to Safe through rule 1, which release through `free`, `rd_free` and `mk_mem_free` (declared releases of one object). DISCHARGE: a contract clause that states which members a declared release releases (or that it releases none), checked where a unit defines the body, and rule 5k reading it.",
+   "source": "docs/reports/w45-sr5-soundness/README.md",
+   "recorded_by": "W45-SR5-SOUNDNESS"
+  },
+  {
+   "id": "W45-SR5-PENDING-INVENTORY-ARM-UNDRIVEN",
+   "title": "The audit's inventory arm that withholds a Pending unit is driven by no fixture",
+   "why": "MEASURED by card W45-SR5-SOUNDNESS: crates/qcore-audit/src/projection.rs now makes a Pending unit Unknown when the enumeration inventory does not support a unit Safe, as it already withheld a Safe one. The audit-route fixture (crates/qcore-audit/tests/sr5_pending_gates.rs) reaches the gateway's unread-definition gate first (its reason names `kr_width`), so this arm, like the Safe arm beside it, turns no test red when deleted. Fail-closed by reading. Size: 1 arm. DISCHARGE: a fixture whose enumeration completeness is refused (an undecided conditional group) beside a held call, asserting the unit Unknown with the inventory's reason.",
+   "source": "docs/reports/w45-sr5-soundness/README.md",
+   "recorded_by": "W45-SR5-SOUNDNESS"
+  },
+  {
+   "id": "W45-SR5-SCALAR-READ-STAR-THROUGH-CAST",
+   "title": "Rule 5j does not count a `*` applied through a cast group before a member or subscript root (`*(T *)q->f`)",
+   "why": "INFERRED by card W45-SR5-SOUNDNESS from crates/qcore-c-gateway/src/legacy_return_family.rs (stars_before stops at the `)` of a cast group): for a name the body may bind, `return *(T *)q->f;` reads `q->f` and dereferences the value, two dereferences, while the reader sees one. Pre-existing (the base reader read the same), found while repairing SCALAR-READ-PARENTHESISED-DOUBLE-DEREF; the first AFTER run showed the neighbouring shape `*(int32_t *)rl->rl_elems[idx]` (rd_list_get_int32) keeps its refusal only through the cast's type name. Size: 4 textual `return *(T *)X->F` or `X[I]` shapes in the pinned Fluent Bit tree (rdlist.c:588, pb_encode.c:257,262,303); no corpus verdict moved at base or after. DISCHARGE: a `*` before a cast group that precedes a may-bind root counts as a dereference of that root's read, with a unit pin.",
+   "source": "docs/reports/w45-sr5-soundness/README.md",
+   "recorded_by": "W45-SR5-SOUNDNESS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

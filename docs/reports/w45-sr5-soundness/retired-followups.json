@@ -1,0 +1,123 @@
+[
+  {
+    "entry": {
+      "id": "W45-REVIEW-PREFIX-COLLISION-UNPINNED",
+      "title": "The review hold's claim that no corpus symbol begins with its rewrite prefix has no test",
+      "why": "`crates/qcore-c-gateway/src/legacy_review_hold.rs` documents its `qcore_review_pending__` prefix as asserted by the tests to occur in no corpus symbol; no test asserts it (found by W45-CONTRACT-REVISION-MODE, whose `qcore_pin_mismatch__` prefix documents the refusing-only consequence of a collision instead). A collision can only make a call read as held, which is `Unknown`, so no verdict moves towards Safe or Unsafe. DISCHARGE: either a test over the corpus inputs asserting neither prefix occurs, or the review hold's comment corrected to the refusing-only argument.",
+      "source": "docs/reports/w45-contract-revision-mode/README.md",
+      "recorded_by": "W45-CONTRACT-REVISION-MODE"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged by its second arm, made true again: the review hold's comment is corrected, and a collision can no longer read as held at all, because every source-spelled reserved prefix is escaped before the rewrites run (legacy_reserved_spelling.rs, unit tests there; crates/qcore-c-gateway/tests/sr5_soundness.rs pins the collision with a withheld name Unknown). Since held calls became Pending the entry's 'so no verdict moves' was false (HELD-PREFIX-SOURCE-FORGES-PENDING); it is true again."
+  },
+  {
+    "entry": {
+      "id": "MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE",
+      "title": "A member release followed by a callee whose summary releases the same member again is Safe (rule 5k)",
+      "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): with the unit-test destructor `node_destroy` (`if (n->buf) q_nullable_free(n->buf); q_nullable_free(n);`), `void subject(struct node *n) { q_nullable_free(n->buf); node_destroy(n); }` is Safe at function level AND as the unit verdict of analyze_unrestricted_c11 (probe rows 5k-member-then-destroy, 5k-unit-member-then-destroy) although `n->buf` is released twice. Mechanism (read): P4's R(B) accepts any callee whose contract in force releases its only parameter (crates/qcore-c-gateway/src/legacy_member_release.rs:377 releases_its_only_parameter, used at :423-430 and :473-481), and derived summaries are in that environment (legacy_summary.rs:274-275); the call-site guard (:300-327) refuses only a tracked sub-custody. tests/unit/legacy_member_release.rs:201 pins only the opposite order. Lean MemberRelease.lean:222 is over one body's occurrence list. This is the admitting direction (invariant 1); corpus reach unmeasured. DISCHARGE: the probe's shape pinned != Safe by a test, and P4's R restricted to a callee that does not itself release the member (a declared contract, or a callee outside member_releasing_functions), with the Lean model carrying the interprocedural case.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: rule 5k reads every R(B) for what R does to B->F (legacy_member_release.rs section 4); a unit-defined callee that releases the member again makes the release a DoubleRelease candidate and withholds the place. The probe's shape, its null-tested form, the wrapper, the declared-and-defined destructor and the same-member-next row are pinned Unsafe with the double release in crates/qcore-c-gateway/tests/sr5_soundness.rs (the unit verdict too); the neighbours stay Safe. Lean: QCore.MemberReleaseCallee (an_admitted_member_is_not_released_again, a_reported_place_is_never_admitted). Residual premise: W45-SR5-DECLARED-RELEASE-DOES-NOT-CASCADE."
+  },
+  {
+    "entry": {
+      "id": "PUBLICATION-ROOT-RELEASED",
+      "title": "A body that publishes into a formal's container and then releases that formal is Safe; container teardown is an unstated premise (10d/10f)",
+      "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): `void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); q_free(q); }` is Safe (probe row 10d-root-released-after-publication): the element's custody moved into a container whose root the same body then releases. A CallerFormal root is stable only lexically (legacy_container_publication.rs:187-197); Lean ContainerPublication has no lifetime and ContainerRootReach's `lifetime` is true by definition (:57, :81). Whether this is a leak depends on a container-teardown premise no rule states. DISCHARGE: either state the premise in gateway 10d with its ground, or withdraw published sites when a release (direct or by summary) reaches their root, with the probe's shape pinned by a test either way.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged by the second arm: a publication into a container whose root the body hands whole to a non-Borrowed position (a direct release, a summary's Released, through a local initialised from the formal) refuses (legacy_container_publication.rs rule 7, gateway 10d); pinned not Safe in crates/qcore-c-gateway/tests/sr5_soundness.rs beside the Safe publication alone. Lean: QCore.Sr5Soundness (a_released_root_discharges_nothing)."
+  },
+  {
+    "entry": {
+      "id": "COUNTED-USER-CONDITIONAL-OPERAND",
+      "title": "The counted-user walker applies calls and counter writes behind ?:, && and || on every path, and reads f(a)(b) as non-opaque (10e)",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: Walker::expression (crates/qcore-c-gateway/src/legacy_counted_users.rs:1113-1160, :1162-1215) ignores conditional operators; opaque_callee (:776-795) treats `) (` after an argument list as not opaque and its unit test pins `f ( a ) ( b )` so (:1753-1754), against 10c's rule 2. verify_declared accepts a declaration at callers on records only (:500-540), so a false Held would hide a refutation from 10g. (The custody classifier's expression statements were probed and refuse these operators: probe rows 10c-ternary/-and/-or are Unknown.) DISCHARGE: the walker undecides a call or counter write behind a top-level ?:, && or ||, f(a)(b) is opaque, and a fixture `u_ref(t); c ? u_unref(t,0) : (void)0; return 0;` under resource_user_exit is not Held.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: the counted-user walker undecides a call or counter write behind ?:, && or || and treats f(a)(b) as opaque (legacy_counted_users.rs; the unit pin that read f(a)(b) as named is inverted). The fixture `u_ref(t); c ? u_unref(t, 0) : (void)0; return 0;` and the && and f(a)(b) forms are Undecided, neither body nor caller Safe, in crates/qcore-c-gateway/tests/sr5_soundness.rs. Lean: QCore.Sr5Soundness (a_skippable_or_opaque_event_holds_no_clause)."
+  },
+  {
+    "entry": {
+      "id": "CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER",
+      "title": "Publishing an element bound by container_of over a formal skips the formal-publication rule (10d with 5l(2))",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: 5l(2) binds `ctx = container_of(arg, ...)` over a never-bound formal and leaves ctx unbound (legacy_list_iteration.rs:947-957); a 10d publication of `&ctx->_head` reaches `Ok(None) => continue` (legacy_container_publication.rs:518-519) because the formal check reads only the entry's own spelling (:405), so the summary can say `arg` Borrowed while it is linked - the launder 10d forbids for a literal formal. DISCHARGE: a publication whose entry 5l bound over a formal is treated as that formal (Consumed/UnknownAlias) or refused, with a fixture (a link helper over `void *arg` and a caller that frees after linking) pinned != Safe.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: a publication of an element rule 5l(2) bound over a formal takes the formal entry's rule (ForeignOrigins::note_over_formal, legacy_container_publication.rs rule 8); the link helper over `void *arg` and the caller that frees after linking are pinned not Safe in crates/qcore-c-gateway/tests/sr5_soundness.rs. Lean: QCore.Sr5Soundness (an_element_over_a_formal_is_never_borrowed)."
+  },
+  {
+    "entry": {
+      "id": "DECLARED-NEUTRAL-UNVERIFIED-AT-CALL",
+      "title": "A declared resource_user_neutral() is applied at call sites before, and without, checking the callee's analysed body",
+      "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) by reading crates/qcore-c-gateway/src/legacy_counted_users.rs:645-647 (neutral returned before the body is examined) and :1283-1288 (verify_declared runs for effects and exits only); the defining row records Undecided (:432-446), which 10g does not withdraw. Narrower than W45-UNCHECKED-DECLARATIONS-TRUSTED: neutrality is not undecided by the body, it is never compared with it. In the Fluent Bit slice the provider declares neutral for flb_task_retry_destroy and flb_output_thread_pool_flush (task_users.qcore:81-108). DISCHARGE: declared neutrality is routed through verify_declared where the unit defines the body, with a fixture whose body writes the counter and whose caller clause is then not Held.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: call_effect routes a declared resource_user_neutral() of a body the unit defines through verify_declared (legacy_counted_users.rs); a helper writing the counter or operating in a loop leaves its caller's clause Undecided, and the verifying control stays Safe, in crates/qcore-c-gateway/tests/sr5_soundness.rs. The Fluent Bit slice at 046accf6 is leaf-identical. Lean: QCore.Sr5Soundness (an_unverified_neutral_body_is_opaque)."
+  },
+  {
+    "entry": {
+      "id": "SCALAR-READ-PARENTHESISED-DOUBLE-DEREF",
+      "title": "Rule 5j's scalar read may admit (*q)->len, (*q)[0] and **q as one dereference",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: tracing legacy_return_family.rs:402-447, a starred root in parentheses followed by -> or [, or a repeated unary *, passes as one dereference with base q, while the equivalent *q->len, q[0]->len and q->next->len are refused (pinned at tests/unit/legacy_return_family.rs:109-114). DISCHARGE: unit pins asserting None for the three shapes, and the reader refuses them if any is admitted.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: the reader counts a `*` through parentheses and ends the dereference only after closing ones (legacy_return_family.rs stars_before, ends_one_dereference); unit pins assert None for (*q)->len, (*q)[0], **q, *(*q), (q->next)->len, (q[0])->len, *(q->next), *(q[0]) and the cast shape `*(q *) p` (tests/unit/legacy_return_family.rs). Lean: QCore.Sr5Soundness (an_admitted_read_dereferences_once). Pre-existing neighbour: W45-SR5-SCALAR-READ-STAR-THROUGH-CAST."
+  },
+  {
+    "entry": {
+      "id": "GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK",
+      "title": "Rule 5l's premise that an iterated element is not a tracked identity is stale since the foreign unlink (10f) binds it",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: docs/agents/gateway.md:426-429 reads that an element of a borrowed container is untracked and refuses on its own; W45-CONTAINER-ROOT-REACH's take_foreign_custody binds the element at a fresh site (legacy_container_publication.rs:627-640), which 5l's lexical guard does not see. (The two-name alias of one foreign element was probed and is Unknown, UnknownAlias f/e: probe row 10f-two-names.) DISCHARGE: 5l's text revised to the post-10f state, and a fixture that re-publishes a foreign-unlinked element into the iterated list under a different head spelling pinned != Safe. AMENDED (DOCS-COMPACT-9, wave-45 close): rule 5l's text is revised to the post-10f state: the unlink of the current element is 10f's foreign unlink, which binds it at a fresh site, and the lexical guard is stated as not seeing an element 10f has bound. Open: the fixture that re-publishes a foreign-unlinked element into the iterated list under a different head spelling, pinned != Safe.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: DOCS-COMPACT-9 revised 5l's text to the post-10f state; this card pins the fixture that re-publishes a foreign-unlinked element into the iterated list under an alias head spelling not Safe (a_foreign_element_republished_under_an_alias_head_is_not_safe in crates/qcore-c-gateway/tests/sr5_soundness.rs; probe row 5l-republish-alias-head, Unknown at base and after, docs/reports/w45-sr5-soundness/probes/ (probe-before.log, probe-after.log))."
+  },
+  {
+    "entry": {
+      "id": "STATIC-ROOT-SHADOW-READER",
+      "title": "10f's static-root set is a lexical reader that skips a shadowing declaration containing '(' (low)",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: statics come from the CTWIN-PUBLISH destination reader (legacy_c.rs:2907; publication.rs:475-489), which skips a block-scope declaration containing '(' (publication.rs:169), so a global shadowed by such a declaration could be read as a static root. Masked today by the classifier refusing __attribute__/_Alignas/typeof. DISCHARGE: a fixture shadowing a global inside a declaration containing '(' pinned != Safe, or the reader refuses the unit.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged by the fixture arm: a global shadowed by a declaration containing `(` (a parenthesised initialiser, a parenthesised declarator) is pinned not Safe beside the unshadowed Safe control (a_shadowed_static_root_is_not_a_root in crates/qcore-c-gateway/tests/sr5_soundness.rs); the probe measured all three shadowing rows Unknown at base (docs/reports/w45-sr5-soundness/probes/ (probe-before.log, probe-after.log))."
+  },
+  {
+    "entry": {
+      "id": "HELD-PREFIX-SOURCE-FORGES-PENDING",
+      "title": "A source that itself spells a held-call prefix publishes Pending with a human-resolvable reason instead of Unknown",
+      "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) with a one-off probe over the synthetic q_*/r_* test contracts (docs/reports/stability-reeval-5/probes/, run once and removed; no test landed): `qcore_pin_mismatch__zz(0);` and `qcore_review_pending__zz(0);` are Pending (reasons contract-pin-mismatch, awaiting-human-review) where the control `zz(0);` is Unknown, and a unit holding only the first is a Pending unit verdict (probe rows held-pin-prefix, held-review-prefix, unit-control-held-alone). The held classification is lexical: legacy_c.rs:7156-7171 and :7641-7654 test only the callee prefix (legacy_pin_hold.rs:40, legacy_review_hold.rs:61), and legacy_verdict.rs:76-78 maps the description to Pending; nothing checks membership in the withheld set. The comment at legacy_pin_hold.rs:37-39 ('which is Unknown') and W45-REVIEW-PREFIX-COLLISION-UNPINNED's 'so no verdict moves' became false when W45-USER-CONTRACT-PLUGINS made held calls Pending. Never Safe. DISCHARGE: a source identifier carrying a held prefix the rewrite did not produce is Unknown (or the held description is emitted only for a member of the withheld set), both texts corrected, and the probe's rows pinned.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: legacy_reserved_spelling.rs escapes every source identifier spelled with a reserved rewrite prefix before any rewrite mints one, on every route; an escaped callee is Unknown (reserved-prefix-in-source). Both texts corrected (legacy_pin_hold.rs, legacy_review_hold.rs). The probe's rows are pinned Unknown in crates/qcore-c-gateway/tests/sr5_soundness.rs and a genuine hold stays Pending. Lean: QCore.ReservedSpelling (pending_only_from_a_minted_hold). Gateway rule 10i."
+  },
+  {
+    "entry": {
+      "id": "PENDING-BYPASSES-UNIT-SAFE-GATES",
+      "title": "A Pending unit skips the Safe arm's unread-definition, certificate-scope and inventory gates",
+      "why": "INFERRED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb) from code read at the cited lines, no fixture run: crates/qcore-c-gateway/src/legacy_c.rs:2111-2122 publishes Unknown|Pending through the Unknown variant, and legacy_verdict.rs:124-127 reads Pending back from the summary; the unread selected-definition gate (:2153-2170, whose comment :2145-2147 predates Pending), the certificate target scope (:2171-2186) and the audit's inventory withholding (projection.rs:419-429) run on the Safe arm only. A unit with a held call and an unread definition is then Pending although a re-pin could not make it Safe, against spec §L21.1 ('withheld for one of them alone'). The probe could not engage the gate: analyze_unrestricted_c11 without a selection gives Safe for an `#if 0` definition too (probe rows unit-control-if0-safe, unit-if0-plus-held). DISCHARGE: the same gates applied to a Pending unit (any failure Unknown), with a fixture of a held call beside an unread selected definition on the audit route.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "W45-SR5-SOUNDNESS",
+    "ground": "Discharged: the unread-definition gate and the certificate target scope apply to a Pending unit in legacy_c.rs, and projection.rs withholds a Pending unit the inventory withholds; any failure is Unknown (gateway 10i). Fixtures: a held call beside an `#if 0` or K&R definition is an Unknown unit on the gateway route (crates/qcore-c-gateway/tests/sr5_soundness.rs) and on the audit route (crates/qcore-audit/tests/sr5_pending_gates.rs), the function row keeping its Pending reason. Lean: QCore.Sr5Soundness (a_gated_unit_is_never_pending). Residual: W45-SR5-PENDING-INVENTORY-ARM-UNDRIVEN."
+  }
+]

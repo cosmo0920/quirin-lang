@@ -1,0 +1,13 @@
+{
+ "note": "PROVISIONAL, replaced by the final gate run: figures from the gate at e4f10653 (run_test_binaries.py 0: 321 units, 333 summaries; 6014 passed; 0 failed; 11 ignored; check_lean_audits.py 0, 210 audits), before the clippy-only fix.",
+ "workspace_tests": 6014,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 210,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
