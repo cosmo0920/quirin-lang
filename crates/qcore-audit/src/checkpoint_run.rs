@@ -38,7 +38,7 @@ use crate::checkpoint::{
     AnalyzerIdentity, CategoryCount, CertificateRecord, CertificatesSection, Checkpoint,
     CheckpointReader, CompilerIdentity, ContractSetIdentity, ContractsSection, CountsRecord,
     EnvironmentValue, GlobalSection, GroupIdentity, HeldCallRecord, HeldFunction,
-    IdentitySection, ModuleDigest, PendingMarkerRecord, PlanSection, PlannedGroup,
+    IdentitySection, LockDigest, ModuleDigest, PendingMarkerRecord, PlanSection, PlannedGroup,
     PreparationFacts, ProvenanceSection, ResultSection, RowMembers, RowStepSection, RunIdentity,
     UnitFingerprint, UnitKey, exact_json, json_sha256, split_row,
 };
@@ -99,8 +99,15 @@ pub(crate) fn run(
     let groups = split_groups(plan.headers, plan.unresolved, plan.tasks)?;
     fs::create_dir_all(&options.directory)
         .map_err(|error| format!("{}: {error}", options.directory.display()))?;
-    let run_identity = run_identity(route, audit)?;
-    let global = global_section(route, audit, plan.preamble)?;
+    let revision_template = exact_json(
+        &serde_json::to_value(crate::contract_revision::template(
+            audit.contracts(),
+            audit.pins(),
+        ))
+        .map_err(|error| error.to_string())?,
+    )?;
+    let run_identity = run_identity(route, audit, &revision_template)?;
+    let global = global_section(route, audit, plan.preamble, revision_template)?;
     let planned = planned_groups(audit, &groups)?;
     warn_stale(&options.directory, &groups);
     let mut paths = Vec::new();
@@ -303,7 +310,11 @@ fn warn_stale(directory: &Path, groups: &[Group<'_>]) {
 
 /// The analyzer build, the configuration, the contract set and the
 /// environment shared by every group.
-fn run_identity(route: &CurrentRoute<'_>, audit: &CurrentAudit) -> Result<RunIdentity, String> {
+fn run_identity(
+    route: &CurrentRoute<'_>,
+    audit: &CurrentAudit,
+    revision_template: &str,
+) -> Result<RunIdentity, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let binary = fs::read(&executable)
         .map_err(|error| format!("could not read the analyzer {}: {error}", executable.display()))?;
@@ -356,7 +367,8 @@ fn run_identity(route: &CurrentRoute<'_>, audit: &CurrentAudit) -> Result<RunIde
                 .map(json_sha256)
                 .transpose()?,
             evidence_sha256: audit.report_evidence().map(json_sha256).transpose()?,
-            locks_sha256: None,
+            locks: lock_digests(audit),
+            pin_evaluation_sha256: sha256_hex(revision_template.as_bytes()),
         },
         compiler: CompilerIdentity {
             program: audit.compiler().program().to_owned(),
@@ -367,10 +379,21 @@ fn run_identity(route: &CurrentRoute<'_>, audit: &CurrentAudit) -> Result<RunIde
     })
 }
 
+/// Every contract lock the pin evaluation read, with its digest.
+fn lock_digests(audit: &CurrentAudit) -> Vec<LockDigest> {
+    audit
+        .pins()
+        .lock_digests()
+        .into_iter()
+        .map(|(path, sha256)| LockDigest { path, sha256 })
+        .collect()
+}
+
 fn global_section(
     route: &CurrentRoute<'_>,
     audit: &CurrentAudit,
     preamble: Vec<String>,
+    revision_template_json: String,
 ) -> Result<GlobalSection, String> {
     let markers = crate::pending_review::markers(audit.contracts());
     Ok(GlobalSection {
@@ -393,6 +416,7 @@ fn global_section(
                 module_sha256: marker.module_sha256,
             })
             .collect(),
+        revision_template_json,
         historical_reference_revision: route.historical_reference_revision.to_owned(),
     })
 }
@@ -667,6 +691,7 @@ fn compute_group(
         verdicts,
         certificates,
         held,
+        facts,
         diagnostic_counts,
         counts,
         sources,
@@ -728,27 +753,21 @@ fn compute_group(
                 .map(exact_json)
                 .transpose()?,
             evidence_mode: run.mode.clone(),
-            locks_sha256: None,
+            locks: run.contracts.locks.clone(),
             pending_declarations: markers.declarations as u64,
             pending_markers: markers.markers.len() as u64,
             held_calls: held
                 .call_sites
                 .iter()
-                .map(|(callee, sites)| HeldCallRecord {
-                    callee: callee.clone(),
-                    call_sites: *sites as u64,
-                    functions: held
-                        .functions
-                        .get(callee)
-                        .into_iter()
-                        .flatten()
-                        .map(|(library, file, function)| HeldFunction {
-                            library: library.clone(),
-                            file: file.clone(),
-                            function: function.clone(),
-                        })
-                        .collect(),
+                .map(|(callee, sites)| {
+                    held_record(callee, *sites, held.functions.get(callee).into_iter().flatten())
                 })
+                .collect(),
+            analysed_functions: facts.analysed.iter().cloned().collect(),
+            pin_held_calls: facts
+                .held
+                .iter()
+                .map(|(callee, (sites, rows))| held_record(callee, *sites, rows))
                 .collect(),
         },
         result: ResultSection {
@@ -803,10 +822,31 @@ struct GroupBuilder {
     verdicts: Vec<RowMembers>,
     certificates: Vec<CertificateRecord>,
     held: HeldCalls,
+    facts: crate::contract_revision::ReportFacts,
     diagnostic_counts: BTreeMap<String, usize>,
     counts: AuditCounts,
     sources: BTreeSet<String>,
     outputs: Vec<String>,
+}
+
+/// One callee's held calls as a checkpoint records them.
+fn held_record<'a>(
+    callee: &str,
+    sites: usize,
+    rows: impl IntoIterator<Item = &'a (String, String, String)>,
+) -> HeldCallRecord {
+    HeldCallRecord {
+        callee: callee.to_owned(),
+        call_sites: sites as u64,
+        functions: rows
+            .into_iter()
+            .map(|(library, file, function)| HeldFunction {
+                library: library.clone(),
+                file: file.clone(),
+                function: function.clone(),
+            })
+            .collect(),
+    }
 }
 
 impl GroupBuilder {
@@ -858,6 +898,8 @@ impl GroupBuilder {
             reason: refused.map(str::to_owned),
         });
         self.held.absorb(HeldCalls::from_rows(fragment.unit_rows()));
+        self.facts
+            .absorb(crate::contract_revision::ReportFacts::of_rows(fragment.unit_rows()));
         for (category, count) in fragment.diagnostic_count_map() {
             *self.diagnostic_counts.entry(category.clone()).or_default() += count;
         }

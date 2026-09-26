@@ -532,6 +532,11 @@ impl CurrentAudit {
     pub(crate) fn report_evidence(&self) -> Option<&Value> {
         self.report.evidence_record()
     }
+
+    /// The pin evaluation of card W45-CONTRACT-REVISION-MODE.
+    pub(crate) fn pins(&self) -> &crate::contract_revision::PinEvaluation {
+        &self.pins
+    }
 }
 
 impl EntryProducts {

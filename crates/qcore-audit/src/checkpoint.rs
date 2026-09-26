@@ -173,10 +173,20 @@ pub struct ContractSetIdentity {
     pub sources_sha256: String,
     pub provider_selection_sha256: Option<String>,
     pub evidence_sha256: Option<String>,
-    /// Reserved for the contract lock (revision mode) of card
-    /// W45-CONTRACT-REVISION-MODE: the digest of the locks in force, once a
-    /// route has them. Absent today.
-    pub locks_sha256: Option<String>,
+    /// Every contract lock (`contracts.lock`, card W45-CONTRACT-REVISION-MODE)
+    /// the pin evaluation read, by path, with its file's SHA-256: a re-pin
+    /// changes the identity.
+    pub locks: Vec<LockDigest>,
+    /// SHA-256 of the pin evaluation's section template (which contracts are
+    /// pinned, in force or withheld, over which reviewed sites).
+    pub pin_evaluation_sha256: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LockDigest {
+    pub path: String,
+    pub sha256: String,
 }
 
 /// The Clang every unit was prepared with.
@@ -287,6 +297,9 @@ pub struct GlobalSection {
     pub assumptions_json: String,
     pub pending_declarations: u64,
     pub pending_markers: Vec<PendingMarkerRecord>,
+    /// The report-independent part of the `contract_revision` section
+    /// ([`crate::contract_revision::SectionTemplate`]), as JSON.
+    pub revision_template_json: String,
     /// The historical reference revision the Unknown sidecars name.
     pub historical_reference_revision: String,
 }
@@ -354,12 +367,16 @@ pub struct ContractsSection {
     pub modules: Vec<ModuleDigest>,
     pub provider_selection_json: Option<String>,
     pub evidence_mode: String,
-    /// Reserved for the contract lock of card W45-CONTRACT-REVISION-MODE.
-    pub locks_sha256: Option<String>,
+    pub locks: Vec<LockDigest>,
     pub pending_declarations: u64,
     pub pending_markers: u64,
     /// The group's `awaiting-human-review` held calls, per callee.
     pub held_calls: Vec<HeldCallRecord>,
+    /// The functions the group's analysis read, by name (what the
+    /// `contract_revision` section reads of the report).
+    pub analysed_functions: Vec<String>,
+    /// The group's `contract-pin-mismatch` held calls, per callee.
+    pub pin_held_calls: Vec<HeldCallRecord>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1074,7 +1091,11 @@ mod tests {
                         sources_sha256: "3".repeat(64),
                         provider_selection_sha256: Some("4".repeat(64)),
                         evidence_sha256: None,
-                        locks_sha256: None,
+                        locks: vec![LockDigest {
+                            path: "/p/contracts.lock".into(),
+                            sha256: "a".repeat(64),
+                        }],
+                        pin_evaluation_sha256: "b".repeat(64),
                     },
                     compiler: CompilerIdentity {
                         program: "/usr/bin/clang".into(),
@@ -1134,6 +1155,7 @@ mod tests {
                     module: "m".into(),
                     module_sha256: None,
                 }],
+                revision_template_json: "{\"pinned\":[]}".into(),
                 historical_reference_revision: "h".into(),
             },
             preparation: RowStepSection { units: vec![preparation] },
@@ -1156,10 +1178,20 @@ mod tests {
                 }],
                 provider_selection_json: None,
                 evidence_mode: "configured".into(),
-                locks_sha256: None,
+                locks: vec![],
                 pending_declarations: 0,
                 pending_markers: 0,
                 held_calls: vec![],
+                analysed_functions: vec!["f".into(), "g".into()],
+                pin_held_calls: vec![HeldCallRecord {
+                    callee: "k".into(),
+                    call_sites: 2,
+                    functions: vec![HeldFunction {
+                        library: "lib".into(),
+                        file: "a.c".into(),
+                        function: "g".into(),
+                    }],
+                }],
             },
             result: ResultSection {
                 header: "lib: 1 selected compilation configuration(s)".into(),

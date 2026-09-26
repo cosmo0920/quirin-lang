@@ -120,10 +120,11 @@ impl Fixture {
         .unwrap()
         .trim()
         .to_owned();
-        fs::write(root.join("heap.qcore"), HEAP).unwrap();
+        fs::create_dir_all(root.join("contracts")).unwrap();
+        fs::write(root.join("contracts/heap.qcore"), HEAP).unwrap();
         fs::write(
             root.join("contracts.json"),
-            json!({"schema_version": 1, "modules": ["heap.qcore"]}).to_string(),
+            json!({"schema_version": 1, "modules": ["contracts/heap.qcore"]}).to_string(),
         )
         .unwrap();
         let library = |name: &str| {
@@ -368,7 +369,7 @@ fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
     );
     assert_eq!(fixture.outputs("repaired"), fixture.outputs("changed-whole"));
     // A different contract set recomputes every group.
-    fs::write(fixture.path("heap.qcore"), format!("{HEAP}\n")).unwrap();
+    fs::write(fixture.path("contracts/heap.qcore"), format!("{HEAP}\n")).unwrap();
     let contracts = fixture.run("contracts", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
     succeeded(&contracts);
     let stderr = String::from_utf8_lossy(&contracts.stderr);
@@ -432,7 +433,7 @@ fn composition_is_the_whole_run_and_refuses_an_incomplete_or_mixed_set() {
     );
     assert!(!fixture.path("x/report.json").exists());
     // A checkpoint of another run (another contract set) is refused.
-    fs::write(fixture.path("heap.qcore"), format!("{HEAP}\n")).unwrap();
+    fs::write(fixture.path("contracts/heap.qcore"), format!("{HEAP}\n")).unwrap();
     succeeded(&fixture.run("other", &["--jobs", "2", "--checkpoint-dir", "qo-other"]));
     let other_beta = fixture.path("qo-other/beta-group.qo");
     refused(
@@ -457,6 +458,41 @@ fn composition_is_the_whole_run_and_refuses_an_incomplete_or_mixed_set() {
         "truncated",
     );
     assert!(!fixture.path("x/report.json").exists());
+}
+
+/// Card W45-CONTRACT-REVISION-MODE's locks are part of the identity: pinning
+/// the contracts (a new `contracts.lock`) invalidates every checkpoint, and the
+/// resumed run is the whole run under the new lock.
+#[test]
+fn a_re_pin_invalidates_every_checkpoint() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang);
+    succeeded(&fixture.run("before", &["--jobs", "2", "--checkpoint-dir", "qo"]));
+    let before = Checkpoint::from_bytes(&fs::read(fixture.path("qo/alpha.qo")).unwrap()).unwrap();
+    assert!(before.identity.run.contracts.locks.is_empty());
+    let pinned = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        .current_dir(&fixture.0)
+        .args(["pin", "--source-root", "checkout", "--modules", "contracts"])
+        .output()
+        .unwrap();
+    succeeded(&pinned);
+    let after = fixture.run("after", &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"]);
+    succeeded(&after);
+    let stderr = String::from_utf8_lossy(&after.stderr);
+    assert!(
+        stderr.contains("checkpoint alpha: recomputed (contract set differs)"),
+        "{stderr}"
+    );
+    assert!(stderr.contains("checkpoint beta-group: recomputed (contract set differs)"));
+    let now = Checkpoint::from_bytes(&fs::read(fixture.path("qo/alpha.qo")).unwrap()).unwrap();
+    assert_eq!(now.identity.run.contracts.locks.len(), 1);
+    assert_ne!(
+        now.identity.run.contracts.pin_evaluation_sha256,
+        before.identity.run.contracts.pin_evaluation_sha256
+    );
+    succeeded(&fixture.run("after-whole", &["--jobs", "2"]));
+    assert_eq!(fixture.outputs("after"), fixture.outputs("after-whole"));
+    assert_ne!(fixture.outputs("after"), fixture.outputs("before"));
 }
 
 #[test]

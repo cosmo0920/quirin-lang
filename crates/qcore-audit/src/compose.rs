@@ -26,7 +26,7 @@ use std::path::{Path, PathBuf};
 use serde_json::{Value, json};
 
 use crate::checkpoint::{
-    CheckpointReader, ContractsSection, GlobalSection, IdentitySection, PlanSection,
+    CheckpointReader, ContractsSection, CountsRecord, GlobalSection, IdentitySection, PlanSection,
     ProvenanceSection, ResultSection, RowStepSection, RunIdentity, render_row, report_frame,
 };
 use crate::pending_review::{HeldCalls, PendingMarker, PendingMarkers};
@@ -148,6 +148,9 @@ pub fn compose(
             .collect(),
     };
     let pending = crate::pending_review::render(&markers, &totals.held);
+    let template: crate::contract_revision::SectionTemplate =
+        serde_json::from_str(&global.revision_template_json).map_err(|error| error.to_string())?;
+    let revision = crate::contract_revision::render(&template, &totals.revision);
     let counts = &totals.counts;
     println!(
         "current revision: {} source file(s), {} configuration(s): {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
@@ -168,6 +171,7 @@ pub fn compose(
         totals.marked_us,
     );
     println!("{}", crate::pending_review::tally(&pending));
+    println!("{}", crate::contract_revision::tally(&revision));
     if let Some(report) = outputs.report {
         if let Some(parent) = report.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
@@ -189,6 +193,7 @@ pub fn compose(
         let mut assumptions: Value =
             serde_json::from_str(&global.assumptions_json).map_err(|error| error.to_string())?;
         assumptions["pending_human_review"] = pending;
+        assumptions["contract_revision"] = revision;
         assumptions["source_file_count"] = json!(totals.sources.len());
         assumptions["configuration_count"] = json!(counts["units"]);
         fs::write(
@@ -328,6 +333,39 @@ fn open_members(files: &[PathBuf]) -> Result<Vec<Member>, String> {
         .collect())
 }
 
+/// The composition's verdict fold: a group's unit verdicts and tallies are
+/// added to the running totals. Unit verdicts are never merged across groups
+/// — every unit keeps its own row — so the whole run's verdict account is
+/// exactly this sum. Kept in one function so that a per-group verdict join
+/// (the four-valued semigroup of card W45-USER-CONTRACT-PLUGINS) can replace
+/// or extend it.
+fn fold_verdicts(totals: &mut BTreeMap<&'static str, u64>, group: &CountsRecord) {
+    for (name, value) in [
+        ("units", group.units),
+        ("data_only_units", group.data_only_units),
+        ("source_functions", group.source_functions),
+        ("projected_functions", group.projected_functions),
+        ("safe_units", group.safe_units),
+        ("unsafe_units", group.unsafe_units),
+        ("unknown_units", group.unknown_units),
+        ("gateway_failures", group.gateway_failures),
+        (
+            "absent_from_raw_scan_definitions",
+            group.absent_from_raw_scan_definitions,
+        ),
+        ("unanalyzable_definitions", group.unanalyzable_definitions),
+        ("enumeration_refused_units", group.enumeration_refused_units),
+        ("withheld_safe_units", group.withheld_safe_units),
+        ("prepared_units", group.prepared_units),
+        (
+            "preparation_clang_invocations",
+            group.preparation_clang_invocations,
+        ),
+    ] {
+        *totals.entry(name).or_default() += value;
+    }
+}
+
 /// The merged small results of every group.
 #[derive(Default)]
 struct Totals {
@@ -335,6 +373,7 @@ struct Totals {
     diagnostic_counts: BTreeMap<String, usize>,
     sources: BTreeSet<String>,
     held: HeldCalls,
+    revision: crate::contract_revision::ReportFacts,
     plain_us: u64,
     syntax_us: u64,
     marked_us: u64,
@@ -347,31 +386,7 @@ impl Totals {
         contracts: ContractsSection,
         provenance: &ProvenanceSection,
     ) {
-        let counts = &result.counts;
-        for (name, value) in [
-            ("units", counts.units),
-            ("data_only_units", counts.data_only_units),
-            ("source_functions", counts.source_functions),
-            ("projected_functions", counts.projected_functions),
-            ("safe_units", counts.safe_units),
-            ("unsafe_units", counts.unsafe_units),
-            ("unknown_units", counts.unknown_units),
-            ("gateway_failures", counts.gateway_failures),
-            (
-                "absent_from_raw_scan_definitions",
-                counts.absent_from_raw_scan_definitions,
-            ),
-            ("unanalyzable_definitions", counts.unanalyzable_definitions),
-            ("enumeration_refused_units", counts.enumeration_refused_units),
-            ("withheld_safe_units", counts.withheld_safe_units),
-            ("prepared_units", counts.prepared_units),
-            (
-                "preparation_clang_invocations",
-                counts.preparation_clang_invocations,
-            ),
-        ] {
-            *self.counts.entry(name).or_default() += value;
-        }
+        fold_verdicts(&mut self.counts, &result.counts);
         for category in result.diagnostic_counts {
             *self
                 .diagnostic_counts
@@ -379,18 +394,30 @@ impl Totals {
                 .or_default() += category.count as usize;
         }
         self.sources.extend(result.sources);
+        let rows = |functions: Vec<crate::checkpoint::HeldFunction>| {
+            functions
+                .into_iter()
+                .map(|function| (function.library, function.file, function.function))
+                .collect::<BTreeSet<_>>()
+        };
         let mut held = HeldCalls::default();
         for call in contracts.held_calls {
-            held.call_sites.insert(call.callee.clone(), call.call_sites as usize);
-            held.functions.insert(
-                call.callee,
-                call.functions
-                    .into_iter()
-                    .map(|function| (function.library, function.file, function.function))
-                    .collect(),
-            );
+            held.call_sites
+                .insert(call.callee.clone(), call.call_sites as usize);
+            held.functions.insert(call.callee, rows(call.functions));
         }
         self.held.absorb(held);
+        let mut revision = crate::contract_revision::ReportFacts {
+            analysed: contracts.analysed_functions.into_iter().collect(),
+            ..Default::default()
+        };
+        for call in contracts.pin_held_calls {
+            revision.held.insert(
+                call.callee,
+                (call.call_sites as usize, rows(call.functions)),
+            );
+        }
+        self.revision.absorb(revision);
         self.plain_us += provenance.plain_preprocessing_elapsed_us;
         self.syntax_us += provenance.syntax_validation_elapsed_us;
         self.marked_us += provenance.line_marked_preprocessing_elapsed_us;
