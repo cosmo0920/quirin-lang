@@ -8,7 +8,7 @@
     "contracts/monkey/cycle18_composition.qcore": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
     "contracts/monkey/descriptor_observation.qcore": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091",
     "contracts/monkey/event_payload.qcore": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
-    "contracts/monkey/intrusive_list.qcore": "b887797ad818ac1aca840d09a27ec905fd22b5985365fb65b6ed4bab76c3236e",
+    "contracts/monkey/intrusive_list.qcore": "968dd8fbfcec35be73abe45e42ae843076d42166412a6c6912d2dc39154ce977",
     "contracts/monkey/logging.qcore": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade",
     "contracts/monkey/memory.qcore": "661dbb51f45552bcb357022f70be035745727284d6f66ded9ee6e3bbf330ecbe",
     "contracts/monkey/native_platform_matrix.qcore": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",

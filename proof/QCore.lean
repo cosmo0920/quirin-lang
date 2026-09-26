@@ -243,5 +243,7 @@ import QCore.ContractDeferredReview
 import QCore.ParenthesisedCallee
 import QCore.ListIteration
 import QCore.CheckedSpecification
+import QCore.ContainerPublication
+import QCore.CountedUsers
 
 /-! The executable formal core of QCore-C revision 0.1. -/

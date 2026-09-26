@@ -58,6 +58,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/memory.qcore"),
     ),
     (
+        "fluent_bit/output_singleplex.qcore",
+        include_str!("../contracts/fluent_bit/output_singleplex.qcore"),
+    ),
+    (
         "fluent_bit/resource_memory.qcore",
         include_str!("../contracts/fluent_bit/resource_memory.qcore"),
     ),
@@ -72,6 +76,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
     (
         "fluent_bit/storage_backlog.qcore",
         include_str!("../contracts/fluent_bit/storage_backlog.qcore"),
+    ),
+    (
+        "fluent_bit/task_users.qcore",
+        include_str!("../contracts/fluent_bit/task_users.qcore"),
     ),
     (
         "fluent_bit/time.qcore",

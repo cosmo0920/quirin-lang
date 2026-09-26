@@ -78,9 +78,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    // 47 -> 48 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
+    // `fluent_bit/output_singleplex.qcore`.
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.2).
-    assert_eq!(contracts.source_assumptions().len(), 48);
+    assert_eq!(contracts.source_assumptions().len(), 50);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -165,7 +167,6 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // obligation, and the publication itself stays unmodeled.
         ("__errno_location", 0),
         ("flb_errno_print", 3),
-        ("mk_list_add", 2),
         // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds two, listed explicitly
         // for the same reason and in the same shape: every parameter borrowed,
         // no result custody. Both were UNWRITABLE before that card, because
@@ -547,6 +548,79 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     ] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card W45-FB-RETRY-LIFETIME: `mk_list_add` keeps its borrowed modes and
+    // gains the publication its body performs (contract specification
+    // C04.8); `mk_list_del` is its new converse. The Fluent Bit counter
+    // operations, the two neutral callees and the two checked obligation
+    // declarations are additions, listed explicitly so the parity check
+    // below still covers every previous name.
+    {
+        use qcore_schemas::contract::{ContainerEffect, UserEffect, UserExitClause, UserOperation};
+        let mut list_add = ResourceFunctionContract::new([P::Borrowed, P::Borrowed], R::None);
+        list_add.container_effects.insert(
+            0,
+            ContainerEffect::Published {
+                container_parameter: 1,
+            },
+        );
+        old.insert_contract("mk_list_add", list_add);
+        let mut list_del = ResourceFunctionContract::new([P::Borrowed], R::None);
+        list_del
+            .container_effects
+            .insert(0, ContainerEffect::Unpublished);
+        old.insert_contract("mk_list_del", list_del);
+        let operation = |effect| UserOperation {
+            effect,
+            counter: "users".to_owned(),
+        };
+        let mut inc = ResourceFunctionContract::new([P::Borrowed], R::None);
+        inc.counted_users
+            .effects
+            .insert(0, operation(UserEffect::Added));
+        old.insert_contract("flb_task_users_inc", inc);
+        let mut dec = ResourceFunctionContract::new([P::Borrowed, P::Borrowed], R::None);
+        dec.counted_users
+            .effects
+            .insert(0, operation(UserEffect::Dropped));
+        old.insert_contract("flb_task_users_dec", dec);
+        let mut retry = ResourceFunctionContract::new([P::Released { nullable: false }], R::None);
+        retry.counted_users.neutral = true;
+        old.insert_contract("flb_task_retry_destroy", retry);
+        let mut pool =
+            ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None);
+        pool.counted_users.neutral = true;
+        old.insert_contract("flb_output_thread_pool_flush", pool);
+        let exits = |task: usize| {
+            vec![
+                UserExitClause {
+                    parameter: task,
+                    returned: -1,
+                    delta: 0,
+                },
+                UserExitClause {
+                    parameter: task,
+                    returned: 0,
+                    delta: 1,
+                },
+            ]
+        };
+        let mut enqueue = ResourceFunctionContract::new(
+            [
+                P::Borrowed,
+                P::Consumed { nullable: true },
+                P::Borrowed,
+                P::Borrowed,
+                P::Borrowed,
+            ],
+            R::None,
+        );
+        enqueue.counted_users.exits = exits(2);
+        old.insert_contract("flb_output_task_singleplex_enqueue", enqueue);
+        let mut flush =
+            ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None);
+        flush.counted_users.exits = exits(0);
+        old.insert_contract("flb_output_task_flush", flush);
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -835,9 +909,11 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    // 47 -> 48 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
+    // `fluent_bit/output_singleplex.qcore`.
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.2).
-    assert_eq!(certificate.contracts.source_assumptions().len(), 48);
+    assert_eq!(certificate.contracts.source_assumptions().len(), 50);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1052,10 +1128,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 110 -> 111: card W43-DESCRIPTOR-NATIVE-CHECK adds
     // `library/descriptor_native_observation.qcore`, a native observation
     // policy (ten parameterless rules), not resource-v1 and not selected.
-    // 111 -> 112: card W45-FB-BACKLOG-CUSTODY adds
+    // 111 -> 113: card W45-FB-RETRY-LIFETIME adds `fluent_bit/task_users.qcore`
+    // and `fluent_bit/output_singleplex.qcore`, entirely v1 and
+    // manifest-selected.
+    // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
     // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
     // and manifest-selected.
-    assert_eq!(modules.len(), 112, "corpus module count");
+    assert_eq!(modules.len(), 114, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1196,11 +1275,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 152 -> 155 by card W44-LIBC-RESIDUALS: `vsnprintf` and `vprintf`
     // appended to `libc/stdio.qcore` and `strerror` to `libc/errno.qcore`, all
     // already selected. Selection and rejected unchanged.
-    // 47 -> 48 and 155 -> 167 by card W45-FB-BACKLOG-CUSTODY: the twelve
+    // 47 -> 49 and 155 -> 162 by card W45-FB-RETRY-LIFETIME: two new
+    // `fluent_bit/` modules (six declarations) and `mk_list_del` appended to
+    // the already-selected `monkey/intrusive_list.qcore`. Rejected unchanged.
+    // 49 -> 50 and 162 -> 174 by card W45-FB-BACKLOG-CUSTODY: the twelve
     // checked specifications of `fluent_bit/storage_backlog.qcore`.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (48, 167, 216)
+        (50, 174, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

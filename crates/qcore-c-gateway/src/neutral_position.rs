@@ -372,6 +372,8 @@ fn admitted_neutral_call(
         .parameters
         .iter()
         .all(|mode| *mode == ResourceParameterMode::Borrowed)
+        // Card W45-FB-RETRY-LIFETIME: a container effect is not neutral.
+        || contract.has_container_effect()
     {
         return None;
     }

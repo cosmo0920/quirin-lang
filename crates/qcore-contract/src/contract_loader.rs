@@ -262,6 +262,10 @@ use qcore_frontend::frontend::{
     SourceModuleMode, parse_source_program,
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
+
+// Card W45-FB-RETRY-LIFETIME: counted-user and container clauses.
+#[path = "contract_counted_users.rs"]
+mod counted_users;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewScope,
@@ -1080,6 +1084,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             .ok_or_else(|| format!("unknown parameter {name}"))
     };
     let mut review: Vec<ReviewDeferral> = Vec::new();
+    let mut collected = counted_users::Collected::default();
     for clause in clauses {
         let written = &clause.value.expression_source;
         // Card W45-CONTRACT-DEFERRED-REVIEW: a review marker, contract-level
@@ -1144,8 +1149,19 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
             continue;
         }
+        // Card W45-FB-RETRY-LIFETIME: the counted-user and container clauses
+        // (§C04.7, §C04.8). The exit clause carries a value, so it is read
+        // before the identifier-only predicate reader.
+        if let Some(clause) = counted_users::parse(None, expression)? {
+            counted_users::record(&mut collected, clause, &index)?;
+            continue;
+        }
         let words = predicate_call(expression)?;
         let words = words.iter().map(String::as_str).collect::<Vec<_>>();
+        if let Some(clause) = counted_users::parse(Some(&words), expression)? {
+            counted_users::record(&mut collected, clause, &index)?;
+            continue;
+        }
         // The variadic data tail is a *whole-declaration* fact, not a parameter
         // or result mode: it says what the arguments the declaration does not
         // name carry. It takes no argument (a tail has no index to point at)
@@ -1355,9 +1371,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     {
         return Err("reallocation requires an owned input parameter".into());
     }
+    counted_users::validate(&collected, &parameters, &parameter_types, return_type)?;
     let mut contract = ResourceFunctionContract::new(parameters, result);
     contract.parameter_kinds = kinds.parameter_kinds;
     contract.result_kind = kinds.result_kind;
+    contract.container_effects = collected.container_effects;
+    contract.counted_users = collected.users;
     Ok(LoadedDeclaration {
         contract,
         variadic_data_tail,

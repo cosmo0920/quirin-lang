@@ -744,3 +744,52 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     argument list and a declarator from a callee (trust boundary 28), and the
     typedef reader over-approximates object uses. `QCore.ParenthesisedCallee`;
     [report](../reports/w45-parenthesised-callee/README.md).
+
+<a id="constraint-10d"></a>
+
+10d. **A publication moves custody into a caller's container, and only
+    there.** Card W45-FB-RETRY-LIFETIME (`legacy_container_publication.rs`;
+    contract specification §C04.8) applies a declared `resource_published` /
+    `resource_unpublished` clause after the call's borrowed reading. A body
+    object linked into a container reached from an unrebound formal, or from a
+    local whose one write is its declaration's initialiser from one, is
+    discharged (`ESCAPED`, recorded as published; the set joins by
+    intersection). Keep four premises. An unbound formal entry reports its
+    unresolved identity, so W4 binds it and derives `Consumed`: **do not** let
+    it fall back to the borrowed reading, which is constraint 10's launder. Any
+    other container, entry or binding refuses with an unresolved effect: a
+    local or file-scope list does not outlive the call, and a body-acquired
+    owner would need an owner/child relation `mk_list` does not have. An
+    object that owns linked members is published with them withdrawn, never
+    cascaded as escaped, because an unlink could not hand them back. A release
+    of a published object keeps `release_after_escape`; a `return` of it and
+    an unlink of anything not published on every reaching path refuse. Every
+    route that admits a call as the identity because its modes are `Borrowed`
+    (nested calls, desugared conditions, neutral positions, sub-object store
+    values) must refuse a container effect (`has_container_effect`). The
+    lexical reader of entries, containers and rebinding is trust boundary 28.
+    `QCore.ContainerPublication`;
+    [report](../reports/w45-fb-retry-lifetime/README.md).
+
+<a id="constraint-10e"></a>
+
+10e. **A counted user is an obligation checked per path, and a declaration
+    of a defined body is verified, never assumed.** Card W45-FB-RETRY-LIFETIME
+    (`legacy_counted_users.rs`; contract specification §C04.7) enumerates each
+    reported body's paths after its custody analysis and decides every
+    `resource_user_exit` clause: refuted on a path that definitely returns the
+    value with a known contradicting count (a provisional `Unsafe` candidate,
+    never an upstream defect), undecided where a count or the returned value is
+    not known, held otherwise; an uncovered exit must restore every tracked
+    count, and a drop below the entry count that reaches an exit with no
+    re-addition or release check is the C3 shape. A declared operation or exit
+    clause whose function this unit defines is applied at a call only when its
+    own body validates here; otherwise the call is opaque. **Do not** apply such
+    a declaration unchecked, attribute an operation to anything but an unrebound
+    formal, prune a branch the pass has not decided, or treat an uncontracted or
+    expression callee as neutral. Loops, `switch`, `goto` and labels leave the
+    function's clauses undecided. The frame premise UC-FRAME — a declaration with
+    no counted-user clause and no body here changes no count — is stated, not
+    proved. A derived custody summary is compared with a declaration's custody
+    projection only. `QCore.CountedUsers`;
+    [report](../reports/w45-fb-retry-lifetime/README.md).

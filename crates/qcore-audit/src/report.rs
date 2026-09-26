@@ -360,11 +360,35 @@ impl AuditReport {
                         "description": description,
                     }));
                 }
-                functions.push(json!({
+                let mut row = json!({
                     "function": function.function,
                     "status": format!("{:?}", function.status),
                     "diagnostics": diagnostics,
-                }));
+                });
+                // Card W45-FB-RETRY-LIFETIME: every counted-user clause
+                // checked against this body, with its verdict. Omitted when
+                // there is none, so every other row is byte-identical.
+                if !function.counted_users.is_empty() {
+                    row["user_count_clauses"] = function
+                        .counted_users
+                        .iter()
+                        .map(|record| {
+                            json!({
+                                "clause": record.clause,
+                                "verdict": record.verdict.spelling(),
+                                "line": record.line,
+                                "origin": if record.line == 0 {
+                                    Value::Null
+                                } else {
+                                    Self::origin(locations, file, record.line)
+                                },
+                                "reason": record.reason,
+                            })
+                        })
+                        .collect::<Vec<_>>()
+                        .into();
+                }
+                functions.push(row);
             }
         }
         let not_projected = source_functions
@@ -540,6 +564,9 @@ fn diagnostic_description(
                 site(*acquisition_line)
             ),
         ),
+        // Card W45-FB-RETRY-LIFETIME: a refuted counted-user obligation.
+        // Provisional, like every other defect category here.
+        LegacyDiagnosticKind::CountedUser { description } => ("counted_user", description.clone()),
         LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
             "summary_conflict",
             format!(

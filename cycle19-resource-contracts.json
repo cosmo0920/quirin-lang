@@ -46,6 +46,8 @@
     "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qcore",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qcore",

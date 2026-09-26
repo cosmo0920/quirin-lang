@@ -144,6 +144,15 @@ pub fn declared_contract(
              has no extern-call model; the checked extern-call route has one custody kind"
         ));
     }
+    // Card W45-FB-RETRY-LIFETIME: neither a container publication nor a
+    // counted user has an extern-call model; projecting one onto its borrowed
+    // modes would drop exactly the effect it declares.
+    if contract.has_container_effect() || !contract.counted_users.is_empty() {
+        return Err(format!(
+            "`{name}`: a container or counted-user clause (card W45-FB-RETRY-LIFETIME) \
+             has no extern-call model"
+        ));
+    }
     let mut parameters = Vec::with_capacity(contract.parameters.len());
     for (index, (spelling, mode)) in signature
         .parameter_types

@@ -1,0 +1,110 @@
+{
+  "argv": [
+    "quirin-audit",
+    "prepare",
+    "--fluent-bit",
+    "/home/cosmo/Documents/GitHub/fluent-bit",
+    "--revision",
+    "046accf6aded7906f66a1baf0202da349e521736",
+    "--output",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2",
+    "--clang",
+    "/usr/lib/llvm-21/bin/clang",
+    "--clangxx",
+    "/usr/lib/llvm-21/bin/clang++"
+  ],
+  "build_profile": "release",
+  "clang_build": {
+    "build": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-production",
+    "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-production/compile_commands.json",
+    "compile_database_sha256": "b9c74281e00298024100149b665c30a28b38803c7e3ad420fa73fcd480b6f268",
+    "configuration": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-production/cmetrics-audit.json.config",
+    "configuration_sha256": "a1b9b7053ccee688e6acbc9a511981f29fa145aad975475c08237372b0974fd4",
+    "configure_command": [
+      "cmake",
+      "-S",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-source",
+      "-B",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-production",
+      "-DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang",
+      "-DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++",
+      "-DCMAKE_C_STANDARD=17",
+      "-DCMAKE_C_FLAGS:STRING=-std=gnu17",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+      "-DFLB_DEV=ON",
+      "-DFLB_EXAMPLES=ON"
+    ],
+    "provenance": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-production/build-provenance.json",
+    "provenance_sha256": "3a3b6cd168782e634168e43f5b79b51738ed5b82d3184d2d24dcd8a242caa8bf",
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-source"
+  },
+  "cmake": {
+    "program": "cmake",
+    "version": "cmake version 4.2.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake)."
+  },
+  "compilers": {
+    "c": {
+      "path": "/usr/lib/llvm-21/bin/clang",
+      "requested": "/usr/lib/llvm-21/bin/clang",
+      "resolved": "/usr/lib/llvm-21/bin/clang",
+      "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+    },
+    "cxx": {
+      "path": "/usr/lib/llvm-21/bin/clang++",
+      "requested": "/usr/lib/llvm-21/bin/clang++",
+      "resolved": "/usr/lib/llvm-21/bin/clang",
+      "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+    }
+  },
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5",
+  "monkey": {
+    "cmake_command": [
+      "cmake",
+      "-S",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/monkey/monkey-source",
+      "-B",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/monkey/monkey-build",
+      "-DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang",
+      "-DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++",
+      "-DCMAKE_C_STANDARD=17",
+      "-DCMAKE_C_FLAGS:STRING=-std=gnu17",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+      "-DMK_EVENT_LOOP_LIBEVENT=ON",
+      "-DMK_EVENT_LOOP_EPOLL=OFF",
+      "-DMK_EVENT_LOOP_KQUEUE=OFF",
+      "-DMK_EVENT_LOOP_POLL=OFF",
+      "-DMK_EVENT_LOOP_SELECT=OFF",
+      "-DMK_WITHOUT_BIN=ON",
+      "-DMK_WITHOUT_CONF=ON",
+      "-DMK_TLS=OFF",
+      "-DMK_TESTS=OFF",
+      "-DMK_PLUGIN_AUTH=OFF",
+      "-DMK_PLUGIN_CGI=OFF",
+      "-DMK_PLUGIN_CHEETAH=OFF",
+      "-DMK_PLUGIN_DIRLISTING=OFF",
+      "-DMK_PLUGIN_FASTCGI=OFF",
+      "-DMK_PLUGIN_LOGGER=OFF",
+      "-DMK_PLUGIN_MANDRIL=OFF"
+    ],
+    "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/monkey/monkey-build/compile_commands.json",
+    "compile_database_sha256": "272283f9b630a12ee93c71271c5df34fc74a93e6cd3b869bfe1105cee4dbab30",
+    "marker": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/monkey/qcore-monkey-inputs.json",
+    "marker_sha256": "7da3b8b27ada37059b978a0b828462cb070a929b52ca609861c81d4d0928c7d6",
+    "output": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/monkey"
+  },
+  "output": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2",
+  "repository": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a48b57615d266c1f5",
+  "requested_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "run": {
+    "QCORE_CLANG": null,
+    "current_argv": null,
+    "requested": false
+  },
+  "schema_version": 1,
+  "scope": "provenance of the preparation only; not an input to any verdict. The Clang CMake build is CMake's unmodified output of an independent clone and proves no GCC, code-generation or whole-library equivalence; the C++ compiler is used by preparation only, never by the audit",
+  "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "tool": "quirin-audit prepare",
+  "tool_version": "0.1.0",
+  "upstream": "/home/cosmo/Documents/GitHub/fluent-bit"
+}

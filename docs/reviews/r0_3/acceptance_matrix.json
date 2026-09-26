@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 112,
+  "contract_modules": 113,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-PARENTHESISED-CALLEE integration, 2026-09-25. The card (measured against docs/reports/w45-sub-object-stores/integration/artifacts) composed onto the combined tree docs/reports/w45-sub-object-stores/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1 added 5 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card's delta moves 6 unknown_alias leaves to 5 for-clause-refusal unsupported leaves (net +5 unsupported, unknown_alias 3,568 to 3,567) with no function or unit status change: 0 corrections. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-parenthesised-callee/integration/previous-corpus-row.json.",
+   "note": "W45-FB-RETRY-LIFETIME integration, 2026-09-25. The card (measured against docs/reports/w45-parenthesised-callee/integration/artifacts) composed onto the combined tree docs/reports/w45-parenthesised-callee/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 11 added 18 functions 1 units 0); functions moved (combined): [('flb_input_chunk_create', ('Safe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] functions moved: flb_input_chunk_create Safe -> Unknown (a correction: its Safe relied on reading mk_list_add as a borrow). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 4,
    "provisional_unsafe": 10,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 37,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-parenthesised-callee/integration/artifacts/",
-   "source": "docs/reports/w45-parenthesised-callee/integration/integration-confirmation.md; preceding baseline docs/reports/w45-sub-object-stores/integration/artifacts",
-   "unknown_alias_diagnostics": 3567,
-   "unsupported_diagnostics": 42699,
+   "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts/",
+   "source": "docs/reports/w45-fb-retry-lifetime/integration/integration-confirmation.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts",
+   "unknown_alias_diagnostics": 3571,
+   "unsupported_diagnostics": 42702,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 390,
+    "safe": 389,
     "provisional_unsafe": 12,
-    "unknown": 4432
+    "unknown": 4433
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6731,8 +6731,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-FB-RETRY-FAULT-INJECTION on merge 53a3fcec (onto main 10fd4e55, after all wave-45 cards through W45-TSAN-ROWS-LOAD-SENSITIVE), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5788 core Rust passed / 0 failed / 11 ignored over 297 summaries, including task_route_tsan itself at 20 passed / 0 failed / 1 ignored; 124 provider Rust passed / 0 / 0 over 39 summaries; 195 Lean audits; 358 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 82 s and baseline_identity.py against docs/reports/w45-parenthesised-callee/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move: this card is a records-only merge (native fault-injection observations for retry candidates C1-C3, docs/reports and docs/development/increments only), with no verdict-bearing surface touched.",
-  "workspace_tests": 5788,
+  "note": "Integration gate for W45-FB-RETRY-LIFETIME on merge 4dbab8e7 (onto main 74579af6, after all wave-45 cards through W45-FB-RETRY-FAULT-INJECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5815 core Rust passed / 0 failed / 11 ignored over 310 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 197 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration). The package Python step's first attempt (27-package-python.log, exit 1) failed one test, test_the_real_workspace_manifest_is_current (providers/tests/test_contract_load_path.py): AssertionError 49 != 47, a genuine stale pin — that suite still pinned 47 resource-view modules while this card deliberately grew the Cycle 19 manifest to 49. The integrator committed the pin update to 49 (commit b981c5c4, test-only) on this branch, and the rerun of the full providers Python suite on that tree passed clean: 15 package Python tests (27-package-python-rerun.log, exit 0). Both attempts are recorded; the first exit is kept as measured, not replaced, and the count below is taken from the clean rerun. The isolated package mutation control's first attempt (23-package-mutation.log, exit 101) failed one test, real_packages_preserve_unknown_and_reject_mutations (providers/conformance/tests/packages.rs): a BrokenPipe writing to a spawned provider's stdin, a host-load failure under concurrent cards. It passed 3/3 isolated reruns (23-package-mutation-rerun-{1,2,3}.log, each exit 0). fmt/clippy (core and provider), both reevaluation examples, the docs index, and providers/contracts.py check exit 0, and all five package builds and verifications exit 0. Both fixes are test-only; the arbiter run and its composition against docs/reports/w45-parenthesised-callee/integration/artifacts stand unaffected. The byte-identity step against docs/reports/w45-parenthesised-callee/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5815,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
   "lean_audits": 197,
@@ -6761,7 +6761,6 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
-   "AuditCheckedSpecification.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6774,10 +6773,12 @@
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
+   "AuditContainerPublication.lean",
    "AuditContractBundle.lean",
    "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
    "AuditContractViewProjection.lean",
+   "AuditCountedUsers.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6832,7 +6833,6 @@
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
-   "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
@@ -6941,7 +6941,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-retry-lifetime/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -9384,13 +9384,6 @@
    "recorded_by": "W44-LEAK-PIN-AUDIT"
   },
   {
-   "id": "MK-LIST-ADD-BORROWED-PUBLICATION",
-   "title": "mk_list_add is declared borrowed on both positions, so a Monkey object linked into a caller-reachable list is still accused at the next exit (8 leaves)",
-   "why": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore declares mk_list_add(entry, head) resource_borrowed on both parameters. Linking `&obj->_head` into a list reachable from the caller publishes `obj`, which a borrowed position does not state, so card W44-LEAK-PIN-AUDIT's audit found 8 class (c) leak leaves in 7 functions whose accusation rests on that silence (mk_rconf_meta_add, mk_rconf_read, mk_rconf_section_entry_add, mk_sched_worker_cb_add, mk_vhost_set_property, mk_vhost_set_single 2, mk_vhost_create 1); reading shows each object linked into its caller's configuration, server or host. Discharge condition: a vocabulary or contract that states an intrusive insertion's publication of the containing object (the v1 `resource_stored` relation over an interior address, or an equivalent), with gateway and Lean parity, and an arbiter attributing each withdrawn leaf. After the refused hand-on rule, 5 of the 8 are also withdrawn (the object is named in a refused statement on the path); 3 stay published (mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single). Measured by W44-INDIRECT-CALL-ARGUMENT-ACCESS on the combined tree (merge of main 70ce6b44): that card admits `mk_list_add(&file->_head, &conf->includes)` in mk_rconf_read as a modeled call (two non-pointer sub-object addresses at Borrowed positions), so the refused hand-on rule no longer withdraws mk_rconf_read's leaf (mk_core/mk_rconf.c:465, acquired at :456): it is accused again, and 4 of the 8 now stay (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single).",
-   "source": "docs/reports/w44-leak-pin-audit/README.md",
-   "recorded_by": "W44-LEAK-PIN-AUDIT"
-  },
-  {
    "id": "LEAK-PATH-SCALAR-CORRELATION",
    "title": "7 provisional leak leaves ride a branch combination no execution takes (a flag, a pass counter, a re-validation of the same bytes)",
    "why": "The custody projection does not correlate branches on scalar values. Card W44-LEAK-PIN-AUDIT's audit found 7 class (c) leaves whose only witness combines branch outcomes no execution combines: decode_histogram_points (cmt_decode_prometheus_remote_write.c) 4, whose witness skips the `static_metric_detected == CMT_FALSE` cleanup arm although the leaked metric exists only on that flag value, and rd_kafka_snappy_java_uncompress (snappy.c) 3, two of whose pass-2 failure arms re-check bytes pass 1 accepted and one of which needs outbuf allocated before its own pass-1 allocation. They stay provisional Unsafe. Discharge condition: a path-sensitivity or relational-scalar refinement with gateway and Lean parity that decides these arms, measured by an arbiter; or a recorded decision that such leaves stay provisional. After the refused hand-on rule all 7 are also withdrawn to Unknown (each identity is named in a refused statement on the path), so on the card's base no published leak rests on this mechanism; it decides them again once those statements are modelled. That has already happened for snappy.c: at the W44-LEAK-PIN-AUDIT integration (combined tree, after W44-BRANCH-CONDITION-CALLS desugared the refused `if (unlikely(!outbuf))` at snappy.c:1706), rd_kafka_snappy_java_uncompress's three leaves are published again and the function keeps provisional Unsafe (docs/reports/w44-leak-pin-audit/integration/explained-leaves.json). So 3 of the 21 combined leak leaves rest on this mechanism.",
@@ -9799,7 +9792,7 @@
   {
    "id": "W45-FB-SYSTEM-SLICE-RESIDUALS",
    "title": "Fluent Bit system slice (864c3d97, 8 files / 15 units / 236 functions): unresolved synchronization premises, six source-reading candidates, list-publication reach and the two selected P1 slices",
-   "why": "Card W45-FB-SYSTEM-SELECTION audited plugins/in_storage_backlog/sb.c and src/flb_{input_chunk,storage,task,engine,engine_dispatch,scheduler,output}.c through quirin-audit current --selection contract/profiles/fluent-bit/system-selection.json (0 Safe / 3 provisional Unsafe / 12 Unknown units; 25 / 2 / 206 functions, 3 not projected) and closed FB-SYSTEM-CURRENT-BUILD-SELECTION and FB-SYSTEM-SYNCHRONIZATION-INVENTORY (for the selected slices). One entry under the wave-45 conflict discipline; the report's followups.json lists each part. (1) W45-FB-SYNC-PREMISES: unresolved edges E-BL-05, E-BL-09, E-BL-11, E-RT-04, E-SH-01 and three shared-state premises (engine-to-worker task writes, task->users read on the append thread, eviction on the engine thread). DISCHARGE: per edge, a source argument, a declared premise scoped in the consuming verdict, or a bound native observation with a control. (2) W45-FB-BACKLOG-SOURCE-CANDIDATES BC-1, BX-1, BX-2 and (3) W45-FB-RETRY-SOURCE-CANDIDATES N1, N2, N3: source reading only, not reproduced, not upstream defects. DISCHARGE: per candidate, a fault-injected or teardown native observation with a control on a bound build, or a refuting source argument. (4) W45-FB-LIST-PUBLICATION-REACH: both provisional Unsafe functions (sb_append_chunk_to_segregated_backlog, flb_output_task_queue_enqueue) rest on mk_list_add's borrowed declaration. DISCHARGE: with MK-LIST-ADD-BORROWED-PUBLICATION, the system slice as a second arbiter. (5) W45-FB-P1-SLICES: FB-BACKLOG-CUSTODY (14 functions, OB-1..10) and FB-RETRY-LIFETIME (15 functions, OR-1..11); first card recommended on the five singleplex-queue functions of flb_output.c. DISCHARGE: a semantic card per slice with Rust and audited Lean against this denominator, attributing every delta, or a measured blocker recorded against the slice.",
+   "why": "Card W45-FB-SYSTEM-SELECTION audited plugins/in_storage_backlog/sb.c and src/flb_{input_chunk,storage,task,engine,engine_dispatch,scheduler,output}.c through quirin-audit current --selection contract/profiles/fluent-bit/system-selection.json (0 Safe / 3 provisional Unsafe / 12 Unknown units; 25 / 2 / 206 functions, 3 not projected) and closed FB-SYSTEM-CURRENT-BUILD-SELECTION and FB-SYSTEM-SYNCHRONIZATION-INVENTORY (for the selected slices). One entry under the wave-45 conflict discipline; the report's followups.json lists each part. (1) W45-FB-SYNC-PREMISES: unresolved edges E-BL-05, E-BL-09, E-BL-11, E-RT-04, E-SH-01 and three shared-state premises (engine-to-worker task writes, task->users read on the append thread, eviction on the engine thread). DISCHARGE: per edge, a source argument, a declared premise scoped in the consuming verdict, or a bound native observation with a control. (2) W45-FB-BACKLOG-SOURCE-CANDIDATES BC-1, BX-1, BX-2 and (3) W45-FB-RETRY-SOURCE-CANDIDATES N1, N2, N3: source reading only, not reproduced, not upstream defects. DISCHARGE: per candidate, a fault-injected or teardown native observation with a control on a bound build, or a refuting source argument. (4) W45-FB-LIST-PUBLICATION-REACH: both provisional Unsafe functions (sb_append_chunk_to_segregated_backlog, flb_output_task_queue_enqueue) rest on mk_list_add's borrowed declaration. DISCHARGE: with MK-LIST-ADD-BORROWED-PUBLICATION, the system slice as a second arbiter. (5) W45-FB-P1-SLICES: FB-BACKLOG-CUSTODY (14 functions, OB-1..10) and FB-RETRY-LIFETIME (15 functions, OR-1..11); first card recommended on the five singleplex-queue functions of flb_output.c. DISCHARGE: a semantic card per slice with Rust and audited Lean against this denominator, attributing every delta, or a measured blocker recorded against the slice. AMENDED by W45-FB-RETRY-LIFETIME (2026-09-26, slice re-pinned by the user to Fluent Bit 046accf6): part (4) W45-FB-LIST-PUBLICATION-REACH is discharged for the slice — both provisional Unsafe functions (sb_append_chunk_to_segregated_backlog, flb_output_task_queue_enqueue) lose their publication leaks under the new `resource_published` declaration of mk_list_add (gateway constraint 10d); part (5) is advanced for FB-RETRY-LIFETIME's five singleplex functions: OR-1 and OR-7 are checked Fluent Bit provider contracts, each decided refuted by `quirin-audit` (provisional Unsafe candidates, never upstream defects; OR-1 under the synchronous-proxy premise), OR-6 is not stated (W45-FB-OR6-ELEMENT-IDENTITY) and OR-2 was not reached. FB-BACKLOG-CUSTODY and the rest of the retry route stay open here.",
    "source": "docs/reports/w45-fb-system-selection/README.md",
    "recorded_by": "W45-FB-SYSTEM-SELECTION"
   },
@@ -9830,6 +9823,62 @@
    "why": "W45-FB-RETRY-FAULT-INJECTION reproduced, on fluent-bit 864c3d97, the source-level C3 candidate from fb-system-audit-cards/retry, under the same simulated FLB_OUTPUT_SYNCHRONOUS flag as the C2 entry. flb_output_task_queue_flush_one (src/flb_output.c) drops a queued task's temporary user before calling flb_output_task_flush; because that call is asynchronous by construction even under the simulated flag (it posts an event and returns 0 immediately), a second task's scheduled retry naturally queued behind the one in flight, giving a genuine queued_task->retry != 0 case with no extra input or raised rate needed. gdb forcing flb_output_task_flush to return -1 at entry (a script fix from the run guide's literal 'step into the call, then return -1', which does not work as scripted because the call site spans multiple source lines -- recorded with the discarded first attempt's log) reproduced a task retained at users=0 with no other route or retry, explicitly named by the engine's own accounting at shutdown ('task_id=0 still running on route(s)'), and destroyed only at grace-period expiry through flb_engine_destroy_tasks / flb_input_instance_destroy (input teardown, del=0) rather than the control's ordinary flb_task_users_release path (del=1). The Codex report names other active routes/retries as a contrary guard; this run deliberately used a single-route setup so that guard does not apply, isolating the candidate, while the teardown-reaps-everything guard held (freed at input-instance destruction, no crash, no use-after-free). Native observation under an injected premise and a simulated flag; NOT an upstream defect or production claim; no Quirin verdict moves. DISCHARGE: the investigation question is discharged observed-local under the stated simulation and single-route setup; FB-RETRY-LIFETIME is not discharged.",
    "source": "docs/reports/w45-fb-retry-fault-injection/README.md",
    "recorded_by": "W45-FB-RETRY-FAULT-INJECTION"
+  },
+  {
+   "id": "W45-FB-OR6-ELEMENT-IDENTITY",
+   "title": "OR-6 (queued_task not used after the flush fails) is not stated: a container element recovered with container_of has no identity, and no summary says a callee frees one",
+   "why": "Card W45-FB-RETRY-LIFETIME stated OR-1 and OR-7 as checked provider contracts but not OR-6. `flb_output_task_queue_flush_one` obtains `queued_task` from `mk_list_entry_first(&queue->pending, ...)`, a container_of expression the gateway reads as an unresolved identity, and the free that would make `queued_task->retry` a use after free happens inside `flb_output_task_singleplex_flush_next` (N3, source reading at 046accf6: unchanged bodies, flb_output.c:312-351 and 392-411). Neither the element identity nor a callee summary that frees the first in-progress element is in the vocabulary. Size: 1 obligation, 2 functions. DISCHARGE: an element-identity rule for `mk_list_entry*` over a published container (coordinated with FB-BACKLOG-CUSTODY's iteration mechanism) and a per-arm callee summary stating the element released, with Lean parity, then a contract for OR-6 decided by `quirin-audit`.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-FB-OR7-FLUSH-CREATE-OPAQUE",
+   "title": "OR-7's -1 clause on flb_output_task_flush is undecided: flb_output_flush_create's body reaches an uncontracted callee",
+   "why": "The counted-user derivation of the header-inline `flb_output_flush_create` stops at `flb_output_flush_id_get` -> `flb_output_thread_instance_get`, which has no contract and no body in the output unit, so every non-threaded path of `flb_output_task_flush` has an undecided count and `resource_user_exit(task, -1, restored)` is undecided (the 0 clause is refuted on the threaded arm regardless). Size: 1 clause. DISCHARGE: a declaration of the user effect (neutral) of the callees the derivation reaches, or the unit that defines them in the selection, then a re-measured clause.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-FB-OR1-FLUSH-ONE-UNATTRIBUTED",
+   "title": "OR-1's success clause is undecided on the `return flb_output_task_queue_flush_one(...)` exit: the callee's counter operations are on a container element",
+   "why": "`flb_output_task_singleplex_enqueue`'s clause `resource_user_exit(task, 0, added)` holds on the `return 0` exit and is undecided on the exit returning `flb_output_task_queue_flush_one(...)`, whose drop and flush act on `queued_task->task`, not a formal. OR-1 itself (the -1 clause) is decided refuted. Size: 1 clause. DISCHARGE: W45-FB-OR6-ELEMENT-IDENTITY's element identity plus an exit clause for flush_one checked against its body.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-FB-USERS-RELEASE-CHECK",
+   "title": "flb_task_users_release and flb_task_users_dec(task, FLB_TRUE) stay uncontracted: a release check may destroy a borrowed formal",
+   "why": "The counted-user vocabulary has `resource_user_dropped_checked` and `resource_user_release_check`, but declaring them for Fluent Bit would let a caller keep using a task the check may have destroyed: no custody mode states 'may release the borrowed object'. The FLB_TRUE call sites therefore stay outside `flb_task_users_dec`'s literal premise (4 leaves in the system slice at 046accf6 read `call to flb_task_users_dec outside its declared literal-argument premise`) and `flb_task_users_release` is undeclared. DISCHARGE: a may-destroy custody mode for a borrowed position with gateway and Lean parity, then the two declarations checked against their header bodies.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-FB-CROSS-UNIT-USER-PREMISES",
+   "title": "Two counted-user declarations are applied in the output unit as cross-unit premises no analysed body checks there",
+   "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-FB-SINGLEPLEX-CUSTODY-DECLARED",
+   "title": "The custody half of the two OR declarations is applied at callers while their bodies do not validate against it",
+   "why": "`flb_output_task_singleplex_enqueue` declares `resource_consumed(retry, nullable)` (faithful by reading: destroyed on the enqueue failure, held by the queued entry otherwise) and `flb_output_task_flush` declares its three pointers borrowed. The counted-user clauses are checked against the bodies, but the custody analysis of each body falls back to the contract-free run (uncontracted `flb_output_task_queue_enqueue`, refused indirect accesses), so the custody half is a declared premise at the callers in flb_engine.c and flb_engine_dispatch.c. DISCHARGE: the two bodies validating under their declared custody, or a check-only declaration form that callers never apply.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-CONTAINER-ROOT-REACH",
+   "title": "A publication discharges only into a container reached from an unrebound formal or a local initialised from one; the MK-LIST corpus leaves need more",
+   "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. Size: 4 leak leaves. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-COUNTED-USERS-LOOPS",
+   "title": "The counted-user pass leaves every clause of a body with a loop, switch, goto or label undecided",
+   "why": "The pass enumerates straight-line paths only (gateway constraint 10e). The five singleplex functions have none; `handle_output_event`, `flb_engine_dispatch_retry` and the other retry-route functions of the FB-RETRY-LIFETIME slice do, and their counter operations act on locals (unattributed) as well. DISCHARGE: a bounded loop rule (a body whose loop touches no tracked count or opaque call is skipped) with Lean parity, measured on the retry slice.",
+   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+   "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
   {
    "id": "W45-FB-BACKLOG-REFERENCE-VOCABULARY",

@@ -28,6 +28,7 @@ step docs-index python3 scripts/build_docs_index.py --check
 step contracts-check python3 providers/contracts.py check
 step package-build python3 providers/package.py build --output "$logs/packages"
 step package-verify python3 providers/package.py verify "$logs/packages/qcore.libevent"
+step provider-python python3 -m unittest discover -s providers/tests
 step provider-tests cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
 step provider-fmt cargo fmt --manifest-path providers/Cargo.toml --all -- --check
 step provider-clippy cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings

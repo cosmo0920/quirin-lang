@@ -394,6 +394,18 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/memory.qcore", "flb_realloc", 9),
     ("fluent_bit/memory.qcore", "flb_realloc_z", 12),
     ("fluent_bit/memory.qcore", "flb_free", 5),
+    // Card W45-FB-RETRY-LIFETIME: OR-1 and OR-7 as checked declarations —
+    // the marker, one mode per parameter, two exit clauses, the result.
+    (
+        "fluent_bit/output_singleplex.qcore",
+        "flb_output_task_singleplex_enqueue",
+        9,
+    ),
+    (
+        "fluent_bit/output_singleplex.qcore",
+        "flb_output_task_flush",
+        7,
+    ),
     ("fluent_bit/resource_memory.qcore", "flb_malloc", 3),
     ("fluent_bit/resource_memory.qcore", "flb_calloc", 4),
     ("fluent_bit/resource_memory.qcore", "flb_free", 3),
@@ -463,6 +475,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // rather than projected onto an integer it does not have, which is why the
     // card added `f32`/`f64` to `SCALAR_ABI_TYPES`. Two clauses: the marker and
     // the result mode. It takes no parameter, so it has no parameter clause.
+    // Card W45-FB-RETRY-LIFETIME: the counter operations (the drop carries a
+    // literal premise) and two neutral callees.
+    ("fluent_bit/task_users.qcore", "flb_task_users_inc", 4),
+    ("fluent_bit/task_users.qcore", "flb_task_users_dec", 6),
+    ("fluent_bit/task_users.qcore", "flb_task_retry_destroy", 4),
+    (
+        "fluent_bit/task_users.qcore",
+        "flb_output_thread_pool_flush",
+        6,
+    ),
     ("fluent_bit/time.qcore", "flb_time_now", 2),
     (
         "language/quantified_indices.qcore",
@@ -904,7 +926,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "contextual_payload_access",
         13,
     ),
-    ("monkey/intrusive_list.qcore", "mk_list_add", 4),
+    // Card W45-FB-RETRY-LIFETIME: `resource_published` / `resource_unpublished`.
+    ("monkey/intrusive_list.qcore", "mk_list_add", 5),
+    ("monkey/intrusive_list.qcore", "mk_list_del", 4),
     // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
     // `fluent_bit/logging.qcore` shape one library over — five clauses because
     // of `resource_variadic_data_tail()`. Read from
@@ -1212,10 +1236,12 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // parameterless rules), not a libc API contract.
     // Card W44-LIBC-RESIDUALS adds no module: its `strerror`, `vsnprintf` and
     // `vprintf` are appended to existing libc modules.
-    // 111 -> 112 by card W45-FB-BACKLOG-CUSTODY's
+    // 111 -> 113 by card W45-FB-RETRY-LIFETIME's `fluent_bit/task_users.qcore`
+    // and `fluent_bit/output_singleplex.qcore`.
+    // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.2).
-    assert_eq!(sources.len(), 112, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 114, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

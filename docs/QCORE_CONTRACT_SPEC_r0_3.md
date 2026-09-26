@@ -237,7 +237,7 @@ Each refused shape leaves the function without a summary, so its calls stay unco
 
 Only normal C returns are represented by v1 postconditions. A C routine returning null or a negative integer has still returned normally; it has not taken a QCore typed-error exit. Error-specific ownership behavior can be modeled only where a supported mode explicitly represents it, such as nullable acquisition or the specified reallocation relation.
 
-General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses, effects, access permissions and synchronization are not in v1. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
+General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
 **Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
@@ -343,6 +343,50 @@ contract {
 **Versioning.** This is an addition to resource vocabulary version 1, exactly as the variadic data tail, the literal premise and the derived results were: the marker is unchanged, every module that loaded before loads to the same functions, and a loader that predates the clauses rejects a module using them as an unsupported predicate (`resource_kind`, `resource_return_kind`) or nullability (`sentinel`, `valid`) rather than misreading it. No new evidence version is minted: every verdict carries the exact module texts in `source_assumptions`, which name the declarations — and so the vocabulary — it rests on. The Lean model is `QCore.KindedCustody`.
 
 **Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot (`pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`). A library-handle kind (`dlopen`/`dlclose`) is also absent: its one corpus effect was a leak candidate refuted by reading, because the return route does not model `return (T *)handle;` as an escape (a pre-existing shape that reports the same false leak for a heap pointer), so the pair is withheld until that route is repaired.
+
+### C04.7. Counted users
+
+Card W45-FB-RETRY-LIFETIME adds a **quantitative** clause family (C09) to vocabulary version 1: a counted reference an object holds on itself through a counter member, such as a task's `users`.
+
+**Vocabulary.**
+
+```qcore
+ensures normal resource_user_added(p, COUNTER);            // one user added; the caller owes its drop
+ensures normal resource_user_dropped(p, COUNTER);          // one user dropped, no release check
+ensures normal resource_user_dropped_checked(p, COUNTER);  // one user dropped, then the release check
+ensures normal resource_user_release_check(p, COUNTER);    // the release check alone
+ensures normal resource_user_neutral();                    // no user of any object changes
+ensures normal resource_user_exit(p, RETURNED, DELTA);     // every return of RETURNED added DELTA users
+```
+
+`p` names a `resource_borrowed` pointer parameter: a user is not custody of the object, and the object's custody mode is unchanged. `COUNTER` names the member of the designated object that holds the count. `RETURNED` is a canonical integer (C04.5's spelling rules) and `DELTA` one of `added` (+1), `restored` (0) and `dropped` (-1), so a net count is never spelled as arithmetic. A parameter carries at most one operation, or exit clauses, never both; `resource_user_neutral()` stands alone; an exit clause requires an integer result. Every other placement rejects the whole module (grammar G05).
+
+**Semantics.** A consumer MUST apply all of the following:
+
+1. **An addition is an obligation, a drop discharges it.** Along a path, a formal's count is the sum of the operations applied to it. An operation is attributed to a formal only when its actual is that formal's name and no statement of the body rebinds or takes the address of it. An unattributed operation leaves every tracked count undecided, and is reported.
+2. **A drop without the release check is owed a check.** A drop that takes the count below its entry value leaves the object possibly unreferenced; unless a later addition or a release check reaches the same path, the exit it reaches is a violation *candidate*. A drop that only rolls back an addition of the same path owes nothing of its own.
+3. **The release check may destroy the object.** After `resource_user_dropped_checked` or `resource_user_release_check`, a further operation on the same formal is undecided.
+4. **Exit clauses are checked, never assumed, where the body is defined.** Every clause of a function defined in the analysed unit is decided against its body per path: **refuted** when a path that returns the clause's value definitely has a known count other than the clause's (a provisional `Unsafe` candidate, never an upstream defect), **undecided** when such a path's count or returned value is not known (`Unknown`, with the blocker), **held** otherwise. An exit no clause covers must restore every tracked count. A caller applies a declaration whose function is defined in its unit only when those clauses hold there; otherwise the call is opaque.
+5. **The frame is declared, and opacity is fail-closed (premise UC-FRAME).** A call's effect on counted users is read from its declaration; a declaration with no counted-user clause and no body in the unit changes no count; a body defined in the unit is neutral when it writes no declared counter member and calls nothing that is not neutral; a call with no contract and no body, or through an expression, is opaque and leaves every tracked count undecided. The premise is stated, not proved: a declaration that omits a counter change it performs is a false declaration (C04.4).
+
+**Verdict contract, unchanged.** A refuted clause is a provisional `Unsafe` candidate under the existing policy; branch feasibility beyond the conditions a consumer decides (a comparison of a stored call result or of a literal-premise formal with a literal) is not proved. Every published result carries the exact module texts, so the evidence identity names the clauses it rests on. The checked extern-call route has no counted-user model and refuses such a declaration. The Lean model is `QCore.CountedUsers`.
+
+### C04.8. Container publication
+
+Card W45-FB-RETRY-LIFETIME. An intrusive insertion (`mk_list_add(&node->_head, &queue->pending)`) links an object into a container the caller reaches; the custody of the object passes to that container. `resource_stored` does not state this: destroying a list head destroys no member.
+
+```qcore
+ensures normal resource_published(entry, container);
+ensures normal resource_unpublished(entry);
+```
+
+Both name `resource_borrowed` pointer parameters, which keep that mode for the ABI projection and for the admission of a member address; the container is a distinct parameter. A consumer that does not apply the clause MUST refuse the call, never read it as a borrow. A consumer MUST apply all of the following:
+
+1. **Publish.** The entry names its object as `&B->F` or `B`. The container must be reached from memory the caller supplied: a formal the body never rebinds (`&P->F…` or `P`), or a local whose one write is its declaration's initialiser from such a formal (`T *L = P->F;`). When `B` denotes exactly one known, non-null, live identity with no unresolved effect, the identity is published: its custody is the container's and no exit owes it. Every other publication that could move custody refuses: an unnamed entry, any other container (a local object, a file-scope object, an object the body acquired), an unknown, ambiguous, derived or possibly-null binding, an identity that is not live, and an unbound formal (reported unresolved, which is also what makes a derivation bind it). An object that owns linked members or children is published with its owned objects withdrawn in both directions, and the call is refused.
+2. **A published identity stays the container's.** Releasing it is a violation candidate (`release_after_escape`); transferring it again, a `return` included, refuses.
+3. **Unlink.** `resource_unpublished` restores the body's custody only for an identity published on every path reaching the call and still published; every other unlink refuses, an untracked entry included.
+
+A derived summary states custody only, so it is compared with a declaration's custody projection; the container and counted-user clauses are not part of that comparison. The Lean model is `QCore.ContainerPublication`.
 
 ## C05. Manifests and immutable assumptions
 
@@ -542,7 +586,7 @@ remains an outer-audit premise. See [frame helper evidence](reports/w5-configure
 
 ## C09. Custody, access, lifetime and quantitative clauses
 
-Custody contracts state who remains responsible for a resource. Access contracts state who may read or write an identified footprint. Lifetime conditions state when identities remain valid. Quantitative clauses state credit, live-count or cost relations. These domains are related but not interchangeable.
+Custody contracts state who remains responsible for a resource. Access contracts state who may read or write an identified footprint. Lifetime conditions state when identities remain valid. Quantitative clauses state credit, live-count or cost relations. These domains are related but not interchangeable. The first implemented quantitative clause family is the counted-user family of C04.7, whose exit clauses state a live-count relation per returned value; the first implemented lifetime relation between an object and a container is the publication of C04.8.
 
 A complete resource contract SHOULD describe its identity-bearing pre-state, the operation's effects, each possible return/error exit, each exit's custody and access post-state, and the cleanup protocol. A complete concurrent contract additionally needs transfer and synchronization witnesses, task/quiescence conditions and any mutex invariant that actually covers the accessed footprint.
 

@@ -1,0 +1,54 @@
+{
+ "card": "W45-FB-RETRY-LIFETIME",
+ "measured_tip": "74d30db3",
+ "log_directory": "private/w45-fb-retry-lifetime/gate-74d30db3/",
+ "exits": {
+  "submodule": 0,
+  "tests": 0,
+  "clean": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean": 0,
+  "python": 0,
+  "docs_index": 0
+ },
+ "rust_suite": {
+  "units": 298,
+  "summaries": 308,
+  "passed": 5815,
+  "failed": 0,
+  "ignored": 11,
+  "log": "private/test-binaries/20260926T063018Z-3446288/"
+ },
+ "lean_audits_passed": 197,
+ "python_tests": 358,
+ "provider_gate": {
+  "cargo_test": {"exit": 0, "passed": 124},
+  "fmt": 0,
+  "clippy": 0,
+  "package_build": 0,
+  "package_verify": {"qcore.chunkio": 0, "qcore.cmetrics": 0, "qcore.ctraces": 0, "qcore.libevent": 0, "qcore.librdkafka": 0},
+  "contracts_py_check": 0,
+  "log_directory": "private/w45-fb-retry-lifetime/"
+ },
+ "earlier_attempts": [
+  {
+   "tree": "work tree after e1259190's code, before the pins",
+   "tests_exit": 101,
+   "passed": 5801,
+   "failed": 14,
+   "note": "13 failures were contract-count pins this card moves (updated deliberately); 1 the load-sensitive standalone_host row (constraint 16), which passed alone, 3/3"
+  },
+  {
+   "tree": "4c6495be",
+   "note": "tests exit 0 (5,815 passed); clippy exit 101 (needless_borrow in legacy_counted_users.rs) and python exit 1 (the Python contract-corpus pin 111 -> 113, 39 -> 41); both fixed in 74d30db3"
+  }
+ ],
+ "measurements": {
+  "binary_commit": "e1259190",
+  "note": "74d30db3 differs from e1259190 in code only by the clippy needless-borrow fix (no behavioural change); the arbiter and slice artifacts were measured with e1259190's binaries"
+ },
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -426,6 +426,8 @@ fn is_identity_call(instruction: &LegacyInstruction) -> bool {
         .parameters
         .iter()
         .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+        // Card W45-FB-RETRY-LIFETIME: a container effect is not the identity.
+        && !contract.has_container_effect()
         && matches!(
             contract.result,
             ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
@@ -438,6 +440,7 @@ fn is_identity_call(instruction: &LegacyInstruction) -> bool {
                 .parameters
                 .iter()
                 .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                && !call.contract.has_container_effect()
                 && call.contract.result == ResourceReturnMode::None
         })
 }
