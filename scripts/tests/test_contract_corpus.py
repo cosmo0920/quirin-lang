@@ -17,9 +17,11 @@ class CanonicalCorpus(unittest.TestCase):
         # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qcore.
         # 110 -> 111: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
         # library/descriptor_native_observation.qcore in quirin-provider-shared.
-        self.assertEqual(len(modules), 111)
+        # 111 -> 112: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qcore
+        # (checked specifications) in quirin-provider-fluent-bit.
+        self.assertEqual(len(modules), 112)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 39)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 40)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

@@ -78,7 +78,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 47);
+    // 47 -> 48 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // (twelve checked specifications, contract spec C06.2).
+    assert_eq!(contracts.source_assumptions().len(), 48);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -808,7 +810,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 47);
+    // 47 -> 48 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // (twelve checked specifications, contract spec C06.2).
+    assert_eq!(certificate.contracts.source_assumptions().len(), 48);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1023,7 +1027,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 110 -> 111: card W43-DESCRIPTOR-NATIVE-CHECK adds
     // `library/descriptor_native_observation.qcore`, a native observation
     // policy (ten parameterless rules), not resource-v1 and not selected.
-    assert_eq!(modules.len(), 111, "corpus module count");
+    // 111 -> 112: card W45-FB-BACKLOG-CUSTODY adds
+    // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
+    // and manifest-selected.
+    assert_eq!(modules.len(), 112, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;

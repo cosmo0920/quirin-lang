@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 421
+  "named_followups": 428
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 111,
+  "contract_modules": 112,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6735,7 +6735,7 @@
   "workspace_tests": 5788,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 195,
+  "lean_audits": 197,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6761,6 +6761,7 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
+   "AuditCheckedSpecification.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6831,6 +6832,7 @@
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
+   "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
@@ -6939,7 +6941,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-retry-fault-injection/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

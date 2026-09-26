@@ -910,5 +910,7 @@ fn the_modules_under_test_are_the_production_ones() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 47);
+    // 47 -> 48 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // (twelve checked specifications, contract spec C06.2).
+    assert_eq!(contracts.source_assumptions().len(), 48);
 }

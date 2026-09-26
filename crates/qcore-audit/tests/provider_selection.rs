@@ -633,7 +633,8 @@ fn cycle19_selection(repository: &Path) -> Vec<String> {
 fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     let repository = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let entries = cycle19_selection(&repository);
-    assert_eq!(entries.len(), 47);
+    // 47 -> 48: W45-FB-BACKLOG-CUSTODY's `fluent_bit/storage_backlog.qcore`.
+    assert_eq!(entries.len(), 48);
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -766,7 +767,7 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
         let contracts = ContractInput::providers(&resolved, None).load().unwrap();
         assert_eq!(contracts.source_assumptions().len(), view.len(), "{name}");
     }
-    assert_eq!(total, 47);
+    assert_eq!(total, 48);
 }
 
 #[test]
@@ -796,7 +797,7 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     };
     let manifest_text = fs::read_to_string(&manifest_path).unwrap();
     assert_eq!(entries(all.manifest_text()), entries(&manifest_text));
-    assert_eq!(entries(&manifest_text).1.len(), 47);
+    assert_eq!(entries(&manifest_text).1.len(), 48);
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.
