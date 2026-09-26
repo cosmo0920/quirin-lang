@@ -12,6 +12,9 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Output, Stdio};
 use std::sync::Arc;
 
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -762,13 +765,19 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
 #[test]
 fn only_template_carrying_crates_are_packaged() {
     let root = root();
-    let mut templates: Vec<String> = std::fs::read_dir(&root)
-        .unwrap()
-        .filter_map(|entry| {
-            let path = entry.unwrap().path();
-            path.join("provider-template.json")
-                .is_file()
-                .then(|| path.file_name().unwrap().to_string_lossy().into_owned())
+    // Card W45-TEST-HYGIENE: a crate directory carrying a tracked template;
+    // an untracked or ignored directory under `providers/` is not a crate.
+    let mut templates: Vec<String> = tracked_files::tracked_files(&root)
+        .iter()
+        .filter_map(|path| {
+            let relative = path.strip_prefix(&root).unwrap();
+            let mut components = relative.components();
+            let krate = components
+                .next()?
+                .as_os_str()
+                .to_string_lossy()
+                .into_owned();
+            (components.as_path() == Path::new("provider-template.json")).then_some(krate)
         })
         .collect();
     templates.sort();

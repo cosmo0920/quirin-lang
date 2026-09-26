@@ -102,3 +102,4 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 26 | [providers](providers.md#constraint-26) | Process providers have process-group containment plus the opt-in… |
 | 27 | [concurrency](concurrency.md#constraint-27) | The mutex model supports initially-unlocked non-recursive mutexes only.… |
 | 28 | [evidence](evidence.md#constraint-28) | Declared profiles, observations_trusted, GuardFootprintAuthority,… |
+| 29 | [validation](validation.md#constraint-29) | A test discovers repository inputs from tracked files only; ignored and untracked content never changes a result. |

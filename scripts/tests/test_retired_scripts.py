@@ -11,9 +11,12 @@ reports under `docs/reports/` and the increment history under
 `docs/development/increments/` record what was true when they were written.
 """
 
-import os
+import sys
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tracked_files import tracked_relative  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -23,19 +26,14 @@ RETIRED = [
     'prepare_cycle19_monkey.py',
 ]
 
-# Frozen history and generated or external trees.
+# Frozen history and the external submodule. Generated and private trees
+# (`target/`, `private/`, `measure/`, `build/`, `proof/.lake/`, other
+# worktrees) are untracked or ignored, so the tracked listing never reads them
+# (card W45-TEST-HYGIENE).
 EXCLUDED_PREFIXES = (
     'docs/reports/',
     'docs/development/increments/',
-    'target/',
     'third_party/',
-    'private/',
-    'measure/',
-    'build/',
-    'proof/.lake/',
-    'providers/target/',
-    '.git/',
-    '.claude/',
 )
 
 TEXT_SUFFIXES = {
@@ -44,19 +42,11 @@ TEXT_SUFFIXES = {
 
 
 def live_files():
-    for directory, subdirectories, files in os.walk(ROOT):
-        relative_directory = Path(directory).relative_to(ROOT).as_posix()
-        prefix = '' if relative_directory == '.' else relative_directory + '/'
-        subdirectories[:] = [
-            name for name in subdirectories
-            if not (prefix + name + '/').startswith(EXCLUDED_PREFIXES)
-        ]
-        for name in files:
-            relative = prefix + name
-            if relative.startswith(EXCLUDED_PREFIXES):
-                continue
-            if Path(name).suffix in TEXT_SUFFIXES:
-                yield relative
+    for relative in tracked_relative(ROOT):
+        if relative.startswith(EXCLUDED_PREFIXES):
+            continue
+        if Path(relative).suffix in TEXT_SUFFIXES:
+            yield relative
 
 
 class RetiredScriptsTest(unittest.TestCase):

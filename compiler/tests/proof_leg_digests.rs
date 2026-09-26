@@ -41,6 +41,19 @@ use std::path::{Path, PathBuf};
 /// `ct_corpus.rs::PROOF_GATED_CASES`.
 const CASES_WITH_A_DIGEST_PIN: &[&str] = &["CT01", "CT03", "CT07", "CT37", "CT50"];
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
+/// The tracked files directly in `directory` with `extension`, sorted. Card
+/// W45-TEST-HYGIENE: an untracked or ignored file there is not a pin site.
+fn tracked_directly_under(directory: &Path, extension: &str) -> Vec<PathBuf> {
+    tracked_files::tracked_files(directory)
+        .into_iter()
+        .filter(|path| path.parent() == Some(directory))
+        .filter(|path| path.extension().is_some_and(|found| found == extension))
+        .collect()
+}
+
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -91,15 +104,7 @@ fn numeral(text: &str) -> Option<u128> {
 /// `theorem ct37_trace_digest : mixTrace referenceRun = 17239871955803798867 :=`
 fn lean_pins(root: &Path) -> Vec<Pin> {
     let directory = root.join("proof").join("QCore");
-    let mut entries: Vec<PathBuf> = fs::read_dir(&directory)
-        .expect("proof/QCore is part of the checkout")
-        .map(|entry| entry.expect("a readable directory entry").path())
-        .filter(|path| {
-            path.extension()
-                .is_some_and(|extension| extension == "lean")
-        })
-        .collect();
-    entries.sort();
+    let entries = tracked_directly_under(&directory, "lean");
     let mut pins = Vec::new();
     for path in entries {
         let text = fs::read_to_string(&path).expect("a readable Lean module");
@@ -150,12 +155,7 @@ fn lean_pins(root: &Path) -> Vec<Pin> {
 /// `const CT37_LEAN_TRACE_DIGEST: u64 = 17239871955803798867;`
 fn rust_pins(root: &Path) -> Vec<Pin> {
     let directory = root.join("compiler").join("tests");
-    let mut entries: Vec<PathBuf> = fs::read_dir(&directory)
-        .expect("compiler/tests is part of the checkout")
-        .map(|entry| entry.expect("a readable directory entry").path())
-        .filter(|path| path.extension().is_some_and(|extension| extension == "rs"))
-        .collect();
-    entries.sort();
+    let entries = tracked_directly_under(&directory, "rs");
     let mut pins = Vec::new();
     for path in entries {
         let text = fs::read_to_string(&path).expect("a readable test file");

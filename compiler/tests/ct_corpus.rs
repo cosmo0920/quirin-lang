@@ -106,6 +106,9 @@ mod diagnostic_sink;
 #[path = "../../tests/support/mutex_observation.rs"]
 mod mutex_observation;
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8072,20 +8075,19 @@ fn proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture() {
     }
 }
 
-/// Every file under `root`, recursively, as `(repository-relative path with
-/// `/` separators, bytes)`. Nothing is skipped: a copy placed anywhere under
-/// the scanned tree is a copy.
+/// Every tracked file under `root`, recursively, as `(repository-relative
+/// path with `/` separators, bytes)`. Nothing tracked is skipped: a committed
+/// copy placed anywhere under the scanned tree is a copy. An untracked or
+/// ignored file is not part of the tree (card W45-TEST-HYGIENE).
 fn fixture_files(root: &Path, relative: &str, out: &mut Vec<(String, Vec<u8>)>) {
-    for entry in fs::read_dir(root).unwrap() {
-        let entry = entry.unwrap();
-        let name = entry.file_name().into_string().unwrap();
-        let path = entry.path();
-        let relative = format!("{relative}/{name}");
-        if entry.file_type().unwrap().is_dir() {
-            fixture_files(&path, &relative, out);
-        } else {
-            out.push((relative, fs::read(&path).unwrap()));
-        }
+    for path in tracked_files::tracked_files(root) {
+        let name = path
+            .strip_prefix(root)
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .replace('\\', "/");
+        out.push((format!("{relative}/{name}"), fs::read(&path).unwrap()));
     }
 }
 

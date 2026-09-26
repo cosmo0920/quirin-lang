@@ -4,20 +4,21 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use qcore_compiler::{load_first_party_manifests, load_first_party_registry};
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 struct Fixture(PathBuf);
 impl Fixture {
     fn new() -> Self {
+        // Card W45-TEST-HYGIENE: the fixture is the tracked profile tree; an
+        // untracked or ignored file under the profiles root is not copied.
         fn copy(source: &Path, target: &Path) {
-            fs::create_dir_all(target).unwrap();
-            for entry in fs::read_dir(source).unwrap() {
-                let entry = entry.unwrap();
-                if entry.file_type().unwrap().is_dir() {
-                    copy(&entry.path(), &target.join(entry.file_name()));
-                } else {
-                    fs::copy(entry.path(), target.join(entry.file_name())).unwrap();
-                }
+            for path in tracked_files::tracked_files(source) {
+                let destination = target.join(path.strip_prefix(source).unwrap());
+                fs::create_dir_all(destination.parent().unwrap()).unwrap();
+                fs::copy(&path, destination).unwrap();
             }
         }
         let root = std::env::temp_dir().join(format!(

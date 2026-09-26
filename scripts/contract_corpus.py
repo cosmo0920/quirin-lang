@@ -32,8 +32,33 @@ def load_path(repository):
     return json.loads((index.parent / manifest["load_path"]).read_text())
 
 
-def sources(repository):
+def _walk(directory, tracked):
+    """Every path under `directory`: the filesystem walk by default, or, when
+    `tracked` is given (absolute paths of the repository's tracked files),
+    only those tracked paths under it, spelled as `directory / relative`.
+    Card W45-TEST-HYGIENE: a test passes `tracked` so that untracked or
+    ignored files never change its result."""
+    if tracked is None:
+        return sorted(directory.rglob("*"))
+    resolved = directory.resolve()
+    return sorted(directory / path.relative_to(resolved)
+                  for path in tracked if path.is_relative_to(resolved))
+
+
+def _tracked_paths(repository, tracked):
+    """`tracked` (repository-relative paths) as absolute paths, or None."""
+    if tracked is None:
+        return None
     repository = Path(repository).resolve()
+    return {repository / path for path in tracked}
+
+
+def sources(repository, tracked=None):
+    """The canonical corpus modules by logical path. `tracked`, when given,
+    is the repository's tracked-file list (repository-relative paths) and
+    replaces the filesystem walk."""
+    repository = Path(repository).resolve()
+    tracked = _tracked_paths(repository, tracked)
     index, manifest = index_manifest(repository)
     if not isinstance(manifest["roots"], list) or not manifest["roots"]:
         raise ValueError("empty or invalid corpus roots")
@@ -42,7 +67,7 @@ def sources(repository):
         directory = index.parent / name
         if not directory.resolve().is_relative_to(repository) or directory.is_symlink() or not directory.is_dir():
             raise ValueError(f"invalid corpus root: {directory}")
-        for path in sorted(directory.rglob("*")):
+        for path in _walk(directory, tracked):
             if path.is_symlink():
                 raise ValueError(f"symbolic link in corpus: {path}")
             if path.is_file() and path.suffix == ".qcore":
@@ -75,7 +100,7 @@ def libc_names(repository):
     return names
 
 
-def libc_placement_violations(repository):
+def libc_placement_violations(repository, tracked=None):
     """Every (module, name) declaring a libc/POSIX function outside the libc crate.
 
     Scanned: every canonical corpus module and every `.qcore` under `providers/`.
@@ -85,10 +110,11 @@ def libc_placement_violations(repository):
     repository = Path(repository).resolve()
     crate = (repository / LIBC_CRATE).resolve()
     names = libc_names(repository)
-    modules = {path.resolve() for path in sources(repository).values()}
+    modules = {path.resolve() for path in sources(repository, tracked).values()}
     providers = repository / "providers"
     if providers.is_dir():
-        modules |= {path.resolve() for path in providers.rglob("*.qcore") if path.is_file()}
+        modules |= {path.resolve() for path in _walk(providers, _tracked_paths(repository, tracked))
+                    if path.suffix == ".qcore" and path.is_file()}
     owned = [path for path in modules if path.is_relative_to(crate)]
     if not owned:
         raise ValueError(f"no contract module under {crate}")
@@ -112,7 +138,7 @@ def _uncommented(text):
     return "\n".join(line.split("//", 1)[0] for line in text.split("\n"))
 
 
-def libc_inheritance(repository):
+def libc_inheritance(repository, tracked=None):
     """Card CONTRACT-INHERIT-ADOPTION: how modules outside the libc crate take
     libc contracts by reference instead of restating them.
 
@@ -133,10 +159,11 @@ def libc_inheritance(repository):
         for record in manifest["crates"]:
             if record["name"] == "quirin-provider-libc":
                 published = set(record["published"])
-    modules = {path.resolve() for path in sources(repository).values()}
+    modules = {path.resolve() for path in sources(repository, tracked).values()}
     providers = repository / "providers"
     if providers.is_dir():
-        modules |= {path.resolve() for path in providers.rglob("*.qcore") if path.is_file()}
+        modules |= {path.resolve() for path in _walk(providers, _tracked_paths(repository, tracked))
+                    if path.suffix == ".qcore" and path.is_file()}
     references, violations = [], []
     for path in sorted(modules):
         if path.is_relative_to(crate):
