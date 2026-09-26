@@ -1,1 +1,1 @@
-target/debug/quirin-audit --plugin-path target/debug --output /tmp/claude-1000/w45-asp-parity-2/p3 libevent prepare --clang /usr/lib/llvm-21/bin/clang --clangxx /usr/lib/llvm-21/bin/clang++ --write-profile 
+target/debug/quirin-audit --plugin-path target/debug --output /tmp/claude-1000/w45-asp-parity-3/p3 libevent prepare --clang /usr/lib/llvm-21/bin/clang --clangxx /usr/lib/llvm-21/bin/clang++ --write-profile 

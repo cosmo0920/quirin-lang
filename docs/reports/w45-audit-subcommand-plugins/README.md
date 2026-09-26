@@ -170,8 +170,8 @@ overwriting the committed one. The plugin claims no verdict.
 [log explanation](scripts/explain_logs.py); evidence in [parity/](parity/)).
 Pinned `third_party/libevent` `d82464a2`, Ubuntu clang 21.1.8
 (`/usr/lib/llvm-21/bin/clang{,++}`), CMake 4.2.3, the script from base
-`37e1b82d`, the plugin at the measured tip; outputs in
-`/tmp/claude-1000/w45-asp-parity-2/`, outside the repository.
+`37e1b82d`, the plugin at `3a08df5f` (after the module rename); outputs in
+`/tmp/claude-1000/w45-asp-parity-3/`, outside the repository.
 
 | Pass | What | Files compared | Identical | After root normalisation | Differ (all explained) |
 |---|---|---:|---:|---:|---:|
@@ -183,10 +183,10 @@ In pass 2 every prepared file is byte-identical, SHA-256:
 
 | File | SHA-256 (script = plugin) |
 |---|---|
-| `compile_commands.json` | `ec1eacb0e9d35e3596369c4d2e330120b3b36f867652d7863282f12f096177de` |
-| `libevent-core-audit.json.config` | `12335660199faa7bd2d40d633393ed2d510b31b83db75a6ce60a696816cf35dd` |
-| `libevent-build-provenance.json` | `4389dfb3efff78555f207f7e92aebf1462ebe6e2bc94491b46bd02248f2644d8` |
-| `CMakeCache.txt` | `b8a1350eaa278ca51998298891725a75c0c42ce17bfcdcddc31266b9427de067` |
+| `compile_commands.json` | `6be53a5faabfe386f7546cccc298c963ddc40ec01d5f711aaaa5cca3fcd7d225` |
+| `libevent-core-audit.json.config` | `2eef66cd4e9c94119338d0869434ffd76b5677432827d3e79cf64ab25939e6fb` |
+| `libevent-build-provenance.json` | `125493b4548f1743c6f6b6128f7ff2c721fbfb7f3bc7d8a914f7345785bbf67f` |
+| `CMakeCache.txt` | `ff440c0b0dcf31623c9eb0aa6c654d64ce34055faf749ab6ee4ff470adde6000` |
 | `lib/libevent_core.a` | `2a14b00576aa2566d47748513ce03974e76462436ada1f67f2663b7c89109935` |
 
 The 5 that differ are logs, each explained by
@@ -200,9 +200,10 @@ script, the output for the plugin. That entry changed no tool CMake chose
 (`CMakeCache.txt` is identical). Pass 1's 7 add `CMakeRuleHashes.txt` and the
 provenance record, whose digests are of files that carry the output root.
 Every step of the harness exited 0 except the intended refusal
-([commands and exits](parity/)); an earlier run of the same harness at
-`00ed15b3` (before the log-explanation step was added) measured pass 2 the
-same, 147 identical and the same 5 logs. The
+([commands and exits](parity/)). Two earlier runs of the same harness, at
+`00ed15b3` (before the log-explanation step was added) and at `d9df130a`
+(before the module rename), measured the same counts in every pass: 147
+identical and the same 5 logs in pass 2. The
 three host records (report, invocation, stderr log) exist only on the plugin's
 side. The protected-output refusal ran end to end (exit 1, `plugin-exit`, the
 libevent plugin's refusal naming `build/cycle19`), and
@@ -224,7 +225,11 @@ increment keep their text.
 | `crates/quirin-audit-plugin` | 7 + 4 + 1 | protocol round trip, version before shape, `Pending` proposals and unknown fields malformed, bad digests; `json_text` order and escapes; the harness running the example plugin, a failed response, a refused request version, a tampered artifact; the Cargo closure: the SDK links `qcore-schemas` alone of the workspace's crates, the libevent plugin only the SDK besides |
 | `crates/quirin-audit-plugin-libevent` | 7 | flag parsing, `selected_units` (prefix, `-o`, `arguments`, the `.c` suffix), protected outputs, only `prepare` answered, the `audit` module's text and cache readers |
 
-The integration binary is in the test runner's `EXCLUSIVE` table (its timeout
+`compiler/tests/workspace_layering.rs` admits `qcore-audit` →
+`quirin-audit-plugin` and pins the two new crates' workspace dependencies
+(`qcore-schemas`; the SDK and `qcore-schemas`); `providers/Cargo.lock`
+records `qcore-audit`'s two new dependencies, since the provider workspace
+path-depends on it. The integration binary is in the test runner's `EXCLUSIVE` table (its timeout
 row is a wall-clock budget).
 
 ## 7. Lean

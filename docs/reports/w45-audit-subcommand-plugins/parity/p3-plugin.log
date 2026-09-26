@@ -1,4 +1,4 @@
-subcommand `libevent` (quirin-audit-libevent@24dbfa5a6047d84e): completed; 7 artifact(s), 0 claim(s); verdict none (no claim, no host row)
-  Warning profile-regenerated: review /tmp/claude-1000/w45-asp-parity-2/p3/libevent-clang-build/profile.json and copy it to /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/contract/profiles/libevent-core/profile.json (generated digests are committed only alongside the record that validated them)
-  Info audit-configuration: /tmp/claude-1000/w45-asp-parity-2/p3/libevent-clang-build/libevent-core-audit.json.config
-report: /tmp/claude-1000/w45-asp-parity-2/p3/quirin-audit-libevent.report.json
+subcommand `libevent` (quirin-audit-libevent@a539f83700e8cf73): completed; 7 artifact(s), 0 claim(s); verdict none (no claim, no host row)
+  Warning profile-regenerated: review /tmp/claude-1000/w45-asp-parity-3/p3/libevent-clang-build/profile.json and copy it to /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/contract/profiles/libevent-core/profile.json (generated digests are committed only alongside the record that validated them)
+  Info audit-configuration: /tmp/claude-1000/w45-asp-parity-3/p3/libevent-clang-build/libevent-core-audit.json.config
+report: /tmp/claude-1000/w45-asp-parity-3/p3/quirin-audit-libevent.report.json

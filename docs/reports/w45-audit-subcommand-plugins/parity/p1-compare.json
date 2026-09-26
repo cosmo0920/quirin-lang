@@ -1,6 +1,6 @@
 {
-  "left": "/tmp/claude-1000/w45-asp-parity-2/p1-script",
-  "right": "/tmp/claude-1000/w45-asp-parity-2/p1-plugin",
+  "left": "/tmp/claude-1000/w45-asp-parity-3/p1-script",
+  "right": "/tmp/claude-1000/w45-asp-parity-3/p1-plugin",
   "normalize": true,
   "counts": {
     "compared": 152,
@@ -29,32 +29,32 @@
   ],
   "key_files": {
     "libevent-clang-build/compile_commands.json": {
-      "left": "e40f976a35501b9040e141056ad514148ae12a695e03186f0cd4f5b095d3a410",
-      "right": "6fe106f433fb97ad8c6b971cec5287bbc3fa413e5076a7c729ea6a6ca70701b3"
+      "left": "71e26c7f26cfa51702c1e366e8df774d3d92538e7841aff3a9eff8b1ade9cd1d",
+      "right": "38e9299848b19a13abaaac2d66d8063e45627f3e5e01db51bf83780c3c1a1f4e"
     },
     "libevent-clang-build/libevent-core-audit.json.config": {
-      "left": "5d518b74aebfcbb97d0d12996bfeac2eefcc0a37b5702b162d8a380433d38482",
-      "right": "29e8fb4797fe47b8c92428992db546e010b3da4ac07b69e3bf5d4e8defb728dd"
+      "left": "79971dbabdba951e832085f51fd15c011980e3afcefe397768e8763e94003f52",
+      "right": "9f56fd50c5577d8e13cad481d197f0cfb340ffee7f94298d86327ba7ca75f158"
     },
     "libevent-clang-build/libevent-build-provenance.json": {
-      "left": "e93769701b3f88ec79bb8de1062738c8889bfe405f24746ab088469fe733f8c5",
-      "right": "29263e86b0ec0be7874abb915ff70a79a0436453fcf59651350c06a83d3ba067"
+      "left": "5d5ba5aa995fcb0bb43c597b98c6c929f4726914afdfbc1f222d5c5d73bb3882",
+      "right": "ad2db88534c5f8f97f4563da47972fe4928b4794591b7e3f3aa23fb1d120bd12"
     },
     "libevent-clang-build/CMakeCache.txt": {
-      "left": "e7c7945a612ad1710f7eead7ea4ca9cff743c24859fbace81926aa3725f5b580",
-      "right": "42105bb30c2ed816b1286564166bd1fb2446d67c58b23f6b77bf67e5b04f65e3"
+      "left": "2493c3715959f40d91f2675254d74791fd51555467383a171352c27e936ffdcd",
+      "right": "abab59921dd9fc977d89da2a3993f6faa81fc7d5b9521b865d54ecd45349524e"
     },
     "libevent-clang-build/lib/libevent_core.a": {
       "left": "2a14b00576aa2566d47748513ce03974e76462436ada1f67f2663b7c89109935",
       "right": "2a14b00576aa2566d47748513ce03974e76462436ada1f67f2663b7c89109935"
     },
     "libevent-clang-build/configure.log": {
-      "left": "bbd79f35e0c248537f96ff563ac53baac682c1185efc4b1f8fac37c4cc46721e",
-      "right": "e0a3e52e02676347d73a85b8747cdfd7b725a5a755d53f3b5d8a26ddfd370576"
+      "left": "83961c312189a1f74e8cf4736682c1dc7e58c7badc17272728cfc82302a3c6d8",
+      "right": "9ef35ff6d43e6966f9d13a97787ae253a7c6268a28e9bbc03a033725df79e764"
     },
     "libevent-clang-build/native-build.log": {
-      "left": "6e6f6277072a409f8649493eda883a3204c92aed8e6c7fc1f0ec97129dbd14e3",
-      "right": "4499d6bc44e97c2e6cf28f737af48cfc09cfd595827acb69e38e326df8288f2a"
+      "left": "75c68293a6889c28ef93fcf2a6a520538c603a0b0d535137e4fd5362d1b47692",
+      "right": "93d63c8f760af66b0d2d4bb559aade0770cb17a1be323f1473f569866bb181a2"
     }
   }
 }

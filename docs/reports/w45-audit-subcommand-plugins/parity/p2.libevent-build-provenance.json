@@ -3,14 +3,14 @@
   "source_set": "libevent-core",
   "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "checkout": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/third_party/libevent",
-  "build": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build",
+  "build": "/tmp/claude-1000/w45-asp-parity-3/p2/libevent-clang-build",
   "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
   "configure_command": [
     "cmake",
     "-S",
     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/third_party/libevent",
     "-B",
-    "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build",
+    "/tmp/claude-1000/w45-asp-parity-3/p2/libevent-clang-build",
     "-DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang",
     "-DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++",
     "-DCMAKE_C_STANDARD=17",
@@ -26,7 +26,7 @@
   "native_build_command": [
     "cmake",
     "--build",
-    "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build",
+    "/tmp/claude-1000/w45-asp-parity-3/p2/libevent-clang-build",
     "--target",
     "event_core_static",
     "-j2"
@@ -55,7 +55,7 @@
     "strlcpy.c",
     "watch.c"
   ],
-  "cmake_database_sha256": "ec1eacb0e9d35e3596369c4d2e330120b3b36f867652d7863282f12f096177de",
+  "cmake_database_sha256": "6be53a5faabfe386f7546cccc298c963ddc40ec01d5f711aaaa5cca3fcd7d225",
   "cmake_database_entries": 55,
   "static_library_sha256": "2a14b00576aa2566d47748513ce03974e76462436ada1f67f2663b7c89109935",
   "source_sha256": {
