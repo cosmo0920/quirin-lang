@@ -18,7 +18,9 @@ Before relying on anything, re-check:
 * `attempt-1/`:
   * `fluent-bit-clang-source/` and `fluent-bit-clang-production/` from
     `prepare`;
-  * `native-debug/`, the Debug build;
+  * `native-bin/fluent-bit`, the Debug binary (sha256 `7e535c9e…`); its
+    build tree `native-debug/` was deleted after the runs, so the run
+    scripts need `native-build.sh` again (they read `native-debug/bin/`);
   * `run/`, the fixtures;
   * `native-logs/`, the full logs;
   * `slice-37e1b82d/` and `slice-37e1b82d-final/`, the slice runs (the
