@@ -420,7 +420,35 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
 
 ## 9. Gate
 
-See [gate.json](gate.json) and §10.
+Run on `c6de5e51` with `scripts/gate.sh`. Every exit goes to its own file, with
+`CARGO_INCREMENTAL=0`. Logs are worktree-private under
+`private/w45-refuted-contract-withdrawal/gate-c6de5e51/`
+([gate.json](gate.json)). The provider packages are built outside the
+repository and then removed.
+
+| Step | Result |
+|---|---|
+| submodule; fmt; clippy `-D warnings`; both reevaluation probes | 0 each |
+| Rust suite (`scripts/run_test_binaries.py`) | 0: 310 units, 320 summaries; **5,936 passed**, 0 failed, 11 ignored |
+| `cargo clean --profile dev` | 0 |
+| Lean audits | 0: **205** passed |
+| Root Python tests; `build_docs_index.py --check` | 0: **358** tests; 0 |
+| Provider gate: `contracts.py check`, package build and verify, `providers/tests`, provider `cargo test`, fmt, clippy | 0 each: 15 Python tests; 129 Rust passed, 0 failed, 1 ignored |
+
+**Discarded attempts**, recorded in `gate.json`:
+
+* **`e747c546` (before the merge).** `provider-tests` exited 101. Two
+  `configured_source_contract` process-provider tests timed out (`QP006`) while
+  concurrent cards loaded the host. They are load-sensitive (constraint 16).
+  They were not weakened, and they pass in the final gate.
+* **`0d4f42f1` (after the merge).** The suite exited 101 with 1 failure.
+  `checkpoint::tests::a_future_schema_version_is_refused` pinned the "future"
+  schema as 2, which this card makes current. The pin moved to 3.
+
+**Pins moved deliberately:**
+
+* the `.qo` schema, from 1 to 2 (`checkpoint_cli` and the checkpoint unit test);
+* the matrix's derived `lean_audits` and follow-up counts.
 
 ## 10. Boundaries
 
