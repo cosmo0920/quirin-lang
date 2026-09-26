@@ -4,8 +4,17 @@ Card W45-GATEWAY-MEMO-KEY, 2026-09-26. A soundness fix in the legacy-C gateway,
 found by W45-AUDIT-CHECKPOINTS's independence audit.
 
 **Base.** Local `main` at `2f9131a8` (W45-CONTRACT-REVISION-MODE integrated),
-as the brief named. **Commits.** Code, tests, Lean and harnesses `891902e1`
-(the measured code); records after it.
+as the brief named. `main` moved to `e90de196` (W45-FB-BACKLOG-CUSTODY) while
+this card was running. That change adds no memo or cache to the four crates,
+so the card was not rebased.
+
+**Commits.**
+
+* `891902e1`: code, tests, Lean and harnesses. The arbiter binaries were
+  built from this commit.
+* `cf26c45f`: the records. The gate was measured here.
+* `d05a4b4e`: rustfmt and the matrix regeneration.
+* Records follow.
 
 ## 1. The defect
 
@@ -193,7 +202,32 @@ out of scope, since the brief asks to fix it.
 
 ## 7. Gate
 
-GATE
+The standing gate ran at `cf26c45f` with `CARGO_INCREMENTAL=0`. Every exit was
+captured to a file ([`gate.json`](gate.json); logs in the worktree's
+`private/memo-key/gate/`). Results:
+
+* Submodule 0, clippy 0, both reevaluation examples 0, docs index `--check` 0.
+* **Lean 0: 199 audits.**
+* **Rust exit 101: 302 units, 312 summaries, 5,842 passed / 1 failed / 11
+  ignored** (`private/test-binaries/20260926T102652Z-1909017/`). The one
+  failure is constraint 16's load-sensitive row
+  `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`, which exceeded its
+  500 ms budget in the exclusive phase under a host load of 15–35.
+* **fmt exit 1**: rustfmt layout of the new test.
+* **Python exit 1**: the committed matrix's derived `lean_audits` was 198
+  against 199 on disk.
+
+Repaired at `d05a4b4e`: rustfmt applied, and the matrix regenerated without
+`--gate`, so its measured numbers stay carried and labelled as carried. At
+that tip:
+
+* fmt 0.
+* Python 0 (358 tests).
+* clippy 0.
+* The module's unit tests 0 (22 passed).
+* The load-sensitive row alone passed 3/3, unchanged.
+
+The provider gate did not run, because `providers/` is untouched.
 
 ## 8. Ledger and follow-ups
 
