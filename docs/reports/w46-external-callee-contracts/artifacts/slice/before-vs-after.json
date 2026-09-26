@@ -1,0 +1,105 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3321,
+   "unknown_alias": 713,
+   "counted_user": 4
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3321,
+   "unknown_alias": 713,
+   "counted_user": 4
+  }
+ },
+ "removed_leaves": 2,
+ "added_leaves": 2,
+ "moving_functions": 2,
+ "status_moves": [],
+ "unit_moves": [],
+ "removed": [
+  {
+   "function": [
+    "src/flb_engine.c",
+    0,
+    "flb_engine_start"
+   ],
+   "leaf": [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    "src/flb_engine.c:1183"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_engine.c",
+    1,
+    "flb_engine_start"
+   ],
+   "leaf": [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    "src/flb_engine.c:1183"
+   ],
+   "count": 1
+  }
+ ],
+ "added": [
+  {
+   "function": [
+    "src/flb_engine.c",
+    0,
+    "flb_engine_start"
+   ],
+   "leaf": [
+    "unsupported",
+    "call to `fcntl` outside its declared literal-argument premise",
+    "src/flb_engine.c:1183"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_engine.c",
+    1,
+    "flb_engine_start"
+   ],
+   "leaf": [
+    "unsupported",
+    "call to `fcntl` outside its declared literal-argument premise",
+    "src/flb_engine.c:1183"
+   ],
+   "count": 1
+  }
+ ]
+}

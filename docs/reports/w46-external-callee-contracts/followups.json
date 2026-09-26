@@ -1,0 +1,30 @@
+[
+  {
+    "id": "W46-SDS-CAT-SAFE-IN-PLACE-REALLOC",
+    "title": "cfl_sds_cat_safe reallocates the string behind a `cfl_sds_t *` slot, which v1 cannot state; it is the top external blocker",
+    "why": "MEASURED by card W46-EXTERNAL-CALLEE-CONTRACTS on its AFTER baseline: cfl_sds_cat_safe (lib/cfl/src/cfl_sds.c:376-389) is the first external callee of the ranking, 170 uncontracted call sites, the only blocker of 3 Unknown functions (format_metric_type, sds_cat_safe, append_bytes_value) and one of the last blockers of 5 more. Its body replaces *buf with the result of cfl_sds_cat, which may reallocate (cfl_sds_increase) and so free the old string, and leaves *buf unchanged on failure. That is neither `resource_borrowed` (the slot's value changes and aliases of the old string die) nor `resource_out` (no fresh custody; the slot's owner keeps one obligation), and `ptr<mut, ptr<mut, u8>>` admits only `resource_out`. CTRACES-FORMATTER-CHAIN waits on it. DISCHARGE: a vocabulary item for reallocation through an out slot (the slot keeps one obligation, the old value is released on success), with gateway and Lean parity, then the declaration in quirin-provider-cfl pinned at both revisions and an arbiter.",
+    "source": "docs/reports/w46-external-callee-contracts/README.md",
+    "recorded_by": "W46-EXTERNAL-CALLEE-CONTRACTS"
+  },
+  {
+    "id": "W46-FCNTL-SETFD-ADDRESS-TAIL",
+    "title": "fcntl at F_SETFD is declared, but rd_kafka_open_cb_generic passes an extra `&on` tail actual that the tail rule refuses",
+    "why": "MEASURED by card W46-EXTERNAL-CALLEE-CONTRACTS: `fcntl(fd, F_SETFD, FD_CLOEXEC, &on);` (lib/librdkafka-2.15.0/src/rdkafka_offset.c:138) now meets the premise-restricted declaration, and its uncontracted-call leaf became `arguments beyond the declared parameters of `fcntl``, because variadic_nested::tail_arguments_are_data_with_nested refuses the address of the local `on` as a tail actual. F_SETFD never reads a fourth argument. 1 leaf, 1 Unknown function blocked by it alone. The other declared site, `fcntl(sockfd, F_SETFD, FD_CLOEXEC);` in mk_socket_set_nonblocking, is admitted. DISCHARGE: a tail rule that admits the address of a plain local scalar as data (it carries no custody), with Lean parity, or a measured decision that it stays refused.",
+    "source": "docs/reports/w46-external-callee-contracts/README.md",
+    "recorded_by": "W46-EXTERNAL-CALLEE-CONTRACTS"
+  },
+  {
+    "id": "W46-HEADER-INLINE-DECLARED-UNCHECKED",
+    "title": "Two `static inline` header callees are declared (trusted, pinned) where no analysed body checks them",
+    "why": "Card W46-EXTERNAL-CALLEE-CONTRACTS declared mk_utils_libc_error (lib/monkey/include/monkey/mk_core/mk_utils.h:92-96) and rd_atomic32_get (lib/librdkafka-2.15.0/src/rdatomic.h:100-112). Both bodies are carried by every unit that includes the header, but neither is an analysed function and the BEFORE run published no W4 summary for either (each was an uncontracted callee), so each declaration is an unchecked premise pinned to the header text (gateway 10j), not a check. 11 call sites; 3 functions moved to Safe rest on them (mk_sched_send_signal, mk_socket_create, rd_kafka_thread_cnt). W44-LIBC-RESIDUALS showed the checked route for glibc's header bodies. DISCHARGE: measure why W4 publishes nothing for these two bodies (the scope filter or the body's own refusals: an errno read, a `%s` tail naming a local array, an atomic builtin) and either validate them so the declarations can be withdrawn, or record the refusal that keeps them declared.",
+    "source": "docs/reports/w46-external-callee-contracts/README.md",
+    "recorded_by": "W46-EXTERNAL-CALLEE-CONTRACTS"
+  },
+  {
+    "id": "W46-EXTERNAL-RESIDUAL-RANKING",
+    "title": "30 Unknown functions stay blocked by one external callee alone, every one behind a named vocabulary, reader or ownership gap",
+    "why": "MEASURED by card W46-EXTERNAL-CALLEE-CONTRACTS (scripts/rank_external.py over its AFTER baseline; 376 external callees, 2,206 call sites): cfl in-place reallocation 3 (W46-SDS-CAT-SAFE-IN-PLACE-REALLOC); Monkey event-backend and thread internals 7 (_mk_event_wait_2 2, _mk_event_add, _mk_event_inject, _mk_event_timeout_create, _mk_event_timeout_destroy, mk_http_thread_resume: backend-selected static inline bodies included into mk_event.c, several of which retain `data`); libc declined by earlier cards 9 (pthread_setspecific, pthread_getspecific: W43-LIBC-CALLBACK-RETAIN, W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED; pthread_key_create, pthread_rwlock_init, pthread_rwlock_destroy: W43-LIBC-IN-PLACE-LIFECYCLE; pthread_once: W43-LIBC-CALLBACK-RETAIN; dlopen, dlclose: W44-DLOPEN-DECLARATION-REMEASURE; bind: the transparent-union reader shape); compiler builtins 6 (__atomic_compare_exchange, __atomic_load_n, __atomic_store_n, __builtin_ctz, __builtin_ctzll, __builtin_nanf: no prototype and no owning crate); librdkafka refcount operations 2 (rd_kafka_q_destroy_owner, rd_kafka_toppar_keep0: a reference-count drop and add, which the heap kind would misstate); system libraries outside the audited source 2 (ERR_clear_error of OpenSSL, curl_global_init of libcurl: no site in the checkout to pin, and a flexible mode for a non-libc library is a product decision); a function-pointer formal called by name 1 (rd_qsort_r_cmp). No external callee blocks 3 or more functions alone. DISCHARGE: per class, the named follow-up or a product decision, each measured by an arbiter.",
+    "source": "docs/reports/w46-external-callee-contracts/README.md",
+    "recorded_by": "W46-EXTERNAL-CALLEE-CONTRACTS"
+  }
+]

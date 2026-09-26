@@ -1,0 +1,1542 @@
+{
+ "BIO_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "BIO_new_file": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "BIO_new_mem_buf": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "CRYPTO_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ENGINE_by_id": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ENGINE_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ERR_clear_error": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ERR_error_string_n": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ERR_peek_error": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ERR_peek_last_error": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ERR_peek_last_error_all": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "EVP_EncodeBlock": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "EVP_MD_CTX_free": {
+  "evidence": "src/flb_crypto.c",
+  "owner": "fluent-bit-internal"
+ },
+ "EVP_MD_CTX_new": {
+  "evidence": "src/flb_crypto.c",
+  "owner": "fluent-bit-internal"
+ },
+ "EVP_PKEY_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "EVP_sha256": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "EVP_sha512": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "MK_EVENT_NEW": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_event.h",
+  "owner": "bundled-library:monkey"
+ },
+ "OPENSSL_sk_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OPENSSL_sk_new_null": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OPENSSL_sk_pop_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OPENSSL_sk_push": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OPENSSL_sk_value": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OSSL_PROVIDER_load": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "OSSL_PROVIDER_unload": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "PEM_read_bio_PrivateKey": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "PEM_read_bio_X509": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "PKCS12_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_ctrl": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_free": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_get_cert_store": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_new": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_set_cert_cb": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_set_default_passwd_cb": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_set_default_passwd_cb_userdata": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_set_default_verify_paths": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_set_options": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_use_PrivateKey": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_use_cert_and_key": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_CTX_use_certificate": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_certs_clear": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_ctrl": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_get_certificate": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "SSL_get_client_CA_list": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_NAME_oneline": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_OBJECT_get0_X509": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_CTX_get_current_cert": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_CTX_get_error": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_CTX_get_error_depth": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_CTX_set_error": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_get0_objects": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_STORE_set_flags": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_free": {
+  "evidence": "lib/monkey/mk_core/deps/libevent/test/regress_mbedtls.c",
+  "owner": "bundled-library:monkey"
+ },
+ "X509_get_issuer_name": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "X509_new": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "XXH_INLINE_XXH3_64bits_digest": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "XXH_INLINE_XXH3_64bits_reset": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "XXH_INLINE_XXH3_64bits_update": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "ZSTD_compressStream": {
+  "evidence": "lib/zstd-1.5.7/lib/compress/zstd_compress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_createCStream": {
+  "evidence": "lib/zstd-1.5.7/lib/compress/zstd_compress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_decompress": {
+  "evidence": "lib/zstd-1.5.7/build/single_file_libs/examples/emscripten.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_endStream": {
+  "evidence": "lib/zstd-1.5.7/lib/compress/zstd_compress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_freeCStream": {
+  "evidence": "lib/zstd-1.5.7/lib/compress/zstd_compress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_getFrameContentSize": {
+  "evidence": "lib/zstd-1.5.7/lib/decompress/zstd_decompress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "ZSTD_initCStream": {
+  "evidence": "lib/zstd-1.5.7/lib/compress/zstd_compress.c",
+  "owner": "bundled-library:zstd-1.5.7"
+ },
+ "__asm__": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "__atomic_compare_exchange": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__atomic_load_n": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__atomic_store_n": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_alloca": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_ctz": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_ctzll": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_memcpy": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_memmove": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_nanf": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_offsetof": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_prefetch": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_va_arg": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_va_copy": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_va_end": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "__builtin_va_start": {
+  "evidence": "compiler builtin spelling",
+  "owner": "builtin"
+ },
+ "_mk_event_add": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_channel_create": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_channel_destroy": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_del": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_inject": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_loop_create": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_loop_destroy": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_timeout_create": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_timeout_destroy": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_event_wait_2": {
+  "evidence": "lib/monkey/mk_core/mk_event_epoll.c",
+  "owner": "bundled-library:monkey"
+ },
+ "_mk_iov_set_free": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_iov.h",
+  "owner": "bundled-library:monkey"
+ },
+ "abort": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "accept4": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "backtrace": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "bind": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "bsearch": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "callback": {
+  "evidence": "lib/c-ares-1.34.6/src/tools/adig.c",
+  "owner": "bundled-library:c-ares-1.34.6"
+ },
+ "cb": {
+  "evidence": "lib/wasm-micro-runtime-WAMR-2.4.1/samples/native-stack-overflow/wasm-apps/testapp.c",
+  "owner": "bundled-library:wasm-micro-runtime-WAMR-2.4.1"
+ },
+ "cb_chunk_complete": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "cfl_arena_calloc": {
+  "evidence": "lib/cfl/include/cfl/cfl_arena.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_arena_create_with_options": {
+  "evidence": "lib/cfl/include/cfl/cfl_arena.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_arena_options_init": {
+  "evidence": "lib/cfl/include/cfl/cfl_arena.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_arena_strndup": {
+  "evidence": "lib/cfl/include/cfl/cfl_arena.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_array_append": {
+  "evidence": "lib/cfl/include/cfl/cfl_array.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_array_append_kvlist": {
+  "evidence": "lib/cfl/include/cfl/cfl_array.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_array_create": {
+  "evidence": "lib/cfl/include/cfl/cfl_array.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_array_destroy": {
+  "evidence": "lib/cfl/include/cfl/cfl_array.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_array_fetch_by_index": {
+  "evidence": "lib/cfl/include/cfl/cfl_array.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_count": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_create": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_destroy": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_fetch": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_insert_array": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_insert_bool": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_insert_kvlist": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_kvlist_insert_string": {
+  "evidence": "lib/cfl/include/cfl/cfl_kvlist.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_list_init": {
+  "evidence": "lib/cfl/include/cfl/cfl_list.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_list_size": {
+  "evidence": "lib/cfl/include/cfl/cfl_list.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_cat_safe": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_create": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_create_len": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_create_size": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_len": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_len_set": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_printf": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_sds_set_len": {
+  "evidence": "lib/cfl/include/cfl/cfl_sds.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_utils_split": {
+  "evidence": "lib/cfl/include/cfl/cfl_utils.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_utils_split_free": {
+  "evidence": "lib/cfl/include/cfl/cfl_utils.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_variant_create_from_array": {
+  "evidence": "lib/cfl/include/cfl/cfl_variant.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_variant_create_from_kvlist": {
+  "evidence": "lib/cfl/include/cfl/cfl_variant.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_variant_create_from_string": {
+  "evidence": "lib/cfl/include/cfl/cfl_variant.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cfl_variant_destroy": {
+  "evidence": "lib/cfl/include/cfl/cfl_variant.h",
+  "owner": "bundled-library:cfl"
+ },
+ "cmt_math_d64_to_uint64": {
+  "evidence": "lib/cmetrics/include/cmetrics/cmt_math.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "cmt_math_uint64_to_d64": {
+  "evidence": "lib/cmetrics/include/cmetrics/cmt_math.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "compress": {
+  "evidence": "lib/miniz/miniz.h",
+  "owner": "bundled-library:miniz"
+ },
+ "connect": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "copy_cb": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_easy_escape": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_global_init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_slist_append": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_slist_free_all": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_url": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_url_cleanup": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_url_get": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "curl_url_set": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "d2i_PKCS12_bio": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "deflateEnd": {
+  "evidence": "lib/miniz/miniz.h",
+  "owner": "bundled-library:miniz"
+ },
+ "deflateInit2_": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "dlclose": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "dlopen": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "entry_processor_callback": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "exit": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "fcntl": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "flb_chunk_trace_do_input": {
+  "evidence": "include/fluent-bit/flb_chunk_trace.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_input_name": {
+  "evidence": "include/fluent-bit/flb_input.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_input_pause": {
+  "evidence": "include/fluent-bit/flb_input.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_input_rate_gate_maybe_resume": {
+  "evidence": "include/fluent-bit/flb_input.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_input_resume": {
+  "evidence": "include/fluent-bit/flb_input.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_mp_count": {
+  "evidence": "include/fluent-bit/flb_mp.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_mp_count_log_records": {
+  "evidence": "include/fluent-bit/flb_mp.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_mp_validate_log_chunk": {
+  "evidence": "include/fluent-bit/flb_mp.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_mp_validate_metric_chunk": {
+  "evidence": "include/fluent-bit/flb_mp.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_task_get_route_status": {
+  "evidence": "include/fluent-bit/flb_task.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_task_set_route_status": {
+  "evidence": "include/fluent-bit/flb_task.h",
+  "owner": "fluent-bit-internal"
+ },
+ "flb_time_get": {
+  "evidence": "include/fluent-bit/flb_time.h",
+  "owner": "fluent-bit-internal"
+ },
+ "freeaddrinfo": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "fts_close": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "fts_open": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "getaddrinfo": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "getgrnam_r": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "getpwnam_r": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "getrlimit": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "glob": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "globfree": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "inflate": {
+  "evidence": "lib/miniz/miniz.h",
+  "owner": "bundled-library:miniz"
+ },
+ "inflateEnd": {
+  "evidence": "lib/miniz/miniz.h",
+  "owner": "bundled-library:miniz"
+ },
+ "mk_http_thread_resume": {
+  "evidence": "lib/monkey/include/monkey/mk_http_thread.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_iov_add": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_iov.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_iov_init": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_iov.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_list_init": {
+  "evidence": "lib/chunkio/deps/monkey/include/monkey/mk_core/mk_list.h",
+  "owner": "bundled-library:chunkio"
+ },
+ "mk_plugin_stage_run_10": {
+  "evidence": "lib/monkey/include/monkey/mk_plugin_stage.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_plugin_stage_run_20": {
+  "evidence": "lib/monkey/include/monkey/mk_plugin_stage.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_plugin_stage_run_40": {
+  "evidence": "lib/monkey/include/monkey/mk_plugin_stage.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_ptr_reset": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_memory.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_sched_conn_timeout_add": {
+  "evidence": "lib/monkey/include/monkey/mk_scheduler.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_sched_conn_timeout_del": {
+  "evidence": "lib/monkey/include/monkey/mk_scheduler.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_sched_event_free_all": {
+  "evidence": "lib/monkey/include/monkey/mk_scheduler.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_sched_get_thread_conf": {
+  "evidence": "lib/monkey/include/monkey/mk_scheduler.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_stream_input_consume": {
+  "evidence": "lib/monkey/include/monkey/mk_stream.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_stream_input_unlink": {
+  "evidence": "lib/monkey/include/monkey/mk_stream.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_stream_release": {
+  "evidence": "lib/monkey/include/monkey/mk_stream.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_thread_destroy": {
+  "evidence": "lib/monkey/include/monkey/mk_thread_libco.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_thread_new": {
+  "evidence": "lib/monkey/include/monkey/mk_thread_libco.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_thread_yield": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_thread.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mk_utils_libc_error": {
+  "evidence": "lib/monkey/include/monkey/mk_core/mk_utils.h",
+  "owner": "bundled-library:monkey"
+ },
+ "mpack_done_array": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_done_bin": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_done_map": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_done_str": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_expect_nil": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_finish_array": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_finish_map": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_peek_tag": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_read_bytes_inplace": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_read_tag": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_reader_destroy": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_reader_remaining": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_start_array": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_start_map": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_array_count": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_bin_length": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_double_value": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_int_value": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_map_count": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_str_length": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_type": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_tag_uint_value": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_bin": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_false": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_int": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_nil": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_true": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_u64": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_write_uint": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "mpack_writer_init_growable": {
+  "evidence": "lib/cmetrics/lib/mpack/src/mpack/mpack.c",
+  "owner": "bundled-library:cmetrics"
+ },
+ "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__free_unpacked": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__unpack": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__collector__trace__v1__export_trace_service_request__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__common__v1__any_value__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__common__v1__array_value__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__common__v1__instrumentation_scope__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__common__v1__key_value__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__common__v1__key_value_list__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__exemplar__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__buckets__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__histogram_data_point__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__metric__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__metrics_data__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__number_data_point__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__resource_metrics__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__scope_metrics__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__summary_data_point__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__metrics__v1__summary_data_point__value_at_quantile__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__resource__v1__resource__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__resource_spans__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__scope_spans__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__span__event__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__span__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__span__link__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "opentelemetry__proto__trace__v1__status__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "prometheus__sample__init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "prometheus__write_request__free_unpacked": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "prometheus__write_request__unpack": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "pthread_attr_init": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_getspecific": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_key_create": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_once": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_rwlock_destroy": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_rwlock_init": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "pthread_setspecific": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "qsort": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "rd_atomic32_add": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdatomic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_atomic32_get": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdatomic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_atomic32_sub": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdatomic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_avg_destroy": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdavg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_avg_rollover": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdavg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_buf_write_pos": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdbuf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_clock": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_crc32_init": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdcrc32.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_crc32_update": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdcrc32.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_file_mkstemp": {
+  "evidence": "lib/librdkafka-2.15.0/src/rd.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_file_read": {
+  "evidence": "lib/librdkafka-2.15.0/src/rd.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_getenv": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdposix.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_interval0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdinterval.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_Uuid_cmp": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_app_poll_start": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_app_polled": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_broker_active_toppar_next": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_broker.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_broker_get_state": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_broker.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_ApiVersion_set": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_crc_init": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_finalize_arraycnt": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_set_abs_timeout0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_update_i32": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_update_i8": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_update_u32": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_arraycnt": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_bool": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_bytes": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_i16": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_i32": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_i64": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_i8": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_kbytes": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_kstr": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_str": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_uuid": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_buf_write_uvarint": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_curr_msgs_cnt": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_curr_msgs_get": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_curr_msgs_wait_zero": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_enq_once_add_source": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_enq_once_del_source_return": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_enq_once_disable": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_enq_once_trigger": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_idemp_get_pid0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_max_poll_exceeded": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_concat": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_deq": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_enq": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_first": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_init": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_last": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_move": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_msgq_purge": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_msg.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_offset_store0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_offset.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_op_set_replyq": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_partition_leader_destroy": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_partition_leader_new": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_concat0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_deq0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_destroy0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_destroy_owner": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_enq": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_io_event": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_mark_served": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_prepend0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_reenq": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_reset": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_q_yield": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_replyq_destroy": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_replyq_make": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_rkt_get_lw": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_set_last_error": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_destroy0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_keep": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_topic.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_partition_get_fetch_pos": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_partition_get_private": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_partition_get_toppar": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_partition_private_new": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_topic_partition_toppar": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_toppar_destroy0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_toppar_keep0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_toppar_set_next_fetch_position": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_toppar_set_offset_validation_position": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafka_txn_add_partition": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafkap_bytes_new": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafkap_str_cmp": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_kafkap_str_new": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_proto.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_list_cmp_curr": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "rd_qsort_r_cmp": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "rd_segment_write_remains": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdbuf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_slice_offset": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdbuf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_slice_pos": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdbuf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_slice_read_varint": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdbuf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_timeout_init": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_timeout_init_us": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_timeout_remains": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_timeout_remains_limit": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_tmpabuf_alloc0": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_tmpabuf_destroy": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdkafka_buf.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_uclock": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdtime.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_usleep": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdposix.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "rd_varint_dec_i64": {
+  "evidence": "lib/librdkafka-2.15.0/src/rdvarint.h",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "re_compile": {
+  "evidence": "lib/monkey/deps/regex/re.c",
+  "owner": "bundled-library:monkey"
+ },
+ "realpath": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "regcomp": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "regfree": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "resolve_cb": {
+  "evidence": "lib/librdkafka-2.15.0/tests/0136-resolve_cb.c",
+  "owner": "bundled-library:librdkafka-2.15.0"
+ },
+ "sasl_client_init": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "set_metric_value": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ },
+ "setrlimit": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "strtod": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "strtol": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "strtoll": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "strtoull": {
+  "evidence": "providers/quirin-provider-libc/libc-names.txt",
+  "owner": "libc-posix"
+ },
+ "unpack_cfl_kvlist": {
+  "evidence": "lib/cmetrics/include/cmetrics/cmt_variant_utils.h",
+  "owner": "bundled-library:cmetrics"
+ },
+ "void": {
+  "evidence": "lib/c-ares-1.34.6/include/ares.h",
+  "owner": "bundled-library:c-ares-1.34.6"
+ },
+ "weight_cb": {
+  "evidence": "no declaration found",
+  "owner": "unresolvable"
+ }
+}

@@ -1,0 +1,282 @@
+{
+ "added_at_contracted_sites": [
+  {
+   "category": "unknown_alias",
+   "count": 1,
+   "description": "unresolved resource identity `X`"
+  },
+  {
+   "category": "unsupported",
+   "count": 1,
+   "description": "arguments beyond the declared parameters of `X` are outside the resource projection"
+  }
+ ],
+ "changed_functions": 44,
+ "corrections": [],
+ "function_status_after": {
+  "Safe": 405,
+  "Unknown": 4420,
+  "Unsafe": 9
+ },
+ "function_status_before": {
+  "Safe": 398,
+  "Unknown": 4427,
+  "Unsafe": 9
+ },
+ "new_leak_or_violation_leaves": [],
+ "removed_cascade_from_moved_callee": [
+  {
+   "callee": "mk_sched_send_signal",
+   "caller": "mk_server/mk_scheduler.c::mk_sched_broadcast_signal",
+   "count": 1
+  },
+  {
+   "callee": "pack_basic_header_finish",
+   "caller": "cmt_encode_cloudwatch_emf.c::pack_metric",
+   "count": 1
+  }
+ ],
+ "removed_contracted_leaves": {
+  "cfl_sds_len": 5,
+  "fcntl": 2,
+  "mk_utils_libc_error": 10,
+  "mpack_finish_array": 23,
+  "mpack_finish_map": 27,
+  "mpack_write_bin": 1,
+  "mpack_write_false": 1,
+  "mpack_write_true": 1,
+  "rd_atomic32_get": 1
+ },
+ "removed_contracted_total": 71,
+ "removed_naming_contracted": [
+  {
+   "callee": "cfl_sds_len",
+   "count": 1,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  }
+ ],
+ "removed_on_contracted_call_line": [
+  {
+   "callee": "cfl_sds_len",
+   "count": 2,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  }
+ ],
+ "status_moves": [
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "cmt_encode_cloudwatch_emf.c::pack_basic_header_finish",
+   "moved_by": [
+    "mpack_finish_array",
+    "mpack_finish_map"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "ctr_encode_msgpack.c::pack_bool",
+   "moved_by": [
+    "mpack_write_false",
+    "mpack_write_true"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "ctr_encode_msgpack.c::pack_bytes",
+   "moved_by": [
+    "cfl_sds_len",
+    "mpack_write_bin"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "ctr_encode_msgpack.c::pack_string",
+   "moved_by": [
+    "cfl_sds_len"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "mk_server/mk_scheduler.c::mk_sched_send_signal",
+   "moved_by": [
+    "mk_utils_libc_error"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "mk_server/mk_socket.c::mk_socket_create",
+   "moved_by": [
+    "mk_utils_libc_error"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "rdkafka.c::rd_kafka_thread_cnt",
+   "moved_by": [
+    "rd_atomic32_get"
+   ]
+  }
+ ],
+ "unattributed": [],
+ "unit_changes": [
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_decode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_cloudwatch_emf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_influx.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_opentelemetry_batch.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_prometheus.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "cmt_encode_text.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "ctr_id.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "mk_core/mk_utils.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "mk_server/mk_kernel.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "unit": "mk_server/mk_scheduler.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "mk_server/mk_server.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "mk_server/mk_socket.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "rdkafka.c"
+  }
+ ],
+ "unit_status_after": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ },
+ "unit_status_before": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ }
+}

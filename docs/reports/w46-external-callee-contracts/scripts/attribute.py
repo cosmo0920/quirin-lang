@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Attribute every difference between a BEFORE and an AFTER corpus run to a contract.
 
-Usage: attribute.py BEFORE AFTER [--json OUT]
+Usage: attribute.py BEFORE AFTER [--source SOURCE_ROOT] [--json OUT]
 
 BEFORE and AFTER are artifact directories (`diagnostics.json.gz`) or run
 directories (`resource-diagnostics.json`). The card's contracts are CONTRACTED
@@ -9,10 +9,17 @@ below. A difference is attributed only if it is one of:
 
 * `removed_contracted`: a BEFORE `call to uncontracted function `NAME`` leaf
   with NAME in CONTRACTED;
-* `added_at_contracted_site`: an AFTER leaf at the coordinate (unit, function,
-  line) of a `removed_contracted` leaf, which that coordinate did not carry
-  BEFORE (what the call site says once the callee is declared: a premise
-  refusal, a tail refusal, an argument refusal);
+* `removed_naming_contracted`: any other BEFORE `unsupported` leaf whose
+  description names a contracted callee in backquotes (a nested call);
+* `removed_cascade_from_moved_callee`: a BEFORE uncontracted-call leaf naming a
+  function that moved to Safe in this run (the existing summary rules);
+* `removed_on_contracted_call_line`: a BEFORE `unsupported` leaf whose source
+  line (read from `--source`, every candidate file agreeing) calls a
+  contracted callee (a condition that is now modelled);
+* `added_at_contracted_site`: an AFTER leaf at the line of a removed leaf of
+  the kinds above, which that coordinate did not carry BEFORE (what the call
+  site says once the callee is declared: a premise refusal, a tail refusal,
+  the next refusal a modelled condition exposes);
 * a status move of a function whose own leaves changed only as above, credited
   to the callees whose leaves it lost;
 * a unit-level status or count change whose functions' changes are all
