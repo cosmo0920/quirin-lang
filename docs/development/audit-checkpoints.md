@@ -163,6 +163,8 @@ Mapping rules, chosen so both forms are lossless:
 The whole run holds every unit's rows until it writes the report. A
 checkpointed run holds one group: its units' analyses (up to `--jobs` at once),
 then the group's rows as JSON text until the group is sealed. The composer holds
-one group's step sections. Within a group, `--jobs` multiplies the working set,
+one group's step sections. The route's setup reads nothing whole: the pin
+evaluation streams the checkout's sources one file at a time. Within a group,
+`--jobs` multiplies the working set,
 because each job holds one unit's analysis and Clang output; lower `--jobs` to
 lower the peak. Measurements are in the [report](../reports/w45-audit-checkpoints/README.md).

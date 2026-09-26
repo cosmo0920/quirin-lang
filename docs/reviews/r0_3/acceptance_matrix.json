@@ -9947,8 +9947,8 @@
   },
   {
    "id": "W45-CHECKPOINT-JOBS-MEMORY",
-   "title": "Checkpoints bound the retained results, not the working set: memory scales with `--jobs`, and the setup phase sets the one-job peak",
-   "why": "A checkpointed run holds one group's results, but that group's units run `--jobs` at a time, each holding its own analysis and Clang output. On the 185-unit corpus the checkpointed peak RSS is 182, 406 and 912 MiB at 1, 4 and 16 jobs against the whole run's 182, 397 and 930 (report, Memory). At one job the process peak is reached before the first group: every group's sampled peak is at most 114.7 MiB, and the route's setup (which since W45-CONTRACT-REVISION-MODE includes the pin evaluation reading the checkout's source tree) is not divided by groups. Before that merge the same comparison measured 168 against 110 MiB. The only control inside a group is `--jobs`. DISCHARGE: a memory-aware admission of units in flight (a resident-set budget or a per-unit weight bound) and a setup phase whose peak is below one group's, measured on the corpus; or a recorded decision that `--jobs` is the control.",
+   "title": "Checkpoints bound the retained results, not the working set: inside a group, memory scales with `--jobs`",
+   "why": "A checkpointed run holds one group's results, but that group's units run `--jobs` at a time, each holding its own analysis and Clang output. On the 185-unit corpus, after the pin evaluation's source read was made to stream (it had held the checkout's 85 MiB of C twice and set a 182 MiB setup peak), the checkpointed peak RSS is 111, 331 and 872 MiB at 1, 4 and 16 jobs against the whole run's 172, 392 and 928; at every job count the peak is librdkafka's group (report, Memory). The only control inside a group is `--jobs`. DISCHARGE: a memory-aware admission of units in flight (a resident-set budget or a per-unit weight bound) measured on the corpus, or a recorded decision that `--jobs` is the control.",
    "source": "docs/reports/w45-audit-checkpoints/README.md",
    "recorded_by": "W45-AUDIT-CHECKPOINTS"
   },

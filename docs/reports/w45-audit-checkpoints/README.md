@@ -37,12 +37,12 @@ verdict semigroup of W45-USER-CONTRACT-PLUGINS can replace it.
   jobs (equal content digests); every checkpoint round-trips through YAML and
   TOML to its original bytes; truncated, tampered and version-mismatched files
   are refused whole.
-* **Memory.** Composition peaks at 31 MiB. A checkpointed run's peak is set by
-  the analyses in flight inside the largest group (librdkafka), so it tracks
-  `--jobs` as the whole run's does (182/406/912 MiB against 182/397/930 MiB at
-  1/4/16 jobs). At one job the peak now falls before the first group, in the
-  route's setup; before the W45-CONTRACT-REVISION-MODE merge the same
-  comparison was 168 against 110 MiB (§7).
+* **Memory.** At one job a checkpointed run peaks at 111 MiB against the whole
+  run's 172 MiB (−35 %), exactly the largest group's peak; at 4 and 16 jobs
+  331 against 392 and 872 against 928 MiB, because the analyses in flight
+  inside librdkafka set the peak there. Reaching this needed the pin
+  evaluation's source read to stream: it had held the checkout's 85 MiB of
+  C twice and set a 182 MiB setup peak (§7). Composition peaks at 31 MiB.
 * **No verdict change.** Off by default; the corpus arbiter's diagnostics are
   byte-identical to the W45-FB-RETRY-LIFETIME baseline (functions 389 / 12 /
   4,433 unchanged).
@@ -232,44 +232,80 @@ refused, and no report is left behind.
 
 ## 7. Memory
 
-Peak resident set size from `/usr/bin/time -v` (`run.json`), and each
-group's sampled peak (10 ms samples of `VmRSS`, recorded in the `.qo`
-provenance and `checkpoint-run.json`; the sampler never resets the kernel's
-high-water mark, so `/usr/bin/time` still measures the whole process):
+### The setup read the whole checkout twice; it now streams
 
-| Jobs | Whole run | Checkpointed | Largest group's sampled peak | Compose |
+At the first measurement, a checkpointed run at one job peaked at the same
+182 MiB as the whole run, although no group's sampled peak exceeded 115 MiB,
+and a no-change resume, which analyses nothing, peaked at 182 MiB too. The
+peak was in the route's setup, before the first group: W45-CONTRACT-REVISION-
+MODE's pin evaluation (`contract_revision::apply_pins`) read every `.c` and
+`.h` blob of the checkout's `HEAD` through `git cat-file --batch` into one
+buffer, then decoded it into a second map of strings, and only then scanned
+it for the pinned functions' sites. On the corpus checkout that is 4,926
+files, 85 MiB, held twice.
+
+After the integration review asked for it (item 4), the evaluation reads the
+sites one file at a time (`c_identity::SourceTree::read_sites`: it streams
+`git cat-file`, or walks the directory, and scans and drops each file). The
+sites are sorted per function, so the order does not matter, and the unit test
+`streamed_sites_equal_the_whole_tree_sites` checks the streamed sites equal the
+whole-tree read's, on a Git checkout whose working tree differs from `HEAD`
+and on a plain directory. `quirin-audit pin`, which writes locks, still reads
+the whole tree. No other setup step reads the corpus whole: the rest loads the
+contracts, the profile and the compile databases. The arbiter's contract and
+source-effects sidecars are byte-identical before and after the change.
+
+### Measurements
+
+Measured once each at `3df36e86` (`scripts/measure_memory.sh`,
+[evidence/memory/](evidence/memory/)), one run at a time on a shared host.
+Peak resident set size is from `/usr/bin/time -v`. Each group's peak is sampled
+every 10 ms from `VmRSS` and recorded in the `.qo` provenance and in
+`checkpoint-run.json`. The sampler never resets the kernel's high-water mark,
+so `/usr/bin/time` still measures the whole process.
+
+| Jobs | Whole run | Checkpointed | Change | Largest group's sampled peak |
 |---|---|---|---|---|
-| 1 | 182 MiB | 182 MiB | 114.7 MiB (chunkio, after librdkafka) | 31 MiB |
-| 4 | 397 MiB | 406 MiB | 401 MiB (monkey-libevent; librdkafka 380 MiB) | |
-| 16 | 930 MiB | 912 MiB | 912 MiB (librdkafka) | |
+| 1 | 172 MiB | **111 MiB** | −35 % | 111.5 MiB (librdkafka) |
+| 4 | 392 MiB | 331 MiB | −15 % | 316 MiB (librdkafka) |
+| 16 | 928 MiB | 872 MiB | −6 % | 872 MiB (librdkafka) |
+| compose | | 31 MiB | | one group's step sections |
 
-Three findings:
-
-* **`--jobs` multiplies memory.** Within a group every job holds one unit's
-  analysis and Clang output, and librdkafka (94 units) sets the peak at 4 and
-  16 jobs in both modes. Checkpoints bound what the run *retains* (the rows),
-  not what it *computes*; `--jobs` is the working-set control. No separate
-  memory-aware limit is added (`W45-CHECKPOINT-JOBS-MEMORY`).
-* **At one job the peak is the setup's.** Every group's sampled peak is at most
-  114.7 MiB, but the process peaks at 182 MiB, and a no-change resume at one
-  job, which analyses nothing, peaks at the same 182 MiB: the high-water mark
-  is reached before the first group, in the route's setup, which since
-  W45-CONTRACT-REVISION-MODE includes the pin evaluation over the checkout's
-  sources. Before that merge, the same pair measured **168 MiB whole against
-  110 MiB checkpointed** (35 % lower; measured once on the pre-merge binary,
-  logs private, not shipped).
+* **One job: the peak is the largest group's.** The checkpointed process peak
+  (111.7 MiB in `checkpoint-run.json`) equals librdkafka's sampled peak. The
+  first group, cmetrics, runs at 41 MiB, so the setup is now below every
+  large group. A no-change resume at one job peaks at 56 MiB in the process
+  (the 103 MiB `/usr/bin/time` reports for that run is its largest child,
+  `git cat-file` or a Clang preparation; `ru_maxrss` of waited children is
+  the largest descendant's, not a sum).
+* **Before the streaming change** the pairs were 182/182, 397/406 and
+  930/912 MiB (whole/checkpointed, at 1/4/16 jobs,
+  [evidence/runs/](evidence/runs/)), so the setup had erased the one-job
+  saving. Before the W45-CONTRACT-REVISION-MODE merge they were 168/110 MiB at
+  one job (measured once, logs private).
+* **`--jobs` multiplies memory.** Inside a group every job holds one unit's
+  analysis and Clang output, and librdkafka (94 units) sets the peak in both
+  modes. Checkpoints bound what the run *retains* (the rows: about 60 MiB, the
+  one-job difference), not what it *computes*; `--jobs` is the working-set control.
+  No separate memory-aware limit is added (`W45-CHECKPOINT-JOBS-MEMORY`).
 * **Composition streams.** Composing the six checkpoints (18.4 MB of `.qo`)
-  into the 17 MB report takes 0.12 s and 31 MiB: it holds one group's step
-  sections at a time.
+  into the 17 MB report takes 0.15 s and 31 MiB.
 
-A group's sampled peak includes memory the allocator kept from earlier groups
-(RSS does not fall when state is freed), so a later, smaller group can show a
-higher sampled peak than its own work needs.
+A group's sampled peak includes memory the allocator kept from earlier groups,
+because RSS does not fall when state is freed. A later, smaller group can
+therefore show a higher sampled peak than its own work needs.
 
-Wall time: one group in flight costs nothing at 16 jobs or 1 job, but at 4
-jobs the checkpointed run took 288.1 s against 141.7 s, because each group ends
-with its longest unit while the whole run overlaps groups; librdkafka alone
-took 230 s (`W45-CHECKPOINT-GROUPS-IN-FLIGHT`).
+Every run of this series is byte-identical to the whole-run archive in all
+five artifacts (`baseline_identity.py`, exit 0 for all eight), and
+`checkpoint verify` passes on all 18 checkpoints.
+
+**Wall time** is noisy on this host: other agents' gates ran at the same time.
+The first series measured the checkpointed run at 115.8 s against 130.8 s (16
+jobs) and 288.1 s against 141.7 s (4 jobs). This series measured 286.6 s
+against 126.9 s (16 jobs) and 286.0 s against 279.1 s (4 jobs). One group in
+flight lets a group's longest unit idle the other jobs (librdkafka took
+213–230 s in the slow runs); the cost is real but its size is not settled here
+(`W45-CHECKPOINT-GROUPS-IN-FLIGHT`).
 
 ## 8. Determinism and round trips
 
@@ -410,7 +446,8 @@ W45-USER-CONTRACT-PLUGINS's registered follow-up.
   sidecars), `current_cli.rs` (flags and configuration), `current.rs` (the
   preparation facts on each configuration's products, read-only accessors),
   `report.rs` (the report document and skeleton), `pending_review.rs` and
-  `contract_revision.rs` (the per-row folds), `main.rs`, `lib.rs`.
+  `contract_revision.rs` (the per-row folds, and the streamed site read),
+  `c_identity.rs` (`SourceTree::read_sites`), `main.rs`, `lib.rs`.
 - `crates/qcore-audit/tests/checkpoint_cli.rs`, `proof/QCore/Checkpoints.lean`,
   `proof/AuditCheckpoints.lean`.
 - `docs/development/audit-checkpoints.md`; `scripts/run_current.py` and
