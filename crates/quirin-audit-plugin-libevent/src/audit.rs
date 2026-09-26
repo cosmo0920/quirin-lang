@@ -1,7 +1,9 @@
-//! The Python semantics the retired script relied on, where they reach an
-//! output byte: `shutil.which`, `Path.resolve`, `Path.suffix`, text-mode
-//! decoding, `str.strip`, and its `capture`/`logged`/`digest` helpers. Each
-//! mirrors the same helper of `quirin-audit prepare`
+//! The process, path and text operations of the libevent preparation, each
+//! where it reaches a prepared byte: running a command for its stripped
+//! output or into a merged log, program lookup on `PATH`, path resolution,
+//! the final `.`-suffix of a name, strict UTF-8 decoding with universal
+//! newlines, and the CMake cache reader. `quirin-audit prepare` has the same
+//! operations
 //! (`crates/qcore-audit/src/prepare.rs`, card W44-QUIRIN-AUDIT-PREPARE).
 
 use std::collections::BTreeSet;
@@ -25,14 +27,14 @@ pub fn write_text(path: &Path, contents: &str) -> Result<(), String> {
     std::fs::write(path, contents).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-/// The script's `digest`: SHA-256 of the file's bytes.
+/// SHA-256 of the file's bytes.
 pub fn digest(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|bytes| qcore_schemas::sha256_hex(&bytes))
         .map_err(|error| format!("{}: {error}", path.display()))
 }
 
-/// Python's text mode: strict UTF-8 with universal newlines.
+/// Strict UTF-8 with universal newlines (`\r\n` and `\r` read as `\n`).
 pub fn decode(bytes: Vec<u8>) -> Result<String, String> {
     let text = String::from_utf8(bytes).map_err(|error| error.to_string())?;
     Ok(if text.contains('\r') {
@@ -42,16 +44,17 @@ pub fn decode(bytes: Vec<u8>) -> Result<String, String> {
     })
 }
 
-/// `str.strip()`: Unicode whitespace plus the ASCII separators Python counts.
-pub fn python_strip(text: &str) -> &str {
+/// Trim Unicode whitespace and the ASCII information separators U+001C–U+001F
+/// from both ends.
+pub fn strip_whitespace(text: &str) -> &str {
     text.trim_matches(|character: char| {
         character.is_whitespace() || ('\u{1c}'..='\u{1f}').contains(&character)
     })
 }
 
-/// The script's `capture`: `subprocess.run(command, check=True, text=True,
-/// capture_output=True).stdout.strip()`. Standard input is closed; none of the
-/// commands reads it.
+/// Run a command to completion and return its standard output, decoded and
+/// stripped; a nonzero exit is an error carrying its standard error. Standard
+/// input is closed; none of the commands reads it.
 pub fn capture(program: &str, arguments: &[&str]) -> Result<String, String> {
     let output = Command::new(program)
         .args(arguments)
@@ -68,10 +71,10 @@ pub fn capture(program: &str, arguments: &[&str]) -> Result<String, String> {
             String::from_utf8_lossy(&output.stderr).trim()
         ));
     }
-    decode(output.stdout).map(|output| python_strip(&output).to_owned())
+    decode(output.stdout).map(|output| strip_whitespace(&output).to_owned())
 }
 
-/// The script's `logged`: standard output and error through one pipe into
+/// Run a command with standard output and error through one pipe into
 /// `path`, written whatever the exit status; a nonzero exit is then an error.
 pub fn logged(command: &[String], path: &Path) -> Result<(), String> {
     let (mut reader, writer) = std::io::pipe().map_err(|error| error.to_string())?;
@@ -103,8 +106,9 @@ pub fn logged(command: &[String], path: &Path) -> Result<(), String> {
     Ok(())
 }
 
-/// `Path.resolve()` (non-strict): symlinks resolved for the components that
-/// exist, the rest applied lexically, a relative path against `base`.
+/// Resolve a path without requiring it to exist: symbolic links resolved for
+/// the components that exist, the rest applied lexically, a relative path
+/// against `base`.
 pub fn resolve(path: &Path, base: &Path) -> PathBuf {
     let absolute = if path.is_absolute() {
         path.to_owned()
@@ -128,8 +132,8 @@ pub fn resolve(path: &Path, base: &Path) -> PathBuf {
     resolved
 }
 
-/// `PurePath.suffix`: the final component's last `.`-suffix, empty for a
-/// name that starts with its only dot or ends with a dot.
+/// The final component's last `.`-suffix, empty for a name that starts with
+/// its only dot or ends with a dot.
 #[must_use]
 pub fn suffix(path: &Path) -> &str {
     let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
@@ -141,9 +145,9 @@ pub fn suffix(path: &Path) -> &str {
     }
 }
 
-/// `shutil.which(name)`: a name with a separator is checked as given;
-/// otherwise the first executable, non-directory `PATH` entry, spelled as
-/// `os.path.join(directory, name)`.
+/// Find a program: a name with a separator is checked as given; otherwise the
+/// first executable, non-directory entry of `PATH` (duplicates skipped),
+/// spelled as the directory joined with the name.
 pub fn which(name: &str) -> Option<String> {
     let usable = |path: &Path| path.exists() && executable(path) && !path.is_dir();
     if name.chars().any(std::path::is_separator) {
@@ -178,8 +182,8 @@ fn executable(path: &Path) -> bool {
     path.is_file()
 }
 
-/// `dict(line.split("=", 1) for line in text.splitlines() if "=" in line and
-/// not line.startswith(("#", "//")))`: the last value of a key wins.
+/// The `KEY=VALUE` entries of a CMake cache, comments (`#`, `//`) skipped;
+/// the last value of a repeated key wins.
 #[must_use]
 pub fn cmake_cache(text: &str) -> Vec<(String, String)> {
     let mut values: Vec<(String, String)> = Vec::new();
@@ -198,7 +202,7 @@ pub fn cmake_cache(text: &str) -> Vec<(String, String)> {
     values
 }
 
-/// `values.get(key)`.
+/// The value of `key`, if present.
 #[must_use]
 pub fn lookup<'a>(values: &'a [(String, String)], key: &str) -> Option<&'a str> {
     values
@@ -212,7 +216,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn suffix_is_python_s() {
+    fn suffix_is_the_final_dot_suffix() {
         assert_eq!(suffix(Path::new("/a/buffer.c")), ".c");
         assert_eq!(suffix(Path::new("/a/.c")), "");
         assert_eq!(suffix(Path::new("/a/x.")), "");
@@ -229,9 +233,9 @@ mod tests {
     }
 
     #[test]
-    fn strip_and_decode_follow_text_mode() {
+    fn strip_and_decode_normalise_text() {
         assert_eq!(
-            python_strip("\u{1c} clang version 21\n"),
+            strip_whitespace("\u{1c} clang version 21\n"),
             "clang version 21"
         );
         assert_eq!(decode(b"a\r\nb\rc".to_vec()).unwrap(), "a\nb\nc");

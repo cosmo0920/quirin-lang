@@ -17,8 +17,8 @@
 //! * the response builders ([`Response::push_artifact`] computes each
 //!   artifact's SHA-256) and [`verify_artifacts`], the check the host applies;
 //! * [`testing`], a harness that runs a plugin binary as the host would;
-//! * [`python_json`], `json.dumps(indent=2)`-compatible output for plugins
-//!   that port a Python script byte for byte.
+//! * [`json_text`], ordered, indented JSON text with ASCII escapes, for
+//!   records compared byte for byte.
 //!
 //! What stays in the host: dispatch, the search path, the cleared
 //! environment, quotas, confinement of the working directory, and the
@@ -38,7 +38,7 @@ use std::process::ExitCode;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-pub mod python_json;
+pub mod json_text;
 pub mod testing;
 
 /// The protocol's name, carried in every request and response.

@@ -1,7 +1,7 @@
 //! `quirin-audit libevent prepare` (card **W45-AUDIT-SUBCOMMAND-PLUGINS**):
 //! the pinned `libevent-core` configured-audit inputs, prepared by the same
-//! git and CMake invocations the retired Python preparation script of card
-//! G03-F ran, with the same output files byte for byte
+//! git and CMake invocations the retired preparation script of card G03-F
+//! ran, with the same output files byte for byte
 //! (`docs/reports/w45-audit-subcommand-plugins/`).
 //!
 //! The audited checkout is the repository's own pinned `third_party/libevent`
@@ -36,13 +36,13 @@
 
 use std::path::{Path, PathBuf};
 
-use quirin_audit_plugin::python_json::PyJson;
+use quirin_audit_plugin::json_text::JsonText;
 use quirin_audit_plugin::{Request, Response, Severity};
 use serde_json::Value;
 
-pub mod python;
+pub mod audit;
 
-use python::{
+use audit::{
     capture, cmake_cache, digest, logged, lookup, read_text, resolve, suffix, text, which,
     write_text,
 };
@@ -151,13 +151,12 @@ pub fn repository(request: &Request, flag: Option<&str>) -> Result<PathBuf, Stri
     Ok(root)
 }
 
-/// The root-level `.c` files the selected target compiles (the script's
-/// `selected_units`).
+/// The root-level `.c` files the selected target compiles.
 ///
 /// # Errors
 ///
-/// An entry the script would have failed on (a missing `file`, a trailing
-/// `-o`, a non-string output).
+/// A malformed entry (a missing `file`, a trailing `-o`, a non-string
+/// output).
 pub fn selected_units(
     entries: &[Value],
     checkout: &Path,
@@ -226,24 +225,24 @@ pub fn check_output(repository: &Path, output: &Path) -> Result<(), String> {
     Ok(())
 }
 
-/// The port of the script's `main`.
+/// Prepare the pinned `libevent-core` inputs.
 ///
 /// # Errors
 ///
-/// Every refusal the script raised, with its message, and the two above.
+/// Every refusal of the preparation, with its message.
 pub fn prepare(request: &Request, options: &Options) -> Result<Response, String> {
     let root = repository(request, options.repository.as_deref())?;
     let profile_dir = root.join(PROFILE_DIRECTORY);
     let output = request.output_directory();
     check_output(&root, &output)?;
     let profile_path = profile_dir.join("profile.json");
-    let mut profile = PyJson::parse(&read_text(&profile_path)?)
+    let mut profile = JsonText::parse(&read_text(&profile_path)?)
         .map_err(|error| format!("{}: {error}", profile_path.display()))?;
     let pin = profile
         .get("pins")
         .and_then(|pins| pins.get("libevent"))
         .and_then(|pin| pin.get("git_commit"))
-        .and_then(PyJson::as_str)
+        .and_then(JsonText::as_str)
         .ok_or("the profile has no pins.libevent.git_commit")?
         .to_owned();
 
@@ -355,11 +354,11 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
         let files = units
             .iter()
             .map(|name| {
-                Ok(PyJson::Object(vec![
-                    ("path".into(), PyJson::string(name)),
+                Ok(JsonText::Object(vec![
+                    ("path".into(), JsonText::string(name)),
                     (
                         "sha256".into(),
-                        PyJson::string(digest(&checkout.join(name))?),
+                        JsonText::string(digest(&checkout.join(name))?),
                     ),
                 ]))
             })
@@ -368,9 +367,9 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
             .get_mut("libraries")
             .and_then(|libraries| libraries.get_mut("libevent-core"))
             .ok_or("the profile has no libraries.libevent-core")?
-            .set("audited_files", PyJson::Array(files))?;
+            .set("audited_files", JsonText::Array(files))?;
         let path = build.join("profile.json");
-        write_text(&path, &profile.dumps_indent2()?)?;
+        write_text(&path, &profile.to_indented_text()?)?;
         regenerated = Some(path);
     } else {
         let declared = profile
@@ -378,15 +377,15 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
             .and_then(|libraries| libraries.get("libevent-core"))
             .and_then(|library| library.get("audited_files"))
             .ok_or("the profile has no libraries.libevent-core.audited_files")?;
-        let PyJson::Array(declared) = declared else {
+        let JsonText::Array(declared) = declared else {
             return Err("audited_files is not a list".into());
         };
-        // `{entry["path"]: entry["sha256"]}`: the last digest of a path wins.
+        // Path to digest; the last digest of a repeated path wins.
         let mut table: Vec<(String, String)> = Vec::new();
         for entry in declared {
             let (Some(path), Some(sha256)) = (
-                entry.get("path").and_then(PyJson::as_str),
-                entry.get("sha256").and_then(PyJson::as_str),
+                entry.get("path").and_then(JsonText::as_str),
+                entry.get("sha256").and_then(JsonText::as_str),
             ) else {
                 return Err("an audited file without a path or sha256".into());
             };
@@ -414,50 +413,58 @@ pub fn prepare(request: &Request, options: &Options) -> Result<Response, String>
     }
 
     let audit_path = profile_dir.join("audit.json");
-    let mut config = PyJson::parse(&read_text(&audit_path)?)
+    let mut config = JsonText::parse(&read_text(&audit_path)?)
         .map_err(|error| format!("{}: {error}", audit_path.display()))?;
-    config.set("profile_directory", PyJson::string(text(&profile_dir)?))?;
-    config.set("checkout", PyJson::string(checkout_text.clone()))?;
-    config.set("compile_database", PyJson::string(text(&database)?))?;
+    config.set("profile_directory", JsonText::string(text(&profile_dir)?))?;
+    config.set("checkout", JsonText::string(checkout_text.clone()))?;
+    config.set("compile_database", JsonText::string(text(&database)?))?;
     config.set(
         "report",
-        PyJson::string(text(&build.join("libevent-core-audit.json"))?),
+        JsonText::string(text(&build.join("libevent-core-audit.json"))?),
     )?;
     let config_path = build.join("libevent-core-audit.json.config");
-    write_text(&config_path, &config.dumps_indent2()?)?;
+    write_text(&config_path, &config.to_indented_text()?)?;
 
     let source_sha256 = units
         .iter()
-        .map(|name| Ok((name.clone(), PyJson::string(digest(&checkout.join(name))?))))
+        .map(|name| {
+            Ok((
+                name.clone(),
+                JsonText::string(digest(&checkout.join(name))?),
+            ))
+        })
         .collect::<Result<Vec<_>, String>>()?;
-    let provenance = PyJson::Object(vec![
-        ("schema_version".into(), PyJson::Integer(1)),
-        ("source_set".into(), PyJson::string("libevent-core")),
-        ("source_revision".into(), PyJson::string(pin)),
-        ("checkout".into(), PyJson::string(checkout_text)),
-        ("build".into(), PyJson::string(build_text)),
-        ("compiler_version".into(), PyJson::string(compiler_version)),
-        ("configure_command".into(), PyJson::strings(configure)),
-        ("native_build_command".into(), PyJson::strings(native)),
-        ("object_prefix".into(), PyJson::string(OBJECT_PREFIX)),
-        ("selected_units".into(), PyJson::strings(units.clone())),
+    let provenance = JsonText::Object(vec![
+        ("schema_version".into(), JsonText::Integer(1)),
+        ("source_set".into(), JsonText::string("libevent-core")),
+        ("source_revision".into(), JsonText::string(pin)),
+        ("checkout".into(), JsonText::string(checkout_text)),
+        ("build".into(), JsonText::string(build_text)),
+        (
+            "compiler_version".into(),
+            JsonText::string(compiler_version),
+        ),
+        ("configure_command".into(), JsonText::strings(configure)),
+        ("native_build_command".into(), JsonText::strings(native)),
+        ("object_prefix".into(), JsonText::string(OBJECT_PREFIX)),
+        ("selected_units".into(), JsonText::strings(units.clone())),
         (
             "cmake_database_sha256".into(),
-            PyJson::string(digest(&database)?),
+            JsonText::string(digest(&database)?),
         ),
         (
             "cmake_database_entries".into(),
-            PyJson::Integer(i128::try_from(entries.len()).map_err(|error| error.to_string())?),
+            JsonText::Integer(i128::try_from(entries.len()).map_err(|error| error.to_string())?),
         ),
         (
             "static_library_sha256".into(),
-            PyJson::string(digest(&build.join("lib/libevent_core.a"))?),
+            JsonText::string(digest(&build.join("lib/libevent_core.a"))?),
         ),
-        ("source_sha256".into(), PyJson::Object(source_sha256)),
-        ("scope".into(), PyJson::string(SCOPE)),
+        ("source_sha256".into(), JsonText::Object(source_sha256)),
+        ("scope".into(), JsonText::string(SCOPE)),
     ]);
     let provenance_path = build.join("libevent-build-provenance.json");
-    write_text(&provenance_path, &provenance.dumps_indent2()?)?;
+    write_text(&provenance_path, &provenance.to_indented_text()?)?;
 
     let mut response = Response::completed();
     for (path, kind) in [

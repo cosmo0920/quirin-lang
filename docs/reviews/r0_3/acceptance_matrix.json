@@ -10127,9 +10127,9 @@
    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
   },
   {
-   "id": "W45-PYJSON-DUPLICATE",
-   "title": "The Python-compatible ordered JSON writer exists twice",
-   "why": "`crates/qcore-audit/src/prepare_json.rs` (W44-QUIRIN-AUDIT-PREPARE) and `crates/quirin-audit-plugin/src/python_json.rs` (W45-AUDIT-SUBCOMMAND-PLUGINS) are the same `PyJson` type. The card kept its `qcore-audit` change to a new module and thin hooks while concurrent cards edit that crate, so it did not move `prepare.rs` onto the SDK's copy. DISCHARGE: `qcore-audit` uses `quirin_audit_plugin::python_json` and `prepare_json.rs` is deleted, with `prepare_cli` and the prepare parity unchanged.",
+   "id": "W45-JSON-TEXT-DUPLICATE",
+   "title": "The ordered JSON text writer exists twice",
+   "why": "`crates/qcore-audit/src/prepare_json.rs` (W44-QUIRIN-AUDIT-PREPARE) and `crates/quirin-audit-plugin/src/json_text.rs` (W45-AUDIT-SUBCOMMAND-PLUGINS, `JsonText`) are the same ordered JSON type (`PyJson` in the former). The card kept its `qcore-audit` change to a new module and thin hooks while concurrent cards edit that crate, so it did not move `prepare.rs` onto the SDK's copy. DISCHARGE: `qcore-audit` uses `quirin_audit_plugin::json_text` and `prepare_json.rs` is deleted, with `prepare_cli` and the prepare parity unchanged.",
    "source": "docs/reports/w45-audit-subcommand-plugins/README.md",
    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
   }

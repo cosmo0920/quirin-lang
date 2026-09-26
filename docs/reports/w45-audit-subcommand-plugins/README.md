@@ -75,9 +75,9 @@ output, every struct `deny_unknown_fields`.
 * **SDK surface:** `Request::from_slice`, `run` (read, answer, write; exit 0
   or 1), `Response::completed`/`failed`/`push_artifact` (hashes the file)/
   `push_diagnostic`/`push_claim`/`validate`, `verify_artifacts`, the
-  harness `testing::invoke` and `Invocation::verified`, `python_json` (the
-  ordered `json.dumps(indent=2)` writer of W44-QUIRIN-AUDIT-PREPARE, public
-  here; `W45-PYJSON-DUPLICATE`), and the example plugin `quirin-audit-example`.
+  harness `testing::invoke` and `Invocation::verified`, `json_text` (`JsonText`,
+  the ordered, indented JSON text writer of W44-QUIRIN-AUDIT-PREPARE, public
+  here; `W45-JSON-TEXT-DUPLICATE`), and the example plugin `quirin-audit-example`.
   It depends on `qcore-schemas` for SHA-256 only, `serde` and `serde_json`,
   like `quirin-provider-plugin`; it links no core analysis crate and contains
   nothing library-specific.
@@ -146,13 +146,20 @@ content digest.
 ## 5. The libevent plugin and the retired script
 
 `crates/quirin-audit-plugin-libevent` (binary `quirin-audit-libevent`,
-depending on the SDK, `qcore-schemas` and `serde_json` only) ports the
-script's `main` step by step: the pin check against `profile.json`, the two
-clean-checkout checks, `shutil.which` of both compilers and the Clang banner
-check, the CMake cache reuse checks, the configure and `-j2`
-`event_core_static` build with one merged pipe per log, `selected_units`
-(Python `Path.suffix` and `resolve` semantics), the declared audited-file set
-and digests, and the three records through the ordered Python-JSON writer.
+depending on the SDK, `qcore-schemas` and `serde_json` only) performs the
+script's steps in order: the pin check against `profile.json`, the two
+clean-checkout checks, the `PATH` lookup of both compilers and the Clang
+banner check, the CMake cache reuse checks, the configure and `-j2`
+`event_core_static` build with one merged pipe per log, the unit selection
+(the final `.`-suffix of a name, non-strict path resolution), the declared
+audited-file set and digests, and the three records through the ordered JSON
+text writer (`quirin_audit_plugin::json_text::JsonText`). Its process, path
+and text operations are the module `src/audit.rs`. (By the user's naming
+correction, modules and identifiers are named for what they do in the audit,
+not after the retired script's language: `src/python.rs` became
+`src/audit.rs`, `python_strip` `strip_whitespace`, and the SDK's
+`python_json::PyJson` `json_text::JsonText`, with `dumps_indent2`
+`to_indented_text`; behaviour unchanged, parity re-measured below.)
 Two deliberate differences, neither reaching a prepared byte: the output is
 the host's required `--output` (an output inside `build/cycle19` or
 `third_party` is refused), and `--write-profile` writes the regenerated profile
@@ -214,8 +221,8 @@ increment keep their text.
 |---|---:|---|
 | `crates/qcore-audit/tests/subcommand_plugins.rs` | 14 | through the `quirin-audit` binary, shell-script plugins: a plugin runs, its artifact, request, working directory and invocation record (path, SHA-256, protocol version, exit) are recorded; built-in shadowing refused (`plugin`, `prepare`, `current`; neither the host-option form nor the variable runs them) and listed; a missing plugin and a plugin only on `PATH` are usage errors listing the search path; a version mismatch, a timeout (its background child gone after the group kill), oversize standard output and standard error, a nonzero exit, malformed JSON and an artifact outside the output are each `Unknown`; uncertified `Safe` and `Unsafe` claims are `Pending` (and a certificate reference is `QP016`, still `Pending`); a failed plugin joined with a `Safe` host row is `Unknown`; no `Safe` or `Unknown` claim lowers an `Unsafe` host row; the environment does not leak (a secret and `CARGO_*` absent, only allow-listed names seen, `--plugin-env` passes one); a provider without a load path and a missing `--output` are refused |
 | `crates/qcore-audit/src/subcommand_plugins.rs` | 7 | names vs options vs built-ins; `BUILTINS` equals `main.rs`; verbatim arguments; `PATH` never searched; no claim certified; the join never lowers a host verdict and a claim-less run has no verdict; audit-report rows as host verdicts |
-| `crates/quirin-audit-plugin` | 7 + 4 + 1 | protocol round trip, version before shape, `Pending` proposals and unknown fields malformed, bad digests; `python_json` parity with CPython; the harness running the example plugin, a failed response, a refused request version, a tampered artifact; the Cargo closure: the SDK links `qcore-schemas` alone of the workspace's crates, the libevent plugin only the SDK besides |
-| `crates/quirin-audit-plugin-libevent` | 7 | flag parsing, `selected_units` (prefix, `-o`, `arguments`, `Path.suffix`), protected outputs, only `prepare` answered, Python helpers |
+| `crates/quirin-audit-plugin` | 7 + 4 + 1 | protocol round trip, version before shape, `Pending` proposals and unknown fields malformed, bad digests; `json_text` order and escapes; the harness running the example plugin, a failed response, a refused request version, a tampered artifact; the Cargo closure: the SDK links `qcore-schemas` alone of the workspace's crates, the libevent plugin only the SDK besides |
+| `crates/quirin-audit-plugin-libevent` | 7 | flag parsing, `selected_units` (prefix, `-o`, `arguments`, the `.c` suffix), protected outputs, only `prepare` answered, the `audit` module's text and cache readers |
 
 The integration binary is in the test runner's `EXCLUSIVE` table (its timeout
 row is a wall-clock budget).
@@ -286,5 +293,5 @@ by [scripts/update_ledger.py](scripts/update_ledger.py), then
 `W45-SUBCOMMAND-CERTIFICATE-ROUTE` (no checker for a subcommand claim's
 certificate), `W45-SUBCOMMAND-CONFINEMENT` (containment, not a sandbox),
 `W45-SUBCOMMAND-NON-UNIX` (the route refuses off Unix) and
-`W45-PYJSON-DUPLICATE` (the ordered JSON writer exists twice). Nothing is
+`W45-JSON-TEXT-DUPLICATE` (the ordered JSON text writer exists twice). Nothing is
 retired: no registered follow-up named the script or external subcommands.

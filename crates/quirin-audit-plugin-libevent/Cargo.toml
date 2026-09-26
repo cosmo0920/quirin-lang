@@ -3,7 +3,7 @@ name = "quirin-audit-plugin-libevent"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-description = "The `quirin-audit libevent` subcommand plugin: prepares the pinned libevent-core configured-audit inputs (the port of the retired Python preparation script)."
+description = "The `quirin-audit libevent` subcommand plugin: prepares the pinned libevent-core configured-audit inputs byte-identical to the retired preparation script of card G03-F."
 
 [lib]
 name = "quirin_audit_plugin_libevent"

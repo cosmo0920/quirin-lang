@@ -1,18 +1,16 @@
-//! Ordered JSON written byte for byte as a Python script wrote it with
-//! `json.dumps(value, indent=2)`: for a plugin that ports such a script with
-//! byte parity. The same type as `quirin-audit prepare`'s (card
-//! W44-QUIRIN-AUDIT-PREPARE, `crates/qcore-audit/src/prepare_json.rs`),
-//! public here so a plugin crate needs no core crate for it.
+//! Ordered, indented JSON text with ASCII escapes: the exact bytes a
+//! preparation record is compared on.
 //!
-//! The workspace's `serde_json` has no `preserve_order` feature, so its `Value`
-//! sorts object keys. The records keep Python's insertion order:
-//! a parsed object keeps its source order (a duplicate key keeps its first
-//! position and takes the last value, as `dict` does), and `set` replaces a
-//! value in place or appends a new key. Output escapes like `ensure_ascii`:
-//! `"`, `\`, the five short escapes, and every other character outside
-//! printable ASCII as `\uXXXX` (UTF-16 surrogate pairs above U+FFFF).
-//! Non-integer numbers are refused rather than printed in a notation that may
-//! differ from Python's `repr(float)`.
+//! Objects keep their insertion order: a parsed object keeps its source order
+//! (a repeated key keeps its first position and takes its last value), and
+//! `set` replaces a value in place or appends a new key. [`JsonText::to_indented_text`]
+//! writes two-space indentation, `": "` between a key and its value, empty
+//! containers inline and a final newline, and escapes `"`, `\`, the five short
+//! escapes and every other character outside printable ASCII as `\uXXXX`
+//! (UTF-16 surrogate pairs above U+FFFF). A non-integer number is refused
+//! rather than printed in a notation that could differ between writers.
+//! `quirin-audit prepare` carries the same type (`crates/qcore-audit/src/prepare_json.rs`,
+//! `W45-JSON-TEXT-DUPLICATE`), public here so a plugin needs no core crate.
 
 use std::fmt::Write as _;
 
@@ -20,17 +18,17 @@ use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 
 /// A JSON value with ordered objects.
 #[derive(Clone, Debug, PartialEq)]
-pub enum PyJson {
+pub enum JsonText {
     Null,
     Bool(bool),
     Integer(i128),
     Float(f64),
     String(String),
-    Array(Vec<PyJson>),
-    Object(Vec<(String, PyJson)>),
+    Array(Vec<JsonText>),
+    Object(Vec<(String, JsonText)>),
 }
 
-impl PyJson {
+impl JsonText {
     /// Parse JSON text, keeping object key order.
     pub fn parse(text: &str) -> Result<Self, String> {
         serde_json::from_str(text).map_err(|error| error.to_string())
@@ -48,7 +46,7 @@ impl PyJson {
         Self::Array(values.into_iter().map(Self::string).collect())
     }
 
-    pub fn get(&self, key: &str) -> Option<&PyJson> {
+    pub fn get(&self, key: &str) -> Option<&JsonText> {
         match self {
             Self::Object(entries) => entries
                 .iter()
@@ -58,7 +56,7 @@ impl PyJson {
         }
     }
 
-    pub fn get_mut(&mut self, key: &str) -> Option<&mut PyJson> {
+    pub fn get_mut(&mut self, key: &str) -> Option<&mut JsonText> {
         match self {
             Self::Object(entries) => entries
                 .iter_mut()
@@ -75,8 +73,8 @@ impl PyJson {
         }
     }
 
-    /// `dict[key] = value`: replace in place, or append.
-    pub fn set(&mut self, key: &str, value: PyJson) -> Result<(), String> {
+    /// Set `key`: replace its value in place, or append it.
+    pub fn set(&mut self, key: &str, value: JsonText) -> Result<(), String> {
         let Self::Object(entries) = self else {
             return Err(format!("cannot set `{key}` on a non-object JSON value"));
         };
@@ -87,7 +85,7 @@ impl PyJson {
         Ok(())
     }
 
-    /// `del dict[key]`; a missing key is an error, as `KeyError` was.
+    /// Remove `key`; a missing key is an error.
     pub fn remove(&mut self, key: &str) -> Result<(), String> {
         let Self::Object(entries) = self else {
             return Err(format!(
@@ -102,8 +100,8 @@ impl PyJson {
         Ok(())
     }
 
-    /// `json.dumps(self, indent=2) + '\n'`.
-    pub fn dumps_indent2(&self) -> Result<String, String> {
+    /// The value as indented JSON text with a final newline.
+    pub fn to_indented_text(&self) -> Result<String, String> {
         let mut out = String::new();
         self.write(&mut out, 0)?;
         out.push('\n');
@@ -162,7 +160,7 @@ fn indent(out: &mut String, level: usize) {
     }
 }
 
-/// Python's `json` `ensure_ascii` string encoder.
+/// A JSON string with every character outside printable ASCII escaped.
 fn escape_ascii(out: &mut String, value: &str) {
     out.push('"');
     for character in value.chars() {
@@ -186,54 +184,54 @@ fn escape_ascii(out: &mut String, value: &str) {
     out.push('"');
 }
 
-impl<'de> Deserialize<'de> for PyJson {
+impl<'de> Deserialize<'de> for JsonText {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        struct PyJsonVisitor;
-        impl<'de> Visitor<'de> for PyJsonVisitor {
-            type Value = PyJson;
+        struct JsonTextVisitor;
+        impl<'de> Visitor<'de> for JsonTextVisitor {
+            type Value = JsonText;
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
                 formatter.write_str("a JSON value")
             }
-            fn visit_unit<E>(self) -> Result<PyJson, E> {
-                Ok(PyJson::Null)
+            fn visit_unit<E>(self) -> Result<JsonText, E> {
+                Ok(JsonText::Null)
             }
-            fn visit_none<E>(self) -> Result<PyJson, E> {
-                Ok(PyJson::Null)
+            fn visit_none<E>(self) -> Result<JsonText, E> {
+                Ok(JsonText::Null)
             }
-            fn visit_bool<E>(self, value: bool) -> Result<PyJson, E> {
-                Ok(PyJson::Bool(value))
+            fn visit_bool<E>(self, value: bool) -> Result<JsonText, E> {
+                Ok(JsonText::Bool(value))
             }
-            fn visit_i64<E>(self, value: i64) -> Result<PyJson, E> {
-                Ok(PyJson::Integer(value.into()))
+            fn visit_i64<E>(self, value: i64) -> Result<JsonText, E> {
+                Ok(JsonText::Integer(value.into()))
             }
-            fn visit_u64<E>(self, value: u64) -> Result<PyJson, E> {
-                Ok(PyJson::Integer(value.into()))
+            fn visit_u64<E>(self, value: u64) -> Result<JsonText, E> {
+                Ok(JsonText::Integer(value.into()))
             }
-            fn visit_f64<E>(self, value: f64) -> Result<PyJson, E> {
-                Ok(PyJson::Float(value))
+            fn visit_f64<E>(self, value: f64) -> Result<JsonText, E> {
+                Ok(JsonText::Float(value))
             }
-            fn visit_str<E>(self, value: &str) -> Result<PyJson, E> {
-                Ok(PyJson::String(value.to_owned()))
+            fn visit_str<E>(self, value: &str) -> Result<JsonText, E> {
+                Ok(JsonText::String(value.to_owned()))
             }
-            fn visit_string<E>(self, value: String) -> Result<PyJson, E> {
-                Ok(PyJson::String(value))
+            fn visit_string<E>(self, value: String) -> Result<JsonText, E> {
+                Ok(JsonText::String(value))
             }
-            fn visit_seq<A: SeqAccess<'de>>(self, mut sequence: A) -> Result<PyJson, A::Error> {
+            fn visit_seq<A: SeqAccess<'de>>(self, mut sequence: A) -> Result<JsonText, A::Error> {
                 let mut values = Vec::new();
                 while let Some(value) = sequence.next_element()? {
                     values.push(value);
                 }
-                Ok(PyJson::Array(values))
+                Ok(JsonText::Array(values))
             }
-            fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<PyJson, A::Error> {
-                let mut object = PyJson::Object(Vec::new());
-                while let Some((key, value)) = map.next_entry::<String, PyJson>()? {
+            fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<JsonText, A::Error> {
+                let mut object = JsonText::Object(Vec::new());
+                while let Some((key, value)) = map.next_entry::<String, JsonText>()? {
                     object.set(&key, value).map_err(serde::de::Error::custom)?;
                 }
                 Ok(object)
             }
         }
-        deserializer.deserialize_any(PyJsonVisitor)
+        deserializer.deserialize_any(JsonTextVisitor)
     }
 }
 
@@ -242,36 +240,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn output_matches_python_json_dumps_indent_2() {
-        // Expected bytes are `json.dumps(json.loads(SOURCE), indent=2)` from
-        // CPython 3: order kept, duplicate key at its first position with the
+    fn indented_text_keeps_order_and_escapes_to_ascii() {
+        // The expected bytes (checked against the retired script's JSON
+        // writer): order kept, a repeated key at its first position with the
         // last value, empty containers inline, ASCII escapes.
         let source = r#"{"b": 1, "a": [], "c": {}, "b": [true, null, -2],
             "s": "q\"\\\n\t\u0001é😀~\u007f/"}"#;
         let expected = "{\n  \"b\": [\n    true,\n    null,\n    -2\n  ],\n  \"a\": [],\n  \
                         \"c\": {},\n  \"s\": \"q\\\"\\\\\\n\\t\\u0001\\u00e9\\ud83d\\ude00~\
                         \\u007f/\"\n}\n";
-        let value = PyJson::parse(source).unwrap();
-        assert_eq!(value.dumps_indent2().unwrap(), expected);
+        let value = JsonText::parse(source).unwrap();
+        assert_eq!(value.to_indented_text().unwrap(), expected);
     }
 
     #[test]
     fn set_replaces_in_place_or_appends_and_remove_requires_the_key() {
-        let mut value = PyJson::parse(r#"{"x": 1, "y": 2}"#).unwrap();
-        value.set("x", PyJson::string("one")).unwrap();
-        value.set("z", PyJson::Integer(3)).unwrap();
+        let mut value = JsonText::parse(r#"{"x": 1, "y": 2}"#).unwrap();
+        value.set("x", JsonText::string("one")).unwrap();
+        value.set("z", JsonText::Integer(3)).unwrap();
         assert_eq!(
-            value.dumps_indent2().unwrap(),
+            value.to_indented_text().unwrap(),
             "{\n  \"x\": \"one\",\n  \"y\": 2,\n  \"z\": 3\n}\n"
         );
         value.remove("y").unwrap();
         assert!(value.remove("y").is_err());
-        assert!(PyJson::Integer(1).set("k", PyJson::Null).is_err());
+        assert!(JsonText::Integer(1).set("k", JsonText::Null).is_err());
     }
 
     #[test]
     fn a_float_is_refused_not_reformatted() {
-        let value = PyJson::parse(r#"{"x": 1.5}"#).unwrap();
-        assert!(value.dumps_indent2().is_err());
+        let value = JsonText::parse(r#"{"x": 1.5}"#).unwrap();
+        assert!(value.to_indented_text().is_err());
     }
 }

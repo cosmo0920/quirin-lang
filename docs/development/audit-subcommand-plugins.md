@@ -141,8 +141,8 @@ response; an `Err` becomes a failed response and exit 1. Write diagnostics for
 a person to standard error. `quirin_audit_plugin::testing::invoke` runs a built
 plugin binary on a request as the host would (cleared environment, working
 directory the output) and `Invocation::verified` checks its response and
-artifacts; `quirin_audit_plugin::python_json` writes `json.dumps(indent=2)`
-bytes for a port of a Python script. The crate's own example,
+artifacts; `quirin_audit_plugin::json_text` (`JsonText`) writes ordered,
+indented JSON text with ASCII escapes, for records compared byte for byte. The crate's own example,
 `quirin-audit-example`, is a complete plugin:
 
 ```sh

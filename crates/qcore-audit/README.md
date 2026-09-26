@@ -472,7 +472,7 @@ run, not an input to any verdict, so it is not part of any identity comparison.
 The `libevent-core` inputs are prepared by the external subcommand
 `quirin-audit libevent prepare` (crate `quirin-audit-plugin-libevent`), from
 the pinned `third_party/libevent` submodule, byte for byte as the retired
-Python script did ([parity](../../docs/reports/w45-audit-subcommand-plugins/README.md)):
+preparation script did ([parity](../../docs/reports/w45-audit-subcommand-plugins/README.md)):
 
 ```sh
 cargo build -p qcore-audit -p quirin-audit-plugin-libevent
