@@ -1,10 +1,112 @@
-{"file": "docs/agents/diagnostics.md", "base": "8c1f15eb", "section": "diagnostics", "heading": "`docs/agents/diagnostics.md`", "edits": [
- {"start": 43, "end": 43, "with": null, "moved": [[43, 43]], "title": "Diagnostics namespaces, the preserved start marker", "note": "Removed because the block below it is no longer the migration's text; the end marker is in the last block of this section."},
- {"start": 117, "end": 117, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_117.txt", "moved": [[117, 117]], "title": "Table row `Q051`–`Q057`", "note": "Kept: the route, every card and every widened, narrowed or unwidened code with its constraint. Moved: the per-card wording, which §L21 carries in full."},
- {"start": 119, "end": 119, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_119.txt", "moved": [[119, 119]], "title": "Table row `Q068`–`Q079`", "note": "Kept: the three bands, both extending cards and the deliberate choices (`Q071` not used, `Q078` widened, `Q079` reached without widening). Moved: the pool history of `Q077`–`Q079`."},
- {"start": 120, "end": 120, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_120.txt", "moved": [[120, 120]], "title": "Table row `Q080`–`Q089`", "note": "Kept: every code, the three extending cards and their widened conditions. Moved: the band-assignment history and the address examples."},
- {"start": 121, "end": 121, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_121.txt", "moved": [[121, 121]], "title": "Table row `Q090`–`Q096`", "note": "Kept: every code, both extending cards, the resolved-before-admission reason and constraint 15f. Moved: the long-form condition lists, which §L21 carries."},
- {"start": 128, "end": 128, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_128.txt", "moved": [[128, 128]], "title": "Table row `Q600`", "note": "Kept: all six extending cards with their wave, constraint and vocabulary, the narrowing, the `Q500` backstop and `CT24-CLEANUP-PREEMPTED`'s non-instance."},
- {"start": 137, "end": 137, "with": null, "moved": [[137, 137]], "title": "Diagnostics namespaces, the preserved end marker", "note": "With the start marker above, removed because the block is no longer the migration's text; the untouched rows stay byte-identical in place."},
- {"start": 143, "end": 147, "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_pre.txt", "moved": [[143, 147]], "title": "The amendments preamble", "note": "Replaced because it said every preserved block above is never edited in place; the namespaces section now is, and `verify.py` itself exits 1 at base `8c1f15eb` (eight rows edited on other pages and `operations` unmarked), so the pin it named no longer holds for the tree."}
-]}
+{
+ "file": "docs/agents/diagnostics.md",
+ "base": "8c1f15eb",
+ "section": "diagnostics",
+ "heading": "`docs/agents/diagnostics.md`",
+ "edits": [
+  {
+   "start": 43,
+   "end": 43,
+   "with": null,
+   "moved": [
+    [
+     43,
+     43
+    ]
+   ],
+   "title": "Diagnostics namespaces, the preserved start marker",
+   "note": "Removed because the block below it is no longer the migration's text; the end marker is in the last block of this section."
+  },
+  {
+   "start": 117,
+   "end": 117,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_117.txt",
+   "moved": [
+    [
+     117,
+     117
+    ]
+   ],
+   "title": "Table row `Q051`–`Q057`",
+   "note": "The rule keeps every card and every widened, narrowed or unwidened code; §L21 carries the wording."
+  },
+  {
+   "start": 119,
+   "end": 119,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_119.txt",
+   "moved": [
+    [
+     119,
+     119
+    ]
+   ],
+   "title": "Table row `Q068`–`Q079`",
+   "note": "The rule keeps both extending cards and the deliberate choices; the pool history moved."
+  },
+  {
+   "start": 120,
+   "end": 120,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_120.txt",
+   "moved": [
+    [
+     120,
+     120
+    ]
+   ],
+   "title": "Table row `Q080`–`Q089`",
+   "note": "The rule keeps every code and the three extending cards; the band history moved."
+  },
+  {
+   "start": 121,
+   "end": 121,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_121.txt",
+   "moved": [
+    [
+     121,
+     121
+    ]
+   ],
+   "title": "Table row `Q090`–`Q096`",
+   "note": "The rule keeps every code, both extending cards and constraint 15f; §L21 carries the long form."
+  },
+  {
+   "start": 128,
+   "end": 128,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_128.txt",
+   "moved": [
+    [
+     128,
+     128
+    ]
+   ],
+   "title": "Table row `Q600`",
+   "note": "The rule keeps all six extending cards, the narrowing, the `Q500` backstop and the non-instance."
+  },
+  {
+   "start": 137,
+   "end": 137,
+   "with": null,
+   "moved": [
+    [
+     137,
+     137
+    ]
+   ],
+   "title": "Diagnostics namespaces, the preserved end marker",
+   "note": "With the start marker above, removed because the block is no longer the migration's text; the untouched rows stay byte-identical in place."
+  },
+  {
+   "start": 143,
+   "end": 147,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/diag_pre.txt",
+   "moved": [
+    [
+     143,
+     147
+    ]
+   ],
+   "title": "The amendments preamble",
+   "note": "Replaced: `verify.py` exits 1 at base `8c1f15eb`, so it pins nothing (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`)."
+  }
+ ]
+}

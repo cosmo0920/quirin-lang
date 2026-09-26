@@ -10,8 +10,9 @@ docs/agents/diagnostics.md       120-120     2092   1508    -584  Table row `Q08
 docs/agents/diagnostics.md       121-121     2150   1733    -417  Table row `Q090`–`Q096`
 docs/agents/diagnostics.md       128-128     3113   1940   -1173  Table row `Q600`
 docs/agents/diagnostics.md       137-137       45      0     -45  Diagnostics namespaces, the preserved end marker
-docs/agents/diagnostics.md       143-147      364    688    +324  The amendments preamble
+docs/agents/diagnostics.md       143-147      364    978    +614  The amendments preamble
 docs/agents/buffers-records.md   319-328      624    383    -241  15k amendment (`OWNED-FIELD-ROUTE-REACH`), its opening two paragraphs
+docs/agents/buffers-records.md   307-313      510    812    +302  The amendments preamble
 docs/STATUS.md                   3-12        1298   1103    -195  The provenance paragraph
 docs/STATUS.md                   25-25       1199    720    -479  Coverage row: Cycle 19 units
 docs/STATUS.md                   26-26       5037   1469   -3568  Coverage row: Projected functions
@@ -24,9 +25,9 @@ docs/STATUS.md                   33-33       1297    551    -746  Coverage row: 
 docs/STATUS.md                   34-34        378    252    -126  Coverage row: Unit reasons
 docs/STATUS.md                   42-42        979    765    -214  Coverage row: Contract corpus
 docs/STATUS.md                   45-45       2085   1342    -743  Coverage row: Fluent Bit system slice
-docs/STATUS.md                   48-48       2935    296   -2639  Coverage row: Registered follow-ups
+docs/STATUS.md                   48-48       2935    333   -2602  Coverage row: Registered follow-ups
 docs/STATUS.md                   65-78       1143   1050     -93  The raw-units paragraph
-docs/STATUS.md                   97-139      3328   2115   -1213  Latest validated gate, and the provider-contract narrative
+docs/STATUS.md                   97-139      3328   2158   -1170  Latest validated gate, and the provider-contract narrative
 docs/STATUS.md                   141-189     4172    361   -3811  The follow-up chronicle
 
 [exit 0]

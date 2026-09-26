@@ -50,7 +50,7 @@ REPLACE[(42, 42)] = """| Contract corpus | **114** modules; **174** resource-v1 
 
 REPLACE[(45, 45)] = """| Fluent Bit system slice (current build) | **8 files / 15 units: 0 Safe / 2 provisional Unsafe / 13 Unknown**; **237 functions: 28 Safe / 2 provisional Unsafe / 204 Unknown / 3 not projected**, at `046accf6` (re-pinned by the user) through `--selection contract/profiles/fluent-bit/system-selection.json`; unmoved since W45-FB-BACKLOG-CUSTODY. The obligations OR-1 (`flb_output_task_singleplex_enqueue`, under the synchronous-proxy premise) and OR-7 (`flb_output_task_flush`) are checked Fluent Bit provider contracts, each decided **refuted** by its own body (provisional Unsafe candidates, never upstream defects), and every caller call site is held Unknown (`contract-refuted-by-body`, W45-REFUTED-CONTRACT-WITHDRAWAL); OR-6 is not stated and OR-2 not reached; backlog obligations OB-1 … OB-10 are all Unknown, two custody legs held by pinned checked specifications. A separate audit scope, not counted in the Cycle 19 rows above, and no promotion | [W45-FB-BACKLOG-CUSTODY](reports/w45-fb-backlog-custody/README.md) §4–5, [W45-FB-RETRY-LIFETIME](reports/w45-fb-retry-lifetime/README.md) §4–5, [W45-REFUTED-CONTRACT-WITHDRAWAL](reports/w45-refuted-contract-withdrawal/README.md), [W45-CONTAINER-ROOT-REACH](reports/w45-container-root-reach/README.md) §6–7, [W45-FB-SYSTEM-SELECTION](reports/w45-fb-system-selection/README.md) |"""
 
-REPLACE[(48, 48)] = """| Registered follow-ups | **472**; last moved by W45-AUDIT-SUBCOMMAND-PLUGINS (four registered, and one by its integration). Which card registered or retired which name is in its report and wave record | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |"""
+REPLACE[(48, 48)] = """| Registered follow-ups | **474**; last moved by DOCS-COMPACT-9 (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`, `W45-RECONCILIATION-SUBSTRING-CLAIMS`), 472 before it. Which card registered or retired which name is in its report and wave record | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |"""
 
 REPLACE[(65, 78)] = """**Raw units remain unpromoted.** The unit Safe count is 5; each is a
 function-level roll-up, not a promotion. `flb_input_chunk_create` is
@@ -70,8 +70,8 @@ and [gateway rules](agents/gateway.md#constraint-7)."""
 
 REPLACE[(97, 139)] = """The latest merged gate is the
 [W45-AUDIT-SUBCOMMAND-PLUGINS integration gate](reports/w45-audit-subcommand-plugins/integration/gate.json)
-on merge `658717fb`: **5,995 core Rust passed, 0 failed, 11 ignored over 333
-summaries; 129 provider Rust passed, 0 failed, 1 ignored over 43 summaries;
+on merge `658717fb`: **5,995 core Rust passed, 0 failed, 11 ignored over 331
+summaries (333 until `33558c67` corrected the count); 129 provider Rust passed, 0 failed, 1 ignored over 43 summaries;
 207 Lean audits; 364 root Python tests; 15 package Python tests**. Core and
 provider fmt and clippy, both reevaluation examples, the docs index, the
 contract check, the isolated package mutation control and all five package

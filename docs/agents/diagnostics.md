@@ -139,11 +139,15 @@ engage.
 ## Amendments after the 2026-09-19 migration checkpoint
 
 The blocks still marked preserved above are the migration's reconstruction
-text, checked by `docs/reports/docs-structure-compression/verify.py` at that
-card's own checkpoint, and are not edited in place. The namespaces section was
-not: at wave 45 `DOCS-COMPACT-9` compacted its table rows to their current
-conditions, moving the per-card wording verbatim, with its preserved markers,
-into the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#diagnostics).
+text. `docs/reports/docs-structure-compression/verify.py` checked them at that
+card's own checkpoint; it no longer passes against the tree, failing at its first
+row (`AGENTS.md` → `docs/development/architecture.md`), so the markers pin
+nothing mechanically (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`). Edit such a
+block only to correct or compact the current rule, and move its migration text,
+markers included, verbatim into a checkpoint. The namespaces section was edited
+this way at wave 45 (`DOCS-COMPACT-9`): its table rows are compacted to their
+current conditions, and the per-card wording is in the
+[wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#diagnostics).
 Amendments land here, carry the same authority as the rule they amend, and stay
 short: `docs/QCORE_SPEC_r0_3.md` §L21 carries each condition's full text, and
 this page is capped at 32 KiB.

@@ -13,14 +13,14 @@ of three checkpoint pages, re-read from `git show 8c1f15eb:<file>` by
 [`checkpoint.py`](scripts/checkpoint.py) and asserted to be a contiguous
 substring of the base file:
 [rule pages](../../development/increments/wave-45-compaction-checkpoints.md)
-(32,564 bytes), [status table](../../development/increments/wave-45-compaction-status.md)
+(32,143 bytes), [status table](../../development/increments/wave-45-compaction-status.md)
 (29,054) and [status prose](../../development/increments/wave-45-compaction-status-prose.md)
 (10,747). Each says it is history and not a second authority.
 
-**Headline.** 28,230 bytes left four current pages: `docs/STATUS.md`
-43,785 → 23,605, `gateway.md` 61,441 → 57,211, `diagnostics.md` 34,348 → 30,770
+**Headline.** 27,558 bytes net left four current pages: `docs/STATUS.md`
+43,785 → 23,685, `gateway.md` 61,441 → 57,211, `diagnostics.md` 34,348 → 31,060
 (back under the 32 KiB cap the page sets itself), `buffers-records.md`
-32,132 → 31,891. All 69 rule blocks keep their numbers, pages and anchors; 65
+32,132 → 32,193 (compacted, then grown by the corrected preamble). All 69 rule blocks keep their numbers, pages and anchors; 65
 are byte-identical. The six hard invariants are byte-identical. **Nine
 corrections**, each measured, two of them the brief's named stale items.
 
@@ -56,16 +56,17 @@ Per block by [`deltas.py`](scripts/deltas.py) ([table](artifacts/byte-deltas.txt
 
 | Page | Blocks | Compaction | Correction | Both |
 |---|---|---:|---:|---:|
-| `docs/STATUS.md` | provenance paragraph; nine coverage rows' parenthetical chains | −14,606 | | |
+| `docs/STATUS.md` | provenance paragraph; nine coverage rows' parenthetical chains (the follow-up row also carries this card's two registrations) | −14,569 | | |
 | | condition-call row (dated, current figure added); unit-reason row (re-sourced); raw-units paragraph | | +51 | |
-| | uncontracted-call row; latest gate and provider paragraph; follow-up chronicle | | | −5,625 |
+| | uncontracted-call row; latest gate (331 summaries, as `33558c67` corrected it) and provider paragraph; follow-up chronicle | | | −5,582 |
 | `docs/agents/gateway.md` | header pointer; constraint 8's two first-exercise paragraphs | −355 | | |
 | | constraints 5c and 7 | | | −3,875 |
 | `docs/agents/diagnostics.md` | five `§L21` table rows; the namespaces block's markers | −3,902 | | |
-| | the amendments preamble | | +324 | |
+| | the amendments preamble | | +614 | |
 | `docs/agents/buffers-records.md` | the 15k amendment's opening history | −241 | | |
+| | the amendments preamble, made the same statement as `diagnostics.md`'s | | +302 | |
 | `docs/agents/README.md` | rule 7's index sentence | | −1 | |
-| **Total −28,230** | | **−19,104** | **+374** | **−9,500** |
+| **Total −27,558** | | **−19,067** | **+966** | **−9,457** |
 
 What each compacted block keeps is stated beside its verbatim copy in the
 checkpoint. In short: every STATUS row keeps its current figure, the card that
@@ -85,7 +86,10 @@ in them is stale, so they are unchanged. Gateway rules 4, 4a, 5–5b, 5d–5l, 6
 9–10h are operative rules, not chronicles; 5d–5l and 10c–10h are wave-44/45
 authorities. `buffers-records.md`'s preserved 15h and 15k blocks are dense
 must-survive lists (`DOCS-COMPACT-8` §3.5 reached the same view of 15h) and the
-page is under 32 KiB. The other topic pages are under 16 KiB.
+page is under 32 KiB. The other topic pages are under 16 KiB. **`gateway.md`
+stays one page at 57,211 bytes** (integrator decision): what remains is
+operative rule text, and a split would move the `gateway.md#constraint-N`
+anchors that reports link to, so it would need an anchor-redirect plan first.
 
 ## 3. Corrections, each with its measured source
 
@@ -117,21 +121,27 @@ page is under 32 KiB. The other topic pages are under 16 KiB.
 6. **STATUS, latest gate:** it named the task-context bundle gate (5,043 Rust,
    165 Lean, 336 Python). The latest merged gate is
    [W45-AUDIT-SUBCOMMAND-PLUGINS' integration gate](../w45-audit-subcommand-plugins/integration/gate.json):
-   5,995 / 0 / 11 over 333 summaries, provider 129 / 0 / 1 over 43, 207 Lean,
-   364 Python, 15 package Python.
+   5,995 / 0 / 11 over 331 summaries (the record said 333 until `33558c67`
+   corrected it on `main`), provider 129 / 0 / 1 over 43, 207 Lean, 364 Python,
+   15 package Python.
 7. **STATUS, provider paragraph:** "39 shared modules … indexes all 111". The
    eleven roots of `contract/corpus.json` hold 72 + 42 = **114** tracked modules
    ([`rederive2.py`](scripts/rederive2.py)), which `qcore_contract_corpus.rs` pins.
 8. **STATUS, follow-up paragraph:** "391 follow-ups are registered"; the matrix
-   carries **472**, carried and derived agreeing. The three open Cycle 18
+   carried **472**, carried and derived agreeing (474 after this card's two
+   registrations, §8). The three open Cycle 18
    follow-ups it mentioned are now named, each read from `named_followups`.
-9. **`diagnostics.md`'s amendments preamble** said every preserved block is
-   "pinned by `verify.py` and never edited in place". `verify.py` exits 1 at the
-   base ([before](artifacts/structure-verify-before.txt)): eight migration rows
-   were already edited in place on other pages and `operations` has no markers
-   ([blocks](artifacts/preserved-blocks-before.txt)). The preamble now says
-   which blocks are still preserved and where the namespaces block's migration
-   text is.
+9. **The amendments preambles of `diagnostics.md` and `buffers-records.md`**
+   said the preserved blocks are "pinned by `verify.py`" and that `verify.py`
+   "reconstructs the pre-restructure guides from them byte for byte". It exits 1
+   at the base, on its first row, `AGENTS.md` → `docs/development/architecture.md`
+   ([before](artifacts/structure-verify-before.txt)): eight migration rows were
+   already edited in place and `operations` has no markers
+   ([blocks](artifacts/preserved-blocks-before.txt)). Both preambles now make one
+   statement: the markers pin nothing mechanically
+   (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`), and a preserved block is edited
+   only to correct or compact the current rule, with its migration text moved
+   verbatim, markers included, into a checkpoint.
 
 Two sentences were re-sourced rather than corrected: the unit-reason row
 (167 / 1 / 17 reproduce from the baseline's `reason_code`) and the indirect-access
@@ -150,7 +160,7 @@ corrections above.
 | Functions | 398 / 9 / 4,427 (4,834); 4,921 definitions, 87 not projected | same |
 | Diagnostics | leak 34, unknown_alias 3,571, unsupported 41,314, summary_conflict 1 | same, `diagnostic_counts` |
 | CT | 50/50 mapped; proof 5 (CT01, CT03, CT07, CT37, CT50); sanitized-native 10 | `docs/reevaluation/ct_manifest.json` |
-| Follow-ups | 472, carried = derived | `docs/reviews/r0_3/acceptance_matrix.json` |
+| Follow-ups | 472 at the base, carried = derived; 474 after §8's registrations | `docs/reviews/r0_3/acceptance_matrix.json` |
 | Contract corpus | 114 modules; 50 manifest-selected; 174 elaborated v1 declarations | tracked provider sources; `cycle19-resource-contracts.json`; `contract_loader.rs` pin |
 | Lean audits | 207; toolchain `leanprover/lean4:v4.34.0` | `proof/Audit*.lean`; `proof/lean-toolchain` |
 
@@ -183,18 +193,28 @@ three `wave-41.md` claims sit in its head, and the two
   failing. The three flips are `canonical-contract-locations` and
   `cycle18-priority1-integration` (twice) claiming STATUS "contains `281`",
   their follow-up count of wave 41. It had matched only by accident, inside
-  "17,281" in the indirect-access chain that moved. Frozen records are not
-  rewritten (integration policy).
+  "17,281" in the indirect-access chain that moved, so they were vacuous
+  before this card. Frozen records are not rewritten (integration policy);
+  registered as `W45-RECONCILIATION-SUBSTRING-CLAIMS` (§8). No gate or CI step
+  runs them: `.github/workflows/` runs no reconciliation check, the standing
+  gate does not, and `scripts/tests` exercises the sweep only on temporary
+  fixtures. They run only when a close checks its own record by hand.
 * **Residual discovery** (`reconciliation_sweep.untracked_residuals` over a
   documents-only base root and the tree, [result](artifacts/residual-discovery.txt)):
-  97 → 98 candidates, none lost. The new one, `W43-LIBC-POINTER-QUALIFIER-READER`,
+  97 → 97 candidates. `DOCS-COMPACT-9` left the list, now tracked as the
+  `recorded_by` of §8's entries; the one new candidate, `W43-LIBC-POINTER-QUALIFIER-READER`,
   is a name W43-LIBC-RESULT-ALIAS retired; it surfaces because the status
   checkpoint is an increment page the sweep reads and `STATUS.md` was not.
 * **Preserved migration blocks** ([after](artifacts/preserved-blocks-after.txt)):
   constraint 5c, 7, 8 and the namespaces block lose their markers, because
   their text is no longer the migration's; every removed line is in the rule-page
-  checkpoint with its markers. The migration's `verify.py` exits 1 before and
-  after, at the same first row ([after](artifacts/structure-verify-after.txt)).
+  checkpoint with its markers. The other 59 rows stay byte-identical to the
+  migration. The migration's `verify.py` exits 1 before and after, at the same
+  first row ([after](artifacts/structure-verify-after.txt)).
+* **After the integrator's decisions** (§8): `python3 -m unittest discover -s
+  scripts/tests` and `python3 scripts/build_docs_index.py --check` re-run on the
+  final tree, exits in [`gate/`](gate/) as `python-post.exit` and
+  `docs-index-post.exit`.
 
 ## 7. Gate
 
@@ -218,9 +238,8 @@ and the Clang recording are in [`gate/`](gate/), logs private under
 | `clang --version` | 0 | Ubuntu clang 21.1.8, run in this worktree |
 
 The pass, fail and ignored counts equal the W45-AUDIT-SUBCOMMAND-PLUGINS
-integration gate's on the same code; that record says 333 summaries where this
-runner's totals line says 331, a difference in how summaries were counted that
-this card did not investigate. Constraint 16's rows in this workspace all
+integration gate's on the same code, and so do the 331 summaries, which is the
+count `33558c67` corrected that record to. Constraint 16's rows in this workspace all
 passed on the first run (`a_declared_process_limit_stops_the_fixture_from_forking`,
 `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
 `a_confined_fixture_cannot_write_outside_the_admitted_paths`,
@@ -231,26 +250,35 @@ run, since no provider file changed. The Python suite's task-context tests read
 `STATUS.md` and the rule pages through the packet builder, and passed; no test
 pins a heading or anchor this card moved, so no test was adjusted.
 
-## 8. For the integrator
+## 8. Integrator decisions, and names registered
 
-1. **The cadence bullet.** `operations.md`'s "Due and not yet recorded as run"
-   bullet is `STABILITY-REEVAL-5`'s to update for its own firing; this card
-   records its firing there only after merging that version (§9).
-2. **Editing preserved blocks is a decision this card took.** `diagnostics.md`
-   and `buffers-records.md` stated that preserved blocks are never edited in
-   place; the pin it rested on no longer holds (correction 9). This card
-   compacted the namespaces block and gateway 5c, 7 and 8 with their migration
-   text moved verbatim, markers included, and left every other preserved block
-   untouched. Reverse it by restoring those blocks from the checkpoint if the
-   convention should stand.
-3. **`gateway.md` is still 57,211 bytes**, the one policy page far over
-   32 KiB. What remains is operative rule text. Splitting it would move
-   `gateway.md#constraint-N` anchors that reports link to, so it is a structural
-   decision, not a compaction.
-4. **The Q-space tally was carried, not re-derived.** The amendments put it at
-   twenty-four plus one (RESOURCE-HELPER-FUNCTIONS); the compacted `§L21` rows
-   keep every card, so it stays derivable.
-5. **Three frozen claims flipped** (§6), by accident, not by a moved claim.
+Decided by the integrator on the draft, and applied:
+
+1. **Preserved blocks: the edits stand.** `verify.py` had already decayed and
+   protects nothing, and a false figure in a current rule is worse than an
+   edited migration block. The migration text of every edited block stays
+   verbatim, markers included, in the rule-page checkpoint, and both pages that
+   stated the convention now say the same thing (correction 9).
+2. **`gateway.md` stays one page** (§2): anchors take precedence.
+3. **Two names registered**, `named_followups` 472 → 474, appended by
+   [`update_ledger.py`](scripts/update_ledger.py) from [`followups.json`](followups.json)
+   and the matrix regenerated with this card's [`gate.json`](gate.json)
+   (provider figure carried from the W45-AUDIT-SUBCOMMAND-PLUGINS integration
+   gate and said so). None retired.
+
+| id | what it records | discharge |
+|---|---|---|
+| `W45-DOCS-PRESERVATION-VERIFIER-DECAYED` | `verify.py` exits 1 at `8c1f15eb` on its architecture row; eight rows were edited before this card and four by it; the script is a frozen report's (constraint 21) | a live check verifying each still-preserved block against its checkpoint copy, or a recorded retirement of the pin listing the blocks it covered |
+| `W45-RECONCILIATION-SUBSTRING-CLAIMS` | the three frozen "STATUS contains `281`" claims of §6, vacuous before this card | the sweep's containment check anchored to a token or field, or the claims marked historical |
+
+Still open for the merge:
+
+* **The cadence bullet.** `operations.md`'s "Due and not yet recorded as run"
+  bullet is `STABILITY-REEVAL-5`'s to update for its own firing; this card
+  records its firing there only after merging that version (§9).
+* **The Q-space tally was carried, not re-derived.** The amendments put it at
+  twenty-four plus one (RESOURCE-HELPER-FUNCTIONS); the compacted `§L21` rows
+  keep every card, so it stays derivable.
 
 ## 9. Re-derivation after `main` moved
 
