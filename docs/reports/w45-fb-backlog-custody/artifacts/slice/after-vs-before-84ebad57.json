@@ -1,25 +1,25 @@
 {
- "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-before-74579af6/resource-diagnostics.json",
+ "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-before-84ebad57/resource-diagnostics.json",
  "baseline_counts": {
-  "leak": 3,
-  "unknown_alias": 661,
-  "unsupported": 4331
+  "counted_user": 4,
+  "unknown_alias": 685,
+  "unsupported": 4325
  },
  "baseline_distinct": {
   "NotProjected": 3,
-  "Safe": 25,
-  "Unknown": 207,
+  "Safe": 24,
+  "Unknown": 208,
   "Unsafe": 2
  },
  "baseline_functions": {
   "NotProjected": 6,
-  "Safe": 48,
-  "Unknown": 397,
-  "Unsafe": 3
+  "Safe": 46,
+  "Unknown": 398,
+  "Unsafe": 4
  },
  "baseline_units": {
-  "Unknown": 12,
-  "Unsafe": 3
+  "Unknown": 13,
+  "Unsafe": 2
  },
  "differing": [
   {
@@ -463,13 +463,8 @@
   },
   {
    "baseline": [
-    "Unsafe",
+    "Unknown",
     [
-     [
-      "leak",
-      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
-      "plugins/in_storage_backlog/sb.c:289"
-     ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
@@ -483,13 +478,8 @@
     "sb_append_chunk_to_segregated_backlog"
    ],
    "run": [
-    "Unsafe",
+    "Unknown",
     [
-     [
-      "leak",
-      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
-      "plugins/in_storage_backlog/sb.c:289"
-     ],
      [
       "unsupported",
       "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
@@ -748,7 +738,7 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `backlog`, which this function has not published",
       "plugins/in_storage_backlog/sb.c:188"
      ]
     ]
@@ -1042,12 +1032,12 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:226"
+      "plugins/in_storage_backlog/sb.c:229"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:229"
+      "unlink by `mk_list_del` of `chunk`, which this function has not published",
+      "plugins/in_storage_backlog/sb.c:226"
      ],
      [
       "unsupported",
@@ -4798,6 +4788,16 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:327"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:319"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_engine_dispatch.c:254"
      ],
@@ -4925,6 +4925,16 @@
       "unsupported",
       "call to uncontracted function `test_run_formatter`",
       "src/flb_engine_dispatch.c:294"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:327"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:319"
      ],
      [
       "unsupported",
@@ -5212,6 +5222,16 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:327"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:319"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_engine_dispatch.c:254"
      ],
@@ -5342,6 +5362,16 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:327"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+      "src/flb_engine_dispatch.c:319"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_engine_dispatch.c:274"
      ],
@@ -5635,17 +5665,17 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_input_chunk.c:2810"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2813"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2814"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `ic`, which this function has not published",
+      "src/flb_input_chunk.c:2810"
      ],
      [
       "unsupported",
@@ -5872,17 +5902,17 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_input_chunk.c:2703"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2706"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2707"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `ic`, which this function has not published",
+      "src/flb_input_chunk.c:2703"
      ],
      [
       "unsupported",
@@ -7512,17 +7542,17 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_input_chunk.c:2810"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2813"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2814"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `ic`, which this function has not published",
+      "src/flb_input_chunk.c:2810"
      ],
      [
       "unsupported",
@@ -7749,17 +7779,17 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_input_chunk.c:2703"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2706"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_input_chunk.c:2707"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `ic`, which this function has not published",
+      "src/flb_input_chunk.c:2703"
      ],
      [
       "unsupported",
@@ -11406,6 +11436,11 @@
      ],
      [
       "unsupported",
+      "publication by `mk_list_add` of `instance`, which this function does not hold as one live object",
+      "src/flb_output.c:989"
+     ],
+     [
+      "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "src/flb_output.c:778"
      ],
@@ -11584,11 +11619,6 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:1459"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_output.c:1469"
      ],
      [
@@ -11610,6 +11640,11 @@
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:1482"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `kv`, which this function has not published",
+      "src/flb_output.c:1459"
      ],
      [
       "unsupported",
@@ -11707,6 +11742,16 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:318"
      ],
@@ -11757,28 +11802,28 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:318"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:325"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:332"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:333"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_output.c:340"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+      "src/flb_output.c:325"
      ]
     ]
    ]
@@ -11845,12 +11890,12 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:402"
+      "src/flb_output.c:407"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:407"
+      "unlink by `mk_list_del` of `ended_task`, which this function has not published",
+      "src/flb_output.c:402"
      ]
     ]
    ]
@@ -14213,6 +14258,11 @@
      ],
      [
       "unsupported",
+      "publication by `mk_list_add` of `instance`, which this function does not hold as one live object",
+      "src/flb_output.c:989"
+     ],
+     [
+      "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "src/flb_output.c:778"
      ],
@@ -14391,11 +14441,6 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:1459"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_output.c:1469"
      ],
      [
@@ -14417,6 +14462,11 @@
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:1482"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `kv`, which this function has not published",
+      "src/flb_output.c:1459"
      ],
      [
       "unsupported",
@@ -14514,6 +14564,16 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:318"
      ],
@@ -14564,28 +14624,28 @@
      ],
      [
       "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_output.c:318"
      ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:325"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:332"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:333"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_output.c:340"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+      "src/flb_output.c:325"
      ]
     ]
    ]
@@ -14652,12 +14712,12 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_output.c:402"
+      "src/flb_output.c:407"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_output.c:407"
+      "unlink by `mk_list_del` of `ended_task`, which this function has not published",
+      "src/flb_output.c:402"
      ]
     ]
    ]
@@ -15716,17 +15776,7 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_scheduler.c:192"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_scheduler.c:193"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_scheduler.c:200"
      ],
      [
       "unsupported",
@@ -15745,7 +15795,17 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
+      "src/flb_scheduler.c:192"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
+      "src/flb_scheduler.c:200"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
       "src/flb_scheduler.c:226"
      ]
     ]
@@ -16716,17 +16776,7 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_scheduler.c:192"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_scheduler.c:193"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "src/flb_scheduler.c:200"
      ],
      [
       "unsupported",
@@ -16745,7 +16795,17 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
+      "src/flb_scheduler.c:192"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
+      "src/flb_scheduler.c:200"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `request`, which this function has not published",
       "src/flb_scheduler.c:226"
      ]
     ]
@@ -19692,6 +19752,11 @@
     [
      [
       "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:936"
+     ],
+     [
+      "unknown_alias",
       "unresolved resource identity `route`",
       "src/flb_task.c:919"
      ],
@@ -19709,11 +19774,6 @@
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:934"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:936"
      ],
      [
       "unsupported",
@@ -19812,6 +19872,11 @@
     [
      [
       "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:936"
+     ],
+     [
+      "unknown_alias",
       "unresolved resource identity `route`",
       "src/flb_task.c:919"
      ],
@@ -19819,11 +19884,6 @@
       "unknown_alias",
       "unresolved resource identity `task`",
       "src/flb_task.c:947"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:936"
      ],
      [
       "unsupported",
@@ -19848,11 +19908,6 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_task.c:924"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_task.c:929"
      ],
      [
@@ -19864,6 +19919,11 @@
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_task.c:944"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `task`, which this function has not published",
+      "src/flb_task.c:924"
      ],
      [
       "unsupported",
@@ -19964,12 +20024,12 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
       "src/flb_task.c:969"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
       "src/flb_task.c:975"
      ]
     ]
@@ -19980,6 +20040,11 @@
     "Unknown",
     [
      [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:429"
+     ],
+     [
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:427"
@@ -19988,11 +20053,6 @@
       "unsupported",
       "call to uncontracted function `flb_task_clear_route_retry_context`",
       "src/flb_task.c:434"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:429"
      ],
      [
       "unsupported",
@@ -20020,14 +20080,14 @@
     "Unknown",
     [
      [
-      "unsupported",
-      "call to uncontracted function `flb_task_clear_route_retry_context`",
-      "src/flb_task.c:434"
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:429"
      ],
      [
       "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:429"
+      "call to uncontracted function `flb_task_clear_route_retry_context`",
+      "src/flb_task.c:434"
      ],
      [
       "unsupported",
@@ -20096,6 +20156,11 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:331"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:339"
      ],
      [
@@ -20107,11 +20172,6 @@
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:326"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:331"
      ],
      [
       "unsupported",
@@ -20200,7 +20260,7 @@
      ],
      [
       "unsupported",
-      "unmodeled increment or decrement expression",
+      "unmodeled expression may mutate a formal resource identity",
       "src/flb_task.c:356"
      ]
     ]
@@ -20226,6 +20286,11 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:331"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:339"
      ],
      [
@@ -20241,17 +20306,17 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:357"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:383"
      ],
      [
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:326"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:331"
      ],
      [
       "unsupported",
@@ -20285,6 +20350,11 @@
      ],
      [
       "unsupported",
+      "publication by `mk_list_add` of `retry`, which this function does not hold as one live object",
+      "src/flb_task.c:350"
+     ],
+     [
+      "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "src/flb_task.c:327"
      ],
@@ -20297,6 +20367,11 @@
       "unsupported",
       "unmodeled call, aggregate or indirect access in for-loop condition",
       "src/flb_task.c:325"
+     ],
+     [
+      "unsupported",
+      "unmodeled expression may mutate a formal resource identity",
+      "src/flb_task.c:356"
      ]
     ]
    ]
@@ -21875,6 +21950,11 @@
     [
      [
       "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:936"
+     ],
+     [
+      "unknown_alias",
       "unresolved resource identity `route`",
       "src/flb_task.c:919"
      ],
@@ -21892,11 +21972,6 @@
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:934"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:936"
      ],
      [
       "unsupported",
@@ -21995,6 +22070,11 @@
     [
      [
       "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:936"
+     ],
+     [
+      "unknown_alias",
       "unresolved resource identity `route`",
       "src/flb_task.c:919"
      ],
@@ -22002,11 +22082,6 @@
       "unknown_alias",
       "unresolved resource identity `task`",
       "src/flb_task.c:947"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:936"
      ],
      [
       "unsupported",
@@ -22031,11 +22106,6 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "src/flb_task.c:924"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
       "src/flb_task.c:929"
      ],
      [
@@ -22047,6 +22117,11 @@
       "unsupported",
       "indirect memory access is outside the resource projection",
       "src/flb_task.c:944"
+     ],
+     [
+      "unsupported",
+      "unlink by `mk_list_del` of `task`, which this function has not published",
+      "src/flb_task.c:924"
      ],
      [
       "unsupported",
@@ -22147,12 +22222,12 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
       "src/flb_task.c:969"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `queued_task`, which this function has not published",
       "src/flb_task.c:975"
      ]
     ]
@@ -22163,6 +22238,11 @@
     "Unknown",
     [
      [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:429"
+     ],
+     [
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:427"
@@ -22171,11 +22251,6 @@
       "unsupported",
       "call to uncontracted function `flb_task_clear_route_retry_context`",
       "src/flb_task.c:434"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:429"
      ],
      [
       "unsupported",
@@ -22203,14 +22278,14 @@
     "Unknown",
     [
      [
-      "unsupported",
-      "call to uncontracted function `flb_task_clear_route_retry_context`",
-      "src/flb_task.c:434"
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_task.c:429"
      ],
      [
       "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:429"
+      "call to uncontracted function `flb_task_clear_route_retry_context`",
+      "src/flb_task.c:434"
      ],
      [
       "unsupported",
@@ -22279,6 +22354,11 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:331"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:339"
      ],
      [
@@ -22290,11 +22370,6 @@
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:326"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:331"
      ],
      [
       "unsupported",
@@ -22383,7 +22458,7 @@
      ],
      [
       "unsupported",
-      "unmodeled increment or decrement expression",
+      "unmodeled expression may mutate a formal resource identity",
       "src/flb_task.c:356"
      ]
     ]
@@ -22409,6 +22484,11 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:331"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:339"
      ],
      [
@@ -22424,17 +22504,17 @@
      [
       "unknown_alias",
       "unresolved resource identity `retry`",
+      "src/flb_task.c:357"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
       "src/flb_task.c:383"
      ],
      [
       "unsupported",
       "braced initializer, expression, or declaration is not modeled",
       "src/flb_task.c:326"
-     ],
-     [
-      "unsupported",
-      "call to uncontracted function `flb_task_retry_destroy`",
-      "src/flb_task.c:331"
      ],
      [
       "unsupported",
@@ -22468,6 +22548,11 @@
      ],
      [
       "unsupported",
+      "publication by `mk_list_add` of `retry`, which this function does not hold as one live object",
+      "src/flb_task.c:350"
+     ],
+     [
+      "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "src/flb_task.c:327"
      ],
@@ -22480,6 +22565,11 @@
       "unsupported",
       "unmodeled call, aggregate or indirect access in for-loop condition",
       "src/flb_task.c:325"
+     ],
+     [
+      "unsupported",
+      "unmodeled expression may mutate a formal resource identity",
+      "src/flb_task.c:356"
      ]
     ]
    ]
@@ -23067,26 +23157,26 @@
   }
  ],
  "named": {},
- "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-0a677729/resource-diagnostics.json",
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-95b7399e/resource-diagnostics.json",
  "run_counts": {
-  "leak": 3,
-  "unknown_alias": 691,
-  "unsupported": 3342
+  "counted_user": 4,
+  "unknown_alias": 717,
+  "unsupported": 3338
  },
  "run_distinct": {
   "NotProjected": 3,
-  "Safe": 29,
-  "Unknown": 203,
+  "Safe": 28,
+  "Unknown": 204,
   "Unsafe": 2
  },
  "run_functions": {
   "NotProjected": 6,
-  "Safe": 56,
-  "Unknown": 389,
-  "Unsafe": 3
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
  },
  "run_units": {
-  "Unknown": 12,
-  "Unsafe": 3
+  "Unknown": 13,
+  "Unsafe": 2
  }
 }

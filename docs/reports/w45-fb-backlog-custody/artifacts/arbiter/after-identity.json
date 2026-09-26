@@ -1,11 +1,11 @@
 {
-  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729",
-  "baseline": "docs/reports/w45-parenthesised-callee/integration/artifacts",
+  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-95b7399e",
+  "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "fb686bf187170834bf902d84e50bb3f0b903c815fab33ac67ecb4857a9baca40",
-      "baseline_raw_sha256": "8d1138ef70d0c304721457304b8f2638b0b702fe37998e81aff2e69714b4e781",
+      "run_sha256": "cb8b4c39f2b606b842b974e4dc79c8d3074b2e8c4bb81008d4355c9f037dcb01",
+      "baseline_raw_sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": false
@@ -19,8 +19,8 @@
     },
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
-      "run_sha256": "ff2b9688604b8673a829e2a281ea29f7a7ede2ee846c2e249caa23bdfd028714",
-      "baseline_raw_sha256": "ac14660ec570b105804a4371aaee041e37baf0f7c445dc80afb05ac85f5c715b",
+      "run_sha256": "4db5a9954d25074999ca27b7d0e9df97f854027afde29aaf52d87ec6ad0592ab",
+      "baseline_raw_sha256": "b6489afec863a1f30d9481be891b61f02e34163954c205bd89b9ae10555a17e3",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": false

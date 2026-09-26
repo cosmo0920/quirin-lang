@@ -1,25 +1,25 @@
 {
- "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-0a677729-without-module/resource-diagnostics.json",
+ "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-95b7399e-without-module/resource-diagnostics.json",
  "baseline_counts": {
-  "leak": 3,
-  "unknown_alias": 691,
-  "unsupported": 3332
+  "counted_user": 4,
+  "unknown_alias": 717,
+  "unsupported": 3328
  },
  "baseline_distinct": {
   "NotProjected": 3,
-  "Safe": 29,
-  "Unknown": 203,
+  "Safe": 28,
+  "Unknown": 204,
   "Unsafe": 2
  },
  "baseline_functions": {
   "NotProjected": 6,
-  "Safe": 56,
-  "Unknown": 389,
-  "Unsafe": 3
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
  },
  "baseline_units": {
-  "Unknown": 12,
-  "Unsafe": 3
+  "Unknown": 13,
+  "Unsafe": 2
  },
  "differing": [
   {
@@ -368,13 +368,8 @@
   },
   {
    "baseline": [
-    "Unsafe",
+    "Unknown",
     [
-     [
-      "leak",
-      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
-      "plugins/in_storage_backlog/sb.c:289"
-     ],
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
@@ -388,13 +383,8 @@
     "sb_append_chunk_to_segregated_backlog"
    ],
    "run": [
-    "Unsafe",
+    "Unknown",
     [
-     [
-      "leak",
-      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
-      "plugins/in_storage_backlog/sb.c:289"
-     ],
      [
       "unsupported",
       "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
@@ -558,7 +548,7 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `backlog`, which this function has not published",
       "plugins/in_storage_backlog/sb.c:188"
      ]
     ]
@@ -588,7 +578,7 @@
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
+      "unlink by `mk_list_del` of `backlog`, which this function has not published",
       "plugins/in_storage_backlog/sb.c:188"
      ]
     ]
@@ -678,12 +668,12 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:226"
+      "plugins/in_storage_backlog/sb.c:229"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:229"
+      "unlink by `mk_list_del` of `chunk`, which this function has not published",
+      "plugins/in_storage_backlog/sb.c:226"
      ],
      [
       "unsupported",
@@ -713,12 +703,12 @@
      [
       "unsupported",
       "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:226"
+      "plugins/in_storage_backlog/sb.c:229"
      ],
      [
       "unsupported",
-      "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:229"
+      "unlink by `mk_list_del` of `chunk`, which this function has not published",
+      "plugins/in_storage_backlog/sb.c:226"
      ],
      [
       "unsupported",
@@ -964,26 +954,26 @@
   }
  ],
  "named": {},
- "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-0a677729/resource-diagnostics.json",
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-95b7399e/resource-diagnostics.json",
  "run_counts": {
-  "leak": 3,
-  "unknown_alias": 691,
-  "unsupported": 3342
+  "counted_user": 4,
+  "unknown_alias": 717,
+  "unsupported": 3338
  },
  "run_distinct": {
   "NotProjected": 3,
-  "Safe": 29,
-  "Unknown": 203,
+  "Safe": 28,
+  "Unknown": 204,
   "Unsafe": 2
  },
  "run_functions": {
   "NotProjected": 6,
-  "Safe": 56,
-  "Unknown": 389,
-  "Unsafe": 3
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
  },
  "run_units": {
-  "Unknown": 12,
-  "Unsafe": 3
+  "Unknown": 13,
+  "Unsafe": 2
  }
 }

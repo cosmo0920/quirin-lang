@@ -2,7 +2,7 @@
 
 Library crate `quirin-provider-fluent-bit` (Rust library `quirin_provider_fluent_bit`) in the separate
 `providers/` workspace. It owns the shared Quirin contract modules for
-Fluent Bit application code (input chunks, routing, hash tables, logging, memory, strings, time, the storage backlog), under `contracts/fluent_bit/` (14 modules). `storage_backlog.qcore` holds checked specifications (`requires resource_body_checked;`, contract spec §C06.2): declarations of bodies the audit analyses, in force only where the body establishes them (card W45-FB-BACKLOG-CUSTODY). Two of them take their contracts from published `quirin-provider-libc` modules by `#include` and `contract inherit` (card CONTRACT-INHERIT-ADOPTION), through the crate's Cargo dependency on that crate. These are canonical
+Fluent Bit application code (input chunks, routing, hash tables, logging, memory, strings, time, the storage backlog, task users and the singleplex queue), under `contracts/fluent_bit/` (16 modules). `storage_backlog.qcore` holds checked specifications (`requires resource_body_checked;`, contract spec §C06.2): declarations of bodies the audit analyses, in force only where the body establishes them (card W45-FB-BACKLOG-CUSTODY). Two of them take their contracts from published `quirin-provider-libc` modules by `#include` and `contract inherit` (card CONTRACT-INHERIT-ADOPTION), through the crate's Cargo dependency on that crate. These are canonical
 sources, not copies: the [corpus index](../../contract/corpus.json) names this
 crate's `contracts/` as a root and rejects duplicate logical names. The crate is
 data only; it links no provider runtime and is not an executable package.

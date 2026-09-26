@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 428
+  "named_followups": 436
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 113,
+  "contract_modules": 114,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6735,7 +6735,7 @@
   "workspace_tests": 5815,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 197,
+  "lean_audits": 199,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6761,6 +6761,7 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
+   "AuditCheckedSpecification.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6833,6 +6834,7 @@
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
+   "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
@@ -6941,7 +6943,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-retry-lifetime/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -9910,8 +9912,8 @@
   },
   {
    "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
-   "title": "Backlog OB-1 (a wrapper is linked into exactly one queue) is blocked on intrusive-list publication, owned by W45-FB-RETRY-LIFETIME",
-   "why": "sb_append_chunk_to_segregated_backlog's checked specification (all Borrowed) is not established: the wrapper it allocates is linked with mk_list_add into backlog->chunks, declared Borrowed, so the leak at the exit (the function's provisional Unsafe) is the unmodeled publication of MK-LIST-ADD-BORROWED-PUBLICATION, not an OB-1 refutation. The same class re-accuses mk_rconf_section_entry_add in the corpus (one of that entry's 8 leaves, 5 now standing) and newly accuses mk_vhost_fdt_worker_init, both through W45-FB-BACKLOG-CUSTODY's declaration reader. DISCHARGE: W45-FB-RETRY-LIFETIME's publication mechanism, then the backlog slice as second arbiter for OB-1 and OB-8.",
+   "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
+   "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree (main 84ebad57 + W45-FB-BACKLOG-CUSTODY) rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. The class also still accuses mk_rconf_section_entry_add and mk_vhost_fdt_worker_init in the corpus, whose containers are not reached from a formal (W45-CONTAINER-ROOT-REACH). DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
    "source": "docs/reports/w45-fb-backlog-custody/README.md",
    "recorded_by": "W45-FB-BACKLOG-CUSTODY"
   },
@@ -9926,6 +9928,13 @@
    "id": "W45-MK-HTTP-ERROR-FD-LEAK",
    "title": "mk_http_error: descriptor from open() on the custom-error-page arm is never closed (provisional Unsafe candidate)",
    "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and not closed or stored before the return at :1315; the source's own comment reads 'This fd seems to be leaked'. Unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
+   "source": "docs/reports/w45-fb-backlog-custody/README.md",
+   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
+  },
+  {
+   "id": "W45-FB-BACKLOG-FOREIGN-UNLINK",
+   "title": "Rule 10d refuses unlinking an entry this function did not publish; it blocks the backlog's retirement legs (OB-3, OB-7, OB-10) and 17 corpus leaves in 14 teardown functions",
+   "why": "sb_remove_chunk_from_segregated_backlog and sb_destroy_backlogs unlink wrappers (queues) that another function published (sb_append_chunk_to_segregated_backlog, sb_allocate_backlogs); W45-FB-RETRY-LIFETIME's rule 10d refuses 'unlink by mk_list_del of X, which this function has not published'. W45-FB-BACKLOG-CUSTODY's safe-iteration admission makes 17 such element unlinks reachable in 14 corpus teardown functions (mk_rconf_free, mk_vhost_destroy, flb_input_chunk_destroy, ...), each an exchange for an earlier refusal, fail-closed. DISCHARGE: an unlink of an element of a container the caller owns or borrows, stated against the container's membership (a caller-side publication premise or a container-element identity), with parity and a corpus re-pin.",
    "source": "docs/reports/w45-fb-backlog-custody/README.md",
    "recorded_by": "W45-FB-BACKLOG-CUSTODY"
   }

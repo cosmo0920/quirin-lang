@@ -1,13 +1,20 @@
 # W45-FB-BACKLOG-CUSTODY: intrusive-list iteration, element identity and checked backlog specifications
 
-Card W45-FB-BACKLOG-CUSTODY, 2026-09-26, base `74579af6` ("Record the
-w45-fb-retry-fault-injection integration gate"), measured tip `0a677729`.
-P1.1 of the [Fluent Bit system plan](../../plans/fluent-bit-system-coverage/README.md)
-on the slice [W45-FB-SYSTEM-SELECTION §5](../w45-fb-system-selection/README.md)
-chose. Two user amendments apply: the obligations are **checked provider
-contracts** reported by `quirin-audit`, and the slice is **re-pinned** from
-`864c3d97` to Fluent Bit master `046accf6aded7906f66a1baf0202da349e521736`.
-[PREDICTION.md](PREDICTION.md) was frozen before implementation.
+Card W45-FB-BACKLOG-CUSTODY, 2026-09-26. Base `74579af6`; `main` `84ebad57`
+(W45-FB-RETRY-LIFETIME integrated) merged in at `95b7399e`, which is the
+measured code. P1.1 of the
+[Fluent Bit system plan](../../plans/fluent-bit-system-coverage/README.md), on
+the slice [W45-FB-SYSTEM-SELECTION §5](../w45-fb-system-selection/README.md)
+chose.
+
+Two user amendments apply:
+
+* the obligations are **checked provider contracts** reported by
+  `quirin-audit`;
+* the slice is **re-pinned** from `864c3d97` to Fluent Bit master
+  `046accf6aded7906f66a1baf0202da349e521736`.
+
+[PREDICTION.md](PREDICTION.md) was frozen before implementation, on the base.
 
 ## Headline
 
@@ -20,35 +27,59 @@ contracts** reported by `quirin-audit`, and the slice is **re-pinned** from
   2. **Element identity and its declaration**: the `container_of` GNU
      statement expression binds untracked list memory, and the declaration
      reader skips the one declaration inside it instead of refusing the whole
-     function. This was the dominant "declaration" blocker (criterion 2).
+     function. That silent refusal was the dominant "declaration" blocker
+     (criterion 2).
   3. **Checked specifications** (contract spec §C06.2, `legacy_checked_spec.rs`):
      `requires resource_body_checked;` makes a declaration a specification that
      is in force only where its body establishes it.
 * **Contracts**: `providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore`,
   twelve checked specifications of the backlog functions, bound by name and
   signature only.
-* **Corpus** (185 units): functions **390 / 12 / 4,432 → 399 Safe / 15
-  provisional Unsafe / 4,420 Unknown**; units **4 / 10 / 167 / 4 → 5 / 11 / 165
-  / 4**; leak **37 → 40**, unknown_alias 3,567 → 3,566, unsupported 42,699 →
-  41,321. 1,459 leaves removed and 83 added in 189 functions, all attributed.
-  **No Safe → non-Safe move.** The new module moves **no** corpus diagnostic.
-* **Slice at 046accf6**: units **0 / 3 / 12** (unchanged); functions **25 / 2
-  / 207 / 3 → 29 / 2 / 203 / 3**; unsupported 4,331 → 3,342. Every
-  `mk_list_foreach` and `mk_list_entry` refusal in `sb.c` is gone.
+* **Corpus** (185 units), against the post-retry baseline:
+  * functions **389 / 12 / 4,433 → 398 Safe / 15 provisional Unsafe / 4,421
+    Unknown**;
+  * units **4 / 10 / 167 / 4 → 5 / 11 / 165 / 4**;
+  * leak **37 → 40**, unknown_alias 3,571 → 3,570, unsupported 42,702 →
+    41,325;
+  * 1,476 leaves removed and 101 added in 189 functions, all attributed;
+  * **no Safe → non-Safe move**, and the new module moves **no** corpus
+    diagnostic.
+* **Slice at 046accf6**, against the post-retry slice: units **0 / 2 / 13**,
+  unchanged; functions **24 / 2 / 208 / 3 → 28 / 2 / 204 / 3**; unsupported
+  4,325 → 3,338. Every `mk_list_foreach` and `mk_list_entry` refusal in `sb.c`
+  is gone.
 * **Obligations**: none of OB-1 … OB-10 is decided. Two custody legs are held
   (`sb_allocate_chunk`, `sb_destroy_chunk`), and every obligation's relational
-  part is a named vocabulary residual. OB-2 and OB-5 are **not** refuted (see
-  §5).
+  part is a named residual. OB-2 and OB-5 are **not** refuted (§5).
+* **Publication reach from the merge.** `sb_append_chunk_to_segregated_backlog`
+  is no longer blocked by publication: its one remaining blocker is the byte
+  counter's indirect access (OB-8). But the retirement legs of OB-3, OB-7 and
+  OB-10 now meet rule 10d's refusal of an unlink the function did not publish
+  (§5).
 * **Lean**: `QCore.ListIteration` (13 audited theorems) and
   `QCore.CheckedSpecification` (7), both registered.
 
-## 1. Base and re-pin
+## 1. Bases, merge and re-pin
 
 | Measurement | Result |
 |---|---|
-| Arbiter BEFORE (`run_audit.py`, `--jobs 8`) | Reproduces [w45-parenthesised-callee](../w45-parenthesised-callee/integration/artifacts/): `resource-diagnostics.json`, `chunk-contracts` and `monkey-source.json` byte-identical, `contracts.json` identical after the root alias, `source-effects` differing only in path digests as before, `verdict_bearing_identical: true` ([before-identity.json](artifacts/arbiter/before-identity.json)) |
-| Slice BEFORE at `864c3d97` (attempt-1) | Reproduces the published figures, 0 differing function rows ([comparison](artifacts/slice/before-864c3d97-vs-published.json)) |
-| Slice BEFORE at `046accf6` (attempt-2) | units 0 / 3 / 12; functions **25 / 2 / 207 / 3** ([report](artifacts/slice/before-046accf6.json.gz)) |
+| Arbiter BEFORE on the card's base `74579af6` | Reproduces [w45-parenthesised-callee](../w45-parenthesised-callee/integration/artifacts/): diagnostics, `chunk-contracts` and `monkey-source.json` byte-identical, `verdict_bearing_identical: true` |
+| Arbiter BEFORE on `main` `84ebad57` (a private export of the tree, built into its own target) | Reproduces [w45-fb-retry-lifetime](../w45-fb-retry-lifetime/integration/artifacts/): diagnostics, `chunk-contracts` and `monkey-source.json` byte-identical, `contracts.json` identical after the root alias, `verdict_bearing_identical: true` ([before-identity.json](artifacts/arbiter/before-identity.json)) |
+| Slice BEFORE at `864c3d97` (attempt-1, base binary) | Reproduces the published figures, 0 differing function rows ([comparison](artifacts/slice/before-864c3d97-vs-published.json)) |
+| Slice BEFORE at `046accf6` (attempt-2, base binary) | units 0 / 3 / 12; functions 25 / 2 / 207 / 3 ([report](artifacts/slice/before-046accf6.json.gz)) |
+| Slice BEFORE at `046accf6` (attempt-2, `main` binary) | units **0 / 2 / 13**; functions **24 / 2 / 208 / 3**: the post-retry figures ([report](artifacts/slice/before-84ebad57.json.gz), [difference from the base binary](artifacts/slice/before-84ebad57-vs-before-74579af6.json)) |
+
+**Merge.** `main` `84ebad57` merged cleanly apart from shared pins and hooks.
+Both cards' `Parser` fields and hooks are kept (`caller_formals` beside
+`list_facts`/`list_frames`), and so are both cards' modules in the crate and
+the manifest. The pins now count both:
+
+* 50 selected modules;
+* 114 in the corpus;
+* 174 resource-v1 declarations;
+* 50 resource views, `providers/tests/test_contract_load_path.py`.
+
+No schema version was bumped: this card adds no schema field.
 
 **Re-pin.** attempt-2 is a fresh private clone and build at `046accf6`
 ([pin-attempt-2.json](artifacts/slice/pin-attempt-2.json): clone HEAD equals
@@ -58,12 +89,14 @@ at both). Only `src/flb_input_chunk.c` changed among the backlog files
 ([diff](artifacts/slice/flb_input_chunk-864c3d97-046accf6.diff)):
 `flb_input_chunk_write_header_v2`, `input_chunk_get` and
 `input_chunk_append_raw`. `flb_input_chunk_map` is unchanged, and
-`flb_input_chunk_destroy` is unchanged apart from a +12 line shift. The BEFORE difference from
-`864c3d97` (one new Unknown function, `flb_output_task_flush_error`, and
-diagnostic changes in 13 functions of `flb_engine.c`,
-`flb_engine_dispatch.c`, `flb_input_chunk.c` and `flb_output.c`) is **source
-change measured with one binary**, not analyzer change
-([comparison](artifacts/slice/before-046accf6-vs-864c3d97.json)).
+`flb_input_chunk_destroy` is unchanged apart from a +12 line shift.
+
+The base binary's BEFORE difference from `864c3d97` is **source change
+measured with one binary**, not analyzer change
+([comparison](artifacts/slice/before-046accf6-vs-864c3d97.json)): one new
+Unknown function, `flb_output_task_flush_error`, and diagnostic changes in 13
+functions of `flb_engine.c`, `flb_engine_dispatch.c`, `flb_input_chunk.c` and
+`flb_output.c`.
 
 **Native controls.** The partial-fan-out and zero-progress observations of
 [W45-FB-BACKLOG-FAULT-INJECTION](../w45-fb-backlog-fault-injection/README.md)
@@ -200,67 +233,73 @@ No ChunkIO fact was needed, because no obligation becomes decidable from one.
 
 ## 3. Corpus arbiter (185 units)
 
-Final run: [artifacts/arbiter/](artifacts/arbiter/), the new baseline
-(`run.json`, manifest digests). Identity against the old baseline: the
-diagnostics differ, and `contracts.json` differs by exactly two paths, the
-manifest's new line and the module text
-([contracts-delta.json](artifacts/arbiter/contracts-delta.json)).
+Final run on `95b7399e`: [artifacts/arbiter/](artifacts/arbiter/), the new
+baseline (`run.json`, manifest digests). BEFORE is `main` `84ebad57`, which
+reproduces the post-retry baseline (§1). Identity against it:
+
+* the diagnostics differ;
+* `contracts.json` differs by exactly two paths, the manifest's new line and
+  the module text ([contracts-delta.json](artifacts/arbiter/contracts-delta.json)).
 
 **Attribution** is two sequential diffs through an intermediate build.
-`scripts/decompose.py` produced the variant by rewriting hook lines, building
-into a private target and restoring the bytes, with SHA-256 asserted
-([attribution/](artifacts/attribution/), every leaf listed):
+`scripts/decompose.py` rewrites hook lines, builds into a private target and
+restores the bytes, with SHA-256 asserted. Every leaf is listed in
+[attribution/](artifacts/attribution/).
 
 | Step | Removed | Added | Functions | Status moves |
 |---|---:|---:|---:|---|
-| BEFORE → declaration reader only (§2.2's skip) | 674 | 78 | 114 | 3 Unknown → provisional Unsafe |
-| → + iteration and element rules (full) | 786 | 6 | 179 | 9 Unknown → Safe |
-| **Total** (BEFORE → full) | **1,459** | **83** | **189** | 9 → Safe, 3 → provisional Unsafe |
+| BEFORE → declaration reader only (§2.2's skip) | 691 | 95 | 121 | 3 Unknown → provisional Unsafe |
+| → + iteration and element rules (full) | 785 | 6 | 179 | 9 Unknown → Safe |
+| **Total** (BEFORE → full) | **1,476** | **101** | **189** | 9 → Safe, 3 → provisional Unsafe |
 
-**Other controls:**
+Two further runs:
 
-* The iteration rules **without** the reader move 2 leaves in 1 function,
-  because every recognised loop in a body carrying an element expression
-  needs the reader.
+* The iteration rules **without** the reader move 2 leaves in 1 function
+  (one Unknown → Safe). Every recognised loop in a body carrying an element
+  expression needs the reader.
 * With `storage_backlog.qcore` removed from the manifest, the final binary's
   `resource-diagnostics.json` is **byte-identical**
-  ([module-identity.json](artifacts/attribution/module-identity.json)).
-  The corpus defines none of the twelve functions.
+  ([module-identity.json](artifacts/attribution/module-identity.json)). The
+  corpus defines none of the twelve functions.
 
-**Step 1, the declaration reader.** It removes 604 `unsupported` and 70
-`unknown_alias` leaves: branch conditions 218, indirect accesses 170,
-increments 99, assignments 58, … In the functions whose declarations it can
-now read, typed routes replace blanket refusals. It adds:
+**Step 1, the declaration reader.** In the functions whose declarations it
+now reads, typed routes replace blanket refusals.
 
-* 68 `unknown_alias` leaves: reads through names now reaching a flow check,
-  with an unresolved identity (`request` 9, `map` 8, …);
-* 7 `unsupported` exchanges;
-* **3 leaks**, classified by reading in the next table.
+* **Removed:** 621 `unsupported` and 70 `unknown_alias` leaves (branch
+  conditions 218, indirect accesses 187, increments 99, assignments 58, …).
+* **Added:**
+  * 67 `unknown_alias` leaves, reads through names now reaching a flow check
+    with an unresolved identity (`request` 9, `map` 8, …);
+  * 25 `unsupported`, of which 17 are rule 10d's `unlink by mk_list_del of X,
+    which this function has not published` in 14 teardown functions. The
+    element unlinks of their now-admitted safe iterations reach W45-FB-RETRY-LIFETIME's
+    rule and refuse, fail-closed.
+  * **3 leaks**:
 
 | Function (unit) | Leak | Class |
 |---|---|---|
-| `mk_rconf_section_entry_add` (`mk_core/mk_rconf.c`) | `new`, acquired :91, linked by `mk_list_add(&new->_head, &section->entries)` | Publication artifact: `MK-LIST-ADD-BORROWED-PUBLICATION`, one of its 8 registered leaves, re-accused. The refused hand-on had withdrawn it; the body is now read. |
-| `mk_vhost_fdt_worker_init` (`mk_server/mk_vhost.c`) | `fdt`, acquired :95, linked into `list`, which the body publishes through `MK_TLS_SET` | The same publication class; the list is published by an uncontracted `pthread_setspecific` |
+| `mk_rconf_section_entry_add` (`mk_core/mk_rconf.c`) | `new`, acquired :91, linked by `mk_list_add(&new->_head, &section->entries)` | A publication artifact that rule 10d does not reach: `section` is a list element, not a container reached from a formal (`W45-CONTAINER-ROOT-REACH`). It is one of `MK-LIST-ADD-BORROWED-PUBLICATION`'s 8 leaves, re-accused. |
+| `mk_vhost_fdt_worker_init` (`mk_server/mk_vhost.c`) | `fdt`, acquired :95, linked into a local `list` the body publishes through `MK_TLS_SET` | The same class, and the same reach limit |
 | `mk_http_error` (`mk_server/mk_http.c`) | descriptor from `open()` at :1301, never closed on the `return` at :1315 | Provisional `Unsafe` candidate, a descriptor leak on the custom-error-page arm; the source's own comment reads "This fd seems to be leaked". Not an upstream defect claim. |
 
-**Step 2, the iteration and element rules.** It removes:
+**Step 2, the iteration and element rules.**
 
-* 284 element-read braced leaves;
-* 258 header indirect accesses;
-* 235 header `for`-loop conditions;
-* 9 leaves behind callees that now validate a summary (`cio_stream_get`,
-  `cio_stats_get`, `is_file_included`, `mk_vhost_lookup`, …).
+* **Removed:**
+  * 284 element-read braced leaves;
+  * 258 header indirect accesses;
+  * 235 header `for`-loop conditions;
+  * 8 leaves behind callees that now validate a summary (`cio_stream_get`,
+    `cio_stats_get`, `is_file_included`, `mk_vhost_lookup`, …).
+* **Added:** 6 exchanges. Five are head-root read obligations (`ic` 3,
+  `output_plugin`, `sr`); one is `nullable resource st` in
+  `cio_stream_create`, where a call now binds its result.
+* **Nine read-only traversals become Safe:**
+  * ChunkIO: `cio_memfs_scan_dump`, `cio_stats_get`,
+    `cio_stats_print_summary`, `cio_stream_get`, `cio_stream_size_chunks_up`;
+  * CMetrics: `cmt_labels_count`;
+  * Monkey: `is_file_included`, `mk_rconf_meta_get`, `mk_vhost_lookup`.
 
-It adds 6 exchanges: 5 head-root read obligations (`ic` 3, `output_plugin`,
-`sr`) and one `nullable resource st` in `cio_stream_create`, where a call
-now bound its result. The 9 new Safe functions are read-only traversals:
-
-* `cio_memfs_scan_dump`, `cio_stats_get`, `cio_stats_print_summary`,
-  `cio_stream_get`, `cio_stream_size_chunks_up` (ChunkIO);
-* `cmt_labels_count` (CMetrics);
-* `is_file_included`, `mk_rconf_meta_get`, `mk_vhost_lookup` (Monkey).
-
-Units: `cio_stats.c` Unknown → Safe, and `mk_server/mk_http.c` Unknown →
+**Units.** `cio_stats.c` Unknown → Safe; `mk_server/mk_http.c` Unknown →
 provisional Unsafe (the descriptor leak).
 
 **Shape reach** ([shape-census-after.json](shape-census-after.json)):
@@ -268,20 +307,29 @@ provisional Unsafe (the descriptor leak).
 * element-read braced leaves 326 → 43;
 * list-header `for` leaves 269 → 34.
 
-What remains is declined by P-ILI-UNTRACKED's guard, by a header whose head
-spelling the chain reader does not type, or by an unbraced body.
+What remains is declined by one of P-ILI-UNTRACKED's guard, a header whose
+head spelling the chain reader does not type, or an unbraced body.
 
-**Rule 4 in the corpus.** It adds **no** refusal. A source census
-([plain-unlink-census.json](plain-unlink-census.json)) finds 17 plain
-iteration bodies with an unlink or release call. The two read are not
-refused, and correctly so:
+**Rule 4 in the corpus.** It adds **no** refusal.
 
-* `cmt_filter.c:282` frees a copied `labels` array, not the element;
-* `cmt_map.c:71` unlinks the element's *second* link `_hash_head` while
-  iterating `_head`.
+* A source census ([plain-unlink-census.json](plain-unlink-census.json))
+  finds 17 plain iteration bodies with an unlink or release call.
+* The two read are correctly not refused: `cmt_filter.c:282` frees a copied
+  `labels` array, and `cmt_map.c:71` unlinks the element's *second* link
+  `_hash_head` while iterating `_head`.
+* The other 15 were not read one by one; the audit reports no rule-4 leaf in
+  them.
 
-The other 15 were not read one by one; the audit reports no rule-4 leaf in
-them.
+**Pre-merge measurement, kept for the record.** On the card's own base
+`74579af6` (tip `0a677729`), the same mechanisms gave, against the pre-retry
+baseline:
+
+* functions 390 / 12 / 4,432 → 399 / 15 / 4,420;
+* leak 37 → 40;
+* 1,459 removed and 83 added;
+* the same 9 and 3 status moves.
+
+That gate is recorded in [gate.json](gate.json).
 
 ## 4. System slice at `046accf6`
 
@@ -293,7 +341,7 @@ QCORE_CLANG=/usr/lib/llvm-21/bin/clang quirin-audit current \
   --profile-directory contract/profiles/fluent-bit \
   --compile-database OUT/attempt-2/fluent-bit-clang-production/compile_commands.json \
   --selection contract/profiles/fluent-bit/system-selection.json \
-  --report OUT/attempt-2/slice-after-0a677729/resource-diagnostics.json --jobs 8
+  --report OUT/attempt-2/slice-after-95b7399e/resource-diagnostics.json --jobs 8
 ```
 
 `OUT` is `/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody`.
@@ -302,31 +350,36 @@ The profile's manifest (`cycle19-resource-contracts.json`) loads
 specifications. The obligation table is `scripts/ob_table.py` over that report
 ([ob-table.json](ob-table.json)).
 
-**Tally.** Units 0 / 3 / 12, unchanged. Distinct functions 25 / 2 / 207 / 3 →
-**29 / 2 / 203 / 3**. Four functions become Safe, each in both variants:
-`flb_sched_timer_coro_get`, `sched_timer_coro_get_by_id`,
-`sched_timer_coro_get_id` (`flb_scheduler.c`) and `dlq_stream_total_size`
-(`flb_storage.c`); all are list traversals. Leaves: unsupported 4,331 → 3,342,
-unknown_alias 661 → 691, leak 3 → 3.
+**Tally**, against the post-retry slice:
+
+* units 0 / 2 / 13, unchanged;
+* distinct functions 24 / 2 / 208 / 3 → **28 / 2 / 204 / 3**;
+* leaves: unsupported 4,325 → 3,338, unknown_alias 685 → 717, counted_user
+  4 → 4.
+
+The four functions that become Safe are list traversals, each in both
+variants: `flb_sched_timer_coro_get`, `sched_timer_coro_get_by_id` and
+`sched_timer_coro_get_id` (`flb_scheduler.c`), and `dlq_stream_total_size`
+(`flb_storage.c`).
 
 **The module's own share** is exactly the ten `not established` leaves on ten
 rows, with no status change ([module-effect.json](artifacts/slice/module-effect.json)).
 
 Backlog slice functions (`sb.c`, one unit; `flb_input_chunk.c` identical in
-both variants):
+both variants). BEFORE is the post-retry slice:
 
 | Function | BEFORE | AFTER | Specification | Remaining blockers (AFTER) |
 |---|---|---|---|---|
 | `sb_allocate_chunk` | Safe (0) | Safe (0) | **held** | — |
 | `sb_destroy_chunk` | Safe (0) | Safe (0) | **held** | — |
-| `sb_append_chunk_to_segregated_backlog` | prov. Unsafe (2) | prov. Unsafe (3) | not established | the publication leak (:289), one indirect access |
+| `sb_append_chunk_to_segregated_backlog` | Unknown (1) | Unknown (2) | not established | one indirect access: the byte counter's saturation test (`backlog->ins->fs_backlog_chunks_size`, OB-8) |
 | `sb_append_chunk_to_segregated_backlogs` | Unknown (15) | Unknown (9) | not established | uncontracted `cio_chunk_get_real_size`, `flb_input_chunk_get_tag`, `sb_append_chunk_to_segregated_backlog`; indirect accesses; a branch condition |
 | `sb_segregate_chunks` | Unknown (25) | Unknown (19) | not established | element `chunk` released by `cio_chunk_close` (unresolved identity ×5); uncontracted `cio_chunk_lock`, `cio_error_get`, `sb_get_context`, own helpers; branch conditions |
 | `sb_allocate_backlogs` | Unknown (7) | Unknown (8) | not established | its iteration declined by P-ILI-UNTRACKED (`mk_list_add(&backlog->_head, …)` beside the head); uncontracted `sb_destroy_backlogs` |
-| `sb_remove_chunk_from_segregated_backlog` | Unknown (10) | Unknown (5) | not established | element release (`chunk`), indirect accesses, a branch condition |
+| `sb_remove_chunk_from_segregated_backlog` | Unknown (10) | Unknown (5) | not established | rule 10d: `unlink by mk_list_del of chunk, which this function has not published`; element release; a branch condition |
 | `sb_remove_chunk_from_segregated_backlogs` | Unknown (4) | Unknown (2) | not established | uncontracted callee (its helper's specification is withdrawn) |
 | `sb_destroy_backlog` | Unknown (4) | Unknown (2) | not established | one indirect access |
-| `sb_destroy_backlogs` | Unknown (6) | Unknown (4) | not established | element release (`backlog`), uncontracted `sb_destroy_backlog` |
+| `sb_destroy_backlogs` | Unknown (6) | Unknown (4) | not established | rule 10d's unlink refusal (`backlog`); element release; uncontracted `sb_destroy_backlog` |
 | `sb_release_output_queue_space` | Unknown (12) | Unknown (6) | not established | uncontracted `sb_find_segregated_backlog_by_output_plugin_instance`, own helper; element `underlying_chunk` release |
 | `cb_queue_chunks` | Unknown (42) | Unknown (26) | not established | uncontracted `flb_input_chunk_map`, `flb_input_chunk_get_event_type`, own helper; element releases; branch and loop conditions; indirect accesses |
 | `flb_input_chunk_map` | Unknown (91) | Unknown (91) | undeclared | per-arm disposition (§2.4) |
@@ -346,16 +399,16 @@ states a relation between a wrapper, a queue and a chunk.
 
 | OB | Relation | BEFORE | AFTER | Blocker / residual |
 |---|---|---|---|---|
-| OB-1 | wrapper linked into exactly one queue, or never created | Unknown | **Unknown**; creation leg held (`sb_allocate_chunk`) | Linking is publication (`mk_list_add`, W45-FB-RETRY-LIFETIME). `sb_append_chunk_to_segregated_backlog`'s provisional Unsafe is that unmodeled publication, not a refutation (`W45-FB-BACKLOG-PUBLICATION-BLOCKED`). |
+| OB-1 | wrapper linked into exactly one queue, or never created | Unknown | **Unknown**; creation leg held (`sb_allocate_chunk`) | Publication (rule 10d, merged) now models the link and withdrew the old publication leak. The insertion leg fails only on the byte counter's indirect access (OB-8); "exactly one queue" is not stated by a clause (`W45-FB-BACKLOG-PUBLICATION-BLOCKED`, re-scoped). |
 | OB-2 | no chunk closed while a wrapper refers to it (the `-3` arm) | Unknown | **Unknown** (not refuted) | Needs a wrapper→chunk reference relation, a return-conditioned clause and element identities; the chunk is an untracked list element in both functions (`W45-FB-BACKLOG-REFERENCE-VOCABULARY`) |
-| OB-3 | at most one wrapper per chunk per queue | Unknown | **Unknown**; retirement leg held (`sb_destroy_chunk`) | list membership uniqueness (same residual) |
+| OB-3 | at most one wrapper per chunk per queue | Unknown | **Unknown**; retirement leg held (`sb_destroy_chunk`) | List membership uniqueness (same residual). The unlink in `sb_remove_chunk_from_segregated_backlog` is refused by rule 10d: it unlinks a wrapper another function published (`W45-FB-BACKLOG-FOREIGN-UNLINK`). |
 | OB-4 | after a successful map, no wrapper refers to the chunk | Unknown | **Unknown** | `flb_input_chunk_map` per-arm disposition (`W45-FB-BACKLOG-MAP-ARMS`) |
 | OB-5 | chunk closed exactly once on a NULL map return | Unknown | **Unknown** (not refuted) | Same. BC-1 stays a source-reading candidate. No v1 mode states "closes on one NULL arm", so neither the double close nor its absence is decidable. |
 | OB-6 | no wrapper used after a callee frees it | Unknown | **Unknown** | the callee frees what its argument reaches (`W45-FB-BACKLOG-REACHABLE-RELEASE`) |
-| OB-7 | eviction retires every wrapper before the close; the saved successor stays valid | Unknown | **Unknown** | same, and P-ILI-CALLEE-FRAME (a stated premise, not a proof) |
+| OB-7 | eviction retires every wrapper before the close; the saved successor stays valid | Unknown | **Unknown** | same, the foreign-unlink refusal inside the callee, and P-ILI-CALLEE-FRAME (a stated premise, not a proof) |
 | OB-8 | byte counter equals the sum over linked wrappers | Unknown | **Unknown** | quantitative clauses (FB-BACKLOG-ACCOUNTING) |
 | OB-9 | each chunk ends the pass in exactly one state | Unknown | **Unknown** | ChunkIO return-code summaries (`W45-FB-BACKLOG-CIO-RETURN-CODES`) |
-| OB-10 | teardown retires every wrapper, touches live outputs only | Unknown | **Unknown**; retirement leg held | shutdown ordering (`W45-FB-SYNC-PREMISES`) and reachable release |
+| OB-10 | teardown retires every wrapper, touches live outputs only | Unknown | **Unknown**; retirement leg held | shutdown ordering (`W45-FB-SYNC-PREMISES`), reachable release, and the foreign-unlink refusal in `sb_destroy_backlogs` |
 
 **Why OB-2 and OB-5 are not refuted.** A provisional `Unsafe` needs a
 validated reachable violation in the resource projection, and neither is
@@ -456,17 +509,20 @@ tests above.
 
 ## 8. Prediction against outcome
 
+The prediction was frozen on the base `74579af6`. The pre-merge figures
+answer it; the post-merge ones are in brackets.
+
 | Prediction | Outcome |
 |---|---|
-| 200–269 of 269 list-header `for` leaves withdrawn | **235** |
-| 220–326 of 326 element braced leaves withdrawn | **283** |
+| 200–269 of 269 list-header `for` leaves withdrawn | **235** [235] |
+| 220–326 of 326 element braced leaves withdrawn | **283** [283] |
 | 10–60 new plain-form refusals | **0**. Miss: no plain body in the corpus or the slice hands its current element to a releasing position (§3). |
-| unsupported falls by several hundred, unknown_alias rises by tens | unsupported −1,378 (+8, −1,386); unknown_alias −1 net (+72, −73). Miss on the sign: the declaration reader also removed 70 aliases. |
-| Unknown → Safe 0–15; Safe → non-Safe 0 | **9**; **0** |
-| Unknown → provisional Unsafe 0–10; leak pin +0–10 | **3**; **37 → 40**, classified in §3 |
-| the module moves no corpus leaf | **confirmed**, byte-identical |
+| unsupported falls by several hundred, unknown_alias rises by tens | unsupported −1,378 [−1,377]; unknown_alias −1 [−1]. Miss on the sign: the declaration reader also removed 70 aliases. |
+| Unknown → Safe 0–15; Safe → non-Safe 0 | **9**; **0** [the same] |
+| Unknown → provisional Unsafe 0–10; leak pin +0–10 | **3**; **37 → 40** [the same], classified in §3 |
+| the module moves no corpus leaf | **confirmed**, byte-identical [the same] |
 | slice: `mk_list_foreach` refusals leave 10 of 12 `sb.c` functions; no new Safe beyond the two | **all** iteration and element refusals in `sb.c` gone; no new `sb.c` Safe (4 other slice functions became Safe) |
-| OB-1 blocked on publication; OB-2, OB-5 Unknown, not refuted; at most the two helper legs held | **as predicted** |
+| OB-1 blocked on publication; OB-2, OB-5 Unknown, not refuted; at most the two helper legs held | **as predicted** pre-merge. After the merge, OB-1 is blocked on accounting instead (§5). |
 
 ## 9. Follow-ups (`followups.json`)
 
@@ -480,8 +536,13 @@ tests above.
 * `W45-FB-BACKLOG-REACHABLE-RELEASE` (OB-6, OB-7, OB-10): objects released
   through what an argument reaches;
 * `W45-FB-BACKLOG-CIO-RETURN-CODES` (OB-9);
-* `W45-FB-BACKLOG-PUBLICATION-BLOCKED`: OB-1's reach, which is
-  W45-FB-RETRY-LIFETIME's mechanism;
+* `W45-FB-BACKLOG-PUBLICATION-BLOCKED`, re-scoped after the merge. OB-1's
+  link is now modeled. What stays open is the counter's indirect access
+  (OB-8) and the absence of a clause stating "exactly one queue".
+* `W45-FB-BACKLOG-FOREIGN-UNLINK`: rule 10d refuses an unlink of a wrapper
+  another function published. That blocks OB-3's, OB-7's and OB-10's
+  retirement legs in `sb.c`, and 17 corpus leaves in 14 teardown functions
+  reached through this card's safe iterations.
 * `W45-ILI-PREMISES`: P-ILI-UNTRACKED's lexical guard, P-ILI-CALLEE-FRAME
   and P-ILI-BRACED; residual element leaves 43 and header leaves 34;
 * `W45-MK-HTTP-ERROR-FD-LEAK`: the provisional candidate, for a native or
@@ -490,13 +551,26 @@ tests above.
 **`W45-FOR-CLAUSE-ORIGINAL-SPELLING`** is narrowed to the other headers, not
 retired.
 
-**For the integrator:** `MK-LIST-ADD-BORROWED-PUBLICATION` now has
-`mk_rconf_section_entry_add` accused again (4 → 5 of its 8 standing), plus the
-new `mk_vhost_fdt_worker_init` leaf of the same class.
+**For the integrator:**
+
+* `MK-LIST-ADD-BORROWED-PUBLICATION` and `W45-CONTAINER-ROOT-REACH` now have
+  `mk_rconf_section_entry_add` accused again, plus the new
+  `mk_vhost_fdt_worker_init` leaf of the same class. In both, the container
+  is not reached from a formal, so rule 10d does not discharge.
+* `W45-FB-SINGLEPLEX-CUSTODY-DECLARED` (the retry card's custody half applied
+  at callers while the bodies do not validate) could be answered by the
+  `resource_body_checked` marker of §2.3.
+* The retry card's `W45-FB-OR6-ELEMENT-IDENTITY` is adjacent: rule 3 binds a
+  `container_of` element as untracked memory, not as an identity.
 
 ## 10. Gate
 
-See [gate.json](gate.json).
+`scripts/gate.sh` runs the standing gate of `docs/agents/validation.md` and the
+provider gate (constraint 18, including `providers/tests`). Each exit is
+captured to its own file, `CARGO_INCREMENTAL=0`, and `cargo clean --profile
+dev` runs after the test step. Commands, exits and counts are in
+[gate.json](gate.json). Logs are under the worktree-private
+`private/w45-fb-backlog-custody/`.
 
 ## Reproduce
 

@@ -1,11 +1,11 @@
 {
-  "run": "private/bc/arbiter/before-74579af6",
-  "baseline": "docs/reports/w45-parenthesised-callee/integration/artifacts",
+  "run": "private/bc/arbiter/before-84ebad57b",
+  "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "8d1138ef70d0c304721457304b8f2638b0b702fe37998e81aff2e69714b4e781",
-      "baseline_raw_sha256": "8d1138ef70d0c304721457304b8f2638b0b702fe37998e81aff2e69714b4e781",
+      "run_sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+      "baseline_raw_sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
       "archive_matches_manifest": true,
       "byte_identical": true
     },
@@ -18,8 +18,8 @@
     },
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
-      "run_sha256": "882323fdb845657b88a9a7368d8b09a98f4057f906e6926ec01aceb55afba824",
-      "baseline_raw_sha256": "ac14660ec570b105804a4371aaee041e37baf0f7c445dc80afb05ac85f5c715b",
+      "run_sha256": "2f9e436398449ecd22b9657ef9df219389ff469fca39f4eb6db56453575fa8e9",
+      "baseline_raw_sha256": "b6489afec863a1f30d9481be891b61f02e34163954c205bd89b9ae10555a17e3",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": true

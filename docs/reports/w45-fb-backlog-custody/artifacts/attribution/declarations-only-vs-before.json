@@ -1,18 +1,18 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-0a677729/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-74579af6/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-95b7399e/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-84ebad57b/resource-diagnostics.json",
  "totals": {
   "after": {
    "leak": 40,
    "summary_conflict": 1,
-   "unknown_alias": 3565,
-   "unsupported": 42102
+   "unknown_alias": 3568,
+   "unsupported": 42106
   },
   "before": {
    "leak": 37,
    "summary_conflict": 1,
-   "unknown_alias": 3567,
-   "unsupported": 42699
+   "unknown_alias": 3571,
+   "unsupported": 42702
   }
  },
  "units": {
@@ -31,22 +31,22 @@
  },
  "functions": {
   "after": {
-   "Unknown": 4429,
-   "Safe": 390,
+   "Unknown": 4430,
+   "Safe": 389,
    "Unsafe": 15
   },
   "before": {
-   "Unknown": 4432,
-   "Safe": 390,
+   "Unknown": 4433,
+   "Safe": 389,
    "Unsafe": 12
   }
  },
  "status_transitions": {
   "Unknown -> Unsafe": 3
  },
- "functions_with_leaf_changes": 114,
- "leaves_added": 78,
- "leaves_removed": 674,
+ "functions_with_leaf_changes": 121,
+ "leaves_added": 95,
+ "leaves_removed": 691,
  "added_by_description": {
   "unknown_alias: unresolved resource identity `request`": {
    "total": 9,
@@ -96,6 +96,12 @@
     "other-line": 3
    }
   },
+  "unsupported: unlink by `mk_list_del` of `entry`, which this function has not published": {
+   "total": 3,
+   "by_line_shape": {
+    "other-line": 3
+   }
+  },
   "unknown_alias: unresolved resource identity `listen`": {
    "total": 3,
    "by_line_shape": {
@@ -115,6 +121,12 @@
    }
   },
   "unknown_alias: unresolved resource identity `exp_bucket_counts`": {
+   "total": 2,
+   "by_line_shape": {
+    "other-line": 2
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published": {
    "total": 2,
    "by_line_shape": {
     "other-line": 2
@@ -186,6 +198,18 @@
     "other-line": 1
    }
   },
+  "unsupported: unlink by `mk_list_del` of `file`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `section`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
   "leak: live obligation acquired at mk_core/mk_rconf.c:91": {
    "total": 1,
    "by_line_shape": {
@@ -204,6 +228,24 @@
     "other-line": 1
    }
   },
+  "unsupported: publication by `mk_list_add` of `listen`, which this function does not hold as one live object": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `l`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `fw`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
   "leak: live obligation acquired at mk_server/mk_http.c:1301": {
    "total": 1,
    "by_line_shape": {
@@ -216,6 +258,12 @@
     "list-header-line:loop:mk_list_foreach": 1
    }
   },
+  "unsupported: unlink by `mk_list_del` of `request`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
   "unknown_alias: unresolved resource identity `sr`": {
    "total": 1,
    "by_line_shape": {
@@ -223,6 +271,18 @@
    }
   },
   "unknown_alias: unresolved resource identity `node`": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `listen`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `listener`, which this function has not published": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -240,7 +300,25 @@
     "other-line": 1
    }
   },
-  "unknown_alias: unresolved resource identity `halias`": {
+  "unsupported: unlink by `mk_list_del` of `halias`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `ep`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `vh`, which this function has not published": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `fdt`, which this function has not published": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -253,6 +331,12 @@
    }
   },
   "leak: live obligation acquired at mk_server/mk_vhost.c:95": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unsupported: unlink by `mk_list_del` of `param`, which this function has not published": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -274,9 +358,9 @@
    }
   },
   "unsupported: indirect memory access is outside the resource projection": {
-   "total": 170,
+   "total": 187,
    "by_line_shape": {
-    "other-line": 163,
+    "other-line": 180,
     "list-header-line:loop:cfl_list_foreach": 4,
     "list-header-line:loop:mk_list_foreach": 3
    }
@@ -972,6 +1056,24 @@
   ],
   [
    "flb_input_chunk.c",
+   "flb_input_chunk_destroy",
+   "unsupported",
+   "unlink by `mk_list_del` of `ic`, which this function has not published",
+   19772,
+   "flb_input_chunk.c:2798",
+   1
+  ],
+  [
+   "flb_input_chunk.c",
+   "flb_input_chunk_destroy_corrupted",
+   "unsupported",
+   "unlink by `mk_list_del` of `ic`, which this function has not published",
+   19699,
+   "flb_input_chunk.c:2691",
+   1
+  ],
+  [
+   "flb_input_chunk.c",
    "flb_input_chunk_release_space",
    "unknown_alias",
    "unresolved resource identity `old_input_chunk`",
@@ -1017,6 +1119,42 @@
   ],
   [
    "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `entry`, which this function has not published",
+   2203,
+   "mk_core/mk_rconf.c:683",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `file`, which this function has not published",
+   2197,
+   "mk_core/mk_rconf.c:675",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `section`, which this function has not published",
+   2210,
+   "mk_core/mk_rconf.c:692",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free_entries",
+   "unsupported",
+   "unlink by `mk_list_del` of `entry`, which this function has not published",
+   2227,
+   "mk_core/mk_rconf.c:716",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
    "mk_rconf_section_entry_add",
    "leak",
    "live obligation acquired at mk_core/mk_rconf.c:91",
@@ -1049,6 +1187,15 @@
    "call to uncontracted function `mk_string_dup`",
    1829,
    "mk_core/mk_rconf.c:93",
+   1
+  ],
+  [
+   "mk_core/mk_string.c",
+   "mk_string_split_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `entry`, which this function has not published",
+   2236,
+   "mk_core/mk_string.c:399",
    1
   ],
   [
@@ -1088,6 +1235,33 @@
    1
   ],
   [
+   "mk_server/mk_config.c",
+   "mk_config_listener_add",
+   "unsupported",
+   "publication by `mk_list_add` of `listen`, which this function does not hold as one live object",
+   6366,
+   "mk_server/mk_config.c:596",
+   1
+  ],
+  [
+   "mk_server/mk_config.c",
+   "mk_config_listeners_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `l`, which this function has not published",
+   5972,
+   "mk_server/mk_config.c:62",
+   1
+  ],
+  [
+   "mk_server/mk_fifo.c",
+   "mk_fifo_worker_destroy_all",
+   "unsupported",
+   "unlink by `mk_list_del` of `fw`, which this function has not published",
+   5275,
+   "mk_server/mk_fifo.c:267",
+   1
+  ],
+  [
    "mk_server/mk_http.c",
    "mk_http_error",
    "leak",
@@ -1103,6 +1277,15 @@
    "for-loop clause with a call or grouping is not classified from its stripped spelling",
    6491,
    "mk_server/mk_http.c:629",
+   1
+  ],
+  [
+   "mk_server/mk_http.c",
+   "mk_http_request_free_list",
+   "unsupported",
+   "unlink by `mk_list_del` of `request`, which this function has not published",
+   7121,
+   "mk_server/mk_http.c:1535",
    1
   ],
   [
@@ -1242,6 +1425,24 @@
   ],
   [
    "mk_server/mk_server.c",
+   "mk_server_listen_exit",
+   "unsupported",
+   "unlink by `mk_list_del` of `listen`, which this function has not published",
+   6257,
+   "mk_server/mk_server.c:162",
+   1
+  ],
+  [
+   "mk_server/mk_server.c",
+   "mk_server_listen_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `listener`, which this function has not published",
+   6242,
+   "mk_server/mk_server.c:144",
+   1
+  ],
+  [
+   "mk_server/mk_server.c",
    "mk_server_listen_init",
    "unknown_alias",
    "unresolved resource identity `listener`",
@@ -1297,10 +1498,37 @@
   [
    "mk_server/mk_vhost.c",
    "mk_vhost_destroy",
-   "unknown_alias",
-   "unresolved resource identity `halias`",
-   6506,
-   "mk_server/mk_vhost.c:766",
+   "unsupported",
+   "unlink by `mk_list_del` of `ep`, which this function has not published",
+   6521,
+   "mk_server/mk_vhost.c:785",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_destroy",
+   "unsupported",
+   "unlink by `mk_list_del` of `halias`, which this function has not published",
+   6505,
+   "mk_server/mk_vhost.c:765",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_destroy",
+   "unsupported",
+   "unlink by `mk_list_del` of `vh`, which this function has not published",
+   6535,
+   "mk_server/mk_vhost.c:801",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_fdt_worker_exit",
+   "unsupported",
+   "unlink by `mk_list_del` of `fdt`, which this function has not published",
+   6014,
+   "mk_server/mk_vhost.c:134",
    1
   ],
   [
@@ -1364,6 +1592,15 @@
    "unresolved resource identity `ht`",
    5988,
    "mk_server/mk_vhost.c:101",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_handler_free",
+   "unsupported",
+   "unlink by `mk_list_del` of `param`, which this function has not published",
+   6486,
+   "mk_server/mk_vhost.c:742",
    1
   ],
   [
@@ -5125,6 +5362,15 @@
    "flb_input_chunk.c",
    "flb_input_chunk_destroy",
    "unsupported",
+   "indirect memory access is outside the resource projection",
+   19772,
+   "flb_input_chunk.c:2798",
+   1
+  ],
+  [
+   "flb_input_chunk.c",
+   "flb_input_chunk_destroy",
+   "unsupported",
    "nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection",
    19741,
    "flb_input_chunk.c:2752",
@@ -5209,6 +5455,15 @@
    "unmodeled call, aggregate or indirect access in branch condition",
    19773,
    "flb_input_chunk.c:2800",
+   1
+  ],
+  [
+   "flb_input_chunk.c",
+   "flb_input_chunk_destroy_corrupted",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   19699,
+   "flb_input_chunk.c:2691",
    1
   ],
   [
@@ -5837,6 +6092,33 @@
    "mk_rconf_free",
    "unsupported",
    "indirect memory access is outside the resource projection",
+   2197,
+   "mk_core/mk_rconf.c:675",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   2203,
+   "mk_core/mk_rconf.c:683",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   2210,
+   "mk_core/mk_rconf.c:692",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
    2216,
    "mk_core/mk_rconf.c:702",
    1
@@ -5857,6 +6139,15 @@
    "unmodeled call, aggregate or indirect access in branch condition",
    2215,
    "mk_core/mk_rconf.c:701",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_free_entries",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   2227,
+   "mk_core/mk_rconf.c:716",
    1
   ],
   [
@@ -5911,6 +6202,15 @@
    "indirect memory access is outside the resource projection",
    1830,
    "mk_core/mk_rconf.c:95",
+   1
+  ],
+  [
+   "mk_core/mk_string.c",
+   "mk_string_split_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   2236,
+   "mk_core/mk_string.c:399",
    1
   ],
   [
@@ -6046,6 +6346,15 @@
    "indirect memory access is outside the resource projection",
    6366,
    "mk_server/mk_config.c:596",
+   1
+  ],
+  [
+   "mk_server/mk_config.c",
+   "mk_config_listeners_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5972,
+   "mk_server/mk_config.c:62",
    1
   ],
   [
@@ -6349,6 +6658,15 @@
    "mk_server/mk_fifo.c",
    "mk_fifo_worker_destroy_all",
    "unsupported",
+   "indirect memory access is outside the resource projection",
+   5275,
+   "mk_server/mk_fifo.c:267",
+   1
+  ],
+  [
+   "mk_server/mk_fifo.c",
+   "mk_fifo_worker_destroy_all",
+   "unsupported",
    "unmodeled increment or decrement expression",
    5278,
    "mk_server/mk_fifo.c:270",
@@ -6523,6 +6841,15 @@
    "unmodeled call, aggregate or indirect access in branch condition",
    6799,
    "mk_server/mk_http.c:1078",
+   1
+  ],
+  [
+   "mk_server/mk_http.c",
+   "mk_http_request_free_list",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7121,
+   "mk_server/mk_http.c:1535",
    1
   ],
   [
@@ -6932,6 +7259,24 @@
   ],
   [
    "mk_server/mk_server.c",
+   "mk_server_listen_exit",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6257,
+   "mk_server/mk_server.c:162",
+   1
+  ],
+  [
+   "mk_server/mk_server.c",
+   "mk_server_listen_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6242,
+   "mk_server/mk_server.c:144",
+   1
+  ],
+  [
+   "mk_server/mk_server.c",
    "mk_server_listen_init",
    "unsupported",
    "indirect memory access is outside the resource projection",
@@ -7204,6 +7549,33 @@
    "mk_server/mk_vhost.c",
    "mk_vhost_destroy",
    "unsupported",
+   "indirect memory access is outside the resource projection",
+   6505,
+   "mk_server/mk_vhost.c:765",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_destroy",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6521,
+   "mk_server/mk_vhost.c:785",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_destroy",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6535,
+   "mk_server/mk_vhost.c:801",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_destroy",
+   "unsupported",
    "unmodeled call, aggregate or indirect access in branch condition",
    6506,
    "mk_server/mk_vhost.c:766",
@@ -7243,6 +7615,15 @@
    "unmodeled call, aggregate or indirect access in branch condition",
    6536,
    "mk_server/mk_vhost.c:802",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_fdt_worker_exit",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6014,
+   "mk_server/mk_vhost.c:134",
    1
   ],
   [
@@ -7351,6 +7732,15 @@
    "unmodeled increment or decrement expression",
    5989,
    "mk_server/mk_vhost.c:104",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_handler_free",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6486,
+   "mk_server/mk_vhost.c:742",
    1
   ],
   [

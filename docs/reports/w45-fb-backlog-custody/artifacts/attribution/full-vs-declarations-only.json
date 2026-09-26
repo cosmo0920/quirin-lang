@@ -1,18 +1,18 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-0a677729/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-95b7399e/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-95b7399e/resource-diagnostics.json",
  "totals": {
   "after": {
    "leak": 40,
    "summary_conflict": 1,
-   "unknown_alias": 3566,
-   "unsupported": 41321
+   "unknown_alias": 3570,
+   "unsupported": 41325
   },
   "before": {
    "leak": 40,
    "summary_conflict": 1,
-   "unknown_alias": 3565,
-   "unsupported": 42102
+   "unknown_alias": 3568,
+   "unsupported": 42106
   }
  },
  "units": {
@@ -31,13 +31,13 @@
  },
  "functions": {
   "after": {
-   "Unknown": 4420,
-   "Safe": 399,
+   "Unknown": 4421,
+   "Safe": 398,
    "Unsafe": 15
   },
   "before": {
-   "Unknown": 4429,
-   "Safe": 390,
+   "Unknown": 4430,
+   "Safe": 389,
    "Unsafe": 15
   }
  },
@@ -46,7 +46,7 @@
  },
  "functions_with_leaf_changes": 179,
  "leaves_added": 6,
- "leaves_removed": 786,
+ "leaves_removed": 785,
  "added_by_description": {
   "unknown_alias: unresolved resource identity `ic`": {
    "total": 3,
@@ -105,12 +105,6 @@
     "other-line": 2
    }
   },
-  "unknown_alias: unresolved resource identity `halias`": {
-   "total": 2,
-   "by_line_shape": {
-    "other-line": 2
-   }
-  },
   "unsupported: call to uncontracted function `cio_stats_get`": {
    "total": 1,
    "by_line_shape": {
@@ -136,6 +130,12 @@
    }
   },
   "unknown_alias: unresolved resource identity `p`": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "unknown_alias: unresolved resource identity `halias`": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -7111,15 +7111,6 @@
    "unresolved resource identity `halias`",
    6504,
    "mk_server/mk_vhost.c:764",
-   1
-  ],
-  [
-   "mk_server/mk_vhost.c",
-   "mk_vhost_destroy",
-   "unknown_alias",
-   "unresolved resource identity `halias`",
-   6506,
-   "mk_server/mk_vhost.c:766",
    1
   ],
   [

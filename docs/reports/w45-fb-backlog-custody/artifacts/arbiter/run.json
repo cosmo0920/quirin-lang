@@ -4,11 +4,11 @@
     "--pinned-evidence",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729/monkey-source.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729/resource-diagnostics.json"
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-95b7399e/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-95b7399e/resource-diagnostics.json"
   ],
-  "source_commit": "0a677729",
-  "binary_sha256": "0043b9c8776400577f8c62a25f1d1310a2a850e9f04f14cabff261075d28b1e5",
+  "source_commit": "95b7399e",
+  "binary_sha256": "2e14c57a1d45461e3e1109bb98b4466971d2ac2d22c2fabe2fa0ee1efe9cf16a",
   "environment": {
     "QCORE_CLANG": "/usr/bin/clang",
     "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
@@ -16,7 +16,7 @@
     "QCORE_RETURN_CENSUS": "unset",
     "QCORE_AUDIT_JOBS": "8"
   },
-  "start": "2026-09-26T06:16:26.847037+00:00",
+  "start": "2026-09-26T07:22:15.216913+00:00",
   "exit": 0,
-  "end": "2026-09-26T06:19:21.249008+00:00"
+  "end": "2026-09-26T07:23:54.652232+00:00"
 }

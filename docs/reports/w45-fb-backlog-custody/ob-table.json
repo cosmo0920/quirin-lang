@@ -63,32 +63,26 @@
   },
   "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": {
    "before": {
-    "status": "Unsafe",
-    "leg": "no specification (row Unsafe)",
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
     "specification": [],
-    "violations": [
-     "leak plugins/in_storage_backlog/sb.c:289: live obligation acquired at plugins/in_storage_backlog/sb.c:269"
-    ],
+    "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 1,
-     "leak: live obligation acquired at plugins/in_storage_backlog/sb.c:269": 1
+     "unsupported: indirect memory access is outside the resource projection": 1
     },
-    "diagnostic_count": 2
+    "diagnostic_count": 1
    },
    "after": {
-    "status": "Unsafe",
-    "leg": "blocked-publication",
+    "status": "Unknown",
+    "leg": "unknown",
     "specification": [
      "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
     ],
-    "violations": [
-     "leak plugins/in_storage_backlog/sb.c:289: live obligation acquired at plugins/in_storage_backlog/sb.c:269"
-    ],
+    "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 1,
-     "leak: live obligation acquired at plugins/in_storage_backlog/sb.c:269": 1
+     "unsupported: indirect memory access is outside the resource projection": 1
     },
-    "diagnostic_count": 3
+    "diagnostic_count": 2
    }
   },
   "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs": {
@@ -174,7 +168,7 @@
     ],
     "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unsupported: unlink by `mk_list_del` of `backlog`, which this function has not published": 1,
      "unsupported: call to uncontracted function `sb_destroy_backlog`": 1,
      "unknown_alias: unresolved resource identity `backlog`": 1
     },
@@ -256,8 +250,9 @@
     ],
     "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 2,
      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: unlink by `mk_list_del` of `chunk`, which this function has not published": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1,
      "unknown_alias: unresolved resource identity `chunk`": 1
     },
     "diagnostic_count": 5
@@ -356,12 +351,13 @@
     "specification": [],
     "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 13,
+     "unsupported: indirect memory access is outside the resource projection": 12,
      "unknown_alias: unresolved resource identity `ic`": 2,
      "unsupported: call to uncontracted function `flb_input_chunk_set_up`": 1,
      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
      "unsupported: call to uncontracted function `flb_input_chunk_output_size_subtract`": 1,
-     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published": 1
     },
     "diagnostic_count": 19
    }
@@ -427,14 +423,14 @@
     "verdict": "unknown",
     "legs": {
      "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": "no specification (row Safe)",
-     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unsafe)"
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unknown)"
     }
    },
    "after": {
     "verdict": "unknown",
     "legs": {
      "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": "held",
-     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "blocked-publication"
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "unknown"
     }
    }
   },
@@ -552,14 +548,14 @@
    "before": {
     "verdict": "unknown",
     "legs": {
-     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unsafe)",
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unknown)",
      "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "no specification (row Unknown)"
     }
    },
    "after": {
     "verdict": "unknown",
     "legs": {
-     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "blocked-publication",
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "unknown",
      "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "unknown"
     }
    }

@@ -1,18 +1,18 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only-0a677729b/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-74579af6/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only-95b7399e/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-84ebad57b/resource-diagnostics.json",
  "totals": {
   "after": {
    "leak": 37,
    "summary_conflict": 1,
-   "unknown_alias": 3567,
-   "unsupported": 42697
+   "unknown_alias": 3571,
+   "unsupported": 42700
   },
   "before": {
    "leak": 37,
    "summary_conflict": 1,
-   "unknown_alias": 3567,
-   "unsupported": 42699
+   "unknown_alias": 3571,
+   "unsupported": 42702
   }
  },
  "units": {
@@ -31,13 +31,13 @@
  },
  "functions": {
   "after": {
-   "Unknown": 4431,
-   "Safe": 391,
+   "Unknown": 4432,
+   "Safe": 390,
    "Unsafe": 12
   },
   "before": {
-   "Unknown": 4432,
-   "Safe": 390,
+   "Unknown": 4433,
+   "Safe": 389,
    "Unsafe": 12
   }
  },
