@@ -1,0 +1,13 @@
+{
+ "note": "STABILITY-REEVAL-5, 2026-09-27, the cadence's fifth firing (6dc484ad..8c1f15eb). ONE detached standing gate by scripts/gate.sh at cb07510c = 8c1f15eb's code byte for byte plus this card's documentation-only skeleton; CARGO_INCREMENTAL=0; every exit in its own file, no pipe; logs worktree-private under measure/gate-cb07510c/, exits and the Clang recording copied into gate/. submodule 0 (libevent d82464a2); run_test_binaries.py 0: 319 units, 331 summaries; 5995 passed; 0 failed; 11 ignored (private/test-binaries/20260926T161112Z-1623871/), 331 strict '^test result: ' lines and 333 loose, the two extra being test names beginning result_; cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 207 (207 proof/Audit*.lean); Python 364 OK at the base, re-run after this card's matrix edit (see python_evidence_validator_tests); build_docs_index.py --check 0; clang --version 0 run in this worktree. A one-off probe (cargo test -p qcore-c-gateway --test zz_sr5_probe, exit 0) was run once and its file removed; its source and output are in probes/. Provider gate not run: nothing under providers/ changed (constraint 18 not engaged); provider 129 carried from the W45-AUDIT-SUBCOMMAND-PLUGINS integration gate, not re-measured. The matrix's validation block was regenerated from that integration gate file, which it already named, so it stays byte-identical; this file records equal core figures. THIS CARD CHANGES NO RUST, NO LEAN AND NO TEST; nothing is promoted.",
+ "workspace_tests": 5995,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 207,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

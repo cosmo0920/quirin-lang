@@ -162,7 +162,9 @@ Read this section for documentation compaction, stability review and wave close.
   a stated measured boundary). Record postponement explicitly. Never relabel an
   observation as proof or infer stability from green tests.
 - Due and not yet recorded as run: the ninth compaction (due around wave 42–43;
-  the eighth was wave 40) and stability review firing five (due after wave 41). A wave close records each firing or its postponement;
+  the eighth was wave 40). Stability review firing five ran at the wave-45
+  close over `6dc484ad..8c1f15eb` ([report](../reports/stability-reeval-5/README.md));
+  firing six is due after wave 47. A wave close records each firing or its postponement;
   neither is discharged silently.
 
 ## Task reading protocol
