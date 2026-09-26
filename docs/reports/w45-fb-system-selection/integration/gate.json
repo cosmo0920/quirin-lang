@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-FB-SYSTEM-SELECTION on merge 0d2b5050 (onto main dca25232, after all wave-45 cards through W45-PARENTHESISED-CALLEE); measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The core test step's first attempt (02-test.log, 02-test.exit) exited 101: one failure, qcore-compiler::test::task_route_tsan::overlapping_writers_are_reported_under_every_schedule (compiler/tests/task_route_tsan.rs:690), a ThreadSanitizer forced-schedule row that failed to observe the planted overlapping-writer race while another card was building elsewhere on the host. It passed 5/5 isolated binary reruns (02-tsan-binary-rerun-{1..5}.log, each exit 0, 18/18 passed each time) and a full rerun of the test step on the same tree (02-test-rerun.log, 02-test-rerun.exit) was clean: 5786 core Rust passed / 0 failed / 11 ignored over 307 summaries (297 units), exit 0, from test-binaries-rerun/. Both attempts are recorded; the first exit is kept as measured, not replaced, and the core counts below are taken from the clean rerun. 124 provider Rust passed / 0 / 0 over 39 summaries; 195 Lean audits; 358 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The card adds a separate system-slice route and does not move the pinned corpus: the byte-identity step against docs/reports/w45-parenthesised-callee/integration/artifacts exits 0 with verdict_bearing_identical true (32-identity.log), so the 185-unit corpus is unchanged and no new baseline is archived.",
+ "workspace_tests": 5786,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 195,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
