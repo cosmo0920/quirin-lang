@@ -301,6 +301,7 @@ pub(crate) mod census {
                         AnalysisStatus::Safe => "Safe",
                         AnalysisStatus::Unsafe => "Unsafe",
                         AnalysisStatus::Unknown => "Unknown",
+                        AnalysisStatus::Pending => "Pending",
                     }
                     .to_owned(),
                 );

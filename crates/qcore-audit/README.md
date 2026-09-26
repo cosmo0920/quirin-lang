@@ -588,7 +588,8 @@ contract text is the pinned one and the audited source matches one of the
 **reviewed identities** its crate's generated `contracts.lock` records, each
 the function's sites at the revisions it was reviewed at; every route above,
 and the corpus arbiter, compares the pins before analysing any unit, withholds
-each mismatch (calls relying on it are `Unknown` under `contract-pin-mismatch`)
+each mismatch (calls relying on it are held under `contract-pin-mismatch`, and a
+function resting only on held calls is `Pending`)
 and publishes a `contract_revision` section in the contract sidecar with a
 one-line tally. Flexible contracts bind by name and signature; the libc
 provider's are one standing assumption.
@@ -610,9 +611,37 @@ quirin-audit compare --before A/resource-diagnostics.json --after B/resource-dia
 ```
 
 The change report keeps *violation detected* (a move to `Unsafe`) apart from
-*coverage lost* (a move from `Safe` to `Unknown`) and lists contracts in force,
+*coverage lost* (a move from `Safe` to `Pending` or `Unknown`) and lists contracts in force,
 pin mismatches, assumptions, sources and per-function obligations
-([report](../../docs/reports/w45-contract-revision-mode/README.md)).
+([report](../../docs/reports/w45-contract-revision-mode/README.md)); since
+W45-USER-CONTRACT-PLUGINS it also classes moves between `Unknown` and `Pending`
+and tallies each run's four verdicts.
+
+## User contract crates and checker plugins
+
+Card W45-USER-CONTRACT-PLUGINS (contract specification C11.1). Every verdict
+is one of `Safe < Pending < Unknown < Unsafe` and every roll-up is their join;
+`Pending` (awaiting a named human act) is printed in every tally and never
+counted as `Safe`. A user's own contract crate, outside this repository, is
+listed in a **user load path** that `extends` the shipped one and selected like
+any provider:
+
+```sh
+quirin-audit plugin views --load-path work/user-load-path.json --write
+quirin-audit pin --load-path work/user-load-path.json --source-root SOURCE
+quirin-audit contracts --load-path work/user-load-path.json \
+    --provider quirin-provider-acme --source-root SOURCE --report out/r.json
+```
+
+A user module declaring a function a shipped crate declares is refused unless
+the user load path overrides it explicitly (recorded under the selection's
+`user_load_path`). A **checker plugin** bound to a user module runs once per
+run as a verified process package (`user_plugins.rs`); the host's firewall
+counts its `Safe` only with a certificate the audit's trusted checker replays
+and its `Unsafe` only with a validated witness, and otherwise either is
+`Pending`; a failure is `Unknown`. Its verdict joins every function that
+applies a bound contract, and the sidecar carries a `plugin_checks` section.
+The SDK is [`providers/quirin-provider-plugin`](../../providers/quirin-provider-plugin/README.md).
 
 ## Configured source-contract processes
 

@@ -346,13 +346,14 @@ pub fn run(
                     let counts = std::mem::take(&mut library_counts);
                     failed |= counts.gateway_failures != 0;
                     println!(
-                        "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+                        "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Pending, {} Unsafe, {} Unknown, {} gateway failure(s)",
                         plan.library,
                         counts.units,
                         counts.source_functions,
                         counts.projected_functions,
                         counts.data_only_units,
                         counts.safe_units,
+                        counts.pending_units,
                         counts.unsafe_units,
                         counts.unknown_units,
                         counts.gateway_failures

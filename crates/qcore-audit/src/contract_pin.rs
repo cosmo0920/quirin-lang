@@ -138,10 +138,19 @@ fn crate_targets(load_path: &Path, crates: &[String]) -> Result<Vec<Target>, Str
         .map_err(|error| format!("{}: {error}", load_path.display()))?;
     let manifest = load_contract_load_path_manifest(load_path)?;
     let names = if crates.is_empty() {
+        // Card W45-USER-CONTRACT-PLUGINS: on a user load path only the
+        // user's own crates are pinned; the extended load path's crates keep
+        // the locks they ship with.
         manifest
             .resource_views
             .iter()
             .filter(|(_, view)| !view.is_empty())
+            .filter(|(name, _)| {
+                manifest
+                    .extension
+                    .as_ref()
+                    .is_none_or(|extension| extension.user_crates.contains(*name))
+            })
             .map(|(name, _)| name.clone())
             .collect::<Vec<_>>()
     } else {

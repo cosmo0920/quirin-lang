@@ -21,9 +21,12 @@
 //!   appeared and disappeared;
 //! * **verdict moves** — per unit and per function, classified so that
 //!   *violation detected* (a move to `Unsafe`) is never pooled with
-//!   *coverage lost* (a move from `Safe` to `Unknown`), and a lost coverage
-//!   names the reason codes of its refusals (`contract-pin-mismatch` among
-//!   them).
+//!   *coverage lost* (a move from `Safe` to `Pending` or `Unknown`), and a lost
+//!   coverage names the reason codes of its refusals (`contract-pin-mismatch`
+//!   among them). Card W45-USER-CONTRACT-PLUGINS: the four-value verdict. A
+//!   move between `Unknown` and `Pending` is classed on its own
+//!   (`unknown_to_pending`, `pending_to_unknown`), and each run's verdict
+//!   tallies, `Pending` included, are reported beside the moves.
 //!
 //! Inventory only: it reads two finished runs and decides nothing.
 
@@ -41,7 +44,7 @@ pub const USAGE: &str =
     "usage: quirin-audit compare --before REPORT --after REPORT [--output FILE]";
 
 /// What the change report means, carried in the report itself.
-pub const MEANING: &str = "change report between two audit runs (card W45-CONTRACT-REVISION-MODE): `violation_detected` lists functions that moved to Unsafe and `coverage_lost` functions that moved from Safe to Unknown; the two are never pooled, and a provisional Unsafe is not a validated upstream defect; obligations are per-function diagnostics compared as (category, description) multisets without lines; contracts are compared by status, mode and normalised text digest from each run's contract_revision section";
+pub const MEANING: &str = "change report between two audit runs (card W45-CONTRACT-REVISION-MODE; four-value verdict, card W45-USER-CONTRACT-PLUGINS): `violation_detected` lists functions that moved to Unsafe and `coverage_lost` functions that moved from Safe to Pending or Unknown; the two are never pooled; `unknown_to_pending` and `pending_to_unknown` are moves between the two non-Safe undecided values, and Pending is never Safe; and a provisional Unsafe is not a validated upstream defect; obligations are per-function diagnostics compared as (category, description) multisets without lines; contracts are compared by status, mode and normalised text digest from each run's contract_revision section";
 
 struct Run {
     path: PathBuf,
@@ -150,6 +153,15 @@ fn functions(unit: &Value) -> BTreeMap<String, &Value> {
 /// categories.
 fn refusal_reasons(function: &Value) -> Vec<String> {
     let mut reasons = BTreeSet::new();
+    // Card W45-USER-CONTRACT-PLUGINS: a checker plugin's link names its own
+    // reason codes.
+    for link in function["plugin_links"].as_array().into_iter().flatten() {
+        for reason in link["reasons"].as_array().into_iter().flatten() {
+            if let Some(code) = reason["code"].as_str() {
+                reasons.insert(code.to_owned());
+            }
+        }
+    }
     for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
         let description = diagnostic["description"].as_str().unwrap_or_default();
         if pin_hold::held_call(description).is_some() {
@@ -168,12 +180,37 @@ fn classify(before: Option<&str>, after: Option<&str>) -> &'static str {
         (Some(from), Some(to)) if from == to => "unchanged",
         (_, Some("Unsafe")) => "violation_detected",
         (Some("Unsafe"), _) => "violation_withdrawn",
-        (Some("Safe"), Some("Unknown")) => "coverage_lost",
-        (Some("Unknown"), Some("Safe")) => "coverage_gained",
+        (Some("Safe"), Some("Unknown" | "Pending")) => "coverage_lost",
+        (Some("Unknown" | "Pending"), Some("Safe")) => "coverage_gained",
+        (Some("Unknown"), Some("Pending")) => "unknown_to_pending",
+        (Some("Pending"), Some("Unknown")) => "pending_to_unknown",
         (None, Some(_)) => "added",
         (Some(_), None) => "removed",
         _ => "other",
     }
+}
+
+/// Card W45-USER-CONTRACT-PLUGINS: a run's unit and function verdicts,
+/// tallied over the four values (every other unit status under its own
+/// spelling). `Pending` is counted apart from `Safe` and `Unknown`.
+fn verdict_tallies(report: &Value) -> Value {
+    let mut units = BTreeMap::<String, u64>::new();
+    let mut functions = BTreeMap::<String, u64>::new();
+    for verdict in qcore_schemas::verdict::Verdict::ALL {
+        units.insert(verdict.as_str().to_owned(), 0);
+        functions.insert(verdict.as_str().to_owned(), 0);
+    }
+    for unit in report["units"].as_array().into_iter().flatten() {
+        if let Some(status) = unit["status"].as_str() {
+            *units.entry(status.to_owned()).or_default() += 1;
+        }
+        for function in unit["functions"].as_array().into_iter().flatten() {
+            if let Some(status) = function["status"].as_str() {
+                *functions.entry(status.to_owned()).or_default() += 1;
+            }
+        }
+    }
+    json!({"units": units, "functions": functions})
 }
 
 fn set_difference(before: &BTreeSet<String>, after: &BTreeSet<String>) -> Value {
@@ -351,7 +388,7 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
             record["before"] = json!(old_status);
             record["after"] = json!(new_status);
             if let Some(function) = new_function
-                && new_status == Some("Unknown")
+                && matches!(new_status, Some("Unknown" | "Pending"))
             {
                 record["reasons"] = json!(refusal_reasons(function));
             }
@@ -373,6 +410,8 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
         "violation_withdrawn": count("violation_withdrawn"),
         "coverage_lost": count("coverage_lost"),
         "coverage_gained": count("coverage_gained"),
+        "unknown_to_pending": count("unknown_to_pending"),
+        "pending_to_unknown": count("pending_to_unknown"),
         "functions_added": count("added"),
         "functions_removed": count("removed"),
         "other_moves": count("other"),
@@ -403,12 +442,18 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
             "standing": {"before": standing(before_section), "after": standing(after_section)},
         },
         "obligations": {"added": obligation_added, "removed": obligation_removed},
+        "verdicts": {
+            "before": verdict_tallies(&before.report),
+            "after": verdict_tallies(&after.report),
+        },
         "verdict_moves": {
             "units": unit_moves,
             "violation_detected": classes.remove("violation_detected").unwrap_or_default(),
             "violation_withdrawn": classes.remove("violation_withdrawn").unwrap_or_default(),
             "coverage_lost": classes.remove("coverage_lost").unwrap_or_default(),
             "coverage_gained": classes.remove("coverage_gained").unwrap_or_default(),
+            "unknown_to_pending": classes.remove("unknown_to_pending").unwrap_or_default(),
+            "pending_to_unknown": classes.remove("pending_to_unknown").unwrap_or_default(),
             "functions_added": classes.remove("added").unwrap_or_default(),
             "functions_removed": classes.remove("removed").unwrap_or_default(),
             "other": classes.remove("other").unwrap_or_default(),
@@ -422,8 +467,8 @@ pub fn summary(report: &Value) -> String {
     let count = |key: &str| report["counts"][key].as_u64().unwrap_or_default();
     format!(
         "compare: contracts in force +{} -{} ~{}; pin mismatches {} -> {}; obligations +{} -{}; \
-         violation detected {}, violation withdrawn {}, coverage lost {}, coverage gained {}; \
-         units +{} -{}",
+         violation detected {}, violation withdrawn {}, coverage lost {}, coverage gained {}, \
+         unknown to pending {}, pending to unknown {}; units +{} -{}",
         count("contracts_added"),
         count("contracts_removed"),
         count("contracts_changed"),
@@ -435,6 +480,8 @@ pub fn summary(report: &Value) -> String {
         count("violation_withdrawn"),
         count("coverage_lost"),
         count("coverage_gained"),
+        count("unknown_to_pending"),
+        count("pending_to_unknown"),
         count("units_added"),
         count("units_removed"),
     )

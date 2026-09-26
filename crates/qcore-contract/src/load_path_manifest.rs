@@ -46,6 +46,32 @@
 //! refuses a view that declares a module the loader refuses or omits one it
 //! accepts. This reader checks its shape only (sorted, unique, owned); an
 //! absent view is not a default, and a whole-crate selection refuses it.
+//!
+//! **User load paths (card W45-USER-CONTRACT-PLUGINS).** A user keeps their
+//! own contract crates outside this repository, laid out like the
+//! `quirin-provider-*` crates, and lists them in their own load-path manifest
+//! that **extends** a shipped one:
+//!
+//! ```json
+//! {
+//!   "schema_version": 1,
+//!   "extends": "/opt/quirin/providers/contract-load-path.json",
+//!   "crates": [ { "name": "quirin-provider-acme", "…": "…" } ],
+//!   "overrides": [],
+//!   "checkers": [ { "crate": "quirin-provider-acme", "module": "acme/pool.qcore",
+//!                   "functions": ["pool_get"], "package": "checkers/pool-check" } ]
+//! }
+//! ```
+//!
+//! The extended manifest is read by this same function, in full, and must not
+//! itself extend (one level). Its crates keep their own roots; the user's
+//! crates obey every rule above, and the two sets are validated together by
+//! [`ContractLoadPath::new`], so a user crate can depend on a shipped one and
+//! can never share a name or a namespace with one. `extends` may be absolute
+//! or relative to this file and may leave its directory: it names another
+//! manifest, validated in full, not a contract tree. `overrides` and
+//! `checkers` are admitted only in an extending manifest, and each names one of
+//! its own crates ([`LoadPathExtension`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -67,6 +93,76 @@ pub const LOAD_PATH_MANIFEST_SCHEMA: u32 = 1;
 struct Manifest {
     schema_version: u32,
     crates: Vec<CrateRecord>,
+    #[serde(default)]
+    extends: Option<String>,
+    #[serde(default)]
+    overrides: Option<Vec<OverrideRecord>>,
+    #[serde(default)]
+    checkers: Option<Vec<CheckerRecord>>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct OverrideRecord {
+    function: String,
+    #[serde(rename = "crate")]
+    user_crate: String,
+    shipped_crate: String,
+    reason: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CheckerRecord {
+    #[serde(rename = "crate")]
+    user_crate: String,
+    module: String,
+    functions: Vec<String>,
+    package: String,
+}
+
+/// Card W45-USER-CONTRACT-PLUGINS: an explicit, reported override — a user
+/// crate's contract for a function a shipped crate also declares. Without one
+/// such a collision is refused by the audit.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ContractOverride {
+    pub function: String,
+    pub user_crate: String,
+    pub shipped_crate: String,
+    pub reason: String,
+}
+
+/// Card W45-USER-CONTRACT-PLUGINS: an out-of-process checker attached to the
+/// contracts of `functions` in `module` of `user_crate`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CheckerBinding {
+    pub user_crate: String,
+    /// The user crate's namespace and version, as the load path records them.
+    pub crate_namespace: String,
+    pub crate_version: String,
+    pub module: String,
+    /// SHA-256 of the module's text on the load path.
+    pub module_sha256: String,
+    pub functions: Vec<String>,
+    /// The package directory as written, relative to the manifest.
+    pub package_spelling: String,
+    /// The package directory, resolved against the manifest's directory.
+    pub package: PathBuf,
+}
+
+/// Card W45-USER-CONTRACT-PLUGINS: what an extending (user) manifest adds.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LoadPathExtension {
+    /// The extended (shipped) manifest, as resolved.
+    pub base: PathBuf,
+    /// SHA-256 of the extended manifest's bytes.
+    pub base_sha256: String,
+    /// The extended manifest's crates.
+    pub shipped_crates: BTreeSet<String>,
+    /// This manifest's own crates.
+    pub user_crates: BTreeSet<String>,
+    pub overrides: Vec<ContractOverride>,
+    pub checkers: Vec<CheckerBinding>,
 }
 
 #[derive(Deserialize)]
@@ -95,6 +191,9 @@ pub struct LoadPathManifest {
     /// W44-PROVIDER-RESOURCE-VIEW), sorted owned modules. A crate that
     /// declares none is absent.
     pub resource_views: BTreeMap<String, Vec<String>>,
+    /// Card W45-USER-CONTRACT-PLUGINS: present exactly for a manifest that
+    /// extends a shipped one.
+    pub extension: Option<LoadPathExtension>,
 }
 
 impl LoadPathManifest {
@@ -185,6 +284,13 @@ fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
 pub fn load_contract_load_path_manifest(
     path: &Path,
 ) -> Result<LoadPathManifest, ContractInclusionError> {
+    read_manifest(path, true)
+}
+
+fn read_manifest(
+    path: &Path,
+    may_extend: bool,
+) -> Result<LoadPathManifest, ContractInclusionError> {
     let origin = path.display().to_string();
     let refuse = |subject: &str, message: String| {
         ContractInclusionError::new(InclusionCode::Qi014, subject, message)
@@ -206,6 +312,34 @@ pub fn load_contract_load_path_manifest(
         ));
     }
     let base = path.parent().unwrap_or_else(|| Path::new("."));
+    // Card W45-USER-CONTRACT-PLUGINS: an extending manifest reads its base in
+    // full first; `overrides` and `checkers` exist only beside `extends`.
+    let extended = match &manifest.extends {
+        Some(_) if !may_extend => {
+            return Err(refuse(
+                &origin,
+                "an extended load-path manifest must not itself extend another".into(),
+            ));
+        }
+        Some(spelling) => {
+            let base_path = base.join(spelling);
+            let bytes = fs::read(&base_path)
+                .map_err(|e| refuse(&origin, format!("{}: {e}", base_path.display())))?;
+            Some((
+                read_manifest(&base_path, false)?,
+                base_path,
+                sha256_hex(&bytes),
+            ))
+        }
+        None if manifest.overrides.is_some() || manifest.checkers.is_some() => {
+            return Err(refuse(
+                &origin,
+                "`overrides` and `checkers` belong to a load-path manifest that extends another"
+                    .into(),
+            ));
+        }
+        None => None,
+    };
     let mut crates = Vec::with_capacity(manifest.crates.len());
     let mut contract_roots = BTreeMap::new();
     let mut resource_views = BTreeMap::new();
@@ -312,9 +446,107 @@ pub fn load_contract_load_path_manifest(
             modules,
         });
     }
+    let Some((shipped, base_path, base_sha256)) = extended else {
+        return Ok(LoadPathManifest {
+            load_path: ContractLoadPath::new(crates)?,
+            contract_roots,
+            resource_views,
+            extension: None,
+        });
+    };
+    let user_crates: BTreeSet<String> = contract_roots.keys().cloned().collect();
+    let shipped_crates: BTreeSet<String> = shipped.contract_roots.keys().cloned().collect();
+    if let Some(name) = user_crates.intersection(&shipped_crates).next() {
+        return Err(refuse(
+            name,
+            "a user crate has the name of a crate on the extended load path".into(),
+        ));
+    }
+    let mut overrides = Vec::new();
+    for record in manifest.overrides.unwrap_or_default() {
+        if !user_crates.contains(&record.user_crate)
+            || !shipped_crates.contains(&record.shipped_crate)
+            || record.function.trim().is_empty()
+            || record.reason.trim().is_empty()
+        {
+            return Err(refuse(
+                &origin,
+                format!(
+                    "override of `{}` must name one of this manifest's crates, a crate on the \
+                     extended load path, a function and a reason",
+                    record.function
+                ),
+            ));
+        }
+        overrides.push(ContractOverride {
+            function: record.function,
+            user_crate: record.user_crate,
+            shipped_crate: record.shipped_crate,
+            reason: record.reason,
+        });
+    }
+    let mut checkers = Vec::new();
+    for record in manifest.checkers.unwrap_or_default() {
+        let owner = crates
+            .iter()
+            .find(|krate| krate.name == record.user_crate)
+            .filter(|krate| krate.modules.contains_key(&record.module));
+        let Some(owner) = owner.filter(|_| {
+            !record.functions.is_empty()
+                && record.functions.windows(2).all(|pair| pair[0] < pair[1])
+        }) else {
+            return Err(refuse(
+                &origin,
+                format!(
+                    "checker `{}` must name a module one of this manifest's crates owns and \
+                     sorted, unique functions",
+                    record.package
+                ),
+            ));
+        };
+        if !relative_directory(&record.package) || !base.join(&record.package).is_dir() {
+            return Err(refuse(
+                &origin,
+                format!(
+                    "checker package `{}` is not a directory relative to the manifest without \
+                     traversal",
+                    record.package
+                ),
+            ));
+        }
+        let (crate_namespace, crate_version, module_sha256) = (
+            owner.namespace.clone(),
+            owner.version.clone(),
+            sha256_hex(owner.modules[&record.module].as_bytes()),
+        );
+        checkers.push(CheckerBinding {
+            user_crate: record.user_crate,
+            crate_namespace,
+            crate_version,
+            module: record.module,
+            module_sha256,
+            functions: record.functions,
+            package: base.join(&record.package),
+            package_spelling: record.package,
+        });
+    }
+    let mut all = shipped.load_path.crates().cloned().collect::<Vec<_>>();
+    all.extend(crates);
+    let mut roots = shipped.contract_roots;
+    roots.extend(contract_roots);
+    let mut views = shipped.resource_views;
+    views.extend(resource_views);
     Ok(LoadPathManifest {
-        load_path: ContractLoadPath::new(crates)?,
-        contract_roots,
-        resource_views,
+        load_path: ContractLoadPath::new(all)?,
+        contract_roots: roots,
+        resource_views: views,
+        extension: Some(LoadPathExtension {
+            base: base_path,
+            base_sha256,
+            shipped_crates,
+            user_crates,
+            overrides,
+            checkers,
+        }),
     })
 }

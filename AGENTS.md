@@ -51,7 +51,10 @@ byte counts are not token billing. A smaller index alone proves no task-cost gai
 2. **Verdict contract.** Every published result carries
    `(artifact, property, semantic profile, scope, bounds, assumptions,
    evidence version)`. `Safe` only after all obligations discharge; `Unsafe`
-   only for a validated reachable violation; everything else `Unknown`.
+   only for a validated reachable violation; `Pending` (non-Safe, in the
+   denominator) only for a named human-resolvable reason; everything else
+   `Unknown`. Composition is the join of `Safe < Pending < Unknown < Unsafe`
+   ([§L21.2](docs/QCORE_SPEC_r0_3.md#l212-the-four-value-verdict-and-its-composition)).
    Projection coverage is not safety coverage; unknowns stay in the
    denominator; a provisional `Unsafe` is never presented as an upstream
    defect.

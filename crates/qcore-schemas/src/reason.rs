@@ -92,13 +92,21 @@ pub enum ReasonCategory {
     /// — the row says nothing about the analysed source and never contributes
     /// to a provisional `Unsafe`.
     ContractPinMismatch,
+    /// Card W45-USER-CONTRACT-PLUGINS: an out-of-process checker plugin
+    /// attached to a declared contract claimed `Safe` or `Unsafe` without a
+    /// certificate or witness the audit checks independently (contract spec
+    /// §C11.1). The claim is recorded and decides nothing: the row is
+    /// `Pending` until a person supplies a checkable certificate or witness.
+    /// Subject: the analyser — the row says nothing about the analysed source
+    /// and never contributes to a provisional `Unsafe`.
+    PluginClaimUncertified,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 9] = [
+    pub const ALL: [Self; 10] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -108,6 +116,7 @@ impl ReasonCategory {
         Self::EnvironmentUnavailable,
         Self::AwaitingHumanReview,
         Self::ContractPinMismatch,
+        Self::PluginClaimUncertified,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -123,6 +132,7 @@ impl ReasonCategory {
             Self::EnvironmentUnavailable => "environment-unavailable",
             Self::AwaitingHumanReview => "awaiting-human-review",
             Self::ContractPinMismatch => "contract-pin-mismatch",
+            Self::PluginClaimUncertified => "plugin-claim-uncertified",
         }
     }
 
@@ -136,7 +146,8 @@ impl ReasonCategory {
             | Self::StaleEvidence
             | Self::ProviderFailure
             | Self::AwaitingHumanReview
-            | Self::ContractPinMismatch => ReasonSubject::Analyser,
+            | Self::ContractPinMismatch
+            | Self::PluginClaimUncertified => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -161,6 +172,22 @@ impl ReasonCategory {
     #[must_use]
     pub const fn may_support_unsafe(self) -> bool {
         self.describes_analysed_source()
+    }
+
+    /// Card W45-USER-CONTRACT-PLUGINS: `true` for the categories a person
+    /// resolves by a named act — a review edit (`awaiting-human-review`), a
+    /// re-pin after review (`contract-pin-mismatch`) or a checkable
+    /// certificate for a plugin's claim (`plugin-claim-uncertified`). A row
+    /// withheld for one of these alone is `Pending`
+    /// ([`crate::verdict::Verdict::Pending`]); every other category leaves its
+    /// row `Unknown`. Exactly the categories of
+    /// [`crate::verdict::PendingReason`].
+    #[must_use]
+    pub const fn is_human_resolvable(self) -> bool {
+        matches!(
+            self,
+            Self::AwaitingHumanReview | Self::ContractPinMismatch | Self::PluginClaimUncertified
+        )
     }
 
     /// The documented mapping from the free-text reasons in force onto the
@@ -431,6 +458,15 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     (
         "pinned contract is not in force",
         ReasonCategory::ContractPinMismatch,
+    ),
+    // ---- plugin claim uncertified (card W45-USER-CONTRACT-PLUGINS): a
+    // checker plugin's `Safe` or `Unsafe` claim with no independently checked
+    // certificate or witness. Matched before every source-subject rule: the
+    // phrase describes a plugin's assertion, never the analysed source. Site:
+    // `qcore_verifier_host::plugin_firewall`.
+    (
+        "plugin claim uncertified",
+        ReasonCategory::PluginClaimUncertified,
     ),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the

@@ -74,8 +74,11 @@ LOAD_PATH = "contract-load-path.json"
 CONTRACT_CRATE_PREFIXES = ("quirin-provider-", "qcore-provider-")
 # Workspace packages that carry an admitted prefix but own no contracts: the
 # conformance harness (`providers/conformance`) is a test crate, not a
-# contract crate. Listed by name, and checked to own no contracts.
-NON_CONTRACT_PACKAGES = ("qcore-provider-conformance",)
+# contract crate, and (card W45-USER-CONTRACT-PLUGINS) the SDK for user
+# contract crates and checker plugins (`providers/quirin-provider-plugin`)
+# carries no production contract. Listed by name, and checked to own no
+# contracts.
+NON_CONTRACT_PACKAGES = ("qcore-provider-conformance", "quirin-provider-plugin")
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)
 STRING_LITERAL = re.compile(r'\s*"([a-z0-9_/-]+\.qcore)"\s*')

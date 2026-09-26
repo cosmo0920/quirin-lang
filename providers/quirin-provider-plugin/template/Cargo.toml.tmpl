@@ -1,0 +1,14 @@
+[package]
+name = "{{name}}"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "User-defined Quirin contracts: {{namespace}}"
+
+[lib]
+path = "src/lib.rs"
+
+# A contract-use edge is a real dependency: to `#include` a shipped module
+# (for example libc's), depend on its crate here, and list the same name in
+# the user load path this crate's record generates.
+[dependencies]

@@ -39,6 +39,11 @@ mod source_audit;
 pub mod source_contract;
 pub mod timeout_teardown;
 pub mod unit_selection;
+// Card W45-USER-CONTRACT-PLUGINS: user contract crates on an extending load
+// path, their collisions with shipped contracts, checker plugins, and the
+// resource views of user crates (`quirin-audit plugin views`).
+pub mod plugin_cli;
+pub mod user_plugins;
 pub mod wait_failures;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 

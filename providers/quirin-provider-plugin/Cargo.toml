@@ -1,0 +1,28 @@
+[package]
+name = "quirin-provider-plugin"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autobins = false
+description = "SDK for user-defined Quirin contract crates and out-of-process checker plugins; carries no production contracts"
+
+[lib]
+name = "quirin_provider_plugin"
+
+[[bin]]
+name = "quirin-plugin"
+path = "src/main.rs"
+
+# A checker plugin written with this SDK, used by its own tests and as the
+# template's worked example. It is never packaged by `providers/package.py`.
+[[bin]]
+name = "quirin-plugin-example-checker"
+path = "src/bin/example_checker.rs"
+test = false
+
+[dependencies]
+qcore-schemas.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+quirin-provider-shared.workspace = true

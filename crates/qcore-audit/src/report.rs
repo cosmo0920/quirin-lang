@@ -123,6 +123,10 @@ pub struct AuditReport {
     /// and the contract modules its verdicts rest on. Absent otherwise, so
     /// every other report keeps its shape.
     evidence: Option<Value>,
+    /// Card W45-USER-CONTRACT-PLUGINS: the checker links every recorded unit
+    /// folds (`crate::user_plugins::fold_unit`). Absent without a binding,
+    /// so every other report keeps its shape.
+    plugin_links: Option<std::sync::Arc<crate::user_plugins::PluginLinks>>,
 }
 
 impl AuditReport {
@@ -133,14 +137,24 @@ impl AuditReport {
             diagnostic_counts: BTreeMap::new(),
             source_contracts: None,
             evidence: None,
+            plugin_links: None,
         }
     }
 
     /// An empty report over the same revision, into which one unit's rows are
     /// recorded apart from every other unit's (card
     /// **W44-AUDIT-PARALLEL-UNITS**). Fold it back with [`Self::absorb`].
+    /// It folds the same checker links (card W45-USER-CONTRACT-PLUGINS).
     pub fn fragment(&self) -> Self {
-        Self::new(&self.revision)
+        let mut fragment = Self::new(&self.revision);
+        fragment.plugin_links.clone_from(&self.plugin_links);
+        fragment
+    }
+
+    /// Card W45-USER-CONTRACT-PLUGINS: fold these checker links into every
+    /// unit recorded from now on.
+    pub fn set_plugin_links(&mut self, links: std::sync::Arc<crate::user_plugins::PluginLinks>) {
+        self.plugin_links = Some(links);
     }
 
     /// Append a [`Self::fragment`]'s rows after this report's rows and add its
@@ -161,6 +175,7 @@ impl AuditReport {
             diagnostic_counts,
             source_contracts,
             evidence,
+            plugin_links: _,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -186,6 +201,14 @@ impl AuditReport {
     #[must_use]
     pub fn unit_rows(&self) -> &[Value] {
         &self.units
+    }
+
+    /// The four-value verdict the most recent unit row publishes, `None` when
+    /// there is no row or its status is not a verdict (a gateway failure, a
+    /// data-only unit). Card W45-USER-CONTRACT-PLUGINS.
+    #[must_use]
+    pub fn last_unit_verdict(&self) -> Option<qcore_schemas::verdict::Verdict> {
+        self.units.last()?["status"].as_str()?.parse().ok()
     }
 
     pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
@@ -324,14 +347,24 @@ impl AuditReport {
         result: &Result<UnrestrictedLegacyResult, LegacyCError>,
         locations: Option<&SourceLineMap>,
     ) -> Vec<String> {
+        // Card W45-USER-CONTRACT-PLUGINS: the unit's status is its four-value
+        // verdict; a `Pending` unit is published through the `Unknown` variant.
         let (status, summary, reason) = match result {
-            Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
-                ("Safe", Some(&certificate.summary), None)
+            Ok(verdict @ UnrestrictedLegacyResult::Safe(certificate)) => {
+                (verdict.verdict().as_str(), Some(&certificate.summary), None)
             }
-            Ok(UnrestrictedLegacyResult::Unsafe(summary)) => ("Unsafe", Some(summary), None),
-            Ok(UnrestrictedLegacyResult::Unknown {
-                partial, reason, ..
-            }) => ("Unknown", partial.as_ref(), Some(reason.clone())),
+            Ok(verdict @ UnrestrictedLegacyResult::Unsafe(summary)) => {
+                (verdict.verdict().as_str(), Some(summary), None)
+            }
+            Ok(
+                verdict @ UnrestrictedLegacyResult::Unknown {
+                    partial, reason, ..
+                },
+            ) => (
+                verdict.verdict().as_str(),
+                partial.as_ref(),
+                Some(reason.clone()),
+            ),
             Err(error) => ("gateway_failure", None, Some(error.to_string())),
         };
         let mut functions = Vec::new();
@@ -402,6 +435,10 @@ impl AuditReport {
             "not_projected": not_projected, "diagnostic_counts": counts,
             "origin_coordinates": origin_coordinates(locations),
         }));
+        // Card W45-USER-CONTRACT-PLUGINS: the callee chains of this unit.
+        if let (Some(links), Some(row)) = (&self.plugin_links, self.units.last_mut()) {
+            crate::user_plugins::fold_unit(links, row, result);
+        }
         if counts.is_empty() {
             return Vec::new();
         }

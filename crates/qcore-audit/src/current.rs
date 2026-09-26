@@ -173,6 +173,15 @@ impl CurrentAudit {
             assumptions["provider_selection"] = record.clone();
         }
         let mut report = AuditReport::new(&revision);
+        // Card W45-USER-CONTRACT-PLUGINS: every checker binding of a user load
+        // path runs once, before any unit, and every unit folds its links.
+        if let Some(plugins) = crate::user_plugins::run(
+            input.extension(),
+            crate::user_plugins::PluginCheckers::default(),
+        ) {
+            report.set_plugin_links(plugins.links);
+            assumptions["plugin_checks"] = plugins.section;
+        }
         if mode.is_contracts_only() {
             let record = crate::evidence::contracts_only_record(&contracts);
             assumptions["evidence"] = record.clone();
@@ -447,10 +456,11 @@ impl CurrentAudit {
             return Err("checkout HEAD changed during audit; rerun with stable inputs".into());
         }
         println!(
-            "current revision: {} source file(s), {} configuration(s): {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
+            "current revision: {} source file(s), {} configuration(s): {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
             self.sources.len(),
             self.counts.units,
             self.counts.safe_units,
+            self.counts.pending_units,
             self.counts.unsafe_units,
             self.counts.unknown_units,
             self.counts.data_only_units,
@@ -469,6 +479,13 @@ impl CurrentAudit {
         let pending = crate::pending_review::section(&self.contracts, &self.report);
         println!("{}", crate::pending_review::tally(&pending));
         self.assumptions["pending_human_review"] = pending;
+        // Card W45-USER-CONTRACT-PLUGINS: printed only when a checker ran.
+        if self.assumptions["plugin_checks"].is_object() {
+            println!(
+                "{}",
+                crate::user_plugins::tally(&self.assumptions["plugin_checks"])
+            );
+        }
         // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
         // flexible assumptions, tallied and published the same way.
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);

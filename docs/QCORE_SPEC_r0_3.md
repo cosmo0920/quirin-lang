@@ -1152,7 +1152,7 @@ Every verification claim MUST identify
 
 This is a reporting requirement; the complete tuple is not already one universally implemented record across all current APIs.
 
-**Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds.
+**Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
 These words MUST NOT be repurposed to mean successful parsing, a green build, contract loading, or observed cleanup in a few fixtures. Rejection of malformed source is a compilation result, not necessarily a semantic counterexample to a well-formed program.
 
@@ -1277,6 +1277,9 @@ Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.re
 | `environment-unavailable` | The analysis could not run because a required tool, build tree or configuration input was missing or mismatched. | `audit requires the configured Clang executable …; compilation database selects /usr/bin/cc` |
 | `awaiting-human-review` | A declared contract the row depends on is marked as awaiting human review (contract specification C06.1), so it was withheld: it discharges nothing and accuses nothing. Subject: the analyser; it never contributes to a provisional `Unsafe`. Added by card W45-CONTRACT-DEFERRED-REVIEW; a projection summary naming a held call takes this category ahead of every other. | ``call to `k_close` whose declared contract awaits human review (awaiting-human-review)``; `resource projection unresolved: …, 1 call(s) held awaiting human review` |
 | `contract-pin-mismatch` | A pinned contract the row depends on is not in force, because the audited source does not match the identity its lock records (contract specification C06.2), so it was withheld: it discharges nothing and accuses nothing. Subject: the analyser; it never contributes to a provisional `Unsafe`. Added by card W45-CONTRACT-REVISION-MODE; a projection summary naming a call held for a pin mismatch takes this category ahead of every source category, after `awaiting-human-review`. | ``call to `k_close` whose pinned contract is not in force: the audited source does not match its lock (contract-pin-mismatch)``; `resource projection unresolved: …, 1 call(s) held for a contract pin mismatch` |
+| `plugin-claim-uncertified` | A checker plugin attached to a declared contract claimed `Safe` or `Unsafe` without a certificate or witness the audit checks independently (contract specification C11.1). The claim is recorded and decides nothing. Subject: the analyser; it never contributes to a provisional `Unsafe`. Added by card W45-USER-CONTRACT-PLUGINS. | ``plugin claim uncertified: `acme.pool_check` proposed Safe without a certificate the audit checks independently (QP016: …)`` |
+
+**Human-resolvable categories (card W45-USER-CONTRACT-PLUGINS).** `awaiting-human-review`, `contract-pin-mismatch` and `plugin-claim-uncertified` are exactly the categories a person resolves by a named act (`ReasonCategory::is_human_resolvable`). A row withheld for one of them alone is `Pending` (§L21.2); a row with any other category is `Unknown`, and the categories keep classifying reasons as before.
 
 Two rules bind any implementation of this vocabulary:
 
@@ -1284,6 +1287,20 @@ Two rules bind any implementation of this vocabulary:
 2. **Categories refine, never replace, the verdict contract.** A reason category is added alongside the existing `reason` text; it does not alter the source span, `property`, semantic profile, scope, bounds, assumptions, or obligation ID of any row, and golden data MUST show those unchanged across the migration.
 
 Implementation is deferred, and the reason is structural rather than editorial: `DerivationIncomplete` is a field of `VerificationTask`, whose SHA-256 over canonical JSON travels in every evidence-v2 request and every witness, and the record is `deny_unknown_fields`. Adding a category field there changes every task digest, so every shipped provider package and every recorded witness would have to be regenerated in the same change — the opposite of additive. Adding the key to audit-report units instead would change all four pinned 185-unit artifacts byte for byte. Either belongs to its own increment, which must re-derive the pinned artifacts deliberately and say so.
+
+### L21.2 The four-value verdict and its composition
+
+Card W45-USER-CONTRACT-PLUGINS; the fourth value was proposed and approved by the user on 2026-09-26 as an amendment to the verdict contract (§L20, AGENTS.md hard invariant 2).
+
+**Values and order.** `Safe < Pending < Unknown < Unsafe`. Composition along a chain, over a group and within a unit is the **join** (the larger value): associative, commutative and idempotent, with `Safe` as its identity. A verdict carries a finite multiset of reasons; composition joins the values and unions the reasons, which is again associative with the empty `Safe` as its identity and commutative up to the order of reasons. The shared algebra is `qcore_schemas::verdict` (`Verdict`, `ReasonedVerdict`, `PendingReason`, `Chain`); `ReasonedVerdict::pending` takes a `PendingReason`, the closed set of human-resolvable reasons, so no other `Pending` can be constructed.
+
+**Meaning.** `Pending` is "not decided by the tool, awaiting a human act"; `Unknown` is "not decidable by the tool as configured"; `Unsafe` keeps its provisional policy (§L20). `Pending` is fail-closed: it is never `Safe`, it stays in every denominator, and no composition lowers it to `Safe` (adding a link never lowers a chain's verdict).
+
+**Producers.** In the legacy-C gateway a function's status is the fold of its diagnostics' verdicts: a violation is `Unsafe`, an unresolved construct `Unknown`, and a call **held** for a withheld contract — awaiting review (contract specification C06.1) or a pin mismatch (C06.2) — `Pending`. A function whose only unresolved diagnostics are held calls is therefore `Pending`, and one other unresolved construct makes it `Unknown` as before. A unit's status is the fold of its functions' statuses, joined with `Unknown` for a function that could not be projected. Read through the projection that sends `Pending` to the three-valued `Unknown`, this is exactly the three-way decision the gateway made before the card; on inputs with no held call the published verdicts are unchanged. A checker plugin's answer enters as a link of every function that applies the contract it is attached to (contract specification C11.1).
+
+**Chains.** A chain is an ordered composition of contract steps — a callee chain (a function and the checked contracts it applies), a pipeline of obligations, or a group of units — and its verdict is the fold. A group verdict over checkpoints composes with this same fold.
+
+The Lean model is `QCore.VerdictSemigroup`.
 
 ## L22. Required conformance and regression evidence
 

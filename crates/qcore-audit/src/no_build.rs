@@ -58,6 +58,7 @@ use crate::parallel::run_ordered;
 use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit_into};
 use crate::providers::ContractInput;
 use crate::report::{AuditReport, UnitRefusal};
+use crate::user_plugins::PluginCheckers;
 
 /// Usage text of `quirin-audit contracts`.
 pub const USAGE: &str = "usage: quirin-audit contracts [--config FILE] [--source-root DIR] \
@@ -637,6 +638,19 @@ impl NoBuildAudit {
         input: &ContractInput,
         assumed: AssumedConfiguration,
     ) -> Result<Self, String> {
+        Self::with_plugin_checkers(root, selection, input, assumed, PluginCheckers::default())
+    }
+
+    /// [`Self::new`], with the trusted-core checkers a checker plugin's claim
+    /// may be certified by (card W45-USER-CONTRACT-PLUGINS). The command line
+    /// passes none.
+    pub fn with_plugin_checkers(
+        root: &Path,
+        selection: &Value,
+        input: &ContractInput,
+        assumed: AssumedConfiguration,
+        checkers: PluginCheckers<'_>,
+    ) -> Result<Self, String> {
         let root = root.canonicalize().map_err(|error| error.to_string())?;
         let mut contracts = input.load()?;
         // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared
@@ -710,6 +724,12 @@ impl NoBuildAudit {
         sidecar["evidence_record"] = evidence.clone();
         let mut report = AuditReport::new("none");
         report.set_evidence(evidence);
+        // Card W45-USER-CONTRACT-PLUGINS: every checker binding runs once,
+        // before any unit, and every unit folds its links.
+        if let Some(plugins) = crate::user_plugins::run(input.extension(), checkers) {
+            report.set_plugin_links(plugins.links);
+            sidecar["plugin_checks"] = plugins.section;
+        }
         Ok(Self {
             root,
             compiler: ClangIdentity::capture()?,
@@ -942,11 +962,12 @@ impl NoBuildAudit {
     pub fn finish(mut self, path: Option<&Path>) -> Result<AuditCounts, String> {
         let not_prepared: usize = self.reasons.values().sum();
         println!(
-            "no-build: {} unit(s), {} prepared under the assumptions, {} not prepared: {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures (every verdict relative to the recorded assumptions)",
+            "no-build: {} unit(s), {} prepared under the assumptions, {} not prepared: {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures (every verdict relative to the recorded assumptions)",
             self.counts.units,
             self.counts.units - not_prepared,
             not_prepared,
             self.counts.safe_units,
+            self.counts.pending_units,
             self.counts.unsafe_units,
             self.counts.unknown_units,
             self.counts.data_only_units,
@@ -980,6 +1001,13 @@ impl NoBuildAudit {
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
         println!("{}", crate::contract_revision::tally(&revision));
         self.sidecar["contract_revision"] = revision;
+        // Card W45-USER-CONTRACT-PLUGINS: printed only when a checker ran.
+        if self.sidecar["plugin_checks"].is_object() {
+            println!(
+                "{}",
+                crate::user_plugins::tally(&self.sidecar["plugin_checks"])
+            );
+        }
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
                 fs::create_dir_all(parent).map_err(|error| error.to_string())?;
@@ -989,6 +1017,7 @@ impl NoBuildAudit {
                 "prepared": self.counts.units - not_prepared,
                 "not_prepared": self.reasons,
                 "safe": self.counts.safe_units,
+                "pending": self.counts.pending_units,
                 "provisional_unsafe": self.counts.unsafe_units,
                 "unknown": self.counts.unknown_units,
                 "data_only": self.counts.data_only_units,

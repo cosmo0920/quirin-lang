@@ -39,8 +39,8 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
         AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
         IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
-        ProviderFailure as Provider, ResidualCustody as Custody, StaleEvidence as Stale,
-        UnsupportedSyntax as Syntax,
+        PluginClaimUncertified as Plugin, ProviderFailure as Provider, ResidualCustody as Custody,
+        StaleEvidence as Stale, UnsupportedSyntax as Syntax,
     };
     vec![
         // -- qcore-verification: obligation derivation ------------------------
@@ -193,6 +193,20 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
             "call to `k_close` whose pinned contract is not in force: the audited source \
              does not match its lock (contract-pin-mismatch)",
             Pin,
+        ),
+        // Card W45-USER-CONTRACT-PLUGINS: the plugin firewall's two
+        // uncertified-claim spellings (`qcore_verifier_host::plugin_firewall`).
+        (
+            "plugin claim uncertified: `acme.pool_check` proposed Safe without a certificate \
+             the audit checks independently (QP016: no core witness checker for capability \
+             `resource_contracts` at evidence version 2)",
+            Plugin,
+        ),
+        (
+            "plugin claim uncertified: `acme.pool_check` proposed Unsafe without a witness \
+             the audit validates (QP010: unverified provider allegation: evidence v2 has no \
+             counterexample checker)",
+            Plugin,
         ),
         (
             "`k_close`'s declared contract in k.qcore awaits human review \

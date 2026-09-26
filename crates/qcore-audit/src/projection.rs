@@ -12,6 +12,7 @@ use qcore_c_gateway::legacy_c::{
     map_preprocessed_lines, validate_unrestricted_c11,
 };
 use qcore_schemas::contract::ResourceContracts;
+use qcore_schemas::verdict::Verdict;
 
 /// One line of a unit's console account, written to that unit's buffer. A
 /// `String` sink cannot fail.
@@ -31,6 +32,9 @@ pub struct AuditCounts {
     pub safe_units: usize,
     pub unsafe_units: usize,
     pub unknown_units: usize,
+    /// Card W45-USER-CONTRACT-PLUGINS: units whose verdict is `Pending` —
+    /// not decided, awaiting a named human act. Never counted as `Safe`.
+    pub pending_units: usize,
     pub gateway_failures: usize,
     /// Definitions the enumeration counted that exist only after preprocessing
     /// (unit E01-F1). They are ordinary definitions once expanded, so the
@@ -72,6 +76,7 @@ impl AuditCounts {
             safe_units,
             unsafe_units,
             unknown_units,
+            pending_units,
             gateway_failures,
             absent_from_raw_scan_definitions,
             unanalyzable_definitions,
@@ -90,6 +95,7 @@ impl AuditCounts {
         self.safe_units += safe_units;
         self.unsafe_units += unsafe_units;
         self.unknown_units += unknown_units;
+        self.pending_units += pending_units;
         self.gateway_failures += gateway_failures;
         self.absent_from_raw_scan_definitions += absent_from_raw_scan_definitions;
         self.unanalyzable_definitions += unanalyzable_definitions;
@@ -369,6 +375,17 @@ pub fn project_prepared_unit_into(
     )
 }
 
+/// Count one analysed unit under its published verdict (card
+/// W45-USER-CONTRACT-PLUGINS).
+fn tally(counts: &mut AuditCounts, verdict: Verdict) {
+    match verdict {
+        Verdict::Safe => counts.safe_units += 1,
+        Verdict::Pending => counts.pending_units += 1,
+        Verdict::Unknown => counts.unknown_units += 1,
+        Verdict::Unsafe => counts.unsafe_units += 1,
+    }
+}
+
 fn record_inventory(inventory: &SourceDefinitionInventory, counts: &mut AuditCounts) {
     counts.units += 1;
     counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
@@ -422,19 +439,24 @@ fn record_projection(
     });
     let detail = report.record(library, file, source_functions, &result, locations);
     report.record_enumeration(inventory);
+    // Card W45-USER-CONTRACT-PLUGINS: the unit is tallied and printed under
+    // the verdict its row publishes, which is the result's own verdict unless
+    // a checker plugin's link joined it upwards.
+    let published = report.last_unit_verdict();
     match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
-            counts.safe_units += 1;
+            let verdict = published.unwrap_or(Verdict::Safe);
+            tally(counts, verdict);
             counts.projected_functions += certificate.checked_functions.len();
             say!(
                 out,
-                "  {library}/{file}: Safe ({}/{})",
+                "  {library}/{file}: {verdict} ({}/{})",
                 certificate.checked_functions.len(),
                 source_functions.len()
             );
         }
         Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
-            counts.unsafe_units += 1;
+            tally(counts, Verdict::Unsafe);
             counts.projected_functions += summary.functions.len();
             say!(
                 out,
@@ -446,14 +468,15 @@ fn record_projection(
         Ok(UnrestrictedLegacyResult::Unknown {
             reason, partial, ..
         }) => {
-            counts.unknown_units += 1;
+            let verdict = published.unwrap_or(Verdict::Unknown);
+            tally(counts, verdict);
             let projected = partial
                 .as_ref()
                 .map_or(0, |summary| summary.functions.len());
             counts.projected_functions += projected;
             say!(
                 out,
-                "  {library}/{file}: Unknown ({projected}/{}): {reason}",
+                "  {library}/{file}: {verdict} ({projected}/{}): {reason}",
                 source_functions.len()
             );
         }
