@@ -402,6 +402,45 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     argument (P-B08-SHALLOW). `QCore.MemberRelease`;
     [report](../reports/w45-callee-summary-cascade/README.md).
 
+<a id="constraint-5l"></a>
+
+5l. **An intrusive-list iteration is modelled on its original spelling, and a
+    specification of an audited body is checked, never trusted.**
+    W45-FB-BACKLOG-CUSTODY (`legacy_list_iteration.rs`, `legacy_checked_spec.rs`).
+    (1) The preprocessed Monkey/CFL headers `for (C = (H)->next; C != (H);
+    C = C->next)` and `for (C = (H)->next, N = C->next; C != (H); C = N,
+    N = C->next)` (and `prev`) are recognised on the header's **original**
+    spelling (rule 10c(3)'s distrust of the stripped clauses stands for every
+    other header; `W45-FOR-CLAUSE-ORIGINAL-SPELLING` is discharged for this
+    family only). The init is the typed read of `H`'s root (and member chain),
+    the condition keeps both successors and the exit edge, and each cursor
+    assignment leaves its name unbound: list memory this function does not
+    track. (2) The `container_of` statement expression over an active cursor,
+    a `(H)->next`/`->prev` read or an unwritten, never-bound formal binds its
+    destination the same way; the declaration reader skips the one
+    declaration inside such an expression instead of refusing the function.
+    (3) A **plain** iteration refuses a statement that hands its current node
+    (`C`, `&E->F`) to any call, or `C` or an element bound from it to a
+    position its contract does not declare `Borrowed`; a **safe** iteration
+    protects its saved successor `N` the same way and admits unlinking and
+    releasing the current element (whose custody then refuses on its own:
+    an element of a borrowed container is untracked). Premises, stated not
+    proved: the body does not write or address `C`/`N` (checked lexically;
+    declined otherwise); an element is not an identity the body tracks (the
+    function is declined when one call receives both `&X->…` of a name `X`
+    that may bind a tracked identity and the iterated head); a callee handed
+    the container does not unlink the protected node; a plain body is braced.
+    **Do not** admit a header from its stripped clauses, bind an element from
+    a cursor of a declined iteration, or widen case (2) to a written name.
+    (4) A declaration carrying `requires resource_body_checked;` (contract
+    spec C06.2) is in force in a unit only while the unit defines the body,
+    outside every recursive component, and the body establishes it under the
+    set still standing; otherwise it is withdrawn and the defining row
+    carries `declared specification of … is not established`. **Do not**
+    apply one on a body the unit does not define, and do not accept one
+    beside a `SummaryConflict`. `QCore.ListIteration`,
+    `QCore.CheckedSpecification`; [report](../reports/w45-fb-backlog-custody/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->
