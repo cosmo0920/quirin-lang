@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-TEST-HYGIENE on merge a592e80a (onto main 02e10476, after W45-MEMO-MEMORY, W45-REFUTED-CONTRACT-WITHDRAWAL and earlier wave-45 cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5955 core Rust passed / 0 failed / 11 ignored over 325 summaries; 128 provider Rust passed / 1 failed / 1 ignored over 43 summaries, the one failure being the load-sensitive `configured_audit.rs::pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter` (an assertion on a projected unsupported-operation count), rerun alone once and passing (`ok. 1 passed; 0 failed`); 206 Lean audits; 364 root Python tests (358 before this card, which added 6); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control (real_packages_preserve_unknown_and_reject_mutations, ok on first run), and all five package builds and verifications exit 0. This card changes only tests and test helpers (MOVES=no): the byte-identity step against docs/reports/w45-container-root-reach/integration/artifacts exits 0 with verdict_bearing_identical true and the diagnostics sidecar byte_identical true (identity-vs-container-root-reach-baseline.json); the contracts sidecar is not byte-identical, and the only differing top-level key is `refuted_contracts`, with entries: [], refuted_declarations: 0 and phases: 1 (34-contracts-raw-diff.log), so the corpus does not move. The Registered follow-ups figure in docs/STATUS.md (459) already matches dimensions.named_followups in the regenerated acceptance matrix; no change was needed.",
+ "workspace_tests": 5955,
+ "provider_tests": 128,
+ "python_evidence_validator_tests": 364,
+ "lean_audits": 206,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
