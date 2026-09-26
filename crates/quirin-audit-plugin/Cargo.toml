@@ -1,0 +1,23 @@
+[package]
+name = "quirin-audit-plugin"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "SDK for external quirin-audit subcommand plugins: the versioned JSON protocol, request parsing, response building and a test harness. Links no core analysis crate."
+
+[lib]
+name = "quirin_audit_plugin"
+
+# A subcommand plugin written with this SDK (`quirin-audit example`), used by
+# the SDK's own tests and as the worked example of the user documentation.
+[[bin]]
+name = "quirin-audit-example"
+path = "src/bin/example.rs"
+test = false
+
+[dependencies]
+# SHA-256 only (`qcore_schemas::sha256_hex`): the schema crate carries no
+# analysis logic, as for the checker-plugin SDK `quirin-provider-plugin`.
+qcore-schemas = { path = "../qcore-schemas", version = "17.0.0" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "W45-SUBCOMMAND-CERTIFICATE-ROUTE",
+    "title": "No trusted-core checker accepts a quirin-audit subcommand plugin's certificate or witness",
+    "why": "Card W45-AUDIT-SUBCOMMAND-PLUGINS classifies every subcommand verdict claim with the checker-plugin firewall (`qcore_audit::subcommand_plugins::classify_claim`). A claim's `certificates` are references only: no verification task binds them and no `WitnessChecker` or `CounterexampleChecker` reads them, so every `Safe` claim is `Pending` (QP008 without references, QP016 with them) and every `Unsafe` claim `Pending` (QP010); the certified and validated rows are unreachable on this route (0 claims from the shipped plugins today: the libevent plugin claims nothing). Related to, and not discharged by, W45-PLUGIN-CERTIFICATE-CHECKER, whose task is the user-contract checker's. DISCHARGE: a versioned trusted-core checker for a precisely scoped subcommand claim (a task derived from the claim tuple, evidence bound to the plugin's SHA-256 and the request digest), wired so a certified claim is `Safe` only through a registry-issued `CoreCertificate`, with a test that an unbound or refuted certificate stays `Unknown` and the Lean model's `accepted` case reached.",
+    "source": "docs/reports/w45-audit-subcommand-plugins/README.md",
+    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
+  },
+  {
+    "id": "W45-SUBCOMMAND-CONFINEMENT",
+    "title": "An external quirin-audit subcommand is contained by process group and working directory, not sandboxed",
+    "why": "The host runs `quirin-audit-NAME` in its own process group with its output as working directory, kills the group on a quota breach and at the end of the run, and accepts only artifacts inside the output with their declared SHA-256. Nothing stops the plugin writing elsewhere (the libevent plugin refuses protected outputs itself, but that is the plugin's check, not the host's), and a descendant that calls `setsid` leaves the group and escapes the kill; the host then reports `plugin-escaped-descendant` only if the descendant still holds standard output. The verifier host's `linux-confined-v1` profile (Landlock filesystem rules, a cgroup process quota) is not applied here. DISCHARGE: run subcommand plugins under the verifier host's confining profile (writes limited to the output, reads declared), with tests that a write outside the output and an escaping descendant are refused or killed; or record the measured boundary in contract spec C11.2 as the decided scope.",
+    "source": "docs/reports/w45-audit-subcommand-plugins/README.md",
+    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
+  },
+  {
+    "id": "W45-SUBCOMMAND-NON-UNIX",
+    "title": "External quirin-audit subcommands refuse to run on a non-Unix host",
+    "why": "The quota kill is a process-group kill (`kill(-pgid)`, with `waitid(WNOWAIT)` on Linux so the group ID stays reserved while the rest of the group is killed), so on a host without `std::os::unix` the route reports `plugin-spawn` (`Unknown`) and runs nothing; the integration tests are `#![cfg(unix)]`. The libevent plugin is Unix-only in practice anyway (CMake with make). DISCHARGE: a Windows job object with kill-on-close and the same quotas, with the integration tests run on Windows CI; or a decision that subcommand plugins are Unix-only, recorded in contract spec C11.2.",
+    "source": "docs/reports/w45-audit-subcommand-plugins/README.md",
+    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
+  },
+  {
+    "id": "W45-JSON-TEXT-DUPLICATE",
+    "title": "The ordered JSON text writer exists twice",
+    "why": "`crates/qcore-audit/src/prepare_json.rs` (W44-QUIRIN-AUDIT-PREPARE) and `crates/quirin-audit-plugin/src/json_text.rs` (W45-AUDIT-SUBCOMMAND-PLUGINS, `JsonText`) are the same ordered JSON type (`PyJson` in the former). The card kept its `qcore-audit` change to a new module and thin hooks while concurrent cards edit that crate, so it did not move `prepare.rs` onto the SDK's copy. DISCHARGE: `qcore-audit` uses `quirin_audit_plugin::json_text` and `prepare_json.rs` is deleted, with `prepare_cli` and the prepare parity unchanged.",
+    "source": "docs/reports/w45-audit-subcommand-plugins/README.md",
+    "recorded_by": "W45-AUDIT-SUBCOMMAND-PLUGINS"
+  }
+]

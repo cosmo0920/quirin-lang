@@ -67,6 +67,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 10e | [gateway](gateway.md#constraint-10e) | A counted user is an obligation checked per path; exit clauses of a defined body are verified, never assumed, and an opaque call is undecided. |
 | 10f | [gateway](gateway.md#constraint-10f) | A container outlives the call only by a stated root; an unlinked element of a formal's container is custody taken once, and such a body publishes no summary. |
 | 10g | [gateway](gateway.md#constraint-10g) | A declared contract its own analysed body refutes is withdrawn from every caller, cross-unit through a two-phase refutation table; the held call is Unknown. |
+| 10h | [gateway](gateway.md#constraint-10h) | An external audit subcommand is found only on the declared plugin path, never PATH or a built-in's name; its claims reach a verdict only through the plugin firewall. |
 | 11 | [source-identity](source-identity.md#constraint-11) | Do not normalize the spelled input path (that changes __FILE__), do… |
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |

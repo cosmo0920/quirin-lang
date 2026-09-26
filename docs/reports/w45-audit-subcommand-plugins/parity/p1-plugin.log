@@ -1,0 +1,3 @@
+subcommand `libevent` (quirin-audit-libevent@a539f83700e8cf73): completed; 6 artifact(s), 0 claim(s); verdict none (no claim, no host row)
+  Info audit-configuration: /tmp/claude-1000/w45-asp-parity-3/p1-plugin/libevent-clang-build/libevent-core-audit.json.config
+report: /tmp/claude-1000/w45-asp-parity-3/p1-plugin/quirin-audit-libevent.report.json

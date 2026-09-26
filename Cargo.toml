@@ -11,6 +11,8 @@ members = [
     "crates/qcore-verifier-host",
     "crates/qcore-verification",
     "crates/qcorec",
+    "crates/quirin-audit-plugin",
+    "crates/quirin-audit-plugin-libevent",
 ]
 resolver = "2"
 

@@ -12,6 +12,7 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::revision_compare::USAGE);
         eprintln!("       {}", qcore_audit::checkpoint_cli::USAGE);
         eprintln!("       {}", qcore_audit::plugin_cli::USAGE);
+        eprintln!("       {}", qcore_audit::subcommand_plugins::USAGE);
         return ExitCode::FAILURE;
     };
     if path == "checkpoint" {
@@ -302,6 +303,25 @@ fn main() -> ExitCode {
                 ExitCode::FAILURE
             }
         };
+    }
+    // Card W45-AUDIT-SUBCOMMAND-PLUGINS: after every built-in, an external
+    // subcommand name or a host option runs `quirin-audit-NAME` from the
+    // declared plugin search path.
+    if path
+        .to_str()
+        .is_some_and(qcore_audit::subcommand_plugins::claims)
+    {
+        let mut rest = Vec::new();
+        for argument in std::iter::once(path).chain(arguments) {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::subcommand_plugins::main(rest);
     }
     // Card W44-QUIRIN-AUDIT-PROVIDERS: `quirin-audit [--jobs N] CONFIG.json`
     // (or `CONFIG.json --jobs N`); the flag takes precedence over the

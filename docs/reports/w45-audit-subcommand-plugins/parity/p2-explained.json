@@ -1,0 +1,7 @@
+{
+  "libevent-clang-build/CMakeFiles/CMakeConfigureLog.yaml": "try-compile names, timings, progress, and relative PATH entries ['./.cabal-sandbox/bin'] resolved against the working directory",
+  "libevent-clang-build/CMakeFiles/CMakeError.log": "random try-compile names",
+  "libevent-clang-build/CMakeFiles/CMakeOutput.log": "random try-compile names",
+  "libevent-clang-build/configure.log": "random try-compile names and step timings",
+  "libevent-clang-build/native-build.log": "line order only (parallel build interleaving), after the masks"
+}

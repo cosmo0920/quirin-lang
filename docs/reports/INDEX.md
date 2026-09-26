@@ -874,6 +874,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-audit-checkpoints](w45-audit-checkpoints/README.md) | W45-AUDIT-CHECKPOINTS: per-group `.qo` checkpoints, resume and streaming composition |
 
+| [w45-audit-subcommand-plugins](w45-audit-subcommand-plugins/README.md) | W45-AUDIT-SUBCOMMAND-PLUGINS: external `quirin-audit` subcommands, their SDK, and the libevent plugin |
+
 | [w45-callee-summary-cascade](w45-callee-summary-cascade/README.md) | W45-CALLEE-SUMMARY-CASCADE: which callee bodies unblock whom, and the destructor body modeled |
 
 | [w45-container-root-reach](w45-container-root-reach/README.md) | W45-CONTAINER-ROOT-REACH: where a container outlives the function, and the foreign unlink |

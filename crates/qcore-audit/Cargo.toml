@@ -17,6 +17,8 @@ qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "17.0.0" }
 qcore-verification = { path = "../qcore-verification", version = "0.4.0" }
 qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.4.0" }
+# Card W45-AUDIT-SUBCOMMAND-PLUGINS: the external-subcommand protocol.
+quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 # Card W45-AUDIT-CHECKPOINTS: the `.qo` checkpoint's binary encoding (postcard,
@@ -26,3 +28,8 @@ serde_json = "1.0.151"
 postcard = { version = "1.1.3", default-features = false, features = ["use-std"] }
 serde_norway = "0.9.42"
 toml = "1.1.6"
+
+# Card W45-AUDIT-SUBCOMMAND-PLUGINS: the process-group kill of an external
+# subcommand (the version `qcore-verifier-host` already uses).
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.189"

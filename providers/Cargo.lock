@@ -88,12 +88,14 @@ dependencies = [
 name = "qcore-audit"
 version = "0.1.0"
 dependencies = [
+ "libc",
  "postcard",
  "qcore-c-gateway",
  "qcore-contract",
  "qcore-schemas",
  "qcore-verification",
  "qcore-verifier-host",
+ "quirin-audit-plugin",
  "serde",
  "serde_json",
  "serde_norway",
@@ -228,6 +230,15 @@ version = "0.4.0"
 dependencies = [
  "libc",
  "qcore-frontend",
+ "qcore-schemas",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "quirin-audit-plugin"
+version = "0.1.0"
+dependencies = [
  "qcore-schemas",
  "serde",
  "serde_json",

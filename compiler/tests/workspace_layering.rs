@@ -55,7 +55,17 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-schemas",
             "qcore-verification",
             "qcore-verifier-host",
+            // Card W45-AUDIT-SUBCOMMAND-PLUGINS: the external-subcommand
+            // protocol, a leaf SDK above the schema crate only.
+            "quirin-audit-plugin",
         ],
+    ),
+    // The subcommand-plugin SDK links no core analysis crate (SHA-256 from the
+    // schema crate), and its first plugin only the SDK.
+    ("crates/quirin-audit-plugin", &["qcore-schemas"]),
+    (
+        "crates/quirin-audit-plugin-libevent",
+        &["quirin-audit-plugin", "qcore-schemas"],
     ),
     ("crates/qcorec", &["qcore-compiler"]),
 ];

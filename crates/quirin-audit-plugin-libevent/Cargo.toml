@@ -1,0 +1,19 @@
+[package]
+name = "quirin-audit-plugin-libevent"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "The `quirin-audit libevent` subcommand plugin: prepares the pinned libevent-core configured-audit inputs byte-identical to the retired preparation script of card G03-F."
+
+[lib]
+name = "quirin_audit_plugin_libevent"
+
+# `quirin-audit libevent …` runs this executable.
+[[bin]]
+name = "quirin-audit-libevent"
+path = "src/main.rs"
+
+[dependencies]
+quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "17.0.0" }
+serde_json = "1.0.151"

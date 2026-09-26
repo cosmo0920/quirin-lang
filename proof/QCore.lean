@@ -252,5 +252,6 @@ import QCore.ContainerRootReach
 import QCore.CountedUsers
 import QCore.RefutedContractWithdrawal
 import QCore.Checkpoints
+import QCore.SubcommandPlugins
 
 /-! The executable formal core of QCore-C revision 0.1. -/

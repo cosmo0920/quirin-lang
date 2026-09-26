@@ -1,0 +1,8 @@
+Ubuntu clang version 21.1.8 (6ubuntu1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm-21/bin
+cmake version 4.2.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+d82464a277d0f42703702c4dfd9af6af38595a83
