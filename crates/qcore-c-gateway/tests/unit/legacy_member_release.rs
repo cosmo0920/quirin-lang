@@ -487,3 +487,81 @@ fn the_releasing_set_is_closed_under_calls() {
         ]
     );
 }
+
+// Card W45-GATEWAY-MEMO-KEY: the memo serves an entry only on key equality.
+
+fn releasing_source() -> String {
+    format!(
+        "{RECORD}{DESTROY}static void outer(struct node *n) {{ node_destroy(n); }}\n\
+         static void plain(struct node *n) {{ q_nullable_free(n); }}\n"
+    )
+}
+
+fn texts(tokens: &[super::Token]) -> Vec<String> {
+    tokens.iter().map(|token| token.text.clone()).collect()
+}
+
+fn bogus() -> std::collections::BTreeSet<String> {
+    ["bogus".to_owned()].into_iter().collect()
+}
+
+#[test]
+fn a_forced_digest_collision_is_a_miss_and_gives_the_uncached_answer() {
+    let (tokens, _) = tokenize_with_conditionals(&releasing_source());
+    let uncached = super::compute_member_releasing_functions(&tokens);
+    assert!(uncached.contains("node_destroy") && !uncached.contains("plain"));
+    // Another stream of the same length that differs in one text, filed under
+    // this stream's digest: a collision whose answer would drop every guard.
+    let mut colliding = texts(&tokens);
+    let last = colliding.len() - 1;
+    colliding[last].push_str("_other");
+    super::inject_releasing_entry(super::releasing_digest(&tokens), colliding, bogus());
+    assert_eq!(*super::member_releasing_functions(&tokens), uncached);
+    // A shorter key under the same digest is a miss too.
+    super::inject_releasing_entry(
+        super::releasing_digest(&tokens),
+        texts(&tokens[..last]),
+        bogus(),
+    );
+    assert_eq!(*super::member_releasing_functions(&tokens), uncached);
+}
+
+#[cfg(not(feature = "member-release-memo-off"))]
+#[test]
+fn the_hook_reaches_the_memo_so_the_collision_test_is_not_vacuous() {
+    let (tokens, _) = tokenize_with_conditionals(&releasing_source());
+    // The whole key under its own digest is served, whatever answer it holds:
+    // the entry the collision test injects is the one the memo consults.
+    super::inject_releasing_entry(super::releasing_digest(&tokens), texts(&tokens), bogus());
+    assert_eq!(*super::member_releasing_functions(&tokens), bogus());
+    // The whole key under another digest is not.
+    super::inject_releasing_entry(
+        super::releasing_digest(&tokens) ^ 1,
+        texts(&tokens),
+        bogus(),
+    );
+    assert_eq!(
+        *super::member_releasing_functions(&tokens),
+        super::compute_member_releasing_functions(&tokens)
+    );
+}
+
+#[test]
+fn interleaved_streams_always_get_their_uncached_answer() {
+    let first = tokenize_with_conditionals(&releasing_source()).0;
+    let second = tokenize_with_conditionals(&format!(
+        "{RECORD}static void element(void **v) {{ q_nullable_free(v[0]); }}\n"
+    ))
+    .0;
+    let expected = [
+        super::compute_member_releasing_functions(&first),
+        super::compute_member_releasing_functions(&second),
+    ];
+    assert_ne!(expected[0], expected[1]);
+    for round in 0..4 {
+        for (tokens, want) in [(&first, &expected[0]), (&second, &expected[1])] {
+            assert_eq!(*super::member_releasing_functions(tokens), *want, "round {round}");
+            assert_eq!(*super::member_releasing_functions(tokens), *want, "round {round}");
+        }
+    }
+}
