@@ -29,9 +29,11 @@
  "records_tip": {
   "log_directory": "private/memo-memory/gate-records/",
   "note": "The records commit after 78e3f2b0 changes only documentation, evidence, the report scripts and the matrix's W45-CHECKPOINT-JOBS-MEMORY text; fmt, the Python suite and the docs index check were rerun there.",
-  "fmt": null,
-  "python": null,
-  "docs_index": null
+  "fmt": 0,
+  "python": 0,
+  "docs_index": 0,
+  "tip": "91a0db68",
+  "python_tests": 358
  },
  "environment": "CARGO_INCREMENTAL=0; host shared with two other cards (load average 15-56 during the gate); the gate overlapped four of this card's own measurement runs (README section 3)",
  "provider_gate": "not run: providers/ untouched",
