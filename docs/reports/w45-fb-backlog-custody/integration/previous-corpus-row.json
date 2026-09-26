@@ -1,0 +1,29 @@
+{
+ "note": "W45-FB-RETRY-LIFETIME integration, 2026-09-25. The card (measured against docs/reports/w45-parenthesised-callee/integration/artifacts) composed onto the combined tree docs/reports/w45-parenthesised-callee/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 11 added 18 functions 1 units 0); functions moved (combined): [('flb_input_chunk_create', ('Safe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] functions moved: flb_input_chunk_create Safe -> Unknown (a correction: its Safe relied on reading mk_list_add as a borrow). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 4,
+ "provisional_unsafe": 10,
+ "unknown": 167,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 37,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts/",
+ "source": "docs/reports/w45-fb-retry-lifetime/integration/integration-confirmation.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts",
+ "unknown_alias_diagnostics": 3571,
+ "unsupported_diagnostics": 42702,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 389,
+  "provisional_unsafe": 12,
+  "unknown": 4433
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 166,
+  "none": 18,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
