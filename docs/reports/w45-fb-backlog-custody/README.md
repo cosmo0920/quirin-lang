@@ -651,6 +651,28 @@ dev` runs after the test step. `scripts/pin.sh` records the pinning. Commands,
 exits and counts are in [gate.json](gate.json); logs are under the
 worktree-private `private/w45-fb-backlog-custody/`.
 
+Final gate on `ab87c458` (the merged tree with §2.5): every step exited 0.
+
+| Step | Result |
+|---|---|
+| submodule; `cargo fmt --check`; `cargo clippy -D warnings`; both reevaluation probes | 0 each |
+| Rust suite (`scripts/run_test_binaries.py`) | 0: 305 units, 315 summaries; **5,877 passed**, 0 failed, 11 ignored |
+| `cargo clean --profile dev` | 0 |
+| Lean audits | 0: **201** passed |
+| Root Python tests | 0: **358** tests |
+| `build_docs_index.py --check` | 0 |
+| Provider gate: `contracts.py check`, `package.py build` + `verify qcore.libevent`, `providers/tests`, provider `cargo test`, fmt and clippy | 0 each: 15 Python tests; 124 Rust tests passed, 0 failed |
+| Pins (`scripts/pin.sh`): pin at `046accf6` and `66910c10`, `pin --check` at both, `pin --verify-contracts` | 0 each |
+
+**Discarded, recorded in `gate.json`:**
+
+* `c63f1a08`: the first version of §2.5 withdrew `borrow_residuals_boundary`'s
+  pinned leak, and the rule was narrowed.
+* The first attempt at `9e76fc64`: a private export sat inside the worktree.
+
+**Earlier green gates:** `9e76fc64` (first merge) and `316cf766` (the card's
+own base).
+
 ## Reproduce
 
 ```sh
