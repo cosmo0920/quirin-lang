@@ -404,9 +404,20 @@ not decide EP-L012, whose missing premise is a ChunkIO return-code fact.
 
 ## 8. Validation
 
-Gate commands, exits and counts are in [gate.json](gate.json). The corpus
-arbiter was not run: no analyzer, contract or provider code changed, so it
-cannot move. The slice was run (§ Headline, [invocation](artifacts/slice-invocation.json)).
+The standing gate ran on the merged tip `8f794bf6` (base, card and `main`
+`02e10476`), `scripts/gate.sh`, every step exit 0 ([gate.json](gate.json)):
+
+* Rust suite: 312 units, 322 summaries; 5,951 passed, 0 failed, 11 ignored;
+* fmt, clippy and both reevaluation probes: exit 0;
+* Lean: 206 audits passed;
+* Python: 358 tests;
+* docs index check: exit 0.
+
+No provider step ran, because `providers/` is untouched. The corpus arbiter
+was not run: no analyzer, contract or provider code changed, so it cannot
+move. The slice was re-run with the merged tree's `quirin-audit`, and its
+report is byte-identical to the census run
+([invocation](artifacts/slice-invocation.json)).
 
 ## Follow-ups
 
