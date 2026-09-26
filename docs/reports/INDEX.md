@@ -284,6 +284,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [docs-compact-8](docs-compact-8/README.md) | `DOCS-COMPACT-8` — the wave-40 compaction pass over `AGENTS.md`, `CLAUDE.md`, `README.md` |
 
+| [docs-compact-9](docs-compact-9/README.md) | `DOCS-COMPACT-9` — the ninth documentation compaction (wave 45 close) |
+
 | [docs-structure-compression](docs-structure-compression/README.md) | DOCS-STRUCTURE-COMPRESSION — routed rules and a single documentation hub |
 
 ## E

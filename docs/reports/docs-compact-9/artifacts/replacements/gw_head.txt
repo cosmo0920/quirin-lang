@@ -1,0 +1,4 @@
+read. Rule numbers and anchors are stable; backticked paths are repository-relative.
+Per-card history compacted out of rules 5c, 7 and 8 at wave 45 is kept verbatim
+in the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#gateway),
+which is not a second authority.

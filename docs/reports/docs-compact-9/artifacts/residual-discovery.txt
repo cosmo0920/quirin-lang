@@ -1,0 +1,7 @@
+before 97 names, after 98 names
+lost: []
+new: ['W43-LIBC-POINTER-QUALIFIER-READER']
+mention sets changed: 1
+  DOCS-COMPACT-9 () -> ('docs/agents/diagnostics.md',)
+
+[exit 0]

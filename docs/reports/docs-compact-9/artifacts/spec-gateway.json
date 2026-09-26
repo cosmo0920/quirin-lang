@@ -1,0 +1,66 @@
+{
+ "file": "docs/agents/gateway.md",
+ "base": "8c1f15eb",
+ "section": "gateway",
+ "heading": "`docs/agents/gateway.md`",
+ "edits": [
+  {
+   "start": 4,
+   "end": 4,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_head.txt",
+   "moved": []
+  },
+  {
+   "start": 147,
+   "end": 230,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_5c.txt",
+   "moved": [
+    [
+     147,
+     230
+    ]
+   ],
+   "title": "Constraint 5c",
+   "note": "The whole preserved block, markers included. Kept in the rule: the key, the three survivals, the `for (;;)` route by identifier, the value route's exit-edge rule, the Lean names and the acyclicity boundary. Moved: the line-number history, the 154-pruning and 4,771-function figures, the superseded `CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED` ownership sentence and the wave-35 close's two integrator clauses. Corrected in the rule: the do-while condition leaves are 28 on the current baseline (32 at the card's re-pin)."
+  },
+  {
+   "start": 473,
+   "end": 547,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_7.txt",
+   "moved": [
+    [
+     473,
+     547
+    ]
+   ],
+   "title": "Constraint 7",
+   "note": "The whole preserved block, markers included, with the per-leaf chain from 271 through the wave-37 re-verification. Corrected in the rule: the pin is 34 on the current baseline, not 272. Kept in the rule: the attribution duty, the accusing and deciding directions, withdrawal is not discharge, no promotion, the declarative-card and presentation lessons, the registered residuals and every report pointer."
+  },
+  {
+   "start": 551,
+   "end": 551,
+   "with": null,
+   "moved": [
+    [
+     551,
+     551
+    ]
+   ],
+   "title": "Constraint 8, the preserved start marker",
+   "note": "Removed with the end marker (next block); lines 552–580 stay byte-identical in place."
+  },
+  {
+   "start": 581,
+   "end": 604,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/gw_8tail.txt",
+   "moved": [
+    [
+     581,
+     604
+    ]
+   ],
+   "title": "Constraint 8, the two first-exercise paragraphs",
+   "note": "The rest of the preserved block and its end marker. Kept in the rule as two precedents, with both residual names and the report pointer."
+  }
+ ]
+}

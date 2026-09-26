@@ -1,0 +1,9 @@
+The blocks still marked preserved above are the migration's reconstruction
+text, checked by `docs/reports/docs-structure-compression/verify.py` at that
+card's own checkpoint, and are not edited in place. The namespaces section was
+not: at wave 45 `DOCS-COMPACT-9` compacted its table rows to their current
+conditions, moving the per-card wording verbatim, with its preserved markers,
+into the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#diagnostics).
+Amendments land here, carry the same authority as the rule they amend, and stay
+short: `docs/QCORE_SPEC_r0_3.md` §L21 carries each condition's full text, and
+this page is capped at 32 KiB.

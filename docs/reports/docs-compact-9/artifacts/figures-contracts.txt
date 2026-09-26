@@ -1,0 +1,6 @@
+{'qcore-provider-chunkio': 44, 'qcore-provider-cmetrics': 4, 'qcore-provider-ctraces': 1, 'qcore-provider-libevent': 15, 'qcore-provider-librdkafka': 8, 'quirin-provider-cfl': 4, 'quirin-provider-fluent-bit': 16, 'quirin-provider-libc': 16, 'quirin-provider-mpack': 1, 'quirin-provider-msgpack': 1, 'quirin-provider-plugin': 1, 'quirin-provider-shared': 4} total 115
+resource-v1 declarations 163
+flb_input_chunk.c Unknown
+qcore-provider-* (executable) 72 quirin-provider-* 43
+
+[exit 0]

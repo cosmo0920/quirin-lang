@@ -1,0 +1,40 @@
+7. Leak diagnostics are **34** across the pinned 185-unit corpus
+   (`diagnostic_counts.leak` of the combined baseline
+   `docs/reports/w45-container-root-reach/integration/artifacts/`). A change
+   that moves that number is a finding to attribute in the re-pin, not to
+   absorb. Every move so far has been deliberate and of one of two kinds, and a
+   re-pin names which:
+   * **Accusing**: a newly modelled exit, path or call exposes a leak. Admitting
+     a previously unmodelled exit is an accusing move by construction, because
+     `report_leaks` **skips** an unmodelled exit; an admission card reaching
+     bodies that retain should expect the pin to rise, and that rise is a
+     finding to attribute, not a regression. (`C-GATEWAY-RETURN-CALL-W4`, the
+     first admission card to move no leaf, modelled wrappers that retain nothing.)
+   * **Deciding** a leaf, where a **withdrawal** — the site marked through the
+     unresolved-effect mechanism, so `report_leaks` skips it (`W44-LEAK-PIN-AUDIT`'s
+     refused hand-on rule, extended by constraint 5l (5)) — is not a **discharge**; only a
+     discharging contract or rule answers the leak itself.
+   No move has promoted anything: a withdrawn leak moves a provisional `Unsafe`
+   to `Unknown`, never to `Safe`, and no leak row is a validated upstream
+   defect claim. A declarative card that decides uncontracted-call leaves is
+   not automatically a leak-pin event (`W36-CORPUS-CONTRACTS-3` and
+   `W37-CORPUS-CONTRACTS-4` moved it not at all); the pin is then re-verified,
+   not re-derived. A leak leaf's identity is its preprocessed line, and a
+   presentation re-pin rewrites a description, not a leaf.
+   The pin read 266 from wave 23, 272 from the `C-GATEWAY-WAVE` re-pin into wave
+   43, and 271 from later wave-43 cards to `W44-LEAK-PIN-AUDIT`'s base, which classified
+   every leaf; its hand-on rule then withdrew 249 on the combined tree
+   (270 → 21), and the wave-44/45 cards moved it 21 → 19 → 34 → 35 → 37 → 34,
+   each move attributed in its card's report and archived arbiter. The
+   per-leaf chain through wave 37 is in the wave-45 compaction checkpoint;
+   its residuals stay registered: `AOM-DESTROY-JOINED-PROVENANCE`,
+   `AOM-SIBLINGS-BINDING-POISON` (whose repair moves sites toward the
+   *discharging* arm, a direction invariant 1 constrains) and
+   `CONSTRUCTOR-RESIDUALS-LEAK-271` (withdrawn by refusal at wave 23 for five
+   of its six leaves; L19544, on the success path, stands).
+   `remaining-o04-b08`, `corpus-repin`,
+   `remaining-constructor-residuals` §6.4, `wave17-corpus`,
+   `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
+   `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1,
+   `aom-binding-poison` Headline and §5.2, `gateway-c-location` §5.3,
+   `c-gateway-wave`, `c-gateway-return-call-w4` §5, `w44-leak-pin-audit`.

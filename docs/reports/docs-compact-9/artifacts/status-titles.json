@@ -1,0 +1,18 @@
+{
+ "3-12": ["The provenance paragraph", "Replaced by a single provenance statement naming the baseline and which rows were re-derived here."],
+ "25-25": ["Coverage row: Cycle 19 units", "Kept: the current figures and the last moving card. Moved: the unit-move chain back to W43-INDIRECT-ACCESS-GENERAL."],
+ "26-26": ["Coverage row: Projected functions", "Kept: the current figures, the last moving card, every card's premise boundary (including index traversal's no-bounds claim) and the two soundness repairs. Moved: the per-card count chain."],
+ "27-27": ["Coverage row: Corpus diagnostics", "Kept: the current counts and the last move. Moved: the per-card count chain with its attribution links."],
+ "28-28": ["Coverage row: Leak classification", "Kept: the card's classification figures. Moved: the combined-tree narrative from 21 to 34."],
+ "29-29": ["Coverage row: Uncontracted-call refusals", "Corrected, not compacted: the figures were W45-SUB-OBJECT-STORES'; `callee_census.py` on the current baseline gives 9,157 / 2,619 / 436, and the by-callee split is now that run's."],
+ "30-30": ["Coverage row: Condition-call refusals", "Kept whole and dated to its card; the current branch-condition figure added from the baseline blocker census."],
+ "31-31": ["Coverage row: Indirect-access refusals", "Kept: the current figures (re-derived) and the four residual sizings. Moved: the per-card count chain."],
+ "33-33": ["Coverage row: Return-expression refusals", "Kept: the current figures (re-derived) and the residual sizing. Moved: the per-card count chain."],
+ "34-34": ["Coverage row: Unit reasons", "Re-sourced to the baseline, where the figures reproduce."],
+ "42-42": ["Coverage row: Contract corpus", "Kept: every current figure and source. Moved: the declaration-count chain."],
+ "45-45": ["Coverage row: Fluent Bit system slice", "Kept: the current figures, the refuted OR-1/OR-7 decisions, the held callers and the OR-2/OR-6 and OB-1 … OB-10 status. Moved: the per-card slice chain."],
+ "48-48": ["Coverage row: Registered follow-ups", "Kept: the count and the last moving card. Moved: every card's registration list, which each report and wave record carries."],
+ "65-78": ["The raw-units paragraph", "Corrected: the unit Safe count is 5, not 3, and `flb_input_chunk_create` has been Unknown since W45-FB-RETRY-LIFETIME."],
+ "97-139": ["Latest validated gate, and the provider-contract narrative", "Corrected: the gate named was the task-context bundle's (5,043 Rust / 165 Lean / 336 Python); the latest merged gate is W45-AUDIT-SUBCOMMAND-PLUGINS' integration gate. The provider paragraph said 39 shared modules and 111 indexed; the tree has 42 and 114. The contract-inheritance chronicle moved here."],
+ "141-189": ["The follow-up chronicle", "Corrected: it said 391 follow-ups; the matrix carries 472. Kept: the three open Cycle 18 follow-ups, now by name, and the outstanding coverage. Moved: the card-by-card registration chain from W43 to W44."]
+}

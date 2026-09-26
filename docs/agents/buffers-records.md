@@ -317,15 +317,10 @@ part of the rule — read them with it.
 ### 15k — appended, card `OWNED-FIELD-ROUTE-REACH` (wave 41)
 
 It supersedes nothing above — it makes two of constraint 15k's own sentences
-reachable, which `STABILITY-REEVAL-4` measured they were not.
-
-The copy rule of the sentence "`Copy` of a record declaring an owned field
-refuses whatever the state of its fields" was decided by **four unit tests and
-by nothing else**: `OwnershipOp::Copy` was constructed nowhere outside
-`crates/qcore-core/tests/unit/ownership.rs`, so no `.qcore` program could
-produce the operation the rule refuses, and the opening sentence "a record of
-scalars is a plain **copyable** value" was an assertion this project could not
-check in either direction.
+reachable, which `STABILITY-REEVAL-4` measured they were not: the copy rule
+("`Copy` of a record declaring an owned field refuses whatever the state of its
+fields") and "a record of scalars is a plain **copyable** value", whose
+operation, `OwnershipOp::Copy`, no `.qcore` program could produce before it.
 
 The route now spells the question: `let NAME = NAME;` — **the copy bind** —
 builds `OwnershipOp::Copy` for every name the ledger holds a binding for and

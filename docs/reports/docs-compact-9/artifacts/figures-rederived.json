@@ -1,0 +1,57 @@
+{
+ "baseline": "docs/reports/w45-container-root-reach/integration/artifacts",
+ "unit_statuses": {
+  "Unknown": 168,
+  "Safe": 5,
+  "Unsafe": 8,
+  "data_only": 4
+ },
+ "unit_total": 185,
+ "function_statuses": {
+  "Unknown": 4427,
+  "Safe": 398,
+  "Unsafe": 9
+ },
+ "function_total": 4834,
+ "diagnostic_counts": {
+  "leak": 34,
+  "summary_conflict": 1,
+  "unknown_alias": 3571,
+  "unsupported": 41314
+ },
+ "ct_mapping": {
+  "mapped": 50
+ },
+ "ct_proof": [
+  "CT01",
+  "CT03",
+  "CT07",
+  "CT37",
+  "CT50"
+ ],
+ "ct_sanitized": [
+  "CT03",
+  "CT07",
+  "CT09",
+  "CT17",
+  "CT22",
+  "CT25",
+  "CT26",
+  "CT34",
+  "CT46",
+  "CT49"
+ ],
+ "named_followups_carried": 472,
+ "named_followups_dimension": 472,
+ "contract_corpus_keys": [
+  "schema_version",
+  "load_path",
+  "roots"
+ ],
+ "contract_corpus_modules": null,
+ "lean_audits": 207,
+ "lean_toolchain": "leanprover/lean4:v4.34.0",
+ "manifest_selected": 50
+}
+
+[exit 0]

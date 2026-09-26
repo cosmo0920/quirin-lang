@@ -1,0 +1,3 @@
+{"file": "docs/agents/buffers-records.md", "base": "8c1f15eb", "section": "buffers-records", "heading": "`docs/agents/buffers-records.md`", "edits": [
+ {"start": 319, "end": 328, "with": "docs/reports/docs-compact-9/artifacts/replacements/br_15k.txt", "moved": [[319, 328]], "title": "15k amendment (`OWNED-FIELD-ROUTE-REACH`), its opening two paragraphs", "note": "Kept: what the amendment makes reachable, both quoted sentences and who measured them unreachable. Moved: the account of the four unit tests and the test file that alone constructed the operation. The preserved blocks of this page are untouched."}
+]}
