@@ -73,6 +73,11 @@ pub mod pin_hold;
 #[path = "legacy_refuted_contract.rs"]
 pub mod refuted_contract;
 
+// Card W45-SR5-SOUNDNESS: the reserved rewrite prefixes, escaped where the
+// source spells them, so a held or withdrawn call is only ever tool-minted.
+#[path = "legacy_reserved_spelling.rs"]
+pub mod reserved_spelling;
+
 // Card W45-USER-CONTRACT-PLUGINS: the four-value verdict. Function and unit
 // statuses are folds of the verdict semigroup; a held call is `Pending`.
 #[path = "legacy_verdict.rs"]
@@ -1907,6 +1912,10 @@ fn analyze_legacy_c_tokens(
     // the hold included, reads a call.
     let normalised = parenthesised_callee::normalise_tokens(tokens);
     let tokens = normalised.as_deref().unwrap_or(tokens);
+    // Card W45-SR5-SOUNDNESS: a reserved prefix the source spells is escaped
+    // before any rewrite mints one.
+    let escaped = reserved_spelling::escape(tokens);
+    let tokens = escaped.as_deref().unwrap_or(tokens);
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let held_tokens = review_hold::hold_call_sites(tokens, contracts);
     let tokens = held_tokens.as_deref().unwrap_or(tokens);
@@ -1929,6 +1938,26 @@ fn analyze_legacy_c_tokens(
     Ok(analyze_cfg(build_function_cfg(
         tokens, function, contracts,
     )?))
+}
+
+/// The unread-definition gate's refusal (unit **E01-TAIL**): the selected
+/// source definitions that carry no analysed row, if there are any. Shared by
+/// the `Safe` arm and, since card W45-SR5-SOUNDNESS, the `Pending` arm.
+fn unread_selected_definitions(
+    selected: Option<&[String]>,
+    summary: &LegacyProgramSummary,
+) -> Option<String> {
+    let selected = selected?;
+    let unread = selected
+        .iter()
+        .filter(|name| !summary.functions.contains_key(*name))
+        .collect::<Vec<_>>();
+    let first = unread.first()?;
+    Some(format!(
+        "{} of {} selected source definition(s) carry no analysed row, so no whole-unit Safe claim is published over them; first: `{first}`",
+        unread.len(),
+        selected.len(),
+    ))
 }
 
 /// Gate the conservative importer with Clang's production C11 parser.  The
@@ -2110,13 +2139,51 @@ fn analyze_preprocessed_unrestricted_c11(
     }
     match summary.status {
         AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
+        AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason: unresolved_projection_reason(&summary),
+            partial: Some(summary),
+        }),
         // Card W45-USER-CONTRACT-PLUGINS: a `Pending` unit is published
         // through the same variant; `UnrestrictedLegacyResult::verdict` reads
         // it back from the summary's status.
-        AnalysisStatus::Unknown | AnalysisStatus::Pending => {
+        //
+        // Card W45-SR5-SOUNDNESS (`PENDING-BYPASSES-UNIT-SAFE-GATES`): a
+        // `Pending` unit says only a named human act stands between it and
+        // `Safe`, so it passes the `Safe` arm's scope gates as well: a unit
+        // either gate withholds from `Safe` is `Unknown`, whatever it holds
+        // (spec §L21.1). Before, an unread selected definition beside a held
+        // call published `Pending` where the same unit without the hold was
+        // `Unknown`.
+        AnalysisStatus::Pending => {
+            let mut summary = summary;
+            let reason = unresolved_projection_reason(&summary);
+            let withheld = unread_selected_definitions(source_functions.as_deref(), &summary)
+                .or_else(|| {
+                    build_certificate_scope_from_evidence(
+                        dialect,
+                        function_scope,
+                        &preprocessed_source,
+                        Some(&raw_source),
+                        line_marked_source.as_deref(),
+                        request,
+                    )
+                    .err()
+                    .map(|scope| {
+                        format!("certificate target scope could not be established: {scope}")
+                    })
+                });
+            if let Some(withheld) = withheld {
+                summary.status = AnalysisStatus::Unknown;
+                return Ok(UnrestrictedLegacyResult::Unknown {
+                    preprocessed_source,
+                    reason: format!("{reason}; {withheld}"),
+                    partial: Some(summary),
+                });
+            }
             Ok(UnrestrictedLegacyResult::Unknown {
                 preprocessed_source,
-                reason: unresolved_projection_reason(&summary),
+                reason,
                 partial: Some(summary),
             })
         }
@@ -2150,23 +2217,13 @@ fn analyze_preprocessed_unrestricted_c11(
             // replay: the certificate retains the exact evidence from which
             // the selected denominator is reconstructed, and the checker never
             // uses `checked_functions` as its target set.
-            if let Some(selected) = source_functions.as_deref() {
-                let unread = selected
-                    .iter()
-                    .filter(|name| !summary.functions.contains_key(*name))
-                    .cloned()
-                    .collect::<Vec<_>>();
-                if let Some(first) = unread.first() {
-                    return Ok(UnrestrictedLegacyResult::Unknown {
-                        preprocessed_source,
-                        reason: format!(
-                            "{} of {} selected source definition(s) carry no analysed row, so no whole-unit Safe claim is published over them; first: `{first}`",
-                            unread.len(),
-                            selected.len(),
-                        ),
-                        partial: Some(summary),
-                    });
-                }
+            if let Some(reason) = unread_selected_definitions(source_functions.as_deref(), &summary)
+            {
+                return Ok(UnrestrictedLegacyResult::Unknown {
+                    preprocessed_source,
+                    reason,
+                    partial: Some(summary),
+                });
             }
             let target_scope = match build_certificate_scope_from_evidence(
                 dialect,
@@ -2464,6 +2521,8 @@ pub(crate) fn recursive_component_census(
     let (tokens, conditionals) = tokenize_with_conditionals(source);
     // Card W45-PARENTHESISED-CALLEE: the same stream the analysis reads.
     let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
+    // Card W45-SR5-SOUNDNESS: the same escape the analysis applies.
+    let tokens = reserved_spelling::escape_owned(tokens);
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
@@ -2520,6 +2579,10 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // `f(x)` first, so the hold, both withdrawals, W4 and every classifier
     // position below read the call C evaluates.
     let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
+    // Card W45-SR5-SOUNDNESS: every identifier the source spells with a prefix
+    // a rewrite below reserves is escaped first, so every marked name any
+    // reader sees was minted from the environment (`reserved_spelling`).
+    let tokens = reserved_spelling::escape_owned(tokens);
     // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human review
     // is already absent from the environment (the loader withholds it); its
     // call sites are rewritten here, before the ABI gate and everything else
@@ -2666,6 +2729,7 @@ fn analyze_defined_function(
         Some(cfg) => cfg.clone(),
         None => build_function_cfg(tokens, function, derivation.environment())?,
     };
+    let double_releases = member_release::callee_double_releases(&cfg);
     let mut summary = match derivation.entry_contract(function) {
         Some(contract) => match function_parameters(tokens, function) {
             Some(parameters) => {
@@ -2728,6 +2792,14 @@ fn analyze_defined_function(
     // this body after its custody analysis. The identity in every environment
     // that declares none.
     counted_users::check(tokens, function, derivation.environment(), &mut summary);
+    // Card W45-SR5-SOUNDNESS: a member release a later callee repeats is a
+    // double release candidate, beside the refusal that withheld it.
+    if !double_releases.is_empty() {
+        summary.diagnostics.extend(double_releases);
+        summary.diagnostics.sort();
+        summary.diagnostics.dedup();
+        summary.status = classify_diagnostics(&summary.diagnostics);
+    }
     Ok(summary)
 }
 
@@ -2905,6 +2977,8 @@ fn build_function_cfg_with(
             container_publication::CallerFormals::read(&body, &formal_parameters)
                 // Card W45-CONTAINER-ROOT-REACH: static containers.
                 .with_statics(&publications.destinations)
+                // Card W45-SR5-SOUNDNESS: a root the body releases is not one.
+                .with_released_roots(&body, contracts)
         },
     );
     let mut parser = Parser {
@@ -7180,6 +7254,16 @@ impl Parser<'_> {
                 writes: self.refused_writes(&texts),
             };
         }
+        // Card W45-SR5-SOUNDNESS: a name the source spelled with a reserved
+        // prefix, escaped, refuses as an uncontracted call under its own name.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| reserved_spelling::escaped_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: reserved_spelling::escaped_call_description(callee),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
         // *before* the lexical access gate, so the statement reports why the
         // declaration did not cover it rather than the access the withdrawn
@@ -7656,6 +7740,13 @@ impl Parser<'_> {
             if let Some(callee) = refuted_contract::held_callee(function) {
                 return LegacyInstruction::Unknown {
                     description: refuted_contract::hold_description(callee),
+                    writes: self.refused_writes(&texts),
+                };
+            }
+            // Card W45-SR5-SOUNDNESS: likewise for an escaped source name.
+            if let Some(callee) = reserved_spelling::escaped_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: reserved_spelling::escaped_call_description(callee),
                     writes: self.refused_writes(&texts),
                 };
             }

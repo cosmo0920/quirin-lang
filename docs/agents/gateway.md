@@ -348,7 +348,11 @@ which is not a second authority.
     declared object pointer (escaping its fresh site); everything else keeps
     the return refusal. A pointer-valued read is never this rule's: an
     interior address is a derived result (`legacy_return_family.rs`;
-    `QCore.ReturnExpressionFamilies`).
+    `QCore.ReturnExpressionFamilies`). A `*` counts through parentheses, and
+    the one dereference ends only after the closing ones: `(*q)->len`,
+    `(*q)[0]`, `**q`, `(q->next)->len` and `*(q->f)` are second dereferences
+    and keep the refusal, while a `*` applied to a cast group never counts for
+    the type name inside it (W45-SR5-SOUNDNESS).
     [Report](../reports/w45-return-expression-families/README.md).
 
 <a id="constraint-5k"></a>
@@ -389,6 +393,21 @@ which is not a second authority.
     read; a declaration's `Borrowed` covers what is reachable through the
     argument (P-B08-SHALLOW). `QCore.MemberRelease`;
     [report](../reports/w45-callee-summary-cascade/README.md).
+    **A callee that releases the member again** (W45-SR5-SOUNDNESS): P1's
+    `R(B)` was accepted on its contract's release mode alone, and
+    `q_nullable_free(n->buf); node_destroy(n);` was `Safe` at function and
+    unit level with `node_destroy` releasing `n->buf` itself. Every `R(B)` of
+    the body is now read for what `R` does to `B->F` (`MemberEffect`): a
+    callee this unit defines, declared or not, whose formal is used only as
+    `p->G`, in null tests and as the single actual of a callee read the same
+    way, releases and touches known members; any other body is unknown. A
+    callee that releases `B->F` and follows the release unconditionally makes
+    it a `DoubleRelease` candidate (the release statement refuses under
+    `member-released-again-by-callee`); one that only touches it, or is
+    unknown, withholds the place. A callee with no body here is governed by
+    its declaration: a declared release does not cascade to members
+    (P-B08-SHALLOW, stated). `QCore.MemberReleaseCallee`;
+    [report](../reports/w45-sr5-soundness/README.md).
 
 <a id="constraint-5l"></a>
 
@@ -420,7 +439,8 @@ which is not a second authority.
     body tracks until a 10f unlink binds it (the function is declined when one
     call receives both `&X->…` of a name `X` that may bind a tracked identity
     and the iterated head; that lexical guard does not see an element 10f has
-    bound, `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`); a callee handed
+    bound, and a re-publication under another head spelling refuses on 10d's
+    own rules instead, pinned by W45-SR5-SOUNDNESS); a callee handed
     the container does not unlink the protected node; a plain body is braced.
     **Do not** admit a header from its stripped clauses, bind an element from
     a cursor of a declined iteration, or widen case (2) to a written name.
@@ -734,7 +754,17 @@ which is not a second authority.
     values) must refuse a container effect (`has_container_effect`). The
     lexical reader of entries, containers and rebinding is trust boundary 28.
     `QCore.ContainerPublication`;
-    [report](../reports/w45-fb-retry-lifetime/README.md).
+    [report](../reports/w45-fb-retry-lifetime/README.md). W45-SR5-SOUNDNESS
+    adds two refusals (`QCore.Sr5Soundness`). A publication into a container
+    whose root the body also hands whole to a position its contract does not
+    declare `Borrowed` (`q_free(q)`, a summary's `Released`) refuses: the
+    container need not outlive the call, and whether its release hands on its
+    elements is no stated premise (a formal and a local initialised from it
+    alone are one object; 10f(2)'s foreign unlink out of such a container, a
+    teardown, stays admitted). An entry rule 5l(2) bound over a formal
+    (`ctx = container_of(arg, …)`) takes the unbound formal entry's rule: its
+    borrowed reading let a derived summary call `arg` `Borrowed` while the
+    body linked it.
 
 <a id="constraint-10e"></a>
 
@@ -757,7 +787,12 @@ which is not a second authority.
     no counted-user clause and no body here changes no count — is stated, not
     proved. A derived custody summary is compared with a declaration's custody
     projection only. `QCore.CountedUsers`;
-    [report](../reports/w45-fb-retry-lifetime/README.md).
+    [report](../reports/w45-fb-retry-lifetime/README.md). Since
+    W45-SR5-SOUNDNESS a call or counter write C may skip (behind `?:`, `&&` or
+    `||`) and a call through a call's result (`f(a)(b)`, 10c's rule 2)
+    undecide the counts instead of applying on every path, and a declared
+    `resource_user_neutral()` of a body the unit defines is applied only when
+    that body verifies it, as every other declared clause is.
 
 <a id="constraint-10f"></a>
 
@@ -854,3 +889,29 @@ which is not a second authority.
     `parse_response`, and a descendant that leaves the group is outside the
     kill. `QCore.SubcommandPlugins`;
     [report](../reports/w45-audit-subcommand-plugins/README.md).
+
+<a id="constraint-10i"></a>
+
+10i. **A held or withdrawn call is only ever minted by the tool, and a
+    `Pending` unit passes every `Safe` gate.** Card W45-SR5-SOUNDNESS
+    (`legacy_reserved_spelling.rs`; language specification §L21.1). Six
+    rewrites mark a call site by prefixing its callee, and every reader
+    classifies the call by the prefix: `qcore_review_pending__` and
+    `qcore_pin_mismatch__` (both `Pending`), `qcore_refuted_by_body__`,
+    `qcore_abi_withdrawn__`, `qcore_mode_withdrawn__` and
+    `qcore_premise_unmet__`. A source spelling `qcore_pin_mismatch__zz(0);`
+    published `Pending` with a human-resolvable reason no tool state decided
+    (STABILITY-REEVAL-5). Before any rewrite, on every route that applies
+    them, each source identifier spelled with a reserved prefix (the escape
+    prefix `qcore_source_spelled__` included) is renamed with the escape
+    prefix, consistently across the unit; an escaped callee refuses as an
+    uncontracted call (`reserved-prefix-in-source`, `Unknown`). **Do not** add
+    a rewrite prefix without adding it to `reserved_prefixes`, or classify a
+    held reason from text a source can spell. A `Pending` unit claims that a
+    named human act alone stands between it and `Safe`, so the
+    unread-definition gate, the certificate target scope and the audit's
+    inventory withholding apply to it as to `Safe`: a unit any of them refuses
+    is `Unknown`, its function rows keeping their own held reasons. Premise,
+    stated: the lexer yields the identifiers the escape reads (trust boundary
+    28). `QCore.ReservedSpelling`, `QCore.Sr5Soundness`;
+    [report](../reports/w45-sr5-soundness/README.md).

@@ -1,0 +1,51 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3321,
+   "unknown_alias": 713,
+   "counted_user": 4
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3321,
+   "unknown_alias": 713,
+   "counted_user": 4
+  }
+ },
+ "removed_leaves": 0,
+ "added_leaves": 0,
+ "moving_functions": 0,
+ "status_moves": [],
+ "unit_moves": [],
+ "removed": [],
+ "added": []
+}

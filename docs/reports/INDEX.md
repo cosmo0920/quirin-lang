@@ -910,6 +910,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-return-expression-families](w45-return-expression-families/README.md) | W45-RETURN-EXPRESSION-FAMILIES — the refused return expressions that block functions alone |
 
+| [w45-sr5-soundness](w45-sr5-soundness/README.md) | W45-SR5-SOUNDNESS — the admitting-direction holes STABILITY-REEVAL-5 found |
+
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |
 
 | [w45-test-hygiene](w45-test-hygiene/README.md) | W45-TEST-HYGIENE: tree-walking tests read tracked files only |

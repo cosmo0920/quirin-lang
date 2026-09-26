@@ -134,6 +134,33 @@
 //! `Removed` wrappers, whose owner actual owns sub-custody by construction.
 //! The inserted node is appended and every edge into the call is redirected
 //! to it, so no existing node's identity moves.
+//!
+//! ## 4. A callee that releases the member again (card W45-SR5-SOUNDNESS)
+//!
+//! P1 accepts `R(B)` for any `R` whose contract in force releases its only
+//! parameter, and derived summaries are in force. STABILITY-REEVAL-5 measured
+//! `q_nullable_free(n->buf); node_destroy(n);` `Safe` at function and unit
+//! level with `node_destroy` releasing `n->buf` itself: a double release
+//! (`MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE`). The review repair of section 1
+//! made the release the last use of its place *within the body*; the second
+//! release lived in the callee.
+//!
+//! Every `R(B)` of the body, before or after the release, is now read for
+//! what `R` does to `B->F`. A callee this unit defines has a member effect
+//! ([`MemberEffect`]): its only formal `p` is used only as `p->G`, in null
+//! tests and as the whole single actual of `R2(p)` (whose effect is read the
+//! same way, to a fixed point; a cycle is unknown), and it then touches and
+//! releases known members; any other use leaves it unknown. The place is
+//! admitted only when no such `R` touches `F`. When one releases `F` and
+//! follows the release unconditionally (P4's shape), the release statement
+//! refuses under [`double_release_description`] and the function reports a
+//! `DoubleRelease` at that line, a provisional candidate
+//! ([`callee_double_releases`]); when one only touches `F`, or is unknown,
+//! the place is withheld and the statement keeps its refusal (`Unknown`). A
+//! callee with no body here is governed by its declaration: a declared
+//! release does not cascade to members (P-B08-SHALLOW, stated, not proved).
+//! A callee the unit defines under a declaration is read too; the reading
+//! only withholds. `QCore.MemberReleaseCallee`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -330,9 +357,16 @@ pub(super) fn guard_unit_callees(
 
 /// Rule 1's lexical premises P1–P4 (module documentation), read once per
 /// body: the `(base, member)` places whose single release may be admitted.
+///
+/// Card W45-SR5-SOUNDNESS adds `double_releases`: the places whose release a
+/// later `R(B)` repeats because `R`'s body, defined in this unit, releases the
+/// same member of its formal (section 4 of the module documentation). Such a
+/// place is never admitted, and its release statement refuses under
+/// [`double_release_description`].
 #[derive(Clone, Debug, Default)]
 pub(super) struct AdmissibleReleases {
-    places: BTreeSet<(String, String)>,
+    places: Places,
+    double_releases: DoubleReleases,
 }
 
 impl AdmissibleReleases {
@@ -343,6 +377,18 @@ impl AdmissibleReleases {
                 .places
                 .contains(&((*base).to_owned(), (*field).to_owned())),
             _ => false,
+        }
+    }
+
+    /// Card W45-SR5-SOUNDNESS: the refusal of a release statement whose
+    /// actual is a place a later callee releases again, if `argument` is one.
+    pub(super) fn double_release(&self, argument: &[&str]) -> Option<String> {
+        match strip_parentheses(argument) {
+            [base, "-", ">", field] => self
+                .double_releases
+                .get(&((*base).to_owned(), (*field).to_owned()))
+                .map(|callee| double_release_description(base, field, callee)),
+            _ => None,
         }
     }
 
@@ -359,10 +405,48 @@ impl AdmissibleReleases {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
+        let (places, double_releases) = admissible_places(tokens, &texts, formals, contracts);
         Self {
-            places: admissible_places(&texts, formals, contracts),
+            places,
+            double_releases,
         }
     }
+}
+
+/// Card W45-SR5-SOUNDNESS: the refusal a member release carries when a later
+/// `R(B)` of the same body releases the member again through `R`'s formal.
+#[must_use]
+pub(super) fn double_release_description(base: &str, field: &str, callee: &str) -> String {
+    format!(
+        "release of `{base}->{field}` before `{callee}({base})`, whose body releases the same \
+         member again ({DOUBLE_RELEASE_KEY})"
+    )
+}
+
+/// The stable key ending [`double_release_description`].
+const DOUBLE_RELEASE_KEY: &str = "member-released-again-by-callee";
+
+/// Card W45-SR5-SOUNDNESS: the double release each such refusal stands for,
+/// one diagnostic per refused node of `cfg`, at the node's line. The member
+/// has no acquisition in this body; the line of its first release stands in
+/// for one. A provisional `Unsafe` candidate: the second release happens when
+/// the member is non-null at the call, which nothing here excludes.
+pub(super) fn callee_double_releases(cfg: &LegacyCfg) -> Vec<super::LegacyDiagnostic> {
+    cfg.nodes
+        .iter()
+        .filter(|node| {
+            matches!(&node.instruction, LegacyInstruction::Unknown { description, .. }
+                if description.starts_with("release of `")
+                    && description.ends_with(&format!("({DOUBLE_RELEASE_KEY})")))
+        })
+        .map(|node| super::LegacyDiagnostic {
+            function: cfg.function.clone(),
+            line: node.line,
+            kind: super::LegacyDiagnosticKind::DoubleRelease {
+                acquisition_line: node.line,
+            },
+        })
+        .collect()
 }
 
 const NON_LOCAL_JUMPS: &[&str] = &[
@@ -385,21 +469,10 @@ fn releases_its_only_parameter(contract: Option<&ResourceFunctionContract>) -> b
     })
 }
 
-/// P1–P4 over the body's tokens (without its outer braces).
-fn admissible_places(
-    texts: &[&str],
-    formals: &BTreeSet<String>,
-    contracts: &ResourceContracts,
-) -> BTreeSet<(String, String)> {
-    let mut admitted = BTreeSet::new();
-    if texts.iter().any(|text| NON_LOCAL_JUMPS.contains(text)) {
-        return admitted;
-    }
-    let depth = brace_depths(texts);
-    let loops = loop_spans(texts, &depth);
-    // Every call argument that is exactly `B -> F`: occurrence index of `B`
-    // mapped to (callee, argument index).
-    let mut actuals = BTreeMap::<usize, (&str, usize)>::new();
+/// Every call argument of `texts` that is exactly `B -> F` (parenthesised or
+/// not): the index of `B` mapped to (callee, argument index).
+fn member_actuals<'a>(texts: &[&'a str]) -> BTreeMap<usize, (&'a str, usize)> {
+    let mut actuals = BTreeMap::new();
     for at in 0..texts.len() {
         if !is_name(texts[at]) || texts.get(at + 1) != Some(&"(") || NOT_CALLS.contains(&texts[at])
         {
@@ -417,6 +490,158 @@ fn admissible_places(
             }
         }
     }
+    actuals
+}
+
+/// Whether the actual at `index` of `callee` sits at a release position of
+/// the contract in force (declared, or a derived summary).
+fn releases_position(contracts: &ResourceContracts, callee: &str, index: usize) -> bool {
+    matches!(
+        contracts
+            .contract(callee)
+            .and_then(|contract| contract.parameters.get(index)),
+        Some(ResourceParameterMode::Released { .. })
+    )
+}
+
+/// Card W45-SR5-SOUNDNESS: what a callee this unit defines may do to the
+/// members of its only formal (module documentation, section 4).
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MemberEffect {
+    /// Every use of the formal `p` is a member access `p->G`, a null test of
+    /// `p`, or the whole single actual of `R(p)` where `R` has no body here
+    /// (its declaration governs, P-B08-SHALLOW) or a characterised one.
+    /// `touched`: every member accessed other than by a null test, through
+    /// the whole chain; `released`: every member handed whole to a release
+    /// position, through the whole chain.
+    Characterised {
+        touched: BTreeSet<String>,
+        released: BTreeSet<String>,
+    },
+    /// Any other use: a copy, an address, another actual, an uncontracted
+    /// callee, a recursive chain.
+    Unknown,
+}
+
+/// The member effect of `callee`'s body, or `None` when this unit defines no
+/// body for it. `visiting` breaks cycles, which are [`MemberEffect::Unknown`].
+fn member_effect(
+    tokens: &[Token],
+    callee: &str,
+    contracts: &ResourceContracts,
+    visiting: &mut BTreeSet<String>,
+) -> Option<MemberEffect> {
+    let (body_start, _) = super::find_function_body(tokens, callee)?;
+    if !visiting.insert(callee.to_owned()) {
+        return Some(MemberEffect::Unknown);
+    }
+    let effect = characterise(tokens, callee, body_start, contracts, visiting);
+    visiting.remove(callee);
+    Some(effect)
+}
+
+fn characterise(
+    tokens: &[Token],
+    callee: &str,
+    body_start: usize,
+    contracts: &ResourceContracts,
+    visiting: &mut BTreeSet<String>,
+) -> MemberEffect {
+    let formals = super::function_parameters(tokens, callee).unwrap_or_default();
+    let [Some(formal)] = formals.as_slice() else {
+        return MemberEffect::Unknown;
+    };
+    let Some(body_end) = matching(tokens, body_start, "{", "}") else {
+        return MemberEffect::Unknown;
+    };
+    let texts = tokens[body_start + 1..body_end]
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    let actuals = member_actuals(&texts);
+    let mut touched = BTreeSet::new();
+    let mut released = BTreeSet::new();
+    for at in 0..texts.len() {
+        if texts[at] != formal {
+            continue;
+        }
+        let previous = at.checked_sub(1).map(|p| texts[p]);
+        if previous == Some(".") || (previous == Some(">") && at >= 2 && texts[at - 2] == "-") {
+            continue; // a member name that spells the formal's name
+        }
+        if let (Some("-"), Some(">"), Some(field)) = (
+            texts.get(at + 1).copied(),
+            texts.get(at + 2).copied(),
+            texts.get(at + 3).copied(),
+        ) && is_name(field)
+        {
+            if is_null_test(&texts, at, 4) {
+                continue;
+            }
+            touched.insert(field.to_owned());
+            if actuals
+                .get(&at)
+                .is_some_and(|(inner, index)| releases_position(contracts, inner, *index))
+            {
+                released.insert(field.to_owned());
+            }
+            continue;
+        }
+        if is_null_test(&texts, at, 1) {
+            continue;
+        }
+        if previous == Some("(")
+            && texts.get(at + 1) == Some(&")")
+            && at >= 2
+            && is_name(texts[at - 2])
+            && !NOT_CALLS.contains(&texts[at - 2])
+        {
+            let inner = texts[at - 2];
+            match member_effect(tokens, inner, contracts, visiting) {
+                // No body here: the declaration governs what it does
+                // through its argument (P-B08-SHALLOW); an undeclared one
+                // is not characterised.
+                None if contracts.contract(inner).is_some() => continue,
+                Some(MemberEffect::Characterised {
+                    touched: inner_touched,
+                    released: inner_released,
+                }) => {
+                    touched.extend(inner_touched);
+                    released.extend(inner_released);
+                    continue;
+                }
+                None | Some(MemberEffect::Unknown) => return MemberEffect::Unknown,
+            }
+        }
+        return MemberEffect::Unknown;
+    }
+    MemberEffect::Characterised { touched, released }
+}
+
+/// The admissible `(base, member)` places of one body.
+type Places = BTreeSet<(String, String)>;
+
+/// Card W45-SR5-SOUNDNESS: each place a later callee releases again, with
+/// that callee.
+type DoubleReleases = BTreeMap<(String, String), String>;
+
+/// P1–P4 over the body's tokens (without its outer braces), with card
+/// W45-SR5-SOUNDNESS's condition on every `R(B)`; `tokens` is the whole unit,
+/// where the callees' bodies are read.
+fn admissible_places(
+    tokens: &[Token],
+    texts: &[&str],
+    formals: &BTreeSet<String>,
+    contracts: &ResourceContracts,
+) -> (Places, DoubleReleases) {
+    let mut admitted = BTreeSet::new();
+    let mut double_releases = BTreeMap::new();
+    if texts.iter().any(|text| NON_LOCAL_JUMPS.contains(text)) {
+        return (admitted, double_releases);
+    }
+    let depth = brace_depths(texts);
+    let loops = loop_spans(texts, &depth);
+    let actuals = member_actuals(texts);
     'formal: for base in formals {
         let mut members = BTreeMap::<&str, Vec<usize>>::new();
         let mut base_releases = Vec::new();
@@ -484,19 +709,44 @@ fn admissible_places(
             {
                 continue; // P3
             }
-            let released_after = base_releases.iter().any(|call| {
-                *call > release
-                    && depth[*call] == 0
-                    && (*call == 0 || matches!(texts[*call - 1], ";" | "{" | "}"))
-                    && texts.get(*call + 4) == Some(&";")
-                    && !texts[release..*call].contains(&"return")
-            });
-            if released_after {
+            let unconditionally_after = |call: usize| {
+                call > release
+                    && depth[call] == 0
+                    && (call == 0 || matches!(texts[call - 1], ";" | "{" | "}"))
+                    && texts.get(call + 4) == Some(&";")
+                    && !texts[release..call].contains(&"return")
+            };
+            let released_after = base_releases
+                .iter()
+                .any(|call| unconditionally_after(*call));
+            // Card W45-SR5-SOUNDNESS: every `R(B)` of the body, before or
+            // after the release, is read for what `R` does to `B->F`. A
+            // callee this unit defines releases it again (a double release
+            // when it follows on every path), touches it or is not
+            // characterised: the place is withheld. A callee with no body
+            // here is governed by its declaration (P-B08-SHALLOW).
+            let mut withheld = false;
+            for call in &base_releases {
+                let callee = texts[*call];
+                match member_effect(tokens, callee, contracts, &mut BTreeSet::new()) {
+                    None => {}
+                    Some(MemberEffect::Characterised { touched, released }) => {
+                        if released.contains(field) && unconditionally_after(*call) {
+                            double_releases
+                                .entry((base.clone(), field.to_owned()))
+                                .or_insert_with(|| callee.to_owned());
+                        }
+                        withheld |= touched.contains(field);
+                    }
+                    Some(MemberEffect::Unknown) => withheld = true,
+                }
+            }
+            if released_after && !withheld {
                 admitted.insert((base.clone(), field.to_owned()));
             }
         }
     }
-    admitted
+    (admitted, double_releases)
 }
 
 /// The brace depth of every token, 0 in the body's own block.

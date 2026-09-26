@@ -323,16 +323,54 @@ fn arrow_at(texts: &[&str], index: usize) -> bool {
 }
 
 /// After a may-bind root's one dereference ends at `after`, may only `.`
-/// selections follow, and then nothing that continues the access?
+/// selections and closing parentheses follow, and then nothing that
+/// continues the access? Card W45-SR5-SOUNDNESS
+/// (`SCALAR-READ-PARENTHESISED-DOUBLE-DEREF`): a closing parenthesis no
+/// longer ends the reading, so `(q->next)->len` and `(*q)[0]` are the second
+/// dereferences they are.
 fn ends_one_dereference(texts: &[&str], mut after: usize) -> bool {
-    while texts.get(after) == Some(&".")
-        && texts
-            .get(after + 1)
-            .is_some_and(|text| super::is_identifier(text))
-    {
-        after += 2;
+    loop {
+        if texts.get(after) == Some(&")") {
+            after += 1;
+        } else if texts.get(after) == Some(&".")
+            && texts
+                .get(after + 1)
+                .is_some_and(|text| super::is_identifier(text))
+        {
+            after += 2;
+        } else {
+            break;
+        }
     }
     !arrow_at(texts, after) && !matches!(texts.get(after), Some(&"[") | Some(&"(") | Some(&"."))
+}
+
+/// Card W45-SR5-SOUNDNESS: how many unary `*` apply to the name at `index`,
+/// read back through opening parentheses (`*q`, `(*q)`, `**q`, `*(q->f)`).
+/// A `*` behind more opening parentheses than `closing` does not apply to the
+/// name alone (`*(T *)p` applies to the cast, never to the type name `T`);
+/// `usize::MAX` counts every one, which only refuses.
+fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts, closing: usize) -> usize {
+    let mut at = index;
+    let mut stars = 0;
+    let mut opened = 0usize;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            "(" => {
+                opened += 1;
+                at = previous;
+            }
+            "*" if unary_position(texts, previous, names) => {
+                if opened > closing {
+                    break;
+                }
+                stars += 1;
+                at = previous;
+            }
+            _ => break,
+        }
+    }
+    stars
 }
 
 /// Family S's shape and name premises over one `return` expression. `None`
@@ -427,22 +465,28 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         if conditional[index] {
             return None;
         }
-        let dereferenced =
-            index >= 1 && texts[index - 1] == "*" && unary_position(texts, index - 1, names);
+        // Card W45-SR5-SOUNDNESS: a `*` counts through parentheses, and the
+        // one dereference must end after them too. Before a member or
+        // subscript root every `*` counts (it only refuses); a starred root
+        // counts the `*`s whose parentheses close right after the name.
         let root = if arrow_at(texts, index + 1) {
-            !dereferenced
+            stars_before(texts, index, names, usize::MAX) == 0
                 && texts
                     .get(index + 3)
                     .is_some_and(|text| super::is_identifier(text))
                 && ends_one_dereference(texts, index + 4)
         } else if next == Some("[") {
-            !dereferenced
+            stars_before(texts, index, names, usize::MAX) == 0
                 && close_of(texts, index + 1)
                     .is_some_and(|close| ends_one_dereference(texts, close + 1))
         } else {
-            dereferenced
-                && !arrow_at(texts, index + 1)
-                && !matches!(next, Some("[") | Some("(") | Some("."))
+            let closing = texts[index + 1..]
+                .iter()
+                .take_while(|text| **text == ")")
+                .count();
+            stars_before(texts, index, names, closing) == 1
+                && next != Some(".")
+                && ends_one_dereference(texts, index + 1)
         };
         if !root {
             return None;

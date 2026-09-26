@@ -641,6 +641,11 @@ impl Parser<'_> {
         tokens: &[Token],
         instruction: &LegacyInstruction,
     ) -> Option<Vec<LegacyInstruction>> {
+        // Card W45-SR5-SOUNDNESS: a member release a later callee repeats
+        // keeps its refusal, under a description naming the double release.
+        if let Some(refusal) = self.member_double_release(tokens, instruction) {
+            return Some(vec![refusal]);
+        }
         let mut probe = self.probe_call_arguments(tokens, instruction)?;
         // Card W45-CALLEE-SUMMARY-CASCADE: the object a rule-1 actual releases
         // is outside the projection, so its position is read as `Borrowed`.
@@ -712,6 +717,40 @@ impl Parser<'_> {
         }
         sequence.push(probe.result);
         Some(sequence)
+    }
+
+    /// Card W45-SR5-SOUNDNESS: the gate's refusal of a statement whose call
+    /// hands a member place [`super::member_release::AdmissibleReleases`]
+    /// withheld as a double release, restated under that reason with the same
+    /// writes. `None` for every other statement.
+    fn member_double_release(
+        &self,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) -> Option<LegacyInstruction> {
+        let LegacyInstruction::Unknown {
+            description,
+            writes,
+        } = instruction
+        else {
+            return None;
+        };
+        if description != GATE_REFUSAL {
+            return None;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let (call_index, _) = find_call(&texts)?;
+        let spans = call_argument_spans(&texts, call_index)?;
+        let description = spans
+            .into_iter()
+            .find_map(|(start, end)| self.member_releases.double_release(&texts[start..end]))?;
+        Some(LegacyInstruction::Unknown {
+            description,
+            writes: writes.clone(),
+        })
     }
 
     /// The candidate actuals of one refused statement. Also returns, for the

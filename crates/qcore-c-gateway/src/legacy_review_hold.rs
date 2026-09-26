@@ -57,7 +57,9 @@ use super::declared_abi::is_call_position;
 pub const AWAITING_HUMAN_REVIEW: &str = "awaiting-human-review";
 
 /// The prefix a held callee's call sites are rewritten with. No corpus symbol
-/// begins with it (asserted by the tests), so the rewrite cannot collide.
+/// begins with it (asserted by the tests), and a source that spells it is
+/// escaped before this rewrite runs (card W45-SR5-SOUNDNESS,
+/// `reserved_spelling`), so every name carrying it was minted here.
 pub(crate) const HELD_PREFIX: &str = "qcore_review_pending__";
 
 /// The original callee a rewritten name stands for.

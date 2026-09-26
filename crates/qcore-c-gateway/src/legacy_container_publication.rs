@@ -79,10 +79,33 @@
 //! container a callee returned, one rooted at an element or at a rebound
 //! formal, a body-acquired owner, a formal's own object whose container is
 //! unnamed, and an embedded element.
+//!
+//! # Card W45-SR5-SOUNDNESS
+//!
+//! Two refusals STABILITY-REEVAL-5 measured missing (`QCore.Sr5Soundness`):
+//!
+//! 7. **A released root** (`PUBLICATION-ROOT-RELEASED`). Rule 1's discharge
+//!    rests on the container outliving the call. A body that also hands the
+//!    container's root, whole, to a position its contract in force does not
+//!    declare `Borrowed` (`q_free(q)`, a summary's `Released`) may end that
+//!    storage itself, and whether the container's release hands on its
+//!    elements is a premise no rule states. Such a publication refuses as
+//!    `Other` ([`CallerFormals::with_released_roots`]); a local initialised
+//!    from the formal alone is the same object. Rule 6 is unchanged: a
+//!    teardown unlinks elements and then releases the root.
+//! 8. **An element bound over a formal**
+//!    (`CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER`). Rule 5l(2) binds
+//!    `ctx = container_of(arg, …)` over a never-bound formal and leaves `ctx`
+//!    untracked, so a publication of `&ctx->F` took the borrowed reading and a
+//!    derived summary called `arg` `Borrowed` while the body linked it: rule
+//!    1's launder. Such an entry now takes a formal entry's rule, an
+//!    unresolved identity ([`ForeignOrigins::note_over_formal`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_schemas::contract::{ContainerEffect, ResourceFunctionContract};
+use qcore_schemas::contract::{
+    ContainerEffect, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
+};
 
 use super::{
     AbstractState, Derivation, ESCAPED, LIVE, LegacyDiagnostic, LegacyDiagnosticKind,
@@ -156,6 +179,13 @@ pub struct CallerFormals {
     /// storage duration and which this body does not shadow
     /// (`PublicationFacts::destinations`).
     statics: BTreeSet<String>,
+    /// Card W45-SR5-SOUNDNESS: each derived local whose initialiser is a
+    /// stable formal itself (`L = P`), mapped to that formal: one object.
+    aliases: BTreeMap<String, String>,
+    /// Card W45-SR5-SOUNDNESS (`PUBLICATION-ROOT-RELEASED`): the stable and
+    /// derived names this body hands whole to a position its contract in
+    /// force does not declare `Borrowed` ([`CallerFormals::with_released_roots`]).
+    released: BTreeSet<String>,
 }
 
 const WRITES: [&str; 12] = [
@@ -196,6 +226,7 @@ impl CallerFormals {
             .cloned()
             .collect::<BTreeSet<_>>();
         let mut derived = BTreeSet::new();
+        let mut aliases = BTreeMap::new();
         for (index, token) in body.iter().enumerate() {
             if !is_identifier(token)
                 || formals.contains(*token)
@@ -233,6 +264,9 @@ impl CallerFormals {
             });
             if declarator && from_stable {
                 derived.insert((*token).to_owned());
+                if let Some([root]) = initialiser {
+                    aliases.insert((*token).to_owned(), (*root).to_owned());
+                }
             }
         }
         Self {
@@ -240,7 +274,76 @@ impl CallerFormals {
             derived,
             all: formals.clone(),
             statics: BTreeSet::new(),
+            aliases,
+            released: BTreeSet::new(),
         }
+    }
+
+    /// Card W45-SR5-SOUNDNESS (`PUBLICATION-ROOT-RELEASED`): the same reading,
+    /// with the container roots this body releases. A stable formal or a
+    /// derived local handed whole, as a value (not `P->F`, `P.F` or `P[I]`),
+    /// to a call position whose contract in force is not `Borrowed` (a
+    /// release, a consumption, a derived summary's `Released`, a variadic
+    /// tail) may end the container's storage in this very body, so a
+    /// publication into a container reached from it no longer shows that the
+    /// container outlives the call, and refuses (rule 1's `Other`). A formal
+    /// and a local initialised from it alone are one object. An uncontracted
+    /// call refuses on its own and is not read here. Stated, not proved: a
+    /// declared `Borrowed` position does not end the storage of what it
+    /// receives (P-B08-SHALLOW).
+    pub fn with_released_roots(mut self, body: &[&str], contracts: &ResourceContracts) -> Self {
+        let fused = fuse(body);
+        let body = fused
+            .iter()
+            .map(|(text, _)| text.as_str())
+            .collect::<Vec<_>>();
+        let roots = self
+            .stable
+            .iter()
+            .chain(&self.derived)
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let mut released = BTreeSet::new();
+        for (index, token) in body.iter().enumerate() {
+            if !is_identifier(token) || body.get(index + 1) != Some(&"(") {
+                continue;
+            }
+            let Some(contract) = contracts.contract(token) else {
+                continue;
+            };
+            let Some(close) = matching_close(&body, index + 1) else {
+                continue;
+            };
+            for (position, argument) in split_top_level(&body[index + 2..close])
+                .into_iter()
+                .enumerate()
+            {
+                if matches!(
+                    contract.parameters.get(position),
+                    Some(ResourceParameterMode::Borrowed)
+                ) {
+                    continue;
+                }
+                for (at, word) in argument.iter().enumerate() {
+                    let previous = at.checked_sub(1).map(|p| argument[p]);
+                    let next = argument.get(at + 1).copied();
+                    if roots.contains(*word)
+                        && !matches!(previous, Some("->" | "."))
+                        && !matches!(next, Some("->" | "." | "["))
+                    {
+                        released.insert((*word).to_owned());
+                    }
+                }
+            }
+        }
+        for (local, root) in &self.aliases {
+            if released.contains(local) || released.contains(root) {
+                released.insert(local.clone());
+                released.insert(root.clone());
+            }
+        }
+        self.released = released;
+        self
     }
 
     /// Card W45-CONTAINER-ROOT-REACH: the same reading, with the body's
@@ -269,6 +372,23 @@ impl CallerFormals {
     /// supplied.
     fn reaches_caller(&self, name: &str) -> bool {
         self.stable.contains(name) || self.derived.contains(name)
+    }
+
+    /// Card W45-SR5-SOUNDNESS: a publication's container, withdrawn to
+    /// `Other` when its root is one this body releases. Only a publication
+    /// reads it: rule 6's foreign unlink takes an element out of the
+    /// container, which a teardown that then releases the root may do.
+    fn unreleased(&self, container: Container, argument: &[&str]) -> Container {
+        match container {
+            Container::CallerFormal(root) if self.released.contains(&root) => Container::Other(
+                fuse(argument)
+                    .into_iter()
+                    .map(|(text, _)| text)
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            ),
+            other => other,
+        }
     }
 }
 
@@ -303,6 +423,46 @@ pub(crate) fn fuse(texts: &[&str]) -> Vec<(String, usize)> {
         }
     }
     fused
+}
+
+/// The index of the `)` closing the `(` at `open` in fused tokens.
+fn matching_close(texts: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, text) in texts.iter().enumerate().skip(open) {
+        match *text {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// The top-level comma-separated operands of an argument list.
+fn split_top_level<'a>(texts: &[&'a str]) -> Vec<Vec<&'a str>> {
+    let mut operands = vec![Vec::new()];
+    let mut depth = 0usize;
+    for text in texts {
+        match *text {
+            "(" | "[" | "{" => depth += 1,
+            ")" | "]" | "}" => depth = depth.saturating_sub(1),
+            "," if depth == 0 => {
+                operands.push(Vec::new());
+                continue;
+            }
+            _ => {}
+        }
+        operands.last_mut().expect("one operand").push(*text);
+    }
+    if operands.len() == 1 && operands[0].is_empty() {
+        operands.clear();
+    }
+    operands
 }
 
 fn is_identifier(token: &str) -> bool {
@@ -405,7 +565,10 @@ pub fn operands(
                     let formal = matches!(&entry, Entry::Name(name) if formals.is_formal(name));
                     Operand::Published {
                         entry,
-                        container: container(argument(*container_parameter), formals),
+                        container: formals.unreleased(
+                            container(argument(*container_parameter), formals),
+                            argument(*container_parameter),
+                        ),
                         formal,
                     }
                 }
@@ -648,9 +811,19 @@ fn take_foreign_custody(name: &str, site: usize, state: &mut AbstractState) {
 pub(crate) struct ForeignOrigins {
     admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
     pending: Option<(String, Option<Vec<String>>)>,
+    /// Card W45-SR5-SOUNDNESS (`CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER`):
+    /// every name rule 5l(2) bound from a never-bound formal
+    /// (`ctx = container_of(arg, …)`), wherever the binding was proposed.
+    over_formal: BTreeSet<String>,
 }
 
 impl ForeignOrigins {
+    /// Card W45-SR5-SOUNDNESS: `element` was bound over a formal: the object
+    /// it names is the caller's, exactly as the formal's own is.
+    pub(crate) fn note_over_formal(&mut self, element: &str) {
+        self.over_formal.insert(element.to_owned());
+    }
+
     /// The binding rule 5l is about to return for `element`.
     pub(crate) fn propose(&mut self, element: &str, container: Option<Vec<String>>) {
         self.pending = Some((element.to_owned(), container));
@@ -763,6 +936,20 @@ pub(crate) fn settle_foreign_unlinks(
             continue;
         };
         for operand in &mut operands.0 {
+            // Card W45-SR5-SOUNDNESS: a publication of an element rule 5l(2)
+            // bound over a formal publishes the caller's object, so it takes
+            // the formal entry's rule (rule 1's first premise): an unresolved
+            // identity, never the borrowed reading. Without it a derived
+            // summary called the formal `Borrowed` while the body linked it.
+            if let Operand::Published {
+                entry: Entry::Name(name),
+                formal,
+                ..
+            } = operand
+                && origins.over_formal.contains(name.as_str())
+            {
+                *formal = true;
+            }
             if let Operand::Unpublished {
                 entry: Entry::Name(name),
                 foreign,

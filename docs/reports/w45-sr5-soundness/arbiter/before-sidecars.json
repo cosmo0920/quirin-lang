@@ -1,0 +1,12 @@
+{
+  "contracts": {
+    "equal_after_root_placeholder": true,
+    "run_only_top_level_keys": [
+      "refuted_contracts"
+    ]
+  },
+  "source-effects": {
+    "equal_after_root_placeholder": true,
+    "run_only_top_level_keys": []
+  }
+}

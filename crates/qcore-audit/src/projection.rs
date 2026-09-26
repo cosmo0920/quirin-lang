@@ -427,6 +427,26 @@ fn record_projection(
                 partial: Some(certificate.summary),
             })
         }
+        // Card W45-SR5-SOUNDNESS (`PENDING-BYPASSES-UNIT-SAFE-GATES`): the
+        // inventory withholds `Safe` from this unit, so no human act on its
+        // held calls could make it `Safe`: it is `Unknown`, not `Pending`.
+        Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason,
+            partial: Some(mut summary),
+        }) if summary.status == AnalysisStatus::Pending && !inventory.supports_unit_safe() => {
+            summary.status = AnalysisStatus::Unknown;
+            Ok(UnrestrictedLegacyResult::Unknown {
+                preprocessed_source,
+                reason: format!(
+                    "{reason}; {}",
+                    inventory
+                        .withheld_safe_reason()
+                        .unwrap_or_else(|| "enumeration completeness refused".to_owned())
+                ),
+                partial: Some(summary),
+            })
+        }
         other => other,
     };
     let locations = prepared_locations.filter(|_| {

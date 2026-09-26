@@ -1,0 +1,202 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 168,
+   "Safe": 5,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "function_rows": {
+   "Unknown": 4427,
+   "Safe": 398,
+   "Unsafe": 9
+  },
+  "distinct_functions_worst": {
+   "Unknown": 4427,
+   "Safe": 398,
+   "Unsafe": 9
+  },
+  "categories": {
+   "unsupported": 41314,
+   "unknown_alias": 3571,
+   "leak": 34,
+   "summary_conflict": 1
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 168,
+   "Safe": 5,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "function_rows": {
+   "Unknown": 4427,
+   "Safe": 398,
+   "Unsafe": 9
+  },
+  "distinct_functions_worst": {
+   "Unknown": 4427,
+   "Safe": 398,
+   "Unsafe": 9
+  },
+  "categories": {
+   "unsupported": 41320,
+   "unknown_alias": 3570,
+   "leak": 34,
+   "summary_conflict": 1
+  }
+ },
+ "removed_leaves": 3,
+ "added_leaves": 8,
+ "moving_functions": 6,
+ "status_moves": [],
+ "unit_moves": [],
+ "removed": [
+  {
+   "function": [
+    "mk_server/mk_vhost.c",
+    0,
+    "mk_vhost_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ep`",
+    "mk_server/mk_vhost.c:786"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_server/mk_vhost.c",
+    0,
+    "mk_vhost_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ep`",
+    "mk_server/mk_vhost.c:789"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "rdlist.c",
+    0,
+    "rd_list_get_int32"
+   ],
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in return expression",
+    "rdlist.c:588"
+   ],
+   "count": 1
+  }
+ ],
+ "added": [
+  {
+   "function": [
+    "mk_core/mk_rconf.c",
+    0,
+    "mk_rconf_free"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `file`, which this function has not published",
+    "mk_core/mk_rconf.c:675"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_core/mk_rconf.c",
+    0,
+    "mk_rconf_free"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `entry`, which this function has not published",
+    "mk_core/mk_rconf.c:683"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_core/mk_rconf.c",
+    0,
+    "mk_rconf_free"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `section`, which this function has not published",
+    "mk_core/mk_rconf.c:692"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_core/mk_string.c",
+    0,
+    "mk_string_split_free"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `entry`, which this function has not published",
+    "mk_core/mk_string.c:399"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_server/mk_server.c",
+    0,
+    "mk_server_listen_exit"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `listen`, which this function has not published",
+    "mk_server/mk_server.c:162"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_server/mk_server.c",
+    0,
+    "mk_server_listen_exit"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `listen`",
+    "mk_server/mk_server.c:163"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_server/mk_vhost.c",
+    0,
+    "mk_vhost_destroy"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `ep`, which this function has not published",
+    "mk_server/mk_vhost.c:785"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "mk_server/mk_vhost.c",
+    0,
+    "mk_vhost_handler_free"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `param`, which this function has not published",
+    "mk_server/mk_vhost.c:742"
+   ],
+   "count": 1
+  }
+ ]
+}

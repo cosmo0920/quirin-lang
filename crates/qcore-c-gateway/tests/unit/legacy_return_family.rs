@@ -111,6 +111,19 @@ fn a_may_bind_name_is_a_base_of_one_unconditional_dereference_only() {
         "n | | * q",
         // Inside a parenthesised operand.
         "( q ) - > len",
+        // Card W45-SR5-SOUNDNESS: a second dereference through parentheses
+        // (`SCALAR-READ-PARENTHESISED-DOUBLE-DEREF`).
+        "( * q ) - > len",
+        "( * q ) [ 0 ]",
+        "* * q",
+        "* ( * q )",
+        "( q - > next ) - > len",
+        "( q [ 0 ] ) - > len",
+        "* ( q - > next )",
+        "* ( q [ 0 ] )",
+        // ... and a may-bind name inside a cast a `*` applies to
+        // (`*(int32_t *)rl->rl_elems[idx]`, rd_list_get_int32).
+        "* ( q * ) p",
     ] {
         assert_eq!(read(expression), None, "{expression}");
     }
