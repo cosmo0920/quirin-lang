@@ -1,0 +1,13 @@
+contracts-only, no build: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/runs/changed-transfer/src (1 unit(s); no compilation database, build or source profile)
+evidence: contracts-only-no-build (resource projection from the selected contract modules; every verdict relative to the recorded assumed configuration: -std=gnu17, 0 include dir(s), 0 definition(s), each unit's own directory for quoted includes, the host Clang's system headers)
+.: 1 selected unit(s)
+  ./queue.c: Unknown (6/6): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 1 custody summary conflict(s)
+    resource diagnostics: summary_conflict=1, unsupported=1
+    box_keep: queue.c:20: summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Consumed { nullable: false }], result: None }; the declared contract governs every call site
+    user_keep: queue.c:68: unsupported: call to `box_keep` whose declared contract was withdrawn against the summary derived from its body in this translation unit (mode-parameter-contradiction)
+no-build: 1 unit(s), 1 prepared under the assumptions, 0 not prepared: 0 Safe / 0 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures (every verdict relative to the recorded assumptions)
+preparation: 1 unit(s), 3 Clang invocation(s); -E -P 40492 us / syntax 35218 us / line markers 25754 us
+pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call site(s) held Unknown (awaiting-human-review)
+contract revision: 0 pinned (0 in force, 0 not in force), 4 flexible checked, 6 flexible trusted, 0 libc under the standing assumption; 0 function(s) and 0 call site(s) held Unknown (contract-pin-mismatch)
+
+exit 0

@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <string.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION
@@ -56,6 +62,7 @@ module contract;
 extern fn strcmp(s1: ptr<const, u8>, s2: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s1);
     ensures normal resource_borrowed(s2);
     ensures normal resource_return_none();
@@ -64,6 +71,7 @@ contract {
 extern fn strlen(s: ptr<const, u8>) -> usize
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_return_none();
 };
@@ -71,6 +79,7 @@ contract {
 extern fn strdup(s: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_return_owned(nullable);
 };
@@ -78,6 +87,7 @@ contract {
 extern fn strerror_r(errnum: i32, buf: ptr<mut, u8>, buflen: usize) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(errnum);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(buflen);
@@ -115,6 +125,7 @@ contract {
 extern fn strcpy(dest: ptr<mut, u8>, src: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(dest);
     ensures normal resource_borrowed(src);
     ensures normal resource_return_alias(dest, nonnull);
@@ -123,6 +134,7 @@ contract {
 extern fn strncpy(dest: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(dest);
     ensures normal resource_borrowed(src);
     ensures normal resource_borrowed(n);
@@ -132,6 +144,7 @@ contract {
 extern fn memcpy(dest: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(dest);
     ensures normal resource_borrowed(src);
     ensures normal resource_borrowed(n);
@@ -141,6 +154,7 @@ contract {
 extern fn memmove(dest: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(dest);
     ensures normal resource_borrowed(src);
     ensures normal resource_borrowed(n);
@@ -150,6 +164,7 @@ contract {
 extern fn memset(s: ptr<mut, u8>, c: i32, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(c);
     ensures normal resource_borrowed(n);
@@ -190,6 +205,7 @@ contract {
 extern fn strchr(s: ptr<const, u8>, c: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(c);
     ensures normal resource_return_interior(s, nullable);
@@ -198,6 +214,7 @@ contract {
 extern fn strrchr(s: ptr<const, u8>, c: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(c);
     ensures normal resource_return_interior(s, nullable);
@@ -206,6 +223,7 @@ contract {
 extern fn strstr(haystack: ptr<const, u8>, needle: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(haystack);
     ensures normal resource_borrowed(needle);
     ensures normal resource_return_interior(haystack, nullable);
@@ -214,6 +232,7 @@ contract {
 extern fn strcasestr(haystack: ptr<const, u8>, needle: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(haystack);
     ensures normal resource_borrowed(needle);
     ensures normal resource_return_interior(haystack, nullable);
@@ -222,6 +241,7 @@ contract {
 extern fn memchr(s: ptr<const, u8>, c: i32, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(c);
     ensures normal resource_borrowed(n);
@@ -231,6 +251,7 @@ contract {
 extern fn memrchr(s: ptr<const, u8>, c: i32, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(c);
     ensures normal resource_borrowed(n);
@@ -251,6 +272,7 @@ contract {
 extern fn strndup(s: ptr<const, u8>, n: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(n);
     ensures normal resource_return_owned(nullable);

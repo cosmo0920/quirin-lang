@@ -62,6 +62,11 @@ pub mod review_hold;
 
 pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
 
+// Card W45-CONTRACT-REVISION-MODE: a pinned contract the audit withheld for a
+// pin mismatch; its call sites are held exactly as a pending review's are.
+#[path = "legacy_pin_hold.rs"]
+pub mod pin_hold;
+
 // Card W45-PARENTHESISED-CALLEE: `(f)(x)` is `f(x)`, and any other callee
 // that is not a name refuses. Everything the card adds lives there; this file
 // only carries the hooks marked with the card's name.
@@ -1873,6 +1878,9 @@ fn analyze_legacy_c_tokens(
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let held_tokens = review_hold::hold_call_sites(tokens, contracts);
     let tokens = held_tokens.as_deref().unwrap_or(tokens);
+    // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
+    let pin_held_tokens = pin_hold::hold_call_sites(tokens, contracts);
+    let tokens = pin_held_tokens.as_deref().unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
@@ -2172,6 +2180,9 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
     // operation of the source, so it is counted apart and named only when
     // present; every summary without one is spelled exactly as before.
     let mut held = 0;
+    // Card W45-CONTRACT-REVISION-MODE: calls held for a pin mismatch, counted
+    // and named in the same way, after the review component.
+    let mut pin_held = 0;
     for diagnostic in summary
         .functions
         .values()
@@ -2182,6 +2193,11 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
                 if review_hold::held_call(description).is_some() =>
             {
                 held += 1;
+            }
+            LegacyDiagnosticKind::Unsupported { description }
+                if pin_hold::held_call(description).is_some() =>
+            {
+                pin_held += 1;
             }
             LegacyDiagnosticKind::Unsupported { .. } => unsupported += 1,
             LegacyDiagnosticKind::UnknownAlias { .. } => aliases += 1,
@@ -2195,6 +2211,11 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
     );
     if held > 0 {
         reason.push_str(&format!(", {held} call(s) held awaiting human review"));
+    }
+    if pin_held > 0 {
+        reason.push_str(&format!(
+            ", {pin_held} call(s) held for a contract pin mismatch"
+        ));
     }
     reason
 }
@@ -2408,6 +2429,8 @@ pub(crate) fn recursive_component_census(
     let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
+    // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
+    let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
@@ -2465,6 +2488,8 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // call sites are rewritten here, before the ABI gate and everything else
     // reads a call, so every consumer of the stream sees the hold.
     let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
+    // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
+    let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card LOADER-ABI. A declared contract whose parameter/result ABI
     // projections this unit's own C declaration contradicts is withdrawn here,
     // before anything reads either: the call sites are rewritten to a marked
@@ -7002,6 +7027,15 @@ impl Parser<'_> {
                 writes: self.refused_writes(&texts),
             };
         }
+        // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| pin_hold::held_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: pin_hold::hold_description(callee),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
         // *before* the lexical access gate, so the statement reports why the
         // declaration did not cover it rather than the access the withdrawn
@@ -7463,6 +7497,13 @@ impl Parser<'_> {
             if let Some(callee) = review_hold::held_callee(function) {
                 return LegacyInstruction::Unknown {
                     description: review_hold::hold_description(callee),
+                    writes: self.refused_writes(&texts),
+                };
+            }
+            // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
+            if let Some(callee) = pin_hold::held_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: pin_hold::hold_description(callee),
                     writes: self.refused_writes(&texts),
                 };
             }

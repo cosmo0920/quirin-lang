@@ -1,0 +1,208 @@
+{
+  "rev-864c3d97": {
+    "source": {
+      "kind": "git",
+      "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+    },
+    "counts": {
+      "flexible_checked": 0,
+      "flexible_trusted": 0,
+      "held_call_sites": 0,
+      "held_functions": 0,
+      "pinned": 62,
+      "pinned_in_force": 62,
+      "pinned_not_in_force": 0,
+      "standing_libc": 100
+    },
+    "contracts": {
+      "flb_output_task_flush": {
+        "in_force": true,
+        "through": [
+          "66910c10"
+        ],
+        "identities": 2,
+        "body_analysed": true,
+        "slice_status": [
+          "Unsafe"
+        ]
+      },
+      "flb_output_task_singleplex_enqueue": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": true,
+        "slice_status": [
+          "Unsafe"
+        ]
+      },
+      "flb_output_thread_pool_flush": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "flb_task_retry_destroy": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": true,
+        "slice_status": [
+          "Unknown"
+        ]
+      },
+      "flb_task_users_dec": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "flb_task_users_inc": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "mk_list_add": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "mk_list_del": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      }
+    }
+  },
+  "rev-046accf6": {
+    "source": {
+      "kind": "git",
+      "revision": "046accf6aded7906f66a1baf0202da349e521736"
+    },
+    "counts": {
+      "flexible_checked": 0,
+      "flexible_trusted": 0,
+      "held_call_sites": 0,
+      "held_functions": 0,
+      "pinned": 62,
+      "pinned_in_force": 62,
+      "pinned_not_in_force": 0,
+      "standing_libc": 100
+    },
+    "contracts": {
+      "flb_output_task_flush": {
+        "in_force": true,
+        "through": [
+          "046accf6"
+        ],
+        "identities": 2,
+        "body_analysed": true,
+        "slice_status": [
+          "Unsafe"
+        ]
+      },
+      "flb_output_task_singleplex_enqueue": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": true,
+        "slice_status": [
+          "Unsafe"
+        ]
+      },
+      "flb_output_thread_pool_flush": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "flb_task_retry_destroy": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": true,
+        "slice_status": [
+          "Unknown"
+        ]
+      },
+      "flb_task_users_dec": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "flb_task_users_inc": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "mk_list_add": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      },
+      "mk_list_del": {
+        "in_force": true,
+        "through": [
+          "046accf6",
+          "66910c10"
+        ],
+        "identities": 1,
+        "body_analysed": false,
+        "slice_status": []
+      }
+    }
+  }
+}

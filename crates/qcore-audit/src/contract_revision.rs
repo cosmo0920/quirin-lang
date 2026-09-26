@@ -1,0 +1,926 @@
+//! Revision modes at audit time (card **W45-CONTRACT-REVISION-MODE**, contract
+//! spec §C06.2): contract locks, the pin evaluation that withholds every
+//! pinned contract the audited source does not match, and the
+//! `contract_revision` report section.
+//!
+//! # Locks
+//!
+//! A pinned contract's reviewed identity lives in a generated **lock**,
+//! `contracts.lock`, never in the `.qcore` text. There is one per provider
+//! crate, beside its `Cargo.toml` (the crate root holding its `contracts/`
+//! tree); a contract module outside every crate is covered by the nearest
+//! `contracts.lock` in its own directory or above it, up to the first
+//! directory that holds a `Cargo.toml` or `.git`. A lock records, for every
+//! pinned declaration, the digest of the contract text it
+//! was reviewed with and one or more **reviewed identities**: the function's
+//! sites ([`crate::c_identity`]) as they were at each named source revision
+//! (revisions with equal sites share an identity). `quirin-audit pin` adds or
+//! refreshes the identity of one checkout after human review, never dropping
+//! those reviewed at other revisions; nothing writes a lock during an audit.
+//! Format version 1 (one source per lock) is still read, as one identity per
+//! entry.
+//!
+//! # Evaluation
+//!
+//! [`apply_pins`] runs once, after the contracts are loaded and before any
+//! unit is analysed. Each pinned declaration in force is compared with its
+//! lock ([`pin_standing`]): it stays in force when its contract text is the
+//! pinned one and the audited sites equal those of some reviewed identity;
+//! each mismatch — no lock, no entry or no identity, changed contract text
+//! (which voids every identity), sites matching no identity — is withheld
+//! ([`qcore_schemas::contract::ResourceContracts::withhold_for_pin_mismatch`]),
+//! so every call relying on it is `Unknown` with reason code
+//! `contract-pin-mismatch`, never `Safe` or `Unsafe`. A flexible declaration is
+//! never compared: it binds by name and declared signature only.
+
+use std::collections::{BTreeMap, BTreeSet};
+use std::fs;
+use std::path::{Path, PathBuf};
+
+use qcore_c_gateway::legacy_c::pin_hold::{CONTRACT_PIN_MISMATCH, held_call};
+use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
+use qcore_schemas::contract::ResourceContracts;
+use qcore_schemas::contract_revision::{PinMismatchReason, RevisionMode};
+use qcore_schemas::sha256_hex;
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+
+use crate::c_identity::{NORMALISATION, SourceSite, SourceTree};
+use crate::report::AuditReport;
+
+/// The lock's file name.
+pub const LOCK_FILE: &str = "contracts.lock";
+
+/// The lock format's version.
+pub const LOCK_VERSION: u32 = 2;
+
+/// The provider crate whose flexible contracts form the one standing libc
+/// assumption.
+pub const LIBC_CRATE: &str = "quirin-provider-libc";
+
+/// The name of the standing libc assumption.
+pub const LIBC_ASSUMPTION: &str = "libc-c-standard-abi";
+
+/// What the standing libc assumption states.
+pub const LIBC_STATEMENT: &str = "the C library behaves as the C standard and the platform ABI specify for every function the libc provider declares flexible: its custody statements are trusted at any revision of the audited project, and no libc body is analysed; which C library and version is in use is the build's provenance (its compiler identity and system headers), not part of this assumption";
+
+/// What the section means, carried in the section itself.
+pub const MEANING: &str = "revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is in force only where its contract text is the one pinned and the audited source matches one of the identities its lock records, each reviewed at a named revision, and every mismatch is withheld, so each call relying on it is Unknown with reason code `contract-pin-mismatch`; a flexible contract binds by name and declared signature only: on a function whose body this run analysed it is checked against that body as usual, and on a trusted function it is an explicit assumption of this run; every flexible libc contract without an analysed body is one standing assumption; held counts are recorded held-call refusals, a lower bound on textual call sites";
+
+/// One lock file (format version 2).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContractLock {
+    pub lock_version: u32,
+    pub generated_by: String,
+    pub note: String,
+    /// The crate the lock belongs to, or the directory of a module set.
+    pub owner: String,
+    /// The normalisation of every digest ([`NORMALISATION`]).
+    pub normalisation: String,
+    /// Every pinned declaration, sorted by function.
+    pub pinned: Vec<PinnedEntry>,
+    /// Every flexible declaration, sorted by function: listed so that a
+    /// change of mode is a change of the lock.
+    pub flexible: Vec<FlexibleEntry>,
+}
+
+/// A source a pinned identity was reviewed at: a Git revision, or a
+/// directory tree (which has no revision).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewedSource {
+    /// `git` or `directory`, as [`SourceTree::kind`].
+    pub kind: String,
+    /// The Git revision, for a Git checkout.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub revision: Option<String>,
+}
+
+impl ReviewedSource {
+    /// The source a tree was read from.
+    #[must_use]
+    pub fn of(tree: &SourceTree) -> Self {
+        Self {
+            kind: tree.kind.to_owned(),
+            revision: tree.revision.clone(),
+        }
+    }
+
+    /// `git 66910c10…` or `directory`.
+    #[must_use]
+    pub fn label(&self) -> String {
+        match &self.revision {
+            Some(revision) => format!("{} {revision}", self.kind),
+            None => self.kind.clone(),
+        }
+    }
+
+    /// Whether `spelling` names this source: its full revision, a revision
+    /// prefix of at least seven characters, or `directory`.
+    #[must_use]
+    pub fn is_named_by(&self, spelling: &str) -> bool {
+        match &self.revision {
+            Some(revision) => spelling.len() >= 7 && revision.starts_with(spelling),
+            None => spelling == self.kind,
+        }
+    }
+}
+
+/// One reviewed identity of a pinned function: its sites as they were at
+/// every source listed in `reviewed_at` (sources whose sites were equal share
+/// one identity).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewedIdentity {
+    /// Every source this identity was reviewed at, sorted, at least one.
+    pub reviewed_at: Vec<ReviewedSource>,
+    /// The function's sites, sorted ([`crate::c_identity`]).
+    pub sites: Vec<SourceSite>,
+}
+
+/// One pinned declaration: the contract text it was reviewed with and every
+/// reviewed identity of the function's source. It is in force where the
+/// contract text is this one and the audited sites equal those of **some**
+/// identity.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PinnedEntry {
+    pub function: String,
+    pub module: String,
+    pub contract_sha256: String,
+    /// The reviewed identities, sorted by their first source; no source
+    /// appears in two identities and no two identities have equal sites. An
+    /// entry whose identities were all dropped has none and is never in force.
+    pub identities: Vec<ReviewedIdentity>,
+}
+
+/// One flexible declaration.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FlexibleEntry {
+    pub function: String,
+    pub module: String,
+    pub contract_sha256: String,
+}
+
+/// Lock format version 1 (one source per lock), read and migrated.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LockV1 {
+    #[allow(dead_code)]
+    lock_version: u32,
+    generated_by: String,
+    note: String,
+    owner: String,
+    source: LockSourceV1,
+    pinned: Vec<PinnedEntryV1>,
+    flexible: Vec<FlexibleEntry>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LockSourceV1 {
+    kind: String,
+    #[serde(default)]
+    revision: Option<String>,
+    normalisation: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PinnedEntryV1 {
+    function: String,
+    module: String,
+    contract_sha256: String,
+    sites: Vec<SourceSite>,
+    #[serde(default)]
+    revision: Option<String>,
+}
+
+impl LockV1 {
+    /// A version-1 lock as version 2: each entry has the one identity it was
+    /// reviewed at (its own `revision` when `--function` recorded one).
+    fn migrate(self) -> ContractLock {
+        let source_kind = self.source.kind.clone();
+        let source_revision = self.source.revision.clone();
+        ContractLock {
+            lock_version: LOCK_VERSION,
+            generated_by: self.generated_by,
+            note: self.note,
+            owner: self.owner,
+            normalisation: self.source.normalisation,
+            pinned: self
+                .pinned
+                .into_iter()
+                .map(|entry| PinnedEntry {
+                    function: entry.function,
+                    module: entry.module,
+                    contract_sha256: entry.contract_sha256,
+                    identities: vec![ReviewedIdentity {
+                        reviewed_at: vec![ReviewedSource {
+                            kind: if entry.revision.is_some() {
+                                "git".to_owned()
+                            } else {
+                                source_kind.clone()
+                            },
+                            revision: entry.revision.or_else(|| source_revision.clone()),
+                        }],
+                        sites: entry.sites,
+                    }],
+                })
+                .collect(),
+            flexible: self.flexible,
+        }
+    }
+}
+
+/// How one pinned declaration stands against its lock at one source.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PinStanding {
+    /// In force: the text matches and the sites equal the identity reviewed
+    /// at these sources.
+    InForce { reviewed_at: Vec<ReviewedSource> },
+    /// Not in force, for this reason, with a one-line account.
+    Mismatch {
+        reason: PinMismatchReason,
+        detail: String,
+    },
+}
+
+/// Compare one pinned declaration (its contract digest and the audited
+/// sites) with its lock entry. The single decision both an audit and
+/// `quirin-audit pin --check` use.
+#[must_use]
+pub fn pin_standing(
+    lock: Option<&ContractLock>,
+    function: &str,
+    contract_sha256: &str,
+    sites: &[SourceSite],
+    module: &str,
+) -> PinStanding {
+    let Some(lock) = lock else {
+        return PinStanding::Mismatch {
+            reason: PinMismatchReason::NoLock,
+            detail: format!("no {LOCK_FILE} covers `{module}`"),
+        };
+    };
+    let Some(entry) = lock.pinned.iter().find(|e| e.function == function) else {
+        return PinStanding::Mismatch {
+            reason: PinMismatchReason::NotInLock,
+            detail: format!("the lock has no pinned entry for `{function}`"),
+        };
+    };
+    if entry.contract_sha256 != contract_sha256 {
+        return PinStanding::Mismatch {
+            reason: PinMismatchReason::ContractChanged,
+            detail: format!(
+                "the contract text changed since it was pinned (lock {}, now {}): every \
+                 reviewed identity is void",
+                short(&entry.contract_sha256),
+                short(contract_sha256)
+            ),
+        };
+    }
+    if entry.identities.is_empty() {
+        return PinStanding::Mismatch {
+            reason: PinMismatchReason::NotInLock,
+            detail: format!("the lock records no reviewed identity for `{function}`"),
+        };
+    }
+    match entry
+        .identities
+        .iter()
+        .find(|identity| identity.sites == sites)
+    {
+        Some(identity) => PinStanding::InForce {
+            reviewed_at: identity.reviewed_at.clone(),
+        },
+        None => PinStanding::Mismatch {
+            reason: PinMismatchReason::SourceChanged,
+            detail: site_difference(&entry.identities, sites),
+        },
+    }
+}
+
+impl ContractLock {
+    /// Read and validate a lock. Version 1 is read and migrated to version 2
+    /// (`quirin-audit pin` then writes version 2).
+    ///
+    /// # Errors
+    ///
+    /// A malformed lock refuses; it is never read as an empty one.
+    pub fn read(path: &Path) -> Result<Self, String> {
+        let text =
+            fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+        let malformed =
+            |error: String| format!("malformed contract lock {}: {error}", path.display());
+        let value: Value = serde_json::from_str(&text).map_err(|e| malformed(e.to_string()))?;
+        let lock = match value["lock_version"].as_u64() {
+            Some(1) => serde_json::from_value::<LockV1>(value)
+                .map_err(|e| malformed(e.to_string()))?
+                .migrate(),
+            Some(2) => {
+                serde_json::from_value::<Self>(value).map_err(|e| malformed(e.to_string()))?
+            }
+            other => return Err(malformed(format!("unsupported lock_version {other:?}"))),
+        };
+        lock.validate().map_err(malformed)?;
+        Ok(lock)
+    }
+
+    fn validate(&self) -> Result<(), String> {
+        if self.lock_version != LOCK_VERSION {
+            return Err(format!("unsupported lock_version {}", self.lock_version));
+        }
+        if self.normalisation != NORMALISATION {
+            return Err(format!(
+                "unsupported normalisation `{}`",
+                self.normalisation
+            ));
+        }
+        let hex = |value: &str| value.len() == 64 && value.bytes().all(|b| b.is_ascii_hexdigit());
+        let pinned = self
+            .pinned
+            .iter()
+            .map(|e| e.function.as_str())
+            .collect::<Vec<_>>();
+        let flexible = self
+            .flexible
+            .iter()
+            .map(|e| e.function.as_str())
+            .collect::<Vec<_>>();
+        for (label, names) in [("pinned", &pinned), ("flexible", &flexible)] {
+            if names.windows(2).any(|pair| pair[0] >= pair[1]) {
+                return Err(format!("{label} entries are not sorted and unique"));
+            }
+        }
+        if let Some(both) = pinned.iter().find(|name| flexible.contains(name)) {
+            return Err(format!("`{both}` is both pinned and flexible"));
+        }
+        for entry in &self.pinned {
+            let malformed = || format!("malformed entry for `{}`", entry.function);
+            if !hex(&entry.contract_sha256) {
+                return Err(malformed());
+            }
+            let mut seen = BTreeSet::new();
+            for identity in &entry.identities {
+                if identity.reviewed_at.is_empty()
+                    || identity
+                        .reviewed_at
+                        .windows(2)
+                        .any(|pair| pair[0] >= pair[1])
+                    || identity
+                        .reviewed_at
+                        .iter()
+                        .any(|source| !seen.insert(source.clone()))
+                    || identity.sites.windows(2).any(|pair| pair[0] > pair[1])
+                    || identity.sites.iter().any(|site| {
+                        !hex(&site.declaration_sha256)
+                            || site.body_sha256.as_deref().is_some_and(|body| !hex(body))
+                    })
+                {
+                    return Err(malformed());
+                }
+            }
+            if entry
+                .identities
+                .windows(2)
+                .any(|pair| pair[0].reviewed_at[0] >= pair[1].reviewed_at[0])
+            {
+                return Err(format!(
+                    "identities of `{}` are not sorted by their first source",
+                    entry.function
+                ));
+            }
+            let distinct = entry
+                .identities
+                .iter()
+                .map(|identity| &identity.sites)
+                .collect::<BTreeSet<_>>();
+            if distinct.len() != entry.identities.len() {
+                return Err(format!(
+                    "two identities of `{}` have equal sites",
+                    entry.function
+                ));
+            }
+        }
+        if self
+            .flexible
+            .iter()
+            .any(|entry| !hex(&entry.contract_sha256))
+        {
+            return Err("malformed flexible entry".into());
+        }
+        Ok(())
+    }
+
+    /// The lock's canonical text: two-space pretty JSON and a final newline.
+    ///
+    /// # Errors
+    ///
+    /// Serialisation failure only.
+    pub fn to_text(&self) -> Result<String, String> {
+        serde_json::to_string_pretty(self)
+            .map(|text| text + "\n")
+            .map_err(|error| error.to_string())
+    }
+
+    /// Every source any identity of this lock was reviewed at.
+    #[must_use]
+    pub fn reviewed_sources(&self) -> BTreeSet<ReviewedSource> {
+        self.pinned
+            .iter()
+            .flat_map(|entry| &entry.identities)
+            .flat_map(|identity| identity.reviewed_at.iter().cloned())
+            .collect()
+    }
+}
+
+impl PinnedEntry {
+    /// Record `sites` as reviewed at `source` (adding or refreshing): the
+    /// source leaves any identity it was recorded in, identities left with no
+    /// source go, and then it joins the identity with equal sites or starts a
+    /// new one. Identities reviewed at other sources are kept.
+    pub fn record(&mut self, source: &ReviewedSource, sites: Vec<SourceSite>) {
+        self.drop_source(source);
+        match self
+            .identities
+            .iter_mut()
+            .find(|identity| identity.sites == sites)
+        {
+            Some(identity) => {
+                identity.reviewed_at.push(source.clone());
+                identity.reviewed_at.sort();
+            }
+            None => self.identities.push(ReviewedIdentity {
+                reviewed_at: vec![source.clone()],
+                sites,
+            }),
+        }
+        self.identities
+            .sort_by(|a, b| a.reviewed_at[0].cmp(&b.reviewed_at[0]));
+    }
+
+    /// Remove `source` from every identity; identities left with no source
+    /// go. Returns whether anything was removed.
+    pub fn drop_source(&mut self, source: &ReviewedSource) -> bool {
+        let before = self.identities.clone();
+        for identity in &mut self.identities {
+            identity.reviewed_at.retain(|reviewed| reviewed != source);
+        }
+        self.identities
+            .retain(|identity| !identity.reviewed_at.is_empty());
+        self.identities
+            .sort_by(|a, b| a.reviewed_at[0].cmp(&b.reviewed_at[0]));
+        before != self.identities
+    }
+}
+
+/// Where the modules of an environment's contracts come from: the load path
+/// named by the contract manifest, when there is one.
+#[derive(Clone, Debug, Default)]
+pub struct ModuleOwners {
+    load_path: Option<LoadPathManifest>,
+}
+
+impl ModuleOwners {
+    /// The owners named by a contract manifest's text (schema 2 names its
+    /// load path, relative to the manifest).
+    ///
+    /// # Errors
+    ///
+    /// A load path that does not read refuses.
+    pub fn for_manifest(manifest_path: &Path, manifest_text: &str) -> Result<Self, String> {
+        let manifest: Value = serde_json::from_str(manifest_text)
+            .map_err(|error| format!("{}: {error}", manifest_path.display()))?;
+        let Some(load_path) = manifest["load_path"].as_str() else {
+            return Ok(Self::default());
+        };
+        let path = manifest_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join(load_path);
+        Ok(Self {
+            load_path: Some(load_contract_load_path_manifest(&path)?),
+        })
+    }
+
+    /// Owners resolved through one load-path manifest.
+    ///
+    /// # Errors
+    ///
+    /// A load path that does not read refuses.
+    pub fn for_load_path(path: &Path) -> Result<Self, String> {
+        Ok(Self {
+            load_path: Some(load_contract_load_path_manifest(path)?),
+        })
+    }
+
+    /// The crate root of a load-path crate.
+    fn crate_root(&self, name: &str) -> Option<PathBuf> {
+        let root = self.load_path.as_ref()?.contract_roots.get(name)?;
+        root.parent().map(Path::to_path_buf)
+    }
+
+    /// The lock covering a module key and the crate that owns it, if any.
+    #[must_use]
+    pub fn lock_for(&self, module: &str) -> (Option<PathBuf>, Option<String>) {
+        // A qualified `crate:module` key: the crate's own lock.
+        if let Some((crate_name, _)) = module.split_once(':')
+            && !Path::new(module).is_absolute()
+        {
+            return (
+                self.crate_root(crate_name)
+                    .map(|root| root.join(LOCK_FILE))
+                    .filter(|lock| lock.is_file()),
+                Some(crate_name.to_owned()),
+            );
+        }
+        let Ok(path) = Path::new(module).canonicalize() else {
+            return (None, None);
+        };
+        let owner = self.load_path.as_ref().and_then(|load_path| {
+            load_path
+                .contract_roots
+                .iter()
+                .find(|(_, root)| root.canonicalize().is_ok_and(|root| path.starts_with(root)))
+                .map(|(name, _)| name.clone())
+        });
+        let mut directory = path.parent();
+        while let Some(current) = directory {
+            let lock = current.join(LOCK_FILE);
+            if lock.is_file() {
+                return (Some(lock), owner);
+            }
+            if current.join("Cargo.toml").exists() || current.join(".git").exists() {
+                break;
+            }
+            directory = current.parent();
+        }
+        (None, owner)
+    }
+}
+
+/// A pinned declaration awaiting comparison: function, module, owner, lock
+/// and contract digest.
+type PendingPin = (String, String, Option<String>, Option<PathBuf>, String);
+
+/// Held-call refusals per callee, and the distinct (library, file, function)
+/// rows holding them.
+type HeldCalls = BTreeMap<String, (usize, BTreeSet<(String, String, String)>)>;
+
+/// One pinned declaration's outcome.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct PinOutcome {
+    function: String,
+    module: String,
+    owner: Option<String>,
+    lock: Option<String>,
+    contract_sha256: String,
+    reason: Option<PinMismatchReason>,
+    detail: String,
+    /// The sources of the identity that matched, when in force.
+    matched: Vec<ReviewedSource>,
+    /// Every reviewed identity of the lock entry.
+    identities: Vec<ReviewedIdentity>,
+    found: Vec<SourceSite>,
+}
+
+/// What [`apply_pins`] decided, kept for the report section.
+#[derive(Clone, Debug, Default)]
+pub struct PinEvaluation {
+    source_kind: String,
+    source_revision: Option<String>,
+    locks: BTreeMap<String, Value>,
+    outcomes: Vec<PinOutcome>,
+    owners: BTreeMap<String, Option<String>>,
+    contract_sha256: BTreeMap<String, String>,
+    modules: BTreeMap<String, String>,
+}
+
+/// Compare every pinned declaration in force with its lock over the source at
+/// `source_root`, and withhold every mismatch.
+///
+/// # Errors
+///
+/// A malformed lock or an unreadable source tree refuses the audit; a
+/// missing lock or entry is a mismatch, not an error.
+pub fn apply_pins(
+    contracts: &mut ResourceContracts,
+    owners: &ModuleOwners,
+    source_root: &Path,
+) -> Result<PinEvaluation, String> {
+    let digests =
+        qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())?;
+    let mut evaluation = PinEvaluation::default();
+    let mut locks: BTreeMap<PathBuf, ContractLock> = BTreeMap::new();
+    let mut pending: Vec<PendingPin> = Vec::new();
+    for (name, (module, digest)) in &digests {
+        let (lock, owner) = owners.lock_for(module);
+        evaluation.owners.insert(module.clone(), owner.clone());
+        evaluation
+            .contract_sha256
+            .insert(name.clone(), digest.clone());
+        evaluation.modules.insert(name.clone(), module.clone());
+        if let Some(path) = lock.as_ref().filter(|path| !locks.contains_key(*path)) {
+            let read = ContractLock::read(path)?;
+            evaluation.locks.insert(
+                path.display().to_string(),
+                json!({
+                    "owner": read.owner,
+                    "sha256": sha256_hex(&fs::read(path).map_err(|e| e.to_string())?),
+                    "reviewed_at": read.reviewed_sources(),
+                }),
+            );
+            locks.insert(path.clone(), read);
+        }
+        if contracts.contract(name).is_none()
+            || contracts.revision_mode(name) != RevisionMode::Pinned
+        {
+            continue;
+        }
+        pending.push((name.clone(), module.clone(), owner, lock, digest.clone()));
+    }
+    let wanted = pending
+        .iter()
+        .filter(|(name, _, _, lock, _)| {
+            lock.as_ref()
+                .and_then(|path| locks.get(path))
+                .is_some_and(|lock| lock.pinned.iter().any(|entry| &entry.function == name))
+        })
+        .map(|(name, ..)| name.clone())
+        .collect::<BTreeSet<_>>();
+    let tree = SourceTree::read(source_root)?;
+    evaluation.source_kind = tree.kind.to_owned();
+    evaluation.source_revision.clone_from(&tree.revision);
+    let found = tree.sites(&wanted);
+    for (name, module, owner, lock_path, digest) in pending {
+        let lock = lock_path.as_ref().and_then(|path| locks.get(path));
+        let entry = lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name));
+        let sites = found.get(&name).cloned().unwrap_or_default();
+        let identities = entry.map(|e| e.identities.clone()).unwrap_or_default();
+        let (reason, detail, matched) = match pin_standing(lock, &name, &digest, &sites, &module) {
+            PinStanding::InForce { reviewed_at } => (None, String::new(), reviewed_at),
+            PinStanding::Mismatch { reason, detail } => (Some(reason), detail, Vec::new()),
+        };
+        let lock_display = lock_path.as_ref().map(|path| path.display().to_string());
+        if let Some(reason) = reason {
+            contracts.withhold_for_pin_mismatch(
+                &name,
+                module.clone(),
+                reason,
+                lock_display.clone(),
+                detail.clone(),
+            )?;
+        }
+        evaluation.outcomes.push(PinOutcome {
+            function: name,
+            module,
+            owner,
+            lock: lock_display,
+            contract_sha256: digest,
+            reason,
+            detail,
+            matched,
+            identities,
+            found: sites,
+        });
+    }
+    Ok(evaluation)
+}
+
+fn short(digest: &str) -> &str {
+    &digest[..digest.len().min(12)]
+}
+
+/// A one-line account of how the audited sites differ from every reviewed
+/// identity: per identity, its sources and the files that differ.
+fn site_difference(identities: &[ReviewedIdentity], found: &[SourceSite]) -> String {
+    let parts = identities
+        .iter()
+        .map(|identity| {
+            let expected = &identity.sites;
+            let paths = expected
+                .iter()
+                .chain(found)
+                .filter(|site| !(expected.contains(site) && found.contains(site)))
+                .map(|site| site.path.as_str())
+                .collect::<BTreeSet<_>>();
+            format!(
+                "reviewed at {}: differs in {}",
+                identity
+                    .reviewed_at
+                    .iter()
+                    .map(ReviewedSource::label)
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                paths.into_iter().collect::<Vec<_>>().join(", ")
+            )
+        })
+        .collect::<Vec<_>>();
+    format!(
+        "the audited source's sites match no reviewed identity ({})",
+        parts.join("; ")
+    )
+}
+
+/// The analysed functions of a finished report, by name.
+fn analysed_functions(report: &AuditReport) -> BTreeSet<String> {
+    report
+        .unit_rows()
+        .iter()
+        .flat_map(|unit| unit["functions"].as_array().into_iter().flatten())
+        .filter_map(|function| function["function"].as_str().map(str::to_owned))
+        .collect()
+}
+
+/// Held-call refusals per callee, and the distinct functions holding them.
+fn held_calls(report: &AuditReport) -> HeldCalls {
+    let mut held: BTreeMap<String, (usize, BTreeSet<_>)> = BTreeMap::new();
+    for unit in report.unit_rows() {
+        let library = unit["library"].as_str().unwrap_or_default();
+        let file = unit["file"].as_str().unwrap_or_default();
+        for function in unit["functions"].as_array().into_iter().flatten() {
+            let name = function["function"].as_str().unwrap_or_default();
+            for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
+                let Some(callee) = diagnostic["description"].as_str().and_then(held_call) else {
+                    continue;
+                };
+                let entry = held.entry(callee.to_owned()).or_default();
+                entry.0 += 1;
+                entry
+                    .1
+                    .insert((library.to_owned(), file.to_owned(), name.to_owned()));
+            }
+        }
+    }
+    held
+}
+
+/// The `contract_revision` section for one finished report.
+#[must_use]
+pub fn section(
+    contracts: &ResourceContracts,
+    evaluation: &PinEvaluation,
+    report: &AuditReport,
+) -> Value {
+    let analysed = analysed_functions(report);
+    let held = held_calls(report);
+    let module_sha256 = |module: &str| {
+        contracts
+            .source_assumptions()
+            .get(module)
+            .map(|text| sha256_hex(text.as_bytes()))
+    };
+    let owner_of = |module: &str| evaluation.owners.get(module).cloned().flatten();
+    let mut in_force = Vec::new();
+    let mut mismatches = Vec::new();
+    for outcome in &evaluation.outcomes {
+        let record = json!({
+            "function": outcome.function,
+            "module": outcome.module,
+            "module_sha256": module_sha256(&outcome.module),
+            "owner": outcome.owner,
+            "lock": outcome.lock,
+            "contract_sha256": outcome.contract_sha256,
+        });
+        match outcome.reason {
+            None => {
+                let mut record = record;
+                record["sites"] = json!(outcome.found.len());
+                record["matched_reviewed_at"] = json!(outcome.matched);
+                record["identities"] = json!(outcome.identities.len());
+                record["body_analysed"] = json!(analysed.contains(&outcome.function));
+                in_force.push(record);
+            }
+            Some(reason) => {
+                let (sites, functions) = held
+                    .get(&outcome.function)
+                    .map_or((0, 0), |(sites, functions)| (*sites, functions.len()));
+                let mut record = record;
+                record["reason"] = json!(reason.as_str());
+                record["detail"] = json!(outcome.detail);
+                record["identities"] = json!(outcome.identities);
+                record["found_sites"] = json!(outcome.found);
+                record["held_functions"] = json!(functions);
+                record["held_call_sites"] = json!(sites);
+                mismatches.push(record);
+            }
+        }
+    }
+    let mut checked = Vec::new();
+    let mut trusted = Vec::new();
+    let mut libc = Vec::new();
+    for (name, contract_digest) in &evaluation.contract_sha256 {
+        if contracts.revision_mode(name) != RevisionMode::Flexible
+            || contracts.contract(name).is_none()
+        {
+            continue;
+        }
+        let module = evaluation.modules.get(name).cloned().unwrap_or_default();
+        let owner = owner_of(&module);
+        let record = json!({
+            "function": name,
+            "module": module,
+            "owner": owner,
+            "contract_sha256": contract_digest,
+        });
+        if analysed.contains(name) {
+            checked.push(record);
+        } else if owner.as_deref() == Some(LIBC_CRATE) {
+            libc.push(name.clone());
+        } else {
+            trusted.push(record);
+        }
+    }
+    // Every declaration, with its mode and what this run made of it: the
+    // inventory `quirin-audit compare` reads.
+    let mut inventory = BTreeMap::new();
+    for (name, contract_digest) in &evaluation.contract_sha256 {
+        let mode = contracts.revision_mode(name);
+        let status = if contracts.pending_review().contains_key(name) {
+            "pending-review"
+        } else if contracts.pin_mismatch().contains_key(name) {
+            "not-in-force"
+        } else if mode == RevisionMode::Pinned {
+            "pinned-in-force"
+        } else if analysed.contains(name) {
+            "flexible-checked"
+        } else if libc.contains(name) {
+            "flexible-standing"
+        } else {
+            "flexible-trusted"
+        };
+        inventory.insert(
+            name.clone(),
+            json!({
+                "mode": mode.as_str(),
+                "status": status,
+                "module": evaluation.modules.get(name),
+                "contract_sha256": contract_digest,
+            }),
+        );
+    }
+    let pinned_total = evaluation.outcomes.len();
+    let held_functions = held
+        .values()
+        .flat_map(|(_, functions)| functions)
+        .collect::<BTreeSet<_>>()
+        .len();
+    let standing = if libc.is_empty() {
+        json!([])
+    } else {
+        json!([{
+            "name": LIBC_ASSUMPTION,
+            "owner": LIBC_CRATE,
+            "statement": LIBC_STATEMENT,
+            "contracts": libc.len(),
+            "functions": libc,
+        }])
+    };
+    json!({
+        "meaning": MEANING,
+        "reason_code": CONTRACT_PIN_MISMATCH,
+        "default_mode": RevisionMode::Pinned.as_str(),
+        "source": {"kind": evaluation.source_kind, "revision": evaluation.source_revision},
+        "locks": evaluation.locks,
+        "counts": {
+            "pinned": pinned_total,
+            "pinned_in_force": in_force.len(),
+            "pinned_not_in_force": mismatches.len(),
+            "flexible_checked": checked.len(),
+            "flexible_trusted": trusted.len(),
+            "standing_libc": libc.len(),
+            "held_functions": held_functions,
+            "held_call_sites": held.values().map(|(sites, _)| sites).sum::<usize>(),
+        },
+        "pinned_in_force": in_force,
+        "pin_mismatches": mismatches,
+        "flexible_checked": checked,
+        "assumptions": {
+            "flexible_trusted": trusted,
+            "standing": standing,
+        },
+        "contracts": inventory,
+    })
+}
+
+/// The one-line console tally of a [`section`].
+#[must_use]
+pub fn tally(section: &Value) -> String {
+    let count = |key: &str| section["counts"][key].as_u64().unwrap_or_default();
+    format!(
+        "contract revision: {} pinned ({} in force, {} not in force), {} flexible checked, {} \
+         flexible trusted, {} libc under the standing assumption; {} function(s) and {} call \
+         site(s) held Unknown ({CONTRACT_PIN_MISMATCH})",
+        count("pinned"),
+        count("pinned_in_force"),
+        count("pinned_not_in_force"),
+        count("flexible_checked"),
+        count("flexible_trusted"),
+        count("standing_libc"),
+        count("held_functions"),
+        count("held_call_sites"),
+    )
+}

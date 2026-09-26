@@ -1,0 +1,39 @@
+[
+  {
+    "function": "box_count",
+    "status": "Unsafe",
+    "diagnostics": [
+      {
+        "category": "leak",
+        "description": "live obligation acquired at queue.c:28",
+        "line": 26,
+        "origin": "queue.c:33"
+      }
+    ]
+  },
+  {
+    "function": "box_drop",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_keep",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_two",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_drop",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_keep",
+    "status": "Safe",
+    "diagnostics": []
+  }
+]

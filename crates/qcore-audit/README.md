@@ -580,6 +580,40 @@ this route and the build-configured run analyse gets the same verdict; the
 [measurement](../../docs/reports/w44-contracts-only-no-build/README.md)
 attributes every difference.
 
+## Pinned and flexible contracts: `quirin-audit pin` and `compare`
+
+A contract is **pinned** unless it says `requires resource_revision(flexible);`
+(contract specification C06.2). A pinned contract is in force only where its
+contract text is the pinned one and the audited source matches one of the
+**reviewed identities** its crate's generated `contracts.lock` records, each
+the function's sites at the revisions it was reviewed at; every route above,
+and the corpus arbiter, compares the pins before analysing any unit, withholds
+each mismatch (calls relying on it are `Unknown` under `contract-pin-mismatch`)
+and publishes a `contract_revision` section in the contract sidecar with a
+one-line tally. Flexible contracts bind by name and signature; the libc
+provider's are one standing assumption.
+
+```sh
+# after reviewing the contracts against a checkout: add (or refresh) its
+# identity in every lock, keeping those reviewed at other revisions
+quirin-audit pin --source-root /path/to/fluent-bit
+# per revision, never writing: recorded / in force through another revision /
+# not in force; exit 1 unless every entry is recorded at this revision
+quirin-audit pin --source-root /path/to/fluent-bit --check
+quirin-audit pin --source-root /path/to/fluent-bit --check --revision 66910c10
+# add one reviewed function only; drop a revision; rebuild from one revision
+quirin-audit pin --source-root /path/to/fluent-bit --function flb_input_chunk_destroy
+quirin-audit pin --drop-revision 66910c10 --crate quirin-provider-fluent-bit
+quirin-audit pin --source-root /path/to/fluent-bit --regenerate
+# the change report between two runs (two revisions or two contract sets)
+quirin-audit compare --before A/resource-diagnostics.json --after B/resource-diagnostics.json --output change.json
+```
+
+The change report keeps *violation detected* (a move to `Unsafe`) apart from
+*coverage lost* (a move from `Safe` to `Unknown`) and lists contracts in force,
+pin mismatches, assumptions, sources and per-function obligations
+([report](../../docs/reports/w45-contract-revision-mode/README.md)).
+
 ## Configured source-contract processes
 
 Add an explicit `source_contracts` object to the audit configuration:

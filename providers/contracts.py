@@ -254,6 +254,30 @@ def loader_resource_views(root, load_path_file):
     return {name: record[RESOURCE_VIEW] for name, record in probe["crates"].items()}
 
 
+# Card W45-CONTRACT-REVISION-MODE: every crate with a resource view keeps a
+# generated `contracts.lock` beside its Cargo.toml. `quirin-audit pin
+# --verify-contracts` (no source needed) checks that each lock lists exactly
+# the crate's current declarations, revision modes and contract-text digests;
+# the source identities themselves are compared at audit time.
+LOCK_FILE = "contracts.lock"
+
+
+def verify_locks(root, load_path_file):
+    """Run `quirin-audit pin --verify-contracts` over the load path and
+    return its report lines. Any failure of the probe, or a stale or missing
+    lock, is an error naming the command that regenerates the locks."""
+    workspace = Path(root).resolve().parent / "Cargo.toml"
+    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
+               str(workspace), "-p", "qcore-audit", "--bin", "quirin-audit", "--",
+               "pin", "--verify-contracts", "--load-path", str(Path(load_path_file).resolve())]
+    completed = subprocess.run(command, capture_output=True, text=True)
+    if completed.returncode != 0:
+        raise ValueError(f"contract locks are stale or unreadable (exit {completed.returncode}): "
+                         f"{completed.stdout.strip()} {completed.stderr.strip()}; review the "
+                         "contracts, then run `quirin-audit pin --source-root <checkout>`")
+    return completed.stdout.strip().splitlines()
+
+
 def with_resource_views(load_path, views):
     """`load_path` with each crate's `resource_view` from `views`, validated:
     one view per crate, sorted, unique and owned."""
@@ -381,9 +405,11 @@ def main():
     try:
         load_path = maintain_load_path(sync=args.action == "sync")
         rows = maintain(sync=args.action == "sync", load_path=load_path)
+        locks = verify_locks(ROOT, ROOT / LOAD_PATH)
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"provider contracts: {error}\n")
     print(json.dumps({
+        "locks": locks,
         "providers": rows,
         "total_contracts": sum(r["contracts"] for r in rows),
         "load_path": [{"crate": c["name"], "namespace": c["namespace"], "version": c["version"],

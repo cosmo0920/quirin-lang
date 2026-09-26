@@ -1,0 +1,19 @@
+pin: qcore-provider-chunkio at git 046accf6aded7906f66a1baf0202da349e521736: 6 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-chunkio/contracts.lock)
+pin: qcore-provider-cmetrics at git 046accf6aded7906f66a1baf0202da349e521736: 4 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-cmetrics/contracts.lock)
+pin: qcore-provider-ctraces at git 046accf6aded7906f66a1baf0202da349e521736: 1 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-ctraces/contracts.lock)
+pin: qcore-provider-libevent at git 046accf6aded7906f66a1baf0202da349e521736: 4 recorded, 0 in force through another revision, 2 not in force, 0 stale (providers/qcore-provider-libevent/contracts.lock)
+  x mk_list_add: not in force (contract-changed): the contract text changed since it was pinned (lock 97a811cb31a0, now 748bf3d90bd3): every reviewed identity is void
+  x mk_list_del: not in force (not-in-lock): the lock has no pinned entry for `mk_list_del`
+pin: qcore-provider-librdkafka at git 046accf6aded7906f66a1baf0202da349e521736: 10 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-librdkafka/contracts.lock)
+pin: quirin-provider-cfl at git 046accf6aded7906f66a1baf0202da349e521736: 2 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-cfl/contracts.lock)
+pin: quirin-provider-fluent-bit at git 046accf6aded7906f66a1baf0202da349e521736: 22 recorded, 0 in force through another revision, 6 not in force, 0 stale (providers/quirin-provider-fluent-bit/contracts.lock)
+  x flb_output_task_flush: not in force (not-in-lock): the lock has no pinned entry for `flb_output_task_flush`
+  x flb_output_task_singleplex_enqueue: not in force (not-in-lock): the lock has no pinned entry for `flb_output_task_singleplex_enqueue`
+  x flb_output_thread_pool_flush: not in force (not-in-lock): the lock has no pinned entry for `flb_output_thread_pool_flush`
+  x flb_task_retry_destroy: not in force (not-in-lock): the lock has no pinned entry for `flb_task_retry_destroy`
+  x flb_task_users_dec: not in force (not-in-lock): the lock has no pinned entry for `flb_task_users_dec`
+  x flb_task_users_inc: not in force (not-in-lock): the lock has no pinned entry for `flb_task_users_inc`
+pin: quirin-provider-libc at git 046accf6aded7906f66a1baf0202da349e521736: 0 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-libc/contracts.lock)
+pin: quirin-provider-mpack at git 046accf6aded7906f66a1baf0202da349e521736: 4 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-mpack/contracts.lock)
+pin: quirin-provider-msgpack at git 046accf6aded7906f66a1baf0202da349e521736: 1 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-msgpack/contracts.lock)
+exit 1

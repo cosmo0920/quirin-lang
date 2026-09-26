@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // C11 <threads.h> and POSIX thread/signal helpers -- resource-projection
 // vocabulary version 1.
 //
@@ -59,6 +65,7 @@ module contract;
 extern fn mtx_lock(mutex: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(mutex);
     ensures normal resource_return_none();
 };
@@ -66,6 +73,7 @@ contract {
 extern fn mtx_unlock(mutex: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(mutex);
     ensures normal resource_return_none();
 };
@@ -73,6 +81,7 @@ contract {
 extern fn cnd_wait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(cond);
     ensures normal resource_borrowed(mutex);
     ensures normal resource_return_none();
@@ -81,6 +90,7 @@ contract {
 extern fn pthread_rwlock_rdlock(rwlock: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(rwlock);
     ensures normal resource_return_none();
 };
@@ -88,6 +98,7 @@ contract {
 extern fn pthread_rwlock_wrlock(rwlock: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(rwlock);
     ensures normal resource_return_none();
 };
@@ -95,6 +106,7 @@ contract {
 extern fn pthread_rwlock_unlock(rwlock: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(rwlock);
     ensures normal resource_return_none();
 };
@@ -102,12 +114,14 @@ contract {
 extern fn pthread_self() -> u64
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
 extern fn pthread_kill(threadid: u64, signo: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(threadid);
     ensures normal resource_borrowed(signo);
     ensures normal resource_return_none();
@@ -116,6 +130,7 @@ contract {
 extern fn pthread_setcancelstate(state: i32, oldstate: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(state);
     ensures normal resource_borrowed(oldstate);
     ensures normal resource_return_none();
@@ -124,6 +139,7 @@ contract {
 extern fn pthread_setcanceltype(kind: i32, oldtype: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(kind);
     ensures normal resource_borrowed(oldtype);
     ensures normal resource_return_none();
@@ -132,6 +148,7 @@ contract {
 extern fn pthread_attr_setdetachstate(attr: ptr<mut, u8>, detachstate: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(attr);
     ensures normal resource_borrowed(detachstate);
     ensures normal resource_return_none();
@@ -140,6 +157,7 @@ contract {
 extern fn sigemptyset(set: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(set);
     ensures normal resource_return_none();
 };
@@ -147,6 +165,7 @@ contract {
 extern fn sigfillset(set: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(set);
     ensures normal resource_return_none();
 };
@@ -154,6 +173,7 @@ contract {
 extern fn sigaddset(set: ptr<mut, u8>, signo: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(set);
     ensures normal resource_borrowed(signo);
     ensures normal resource_return_none();
@@ -192,6 +212,7 @@ contract {
 extern fn cnd_timedwait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>, time_point: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(cond);
     ensures normal resource_borrowed(mutex);
     ensures normal resource_borrowed(time_point);
@@ -201,6 +222,7 @@ contract {
 extern fn pthread_sigmask(how: i32, newmask: ptr<const, u8>, oldmask: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(how);
     ensures normal resource_borrowed(newmask);
     ensures normal resource_borrowed(oldmask);

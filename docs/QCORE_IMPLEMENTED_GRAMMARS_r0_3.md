@@ -2472,7 +2472,14 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", literal_argument_premise, ";"
                 | "requires", contract_review_marker, ";"
                 | "ensures", "normal", resource_predicate, ";"
-                | "ensures", "normal", clause_review_marker, ";" ;
+                | "ensures", "normal", clause_review_marker, ";"
+                | "requires", contract_revision_marker, ";"
+                | "ensures", "normal", clause_revision_marker, ";" ;
+contract_revision_marker =
+    "resource_revision", "(", revision_mode, ")" ;
+clause_revision_marker =
+    "resource_revision", "(", resource_predicate, ",", revision_mode, ")" ;
+revision_mode = "pinned" | "flexible" ;
 contract_review_marker =
     "resource_review_pending", "(", review_note, ")" ;
 clause_review_marker =
@@ -2513,7 +2520,9 @@ Additional static conditions are mandatory: exactly one marker, exactly one mode
 
 The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C06) carry their own static conditions. The first `STRING` is the mandatory reason and the second the optional reviewer or owner; each is one lexer string literal, not blank, with no backslash escape and no control character, so each has one spelling. A declaration carries either one `contract_review_marker` or any number of `clause_review_marker`s, never both and never two contract-level markers. A `clause_review_marker` wraps exactly one `resource_predicate` (the kind clauses and `resource_variadic_data_tail()` included), which is then subject to every condition above as if written bare; it cannot wrap a marker, the `resource_contract_v1` selector or a `literal_argument_premise`, and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. Every violation rejects the whole module. A marked declaration is loaded and validated in full and then withheld (C06); inheritance (G05a, C15) copies its markers with its clauses.
 
-The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker` wrapping, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
+The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
+
+The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker` and `clause_revision_marker` wrappings, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
 
 ## G05a. Contract inclusion and inheritance
 

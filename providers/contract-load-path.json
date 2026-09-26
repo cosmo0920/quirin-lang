@@ -246,8 +246,8 @@
         "libc/unistd.qcore"
       ],
       "published": {
-        "libc/memory.qcore": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5",
-        "libc/string.qcore": "ab20b8a8839bca1231c7075b21a1812ef67e13b4655f3123adc6f3b1e480d0b2"
+        "libc/memory.qcore": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+        "libc/string.qcore": "679d979e08d4c5627cad4675de0a7328fd00c8addd119dfab099a582d243b386"
       },
       "resource_view": [
         "libc/dirent.qcore",

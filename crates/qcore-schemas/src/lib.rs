@@ -7,6 +7,7 @@
 //! only; the trusted core re-exports these types for compatibility.
 
 pub mod contract;
+pub mod contract_revision;
 pub mod digest;
 pub mod identity;
 pub mod mechanism;
@@ -23,6 +24,9 @@ pub use contract::{
     ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
     ResourceReturnMode, ResourceSummaryRecord, ReviewDeferral, ReviewScope, UserEffect,
     UserExitClause, UserOperation,
+};
+pub use contract_revision::{
+    DeclaredRevision, PinMismatch, PinMismatchReason, RevisionMarker, RevisionMode, RevisionScope,
 };
 pub use digest::{CANONICAL_SERIALIZER, sha256_hex};
 pub use identity::ExternalSourceBundle;

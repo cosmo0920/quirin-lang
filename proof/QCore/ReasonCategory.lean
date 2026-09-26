@@ -2,7 +2,7 @@
 obligations (`docs/QCORE_SPEC_r0_3.md` §L21.1).
 
 This models the *classification relation* of
-`crates/qcore-schemas/src/reason.rs`: the eight closed categories, the
+`crates/qcore-schemas/src/reason.rs`: the nine closed categories, the
 three-way subject partition, and the fail-closed mapping from the free-text
 reason families this workspace really emits.
 
@@ -36,9 +36,11 @@ inductive Subject where
   | environment
   deriving DecidableEq, Repr
 
-/-- The closed eight-category vocabulary. `awaitingHumanReview` was added by
+/-- The closed nine-category vocabulary. `awaitingHumanReview` was added by
 card W45-CONTRACT-DEFERRED-REVIEW: a declared contract the row depends on is
-marked as awaiting human review. -/
+marked as awaiting human review. `contractPinMismatch` was added by card
+W45-CONTRACT-REVISION-MODE: a pinned contract the row depends on is not in
+force, because the audited source does not match its lock. -/
 inductive Category where
   | unsupportedSyntax
   | missingPremise
@@ -48,6 +50,7 @@ inductive Category where
   | residualCustody
   | environmentUnavailable
   | awaitingHumanReview
+  | contractPinMismatch
   deriving DecidableEq, Repr
 
 namespace Category
@@ -56,7 +59,7 @@ namespace Category
 def all : List Category :=
   [ .unsupportedSyntax, .missingPremise, .incompleteObligationCoverage,
     .staleEvidence, .providerFailure, .residualCustody, .environmentUnavailable,
-    .awaitingHumanReview ]
+    .awaitingHumanReview, .contractPinMismatch ]
 
 /-- The spec spelling, identical to the Rust serde representation. -/
 def spelling : Category → String
@@ -68,6 +71,7 @@ def spelling : Category → String
   | .residualCustody => "residual-custody"
   | .environmentUnavailable => "environment-unavailable"
   | .awaitingHumanReview => "awaiting-human-review"
+  | .contractPinMismatch => "contract-pin-mismatch"
 
 /-- The subject partition, mirroring `ReasonCategory::subject`. -/
 def subject : Category → Subject
@@ -78,6 +82,7 @@ def subject : Category → Subject
   | .staleEvidence => .analyser
   | .providerFailure => .analyser
   | .awaitingHumanReview => .analyser
+  | .contractPinMismatch => .analyser
   | .environmentUnavailable => .environment
 
 def describesAnalysedSource (c : Category) : Bool := subject c == .analysedSource
@@ -96,11 +101,11 @@ open Category
 theorem all_is_complete (c : Category) : c ∈ all := by
   cases c <;> simp [all]
 
-theorem all_has_no_duplicates : all.length = 8 ∧ all.eraseDups.length = 8 := by
+theorem all_has_no_duplicates : all.length = 9 ∧ all.eraseDups.length = 9 := by
   constructor <;> rfl
 
 theorem spellings_are_pairwise_distinct :
-    (all.map spelling).eraseDups.length = 8 := by decide
+    (all.map spelling).eraseDups.length = 9 := by decide
 
 /-- §L21.1 rule 1, structurally: `environmentUnavailable` is the sole member of
 the environment subject. -/
@@ -175,6 +180,10 @@ inductive Family where
   -- the held-call statement itself
   | projectionHeldAwaitingHumanReview
   | heldCallAwaitingHumanReview
+  -- W45-CONTRACT-REVISION-MODE: a projection summary naming calls held for a
+  -- contract pin mismatch, and the held-call statement itself
+  | projectionHeldContractPinMismatch
+  | heldCallContractPinMismatch
   deriving DecidableEq, Repr
 
 namespace Family
@@ -194,7 +203,8 @@ def all : List Family :=
     .configuredClangMismatch, .sourceOutsideCheckout, .notUtf8Source,
     .pinnedBytesMismatch, .historicalEvidenceNotAdmitted,
     .absentFromTypedImport, .sourceContractConfiguration,
-    .projectionHeldAwaitingHumanReview, .heldCallAwaitingHumanReview ]
+    .projectionHeldAwaitingHumanReview, .heldCallAwaitingHumanReview,
+    .projectionHeldContractPinMismatch, .heldCallContractPinMismatch ]
 
 theorem all_is_complete (f : Family) : f ∈ all := by
   cases f <;> simp [all]
@@ -240,6 +250,8 @@ def categoryOf : Family → Category
   | .sourceContractConfiguration => .providerFailure
   | .projectionHeldAwaitingHumanReview => .awaitingHumanReview
   | .heldCallAwaitingHumanReview => .awaitingHumanReview
+  | .projectionHeldContractPinMismatch => .contractPinMismatch
+  | .heldCallContractPinMismatch => .contractPinMismatch
 
 /-- Totality: every enumerated family receives a category of the closed set. -/
 theorem the_mapping_is_total (f : Family) : categoryOf f ∈ Category.all :=
@@ -258,6 +270,7 @@ theorem every_category_is_reached (c : Category) :
   · exact ⟨.projectionUnresolvedCustodyOnly, rfl⟩
   · exact ⟨.productionParserUnavailable, rfl⟩
   · exact ⟨.projectionHeldAwaitingHumanReview, rfl⟩
+  · exact ⟨.projectionHeldContractPinMismatch, rfl⟩
 
 /-- The families whose subject really is the environment: a missing or
 mismatched tool, checkout or compile command. -/

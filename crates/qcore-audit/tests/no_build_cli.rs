@@ -30,15 +30,19 @@ fn clang() -> Option<PathBuf> {
     }
 }
 
+// Card W45-CONTRACT-REVISION-MODE: a synthetic API with no source to pin
+// against, so its contracts bind by name (`revision flexible`).
 const HEAP: &str = "module contract;\n\
 extern fn alloc() -> ptr<mut, u8>\n\
 contract {\n\
     requires resource_contract_v1;\n\
+    requires resource_revision(flexible);\n\
     ensures normal resource_return_owned(nonnull);\n\
 };\n\
 extern fn dispose(p: ptr<mut, u8>) -> unit\n\
 contract {\n\
     requires resource_contract_v1;\n\
+    requires resource_revision(flexible);\n\
     ensures normal resource_released(p, nonnull);\n\
     ensures normal resource_return_none();\n\
 };\n";

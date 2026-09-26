@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <stdio.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION
@@ -48,6 +54,7 @@ module contract;
 extern fn perror(s: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_return_none();
 };
@@ -55,6 +62,7 @@ contract {
 extern fn fflush(stream: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(stream);
     ensures normal resource_return_none();
 };
@@ -62,6 +70,7 @@ contract {
 extern fn remove(filename: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(filename);
     ensures normal resource_return_none();
 };
@@ -135,6 +144,7 @@ contract {
 extern fn printf(format: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(format);
     ensures normal resource_variadic_data_tail();
     ensures normal resource_return_none();
@@ -143,6 +153,7 @@ contract {
 extern fn fprintf(stream: ptr<mut, u8>, format: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(stream);
     ensures normal resource_borrowed(format);
     ensures normal resource_variadic_data_tail();
@@ -152,6 +163,7 @@ contract {
 extern fn snprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(maxlen);
     ensures normal resource_borrowed(format);
@@ -162,6 +174,7 @@ contract {
 extern fn sprintf(s: ptr<mut, u8>, format: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(format);
     ensures normal resource_variadic_data_tail();
@@ -197,6 +210,7 @@ contract {
 extern fn fopen(filename: ptr<const, u8>, modes: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(filename);
     ensures normal resource_borrowed(modes);
     ensures normal resource_return_owned(nullable);
@@ -206,6 +220,7 @@ contract {
 extern fn fclose(stream: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_released(stream, nonnull);
     ensures normal resource_kind(stream, stream);
     ensures normal resource_return_none();
@@ -214,6 +229,7 @@ contract {
 extern fn fileno(stream: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(stream);
     ensures normal resource_return_none();
 };
@@ -255,6 +271,7 @@ contract {
 extern fn vsnprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>, arg: va_list) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(maxlen);
     ensures normal resource_borrowed(format);
@@ -265,6 +282,7 @@ contract {
 extern fn vprintf(format: ptr<const, u8>, arg: va_list) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(format);
     ensures normal resource_borrowed(arg);
     ensures normal resource_return_none();

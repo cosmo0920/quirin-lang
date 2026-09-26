@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <dirent.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-DESCRIPTOR-RESOURCE-TRACKING. TRUSTED ASSUMPTIONS about the C library (trust
@@ -33,6 +39,7 @@ module contract;
 extern fn opendir(name: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(name);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(directory);
@@ -41,6 +48,7 @@ contract {
 extern fn closedir(dirp: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_released(dirp, nonnull);
     ensures normal resource_kind(dirp, directory);
     ensures normal resource_return_none();

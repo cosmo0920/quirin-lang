@@ -1,0 +1,10 @@
+{
+  "byte_identical_after_root_alias": false,
+  "identical_after_masking_digests": true,
+  "digest_tokens": [
+    62,
+    62
+  ],
+  "distinct_digests_only_in_run": 10,
+  "distinct_digests_only_in_baseline": 10
+}
