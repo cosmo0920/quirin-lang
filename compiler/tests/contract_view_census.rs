@@ -93,6 +93,11 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
             "fluent_bit/resource_memory.qcore",
         ],
     ),
+    // Card W45-FB-RETRY-LIFETIME: the resource-v1 view of the unlink.
+    (
+        "mk_list_del",
+        &["chunkio/list_unlink.qcore", "monkey/intrusive_list.qcore"],
+    ),
 ];
 
 fn corpus() -> BTreeMap<String, String> {
@@ -138,10 +143,11 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
         })
         .collect();
     assert_eq!(actual, expected);
-    // Ten functions, twelve pairs, every pair registered exactly once.
-    assert_eq!(census_pairs(&report.census).len(), 12);
-    assert_eq!(REGISTERED_RELATIONS.len(), 12);
-    assert_eq!(report.relations.len(), 12);
+    // Eleven functions, thirteen pairs, every pair registered exactly once
+    // (W45-FB-RETRY-LIFETIME added `mk_list_del`).
+    assert_eq!(census_pairs(&report.census).len(), 13);
+    assert_eq!(REGISTERED_RELATIONS.len(), 13);
+    assert_eq!(report.relations.len(), 13);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

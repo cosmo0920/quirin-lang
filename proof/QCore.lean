@@ -241,5 +241,7 @@ import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 import QCore.ContractDeferredReview
 import QCore.ParenthesisedCallee
+import QCore.ContainerPublication
+import QCore.CountedUsers
 
 /-! The executable formal core of QCore-C revision 0.1. -/
