@@ -576,6 +576,14 @@ pub struct ResourceContracts {
     /// and disjoint from `functions`. Omitted when empty.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pin_mismatch: BTreeMap<String, crate::contract_revision::PinMismatch>,
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: declarations some analysed body
+    /// refutes, found by an audit's first phase (contract spec §C06.4). Unlike
+    /// a pin mismatch the declaration stays in `functions`, so its own body is
+    /// still checked against it; every call site outside that body is held.
+    /// Omitted when empty, so every environment without a refutation
+    /// serializes byte for byte as it did before the card.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    refuted_by_body: crate::contract_refutation::RefutationTable,
 }
 
 impl ResourceContracts {
@@ -591,6 +599,7 @@ impl ResourceContracts {
             pending_review: BTreeMap::new(),
             revision: BTreeMap::new(),
             pin_mismatch: BTreeMap::new(),
+            refuted_by_body: BTreeMap::new(),
         }
     }
 
@@ -719,6 +728,25 @@ impl ResourceContracts {
             },
         );
         Ok(())
+    }
+
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the declarations some analysed
+    /// body refutes, keyed by function name. Each is still in
+    /// [`Self::functions`]; its call sites are held.
+    #[must_use]
+    pub fn refuted_by_body(&self) -> &crate::contract_refutation::RefutationTable {
+        &self.refuted_by_body
+    }
+
+    /// Record an audit's refutation table. Only a name of the function map
+    /// is kept: a table entry for a declaration not in force here (withheld
+    /// for review or a pin, or never declared) has no call site to hold.
+    pub fn set_refuted_by_body(&mut self, table: &crate::contract_refutation::RefutationTable) {
+        self.refuted_by_body = table
+            .iter()
+            .filter(|(name, _)| self.functions.contains_key(*name))
+            .map(|(name, refutations)| (name.clone(), refutations.clone()))
+            .collect();
     }
 
     #[must_use]

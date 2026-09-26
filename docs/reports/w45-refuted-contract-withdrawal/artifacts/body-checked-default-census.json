@@ -1,0 +1,33 @@
+{
+ "declared": 174,
+ "declared_with_an_analysed_body": 24,
+ "declared_without_an_analysed_body": 150,
+ "with_body_safe_in_every_defining_unit": 2,
+ "with_body_not_safe_in_some_defining_unit": 22,
+ "row_refutations_recorded": 0,
+ "not_safe_names": [
+  "cJSON_Delete",
+  "cio_chunk_close",
+  "cio_chunk_down",
+  "cio_chunk_get_content_size",
+  "cio_chunk_is_up",
+  "cio_chunk_open",
+  "cio_chunk_up_force",
+  "cmt_destroy",
+  "cmt_metric_get_timestamp",
+  "cmt_metric_set_double",
+  "cmt_mpack_consume_uint_tag",
+  "ctr_destroy",
+  "flb_input_chunk_destroy",
+  "flb_input_chunk_destroy_direct_routes",
+  "flb_input_chunk_get_name",
+  "flb_input_chunk_get_real_size",
+  "flb_input_chunk_total_size",
+  "generate_chunk_name",
+  "input_chunk_write_header",
+  "mk_print",
+  "rd_kafka_mem_free",
+  "rd_kafka_topic_partition_list_sort"
+ ],
+ "meaning": "under a default resource_body_checked, every declaration is withdrawn from every unit that does not define its body (all cross-unit application), and a defining unit keeps it only where the body establishes it, which a non-Safe row cannot; not_safe_names is a lower bound on NotEstablished withdrawals"
+}

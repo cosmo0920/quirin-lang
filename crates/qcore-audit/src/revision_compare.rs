@@ -168,6 +168,11 @@ fn refusal_reasons(function: &Value) -> Vec<String> {
             reasons.insert(pin_hold::CONTRACT_PIN_MISMATCH.to_owned());
         } else if qcore_c_gateway::legacy_c::held_call(description).is_some() {
             reasons.insert("awaiting-human-review".to_owned());
+        } else if qcore_c_gateway::legacy_c::refuted_contract::held_call(description).is_some() {
+            // Card W45-REFUTED-CONTRACT-WITHDRAWAL.
+            reasons.insert(
+                qcore_c_gateway::legacy_c::refuted_contract::CONTRACT_REFUTED_BY_BODY.to_owned(),
+            );
         } else if let Some(category) = diagnostic["category"].as_str() {
             reasons.insert(category.to_owned());
         }

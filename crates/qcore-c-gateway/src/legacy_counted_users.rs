@@ -274,37 +274,14 @@ pub(super) fn check(
     contracts: &ResourceContracts,
     summary: &mut LegacyFunctionSummary,
 ) {
-    let counters = contracts
-        .functions()
-        .values()
-        .flat_map(|contract| contract.counted_users.effects.values())
-        .map(|operation| operation.counter.clone())
-        .collect::<BTreeSet<_>>();
-    let any_exit_or_neutral = contracts
-        .functions()
-        .values()
-        .any(|contract| !contract.counted_users.is_empty());
-    if counters.is_empty() && !any_exit_or_neutral {
-        return;
-    }
-    let premises = literal_premise::LiteralPremises::read(contracts);
-    let restricted = literal_premise::restrict_to_declared_literals(tokens, contracts, &premises);
-    let tokens = restricted.as_deref().unwrap_or(tokens);
-    let unit = Unit {
-        tokens,
-        contracts,
-        counters,
-        premises,
-        derived: std::cell::RefCell::default(),
-        verified: std::cell::RefCell::default(),
-        consulted: std::cell::RefCell::default(),
-    };
-    let Some((mut records, diagnostics)) = unit.evaluate(function) else {
+    let Some((mut records, diagnostics, consulted)) =
+        evaluate_function(tokens, function, contracts)
+    else {
         return;
     };
     // The declared operations this body relies on, as their own bodies here
     // decided them.
-    for (callee, callee_records) in unit.consulted.borrow().iter() {
+    for (callee, callee_records) in &consulted {
         for record in callee_records {
             records.push(ClauseRecord {
                 clause: format!("callee `{callee}`: {}", record.clause),
@@ -322,6 +299,70 @@ pub(super) fn check(
     records.sort();
     records.dedup();
     summary.counted_users = records;
+}
+
+/// Card **W45-REFUTED-CONTRACT-WITHDRAWAL**: the refuted records of
+/// `function`'s *own* clauses (declared and implicit, never a consulted
+/// callee's), exactly as [`check`] decides them over the same stream and
+/// environment, with nothing reported. Empty in every environment without a
+/// counted-user clause.
+pub(super) fn refuted_own_clauses(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Vec<ClauseRecord> {
+    evaluate_function(tokens, function, contracts)
+        .map(|(records, _, _)| {
+            records
+                .into_iter()
+                .filter(|record| record.verdict == ClauseVerdict::Refuted)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+type Evaluated = (
+    Vec<ClauseRecord>,
+    Vec<LegacyDiagnostic>,
+    BTreeMap<String, Vec<ClauseRecord>>,
+);
+
+/// The shared body of [`check`] and [`refuted_own_clauses`]: the function's
+/// own records, its diagnostics and the records of every declared callee a
+/// verification consulted, or `None` when the pass leaves it alone.
+fn evaluate_function(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Option<Evaluated> {
+    let counters = contracts
+        .functions()
+        .values()
+        .flat_map(|contract| contract.counted_users.effects.values())
+        .map(|operation| operation.counter.clone())
+        .collect::<BTreeSet<_>>();
+    let any_exit_or_neutral = contracts
+        .functions()
+        .values()
+        .any(|contract| !contract.counted_users.is_empty());
+    if counters.is_empty() && !any_exit_or_neutral {
+        return None;
+    }
+    let premises = literal_premise::LiteralPremises::read(contracts);
+    let restricted = literal_premise::restrict_to_declared_literals(tokens, contracts, &premises);
+    let tokens = restricted.as_deref().unwrap_or(tokens);
+    let unit = Unit {
+        tokens,
+        contracts,
+        counters,
+        premises,
+        derived: std::cell::RefCell::default(),
+        verified: std::cell::RefCell::default(),
+        consulted: std::cell::RefCell::default(),
+    };
+    let (records, diagnostics) = unit.evaluate(function)?;
+    let consulted = unit.consulted.into_inner();
+    Some((records, diagnostics, consulted))
 }
 
 impl Unit<'_> {

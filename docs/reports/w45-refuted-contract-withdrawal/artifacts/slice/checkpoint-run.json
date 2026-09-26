@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "content_sha256": "855bf73b99eb868e1570b2160f66d4cf9067dd86c8148a4020cd32c30ef5d4d3",
+      "decision": "recomputed",
+      "group": "fluent-bit-system",
+      "reason": "resume not requested",
+      "sampled_peak_rss_kib": 429928,
+      "wall_time_ms": 20821
+    }
+  ],
+  "jobs": 8,
+  "process_peak_rss_kib": 430284,
+  "schema_version": 1,
+  "scope": "provenance of one checkpointed run: which groups were reused or recomputed and why, with measured wall time and sampled peak memory; not an input to any verdict",
+  "verdict": "Unsafe"
+}

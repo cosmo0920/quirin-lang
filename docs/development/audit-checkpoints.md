@@ -63,7 +63,9 @@ exactly what serde_json prints for the row, so no value is ever re-parsed.
 Every section is its schema type encoded with [postcard](https://postcard.jamesmunns.com/wire-format)
 1.x (varint integers, length-prefixed strings and sequences, a tag byte per
 option, a varint discriminant per enum variant) and must decode with no bytes
-left over. Schema version 1 has exactly the ten sections above, in that order.
+left over. Schema version 2 has exactly the ten sections above, in that order
+(schema 1, before card W45-REFUTED-CONTRACT-WITHDRAWAL, lacked the refutation
+table's digest in the identity and is refused).
 
 The **content digest** of a checkpoint is the SHA-256 of the postcard encoding
 of `(schema_version, manifest entries except provenance)`. Every section but
@@ -97,7 +99,9 @@ group of one run:
   which reviewed sites; card W45-CONTRACT-REVISION-MODE), and the digest of
   the checker-plugin section when a checker ran (card
   W45-USER-CONTRACT-PLUGINS: a plugin's verdict enters every function that
-  applies its contract);
+  applies its contract), and the digest of the refutation table the group was
+  analysed under (card W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4:
+  the empty table's digest in a first phase);
 - the Clang identity (program, version, target);
 - every `QCORE_*` environment variable except `QCORE_AUDIT_JOBS`.
 
@@ -122,6 +126,18 @@ checkpoints: census streams are process-global and ordered by analysis.
 
 ## Composition
 
+**Two phases (card W45-REFUTED-CONTRACT-WITHDRAWAL).** A declared contract
+its own analysed body refutes is withdrawn from callers in every unit, so group
+results are independent only under one refutation table. A checkpointed run
+first analyses every group under the empty table and composes; when the
+composed rows record a refutation, it analyses every group again under that
+table, whose digest is in every group's identity (so no first-phase checkpoint
+is reused for the second, and a resumed second phase reuses only groups sealed
+under the same table), and composes again. Checkpoints sealed under different
+tables disagree on the contract set and never compose. The run records the
+applied table in its assumptions before any unit, and the composer renders the
+`refuted_contracts` section from it and from the rows.
+
 `quirin-audit checkpoint compose FILE.qo... [--report PATH]
 [--monkey-source-report PATH] [--binding-directory DIR]` refuses unless the
 files are exactly one run's plan: every checkpoint agrees on the run identity,
@@ -132,7 +148,7 @@ function names united; the run's verdict is the join of the groups' verdicts,
 and a group whose recorded verdict differs from the one its tallies imply is
 refused), writes the report's head, and streams the rows one
 group at a time. It writes the report, its `.contracts.json` sidecar (with the
-`pending_human_review` and `contract_revision` sections rendered from the
+`pending_human_review`, `contract_revision` and `refuted_contracts` sections rendered from the
 merged facts, `source_file_count` and `configuration_count`), and the explicit
 Unknown sidecars, and prints the whole run's console transcript (with the
 checker-plugin tally when a checker ran). It reports the run's verdict on

@@ -44,7 +44,9 @@ pub const EXTENSION: &str = "qo";
 /// The binary container's format version, spelled in the magic header.
 pub const FORMAT_VERSION: u16 = 1;
 /// The version of the section schemas this build writes and reads.
-pub const SCHEMA_VERSION: u32 = 1;
+// Card W45-REFUTED-CONTRACT-WITHDRAWAL: schema 2 adds the refutation
+// table's digest to the contract set of every group's identity.
+pub const SCHEMA_VERSION: u32 = 2;
 /// The sections of a schema-1 file, in file order.
 pub const SECTIONS: [&str; 10] = [
     "identity",
@@ -116,7 +118,7 @@ fn unhex(text: &str) -> Result<[u8; 32], String> {
 }
 
 // ---------------------------------------------------------------------------
-// Section schemas (schema version 1). Every type is plain data: strings,
+// Section schemas (schema version 2). Every type is plain data: strings,
 // unsigned integers, options, vectors, structs and one enum, so each has a
 // lossless YAML and TOML form. `Option` never appears inside a vector (TOML
 // has no null); a `None` field is omitted from TOML and read back as `None`.
@@ -186,6 +188,12 @@ pub struct ContractSetIdentity {
     /// a checker ran. A plugin's verdict enters every function that applies its
     /// contract, so it is an input of every group.
     pub plugin_checks_sha256: Option<String>,
+    /// SHA-256 of the refutation table the group's units were analysed under
+    /// (card W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4): the empty
+    /// table's digest in a first phase, the whole run's table in a second. A
+    /// changed table recomputes every group, and groups analysed under
+    /// different tables never compose.
+    pub refuted_table_sha256: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1150,6 +1158,7 @@ mod tests {
                         }],
                         pin_evaluation_sha256: "b".repeat(64),
                         plugin_checks_sha256: None,
+                        refuted_table_sha256: "c".repeat(64),
                     },
                     compiler: CompilerIdentity {
                         program: "/usr/bin/clang".into(),
@@ -1424,10 +1433,12 @@ mod tests {
         for (_, bytes) in sections {
             out.extend_from_slice(&bytes);
         }
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL moved the schema to 2, so the
+        // future version is 3.
         assert!(
             Checkpoint::from_bytes(&out)
                 .unwrap_err()
-                .contains("unsupported checkpoint schema version 2")
+                .contains("unsupported checkpoint schema version 3")
         );
     }
 

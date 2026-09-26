@@ -65,6 +65,7 @@ pub struct CheckpointOptions {
 }
 
 /// The route's plan, as `run_current_route` built it.
+#[derive(Clone)]
 pub(crate) struct RoutePlan<'a> {
     pub preamble: Vec<String>,
     pub headers: Vec<String>,
@@ -88,7 +89,7 @@ pub(crate) fn run(
     audit: &CurrentAudit,
     plan: RoutePlan<'_>,
     options: &CheckpointOptions,
-) -> Result<bool, String> {
+) -> Result<(bool, qcore_schemas::contract_refutation::RefutationTable), String> {
     let census = qcore_c_gateway::active_census_sinks();
     if !census.is_empty() {
         return Err(format!(
@@ -189,7 +190,9 @@ pub(crate) fn run(
     bytes.push(b'\n');
     let run_record = options.directory.join(RUN_RECORD);
     fs::write(&run_record, bytes).map_err(|error| format!("{}: {error}", run_record.display()))?;
-    Ok(summary.gateway_failures != 0)
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the composed rows' refutations,
+    // from which the route decides whether a second phase is due.
+    Ok((summary.gateway_failures != 0, summary.refutations))
 }
 
 /// Split the route's tasks into their groups; every label must be a plain,
@@ -390,6 +393,9 @@ fn run_identity(
                 .get("plugin_checks")
                 .map(json_sha256)
                 .transpose()?,
+            refuted_table_sha256: qcore_schemas::contract_refutation::table_digest(
+                audit.refuted_table(),
+            ),
         },
         compiler: CompilerIdentity {
             program: audit.compiler().program().to_owned(),

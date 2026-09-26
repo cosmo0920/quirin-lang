@@ -267,118 +267,191 @@ pub fn run(
     let provider = Mutex::new(());
     let mut library_counts = AuditCounts::default();
     let mut captures = ChunkioCaptures::default();
-    run_ordered(
-        steps,
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: one step's work under a given
+    // environment. Phase one runs every step under the loaded contracts;
+    // when a body refutes its own declaration, phase two analyses every unit
+    // again under the refutation table (each library's prelude context is
+    // reused), and only then is every outcome folded, in step order.
+    let work = |step: Step<'_>, contracts: &ResourceContracts| match step {
+        Step::Prelude(index) => {
+            let plan = &plans[index];
+            let mut output = String::new();
+            // Publishes `None` if the prelude fails or panics, so a unit
+            // waiting on this library never blocks forever.
+            let publish = PublishOnDrop(&contexts[index]);
+            let result = prepare_library(plan, &source_contracts, &mut output)
+                .map(|context| publish.publish(context));
+            StepOutcome::Prelude { output, result }
+        }
+        Step::Unit(index, entry) => {
+            let plan = &plans[index];
+            let mut output = String::new();
+            let result = match contexts[index].wait() {
+                Some(context) => audit_unit(
+                    plan,
+                    context,
+                    entry,
+                    &revision,
+                    contracts,
+                    &source_contracts,
+                    &provider,
+                    &mut output,
+                ),
+                // Unreachable in the fold: the prelude's own failure is
+                // consumed first and stops it.
+                None => Err(format!("{}: library prelude failed", plan.library)),
+            };
+            StepOutcome::Unit {
+                output,
+                result: Box::new(result),
+            }
+        }
+        Step::Finish(index) => StepOutcome::Finish(index),
+        Step::MonkeyGate => StepOutcome::MonkeyGate,
+        Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
+    };
+    let stops = |outcome: &StepOutcome| match outcome {
+        StepOutcome::Prelude { result, .. } => result.is_err(),
+        StepOutcome::Unit { result, .. } => result.is_err(),
+        StepOutcome::PlanningFailed(_) => true,
+        StepOutcome::Finish(_) | StepOutcome::MonkeyGate => false,
+    };
+    let table_of = |outcomes: &[StepOutcome]| {
+        qcore_audit::refuted_contracts::table(
+            &outcomes
+                .iter()
+                .filter_map(|outcome| match outcome {
+                    StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
+                    _ => None,
+                })
+                .flat_map(|products| products.report.unit_rows().iter().cloned())
+                .collect::<Vec<_>>(),
+        )
+    };
+    let mut outcomes = Vec::new();
+    let stopped = run_ordered(
+        steps.clone(),
         jobs,
-        Some(dispatch),
-        |step| match step {
-            Step::Prelude(index) => {
-                let plan = &plans[index];
-                let mut output = String::new();
-                // Publishes `None` if the prelude fails or panics, so a unit
-                // waiting on this library never blocks forever.
-                let publish = PublishOnDrop(&contexts[index]);
-                let result = prepare_library(plan, &source_contracts, &mut output)
-                    .map(|context| publish.publish(context));
-                StepOutcome::Prelude { output, result }
-            }
-            Step::Unit(index, entry) => {
-                let plan = &plans[index];
-                let mut output = String::new();
-                let result = match contexts[index].wait() {
-                    Some(context) => audit_unit(
-                        plan,
-                        context,
-                        entry,
-                        &revision,
-                        &contracts,
-                        &source_contracts,
-                        &provider,
-                        &mut output,
-                    ),
-                    // Unreachable in the fold: the prelude's own failure is
-                    // consumed first and stops it.
-                    None => Err(format!("{}: library prelude failed", plan.library)),
-                };
-                StepOutcome::Unit {
-                    output,
-                    result: Box::new(result),
-                }
-            }
-            Step::Finish(index) => StepOutcome::Finish(index),
-            Step::MonkeyGate => StepOutcome::MonkeyGate,
-            Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
-        },
+        Some(dispatch.clone()),
+        |step| work(step, &contracts),
         |outcome| {
-            match outcome {
-                StepOutcome::Prelude { output, result } => {
-                    print!("{output}");
-                    result?;
-                    library_counts = AuditCounts::default();
-                    captures = ChunkioCaptures::default();
-                }
-                StepOutcome::Unit { output, result } => {
-                    print!("{output}");
-                    let UnitProducts {
-                        report: rows,
-                        counts,
-                        native_results: native,
-                        teardown_results: teardown,
-                        captures: captured,
-                    } = (*result)?;
-                    report.absorb(rows)?;
-                    library_counts.absorb(counts);
-                    native_results.extend(native);
-                    teardown_results.extend(teardown);
-                    captures.absorb(captured);
-                }
-                StepOutcome::Finish(index) => {
-                    let plan = &plans[index];
-                    let mut output = String::new();
-                    let result = finish_library(
-                        &plan.library,
-                        std::mem::take(&mut captures),
-                        &mut teardown_results,
-                        &mut output,
-                    );
-                    print!("{output}");
-                    result?;
-                    let counts = std::mem::take(&mut library_counts);
-                    failed |= counts.gateway_failures != 0;
-                    println!(
-                        "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Pending, {} Unsafe, {} Unknown, {} gateway failure(s)",
-                        plan.library,
-                        counts.units,
-                        counts.source_functions,
-                        counts.projected_functions,
-                        counts.data_only_units,
-                        counts.safe_units,
-                        counts.pending_units,
-                        counts.unsafe_units,
-                        counts.unknown_units,
-                        counts.gateway_failures
-                    );
-                }
-                StepOutcome::MonkeyGate => {
-                    audit_monkey_libevent_contract(&root)?;
-                    if let Some(plan) = plans.get(fluent_bit_libraries) {
-                        verify_monkey_source_copy(
-                            &root.join("lib/monkey"),
-                            &plan.source_root,
-                            &plan.selected,
-                        )?;
-                        audit_monkey_callback_source(
-                            &plan.selected,
-                            monkey_source_report,
-                            binding_directory,
-                        )?;
-                    }
-                }
-                StepOutcome::PlanningFailed(error) => return Err(error),
-            }
-            Ok(())
+            let stop = stops(&outcome);
+            outcomes.push(outcome);
+            if stop { Err(()) } else { Ok(()) }
         },
-    )?;
+    )
+    .is_err();
+    let found = table_of(&outcomes);
+    let applied = if stopped || found.is_empty() {
+        qcore_schemas::contract_refutation::RefutationTable::new()
+    } else {
+        let held = qcore_audit::refuted_contracts::with_table(&contracts, &found);
+        let units = steps
+            .iter()
+            .enumerate()
+            .filter(|(_, step)| matches!(step, Step::Unit(..)))
+            .map(|(index, step)| (index, step.clone()))
+            .collect::<Vec<_>>();
+        let unit_count = units.len();
+        let weights = units
+            .iter()
+            .map(|(_, step)| match step {
+                Step::Unit(_, entry) => source_weight(entry),
+                _ => 0,
+            })
+            .collect::<Vec<_>>();
+        let mut replaced = Vec::new();
+        let _ = run_ordered(
+            units,
+            jobs,
+            Some(qcore_audit::parallel::heaviest_first(&weights)),
+            |(index, step)| (index, work(step, &held)),
+            |(index, outcome)| {
+                let stop = stops(&outcome);
+                replaced.push((index, outcome));
+                if stop { Err(()) } else { Ok(()) }
+            },
+        );
+        // Phase one ran to its end, so every unit has its slot; a phase-two
+        // unit that failed ends the fold at its own position.
+        let complete = replaced.len() == unit_count;
+        let last = replaced.last().map(|(index, _)| *index);
+        for (index, outcome) in replaced {
+            outcomes[index] = outcome;
+        }
+        if !complete {
+            outcomes.truncate(last.map_or(outcomes.len(), |index| index + 1));
+        }
+        found
+    };
+    for outcome in outcomes {
+        match outcome {
+            StepOutcome::Prelude { output, result } => {
+                print!("{output}");
+                result?;
+                library_counts = AuditCounts::default();
+                captures = ChunkioCaptures::default();
+            }
+            StepOutcome::Unit { output, result } => {
+                print!("{output}");
+                let UnitProducts {
+                    report: rows,
+                    counts,
+                    native_results: native,
+                    teardown_results: teardown,
+                    captures: captured,
+                } = (*result)?;
+                report.absorb(rows)?;
+                library_counts.absorb(counts);
+                native_results.extend(native);
+                teardown_results.extend(teardown);
+                captures.absorb(captured);
+            }
+            StepOutcome::Finish(index) => {
+                let plan = &plans[index];
+                let mut output = String::new();
+                let result = finish_library(
+                    &plan.library,
+                    std::mem::take(&mut captures),
+                    &mut teardown_results,
+                    &mut output,
+                );
+                print!("{output}");
+                result?;
+                let counts = std::mem::take(&mut library_counts);
+                failed |= counts.gateway_failures != 0;
+                println!(
+                    "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Pending, {} Unsafe, {} Unknown, {} gateway failure(s)",
+                    plan.library,
+                    counts.units,
+                    counts.source_functions,
+                    counts.projected_functions,
+                    counts.data_only_units,
+                    counts.safe_units,
+                    counts.pending_units,
+                    counts.unsafe_units,
+                    counts.unknown_units,
+                    counts.gateway_failures
+                );
+            }
+            StepOutcome::MonkeyGate => {
+                audit_monkey_libevent_contract(&root)?;
+                if let Some(plan) = plans.get(fluent_bit_libraries) {
+                    verify_monkey_source_copy(
+                        &root.join("lib/monkey"),
+                        &plan.source_root,
+                        &plan.selected,
+                    )?;
+                    audit_monkey_callback_source(
+                        &plan.selected,
+                        monkey_source_report,
+                        binding_directory,
+                    )?;
+                }
+            }
+            StepOutcome::PlanningFailed(error) => return Err(error),
+        }
+    }
     if plans.len() == fluent_bit_libraries {
         println!(
             "monkey-libevent: source contract checked; pass its forced-libevent \
@@ -397,9 +470,17 @@ pub fn run(
         "{}",
         qcore_audit::contract_revision::tally(&revision_section)
     );
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its digest
+    // and the calls it held, tallied and added the same additive way.
+    let refuted_section = qcore_audit::refuted_contracts::section(&applied, &report);
+    println!(
+        "{}",
+        qcore_audit::refuted_contracts::tally(&refuted_section)
+    );
     if let Some((sidecar, mut inputs)) = contract_sidecar {
         inputs["pending_human_review"] = pending;
         inputs["contract_revision"] = revision_section;
+        inputs["refuted_contracts"] = refuted_section;
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }
@@ -557,6 +638,7 @@ fn plan_library(
 }
 
 /// One step of the pinned audit, in sequential order.
+#[derive(Clone)]
 enum Step<'p> {
     /// The library's own checks before its units (frame helpers; ChunkIO's
     /// memory backend and filesystem dependencies).

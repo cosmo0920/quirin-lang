@@ -194,6 +194,13 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              does not match its lock (contract-pin-mismatch)",
             Pin,
         ),
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: a call held because its
+        // callee's own analysed body refutes the declaration.
+        (
+            "call to `k_close` whose declared contract its own analysed body refutes \
+             (contract-refuted-by-body)",
+            Stale,
+        ),
         // Card W45-USER-CONTRACT-PLUGINS: the plugin firewall's two
         // uncertified-claim spellings (`qcore_verifier_host::plugin_firewall`).
         (

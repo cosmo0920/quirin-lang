@@ -1,0 +1,23 @@
+[
+  {
+    "id": "W45-CONTAINER-CLAUSE-BODY-CHECK",
+    "title": "Declared container clauses are never checked against a body, so they can be unchecked but never refuted",
+    "why": "C06.4 withdraws a declaration its own body refutes, and the two refutation arms are a refuted counted-user clause and a contradicted custody duty. `resource_published`/`resource_unpublished` (C04.8) are applied at calls only: no pass checks a declared container clause against the body it names, and W4's conflict check compares the custody projection only. Size: 2 declarations (`mk_list_add`, `mk_list_del` in `providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore`), whose `static inline` bodies every including unit defines. DISCHARGE: a per-path check of a defined body against its declared publication and unlink (the object linked into the named container on every exit, or unlinked), feeding a third refutation arm, with Lean parity and a measured corpus and slice.",
+    "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+    "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  },
+  {
+    "id": "W45-UNCHECKED-DECLARATIONS-TRUSTED",
+    "title": "A declaration its analysed body neither establishes nor refutes is still applied as a trusted premise",
+    "why": "C06.4 withdraws only refuted declarations; an unchecked one (an undecided clause, a body that does not validate) keeps constraint 4's and 8's trusted reading, deliberately: making `resource_body_checked` the default would withdraw every cross-unit application and, on the pinned corpus, at least 22 of the 24 declarations with an analysed main-source body, on no evidence (`docs/reports/w45-refuted-contract-withdrawal/artifacts/body-checked-default-census.json`). In the Fluent Bit slice the unchecked premises include `flb_task_retry_destroy` (neutral clause undecided in `src/flb_task.c`) and `flb_output_thread_pool_flush` (no analysed body). Size: 22 corpus declarations (lower bound). DISCHARGE: per declaration, either its body establishes it (validated W4 summary equal to it, every clause held) or it moves behind `resource_body_checked`; or a report status that names every Safe resting on an unchecked declaration of an audited body.",
+    "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+    "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  },
+  {
+    "id": "W45-REFUTED-HOLD-UNIT-REASON",
+    "title": "A unit whose only open leaves are refuted-contract holds is classed unsupported-syntax at unit level",
+    "why": "The held call's statement classifies as `stale-evidence` (`ReasonCategory::classify`, rule added by W45-REFUTED-CONTRACT-WITHDRAWAL), but the unit reason is the projection summary, which counts the hold among `unsupported`, as it already counts constraint 8's mode withdrawal; review and pin holds have their own summary components. Size: 0 units in the pinned corpus and the Fluent Bit slice (every unit with a hold has other refusals). DISCHARGE: a summary component for refuted and mode-withdrawn holds, classed ahead of the source categories, with the reason-code corpus and the L21.1 table updated.",
+    "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+    "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  }
+]

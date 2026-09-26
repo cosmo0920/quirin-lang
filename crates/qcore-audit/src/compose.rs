@@ -59,6 +59,9 @@ pub struct ComposeSummary {
     pub verdict: Verdict,
     pub units: u64,
     pub gateway_failures: u64,
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the composed rows' own
+    /// refutations.
+    pub refutations: qcore_schemas::contract_refutation::RefutationTable,
 }
 
 struct Member {
@@ -189,6 +192,13 @@ pub fn compose(
         );
     }
     println!("{}", crate::contract_revision::tally(&revision));
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the section the whole run's
+    // `finish` writes, built from the same rows one unit at a time under the
+    // table the run recorded before its units.
+    let applied = crate::refuted_contracts::applied_table(&assumptions)?;
+    let refuted_rows = refuted_rows(&mut members)?;
+    let refuted = refuted_rows.section(&applied);
+    println!("{}", crate::refuted_contracts::tally(&refuted));
     if let Some(report) = outputs.report {
         if let Some(parent) = report.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
@@ -210,6 +220,7 @@ pub fn compose(
         let mut assumptions = assumptions;
         assumptions["pending_human_review"] = pending;
         assumptions["contract_revision"] = revision;
+        assumptions[crate::refuted_contracts::APPLIED_KEY] = refuted;
         assumptions["source_file_count"] = json!(totals.sources.len());
         assumptions["configuration_count"] = json!(counts["units"]);
         fs::write(
@@ -232,7 +243,32 @@ pub fn compose(
         verdict: totals.verdict,
         units: counts["units"],
         gateway_failures: counts["gateway_failures"],
+        refutations: refuted_rows.published().clone(),
     })
+}
+
+/// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the rows' held calls and own
+/// refutations, one unit at a time: each unit's `library` and `file` from its
+/// preparation step and its `functions` from its verdicts step.
+fn refuted_rows(members: &mut [Member]) -> Result<crate::refuted_contracts::RowTally, String> {
+    let mut tally = crate::refuted_contracts::RowTally::default();
+    for member in members.iter_mut() {
+        let preparation = member.reader.section::<RowStepSection>("preparation")?;
+        let verdicts = member.reader.section::<RowStepSection>("verdicts")?;
+        for (preparation, verdicts) in preparation.units.iter().zip(&verdicts.units) {
+            let mut unit = serde_json::Map::new();
+            for member in preparation.members.iter().chain(&verdicts.members) {
+                if matches!(member.key.as_str(), "library" | "file" | "functions") {
+                    unit.insert(
+                        member.key.clone(),
+                        serde_json::from_str(&member.json).map_err(|error| error.to_string())?,
+                    );
+                }
+            }
+            tally.absorb(&Value::Object(unit));
+        }
+    }
+    Ok(tally)
 }
 
 /// Open and verify every file; refuse any set that is not exactly one run's

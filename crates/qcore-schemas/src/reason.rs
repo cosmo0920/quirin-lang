@@ -459,6 +459,16 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "pinned contract is not in force",
         ReasonCategory::ContractPinMismatch,
     ),
+    // ---- a declared contract its own analysed body refutes (card
+    // W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4): the call was
+    // held, and the declaration is evidence about a body other than the one
+    // it names, so the category is constraint 8's `stale-evidence`; never a
+    // human-resolvable one. Site: `qcore_c_gateway::legacy_c`'s held-call
+    // statement.
+    (
+        "its own analysed body refutes",
+        ReasonCategory::StaleEvidence,
+    ),
     // ---- plugin claim uncertified (card W45-USER-CONTRACT-PLUGINS): a
     // checker plugin's `Safe` or `Unsafe` claim with no independently checked
     // certificate or witness. Matched before every source-subject rule: the

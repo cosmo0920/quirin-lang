@@ -896,6 +896,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-parenthesised-callee](w45-parenthesised-callee/README.md) | W45-PARENTHESISED-CALLEE: a callee that is not spelled `NAME (` |
 
+| [w45-refuted-contract-withdrawal](w45-refuted-contract-withdrawal/README.md) | W45-REFUTED-CONTRACT-WITHDRAWAL: a contract the audit refutes does not serve its callers |
+
 | [w45-return-expression-families](w45-return-expression-families/README.md) | W45-RETURN-EXPRESSION-FAMILIES — the refused return expressions that block functions alone |
 
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |

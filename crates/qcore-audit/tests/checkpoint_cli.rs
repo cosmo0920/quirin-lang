@@ -293,7 +293,9 @@ fn a_checkpointed_run_writes_one_checkpoint_per_group_and_the_whole_runs_outputs
         assert_eq!(content(&at_one), content(&at_four), "{group}");
         let verified = fixture.checkpoint(&["verify", at_one.to_str().unwrap()]);
         succeeded(&verified);
-        assert!(String::from_utf8_lossy(&verified.stdout).contains(": ok (format 1, schema 1"));
+        // Schema 2: card W45-REFUTED-CONTRACT-WITHDRAWAL added the refutation
+        // table's digest to every group's identity.
+        assert!(String::from_utf8_lossy(&verified.stdout).contains(": ok (format 1, schema 2"));
     }
     let stderr = String::from_utf8_lossy(&one.stderr);
     assert!(stderr.contains("checkpoint alpha: recomputed (resume not requested)"));

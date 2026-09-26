@@ -62,6 +62,7 @@ pub struct CurrentRoute<'a> {
 }
 
 /// One configured-route compilation configuration, in selection order.
+#[derive(Clone)]
 pub(crate) struct ConfiguredTask<'a> {
     pub(crate) group: usize,
     pub(crate) library: &'a str,
@@ -260,36 +261,67 @@ pub fn run_current_route_with_checkpoints(
                     .map(|(_, _, unresolved)| unresolved.as_deref()),
             )
             .collect::<Vec<_>>();
-        return crate::checkpoint_run::run(
-            route,
-            &audit,
-            crate::checkpoint_run::RoutePlan {
-                preamble,
-                headers,
-                unresolved,
-                tasks,
-            },
-            options,
-        );
+        let plan = crate::checkpoint_run::RoutePlan {
+            preamble,
+            headers,
+            unresolved,
+            tasks,
+        };
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
+        // contracts; when the composed rows refute a declaration, every group
+        // again under that table, whose digest joins each group's identity.
+        audit.set_refuted_table(&qcore_schemas::contract_refutation::RefutationTable::new());
+        let (failed, found) = crate::checkpoint_run::run(route, &audit, plan.clone(), options)?;
+        if found.is_empty() {
+            return Ok(failed);
+        }
+        audit.set_refuted_table(&found);
+        return crate::checkpoint_run::run(route, &audit, plan, options).map(|(failed, _)| failed);
     }
     let mut printed_headers = 0;
     let mut products = Vec::with_capacity(tasks.len());
     let dispatch = task_dispatch(&tasks);
-    run_ordered(
-        tasks,
-        route.jobs,
-        Some(dispatch),
-        |task| (task.group, evaluate_task(&audit, &task)),
-        |(group, outcome)| {
-            for header in &headers[printed_headers..=group] {
-                println!("{header}");
-            }
-            printed_headers = printed_headers.max(group + 1);
-            print!("{}", outcome.output);
-            products.push(outcome.result?);
-            Ok::<(), String>(())
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: every task is analysed under the
+    // loaded contracts and, when a body refutes its own declaration, once more
+    // under the refutation table; only the published phase is printed and
+    // folded, in task order, stopping at its first error as before.
+    let phases = crate::refuted_contracts::run_two_phases(
+        |table| {
+            audit.set_refuted_table(table);
+            let mut outcomes = Vec::new();
+            let stopped = run_ordered(
+                tasks.clone(),
+                route.jobs,
+                Some(dispatch.clone()),
+                |task| (task.group, evaluate_task(&audit, &task)),
+                |(group, outcome): (usize, EntryOutcome)| {
+                    let failed = outcome.result.is_err();
+                    outcomes.push((group, outcome));
+                    if failed { Err(()) } else { Ok(()) }
+                },
+            )
+            .err();
+            (outcomes, stopped)
         },
-    )?;
+        |outcomes| {
+            crate::refuted_contracts::table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
+        },
+    );
+    audit.set_refuted_table(&phases.applied);
+    for (group, outcome) in phases.results {
+        for header in &headers[printed_headers..=group] {
+            println!("{header}");
+        }
+        printed_headers = printed_headers.max(group + 1);
+        print!("{}", outcome.output);
+        products.push(outcome.result?);
+    }
     for header in &headers[printed_headers..] {
         println!("{header}");
     }
