@@ -1,8 +1,8 @@
 # W45-AUDIT-SUBCOMMAND-PLUGINS: external `quirin-audit` subcommands, their SDK, and the libevent plugin
 
 Card W45-AUDIT-SUBCOMMAND-PLUGINS, 2026-09-26, on base `37e1b82d` ("Record
-the w45-refuted-contract-withdrawal integration gate"), local `main` unmoved
-while the card ran. The user's decisions of 2026-09-26: `quirin-audit` gains
+the w45-refuted-contract-withdrawal integration gate"); `main` moved during the
+card and is not merged (§10). The user's decisions of 2026-09-26: `quirin-audit` gains
 cargo-style external subcommands with an SDK crate `quirin-audit-plugin`;
 plugins contribute verdicts only through the certificate firewall of
 W45-USER-CONTRACT-PLUGINS; and the libevent preparation script becomes the
@@ -288,7 +288,43 @@ nothing on its route changed (prediction 2).
 
 ## 10. Gate
 
-GATE_TABLE
+Measured at `96f6b715` by [`scripts/gate.sh`](scripts/gate.sh) into the
+worktree-private `private/asp/gate-96f6b715/`, every step's exit captured to its
+own file, nothing piped, `CARGO_INCREMENTAL=0` ([gate.json](gate.json),
+[Clang recording](clang-version.txt), this run's).
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| submodules | `git submodule update --init --recursive` | 0 | |
+| test | `python3 scripts/run_test_binaries.py` | 0 | **5,993 passed / 0 failed / 11 ignored**, 330 summaries over 318 units (`private/test-binaries/20260926T151551Z-1043578/`) |
+| clean | `cargo clean --profile dev` | 0 | |
+| fmt / clippy | `cargo fmt --all -- --check`; `cargo clippy --all-targets -- -D warnings` | 0, 0 | |
+| probe / followup | `reevaluation_probe` / `reevaluation_followup` | 0, 0 | |
+| lean | `python3 scripts/check_lean_audits.py` | 0 | **207** audits (+1, `AuditSubcommandPlugins.lean`) |
+| python | `python3 -m unittest discover -s scripts/tests` | 0 | 358 tests (after `build_matrix.py .`) |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| contracts | `python3 providers/contracts.py check` | 0 | |
+| packages | `providers/package.py build` (temporary directory) / `verify …/qcore.libevent` | 0, 0 | |
+| provider Python | `python3 -m unittest discover -s providers/tests` | 0 | 15 tests |
+| provider test | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed / 0 failed / 1 ignored, 43 summaries |
+| provider fmt / clippy | | 0, 0 | |
+
+**The discarded attempt** at `d9df130a` failed three ways, all repaired or
+named: `compiler/tests/workspace_layering.rs` refused the new
+`qcore-audit` → `quirin-audit-plugin` edge (§6); `providers/Cargo.lock` lacked
+`qcore-audit`'s two new dependencies, failing the package build and the
+provider test and clippy steps under `--locked`; and constraint 16's
+load-sensitive row `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` (its
+500 ms wall-clock arm) failed in the exclusive phase. Re-run alone at a
+1-minute load of 27–38 with sibling cards building, it passed **3 of 5**
+(`private/asp/isolated/run1..5.log`), and it passed in the final gate. No code
+on its path changed and nothing was weakened; this row is the one constraint
+16 already names.
+
+**`main` not merged.** Local `main` moved to `02e10476` (W45-MEMO-MEMORY
+integrated) while the card ran. Merging it into this branch was refused by the
+session's permission classifier, so the branch stays on `37e1b82d`; the
+overlapping files are listed in the card's reply.
 
 ## 11. Follow-ups
 

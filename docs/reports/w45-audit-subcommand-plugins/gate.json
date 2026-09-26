@@ -1,0 +1,52 @@
+{
+  "card": "W45-AUDIT-SUBCOMMAND-PLUGINS",
+  "measured_tip": "96f6b715",
+  "base": "37e1b82d",
+  "merged_main": [],
+  "command": "docs/reports/w45-audit-subcommand-plugins/scripts/gate.sh private/asp/gate-96f6b715",
+  "environment": "CARGO_INCREMENTAL=0; every exit captured to its own file, none piped; logs worktree-private under private/asp/gate-96f6b715/; provider packages built in a temporary directory outside the repository and removed",
+  "steps": {
+    "submodule": 0,
+    "tests": {
+      "exit": 0,
+      "totals": "318 units, 330 summaries; 5993 passed; 0 failed; 11 ignored",
+      "log_directory": "private/test-binaries/20260926T151551Z-1043578/"
+    },
+    "clean-dev": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "reevaluation-probe": 0,
+    "reevaluation-followup": 0,
+    "lean": {
+      "exit": 0,
+      "audits": 207
+    },
+    "python": {
+      "exit": 0,
+      "tests": 358
+    },
+    "docs-index": 0,
+    "contracts-check": 0,
+    "package-build": 0,
+    "package-verify": 0,
+    "provider-python": {
+      "exit": 0,
+      "tests": 15
+    },
+    "provider-tests": {
+      "exit": 0,
+      "totals": "129 passed; 0 failed; 1 ignored over 43 summaries"
+    },
+    "provider-fmt": 0,
+    "provider-clippy": 0,
+    "clang-version": 0
+  },
+  "discarded_attempts": [
+    {
+      "tip": "d9df130a",
+      "note": "tests 101 (5991 passed / 2 failed): compiler/tests/workspace_layering.rs refused the new qcore-audit -> quirin-audit-plugin edge (repaired at 3a08df5f by admitting it and pinning the two new crates), and constraint 16's load-sensitive row vp04_vp07_vp08_process_lifecycle_and_payload_budgets (500 ms wall-clock bound) failed in the exclusive phase; package-build, package-verify, provider-tests and provider-clippy 1/101 because providers/Cargo.lock lacked qcore-audit's two new dependencies (the provider workspace path-depends on qcore-audit; lock updated at 3a08df5f); every other step 0"
+    }
+  ],
+  "load_sensitive_row": "vp04_vp07_vp08_process_lifecycle_and_payload_budgets, re-run in isolation at 1-minute load 27-38 with sibling cards building: 3 of 5 passed (private/asp/isolated/run1..5.log); it passed in the final gate's exclusive phase. No code on its path changed; not weakened.",
+  "main_not_merged": "local main moved to 02e10476 (W45-MEMO-MEMORY integrated) during the card; the merge into this branch was refused by the session's permission classifier, so the branch is on base 37e1b82d and the integrator merges"
+}
