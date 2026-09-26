@@ -31,18 +31,16 @@
     ],
     "violations": [],
     "blockers": {
-     "unsupported: indirect memory access is outside the resource projection": 8,
+     "unsupported: indirect memory access is outside the resource projection": 7,
      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
      "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`": 4,
      "unknown_alias: unresolved resource identity `underlying_chunk`": 4,
      "unsupported: unsupported assignment expression": 1,
      "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1,
-     "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
-     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
      "unsupported: call to uncontracted function `flb_input_chunk_get_event_type`": 1,
      "unsupported: call to uncontracted function `flb_input_chunk_map`": 1
     },
-    "diagnostic_count": 29
+    "diagnostic_count": 26
    }
   },
   "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": {

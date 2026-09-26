@@ -1,9 +1,9 @@
 {
- "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-89bbc648-without-module/resource-diagnostics.json",
+ "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-0a677729-without-module/resource-diagnostics.json",
  "baseline_counts": {
   "leak": 3,
   "unknown_alias": 691,
-  "unsupported": 3347
+  "unsupported": 3332
  },
  "baseline_distinct": {
   "NotProjected": 3,
@@ -48,11 +48,6 @@
      ],
      [
       "unsupported",
-      "braced initializer, expression, or declaration is not modeled",
-      "plugins/in_storage_backlog/sb.c:616"
-     ],
-     [
-      "unsupported",
       "call to uncontracted function `flb_input_chunk_get_event_type`",
       "plugins/in_storage_backlog/sb.c:662"
      ],
@@ -80,11 +75,6 @@
       "unsupported",
       "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
       "plugins/in_storage_backlog/sb.c:701"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:615"
      ],
      [
       "unsupported",
@@ -150,11 +140,6 @@
       "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "plugins/in_storage_backlog/sb.c:706"
-     ],
-     [
-      "unsupported",
-      "unmodeled call, aggregate or indirect access in for-loop condition",
-      "plugins/in_storage_backlog/sb.c:615"
      ],
      [
       "unsupported",
@@ -198,11 +183,6 @@
      ],
      [
       "unsupported",
-      "braced initializer, expression, or declaration is not modeled",
-      "plugins/in_storage_backlog/sb.c:616"
-     ],
-     [
-      "unsupported",
       "call to uncontracted function `flb_input_chunk_get_event_type`",
       "plugins/in_storage_backlog/sb.c:662"
      ],
@@ -235,11 +215,6 @@
       "unsupported",
       "declared specification of `cb_queue_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
       "plugins/in_storage_backlog/sb.c:581"
-     ],
-     [
-      "unsupported",
-      "indirect memory access is outside the resource projection",
-      "plugins/in_storage_backlog/sb.c:615"
      ],
      [
       "unsupported",
@@ -305,11 +280,6 @@
       "unsupported",
       "unmodeled call, aggregate or indirect access in branch condition",
       "plugins/in_storage_backlog/sb.c:706"
-     ],
-     [
-      "unsupported",
-      "unmodeled call, aggregate or indirect access in for-loop condition",
-      "plugins/in_storage_backlog/sb.c:615"
      ],
      [
       "unsupported",
@@ -994,11 +964,11 @@
   }
  ],
  "named": {},
- "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-89bbc648/resource-diagnostics.json",
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-0a677729/resource-diagnostics.json",
  "run_counts": {
   "leak": 3,
   "unknown_alias": 691,
-  "unsupported": 3357
+  "unsupported": 3342
  },
  "run_distinct": {
   "NotProjected": 3,

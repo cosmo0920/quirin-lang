@@ -1,9 +1,9 @@
 {
   "diagnostics": {
     "file": "diagnostics.json.gz",
-    "raw_sha256": "2f672a00b23f719b9fc7df1d5cfe5911eced2d5316c2ae74535eb6704ed2e09c",
-    "gzip_sha256": "dc0c286211a13dd57a81a037b836c1caf911ac47e65e92a88ee9e253f32b4f3e",
-    "raw_bytes": 11657685
+    "raw_sha256": "fb686bf187170834bf902d84e50bb3f0b903c815fab33ac67ecb4857a9baca40",
+    "gzip_sha256": "84b6dcf439214477a60c975a46ddc0576d6338d527038104aa92faf1cfad3d68",
+    "raw_bytes": 11641737
   },
   "chunk-contracts": {
     "file": "chunk-contracts.json.gz",

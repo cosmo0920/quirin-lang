@@ -1,10 +1,10 @@
 {
-  "run": "private/bc/arbiter/after-89bbc648",
+  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729",
   "baseline": "docs/reports/w45-parenthesised-callee/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "2f672a00b23f719b9fc7df1d5cfe5911eced2d5316c2ae74535eb6704ed2e09c",
+      "run_sha256": "fb686bf187170834bf902d84e50bb3f0b903c815fab33ac67ecb4857a9baca40",
       "baseline_raw_sha256": "8d1138ef70d0c304721457304b8f2638b0b702fe37998e81aff2e69714b4e781",
       "archive_matches_manifest": true,
       "byte_identical": false,

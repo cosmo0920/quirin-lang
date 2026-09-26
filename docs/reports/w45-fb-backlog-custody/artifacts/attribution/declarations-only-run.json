@@ -1,8 +1,8 @@
 {
   "variant": "declarations-only",
-  "binary_sha256": "04d610400414d4548cfdd2ed12be3b3e7ecc7611b15024a738790e9eb1f0dd9e",
+  "binary_sha256": "87e01dccfd0021ecf5fba40f6b3e56bbf2f2d3a612587b9c47c87f74e4e39446",
   "restored": {
-    "crates/qcore-c-gateway/src/legacy_list_iteration.rs": "850cb00285bc43bed67fe7370abab81ac5b1ae0ebc809b5b6c3b96068fff685e"
+    "crates/qcore-c-gateway/src/legacy_list_iteration.rs": "d39eb833615e6bc719778463be346fda3a322b497bfe8674decf720b7541801e"
   },
   "exit": 0
 }

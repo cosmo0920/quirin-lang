@@ -1,12 +1,12 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-89bbc648/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-0a677729/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-0a677729/resource-diagnostics.json",
  "totals": {
   "after": {
    "leak": 40,
    "summary_conflict": 1,
    "unknown_alias": 3566,
-   "unsupported": 41386
+   "unsupported": 41321
   },
   "before": {
    "leak": 40,
@@ -44,9 +44,9 @@
  "status_transitions": {
   "Unknown -> Safe": 9
  },
- "functions_with_leaf_changes": 169,
+ "functions_with_leaf_changes": 179,
  "leaves_added": 6,
- "leaves_removed": 721,
+ "leaves_removed": 786,
  "added_by_description": {
   "unknown_alias: unresolved resource identity `ic`": {
    "total": 3,
@@ -75,28 +75,28 @@
  },
  "removed_by_description": {
   "unsupported: braced initializer, expression, or declaration is not modeled": {
-   "total": 262,
+   "total": 284,
    "by_line_shape": {
-    "entry-line": 261,
+    "entry-line": 283,
     "other-line": 1
    }
   },
   "unsupported: indirect memory access is outside the resource projection": {
-   "total": 236,
+   "total": 258,
    "by_line_shape": {
     "list-header-line:loop:cfl_list_foreach_safe": 29,
-    "list-header-line:loop:cfl_list_foreach": 118,
-    "list-header-line:loop:mk_list_foreach_safe": 34,
-    "list-header-line:loop:mk_list_foreach": 55
+    "list-header-line:loop:cfl_list_foreach": 138,
+    "list-header-line:loop:mk_list_foreach_safe": 35,
+    "list-header-line:loop:mk_list_foreach": 56
    }
   },
   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": {
-   "total": 214,
+   "total": 235,
    "by_line_shape": {
     "list-header-line:loop:cfl_list_foreach_safe": 27,
-    "list-header-line:loop:cfl_list_foreach": 110,
-    "list-header-line:loop:mk_list_foreach_safe": 29,
-    "list-header-line:loop:mk_list_foreach": 48
+    "list-header-line:loop:cfl_list_foreach": 129,
+    "list-header-line:loop:mk_list_foreach_safe": 30,
+    "list-header-line:loop:mk_list_foreach": 49
    }
   },
   "unsupported: call to uncontracted function `mk_vhost_lookup`": {
@@ -1490,6 +1490,33 @@
   ],
   [
    "cmt_decode_opentelemetry.c",
+   "decode_data_point_labels",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7510,
+   "cmt_decode_opentelemetry.c:624",
+   1
+  ],
+  [
+   "cmt_decode_opentelemetry.c",
+   "decode_data_point_labels",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7509,
+   "cmt_decode_opentelemetry.c:623",
+   1
+  ],
+  [
+   "cmt_decode_opentelemetry.c",
+   "decode_data_point_labels",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7509,
+   "cmt_decode_opentelemetry.c:623",
+   1
+  ],
+  [
+   "cmt_decode_opentelemetry.c",
    "decode_resource_metrics_entry",
    "unsupported",
    "braced initializer, expression, or declaration is not modeled",
@@ -1513,6 +1540,78 @@
    "indirect memory access is outside the resource projection",
    8664,
    "cmt_decode_opentelemetry.c:2066",
+   1
+  ],
+  [
+   "cmt_decode_prometheus_remote_write.c",
+   "decode_labels",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   6562,
+   "cmt_decode_prometheus_remote_write.c:194",
+   1
+  ],
+  [
+   "cmt_decode_prometheus_remote_write.c",
+   "decode_labels",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6561,
+   "cmt_decode_prometheus_remote_write.c:193",
+   1
+  ],
+  [
+   "cmt_decode_prometheus_remote_write.c",
+   "decode_labels",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   6561,
+   "cmt_decode_prometheus_remote_write.c:193",
+   1
+  ],
+  [
+   "cmt_decode_statsd.c",
+   "decode_labels",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   5645,
+   "cmt_decode_statsd.c:151",
+   1
+  ],
+  [
+   "cmt_decode_statsd.c",
+   "decode_labels",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   5679,
+   "cmt_decode_statsd.c:194",
+   1
+  ],
+  [
+   "cmt_decode_statsd.c",
+   "decode_labels",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5643,
+   "cmt_decode_statsd.c:149",
+   1
+  ],
+  [
+   "cmt_decode_statsd.c",
+   "decode_labels",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5678,
+   "cmt_decode_statsd.c:193",
+   1
+  ],
+  [
+   "cmt_decode_statsd.c",
+   "decode_labels",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   5678,
+   "cmt_decode_statsd.c:193",
    1
   ],
   [
@@ -1895,6 +1994,33 @@
   ],
   [
    "cmt_encode_cloudwatch_emf.c",
+   "pack_metric",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7257,
+   "cmt_encode_cloudwatch_emf.c:309",
+   1
+  ],
+  [
+   "cmt_encode_cloudwatch_emf.c",
+   "pack_metric",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7253,
+   "cmt_encode_cloudwatch_emf.c:304",
+   1
+  ],
+  [
+   "cmt_encode_cloudwatch_emf.c",
+   "pack_metric",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7253,
+   "cmt_encode_cloudwatch_emf.c:304",
+   1
+  ],
+  [
+   "cmt_encode_cloudwatch_emf.c",
    "pack_metrics",
    "unsupported",
    "braced initializer, expression, or declaration is not modeled",
@@ -2093,6 +2219,33 @@
   ],
   [
    "cmt_encode_influx.c",
+   "format_metric",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   5860,
+   "cmt_encode_influx.c:338",
+   1
+  ],
+  [
+   "cmt_encode_influx.c",
+   "format_metric",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5859,
+   "cmt_encode_influx.c:337",
+   1
+  ],
+  [
+   "cmt_encode_influx.c",
+   "format_metric",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   5859,
+   "cmt_encode_influx.c:337",
+   1
+  ],
+  [
+   "cmt_encode_influx.c",
    "format_metrics",
    "unsupported",
    "braced initializer, expression, or declaration is not modeled",
@@ -2116,6 +2269,195 @@
    "unmodeled call, aggregate or indirect access in for-loop condition",
    5891,
    "cmt_encode_influx.c:381",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_basic_type",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7308,
+   "cmt_encode_msgpack.c:425",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_basic_type",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7307,
+   "cmt_encode_msgpack.c:424",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_basic_type",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7307,
+   "cmt_encode_msgpack.c:424",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7377,
+   "cmt_encode_msgpack.c:524",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7381,
+   "cmt_encode_msgpack.c:530",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7385,
+   "cmt_encode_msgpack.c:536",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7389,
+   "cmt_encode_msgpack.c:542",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7393,
+   "cmt_encode_msgpack.c:548",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7397,
+   "cmt_encode_msgpack.c:554",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7376,
+   "cmt_encode_msgpack.c:523",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7380,
+   "cmt_encode_msgpack.c:529",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7384,
+   "cmt_encode_msgpack.c:535",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7388,
+   "cmt_encode_msgpack.c:541",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7392,
+   "cmt_encode_msgpack.c:547",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7396,
+   "cmt_encode_msgpack.c:553",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7376,
+   "cmt_encode_msgpack.c:523",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7380,
+   "cmt_encode_msgpack.c:529",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7384,
+   "cmt_encode_msgpack.c:535",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7388,
+   "cmt_encode_msgpack.c:541",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7392,
+   "cmt_encode_msgpack.c:547",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_context_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7396,
+   "cmt_encode_msgpack.c:553",
    1
   ],
   [
@@ -2146,12 +2488,93 @@
    1
   ],
   [
+   "cmt_encode_msgpack.c",
+   "pack_metric",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7273,
+   "cmt_encode_msgpack.c:376",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_metric",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7272,
+   "cmt_encode_msgpack.c:375",
+   1
+  ],
+  [
+   "cmt_encode_msgpack.c",
+   "pack_metric",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7272,
+   "cmt_encode_msgpack.c:375",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   9175,
+   "cmt_encode_opentelemetry.c:3167",
+   1
+  ],
+  [
    "cmt_encode_opentelemetry.c",
    "append_sample_to_metric",
    "unsupported",
    "braced initializer, expression, or declaration is not modeled",
    9339,
    "cmt_encode_opentelemetry.c:3361",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   9343,
+   "cmt_encode_opentelemetry.c:3366",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   9174,
+   "cmt_encode_opentelemetry.c:3166",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   9342,
+   "cmt_encode_opentelemetry.c:3365",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   9174,
+   "cmt_encode_opentelemetry.c:3166",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "append_sample_to_metric",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   9342,
+   "cmt_encode_opentelemetry.c:3365",
    1
   ],
   [
@@ -2533,6 +2956,33 @@
    1
   ],
   [
+   "cmt_encode_opentelemetry.c",
+   "pack_basic_type",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   9476,
+   "cmt_encode_opentelemetry.c:3540",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "pack_basic_type",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   9475,
+   "cmt_encode_opentelemetry.c:3539",
+   1
+  ],
+  [
+   "cmt_encode_opentelemetry.c",
+   "pack_basic_type",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   9475,
+   "cmt_encode_opentelemetry.c:3539",
+   1
+  ],
+  [
    "cmt_encode_prometheus.c",
    "cmt_encode_prometheus_create",
    "unsupported",
@@ -2800,6 +3250,33 @@
    "braced initializer, expression, or declaration is not modeled",
    6313,
    "cmt_encode_prometheus.c:616",
+   1
+  ],
+  [
+   "cmt_encode_prometheus.c",
+   "format_metrics",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   6319,
+   "cmt_encode_prometheus.c:623",
+   1
+  ],
+  [
+   "cmt_encode_prometheus.c",
+   "format_metrics",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6318,
+   "cmt_encode_prometheus.c:622",
+   1
+  ],
+  [
+   "cmt_encode_prometheus.c",
+   "format_metrics",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   6318,
+   "cmt_encode_prometheus.c:622",
    1
   ],
   [
@@ -4622,6 +5099,60 @@
   ],
   [
    "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   6972,
+   "ctr_encode_text.c:293",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   6979,
+   "ctr_encode_text.c:303",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6971,
+   "ctr_encode_text.c:292",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6978,
+   "ctr_encode_text.c:302",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   6971,
+   "ctr_encode_text.c:292",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
+   "format_span",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   6978,
+   "ctr_encode_text.c:302",
+   1
+  ],
+  [
+   "ctr_encode_text.c",
    "format_spans",
    "unsupported",
    "braced initializer, expression, or declaration is not modeled",
@@ -5548,6 +6079,33 @@
    1
   ],
   [
+   "mk_server/mk_config.c",
+   "mk_config_read_files",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   6191,
+   "mk_server/mk_config.c:356",
+   1
+  ],
+  [
+   "mk_server/mk_config.c",
+   "mk_config_read_files",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   6190,
+   "mk_server/mk_config.c:355",
+   1
+  ],
+  [
+   "mk_server/mk_config.c",
+   "mk_config_read_files",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   6190,
+   "mk_server/mk_config.c:355",
+   1
+  ],
+  [
    "mk_server/mk_fifo.c",
    "mk_fifo_queue_destroy_all",
    "unsupported",
@@ -5761,6 +6319,33 @@
    "braced initializer, expression, or declaration is not modeled",
    7177,
    "mk_server/mk_http.c:1617",
+   1
+  ],
+  [
+   "mk_server/mk_http.c",
+   "mk_http_session_remove",
+   "unsupported",
+   "braced initializer, expression, or declaration is not modeled",
+   7048,
+   "mk_server/mk_http.c:1428",
+   1
+  ],
+  [
+   "mk_server/mk_http.c",
+   "mk_http_session_remove",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   7047,
+   "mk_server/mk_http.c:1427",
+   1
+  ],
+  [
+   "mk_server/mk_http.c",
+   "mk_http_session_remove",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   7047,
+   "mk_server/mk_http.c:1427",
    1
   ],
   [

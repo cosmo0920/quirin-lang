@@ -38,23 +38,21 @@ REWRITES = {
             LIST,
             "        let Some(shape) = recognise_header(clauses) else {\n            return Ok(None);\n        };",
             "        let Some(shape) = recognise_header(clauses).filter(|_| false) else {\n            return Ok(None);\n        };",
+            1,
         ),
         (
             LIST,
             "        let shape = element_shape(texts)?;\n        // A formal's own slot",
             "        let shape = element_shape(texts).filter(|_| false)?;\n        // A formal's own slot",
+            1,
         ),
     ],
     "iteration-only": [
         (
             TYPED,
-            "    let skipped = crate::legacy_c::list_iteration::element_expression_spans(body);\n    for start in 0..body.len() {\n        if start > 0 && !matches!(body[start - 1], \"{\" | \"}\" | \";\" | \"(\" | \":\") {\n            continue;\n        }\n        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {\n            continue;\n        }\n        if !is_declaration_candidate(body, start) {\n            continue;\n        }\n        let Some(end) = statement_end(body, start) else {\n            note_refusal!(",
-            "    let skipped: Vec<(usize, usize)> = Vec::new();\n    for start in 0..body.len() {\n        if start > 0 && !matches!(body[start - 1], \"{\" | \"}\" | \";\" | \"(\" | \":\") {\n            continue;\n        }\n        if skipped.iter().any(|(open, close)| *open < start && start <= *close) {\n            continue;\n        }\n        if !is_declaration_candidate(body, start) {\n            continue;\n        }\n        let Some(end) = statement_end(body, start) else {\n            note_refusal!(",
-        ),
-        (
-            TYPED,
-            "    // Card W45-FB-BACKLOG-CUSTODY: as in `read_locals`.\n    let skipped = crate::legacy_c::list_iteration::element_expression_spans(body);",
-            "    // Card W45-FB-BACKLOG-CUSTODY: as in `read_locals`.\n    let skipped: Vec<(usize, usize)> = Vec::new();",
+            "    let skipped = crate::legacy_c::list_iteration::element_expression_spans(body);",
+            "    let skipped: Vec<(usize, usize)> = Vec::new();",
+            2,
         ),
     ],
 }
@@ -67,13 +65,13 @@ def sha(path):
 def main():
     variant, out, target = sys.argv[1], pathlib.Path(sys.argv[2]).resolve(), pathlib.Path(sys.argv[3]).resolve()
     rewrites = REWRITES[variant]
-    originals = {path: path.read_bytes() for path, _, _ in rewrites}
+    originals = {path: path.read_bytes() for path, _, _, _ in rewrites}
     digests = {path: sha(path) for path in originals}
     try:
-        for path, old, new in rewrites:
+        for path, old, new, expected in rewrites:
             text = path.read_text()
-            if text.count(old) != 1:
-                raise SystemExit(f"{path}: hook not found exactly once")
+            if text.count(old) != expected:
+                raise SystemExit(f"{path}: hook found {text.count(old)} times, expected {expected}")
             path.write_text(text.replace(old, new))
         environment = dict(os.environ, CARGO_INCREMENTAL="0", CARGO_TARGET_DIR=str(target))
         build = subprocess.run(
