@@ -1,0 +1,78 @@
+{
+ "jobs": "16",
+ "route": "current-ck",
+ "runs": [
+  {
+   "variant": "main",
+   "round": 1,
+   "route": "current-ck",
+   "jobs": "16",
+   "binary_sha256": "3bfb2366e4f3e966963b80bc5421ff06d7b53eb7d30cdb3fa3e94606880167ea",
+   "exit": 0,
+   "wall_seconds": 297.3,
+   "user_seconds": 1120.81,
+   "system_seconds": 17.79,
+   "tree_peak_kib": 1117928,
+   "self_peak_kib": 1117928,
+   "load_average_after": [
+    42.52978515625,
+    46.20068359375,
+    40.923828125
+   ]
+  },
+  {
+   "variant": "change",
+   "round": 1,
+   "route": "current-ck",
+   "jobs": "16",
+   "binary_sha256": "8f2094954ae97a62ef5db8d3d5dc465b026b14bdf7109fb210a3d15bf1cbba3b",
+   "exit": 0,
+   "wall_seconds": 199.35,
+   "user_seconds": 1152.77,
+   "system_seconds": 18.64,
+   "tree_peak_kib": 917328,
+   "self_peak_kib": 917328,
+   "load_average_after": [
+    25.634765625,
+    39.65478515625,
+    39.70361328125
+   ]
+  },
+  {
+   "variant": "main",
+   "round": 2,
+   "route": "current-ck",
+   "jobs": "16",
+   "binary_sha256": "3bfb2366e4f3e966963b80bc5421ff06d7b53eb7d30cdb3fa3e94606880167ea",
+   "exit": 0,
+   "wall_seconds": 187.49,
+   "user_seconds": 1046.99,
+   "system_seconds": 18.72,
+   "tree_peak_kib": 1150688,
+   "self_peak_kib": 1150688,
+   "load_average_after": [
+    25.87060546875,
+    37.5126953125,
+    39.09912109375
+   ]
+  },
+  {
+   "variant": "change",
+   "round": 2,
+   "route": "current-ck",
+   "jobs": "16",
+   "binary_sha256": "8f2094954ae97a62ef5db8d3d5dc465b026b14bdf7109fb210a3d15bf1cbba3b",
+   "exit": 0,
+   "wall_seconds": 216.06,
+   "user_seconds": 1120.82,
+   "system_seconds": 18.52,
+   "tree_peak_kib": 882768,
+   "self_peak_kib": 882768,
+   "load_average_after": [
+    39.7802734375,
+    39.35205078125,
+    39.53466796875
+   ]
+  }
+ ]
+}

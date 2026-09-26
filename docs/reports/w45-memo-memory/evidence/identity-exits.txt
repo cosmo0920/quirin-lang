@@ -1,0 +1,8 @@
+arbiter-j16 main-1 exit 0
+arbiter-j16 change-1 exit 0
+arbiter-j4 main-1 exit 0
+arbiter-j4 change-1 exit 0
+arbiter-j1 main-1 exit 0
+arbiter-j1 change-1 exit 0
+ck-j16 main-1 leaf classes exit 0
+ck-j16 change-1 leaf classes exit 0

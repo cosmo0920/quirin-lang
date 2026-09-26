@@ -1,0 +1,41 @@
+{
+ "card": "W45-MEMO-MEMORY",
+ "base": "675e7289",
+ "measured_tip": "78e3f2b0",
+ "log_directory": "private/memo-memory/gate1/",
+ "exits": {
+  "submodule": 0,
+  "tests": 0,
+  "clean": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "clean_after_examples": 0,
+  "lean": 0,
+  "python": 0,
+  "docs_index": 0
+ },
+ "rust_suite": {
+  "units": 309,
+  "summaries": 319,
+  "passed": 5919,
+  "failed": 0,
+  "ignored": 11,
+  "log": "private/test-binaries/20260926T123837Z-3287785/"
+ },
+ "lean_audits_passed": 204,
+ "python_tests": 358,
+ "records_tip": {
+  "log_directory": "private/memo-memory/gate-records/",
+  "note": "The records commit after 78e3f2b0 changes only documentation, evidence, the report scripts and the matrix's W45-CHECKPOINT-JOBS-MEMORY text; fmt, the Python suite and the docs index check were rerun there.",
+  "fmt": 0,
+  "python": 0,
+  "docs_index": 0,
+  "tip": "91a0db68",
+  "python_tests": 358
+ },
+ "environment": "CARGO_INCREMENTAL=0; host shared with two other cards (load average 15-56 during the gate); the gate overlapped four of this card's own measurement runs (README section 3)",
+ "provider_gate": "not run: providers/ untouched",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

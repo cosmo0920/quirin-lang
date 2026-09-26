@@ -28,12 +28,23 @@ The main result, `run_eq_map`, is observational equivalence: any sequence of
 calls through the memo returns exactly `f` of each key, whatever the digest.
 `the_digest_alone_serves_a_collision` shows the replaced rule is not.
 
+## The memo's removal (card W45-MEMO-MEMORY)
+
+The memo's key, a copy of every token text, stayed resident in every worker
+thread, and the memo saved no measurable time, so card W45-MEMO-MEMORY removed
+it: `member_releasing_functions` now computes `f` on every call. That removal
+changes no answer by `removing_the_memo_changes_no_answer`, a corollary of
+`run_eq_map` from any state the memo filled, the empty one included. The
+definitions above now model the replaced code, not current Rust.
+
 ## What this is not
 
 A proof about the Rust (trust boundary 28): that the Rust key is the whole
 input the uncached function reads (every token text; `line` is not read), and
-that `compute_member_releasing_functions` is a function of it, are review
-premises pinned by the module's unit tests.
+that `compute_member_releasing_functions` is a function of it, were review
+premises pinned by the module's unit tests. Since the removal there is no key
+and no memo state: the Rust calls the function itself, which is what `f`
+stands for here.
 -/
 
 namespace QCore.MemoKey
@@ -129,6 +140,15 @@ theorem run_eq_map (f : K → V) (digest : K → D) :
 omit [DecidableEq K] [DecidableEq D] in
 /-- The empty memo satisfies the invariant. -/
 theorem empty_is_filled (f : K → V) : Filled (D := D) f none := True.intro
+
+/-- **Removing the memo changes no answer** (card W45-MEMO-MEMORY): calling the
+uncached function on every key answers exactly what the memo answered, from
+the empty memo or from any state the memo filled on earlier keys (a worker
+thread's earlier units), for every digest. -/
+theorem removing_the_memo_changes_no_answer (f : K → V) (digest : K → D)
+    (ks : List K) (m : Option (Entry K V D)) (h : Filled f m) :
+    ks.map f = run f digest ks m :=
+  (run_eq_map f digest ks m h).symm
 
 /-- The rule the card replaces: a hit on the digest alone. -/
 def lookupDigestOnly (digest : K → D) (k : K) : Option (Entry K V D) → Option V

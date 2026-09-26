@@ -9,11 +9,12 @@ entry with another key gives the uncached answer whatever it holds; under the
 memo's own invariant every call is the uncached function and keeps the
 invariant, so **any sequence of calls is observationally the uncached
 function**, for every digest; and **the replaced digest-only rule serves a
-collision** (a witness).
+collision** (a witness). Card **W45-MEMO-MEMORY** removed the memo: **removing
+it changes no answer**, from the empty memo or any state it filled.
 
 What this is not: a proof about the Rust (trust boundary 28). That the Rust key
-is the whole input the uncached function reads is a review premise, pinned by
-the module's unit tests. -/
+was the whole input the uncached function reads was a review premise, pinned by
+the memo's unit tests; since the removal the Rust has no key and no memo. -/
 
 #print axioms QCore.MemoKey.a_hit_has_an_equal_key
 #print axioms QCore.MemoKey.a_colliding_entry_is_a_miss
@@ -23,3 +24,4 @@ the module's unit tests. -/
 #print axioms QCore.MemoKey.run_eq_map
 #print axioms QCore.MemoKey.empty_is_filled
 #print axioms QCore.MemoKey.the_digest_alone_serves_a_collision
+#print axioms QCore.MemoKey.removing_the_memo_changes_no_answer
