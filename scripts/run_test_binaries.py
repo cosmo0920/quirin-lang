@@ -95,6 +95,10 @@ EXCLUSIVE: dict[str, str] = {
         "checker-plugin process packages under declared 5 s and 300 ms timeouts "
         "(card W45-USER-CONTRACT-PLUGINS)"
     ),
+    "qcore-audit::test::subcommand_plugins": (
+        "external subcommand plugins under a declared 500 ms timeout, killed "
+        "by process group (card W45-AUDIT-SUBCOMMAND-PLUGINS)"
+    ),
     "qcore-compiler::test::w3_evidence_v2": (
         "an out-of-process provider under a declared timeout"
     ),

@@ -49,6 +49,9 @@ pub mod unit_selection;
 // resource views of user crates (`quirin-audit plugin views`).
 pub mod plugin_cli;
 pub mod user_plugins;
+// Card W45-AUDIT-SUBCOMMAND-PLUGINS: external `quirin-audit NAME` subcommands
+// (`quirin-audit-NAME` on a declared search path), through the plugin firewall.
+pub mod subcommand_plugins;
 pub mod wait_failures;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 

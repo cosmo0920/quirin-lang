@@ -1,11 +1,14 @@
-"""Retired scripts stay retired (cards W44-QUIRIN-AUDIT-PROVIDERS and
-W44-QUIRIN-AUDIT-PREPARE).
+"""Retired scripts stay retired (cards W44-QUIRIN-AUDIT-PROVIDERS,
+W44-QUIRIN-AUDIT-PREPARE and W45-AUDIT-SUBCOMMAND-PLUGINS).
 
 `scripts/prepare_cycle19_clang_audit.py` was removed when `quirin-audit
 current` took over the configured current-revision route.
 `scripts/prepare_cmetrics_clang_audit.py` and `scripts/prepare_cycle19_monkey.py`
 were removed when `quirin-audit prepare` (steps `clang-build` and `monkey`)
-took over preparation with the same commands and output files. No live file
+took over preparation with the same commands and output files.
+`scripts/prepare_libevent_core_audit.py` was removed when the external
+subcommand `quirin-audit libevent prepare` (crate
+`quirin-audit-plugin-libevent`) reproduced its outputs byte for byte. No live file
 may point a reader at a removed script. Frozen evidence keeps its text:
 reports under `docs/reports/` and the increment history under
 `docs/development/increments/` record what was true when they were written.
@@ -21,6 +24,7 @@ RETIRED = [
     'prepare_cycle19_clang_audit.py',
     'prepare_cmetrics_clang_audit.py',
     'prepare_cycle19_monkey.py',
+    'prepare_libevent_core_audit.py',
 ]
 
 # Frozen history and generated or external trees.

@@ -467,6 +467,40 @@ The record also names the configuration file and its digest, and the contract
 source with the digest of the manifest that was loaded. It is provenance of the
 run, not an input to any verdict, so it is not part of any identity comparison.
 
+### Preparing `libevent-core`
+
+The `libevent-core` inputs are prepared by the external subcommand
+`quirin-audit libevent prepare` (crate `quirin-audit-plugin-libevent`), from
+the pinned `third_party/libevent` submodule, byte for byte as the retired
+Python script did ([parity](../../docs/reports/w45-audit-subcommand-plugins/README.md)):
+
+```sh
+cargo build -p qcore-audit -p quirin-audit-plugin-libevent
+target/debug/quirin-audit --plugin-path target/debug --output ../out/libevent \
+  libevent prepare --clang clang --clangxx clang++
+```
+
+It writes `libevent-clang-build/` under the output: CMake's unmodified
+`compile_commands.json`, `libevent-core-audit.json.config` and
+`libevent-build-provenance.json`. An output inside `build/cycle19` or
+`third_party` is refused. `--write-profile` writes the regenerated audited-file
+table to `libevent-clang-build/profile.json` for review instead of editing the
+committed profile.
+
+## External subcommands
+
+`quirin-audit [--plugin-path DIR]... --output DIR NAME ARGS...` runs the
+executable `quirin-audit-NAME`, cargo-style, when `NAME` is not built in.
+Only the declared search path is searched (`--plugin-path`, then
+`QUIRIN_AUDIT_PLUGIN_PATH`; never `PATH`), the environment is cleared except
+an allow-list, and the plugin runs under wall-time and output quotas in its
+output directory. Its verdict claims pass through the checker-plugin firewall,
+so an uncertified `Safe` or `Unsafe` is `Pending` and any failure `Unknown`.
+`--list-plugins` lists what the search path holds. The report is
+`<output>/quirin-audit-NAME.report.json` (or `--report FILE`), with
+`<report>.invocation.json` beside it. How to write one:
+[audit subcommand plugins](../../docs/development/audit-subcommand-plugins.md).
+
 ## `quirin-audit contracts`: contracts only, without build settings
 
 `quirin-audit contracts` audits C sources with the loaded contracts alone. It
