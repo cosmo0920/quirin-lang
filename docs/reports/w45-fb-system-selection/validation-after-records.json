@@ -1,0 +1,8 @@
+{
+ "note": "Record-dependent gate steps rerun after the shared records were edited (scripts/validate_records.sh); logs in the worktree-private private/w45-fb-system-selection/validate-records-{1,2}/. The first run's Python suite exited 1 on CommittedMatrixIsSelfConsistent (dimensions.named_followups 405 against 406), as it must before regeneration; docs/reports/remaining-d02/build_matrix.py . (no --gate: the matrix's gate block is labelled carried rather than replaced) exited 0, and the second run passed.",
+ "runs": [
+  {"run": "validate-records-1", "python_unittest_exit": 1, "python_tests": 351, "failures": 1, "docs_index_check_exit": 0, "git_diff_check_exit": 0},
+  {"run": "build_matrix", "command": "python3 docs/reports/remaining-d02/build_matrix.py .", "exit": 0, "named_followups": 406},
+  {"run": "validate-records-2", "python_unittest_exit": 0, "python_tests": 351, "failures": 0, "docs_index_check_exit": 0, "git_diff_check_exit": 0}
+ ]
+}

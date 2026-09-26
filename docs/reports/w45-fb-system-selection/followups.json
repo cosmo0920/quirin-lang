@@ -1,0 +1,47 @@
+{
+  "card": "W45-FB-SYSTEM-SELECTION",
+  "closes": [
+    {
+      "id": "FB-SYSTEM-CURRENT-BUILD-SELECTION",
+      "origin": "docs/reports/fb-system-audit-cards/census/followups.json",
+      "registered_in_matrix_before": false,
+      "discharge_stated": "Prepare and bind the selected current-revision build; publish full file/function denominator and audit results, including preparation refusals.",
+      "discharged_by": "binding.json (clean private clone at 864c3d97, prepare.json / build-provenance.json / compile database digests, 15 unmodified compile records); measurement/denominator.json (8 files, 15 units, 236 functions, every verdict and blocker class); preparation refusals: none (15/15 records preprocess, 0 absent or unprepared units); artifacts/system-slice/"
+    },
+    {
+      "id": "FB-SYSTEM-SYNCHRONIZATION-INVENTORY",
+      "origin": "docs/reports/fb-system-audit-cards/census/followups.json",
+      "registered_in_matrix_before": false,
+      "discharge_stated": "Enumerate selected production callback and worker handoff edges with source/build binding; distinguish unresolved synchronization premises.",
+      "discharged_by": "lifetime-inventory.json (33 edges over the selected slices: 8 borrow / 12 transfer / 8 retire / 5 unresolved, each unresolved edge with its missing premise; source digests for every cited file) and measurement/inventory-audit-join.json (the 69 functions it names joined with this build's audit). Closed for the selected slices; the remainder is W45-FB-SYNC-PREMISES below."
+    }
+  ],
+  "registered_in_matrix_as": "W45-FB-SYSTEM-SLICE-RESIDUALS",
+  "residuals": [
+    {
+      "id": "W45-FB-SYNC-PREMISES",
+      "what": "Unresolved synchronization and ordering premises of the selected slices: E-BL-05 (chunk ownership after a NULL flb_input_chunk_map, arm-dependent), E-BL-09 (shutdown re-segregation at grace_count==1), E-BL-11 (backlog teardown after output instances are freed), E-RT-04 (completion key without generation), E-SH-01 (worker exit when the stop write fails); plus engine-to-worker writes to shared task state, task->users as a plain int read on the chunk-append thread, and eviction on the engine thread (depends on flb_input_log.c callers, outside the eight files); the output worker loop body in flb_output_thread.c read only in cited ranges.",
+      "discharge": "For each edge or premise: a source argument that decides it at the pin, or a declared premise with its scope stated in the consuming card's verdict assumptions, or a bound native observation with a control; unresolved edges stay Unknown until then."
+    },
+    {
+      "id": "W45-FB-BACKLOG-SOURCE-CANDIDATES",
+      "what": "Source-reading candidates at 864c3d97, not reproduced and not upstream findings: BC-1 (routes_mask allocation failure in flb_input_chunk_map closes the chunk at flb_input_chunk.c:1512-1516, then cb_queue_chunks downs and closes it again at sb.c:691-703); BX-1 (sb_destroy_backlogs unlinks a queue at sb.c:188 before its wrappers are looked up across the remaining queues, so its own wrappers are not freed); BX-2 (backlog teardown writes backlog->ins at sb.c:228-237 after flb_output_exit freed output instances, flb_engine.c:1648 before :1650, when a chunk is queued for two or more outputs).",
+      "discharge": "Per candidate: a fault-injected or teardown native observation on a bound build with a control run, or a source argument refuting it; never presented as an upstream defect without the user's decision."
+    },
+    {
+      "id": "W45-FB-RETRY-SOURCE-CANDIDATES",
+      "what": "Source-reading candidates at 864c3d97, not reproduced and not upstream findings: N1 (failed multiplex retry flush destroys the retry without releasing the task, flb_engine_dispatch.c:169-174); N2 (failed threaded thread-pool flush rolls back the user but flb_output_task_flush returns 0, flb_output.c:422-435, 463); N3 (synchronous non-threaded pipe-write failure: singleplex_flush_next frees the in-progress entry at flb_output.c:396-400, then flb_output_task_queue_flush_one reads queued_task->retry at :336 and advances the queue again).",
+      "discharge": "Per candidate: a fault-injected native observation on a bound build with a control run (gdb-forced return values on an unmodified build preferred), or a source argument refuting it; never presented as an upstream defect without the user's decision."
+    },
+    {
+      "id": "W45-FB-LIST-PUBLICATION-REACH",
+      "what": "MK-LIST-ADD-BORROWED-PUBLICATION reaches the system slice: sb_append_chunk_to_segregated_backlog (leak acquired sb.c:269, at :289) and flb_output_task_queue_enqueue (acquired flb_output.c:288, at :302) are provisional Unsafe only through mk_list_add's borrowed declaration; both keep other refusals.",
+      "discharge": "Discharged with MK-LIST-ADD-BORROWED-PUBLICATION's own condition, with the system-slice run as a second arbiter attributing both leaves."
+    },
+    {
+      "id": "W45-FB-P1-SLICES",
+      "what": "The two selected P1 slices (FB-BACKLOG-CUSTODY: 14 functions, obligations OB-1..OB-10; FB-RETRY-LIFETIME: 15 functions, OR-1..OR-11) and the recommended first card (FB-RETRY-LIFETIME narrowed to the five flb_output.c singleplex functions with task-user header summaries).",
+      "discharge": "A semantic card per slice with Rust and audited Lean, run against contract/profiles/fluent-bit/system-selection.json with this report's denominator as its baseline, attributing every verdict and leaf delta; or a measured blocker recorded against the slice."
+    }
+  ]
+}

@@ -1,0 +1,686 @@
+{
+ "schema_version": 1,
+ "inputs": {
+  "slice_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/system-slice/resource-diagnostics.json",
+   "sha256": "335c2db69dd229044b56ebaa2c2e3d5101088fc9b7e3d0a6b1db2cb85aba326a",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "main_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json",
+   "sha256": "e8bc6bf3b8f3426b9249120adc666a5a6a8c4908d45e87cfc72d4f4d3f179a59",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "census_archive": {
+   "path": "docs/reports/w45-return-expression-families/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "642ea04f1e819e69bb95753ad78bcb8f5b9cc363691d2ceb0530c903034d0cb2",
+   "raw_sha256": "e458950b209b5822b0afd2ed081bb4e151c95307ea863b7e606273ea2b0a89da",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "baseline_archive": {
+   "path": "docs/reports/w45-sub-object-stores/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "3e5b97563941a29d2376348325c1b2c0655f78a5f814e43443a8752a03956e71",
+   "raw_sha256": "c762a4855c66d6d1c3fd155a199a761560a411df7041bb9b59ec10cdf5d83072",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "inventory": {
+   "path": "docs/reports/w45-fb-system-selection/lifetime-inventory.json",
+   "sha256": "ab01c8749d3584da55051e5684dc0a26c8e6b6c1021b72df5740c5ceeea52c97"
+  }
+ },
+ "scope": "measurement of Quirin audit rows; Unsafe is provisional; not a model, proof, native observation or upstream defect claim",
+ "slices": {
+  "FB-BACKLOG-CUSTODY": {
+   "greedy_cover": [
+    {
+     "add": "unsupported: indirect memory access is outside the resource projection",
+     "functions_without_refusal": 1
+    },
+    {
+     "add": "unsupported: braced initializer, expression, or declaration is not modeled",
+     "functions_without_refusal": 1
+    },
+    {
+     "add": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+     "functions_without_refusal": 2
+    },
+    {
+     "add": "unsupported: call to uncontracted function `_`",
+     "functions_without_refusal": 4
+    },
+    {
+     "add": "unknown_alias: unresolved resource identity `_`",
+     "functions_without_refusal": 5
+    },
+    {
+     "add": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+     "functions_without_refusal": 8
+    },
+    {
+     "add": "unsupported: unrecognized assignment destination",
+     "functions_without_refusal": 9
+    },
+    {
+     "add": "unsupported: nested call `_` inside a modeled call is outside the resource projection",
+     "functions_without_refusal": 10
+    },
+    {
+     "add": "unsupported: nullable resource `_` used by a non-null contract",
+     "functions_without_refusal": 11
+    },
+    {
+     "add": "unsupported: unmodeled call, aggregate or indirect access in loop condition",
+     "functions_without_refusal": 11
+    },
+    {
+     "add": "unsupported: unmodeled increment or decrement expression",
+     "functions_without_refusal": 11
+    },
+    {
+     "add": "unsupported: unsupported assignment expression",
+     "functions_without_refusal": 12
+    }
+   ],
+   "uncontracted_callees": {
+    "sb_remove_chunk_from_segregated_backlogs": 5,
+    "flb_input_chunk_get_tag": 3,
+    "cio_chunk_write_at": 3,
+    "sb_get_context": 1,
+    "sb_allocate_backlogs": 1,
+    "cio_error_get": 1,
+    "sb_append_chunk_to_segregated_backlogs": 1,
+    "cio_chunk_lock": 1,
+    "sb_destroy_backlogs": 1,
+    "cio_chunk_get_real_size": 1,
+    "sb_append_chunk_to_segregated_backlog": 1,
+    "sb_remove_chunk_from_segregated_backlog": 1,
+    "flb_input_chunk_get_event_type": 1,
+    "flb_input_chunk_map": 1,
+    "sb_find_segregated_backlog_by_output_plugin_instance": 1,
+    "sb_destroy_backlog": 1,
+    "flb_mp_validate_log_chunk": 1,
+    "flb_mp_validate_metric_chunk": 1,
+    "flb_mp_count_log_records": 1,
+    "flb_input_chunk_get_direct_routes": 1,
+    "flb_input_chunk_update_output_instances": 1,
+    "flb_input_chunk_set_up": 1,
+    "flb_input_chunk_output_size_subtract": 1
+   },
+   "functions": [
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_segregate_chunks",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 5,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: call to uncontracted function `_`": 5,
+      "unsupported: indirect memory access is outside the resource projection": 6,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 5,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_allocate_backlogs",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_append_chunk_to_segregated_backlogs",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 3,
+      "unsupported: indirect memory access is outside the resource projection": 9,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_append_chunk_to_segregated_backlog",
+     "status": "Unsafe",
+     "blocker_classes": {
+      "leak: live obligation acquired at _": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1
+     },
+     "leaks": [
+      {
+       "description": "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
+       "origin": "plugins/in_storage_backlog/sb.c:289"
+      }
+     ]
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_allocate_chunk",
+     "status": "Safe",
+     "blocker_classes": {},
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_destroy_chunk",
+     "status": "Safe",
+     "blocker_classes": {},
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_remove_chunk_from_segregated_backlog",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: indirect memory access is outside the resource projection": 5,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_remove_chunk_from_segregated_backlogs",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "cb_queue_chunks",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 5,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: call to uncontracted function `_`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 17,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1,
+      "unsupported: unmodeled increment or decrement expression": 1,
+      "unsupported: unrecognized assignment destination": 1,
+      "unsupported: unsupported assignment expression": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_release_output_queue_space",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 5,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+      "unsupported: unrecognized assignment destination": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_destroy_backlogs",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "plugins/in_storage_backlog/sb.c",
+     "function": "sb_destroy_backlog",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_input_chunk.c",
+     "function": "flb_input_chunk_map",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 37,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: call to uncontracted function `_`": 9,
+      "unsupported: indirect memory access is outside the resource projection": 31,
+      "unsupported: nullable resource `_` used by a non-null contract": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 11
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_input_chunk.c",
+     "function": "flb_input_chunk_destroy",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 3,
+      "unsupported: indirect memory access is outside the resource projection": 15,
+      "unsupported: nested call `_` inside a modeled call is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 9,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    }
+   ],
+   "absent_from_audit": [],
+   "function_status": {
+    "Safe": 2,
+    "Unknown": 11,
+    "Unsafe": 1
+   },
+   "ranking": [
+    {
+     "class": "unsupported: indirect memory access is outside the resource projection",
+     "functions_blocked": 12,
+     "functions_where_sole_non_leak_class": 1
+    },
+    {
+     "class": "unsupported: braced initializer, expression, or declaration is not modeled",
+     "functions_blocked": 11,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+     "functions_blocked": 10,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: call to uncontracted function `_`",
+     "functions_blocked": 9,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unknown_alias: unresolved resource identity `_`",
+     "functions_blocked": 7,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+     "functions_blocked": 7,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unrecognized assignment destination",
+     "functions_blocked": 2,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "leak: live obligation acquired at _",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: nested call `_` inside a modeled call is outside the resource projection",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: nullable resource `_` used by a non-null contract",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled call, aggregate or indirect access in loop condition",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled increment or decrement expression",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unsupported assignment expression",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    }
+   ]
+  },
+  "FB-RETRY-LIFETIME": {
+   "greedy_cover": [
+    {
+     "add": "unsupported: call to uncontracted function `_`",
+     "functions_without_refusal": 0
+    },
+    {
+     "add": "unsupported: indirect memory access is outside the resource projection",
+     "functions_without_refusal": 2
+    },
+    {
+     "add": "unknown_alias: unresolved resource identity `_`",
+     "functions_without_refusal": 6
+    },
+    {
+     "add": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+     "functions_without_refusal": 7
+    },
+    {
+     "add": "unsupported: braced initializer, expression, or declaration is not modeled",
+     "functions_without_refusal": 9
+    },
+    {
+     "add": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+     "functions_without_refusal": 11
+    },
+    {
+     "add": "unsupported: unsupported assignment expression",
+     "functions_without_refusal": 13
+    },
+    {
+     "add": "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection",
+     "functions_without_refusal": 14
+    },
+    {
+     "add": "unsupported: nullable resource `_` used by a non-null contract",
+     "functions_without_refusal": 14
+    },
+    {
+     "add": "unsupported: unmodeled increment or decrement expression",
+     "functions_without_refusal": 15
+    }
+   ],
+   "uncontracted_callees": {
+    "flb_task_users_dec": 7,
+    "flb_task_retry_destroy": 7,
+    "flb_task_retry_clean": 4,
+    "handle_dlq_if_available": 4,
+    "flb_sched_request_destroy": 3,
+    "flb_task_users_release": 2,
+    "flb_task_retry_reschedule": 2,
+    "flb_output_get_instance": 1,
+    "flb_output_flush_finished": 1,
+    "flb_output_name": 1,
+    "flb_task_retry_count": 1,
+    "flb_task_retry_create": 1,
+    "flb_task_destroy": 1,
+    "flb_task_clear_route_retry_context": 1,
+    "schedule_request_now": 1,
+    "flb_sched_timer_destroy": 1,
+    "flb_sched_timer_invalidate": 1,
+    "flb_sched_ctx_get": 1,
+    "sched_timer_coro_get_by_id": 1,
+    "schedule_request_promote": 1,
+    "flb_sched_timer_cb_disable": 1,
+    "flb_sched_timer_cb_destroy": 1,
+    "record_retry_failure_metrics": 1,
+    "flb_output_task_queue_enqueue": 1,
+    "flb_output_task_singleplex_flush_next": 1,
+    "flb_output_task_queue_flush_one": 1,
+    "flb_output_thread_pool_flush": 1,
+    "flb_output_flush_destroy": 1
+   },
+   "functions": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 5,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 24,
+      "unsupported: call to uncontracted function `_`": 20,
+      "unsupported: indirect memory access is outside the resource projection": 21,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+      "unsupported: unsupported assignment expression": 4
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_retry_create",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 2,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 11,
+      "unsupported: nullable resource `_` used by a non-null contract": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+      "unsupported: unmodeled increment or decrement expression": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_retry_destroy",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+      "unsupported: indirect memory access is outside the resource projection": 3
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_retry_reschedule",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: call to uncontracted function `_`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 3,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_retry_clean",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_request_create",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 2,
+      "unsupported: call to uncontracted function `_`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 8
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_request_destroy",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_request_invalidate",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: call to uncontracted function `_`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 3,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_event_handler",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: call to uncontracted function `_`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 11,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+      "unsupported: unsupported assignment expression": 3
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "flb_engine_dispatch_retry",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: call to uncontracted function `_`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 7
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_task_singleplex_enqueue",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_task_queue_enqueue",
+     "status": "Unsafe",
+     "blocker_classes": {
+      "leak: live obligation acquired at _": 1,
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: call to uncontracted function `_`": 1
+     },
+     "leaks": [
+      {
+       "description": "live obligation acquired at src/flb_output.c:288",
+       "origin": "src/flb_output.c:302"
+      }
+     ]
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_task_queue_flush_one",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 6,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_task_singleplex_flush_next",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unknown_alias: unresolved resource identity `_`": 1,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+      "unsupported: call to uncontracted function `_`": 1,
+      "unsupported: indirect memory access is outside the resource projection": 3
+     },
+     "leaks": []
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_task_flush",
+     "status": "Unknown",
+     "blocker_classes": {
+      "unsupported: call to uncontracted function `_`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "leaks": []
+    }
+   ],
+   "absent_from_audit": [],
+   "function_status": {
+    "Unknown": 14,
+    "Unsafe": 1
+   },
+   "ranking": [
+    {
+     "class": "unsupported: call to uncontracted function `_`",
+     "functions_blocked": 14,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: indirect memory access is outside the resource projection",
+     "functions_blocked": 14,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unknown_alias: unresolved resource identity `_`",
+     "functions_blocked": 8,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+     "functions_blocked": 7,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: braced initializer, expression, or declaration is not modeled",
+     "functions_blocked": 6,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+     "functions_blocked": 3,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unsupported assignment expression",
+     "functions_blocked": 2,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "leak: live obligation acquired at _",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: nullable resource `_` used by a non-null contract",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    },
+    {
+     "class": "unsupported: unmodeled increment or decrement expression",
+     "functions_blocked": 1,
+     "functions_where_sole_non_leak_class": 0
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,5214 @@
+{
+ "schema_version": 1,
+ "inputs": {
+  "slice_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/system-slice/resource-diagnostics.json",
+   "sha256": "335c2db69dd229044b56ebaa2c2e3d5101088fc9b7e3d0a6b1db2cb85aba326a",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "main_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json",
+   "sha256": "e8bc6bf3b8f3426b9249120adc666a5a6a8c4908d45e87cfc72d4f4d3f179a59",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "census_archive": {
+   "path": "docs/reports/w45-return-expression-families/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "642ea04f1e819e69bb95753ad78bcb8f5b9cc363691d2ceb0530c903034d0cb2",
+   "raw_sha256": "e458950b209b5822b0afd2ed081bb4e151c95307ea863b7e606273ea2b0a89da",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "baseline_archive": {
+   "path": "docs/reports/w45-sub-object-stores/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "3e5b97563941a29d2376348325c1b2c0655f78a5f814e43443a8752a03956e71",
+   "raw_sha256": "c762a4855c66d6d1c3fd155a199a761560a411df7041bb9b59ec10cdf5d83072",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  }
+ },
+ "scope": "measurement of Quirin audit rows; Unsafe is provisional; not a model, proof, native observation or upstream defect claim",
+ "units": [
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "variant": "plugin",
+   "status": "Unsafe",
+   "reason_code": null,
+   "reason": null,
+   "source_functions": 20,
+   "analysed_functions": 20,
+   "function_status": {
+    "Safe": 2,
+    "Unknown": 17,
+    "Unsafe": 1
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "98a444b8a5f3fe9f869c02ef45193e453b27fc8c3a4098aeea851409fa3890f9",
+   "compile_task_input_sha256": "8fbdad56421443a4c24fc0007d1101b79f7f8bd46e580cfd96ca3ea62018601c"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 66,
+   "analysed_functions": 64,
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   },
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "d67b3ed2701e88ddc50a3dfa2b2039c24e067566d1b8ad435560a073e0331583",
+   "compile_task_input_sha256": "69a707e2d676b1cf5e77e99c0e0446ba27154360addb9ef2ac8e088b05ca9e0f"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 66,
+   "analysed_functions": 64,
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   },
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "49fb2df576cc7d818cb523b91a322ad52083bd0bfad908e724262d77e409ea57",
+   "compile_task_input_sha256": "69a707e2d676b1cf5e77e99c0e0446ba27154360addb9ef2ac8e088b05ca9e0f"
+  },
+  {
+   "file": "src/flb_storage.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 199 unsupported operation(s), 28 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 21,
+   "analysed_functions": 21,
+   "function_status": {
+    "Safe": 2,
+    "Unknown": 19
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "e835be696bc2c5b74d9ef5179f89e2c34b27ffc8872199ea57354b56111e8e79",
+   "compile_task_input_sha256": "ffa72dfc2045b1af8bf72c3bbe4e159ae595640f82d3bb10c7cf33f21c39f4d9"
+  },
+  {
+   "file": "src/flb_storage.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 199 unsupported operation(s), 28 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 21,
+   "analysed_functions": 21,
+   "function_status": {
+    "Safe": 2,
+    "Unknown": 19
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "3280b8b0d5fb9f3873522bace660c6ac9dce0cc12fe3e87d531cef6ab650b207",
+   "compile_task_input_sha256": "ffa72dfc2045b1af8bf72c3bbe4e159ae595640f82d3bb10c7cf33f21c39f4d9"
+  },
+  {
+   "file": "src/flb_task.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 257 unsupported operation(s), 45 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 19,
+   "analysed_functions": 19,
+   "function_status": {
+    "Unknown": 19
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "4a5014cc6836233d11e93208aac19ef1fd6d2732b1ab422636b975b5a8093343",
+   "compile_task_input_sha256": "6344d515971f9d76b025c036e4d3eec3ed73fb705a828b707aae60423c524e90"
+  },
+  {
+   "file": "src/flb_task.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 257 unsupported operation(s), 45 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 19,
+   "analysed_functions": 19,
+   "function_status": {
+    "Unknown": 19
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "42b844410e6fddb8bdd09cdc0de95214edd117193fe89d88f4ef149d513fe06e",
+   "compile_task_input_sha256": "6344d515971f9d76b025c036e4d3eec3ed73fb705a828b707aae60423c524e90"
+  },
+  {
+   "file": "src/flb_engine.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 326 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 33,
+   "analysed_functions": 32,
+   "function_status": {
+    "Safe": 4,
+    "Unknown": 28
+   },
+   "not_projected": [
+    "sb_segregate_chunks"
+   ],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "700400795f45c9025eca329c0dad12bb6bf2c9791b4cd7ab4d8b620a537a6a5f",
+   "compile_task_input_sha256": "11b88b643f23871a90b70ff94958530e3c6bbc54f27ade66f224694af59c8c81"
+  },
+  {
+   "file": "src/flb_engine.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 326 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 33,
+   "analysed_functions": 32,
+   "function_status": {
+    "Safe": 4,
+    "Unknown": 28
+   },
+   "not_projected": [
+    "sb_segregate_chunks"
+   ],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "54a34471652a058ec9b1cc248c8657e102cd62d8c948608b201bee152dc91c44",
+   "compile_task_input_sha256": "11b88b643f23871a90b70ff94958530e3c6bbc54f27ade66f224694af59c8c81"
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 72 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 5,
+   "analysed_functions": 5,
+   "function_status": {
+    "Unknown": 5
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "8e2bfbfb88d5f538bc50a5e80c03f00da7b4703e19061b21bd1374855091da7c",
+   "compile_task_input_sha256": "42b9437db5fc16dde5f8fc2e4977a868ed5524b0abe2966221f2cc10d73b40e1"
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 72 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 5,
+   "analysed_functions": 5,
+   "function_status": {
+    "Unknown": 5
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "b9d8921f9b1c84d896534f942f868bbc92b8ae9c94b2974974134aba019fffe8",
+   "compile_task_input_sha256": "42b9437db5fc16dde5f8fc2e4977a868ed5524b0abe2966221f2cc10d73b40e1"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "variant": "shared",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 221 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 34,
+   "analysed_functions": 34,
+   "function_status": {
+    "Safe": 5,
+    "Unknown": 29
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "53dacf6a6c321984d2c81395d06ef5b3e6a357adf5bf40570d9715271aeb1838",
+   "compile_task_input_sha256": "041f4da5aa8a38d31cb8a21e8ae0a3e379404e0b0e9660eeb451eebe55729375"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "variant": "static",
+   "status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "reason": "resource projection unresolved: 221 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)",
+   "source_functions": 34,
+   "analysed_functions": 34,
+   "function_status": {
+    "Safe": 5,
+    "Unknown": 29
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "62b9700c22cdac364bfa06ebcf77ccb90ae653387ddfd08bbe6d7e52c2308b29",
+   "compile_task_input_sha256": "041f4da5aa8a38d31cb8a21e8ae0a3e379404e0b0e9660eeb451eebe55729375"
+  },
+  {
+   "file": "src/flb_output.c",
+   "variant": "shared",
+   "status": "Unsafe",
+   "reason_code": null,
+   "reason": null,
+   "source_functions": 38,
+   "analysed_functions": 38,
+   "function_status": {
+    "Safe": 3,
+    "Unknown": 34,
+    "Unsafe": 1
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "cdfda7994c4a0bb315b8a65ef3dbb416ba59ddfe00eac370b134bb884ce55df0",
+   "compile_task_input_sha256": "47ef1e5681af0982bda32fde9841cc56934d84dca65c4fcebe5eb754edbdcb5f"
+  },
+  {
+   "file": "src/flb_output.c",
+   "variant": "static",
+   "status": "Unsafe",
+   "reason_code": null,
+   "reason": null,
+   "source_functions": 38,
+   "analysed_functions": 38,
+   "function_status": {
+    "Safe": 3,
+    "Unknown": 34,
+    "Unsafe": 1
+   },
+   "not_projected": [],
+   "enumeration_completeness": "established",
+   "inventory_sha256": "7223eda764e9a94bec82383ceee8598282e6e0bdb730bd58fd3f3eb916f32b6d",
+   "compile_task_input_sha256": "47ef1e5681af0982bda32fde9841cc56934d84dca65c4fcebe5eb754edbdcb5f"
+  }
+ ],
+ "functions": [
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_queue_chunks",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 42,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 17,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1,
+    "unsupported: unrecognized assignment destination": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "plugins/in_storage_backlog/sb.c:599"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_exit",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "plugins/in_storage_backlog/sb.c:795"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_init",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 18,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 6,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 8,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:743"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_pause",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "plugins/in_storage_backlog/sb.c:783"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_resume",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "plugins/in_storage_backlog/sb.c:789"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_allocate_backlogs",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:155"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_allocate_chunk",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_append_chunk_to_segregated_backlog",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unsafe",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "leak: live obligation acquired at _": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:278"
+   },
+   "leaks": [
+    {
+     "description": "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
+     "origin": "plugins/in_storage_backlog/sb.c:289"
+    }
+   ]
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_append_chunk_to_segregated_backlogs",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 9,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:308"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_destroy_backlog",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:142"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_destroy_backlogs",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:185"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_destroy_chunk",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:203"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_get_context",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in return expression",
+    "origin": "plugins/in_storage_backlog/sb.c:111"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_get_releasable_output_queue_space",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:497"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_is_rejected_stream",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "plugins/in_storage_backlog/sb.c:362"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_release_output_queue_space",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unrecognized assignment destination": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:536"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_remove_chunk_from_segregated_backlog",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 10,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:222"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_remove_chunk_from_segregated_backlogs",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "plugins/in_storage_backlog/sb.c:255"
+   },
+   "leaks": []
+  },
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_segregate_chunks",
+   "variants": [
+    "plugin"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 25,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 5,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "plugins/in_storage_backlog/sb.c:388"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "append_to_ring_buffer",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 24,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 7,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 3,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 8,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3575"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "destroy_chunk_raw",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:3552"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:403"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_append_raw",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3742"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_append_raw_local",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3760"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 32,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 15,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:2714"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 27,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 14,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:2631"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_destroy_direct_routes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:2495"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_down",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:876"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_find_space_new_data",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1223"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_flush",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:3796"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_direct_routes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 36,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: C operator `_` requires type/operand analysis": 6,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 14,
+    "unsupported: store through `_` without an out-parameter contract": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+    "unsupported: unrecognized assignment destination": 3,
+    "unsupported: unsupported assignment expression": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: C operator `_` requires type/operand analysis",
+    "origin": "src/flb_input_chunk.c:2212"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_event_type",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3868"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_name",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3853"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_projected_write_size",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unsupported assignment expression": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1011"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_real_size",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:772"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_size",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_tag",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: store through `_` without an out-parameter contract": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3905"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_has_direct_routes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:2156"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_has_other_routes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:947"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_has_overlimit_routes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1270"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_is_mem_overlimit",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_is_storage_overlimit",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:2930"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_is_task_safe_delete",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_is_up",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_map",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 91,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 37,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 9,
+    "unsupported: indirect memory access is outside the resource projection": 31,
+    "unsupported: nullable resource `_` used by a non-null contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 11
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1496"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_output_size_subtract",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:70"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_output_would_exceed_limit",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_place_new_chunk",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1303"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_prefers_physical_delete",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:974"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_protect",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3043"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_lock",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_route",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:820"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 44,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 4,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 4,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 13,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 10,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1,
+    "unsupported: unrecognized assignment destination": 2,
+    "unsupported: unsupported assignment expression": 7
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_input_chunk.c:563"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space_compound",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: store through `_` without an out-parameter contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:1113"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_cleanup",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in loop condition",
+    "origin": "src/flb_input_chunk.c:3669"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_collector",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3685"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3770"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3781"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_safe_delete",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:932"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_set_limits",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 10,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_input_chunk.c:2977"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_set_up",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3145"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_set_up_down",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_input_chunk.c:3111"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_total_size",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:2952"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_update_output_instances",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_input_chunk.c:3930"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_write",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_input_chunk.c:797"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_write_at",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_input_chunk.c:809"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 49,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 11,
+    "unsupported: C operator `_` requires type/operand analysis": 9,
+    "unsupported: call has an unmodeled formal address or borrowed expression": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 12,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported: unrecognized assignment destination": 3,
+    "unsupported: unsupported assignment expression": 5
+   },
+   "first_blocker": {
+    "class": "unsupported: C operator `_` requires type/operand analysis",
+    "origin": "src/flb_input_chunk.c:1899"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "generate_chunk_name",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:749"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "get_input_chunk_record_count",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:502"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "get_input_chunk_source_name",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:529"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 42,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 6,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 4,
+    "unsupported: call to uncontracted function `_`": 10,
+    "unsupported: indirect memory access is outside the resource projection": 14,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_input_chunk.c:3249"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_collect_output_references",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 53,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 6,
+    "unsupported: indirect memory access is outside the resource projection": 16,
+    "unsupported: store through `_` without an out-parameter contract": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 12,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 6,
+    "unsupported: unmodeled increment or decrement expression": 6
+   },
+   "first_blocker": {
+    "class": "unsupported: store through `_` without an out-parameter contract",
+    "origin": "src/flb_input_chunk.c:1339"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 19,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: nullable resource `_` used by a non-null contract": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 5
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:2824"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_has_magic_bytes",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_input_chunk.c:299"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_metadata_view",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:323"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_output_size_add",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:84"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_write_header",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call has an unmodeled formal address or borrowed expression": 1,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call has an unmodeled formal address or borrowed expression",
+    "origin": "src/flb_input_chunk.c:1840"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "logs_tag_records_metrics_enabled",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "memrb_input_chunk_release_space",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: store through `_` without an out-parameter contract": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1,
+    "unsupported: unrecognized assignment destination": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_input_chunk.c:3164"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "update_logs_tag_records_metrics",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 21,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call has an unmodeled formal address or borrowed expression": 2,
+    "unsupported: call to `_` outside its declared literal-argument premise": 1,
+    "unsupported: call to uncontracted function `_`": 8,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:141"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "update_logs_tag_records_untracked",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_input_chunk.c:108"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "sb_get_releasable_output_queue_space",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "not-projected",
+   "variants_identical": true,
+   "reason": "raw-scan definition absent from this configuration's preprocessed text (report not_projected)"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "sb_release_output_queue_space",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "not-projected",
+   "variants_identical": true,
+   "reason": "raw-scan definition absent from this configuration's preprocessed text (report not_projected)"
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "cb_storage_metrics_collect",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_storage.c:354"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "dlq_stream_total_size",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unrecognized assignment destination": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:854"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_chunk_count",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:775"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_chunk_restore_state",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 21,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 10,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: braced initializer, expression, or declaration is not modeled",
+    "origin": "src/flb_storage.c:669"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:987"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_input_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 27,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 6,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 12,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_storage.c:537"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_input_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:632"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_metrics_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_storage.c:376"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_metrics_update",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 6
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:74"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_quarantine_chunk",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 16,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 6,
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: call to uncontracted function `_`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_storage.c:890"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "get_or_create_rejected_stream",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_storage.c:806"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "log_cb",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "metrics_append_general",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 22,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 16,
+    "unsupported: indirect memory access is outside the resource projection": 6
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:94"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "metrics_append_input",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 70,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 10,
+    "unsupported: call to uncontracted function `_`": 42,
+    "unsupported: indirect memory access is outside the resource projection": 7,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unsupported: unmodeled increment or decrement expression": 3,
+    "unsupported: unrecognized assignment destination": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_storage.c:162"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "metrics_context_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 5,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_storage.c:33"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "parse_stamp",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_storage.c:396"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "print_storage_info",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_storage.c:477"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "sanitize_name_component",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_storage.c:791"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "sort_chunk_cmp",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:416"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_storage.c",
+   "function": "storage_contexts_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_storage.c:649"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 116,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 24,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 15,
+    "unsupported: indirect memory access is outside the resource projection": 47,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 1,
+    "unsupported: store through `_` without an out-parameter contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unsupported: unmodeled increment or decrement expression": 6,
+    "unsupported: unsupported assignment expression": 9
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_task.c:566"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 22,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 10,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:906"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_from_fs_storage",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:395"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_map_get_task_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_task.c:547"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_queue_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:957"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_queue_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 11,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:967"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:426"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_count",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_task.c:405"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 22,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 11,
+    "unsupported: nullable resource `_` used by a non-null contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:325"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:274"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:296"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_running_count",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:485"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_running_print",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 18,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 3,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 7,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_task.c:510"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "map_free_task_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:77"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "map_get_task_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_task.c:54"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "map_set_task_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_task.c:71"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "record_unmatched_route_drop_metrics",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_task.c:90"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "task_alloc",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: resource call with a formal embedded in an unmodeled expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: resource call with a formal embedded in an unmodeled expression",
+    "origin": "src/flb_task.c:446"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "task_collect_output_references",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 53,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 6,
+    "unsupported: indirect memory access is outside the resource projection": 16,
+    "unsupported: store through `_` without an out-parameter contract": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 12,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 6,
+    "unsupported: unmodeled increment or decrement expression": 6
+   },
+   "first_blocker": {
+    "class": "unsupported: store through `_` without an out-parameter contract",
+    "origin": "src/flb_task.c:154"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "adaptive_flush_clamp",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "calculate_chunk_capacity_percent",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in return expression",
+    "origin": "src/flb_engine.c:253"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "cb_engine_sched_timer",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:210"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "engine_has_fluentbit_logs_input",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:89"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_init",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_engine.c:454"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_interval",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: braced initializer, expression, or declaration is not modeled",
+    "origin": "src/flb_engine.c:361"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_target_level",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_update",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 11,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_engine.c:387"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_destroy_tasks",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:132"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_drain_ring_buffer_signal_channel",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_evl_get",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_engine.c:116"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_evl_init",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_engine.c:109"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_evl_init_private",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_evl_set",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_engine.c:122"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_engine.c:1698"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit_status",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_engine.c:1715"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_failed",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_engine.c:1032"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_flush",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:191"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_flush_timer_reset",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 11,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:305"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_engine.c:277"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_handle_event",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_engine.c:969"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_log_start",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_engine.c:1080"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_manager",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_engine.c:931"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_reschedule_retries",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 3,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:154"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_shutdown",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 17,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 4,
+    "unsupported: call to uncontracted function `_`": 7,
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_engine.c:1633"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 137,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 47,
+    "unsupported: indirect memory access is outside the resource projection": 51,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 27,
+    "unsupported: unmodeled increment or decrement expression": 1,
+    "unsupported: unsupported assignment expression": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_engine.c:1121"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_started",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_engine.c:1018"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_stop_ingestion",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_engine.c:1706"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "handle_dlq_if_available",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_engine.c:511"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "handle_input_event",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_engine.c:231"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 81,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 5,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 24,
+    "unsupported: call to uncontracted function `_`": 20,
+    "unsupported: indirect memory access is outside the resource projection": 21,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported: unsupported assignment expression": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_engine.c:566"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "handle_output_events",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine.c:873"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "sb_segregate_chunks",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "not-projected",
+   "variants_identical": true,
+   "reason": "raw-scan definition absent from this configuration's preprocessed text (report not_projected)"
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 23,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 10,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine_dispatch.c:345"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 14,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 7
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine_dispatch.c:95"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "record_retry_failure_metrics",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 4,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine_dispatch.c:50"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "tasks_start",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 23,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 8,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unsupported: unmodeled increment or decrement expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine_dispatch.c:238"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "test_run_formatter",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_engine_dispatch.c:192"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "backoff_full_jitter",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: nested call `_` inside a modeled call is outside the resource projection",
+    "origin": "src/flb_scheduler.c:263"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "consume_byte",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "event_fd_consume_byte",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 28,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 4,
+    "unsupported: call to uncontracted function `_`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 20
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:752"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_ctx_get",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_scheduler.c:46"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_ctx_init",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_ctx_set",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_scheduler.c:52"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 27,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 4,
+    "unsupported: call to uncontracted function `_`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 8,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 4,
+    "unsupported: unmodeled increment or decrement expression": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:827"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 27,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 6,
+    "unsupported: indirect memory access is outside the resource projection": 11,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported: unsupported assignment expression": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_scheduler.c:555"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 8
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:276"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_request_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:336"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_request_invalidate",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 11,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:361"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 12,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 7
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:960"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 16,
+   "blocker_classes": {
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 11,
+    "unsupported: store through `_` without an out-parameter contract": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection",
+    "origin": "src/flb_scheduler.c:649"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:732"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_disable",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_scheduler.c:722"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:924"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_cb_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:707"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_cleanup",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:943"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 9
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:474"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:518"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_get",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:1002"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_create",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 8
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:879"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:907"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_invalidate",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:896"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "ipow",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: local declaration may shadow a formal resource identity": 1,
+    "unsupported: unrecognized assignment destination": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unrecognized assignment destination",
+    "origin": "src/flb_scheduler.c:239"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "random_uniform",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_scheduler.c:96"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "sched_timer_coro_get_by_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:452"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "sched_timer_coro_get_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported: unmodeled increment or decrement expression": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:424"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "schedule_request_now",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 7
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_scheduler.c:128"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "schedule_request_promote",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 20,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 12,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:181"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "schedule_request_wait",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "timer_cb_coro_trampoline",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_scheduler.c:534"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "xmin",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "check_protocol",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_output.c:135"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:1844"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_coro_add",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: C operator `_` requires type/operand analysis": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: C operator `_` requires type/operand analysis",
+    "origin": "src/flb_output.c:272"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_enable_multi_threading",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:1228"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_exit",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 14,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:574"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 7,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:650"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_id_get",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:246"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_prepare_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 3,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:227"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_free_properties",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 15,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 15
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:170"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_get_cmt_instance",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_get_global_config_map",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:119"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_get_instance",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:622"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_get_property",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1250"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_http_server_property_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1329"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 98,
+   "blocker_classes": {
+    "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 24,
+    "unsupported: call to uncontracted function `_`": 16,
+    "unsupported: indirect memory access is outside the resource projection": 34,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 19,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1455"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_instance_destroy",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 27,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 22,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:469"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_log_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_name",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in return expression",
+    "origin": "src/flb_output.c:1245"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_net_default",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:1215"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1266"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_new",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 111,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 10,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 76,
+    "unsupported: nullable resource `_` used by a non-null contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 16,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unsupported: unrecognized assignment destination": 1,
+    "unsupported: unsupported assignment expression": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: unsupported assignment expression",
+    "origin": "src/flb_output.c:681"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_oauth2_property_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1298"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_plugin_property_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 18,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 11,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1360"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_pre_run",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:158"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_prepare",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Safe",
+   "variants_identical": true,
+   "diagnostics": 0,
+   "blocker_classes": {},
+   "first_blocker": null,
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_proxy_tls_ca_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 4,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:1417"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_set_context",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:1838"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_set_http_debug_callbacks",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:2005"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_set_property",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 122,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 40,
+    "unsupported: call to uncontracted function `_`": 5,
+    "unsupported: indirect memory access is outside the resource projection": 40,
+    "unsupported: nested call `_` inside a modeled call is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 36
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:944"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 8,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:426"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_queue_enqueue",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unsafe",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "leak: live obligation acquired at _": 1,
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:292"
+   },
+   "leaks": [
+    {
+     "description": "live obligation acquired at src/flb_output.c:288",
+     "origin": "src/flb_output.c:302"
+    }
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_queue_flush_one",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 9,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:315"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_singleplex_enqueue",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 3,
+   "blocker_classes": {
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "first_blocker": {
+    "class": "unsupported: call to uncontracted function `_`",
+    "origin": "src/flb_output.c:371"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_singleplex_flush_next",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 6,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `_`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3
+   },
+   "first_blocker": {
+    "class": "unsupported: indirect memory access is outside the resource projection",
+    "origin": "src/flb_output.c:395"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_upstream_ha_set",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 5,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "first_blocker": {
+    "class": "unknown_alias: unresolved resource identity `_`",
+    "origin": "src/flb_output.c:1988"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_upstream_set",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 20,
+   "blocker_classes": {
+    "unknown_alias: unresolved resource identity `_`": 1,
+    "unsupported: call to uncontracted function `_`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 13,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:1889"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "instance_id",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 2,
+   "blocker_classes": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:607"
+   },
+   "leaks": []
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "prop_key_check",
+   "variants": [
+    "shared",
+    "static"
+   ],
+   "status": "Unknown",
+   "variants_identical": true,
+   "diagnostics": 1,
+   "blocker_classes": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "first_blocker": {
+    "class": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "origin": "src/flb_output.c:928"
+   },
+   "leaks": []
+  }
+ ],
+ "totals": {
+  "selected_files": 8,
+  "files_with_units": 8,
+  "units": 15,
+  "unit_status": {
+   "Unknown": 12,
+   "Unsafe": 3
+  },
+  "distinct_functions": 236,
+  "function_status": {
+   "Safe": 25,
+   "Unknown": 206,
+   "Unsafe": 2,
+   "not-projected": 3
+  },
+  "functions_identical_across_variants": 236,
+  "per_file": {
+   "plugins/in_storage_backlog/sb.c": {
+    "Safe": 2,
+    "Unknown": 17,
+    "Unsafe": 1
+   },
+   "src/flb_input_chunk.c": {
+    "Safe": 9,
+    "Unknown": 55,
+    "not-projected": 2
+   },
+   "src/flb_storage.c": {
+    "Safe": 2,
+    "Unknown": 19
+   },
+   "src/flb_task.c": {
+    "Unknown": 19
+   },
+   "src/flb_engine.c": {
+    "Safe": 4,
+    "Unknown": 28,
+    "not-projected": 1
+   },
+   "src/flb_engine_dispatch.c": {
+    "Unknown": 5
+   },
+   "src/flb_scheduler.c": {
+    "Safe": 5,
+    "Unknown": 29
+   },
+   "src/flb_output.c": {
+    "Safe": 3,
+    "Unknown": 34,
+    "Unsafe": 1
+   }
+  },
+  "blocker_classes_over_distinct_functions": {
+   "unsupported: indirect memory access is outside the resource projection": 164,
+   "unsupported: call to uncontracted function `_`": 116,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 106,
+   "unknown_alias: unresolved resource identity `_`": 98,
+   "unsupported: braced initializer, expression, or declaration is not modeled": 74,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 57,
+   "unsupported: unsupported assignment expression": 35,
+   "unsupported: unmodeled increment or decrement expression": 18,
+   "unsupported: unrecognized assignment destination": 10,
+   "unsupported: nested call `_` inside a modeled call is outside the resource projection": 9,
+   "unsupported: store through `_` without an out-parameter contract": 8,
+   "unsupported: arguments beyond the declared parameters of `_` are outside the resource projection": 8,
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": 5,
+   "unsupported: nullable resource `_` used by a non-null contract": 4,
+   "unsupported: C operator `_` requires type/operand analysis": 3,
+   "unsupported: call has an unmodeled formal address or borrowed expression": 3,
+   "unsupported: unmodeled call, aggregate or indirect access in loop condition": 2,
+   "leak: live obligation acquired at _": 2,
+   "unsupported: call to `_` outside its declared literal-argument premise": 1,
+   "unsupported: resource call with a formal embedded in an unmodeled expression": 1,
+   "unsupported: local declaration may shadow a formal resource identity": 1
+  }
+ }
+}

@@ -1,0 +1,62 @@
+{
+  "argv": [
+    "quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0c8f2c8c8b2c6434/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json",
+    "--monkey-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/monkey/monkey-build/compile_commands.json",
+    "--monkey-source-report",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/monkey-source.json",
+    "--jobs",
+    "8"
+  ],
+  "build_profile": "release",
+  "checkout": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/fluent-bit-clang-source",
+  "clang": {
+    "program": "/usr/lib/llvm-21/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+  },
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "e8774afbe44c1d09bd7143ec1a1f3221a48fbcc5ef23fd8c4fcaf182006ded59",
+  "configuration": null,
+  "configuration_sha256": null,
+  "contracts": {
+    "manifest": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0c8f2c8c8b2c6434/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+    "manifest_sha256": "801afee7e39da835c0ae4d8c2def301cd55fa3795c3f5b8fbd909104c93d9151",
+    "selection": null,
+    "source": "profile_manifest"
+  },
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0c8f2c8c8b2c6434",
+  "environment": {
+    "QCORE_AUDIT_JOBS": null,
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "gateway_failures": false,
+  "jobs": {
+    "effective": 8,
+    "requested": 8,
+    "source": "command_line"
+  },
+  "mode": "configured",
+  "monkey_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/monkey/monkey-build/compile_commands.json",
+  "monkey_database_sha256": "53d2e80453f618550c9a2be7dc4e59e188df9a35847b81768aa679785bee91a0",
+  "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0c8f2c8c8b2c6434/contract/profiles/fluent-bit",
+  "reports": {
+    "binding_directory": null,
+    "monkey_source_report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/monkey-source.json",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json"
+  },
+  "schema_version": 1,
+  "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "tool": "quirin-audit current",
+  "tool_version": "0.1.0"
+}
