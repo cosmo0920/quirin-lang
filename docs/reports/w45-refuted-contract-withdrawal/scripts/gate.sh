@@ -26,8 +26,12 @@ step lean python3 scripts/check_lean_audits.py
 step python python3 -m unittest discover -s scripts/tests
 step docs-index python3 scripts/build_docs_index.py --check
 step contracts-check python3 providers/contracts.py check
-step package-build python3 providers/package.py build --output "$logs/packages"
-step package-verify python3 providers/package.py verify "$logs/packages/qcore.libevent"
+# Packages hold `.qcore` copies, so they are built outside the repository
+# (the coordinator's hygiene rule), in a fresh temporary directory.
+scratch="$(mktemp -d /tmp/claude-1000/w45-refuted-packages.XXXXXX)"
+step package-build python3 providers/package.py build --output "$scratch/packages"
+step package-verify python3 providers/package.py verify "$scratch/packages/qcore.libevent"
+rm -rf "$scratch"
 step provider-python python3 -m unittest discover -s providers/tests
 step provider-tests cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
 step provider-fmt cargo fmt --manifest-path providers/Cargo.toml --all -- --check

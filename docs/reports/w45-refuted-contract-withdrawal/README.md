@@ -1,7 +1,8 @@
 # W45-REFUTED-CONTRACT-WITHDRAWAL: a contract the audit refutes does not serve its callers
 
 Card W45-REFUTED-CONTRACT-WITHDRAWAL, 2026-09-26. Base `12553fb3` ("Record
-the w45-gateway-memo-key integration gate"). Measured code `a3677482`.
+the w45-gateway-memo-key integration gate"); `main` `675e7289`
+(W45-AUDIT-CHECKPOINTS) merged in at `e359fd3c`, which is the measured code.
 [PREDICTION.md](PREDICTION.md) was frozen before implementation, in `8c094092`.
 
 ## Headline
@@ -35,7 +36,7 @@ the w45-gateway-memo-key integration gate"). Measured code `a3677482`.
 * **Ledger:**
   * `W45-FB-SINGLEPLEX-CUSTODY-DECLARED` is **retired** (discharged).
   * `W45-FB-CROSS-UNIT-USER-PREMISES` is **re-scoped**.
-  * Four follow-ups are registered.
+  * Three follow-ups are registered.
 * **Lean:** `QCore.RefutedContractWithdrawal`, 15 audited theorems.
 
 ## 1. Bases and BEFORE
@@ -250,7 +251,7 @@ that frees the object again was certified **Safe**. It is now Unknown.
 
 ### 5.1 Corpus arbiter
 
-`run_audit.py … --jobs 8` at `a3677482`:
+`run_audit.py … --jobs 8` at `e359fd3c` (the pre-merge `a3677482` gave the same artifacts):
 [after-identity.json](artifacts/arbiter/after-identity.json),
 [contracts-delta.json](artifacts/arbiter/contracts-delta.json),
 [refuted-contracts-section.json](artifacts/arbiter/refuted-contracts-section.json).
@@ -315,6 +316,14 @@ text.
 **`--jobs` independence:** at `--jobs 1`, `resource-diagnostics.json` and its
 contracts sidecar are byte-identical to the `--jobs 8` run
 ([jobs-independence.json](artifacts/slice/jobs-independence.json)).
+
+**Checkpointed:** the same run with `--checkpoint-dir` seals the one group
+(`fluent-bit-system`) twice, first under the empty table and then under the
+two-entry table, and composes a report and sidecar byte-identical to the whole
+run's ([checkpointed.json](artifacts/slice/checkpointed.json),
+[stderr](artifacts/slice/checkpointed.stderr.log)). Its console prints the
+first phase's composition too, which the whole run does not. The report at
+`e359fd3c` is byte-identical to the one at the pre-merge `a3677482`.
 
 ### 5.3 Criterion 3, the concrete case
 
@@ -406,7 +415,7 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
   holds callers in every unit. A declaration whose body no unit analyses is
   still never compared.
 * The corpus row is unchanged. `build_matrix.py .` regenerated the derived
-  counts: `lean_audits` 204, follow-ups 452. The gate figures are carried and
+  counts: `lean_audits` 205, follow-ups 456. The gate figures are carried and
   labelled as carried, for the integrator's `--gate`.
 
 ## 9. Gate

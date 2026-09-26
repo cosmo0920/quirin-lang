@@ -1,5 +1,5 @@
 {
-  "run": "private/rw/arbiter-after",
+  "run": "private/rw/arbiter-merged",
   "baseline": "docs/reports/w45-fb-backlog-custody/integration/artifacts",
   "artifacts": {
     "diagnostics": {
