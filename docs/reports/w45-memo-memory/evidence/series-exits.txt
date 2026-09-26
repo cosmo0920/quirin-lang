@@ -1,0 +1,4 @@
+arbiter-j16 exit 0
+ck-j16 exit 0
+arbiter-j4 exit 0
+arbiter-j1 exit 0

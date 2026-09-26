@@ -894,6 +894,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-gateway-memo-key](w45-gateway-memo-key/README.md) | W45-GATEWAY-MEMO-KEY: no cached analysis answer is served on a hash match alone |
 
+| [w45-memo-memory](w45-memo-memory/README.md) | W45-MEMO-MEMORY: the member-release memo is removed |
+
 | [w45-parenthesised-callee](w45-parenthesised-callee/README.md) | W45-PARENTHESISED-CALLEE: a callee that is not spelled `NAME (` |
 
 | [w45-refuted-contract-withdrawal](w45-refuted-contract-withdrawal/README.md) | W45-REFUTED-CONTRACT-WITHDRAWAL: a contract the audit refutes does not serve its callers |

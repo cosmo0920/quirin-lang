@@ -1,0 +1,114 @@
+{
+ "jobs": "4",
+ "route": "arbiter",
+ "runs": [
+  {
+   "variant": "main",
+   "round": 1,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274",
+   "exit": 0,
+   "wall_seconds": 295.04,
+   "user_seconds": 928.54,
+   "system_seconds": 24.75,
+   "tree_peak_kib": 435272,
+   "self_peak_kib": 436148,
+   "load_average_after": [
+    17.384765625,
+    29.734375,
+    35.83984375
+   ]
+  },
+  {
+   "variant": "change",
+   "round": 1,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace",
+   "exit": 0,
+   "wall_seconds": 232.4,
+   "user_seconds": 880.2,
+   "system_seconds": 20.27,
+   "tree_peak_kib": 356124,
+   "self_peak_kib": 357284,
+   "load_average_after": [
+    14.9560546875,
+    22.1640625,
+    31.37890625
+   ]
+  },
+  {
+   "variant": "main",
+   "round": 2,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274",
+   "exit": 0,
+   "wall_seconds": 186.87,
+   "user_seconds": 716.51,
+   "system_seconds": 20.19,
+   "tree_peak_kib": 435648,
+   "self_peak_kib": 435756,
+   "load_average_after": [
+    8.1640625,
+    16.369140625,
+    27.51513671875
+   ]
+  },
+  {
+   "variant": "change",
+   "round": 2,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace",
+   "exit": 0,
+   "wall_seconds": 429.27,
+   "user_seconds": 1082.41,
+   "system_seconds": 22.65,
+   "tree_peak_kib": 354008,
+   "self_peak_kib": 354352,
+   "load_average_after": [
+    55.451171875,
+    43.1474609375,
+    35.56640625
+   ]
+  },
+  {
+   "variant": "main",
+   "round": 3,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "874033087fcd6bebb5d0ecbccbae95f4cbb883cac5e8b918cade19a9e8e00274",
+   "exit": 0,
+   "wall_seconds": 255.24,
+   "user_seconds": 813.52,
+   "system_seconds": 24.0,
+   "tree_peak_kib": 425832,
+   "self_peak_kib": 426456,
+   "load_average_after": [
+    17.37841796875,
+    33.26025390625,
+    33.95458984375
+   ]
+  },
+  {
+   "variant": "change",
+   "round": 3,
+   "route": "arbiter",
+   "jobs": "4",
+   "binary_sha256": "3e442a59a5bf757bdfdb0aba88f74fa9d5aa6c0aa5f6a80875ce918fee10aace",
+   "exit": 0,
+   "wall_seconds": 194.53,
+   "user_seconds": 751.57,
+   "system_seconds": 17.94,
+   "tree_peak_kib": 365092,
+   "self_peak_kib": 366268,
+   "load_average_after": [
+    9.4873046875,
+    22.02001953125,
+    29.38623046875
+   ]
+  }
+ ]
+}
