@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-CONTAINER-ROOT-REACH integration, 2026-09-25. The card (measured against docs/reports/w45-fb-backlog-custody/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-backlog-custody/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 12 added 2 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card removed 11 foreign-unlink refusal leaves and mk_server_listen_exit's discharged release leaf, and added 2 unresolved-identity leaves in mk_vhost_destroy, with no status moves. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-container-root-reach/integration/previous-corpus-row.json.",
+   "note": "W46-EXTERNAL-CALLEE-CONTRACTS integration, 2026-09-25. The card (measured against docs/reports/w45-container-root-reach/integration/artifacts) composed onto the combined tree docs/reports/w45-container-root-reach/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 76 added 2 functions 7 units 0); functions moved (combined): [('mk_sched_send_signal', ('Unknown', 'Safe')), ('mk_socket_create', ('Unknown', 'Safe')), ('pack_basic_header_finish', ('Unknown', 'Safe')), ('pack_bool', ('Unknown', 'Safe')), ('pack_bytes', ('Unknown', 'Safe')), ('pack_string', ('Unknown', 'Safe')), ('rd_kafka_thread_cnt', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] seven Unknown -> Safe from the nine new external-callee contracts (pack_basic_header_finish, pack_bool, pack_bytes, pack_string, mk_sched_send_signal, mk_socket_create, rd_kafka_thread_cnt); no corrections Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w46-external-callee-contracts/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 5,
    "provisional_unsafe": 8,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 34,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-container-root-reach/integration/artifacts/",
-   "source": "docs/reports/w45-container-root-reach/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts",
-   "unknown_alias_diagnostics": 3571,
-   "unsupported_diagnostics": 41314,
+   "baseline": "docs/reports/w46-external-callee-contracts/integration/artifacts/",
+   "source": "docs/reports/w46-external-callee-contracts/integration/integration-confirmation.md; preceding baseline docs/reports/w45-container-root-reach/integration/artifacts",
+   "unknown_alias_diagnostics": 3572,
+   "unsupported_diagnostics": 41239,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 398,
+    "safe": 405,
     "provisional_unsafe": 9,
-    "unknown": 4427
+    "unknown": 4420
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6736,7 +6736,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W46-EXTERNAL-CALLEE-CONTRACTS, 2026-09-27. Standing gate plus the provider gate by scripts/gate.sh at a787a9b5, CARGO_INCREMENTAL=0, every exit in its own file, no pipe; logs private under /tmp/claude-1000/w46ext/gate2/, exits and the Clang recording in gate/. submodule 0 (libevent d82464a2); run_test_binaries.py 0: 322 units, 334 summaries; 6021 passed; 0 failed; 11 ignored (runner totals line, private/test-binaries/20260926T185741Z-2844918/); cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 210 (no new audit: every contract is in an existing effect kind); Python 364 OK; build_docs_index.py --check 0; provider cargo test 0 (129 passed), provider cargo clean --profile dev 0, provider fmt 0, provider clippy 0, providers/contracts.py check 0, package.py build 0 and verify 0 for all five packages, python3 -m unittest discover -s providers/tests 0 (15 OK); clang --version 0 in this worktree. An earlier run at 72470631 measured tests 101 (3 failed: contract_inherit_qcore_provider's parity fixture lacked the appended rd_atomic32_get, and the descriptor binding bound fcntl executions outside the new literal premise) and fmt 1; both fixed in a787a9b5. Corpus arbiter at e8c4a93b: +7 Safe, every leaf attributed; slice at 046accf6: no verdict moves. Nothing is promoted.",
+  "note": "Integration gate for W46-EXTERNAL-CALLEE-CONTRACTS on merge 80133806 (onto main 25453cb7, after W45-SR5-SOUNDNESS and every wave-45 card), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 6021 core Rust passed / 0 failed / 11 ignored over 336 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 210 Lean audits; 364 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-container-root-reach/integration/artifacts exits 0 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
   "workspace_tests": 6021,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
@@ -6959,7 +6959,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w46-external-callee-contracts/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w46-external-callee-contracts/integration/gate.json)"
  },
  "named_followups": [
   {

@@ -1,0 +1,29 @@
+{
+ "note": "W45-CONTAINER-ROOT-REACH integration, 2026-09-25. The card (measured against docs/reports/w45-fb-backlog-custody/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-backlog-custody/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 12 added 2 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card removed 11 foreign-unlink refusal leaves and mk_server_listen_exit's discharged release leaf, and added 2 unresolved-identity leaves in mk_vhost_destroy, with no status moves. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-container-root-reach/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 5,
+ "provisional_unsafe": 8,
+ "unknown": 168,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 34,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-container-root-reach/integration/artifacts/",
+ "source": "docs/reports/w45-container-root-reach/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts",
+ "unknown_alias_diagnostics": 3571,
+ "unsupported_diagnostics": 41314,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 398,
+  "provisional_unsafe": 9,
+  "unknown": 4427
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 167,
+  "none": 17,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

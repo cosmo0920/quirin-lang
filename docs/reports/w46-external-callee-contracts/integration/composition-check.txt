@@ -1,0 +1,8 @@
+card delta:     removed 76 added 2 functions 7 units 0
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 76 added 2
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('mk_sched_send_signal', ('Unknown', 'Safe')), ('mk_socket_create', ('Unknown', 'Safe')), ('pack_basic_header_finish', ('Unknown', 'Safe')), ('pack_bool', ('Unknown', 'Safe')), ('pack_bytes', ('Unknown', 'Safe')), ('pack_string', ('Unknown', 'Safe')), ('rd_kafka_thread_cnt', ('Unknown', 'Safe'))]
+COMPOSES

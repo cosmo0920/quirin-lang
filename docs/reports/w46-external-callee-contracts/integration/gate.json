@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W46-EXTERNAL-CALLEE-CONTRACTS on merge 80133806 (onto main 25453cb7, after W45-SR5-SOUNDNESS and every wave-45 card), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 6021 core Rust passed / 0 failed / 11 ignored over 336 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 210 Lean audits; 364 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-container-root-reach/integration/artifacts exits 0 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+ "workspace_tests": 6021,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "lean_audits": 210,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
