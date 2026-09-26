@@ -1,0 +1,48 @@
+{
+  "argv": [
+    "--plugin-path",
+    "target/debug",
+    "--output",
+    "/tmp/claude-1000/w45-asp-parity-2/p2",
+    "libevent",
+    "prepare",
+    "--clang",
+    "/usr/lib/llvm-21/bin/clang",
+    "--clangxx",
+    "/usr/lib/llvm-21/bin/clang++"
+  ],
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b",
+  "environment": {
+    "cleared": true,
+    "passed": [
+      "PATH",
+      "HOME",
+      "LANG"
+    ]
+  },
+  "outcome": "completed",
+  "output": "/tmp/claude-1000/w45-asp-parity-2/p2",
+  "plugin": {
+    "executable": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/target/debug/quirin-audit-libevent",
+    "exit_code": 0,
+    "name": "libevent",
+    "protocol_version": 1,
+    "response_protocol_version": 1,
+    "sha256": "24dbfa5a6047d84e9ac24b19c93ba96d65ab9aaceac46b221794ea60f955c023",
+    "signal": null
+  },
+  "quotas": {
+    "stderr_bytes": 16777216,
+    "stdout_bytes": 16777216,
+    "wall_time_ms": 1800000
+  },
+  "request_sha256": "3df4a64f04b5ea1dc3bcd4bbec2915cf25b9836189b550e8dc06d295a21a5f68",
+  "route": "external-subcommand",
+  "schema_version": 1,
+  "search_path": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/target/debug"
+  ],
+  "stderr_log": "/tmp/claude-1000/w45-asp-parity-2/p2/quirin-audit-libevent.report.stderr.log",
+  "subcommand": "libevent",
+  "verdict": null
+}

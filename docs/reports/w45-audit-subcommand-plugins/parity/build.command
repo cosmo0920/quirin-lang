@@ -1,0 +1,1 @@
+cargo build -p qcore-audit -p quirin-audit-plugin-libevent 

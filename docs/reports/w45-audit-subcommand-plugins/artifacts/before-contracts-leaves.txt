@@ -1,0 +1,1 @@
+only-run /refuted_contracts = {"entries": [], "held_call_sites": 0, "held_functions": 0, "meaning": "declared contracts of functions whose bodies this run analysed, checked against those bodies (contract spec C06.4): a declaration

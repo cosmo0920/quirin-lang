@@ -1,0 +1,1 @@
+python3 scripts/prepare_libevent_core_audit.py --output /tmp/claude-1000/w45-asp-parity-2/p2 --clang /usr/lib/llvm-21/bin/clang --clangxx /usr/lib/llvm-21/bin/clang++ 

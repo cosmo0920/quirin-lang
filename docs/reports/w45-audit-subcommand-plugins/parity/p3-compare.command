@@ -1,0 +1,1 @@
+cmp contract/profiles/libevent-core/profile.json /tmp/claude-1000/w45-asp-parity-2/p3/libevent-clang-build/profile.json 

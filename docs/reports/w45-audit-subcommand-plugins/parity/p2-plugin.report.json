@@ -1,0 +1,110 @@
+{
+  "artifacts": [
+    {
+      "bytes": 609,
+      "kind": "audit-configuration",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/libevent-core-audit.json.config",
+      "relative": "libevent-clang-build/libevent-core-audit.json.config",
+      "sha256": "12335660199faa7bd2d40d633393ed2d510b31b83db75a6ce60a696816cf35dd"
+    },
+    {
+      "bytes": 4206,
+      "kind": "provenance",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/libevent-build-provenance.json",
+      "relative": "libevent-clang-build/libevent-build-provenance.json",
+      "sha256": "4389dfb3efff78555f207f7e92aebf1462ebe6e2bc94491b46bd02248f2644d8"
+    },
+    {
+      "bytes": 66323,
+      "kind": "compile-database",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/compile_commands.json",
+      "relative": "libevent-clang-build/compile_commands.json",
+      "sha256": "ec1eacb0e9d35e3596369c4d2e330120b3b36f867652d7863282f12f096177de"
+    },
+    {
+      "bytes": 317964,
+      "kind": "static-library",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/lib/libevent_core.a",
+      "relative": "libevent-clang-build/lib/libevent_core.a",
+      "sha256": "2a14b00576aa2566d47748513ce03974e76462436ada1f67f2663b7c89109935"
+    },
+    {
+      "bytes": 17558,
+      "kind": "log",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/configure.log",
+      "relative": "libevent-clang-build/configure.log",
+      "sha256": "b316d5db1c8aaf2677fa9594a51600375464927d3db051dfc25a3ba0b35a7057"
+    },
+    {
+      "bytes": 1597,
+      "kind": "log",
+      "path": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/native-build.log",
+      "relative": "libevent-clang-build/native-build.log",
+      "sha256": "84ee87160e2e8c18020d3f4b068a09041255bcf812f354587d3ab34b5c181c73"
+    }
+  ],
+  "claims": [],
+  "diagnostics": [
+    {
+      "code": "audit-configuration",
+      "message": "/tmp/claude-1000/w45-asp-parity-2/p2/libevent-clang-build/libevent-core-audit.json.config",
+      "severity": "info"
+    }
+  ],
+  "meaning": "an external quirin-audit subcommand (card W45-AUDIT-SUBCOMMAND-PLUGINS, contract spec C11.2): a quirin-audit-NAME executable found only on the declared plugin search path, run out of process with a cleared environment, its working directory the declared output, under wall-time and output quotas enforced by a process-group kill; its artifacts are accepted only inside the output with their declared SHA-256; each verdict claim is classified by the checker-plugin firewall (an uncertified Safe or Unsafe is Pending, plugin-claim-uncertified; an Unknown is Unknown) and a spawn failure, timeout, quota breach, nonzero exit, malformed response, protocol-version mismatch, reported failure or unverified artifact makes the run Unknown; each row is the join (Safe < Pending < Unknown < Unsafe) of the host's verdict from --audit-report, the run's and the claims about its artifact, and `verdict` is the join of every row and the run (null when a completed run has no row: no claim publishes no verdict)",
+  "plugin": {
+    "executable": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b/target/debug/quirin-audit-libevent",
+    "label": "quirin-audit-libevent@24dbfa5a6047d84e",
+    "name": "libevent",
+    "sha256": "24dbfa5a6047d84e9ac24b19c93ba96d65ab9aaceac46b221794ea60f955c023"
+  },
+  "protocol_version": 1,
+  "reasons": null,
+  "request": {
+    "arguments": [
+      "prepare",
+      "--clang",
+      "/usr/lib/llvm-21/bin/clang",
+      "--clangxx",
+      "/usr/lib/llvm-21/bin/clang++"
+    ],
+    "audit_report": null,
+    "checkpoints": [],
+    "identity": {
+      "contract_set_sha256": null,
+      "refuted_table_sha256": null,
+      "revision": null
+    },
+    "invocation_directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a002ae1a3e22bdb2b",
+    "load_path": null,
+    "output": "/tmp/claude-1000/w45-asp-parity-2/p2",
+    "protocol": "quirin-audit-plugin",
+    "protocol_version": 1,
+    "providers": [],
+    "quotas": {
+      "stderr_bytes": 16777216,
+      "stdout_bytes": 16777216,
+      "wall_time_ms": 1800000
+    },
+    "report": "/tmp/claude-1000/w45-asp-parity-2/p2/quirin-audit-libevent.report.json",
+    "subcommand": "libevent"
+  },
+  "response_protocol_version": 1,
+  "route": "external-subcommand",
+  "rows": [],
+  "run": {
+    "code": null,
+    "exit_code": 0,
+    "outcome": "completed",
+    "reason": null,
+    "reasons": [],
+    "signal": null,
+    "stderr_bytes": 0,
+    "stderr_log": "/tmp/claude-1000/w45-asp-parity-2/p2/quirin-audit-libevent.report.stderr.log",
+    "stdout_bytes": 1180,
+    "verdict": "Safe",
+    "wall_time_ms": 18643
+  },
+  "schema_version": 1,
+  "verdict": null
+}

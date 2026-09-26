@@ -1,0 +1,1 @@
+sh -c /usr/lib/llvm-21/bin/clang\ --version\;\ cmake\ --version\;\ git\ -C\ third_party/libevent\ rev-parse\ HEAD 
