@@ -669,7 +669,9 @@ certificates, contracts, result, provenance) with their lengths and SHA-256,
 the header's own SHA-256, and the postcard-encoded sections. A truncated,
 tampered or version-mismatched file is refused whole. Every section but
 `provenance` (wall time, peak memory, timings) is deterministic, so runs at any
-`--jobs` agree on the content digest `verify` prints. The full specification,
+`--jobs` agree on the content digest `verify` prints. Each group records its
+verdict, the join of its units' (`Safe < Pending < Unknown < Unsafe`), and
+`compose` reports the run's verdict, the join of the groups'. The full specification,
 including the YAML/TOML mapping, is
 [docs/development/audit-checkpoints.md](../../docs/development/audit-checkpoints.md)
 ([report](../../docs/reports/w45-audit-checkpoints/README.md)).

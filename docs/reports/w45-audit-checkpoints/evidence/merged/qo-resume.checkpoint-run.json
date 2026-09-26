@@ -1,0 +1,57 @@
+{
+  "groups": [
+    {
+      "content_sha256": "805ec0bd1561faa4748e419a4cdfaaa740eb085ee1397379cf466e028c975128",
+      "decision": "reused",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 133496,
+      "wall_time_ms": 460
+    },
+    {
+      "content_sha256": "55cd5421349a09420261d0380981259beb98be48d488047153a7c35f155fa568",
+      "decision": "reused",
+      "group": "ctraces",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 141320,
+      "wall_time_ms": 276
+    },
+    {
+      "content_sha256": "a3e57ba389f272a4271386a403e9eecd379d1c2d5c354746d5e6b1babbb4c162",
+      "decision": "reused",
+      "group": "librdkafka",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 433484,
+      "wall_time_ms": 2594
+    },
+    {
+      "content_sha256": "f5858a96ddf4ad71a3e8f9fa65efc97e1b29e1b7de1f79bbf9b9cb681298c060",
+      "decision": "reused",
+      "group": "chunkio",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 249152,
+      "wall_time_ms": 121
+    },
+    {
+      "content_sha256": "9b864749805aea4d8e18f927edc2edaa9596ab9fc1cb5f24deae9b982f53f05d",
+      "decision": "reused",
+      "group": "fluent-bit-chunk",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 263128,
+      "wall_time_ms": 202
+    },
+    {
+      "content_sha256": "f1948546097822d8aa47346c814d285aed904e50396cff586b51d779fa8a2a02",
+      "decision": "reused",
+      "group": "monkey-libevent",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 276388,
+      "wall_time_ms": 326
+    }
+  ],
+  "jobs": 16,
+  "process_peak_rss_kib": 432688,
+  "schema_version": 1,
+  "scope": "provenance of one checkpointed run: which groups were reused or recomputed and why, with measured wall time and sampled peak memory; not an input to any verdict",
+  "verdict": "Unsafe"
+}

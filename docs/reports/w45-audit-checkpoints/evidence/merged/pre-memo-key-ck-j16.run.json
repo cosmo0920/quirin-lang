@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/target/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/contract/profiles/fluent-bit",
+    "--monkey-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "--monkey-source-report",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-merged/ck-j16/monkey-source.json",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-merged/ck-j16/resource-diagnostics.json",
+    "--jobs",
+    "16",
+    "--checkpoint-dir",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-merged/qo-j16"
+  ],
+  "binary_sha256": "8468bb16ae88720db6c803210d6efd655806d8f820716012bd0579a697ade909",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_AUDIT_JOBS": "unset"
+  },
+  "start": "2026-09-26T10:59:22.688527+00:00",
+  "exit": 0,
+  "end": "2026-09-26T11:01:16.312218+00:00",
+  "peak_rss_kib": 886976,
+  "wall_clock": "1:53.62"
+}

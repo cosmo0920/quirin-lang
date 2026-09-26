@@ -13,7 +13,8 @@ time and drops it, composition streams, and every `.qo` records its group's
 peak memory and wall time as provenance. The coordinator added: key the
 identity on every `contracts.lock` in force, and keep the composition's verdict
 fold in one small function (`compose::fold_verdicts`) so the four-valued
-verdict semigroup of W45-USER-CONTRACT-PLUGINS can replace it.
+verdict semigroup of W45-USER-CONTRACT-PLUGINS can replace it; after both
+cards landed it did (§13).
 
 ## Headline
 
@@ -48,6 +49,12 @@ verdict semigroup of W45-USER-CONTRACT-PLUGINS can replace it.
   4,433 unchanged).
 * **Lean.** `QCore.Checkpoints`: 14 theorems on identity-guarded reuse,
   composition and admission, no placeholders, no project axioms.
+* **Merged with the three cards that landed after (§13).** Composition now
+  folds group verdicts with `qcore_schemas::verdict` (the join, `Safe` the
+  identity), discharging `W45-CHECKPOINT-COMPOSE-SEMIGROUP`; every identity,
+  resume and round-trip check holds on the merged tree, the arbiter's
+  diagnostics are byte-identical to the W45-FB-BACKLOG-CUSTODY baseline, and
+  the one-job saving is 144 against 172 MiB there.
 
 ## 1. What a user runs
 
@@ -125,7 +132,7 @@ cross-unit and cross-group input of `quirin-audit current`:
 | The audit's shared state (`CurrentAudit`: checkout, `HEAD`, Clang identity, contracts after the pin evaluation, dependency digests, profile digest) | read-only, computed once | the run identity; every checkpoint must agree |
 | A unit's source, headers, command, preprocessed text | the unit's own | the unit fingerprint |
 | The gateway's interprocedural (W4) callee summaries | built inside one translation unit's analysis | none needed: no table outlives a unit |
-| The gateway's per-thread member-release memo (`legacy_member_release.rs`) | a one-entry cache per thread, keyed by a 64-bit hash of the token texts | a deterministic function of the tokens except under a hash collision; the one state that can cross units; not composition-specific (the job-count identity rests on it too); follow-up `W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY` |
+| The gateway's per-thread member-release memo (`legacy_member_release.rs`) | a one-entry cache per thread; at this card's base it was keyed by a 64-bit hash of the token texts | the one state found that could cross units, under a hash collision; registered as `W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY` and discharged by W45-GATEWAY-MEMO-KEY (on `main` at `12553fb3`, merged here): the memo now serves only on full token equality, and that card's inventory of every cache in the gateway, audit, contract and core crates found no other that serves on a hash ([its report](../w45-gateway-memo-key/README.md)) |
 | Census sinks | process-global streams in analysis order, numbered by global counters | checkpoints refuse a census run |
 | The Monkey source copy check | decides the group-wide refusal of every Monkey unit | the Monkey group's identity (`unresolved`) |
 | The Monkey source report, chunk contracts, source effects | the route writes explicit Unknown placeholders, a function of the revision and the historical reference revision | the `global` section; the composer writes them |
@@ -411,6 +418,20 @@ them. Recorded in [gate/gate.json](gate/gate.json), with Clang beside it.
 The provider gate ran because `providers/Cargo.lock` changed (the new
 crates reach it through the conformance crate's `qcore-audit` dependency).
 
+**After the streamed setup** (`3df36e86`, `private/gate-mem/`) the same gate
+passed with every exit 0: 5,856 passed, 0 failed, 11 ignored over 313
+summaries; 199 Lean audits; 358 Python tests; 124 provider tests.
+
+**On the merged tree** (`640d9ace`, after the §13 measurements;
+[gate-merged/gate.json](gate-merged/gate.json), Clang beside it): every step
+exit 0 except the Python suite's first run. `run_test_binaries.py` 309 units,
+319 summaries, 5,921 passed, 0 failed, 11 ignored
+(`private/test-binaries/`); 204 Lean audits; provider workspace 129 passed, 0
+failed, 1 ignored over 43 summaries; `providers/tests` 15. `scripts/tests`
+failed once on the same derived-count check (203 committed against 204 Lean
+audits on disk), and after `build_matrix.py . --gate gate-merged/gate.json`
+the rerun passed, 358 tests. Nothing after `640d9ace` touches code.
+
 ## 12. Follow-ups
 
 Registered in the acceptance matrix's `named_followups`:
@@ -426,12 +447,89 @@ Registered in the acceptance matrix's `named_followups`:
   (§7).
 - `W45-CHECKPOINT-RESUME-PREPARATION-DUPLICATE` — the resume fingerprint
   repeats the route's preparation steps; a recomputed group prepares twice.
-- `W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY` — the per-thread memo keyed by a
-  64-bit hash (§4).
+- `W45-CHECKPOINT-GROUPS-IN-FLIGHT` — one group in flight can idle jobs
+  (§7).
 
-Not a follow-up but a boundary: composition folds unit verdicts by summing
-tallies (`compose::fold_verdicts`); the per-group four-valued join belongs to
-W45-USER-CONTRACT-PLUGINS's registered follow-up.
+Retired, each recorded verbatim with its ground in
+[retired-followups.json](retired-followups.json)
+(`scripts/retire_followups.py`):
+
+- `W45-CHECKPOINT-COMPOSE-SEMIGROUP` (registered by W45-USER-CONTRACT-PLUGINS),
+  discharged by this card (§13).
+- `W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY` (registered by this card), discharged
+  by W45-GATEWAY-MEMO-KEY (§4).
+
+## 13. Merged with W45-FB-BACKLOG-CUSTODY, W45-USER-CONTRACT-PLUGINS and W45-GATEWAY-MEMO-KEY
+
+`main` at `b22425ec` (the first two cards) and then at `12553fb3` (the memo
+key) was merged into this branch, keeping every card's hooks; the tip that
+was measured is `640d9ace`.
+
+**The verdict semigroup.** W45-USER-CONTRACT-PLUGINS adds the four-value
+verdict `Safe < Pending < Unknown < Unsafe` (`qcore_schemas::verdict`) and a
+`Pending` unit tally. Each checkpoint's `result` section now records the
+`Pending` count and the group's **verdict**, `Verdict::fold` of its units'
+verdicts (`checkpoint::unit_verdict`: a data-only unit is `Safe`, the join's
+identity; a gateway failure or an unknown status is `Unknown`).
+`compose::fold_verdicts` joins the group verdicts with `Verdict::join` into the
+run's verdict, and refuses a group whose recorded verdict differs from the one
+its tallies imply (`checkpoint::tallied_verdict`). The run's verdict is printed
+by `checkpoint compose` on standard error and recorded in
+`checkpoint-run.json`; the report is untouched, so composition stays
+byte-identical. This discharges `W45-CHECKPOINT-COMPOSE-SEMIGROUP` (retired,
+with its ground, in [retired-followups.json](retired-followups.json)). The
+tests are `compose::tests::a_composed_verdict_is_the_fold_of_its_members`
+(every two-way split of a unit list folds to the whole list's verdict; a
+`Pending` member keeps a group from `Safe`),
+`a_group_whose_verdict_disagrees_with_its_tallies_is_refused`, and the fixture
+test `a_re_pin_invalidates_every_checkpoint`, whose unlocked pinned contracts
+make units `Pending`: the group's and the run's recorded verdicts are the
+folds of the whole run's unit statuses. On the corpus the run's verdict is
+`Unsafe` (units 5 Safe / 0 Pending / 8 provisional Unsafe / 169 Unknown / 4
+data-only).
+
+**Other hooks.** The plugins card's split sections keep their `Pending`
+wording (their `MEANING` and tally texts are the section's constants, which
+the template/fold split renders unchanged). When a checker plugin ran, its
+section's digest joins the run identity (`plugin_checks_sha256`: a plugin's
+verdict enters every function that applies its contract), and the composer
+prints the plugin tally where the whole run prints it. W45-GATEWAY-MEMO-KEY
+discharges `W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY` (§4), retired likewise.
+
+**Measurements on the merged tree** (`scripts/measure_merged.sh`, once each, one
+run at a time; [evidence/merged/](evidence/merged/)). The composition reference
+is the merged tree's whole run at 16 jobs, archived as
+[artifacts/current-whole-merged/](artifacts/current-whole-merged/); the earlier
+`artifacts/current-whole/` stays as the pre-merge reference.
+
+| Check | Result |
+|---|---|
+| checkpointed at 16 and 1 jobs, `checkpoint compose`, resume without change, against the whole run | all five artifacts byte-identical (`baseline_identity.py` exit 0, five runs) |
+| resume after ChunkIO's 13 commands changed, against the whole run over the changed database | byte-identical (exit 0); only `chunkio` recomputed (`unit 0 (lib/chunkio/src/chunkio.c): compile configuration differs`) |
+| content digests | equal group by group at 16 jobs, 1 job and in the no-change resume; `checkpoint verify` passes on all 24 checkpoints |
+| YAML and TOML round trips of the six corpus checkpoints | 12 of 12 byte-identical; an edited text refused |
+| corpus arbiter against `docs/reports/w45-fb-backlog-custody/integration/artifacts/` | diagnostics byte-identical (exit 0), so 398 / 9 / 4,427 and the unit and leaf counts are unchanged; chunk-contracts and monkey-source identical; source-effects identical after masking the 10 path-bound digests per side; the contracts sidecar differs only in `contract_revision.meaning` and `pending_human_review.meaning`, W45-USER-CONTRACT-PLUGINS's documented wording change, which landed after that baseline was archived ([leaf diff](evidence/merged/arbiter-contracts-leaf-diff.txt)) |
+
+| Run | Wall | Peak RSS |
+|---|---|---|
+| whole, 16 jobs | 93.9 s | 1,172 MiB |
+| checkpointed, 16 jobs | 110.0 s | 1,096 MiB (−6.5 %) |
+| resume, no change, 16 jobs | **4.9 s** | 423 MiB |
+| resume, ChunkIO changed, 16 jobs | **6.8 s** | 428 MiB |
+| whole over the changed database, 16 jobs | 95.1 s | 1,155 MiB |
+| whole, 1 job | 693.2 s | 172 MiB |
+| checkpointed, 1 job | 456.4 s | **144 MiB (−16 %)** |
+| compose | 0.11 s | 32 MiB |
+
+At one job the checkpointed peak is still the largest group's (librdkafka,
+sampled at 134 MiB; the setup stays below it, cmetrics running at 46 MiB), but
+that group's own peak rose from 111 to 134 MiB across the merge, so the saving
+fell from 35 % to 16 %. At 16 jobs every run grew by about 240 MiB with the memo
+key: before merging `12553fb3` (at `adb2f681`, measured once, [evidence](evidence/merged/))
+the pair was 934 MiB whole and 866 MiB checkpointed. Both movements belong to
+the merged cards, not to checkpointing; they are measured, not attributed
+further. Wall times on this shared host remain noisy (the one-job checkpointed
+run was faster than the whole run here).
 
 ## Files
 
