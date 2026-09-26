@@ -121,6 +121,9 @@ fn a_may_bind_name_is_a_base_of_one_unconditional_dereference_only() {
         "( q [ 0 ] ) - > len",
         "* ( q - > next )",
         "* ( q [ 0 ] )",
+        // ... and a may-bind name inside a cast a `*` applies to
+        // (`*(int32_t *)rl->rl_elems[idx]`, rd_list_get_int32).
+        "* ( q * ) p",
     ] {
         assert_eq!(read(expression), None, "{expression}");
     }

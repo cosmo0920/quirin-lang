@@ -79,6 +79,27 @@
 //! container a callee returned, one rooted at an element or at a rebound
 //! formal, a body-acquired owner, a formal's own object whose container is
 //! unnamed, and an embedded element.
+//!
+//! # Card W45-SR5-SOUNDNESS
+//!
+//! Two refusals STABILITY-REEVAL-5 measured missing (`QCore.Sr5Soundness`):
+//!
+//! 7. **A released root** (`PUBLICATION-ROOT-RELEASED`). Rule 1's discharge
+//!    rests on the container outliving the call. A body that also hands the
+//!    container's root, whole, to a position its contract in force does not
+//!    declare `Borrowed` (`q_free(q)`, a summary's `Released`) may end that
+//!    storage itself, and whether the container's release hands on its
+//!    elements is a premise no rule states. Such a publication refuses as
+//!    `Other` ([`CallerFormals::with_released_roots`]); a local initialised
+//!    from the formal alone is the same object. Rule 6 is unchanged: a
+//!    teardown unlinks elements and then releases the root.
+//! 8. **An element bound over a formal**
+//!    (`CONTAINER-OF-FORMAL-PUBLICATION-LAUNDER`). Rule 5l(2) binds
+//!    `ctx = container_of(arg, …)` over a never-bound formal and leaves `ctx`
+//!    untracked, so a publication of `&ctx->F` took the borrowed reading and a
+//!    derived summary called `arg` `Borrowed` while the body linked it: rule
+//!    1's launder. Such an entry now takes a formal entry's rule, an
+//!    unresolved identity ([`ForeignOrigins::note_over_formal`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -350,7 +371,24 @@ impl CallerFormals {
     /// Whether a container reached from `name` lives in memory the caller
     /// supplied.
     fn reaches_caller(&self, name: &str) -> bool {
-        (self.stable.contains(name) || self.derived.contains(name)) && !self.released.contains(name)
+        self.stable.contains(name) || self.derived.contains(name)
+    }
+
+    /// Card W45-SR5-SOUNDNESS: a publication's container, withdrawn to
+    /// `Other` when its root is one this body releases. Only a publication
+    /// reads it: rule 6's foreign unlink takes an element out of the
+    /// container, which a teardown that then releases the root may do.
+    fn unreleased(&self, container: Container, argument: &[&str]) -> Container {
+        match container {
+            Container::CallerFormal(root) if self.released.contains(&root) => Container::Other(
+                fuse(argument)
+                    .into_iter()
+                    .map(|(text, _)| text)
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            ),
+            other => other,
+        }
     }
 }
 
@@ -527,7 +565,10 @@ pub fn operands(
                     let formal = matches!(&entry, Entry::Name(name) if formals.is_formal(name));
                     Operand::Published {
                         entry,
-                        container: container(argument(*container_parameter), formals),
+                        container: formals.unreleased(
+                            container(argument(*container_parameter), formals),
+                            argument(*container_parameter),
+                        ),
                         formal,
                     }
                 }

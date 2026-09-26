@@ -652,3 +652,95 @@ fn a_held_call_beside_an_unread_definition_is_unknown() {
         Verdict::Unknown
     );
 }
+
+// ---- 7. The two candidates the probe measured fail-closed, pinned ----
+
+const ITERATION_PRELUDE: &str = r#"
+#include <stddef.h>
+#define container_of(ptr, type, member) ({                      \
+      const typeof( ((type *)0)->member ) *__mptr = (ptr);      \
+      (type *)( (char *)__mptr - offsetof(type,member) );})
+struct mk_list { struct mk_list *prev, *next; };
+#define mk_list_entry( ptr, type, member ) container_of( ptr, type, member )
+#define mk_list_foreach_safe(curr, n, head) \
+    for (curr = (head)->next, n = curr->next; curr != (head); curr = n, n = curr->next)
+void mk_list_add(struct mk_list *entry, struct mk_list *head);
+void mk_list_del(struct mk_list *entry);
+void *q_alloc(void); void q_free(void *);
+struct item { int size; void *payload; struct mk_list _head; };
+struct queue { struct mk_list items; };
+"#;
+
+const MK_LIST_DEL: &str = "module contract;
+extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
+extern fn mk_list_del(entry: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_unpublished(entry); ensures normal resource_return_none(); };
+";
+
+/// `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`: a foreign-unlinked
+/// element re-published into the iterated list under another head spelling.
+#[test]
+fn a_foreign_element_republished_under_an_alias_head_is_not_safe() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load(&[("list.qcore", MK_LIST_DEL)]);
+    let result = c11(
+        &format!(
+            "{ITERATION_PRELUDE}void subject(struct queue *q) {{ struct mk_list *c, *n; \
+             struct mk_list *h = &q->items; struct item *e;\n\
+             mk_list_foreach_safe(c, n, &q->items) {{ e = mk_list_entry(c, struct item, _head); \
+             mk_list_del(&e->_head); mk_list_add(&e->_head, h); }} }}\n"
+        ),
+        LegacyFunctionScope::default(),
+        &contracts,
+    );
+    assert_ne!(result.verdict(), Verdict::Safe);
+    // The control: unlinked and released under the iterated spelling.
+    let result = c11(
+        &format!(
+            "{ITERATION_PRELUDE}void subject(struct queue *q) {{ struct mk_list *c, *n; \
+             struct item *e;\n\
+             mk_list_foreach_safe(c, n, &q->items) {{ e = mk_list_entry(c, struct item, _head); \
+             mk_list_del(&e->_head); q_free(e); }} }}\n"
+        ),
+        LegacyFunctionScope::default(),
+        &contracts,
+    );
+    assert_eq!(result.verdict(), Verdict::Safe);
+}
+
+/// `STATIC-ROOT-SHADOW-READER`: a global shadowed by a declaration that
+/// contains `(` is never read as the static root.
+#[test]
+fn a_shadowed_static_root_is_not_a_root() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load(&[("list.qcore", MK_LIST_DEL)]);
+    let publish = "struct item *e = q_alloc(); mk_list_add(&e->_head, &g);";
+    for (reason, declaration) in [
+        (
+            "a parenthesised initialiser",
+            "struct mk_list g = { (struct mk_list *)0, (struct mk_list *)0 };",
+        ),
+        ("a parenthesised declarator", "struct mk_list (g);"),
+    ] {
+        let result = c11(
+            &format!(
+                "{ITERATION_PRELUDE}struct mk_list g;\nvoid subject(void) {{ {declaration} {publish} }}\n"
+            ),
+            LegacyFunctionScope::default(),
+            &contracts,
+        );
+        assert_ne!(result.verdict(), Verdict::Safe, "{reason}");
+    }
+    // The control: the unshadowed global is a static root.
+    let result = c11(
+        &format!("{ITERATION_PRELUDE}struct mk_list g;\nvoid subject(void) {{ {publish} }}\n"),
+        LegacyFunctionScope::default(),
+        &contracts,
+    );
+    assert_eq!(result.verdict(), Verdict::Safe);
+}

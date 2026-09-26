@@ -347,13 +347,23 @@ fn ends_one_dereference(texts: &[&str], mut after: usize) -> bool {
 
 /// Card W45-SR5-SOUNDNESS: how many unary `*` apply to the name at `index`,
 /// read back through opening parentheses (`*q`, `(*q)`, `**q`, `*(q->f)`).
-fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts) -> usize {
+/// A `*` behind more opening parentheses than `closing` does not apply to the
+/// name alone (`*(T *)p` applies to the cast, never to the type name `T`);
+/// `usize::MAX` counts every one, which only refuses.
+fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts, closing: usize) -> usize {
     let mut at = index;
     let mut stars = 0;
+    let mut opened = 0usize;
     while let Some(previous) = at.checked_sub(1) {
         match texts[previous] {
-            "(" => at = previous,
+            "(" => {
+                opened += 1;
+                at = previous;
+            }
             "*" if unary_position(texts, previous, names) => {
+                if opened > closing {
+                    break;
+                }
                 stars += 1;
                 at = previous;
             }
@@ -456,20 +466,27 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
             return None;
         }
         // Card W45-SR5-SOUNDNESS: a `*` counts through parentheses, and the
-        // one dereference must end after them too.
-        let stars = stars_before(texts, index, names);
+        // one dereference must end after them too. Before a member or
+        // subscript root every `*` counts (it only refuses); a starred root
+        // counts the `*`s whose parentheses close right after the name.
         let root = if arrow_at(texts, index + 1) {
-            stars == 0
+            stars_before(texts, index, names, usize::MAX) == 0
                 && texts
                     .get(index + 3)
                     .is_some_and(|text| super::is_identifier(text))
                 && ends_one_dereference(texts, index + 4)
         } else if next == Some("[") {
-            stars == 0
+            stars_before(texts, index, names, usize::MAX) == 0
                 && close_of(texts, index + 1)
                     .is_some_and(|close| ends_one_dereference(texts, close + 1))
         } else {
-            stars == 1 && next != Some(".") && ends_one_dereference(texts, index + 1)
+            let closing = texts[index + 1..]
+                .iter()
+                .take_while(|text| **text == ")")
+                .count();
+            stars_before(texts, index, names, closing) == 1
+                && next != Some(".")
+                && ends_one_dereference(texts, index + 1)
         };
         if !root {
             return None;
