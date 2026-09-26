@@ -65,6 +65,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 10c | [gateway](gateway.md#constraint-10c) | An expression statement is a classified effect or a refusal, never an unrecorded no-op; `(f)(x)` is `f(x)`. |
 | 10d | [gateway](gateway.md#constraint-10d) | A publication into a caller's container moves custody to it; a published object released is accused, returned or unlinked unpublished is refused. |
 | 10e | [gateway](gateway.md#constraint-10e) | A counted user is an obligation checked per path; exit clauses of a defined body are verified, never assumed, and an opaque call is undecided. |
+| 10f | [gateway](gateway.md#constraint-10f) | A declared contract its own analysed body refutes is withdrawn from every caller, cross-unit through a two-phase refutation table; the held call is Unknown. |
 | 11 | [source-identity](source-identity.md#constraint-11) | Do not normalize the spelled input path (that changes __FILE__), do… |
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |

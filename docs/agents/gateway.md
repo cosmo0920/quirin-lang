@@ -810,3 +810,39 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     proved. A derived custody summary is compared with a declaration's custody
     projection only. `QCore.CountedUsers`;
     [report](../reports/w45-fb-retry-lifetime/README.md).
+
+<a id="constraint-10f"></a>
+
+10f. **A declared contract its own analysed body refutes serves no caller,
+    in any unit.** Card W45-REFUTED-CONTRACT-WITHDRAWAL
+    (`legacy_refuted_contract.rs`, `qcore_audit::refuted_contracts`; contract
+    specification §C06.4). A body **refutes** its declaration when a
+    counted-user clause of its own row (declared, or the implicit uncovered-exit
+    obligation) is refuted, or its validated W4 summary contradicts a declared
+    custody duty (constraint 8's mode arm). A refinement `SummaryConflict`
+    (`rd_kafka_mem_free`) is not a refutation, and an undecided clause, a body
+    that does not validate or no body at all leaves the declaration
+    *unchecked*: still the trusted premise of constraints 4 and 8. The
+    declaration stays in force for its own body, whose row keeps the
+    refutation; every call site outside that body is rewritten to a marked
+    undeclared name before any reader sees it and refuses with
+    `contract-refuted-by-body`, which is `Unknown` (category `stale-evidence`),
+    never `Pending`: a refutation is the tool's decision, and no named human
+    act resolves it. In the defining unit the hold is the unit's own decision
+    (after `checked_spec::settle`, then settled again over the held stream); a
+    name the mode gate withdrew keeps constraint 8's key there. Across units,
+    every audit route runs **two phases**: the first analyses every unit and
+    folds the rows' `contract_refutations` into a table (a set, independent of
+    unit order, `--jobs` and grouping, with a digest over the empty table too);
+    when it is not empty, the second analyses every unit with the table in
+    `ResourceContracts::refuted_by_body`. **Do not** withdraw on an unchecked
+    declaration (making `resource_body_checked` the default would withdraw 22
+    of the 24 declarations with an analysed corpus body, on no evidence, and
+    every cross-unit application), install a derived summary in a refuted
+    declaration's place, hold a call inside the refuted function's own body, or
+    compose phase-two unit results analysed under different table digests (the
+    W45-AUDIT-CHECKPOINTS interface in the report). Premises stated, not
+    proved: the second pass reads the table only by membership, and a held call
+    can only make a refutation undecided, never create one.
+    `QCore.RefutedContractWithdrawal`;
+    [report](../reports/w45-refuted-contract-withdrawal/README.md).

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 449
+  "named_followups": 452
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6736,7 +6736,7 @@
   "workspace_tests": 5903,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 203,
+  "lean_audits": 204,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6887,6 +6887,7 @@
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
    "AuditRefusedWrites.lean",
+   "AuditRefutedContractWithdrawal.lean",
    "AuditRegionCreditJoins.lean",
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
@@ -6948,7 +6949,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-gateway-memo-key/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -9862,14 +9863,7 @@
   {
    "id": "W45-FB-CROSS-UNIT-USER-PREMISES",
    "title": "Two counted-user declarations are applied in the output unit as cross-unit premises no analysed body checks there",
-   "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed.",
-   "source": "docs/reports/w45-fb-retry-lifetime/README.md",
-   "recorded_by": "W45-FB-RETRY-LIFETIME"
-  },
-  {
-   "id": "W45-FB-SINGLEPLEX-CUSTODY-DECLARED",
-   "title": "The custody half of the two OR declarations is applied at callers while their bodies do not validate against it",
-   "why": "`flb_output_task_singleplex_enqueue` declares `resource_consumed(retry, nullable)` (faithful by reading: destroyed on the enqueue failure, held by the queued entry otherwise) and `flb_output_task_flush` declares its three pointers borrowed. The counted-user clauses are checked against the bodies, but the custody analysis of each body falls back to the contract-free run (uncontracted `flb_output_task_queue_enqueue`, refused indirect accesses), so the custody half is a declared premise at the callers in flb_engine.c and flb_engine_dispatch.c. DISCHARGE: the two bodies validating under their declared custody, or a check-only declaration form that callers never apply.",
+   "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed. RE-SCOPED by W45-REFUTED-CONTRACT-WITHDRAWAL (2026-09-26, contract spec C06.4, gateway constraint 10f): both declarations are now named in every run's `refuted_contracts` terms as unchecked, not refuted — `flb_task_retry_destroy`'s neutral clause is undecided where its body is analysed and `flb_output_thread_pool_flush` has no analysed body — so they stay applied as declared premises. Their only consumers in the slice are the two refutations (OR-1, OR-7), which are provisional Unsafe candidates on the OR functions' own rows; no Safe rests on either, and every caller of the two OR functions is now held Unknown (`contract-refuted-by-body`). Discharge condition unchanged; the general residual (unchecked declarations of analysed bodies applied as trusted premises) is W45-UNCHECKED-DECLARATIONS-TRUSTED.",
    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
    "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
@@ -10033,6 +10027,34 @@
    "why": "A binding names a package, and `ProcessProvider::from_package` runs it under the default profile (`unenforced-legacy`: process-group containment, deadline and output bound, no declared rlimits or confinement); the sidecar records the profile and limits. A user load path cannot yet request `linux-rlimit-v1` or `linux-confined-v1`. DISCHARGE: a binding field selecting the profile (and a confinement policy), refusing one the host cannot enforce, with the refusal tested.",
    "source": "docs/reports/w45-user-contract-plugins/README.md",
    "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-REFUTATION-TABLE-CHECKPOINT-KEY",
+   "title": "A per-group checkpoint must carry each unit's refutations and join the refutation table's digest to its identity",
+   "why": "Card W45-REFUTED-CONTRACT-WITHDRAWAL (contract spec C06.4, gateway constraint 10f) makes every audit route two-phase: phase one's unit results depend on the unit and the environment only, phase two's also on the refutation table (`ResourceContracts::refuted_by_body`). W45-AUDIT-CHECKPOINTS composes per-group `.qo` checkpoints assuming units are independent, which holds for phase one only. The interface is in place (`qcore_audit::refuted_contracts::table` recomputes the table from the rows' `contract_refutations` by union; `qcore_schemas::contract_refutation::table_digest`, defined for the empty table too) but not wired into the checkpoint modules, which this card did not edit. Size: 4 audit routes (current, contracts, configured, corpus arbiter) and one checkpoint identity. DISCHARGE: a checkpoint carries its units' `contract_refutations` rows and the digest of the table it was analysed under in its identity; composition recomputes the union table and refuses to compose phase-two results under different digests; a test composes two groups whose refutations cross them and reproduces the whole run.",
+   "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+   "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  },
+  {
+   "id": "W45-CONTAINER-CLAUSE-BODY-CHECK",
+   "title": "Declared container clauses are never checked against a body, so they can be unchecked but never refuted",
+   "why": "C06.4 withdraws a declaration its own body refutes, and the two refutation arms are a refuted counted-user clause and a contradicted custody duty. `resource_published`/`resource_unpublished` (C04.8) are applied at calls only: no pass checks a declared container clause against the body it names, and W4's conflict check compares the custody projection only. Size: 2 declarations (`mk_list_add`, `mk_list_del` in `providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore`), whose `static inline` bodies every including unit defines. DISCHARGE: a per-path check of a defined body against its declared publication and unlink (the object linked into the named container on every exit, or unlinked), feeding a third refutation arm, with Lean parity and a measured corpus and slice.",
+   "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+   "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  },
+  {
+   "id": "W45-UNCHECKED-DECLARATIONS-TRUSTED",
+   "title": "A declaration its analysed body neither establishes nor refutes is still applied as a trusted premise",
+   "why": "C06.4 withdraws only refuted declarations; an unchecked one (an undecided clause, a body that does not validate) keeps constraint 4's and 8's trusted reading, deliberately: making `resource_body_checked` the default would withdraw every cross-unit application and, on the pinned corpus, at least 22 of the 24 declarations with an analysed main-source body, on no evidence (`docs/reports/w45-refuted-contract-withdrawal/artifacts/body-checked-default-census.json`). In the Fluent Bit slice the unchecked premises include `flb_task_retry_destroy` (neutral clause undecided in `src/flb_task.c`) and `flb_output_thread_pool_flush` (no analysed body). Size: 22 corpus declarations (lower bound). DISCHARGE: per declaration, either its body establishes it (validated W4 summary equal to it, every clause held) or it moves behind `resource_body_checked`; or a report status that names every Safe resting on an unchecked declaration of an audited body.",
+   "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+   "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
+  },
+  {
+   "id": "W45-REFUTED-HOLD-UNIT-REASON",
+   "title": "A unit whose only open leaves are refuted-contract holds is classed unsupported-syntax at unit level",
+   "why": "The held call's statement classifies as `stale-evidence` (`ReasonCategory::classify`, rule added by W45-REFUTED-CONTRACT-WITHDRAWAL), but the unit reason is the projection summary, which counts the hold among `unsupported`, as it already counts constraint 8's mode withdrawal; review and pin holds have their own summary components. Size: 0 units in the pinned corpus and the Fluent Bit slice (every unit with a hold has other refusals). DISCHARGE: a summary component for refuted and mode-withdrawn holds, classed ahead of the source categories, with the reason-code corpus and the L21.1 table updated.",
+   "source": "docs/reports/w45-refuted-contract-withdrawal/README.md",
+   "recorded_by": "W45-REFUTED-CONTRACT-WITHDRAWAL"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
