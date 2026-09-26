@@ -1,0 +1,37 @@
+{
+ "attempt-1": {
+  "clone_head": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "prepare_json_sha256": "c9b6c3f631dc520b095638dff4f8754f44dbcb718b3a5bead3e498256c59a0f6",
+  "compile_commands_sha256": "8176d9f1a05c0b4e99aaf368b30346659fb368b8e36a5d65abbae5be0f05bb5e",
+  "files": {
+   "src/flb_output.c": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819",
+   "src/flb_output_thread.c": "932ed57899416bc8db9780328865fd5cdac45f4ec73cff6e006b90fb93258647",
+   "src/flb_task.c": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "include/fluent-bit/flb_task.h": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+   "include/fluent-bit/flb_output.h": "815dc3774c93718b95b5b9474f93d790accb2c0bb9d0c45a15cb40c8649cd51d",
+   "lib/monkey/include/monkey/mk_core/mk_list.h": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1"
+  }
+ },
+ "attempt-2": {
+  "clone_head": "046accf6aded7906f66a1baf0202da349e521736",
+  "prepare_json_sha256": "c5f4133ac5ed0d0a11f9f85e464dd822f54b31ce61fe1f36f7be8d3e3116248c",
+  "compile_commands_sha256": "b9c74281e00298024100149b665c30a28b38803c7e3ad420fa73fcd480b6f268",
+  "files": {
+   "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+   "src/flb_output_thread.c": "b6d1e7ad71b909557eb5fc0d59396585573c9d84d24c183d5ecd2121e19b2b16",
+   "src/flb_task.c": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "include/fluent-bit/flb_task.h": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+   "include/fluent-bit/flb_output.h": "715b72c299d91e1c65fd56cb5e831cc97c77358fe44070626c7ea156c69edf94",
+   "lib/monkey/include/monkey/mk_core/mk_list.h": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1"
+  }
+ },
+ "binaries": {
+  "quirin-audit-base": "2c2f26ab1f60b64401a4b9598f1ec6f94de02d4e130988f7f3e81e41856d2b6e",
+  "quirin-audit-e1259190": "114bc4e1653ff907ee0235232b8a9c914e02fa6d5a6f84f8779af197266ca61a"
+ },
+ "contract_modules": {
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18",
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore": "0822d209ae880d061a3ca94a42db229a116a613a7b6beaee4db8147ddf5d0319",
+  "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore": "968dd8fbfcec35be73abe45e42ae843076d42166412a6c6912d2dc39154ce977"
+ }
+}

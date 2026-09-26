@@ -1,0 +1,286 @@
+{
+ "added_leaves": 18,
+ "categories": {
+  "after": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3571,
+   "unsupported": 42702
+  },
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3567,
+   "unsupported": 42699
+  }
+ },
+ "function_moves": [
+  {
+   "after": "Unknown",
+   "before": "Safe",
+   "function": "flb_input_chunk_create",
+   "unit": "flb_input_chunk.c"
+  }
+ ],
+ "functions": {
+  "after": {
+   "Safe": 389,
+   "Unknown": 4433,
+   "Unsafe": 12
+  },
+  "before": {
+   "Safe": 390,
+   "Unknown": 4432,
+   "Unsafe": 12
+  }
+ },
+ "leaves_by_function": [
+  {
+   "added": [
+    [
+     2382,
+     "unsupported",
+     "unlink by `mk_list_del` of `ch`, which this function has not published"
+    ],
+    [
+     2385,
+     "unknown_alias",
+     "unresolved resource identity `ch`"
+    ],
+    [
+     2388,
+     "unknown_alias",
+     "unresolved resource identity `ch`"
+    ]
+   ],
+   "function": "chunk_state_sync",
+   "removed": [
+    [
+     2382,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "cio_chunk.c"
+  },
+  {
+   "added": [
+    [
+     2083,
+     "unsupported",
+     "unlink by `mk_list_del` of `ch`, which this function has not published"
+    ],
+    [
+     2084,
+     "unsupported",
+     "unlink by `mk_list_del` of `ch`, which this function has not published"
+    ]
+   ],
+   "function": "cio_chunk_close",
+   "removed": [
+    [
+     2083,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ],
+    [
+     2084,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "cio_chunk.c"
+  },
+  {
+   "added": [
+    [
+     2042,
+     "unsupported",
+     "publication by `mk_list_add` of `ch`, which owns linked objects"
+    ],
+    [
+     2052,
+     "unknown_alias",
+     "unresolved resource identity `ch`"
+    ]
+   ],
+   "function": "cio_chunk_open",
+   "removed": [
+    [
+     2052,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "cio_chunk.c"
+  },
+  {
+   "added": [
+    [
+     2214,
+     "unsupported",
+     "publication by `mk_list_add` of `st`, which this function does not hold as one live object"
+    ]
+   ],
+   "function": "cio_stream_create",
+   "removed": [],
+   "unit": "cio_stream.c"
+  },
+  {
+   "added": [
+    [
+     2224,
+     "unsupported",
+     "unlink by `mk_list_del` of `st`, which this function has not published"
+    ]
+   ],
+   "function": "cio_stream_destroy",
+   "removed": [
+    [
+     2224,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "cio_stream.c"
+  },
+  {
+   "added": [
+    [
+     19629,
+     "unsupported",
+     "publication by `mk_list_add` of `ic`, which owns linked objects"
+    ],
+    [
+     19647,
+     "unsupported",
+     "transfer of `ic`, which a container holds after its publication"
+    ]
+   ],
+   "function": "flb_input_chunk_create",
+   "removed": [],
+   "unit": "flb_input_chunk.c"
+  },
+  {
+   "added": [
+    [
+     19835,
+     "unsupported",
+     "call to uncontracted function `flb_input_chunk_create`"
+    ],
+    [
+     19837,
+     "unknown_alias",
+     "unresolved resource identity `ic`"
+    ],
+    [
+     19840,
+     "unknown_alias",
+     "unresolved resource identity `ic`"
+    ]
+   ],
+   "function": "input_chunk_get",
+   "removed": [
+    [
+     19847,
+     "unsupported",
+     "nullable resource `ic` used by a non-null contract"
+    ],
+    [
+     19851,
+     "unsupported",
+     "nullable resource `ic` used by a non-null contract"
+    ]
+   ],
+   "unit": "flb_input_chunk.c"
+  },
+  {
+   "added": [
+    [
+     5618,
+     "unsupported",
+     "unlink by `mk_list_del` of `header`, which this function has not published"
+    ]
+   ],
+   "function": "header_lookup",
+   "removed": [
+    [
+     5618,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "mk_server/mk_http_parser.c"
+  },
+  {
+   "added": [
+    [
+     6135,
+     "unsupported",
+     "unlink by `mk_list_del` of `mth`, which this function has not published"
+    ]
+   ],
+   "function": "mk_http_thread_destroy",
+   "removed": [
+    [
+     6135,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "mk_server/mk_http_thread.c"
+  },
+  {
+   "added": [
+    [
+     6122,
+     "unsupported",
+     "unlink by `mk_list_del` of `mth`, which this function has not published"
+    ]
+   ],
+   "function": "mk_http_thread_purge",
+   "removed": [
+    [
+     6122,
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   ],
+   "unit": "mk_server/mk_http_thread.c"
+  },
+  {
+   "added": [
+    [
+     6593,
+     "unsupported",
+     "call to uncontracted function `mk_sched_conn_timeout_add`"
+    ]
+   ],
+   "function": "mk_sched_add_connection",
+   "removed": [
+    [
+     6593,
+     "unknown_alias",
+     "unresolved resource identity `conn`"
+    ]
+   ],
+   "unit": "mk_server/mk_scheduler.c"
+  }
+ ],
+ "removed_leaves": 11,
+ "unit_moves": [],
+ "units": {
+  "after": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  }
+ }
+}

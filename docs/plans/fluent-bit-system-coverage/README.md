@@ -60,7 +60,7 @@ Existing constraints particularly relevant to this review:
 | P0 | FB-SYSTEM-CENSUS | Measurement | Pinned build available | Select reachable, attributable production slices and measure missing mechanisms | Done: [W45-FB-SYSTEM-SELECTION](../../reports/w45-fb-system-selection/README.md) (2026-09-26); residuals in `W45-FB-SYSTEM-SLICE-RESIDUALS` |
 | P1.1 | FB-BACKLOG-CUSTODY | Semantic implementation | Census selects backlog slice | Preserve shared chunk identity and lifetime through queue/error transitions | |
 | P1.2 | FB-BACKLOG-ACCOUNTING | Semantic implementation | Census plus agreed custody/identity interface | Establish per-transition byte/count accounting and the actual admission bound | |
-| P1.3 | FB-RETRY-LIFETIME | Semantic implementation | Census selects dispatch/retry slice | Preserve task/chunk obligations through scheduling, completion and cancellation | |
+| P1.3 | FB-RETRY-LIFETIME | Semantic implementation | Census selects dispatch/retry slice | Preserve task/chunk obligations through scheduling, completion and cancellation | First slice done: [W45-FB-RETRY-LIFETIME](../../reports/w45-fb-retry-lifetime/README.md) (2026-09-26; singleplex queue, OR-1 and OR-7 decided refuted); the rest of the retry route open |
 | P2 | FB-ENGINE-PROGRESS | Measurement, then separately scoped implementation | Census; lifetime interfaces if traces share them | Distinguish bounded callback work from eventual service and throughput | |
 | P3 | FB-SYSTEM-EXTENSIONS | Candidate inventory only | Findings from the preceding cards | Select one further subsystem per future card | |
 

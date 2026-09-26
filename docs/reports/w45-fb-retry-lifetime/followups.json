@@ -44,7 +44,7 @@
   {
     "id": "W45-CONTAINER-ROOT-REACH",
     "title": "A publication discharges only into a container reached from an unrebound formal or a local initialised from one; the MK-LIST corpus leaves need more",
-    "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. The corpus arbiter also shows `mk_sched_conn_timeout_add` losing its borrowed summary (container reached through a call's result). Size: 4 leak leaves, 1 summary. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf.",
+    "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. Size: 4 leak leaves. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf.",
     "source": "docs/reports/w45-fb-retry-lifetime/README.md",
     "recorded_by": "W45-FB-RETRY-LIFETIME"
   },

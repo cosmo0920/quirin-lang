@@ -880,6 +880,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |
 
+| [w45-fb-retry-lifetime](w45-fb-retry-lifetime/README.md) | W45-FB-RETRY-LIFETIME: counted users and container publication, decided on the singleplex queue |
+
 | [w45-fb-system-selection](w45-fb-system-selection/README.md) | W45-FB-SYSTEM-SELECTION: the Fluent Bit engine, backlog and retry files in a current audit |
 
 | [w45-parenthesised-callee](w45-parenthesised-callee/README.md) | W45-PARENTHESISED-CALLEE: a callee that is not spelled `NAME (` |
