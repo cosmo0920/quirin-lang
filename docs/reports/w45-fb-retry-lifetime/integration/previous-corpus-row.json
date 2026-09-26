@@ -1,0 +1,29 @@
+{
+ "note": "W45-FB-RETRY-LIFETIME, 2026-09-26. BEFORE (base 74579af6) reproduces the W45-PARENTHESISED-CALLEE integration diagnostics byte for byte. `mk_list_add` is declared `resource_published` and `mk_list_del` `resource_unpublished` (contract spec C04.8, gateway constraint 10d), and the counted-user clauses (C04.7, constraint 10e) are added with two new fluent_bit modules no corpus unit calls. Every delta is attributed (11 leaves removed, 18 added): 7 unlink refusals replace the indirect-access refusal of the same statement; 2 publications refused (an object owning linked members; an entry that is not one live object); the refused return of a published `ic` and the refused publication move `flb_input_chunk_create` Safe -> Unknown (a correction: its Safe rested on the borrowed reading while it both links `ic` into `in->chunks` and returns it), which withdraws its derived summary in `input_chunk_get` (2 nullable-contract refusals exchanged for 1 uncontracted call and 2 unresolved identities); `chunk_state_sync` and `cio_chunk_open` report the unresolved identity of the formal or published object; `mk_sched_add_connection` loses the borrowed summary of the header helper `mk_sched_conn_timeout_add`, which publishes a formal on one branch only. Functions 390/12/4,432 -> 389/12/4,433; units unchanged; leak 37 unchanged (the 4 MK-LIST corpus leak leaves are not reached: W45-CONTAINER-ROOT-REACH). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 4,
+ "provisional_unsafe": 10,
+ "unknown": 167,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 37,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-fb-retry-lifetime/artifacts/arbiter-after/",
+ "source": "docs/reports/w45-fb-retry-lifetime/README.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts/",
+ "unknown_alias_diagnostics": 3571,
+ "unsupported_diagnostics": 42702,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 389,
+  "provisional_unsafe": 12,
+  "unknown": 4433
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 166,
+  "none": 18,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

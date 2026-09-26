@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-FB-RETRY-LIFETIME on merge 4dbab8e7 (onto main 74579af6, after all wave-45 cards through W45-FB-RETRY-FAULT-INJECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5815 core Rust passed / 0 failed / 11 ignored over 310 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 197 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration). The package Python step's first attempt (27-package-python.log, exit 1) failed one test, test_the_real_workspace_manifest_is_current (providers/tests/test_contract_load_path.py): AssertionError 49 != 47, a genuine stale pin — that suite still pinned 47 resource-view modules while this card deliberately grew the Cycle 19 manifest to 49. The integrator committed the pin update to 49 (commit b981c5c4, test-only) on this branch, and the rerun of the full providers Python suite on that tree passed clean: 15 package Python tests (27-package-python-rerun.log, exit 0). Both attempts are recorded; the first exit is kept as measured, not replaced, and the count below is taken from the clean rerun. The isolated package mutation control's first attempt (23-package-mutation.log, exit 101) failed one test, real_packages_preserve_unknown_and_reject_mutations (providers/conformance/tests/packages.rs): a BrokenPipe writing to a spawned provider's stdin, a host-load failure under concurrent cards. It passed 3/3 isolated reruns (23-package-mutation-rerun-{1,2,3}.log, each exit 0). fmt/clippy (core and provider), both reevaluation examples, the docs index, and providers/contracts.py check exit 0, and all five package builds and verifications exit 0. Both fixes are test-only; the arbiter run and its composition against docs/reports/w45-parenthesised-callee/integration/artifacts stand unaffected. The byte-identity step against docs/reports/w45-parenthesised-callee/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+ "workspace_tests": 5815,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 197,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

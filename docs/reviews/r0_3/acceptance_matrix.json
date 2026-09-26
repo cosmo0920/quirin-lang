@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-FB-RETRY-LIFETIME, 2026-09-26. BEFORE (base 74579af6) reproduces the W45-PARENTHESISED-CALLEE integration diagnostics byte for byte. `mk_list_add` is declared `resource_published` and `mk_list_del` `resource_unpublished` (contract spec C04.8, gateway constraint 10d), and the counted-user clauses (C04.7, constraint 10e) are added with two new fluent_bit modules no corpus unit calls. Every delta is attributed (11 leaves removed, 18 added): 7 unlink refusals replace the indirect-access refusal of the same statement; 2 publications refused (an object owning linked members; an entry that is not one live object); the refused return of a published `ic` and the refused publication move `flb_input_chunk_create` Safe -> Unknown (a correction: its Safe rested on the borrowed reading while it both links `ic` into `in->chunks` and returns it), which withdraws its derived summary in `input_chunk_get` (2 nullable-contract refusals exchanged for 1 uncontracted call and 2 unresolved identities); `chunk_state_sync` and `cio_chunk_open` report the unresolved identity of the formal or published object; `mk_sched_add_connection` loses the borrowed summary of the header helper `mk_sched_conn_timeout_add`, which publishes a formal on one branch only. Functions 390/12/4,432 -> 389/12/4,433; units unchanged; leak 37 unchanged (the 4 MK-LIST corpus leak leaves are not reached: W45-CONTAINER-ROOT-REACH). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/previous-corpus-row.json.",
+   "note": "W45-FB-RETRY-LIFETIME integration, 2026-09-25. The card (measured against docs/reports/w45-parenthesised-callee/integration/artifacts) composed onto the combined tree docs/reports/w45-parenthesised-callee/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 11 added 18 functions 1 units 0); functions moved (combined): [('flb_input_chunk_create', ('Safe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] functions moved: flb_input_chunk_create Safe -> Unknown (a correction: its Safe relied on reading mk_list_add as a borrow). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-retry-lifetime/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 4,
    "provisional_unsafe": 10,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 37,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-fb-retry-lifetime/artifacts/arbiter-after/",
-   "source": "docs/reports/w45-fb-retry-lifetime/README.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts/",
+   "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts/",
+   "source": "docs/reports/w45-fb-retry-lifetime/integration/integration-confirmation.md; preceding baseline docs/reports/w45-parenthesised-callee/integration/artifacts",
    "unknown_alias_diagnostics": 3571,
    "unsupported_diagnostics": 42702,
    "double_release_diagnostics": 0,
@@ -6731,8 +6731,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-FB-RETRY-FAULT-INJECTION on merge 53a3fcec (onto main 10fd4e55, after all wave-45 cards through W45-TSAN-ROWS-LOAD-SENSITIVE), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5788 core Rust passed / 0 failed / 11 ignored over 297 summaries, including task_route_tsan itself at 20 passed / 0 failed / 1 ignored; 124 provider Rust passed / 0 / 0 over 39 summaries; 195 Lean audits; 358 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 82 s and baseline_identity.py against docs/reports/w45-parenthesised-callee/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move: this card is a records-only merge (native fault-injection observations for retry candidates C1-C3, docs/reports and docs/development/increments only), with no verdict-bearing surface touched.",
-  "workspace_tests": 5788,
+  "note": "Integration gate for W45-FB-RETRY-LIFETIME on merge 4dbab8e7 (onto main 74579af6, after all wave-45 cards through W45-FB-RETRY-FAULT-INJECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5815 core Rust passed / 0 failed / 11 ignored over 310 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 197 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration). The package Python step's first attempt (27-package-python.log, exit 1) failed one test, test_the_real_workspace_manifest_is_current (providers/tests/test_contract_load_path.py): AssertionError 49 != 47, a genuine stale pin — that suite still pinned 47 resource-view modules while this card deliberately grew the Cycle 19 manifest to 49. The integrator committed the pin update to 49 (commit b981c5c4, test-only) on this branch, and the rerun of the full providers Python suite on that tree passed clean: 15 package Python tests (27-package-python-rerun.log, exit 0). Both attempts are recorded; the first exit is kept as measured, not replaced, and the count below is taken from the clean rerun. The isolated package mutation control's first attempt (23-package-mutation.log, exit 101) failed one test, real_packages_preserve_unknown_and_reject_mutations (providers/conformance/tests/packages.rs): a BrokenPipe writing to a spawned provider's stdin, a host-load failure under concurrent cards. It passed 3/3 isolated reruns (23-package-mutation-rerun-{1,2,3}.log, each exit 0). fmt/clippy (core and provider), both reevaluation examples, the docs index, and providers/contracts.py check exit 0, and all five package builds and verifications exit 0. Both fixes are test-only; the arbiter run and its composition against docs/reports/w45-parenthesised-callee/integration/artifacts stand unaffected. The byte-identity step against docs/reports/w45-parenthesised-callee/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5815,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
   "lean_audits": 197,
@@ -6941,7 +6941,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-retry-lifetime/integration/gate.json)"
  },
  "named_followups": [
   {
