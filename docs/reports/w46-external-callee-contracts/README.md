@@ -253,8 +253,26 @@ literal-argument premise`. No status moves. Reports:
 
 ## 7. Gate
 
-See [gate.json](gate.json) and §9 of the reply; logs are private under
-`/tmp/claude-1000/w46ext/gate/`.
+[`scripts/gate.sh`](scripts/gate.sh) at `a787a9b5`, every step exit 0
+([gate.json](gate.json), [steps](gate/steps.txt)): 322 units / 334 summaries,
+**6,021 passed, 0 failed**, 11 ignored; fmt and clippy clean; both
+reevaluation examples 0; 210 Lean audits; Python 364; docs index; provider
+tests 129, fmt, clippy, `contracts.py check`, all five packages built and
+verified, `providers/tests` 15. Logs are private under
+`/tmp/claude-1000/w46ext/gate2/`.
+
+A first run at `72470631` failed 3 tests and fmt, and both causes were this
+card's:
+
+- `contract_inherit_qcore_provider` compares `librdkafka/memory.qcore` with a
+  hand-written fixture, which now carries `rd_atomic32_get` too;
+- the native descriptor binding (`descriptor_contract_binding.rs`) bound every
+  recorded `fcntl` execution to the new declaration, although it is declared
+  only at `F_SETFD`. The binding now rederives the literal premises from the
+  environment's trusted texts and profiles an execution outside them as an
+  undeclared call, never binds it (C04.5); a new unit test pins `F_SETFD`
+  bound, `F_DUPFD` and an unrecorded command profiled. This is off the
+  arbiter's route (only the `bind_descriptor_contracts` example uses it).
 
 ## 8. Follow-ups
 
