@@ -99,6 +99,9 @@ pub struct EntryProducts {
     source: Option<PathBuf>,
     report: AuditReport,
     counts: AuditCounts,
+    /// Card W45-AUDIT-CHECKPOINTS: what preparation established beyond the
+    /// compile-task identity, for the unit's checkpoint fingerprint.
+    preparation: crate::checkpoint::PreparationFacts,
 }
 
 impl CurrentAudit {
@@ -218,6 +221,7 @@ impl CurrentAudit {
             source: None,
             report: self.report.fragment(),
             counts: AuditCounts::default(),
+            preparation: Default::default(),
         };
         let result = self
             .evaluate_entry_into(
@@ -250,6 +254,7 @@ impl CurrentAudit {
             source: None,
             report: self.report.fragment(),
             counts: AuditCounts::default(),
+            preparation: Default::default(),
         };
         let path = self.checkout.join(relative);
         let bytes = fs::read(&path);
@@ -309,6 +314,7 @@ impl CurrentAudit {
             source,
             report,
             counts,
+            preparation: _,
         } = products;
         if let Some(source) = source {
             self.sources.insert(source);
@@ -373,6 +379,7 @@ impl CurrentAudit {
         match prepared {
             Ok(unit) => {
                 let prepared = prepare_translation_unit(&unit);
+                products.preparation = crate::checkpoint::PreparationFacts::of(&prepared);
                 let preparation_error = prepared.validation_error().map(ToString::to_string);
                 let identity = compile_task_identity(
                     entry,
@@ -472,5 +479,54 @@ impl CurrentAudit {
             .map_err(|error| error.to_string())?;
         }
         Ok(self.counts)
+    }
+}
+
+/// Card **W45-AUDIT-CHECKPOINTS**: what a checkpointed run reads of an audit
+/// and of one configuration's products. Read-only; the whole-run fold above is
+/// unchanged.
+impl CurrentAudit {
+    pub(crate) fn checkout(&self) -> &Path {
+        &self.checkout
+    }
+
+    pub(crate) fn compiler(&self) -> &ClangIdentity {
+        &self.compiler
+    }
+
+    pub(crate) fn contracts(&self) -> &ResourceContracts {
+        &self.contracts
+    }
+
+    pub(crate) fn dependencies(&self) -> &BTreeMap<String, String> {
+        &self.dependencies
+    }
+
+    pub(crate) fn source_profile_sha256(&self) -> &str {
+        &self.source_profile_sha256
+    }
+
+    /// The `.contracts.json` assumptions before `finish` adds its run-final keys.
+    pub(crate) fn assumptions(&self) -> &Value {
+        &self.assumptions
+    }
+
+    /// The report's evidence-mode record, when the run has one.
+    pub(crate) fn report_evidence(&self) -> Option<&Value> {
+        self.report.evidence_record()
+    }
+}
+
+impl EntryProducts {
+    /// The configuration's source path, report rows, tally and preparation facts.
+    pub(crate) fn into_parts(
+        self,
+    ) -> (
+        Option<PathBuf>,
+        AuditReport,
+        AuditCounts,
+        crate::checkpoint::PreparationFacts,
+    ) {
+        (self.source, self.report, self.counts, self.preparation)
     }
 }

@@ -9,6 +9,10 @@
 
 pub mod callback_task_handoff;
 pub mod certificate_context;
+pub mod checkpoint;
+pub mod checkpoint_cli;
+pub mod checkpoint_run;
+pub mod compose;
 pub mod compile_db;
 pub mod current;
 pub mod current_cli;

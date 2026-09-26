@@ -430,6 +430,17 @@ impl AuditReport {
 
     /// Compatibility with an existing report schema; verdict contents are unchanged.
     pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
+        let report = self.document(revision_key);
+        let mut bytes = serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?;
+        bytes.push(b'\n');
+        fs::write(path, bytes)
+            .map_err(|error| format!("could not write {}: {error}", path.display()))
+    }
+
+    /// The report document [`Self::write_with_revision_key`] writes (card
+    /// W45-AUDIT-CHECKPOINTS: a composed report is this document over the
+    /// merged tallies, with the groups' rows streamed into `units`).
+    pub(crate) fn document(&self, revision_key: &str) -> Value {
         let mut report = json!({
             "schema_version": 1, revision_key: self.revision,
             "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
@@ -446,10 +457,34 @@ impl AuditReport {
         if let Some(evidence) = &self.evidence {
             report["evidence"] = evidence.clone();
         }
-        let mut bytes = serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?;
-        bytes.push(b'\n');
-        fs::write(path, bytes)
-            .map_err(|error| format!("could not write {}: {error}", path.display()))
+        report
+    }
+
+    /// Card W45-AUDIT-CHECKPOINTS: a report with no rows, the given
+    /// per-category tallies and evidence-mode record: the document a composed
+    /// report's rows are streamed into.
+    pub(crate) fn skeleton(
+        revision: &str,
+        diagnostic_counts: BTreeMap<String, usize>,
+        evidence: Option<Value>,
+    ) -> Self {
+        Self {
+            revision: revision.into(),
+            units: Vec::new(),
+            diagnostic_counts,
+            source_contracts: None,
+            evidence,
+        }
+    }
+
+    /// Card W45-AUDIT-CHECKPOINTS: the per-category tallies recorded so far.
+    pub(crate) fn diagnostic_count_map(&self) -> &BTreeMap<String, usize> {
+        &self.diagnostic_counts
+    }
+
+    /// Card W45-AUDIT-CHECKPOINTS: the evidence-mode record, when there is one.
+    pub(crate) fn evidence_record(&self) -> Option<&Value> {
+        self.evidence.as_ref()
     }
 }
 

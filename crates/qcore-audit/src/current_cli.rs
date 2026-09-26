@@ -37,7 +37,7 @@ use serde_json::{Value, json};
 
 use crate::current_route::{
     CurrentRoute, historical_reference_revision, historical_reference_revision_of,
-    run_current_route,
+    run_current_route_with_checkpoints,
 };
 use crate::evidence::EvidenceMode;
 use crate::providers::{
@@ -49,7 +49,7 @@ pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout
 [--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--report PATH] \
 [--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
 [--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
-[--selection FILE] [--jobs N]";
+[--selection FILE] [--jobs N] [--checkpoint-dir DIR [--resume]]";
 
 /// The JSON configuration of `quirin-audit current`. Relative paths resolve
 /// against the configuration file's directory.
@@ -87,6 +87,12 @@ struct CurrentConfig {
     /// replaces the profile's `audit.json` groups.
     #[serde(default)]
     selection: Option<PathBuf>,
+    /// Card W45-AUDIT-CHECKPOINTS: analyse group by group, sealing each group
+    /// into `<checkpoint_dir>/<label>.qo`; `resume` reuses matching ones.
+    #[serde(default)]
+    checkpoint_dir: Option<PathBuf>,
+    #[serde(default)]
+    resume: Option<bool>,
     /// Named only to be refused with a reason: this route admits no process
     /// package or source-contract evidence.
     #[serde(default)]
@@ -112,6 +118,8 @@ struct Settings {
     quirin_providers_only: Option<bool>,
     jobs: Option<usize>,
     selection: Option<PathBuf>,
+    checkpoint_dir: Option<PathBuf>,
+    resume: Option<bool>,
 }
 
 pub(crate) fn anchor(base: &Path, path: PathBuf) -> PathBuf {
@@ -156,6 +164,11 @@ fn parse_command_line(
             "--load-path" => set_path(&mut settings.load_path, flag, value)?,
             "--contract-manifest" => set_path(&mut settings.contract_manifest, flag, value)?,
             "--selection" => set_path(&mut settings.selection, flag, value)?,
+            "--checkpoint-dir" => set_path(&mut settings.checkpoint_dir, flag, value)?,
+            "--resume" => {
+                settings.resume = Some(true);
+                takes_value = false;
+            }
             "--provider" => {
                 providers.push(
                     value
@@ -227,6 +240,8 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
             quirin_providers_only: config.quirin_providers_only,
             jobs: config.jobs,
             selection: anchor_all(config.selection),
+            checkpoint_dir: anchor_all(config.checkpoint_dir),
+            resume: config.resume,
         },
         bytes,
     ))
@@ -336,6 +351,24 @@ pub(crate) fn choose_contracts(
                 .into(),
         );
     })
+}
+
+/// Card W45-AUDIT-CHECKPOINTS: the checkpoint settings of both forms, which
+/// must agree like every other setting. `--resume` needs a directory.
+fn checkpoint_options(
+    directories: (Option<PathBuf>, Option<PathBuf>),
+    resumes: (Option<bool>, Option<bool>),
+) -> Result<Option<crate::checkpoint_run::CheckpointOptions>, String> {
+    let directory = one("checkpoint_dir", directories.0, directories.1)?;
+    let resume = one("resume", resumes.0, resumes.1)?.unwrap_or(false);
+    match directory {
+        Some(directory) => Ok(Some(crate::checkpoint_run::CheckpointOptions {
+            directory,
+            resume,
+        })),
+        None if resume => Err("--resume needs --checkpoint-dir DIR".into()),
+        None => Ok(None),
+    }
 }
 
 /// Parse, resolve and run. Returns the process exit code.
@@ -459,7 +492,11 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_else(|| "source set".into()),
     };
-    let failures = run_current_route(&CurrentRoute {
+    let checkpoints = checkpoint_options(
+        (command_line.checkpoint_dir, configuration.checkpoint_dir),
+        (command_line.resume, configuration.resume),
+    )?;
+    let failures = run_current_route_with_checkpoints(&CurrentRoute {
         checkout: &checkout,
         profile: &profile,
         contracts: &contracts,
@@ -474,7 +511,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         historical_reference_revision: &historical,
         jobs: effective_jobs,
         selection: selection.as_ref(),
-    })?;
+    }, checkpoints.as_ref())?;
     if let Some(report) = &report {
         let digest = |path: &Option<PathBuf>| -> Result<Value, String> {
             path.as_ref()
@@ -528,6 +565,13 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         // the profile's own groups keeps its record byte for byte.
         if let Some(selection) = &selection {
             invocation["selection"] = selection.record();
+        }
+        // Card W45-AUDIT-CHECKPOINTS: likewise named only when given.
+        if let Some(options) = &checkpoints {
+            invocation["checkpoints"] = json!({
+                "directory": options.directory, "resume": options.resume,
+                "run_record": options.directory.join(crate::checkpoint_run::RUN_RECORD),
+            });
         }
         crate::current_route::write_invocation(report, &invocation)?;
     }

@@ -8,8 +8,24 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::current_cli::USAGE);
         eprintln!("       {}", qcore_audit::prepare::USAGE);
         eprintln!("       {}", qcore_audit::no_build::USAGE);
+        eprintln!("       {}", qcore_audit::checkpoint_cli::USAGE);
         return ExitCode::FAILURE;
     };
+    if path == "checkpoint" {
+        // Card W45-AUDIT-CHECKPOINTS: verify, decompose, recompose and compose
+        // per-group `.qo` checkpoints.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::checkpoint_cli::main(rest);
+    }
     if path == "prepare" {
         // Card W44-QUIRIN-AUDIT-PREPARE: the Clang CMake build and the Monkey
         // inputs, formerly two Python scripts; `--run` chains into `current`.
