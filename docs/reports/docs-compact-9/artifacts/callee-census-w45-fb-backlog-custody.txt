@@ -1,0 +1,17 @@
+{
+ "leaves": 9157,
+ "unknown_functions": 2619,
+ "blocked_only_by_uncontracted_calls": 436,
+ "sole_one_callee": 318,
+ "callees": 2554
+}
+same-unit-selected:Unknown                           leaves  3694 callees  1613 fns  1666 sole 241 class_only 296
+other-unit:Unknown                                   leaves  3002 callees   713 fns  1026 sole  39 class_only  43
+in-unit-header-internal                              leaves  1237 callees   144 fns   453 sole  12 class_only  12
+no-corpus-body                                       leaves   961 callees   229 fns   384 sole  24 class_only  33
+other-unit:Safe                                      leaves   149 callees    49 fns   104 sole   2 class_only   3
+in-unit-header-external                              leaves    86 callees    16 fns    39 sole   0 class_only   1
+same-unit-selected:Unsafe                            leaves    25 callees     4 fns     6 sole   0 class_only   0
+other-unit:Unsafe                                    leaves     3 callees     3 fns     3 sole   0 class_only   0
+
+[exit 0]

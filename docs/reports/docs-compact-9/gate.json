@@ -1,0 +1,13 @@
+{
+  "note": "Standing gate of DOCS-COMPACT-9 on its draft tip 026caf65 (base 8c1f15eb; documentation-only diff), measured in the card's own worktree with CARGO_INCREMENTAL=0, every exit captured to a file and none piped (exits in docs/reports/docs-compact-9/gate/, logs private under private/dc9-gate/ and private/test-binaries/20260926T163033Z-1790014/). python3 scripts/run_test_binaries.py: 319 units, 331 summaries; 5995 passed, 0 failed, 11 ignored. 207 Lean audits; 364 root Python tests; fmt, clippy, both reevaluation examples, the docs index and task_context.py exit 0; Clang 21.1.8 recorded in this worktree. Constraint 16's workspace rows passed on the first run. provider_tests is CARRIED from the W45-AUDIT-SUBCOMMAND-PLUGINS integration gate (129 passed / 0 / 1 over 43 summaries): no provider file changed and the provider workspace was not re-run here. No analysis, contract or corpus artifact changed, so the baseline docs/reports/w45-container-root-reach/integration/artifacts stands.",
+  "workspace_tests": 5995,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 364,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 207,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

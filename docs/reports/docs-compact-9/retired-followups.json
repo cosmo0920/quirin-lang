@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "INTEGRATION-GATE-PATH-RULE-DRIFT",
+      "title": "The integration rule names docs/reports/<card>/integration-gate.json; every integration gate since wave 43 is at integration/gate.json",
+      "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): docs/agents/operations.md:119 names integration-gate.json; ls finds 54 docs/reports/*/integration/gate.json and 15 older */integration-gate.json. A close sweep following the rule's path finds none of wave 45's. DISCHARGE: the rule text, and any close tooling, name the path in use.",
+      "source": "docs/reports/stability-reeval-5/README.md",
+      "recorded_by": "STABILITY-REEVAL-5"
+    },
+    "discharged_by": "DOCS-COMPACT-9",
+    "ground": "Its discharge condition: 'the rule text, and any close tooling, name the path in use.' DOCS-COMPACT-9 corrected docs/agents/operations.md's integration rule to docs/reports/<card>/integration/gate.json, the path every integration gate since wave 43 uses. No close tooling names either path: `git grep integration-gate` over scripts/, providers/, *.rs and *.sh finds nothing, and no script reads integration/gate.json by a hard-coded path, so the rule was the only place the old path stood."
+  }
+]

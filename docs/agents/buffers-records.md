@@ -304,11 +304,15 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 
 ## Amendments after the 2026-09-19 migration checkpoint
 
-The blocks above are the migration's **preserved checkpoint text**, and
-`docs/reports/docs-structure-compression/verify.py` reconstructs the pre-restructure
-guides from them byte for byte. Editing inside a `<!-- preserved:… -->` block
-therefore breaks that reconstruction, which is standing constraint 21's own
-case: provenance is published **beside** a frozen archive, never by editing it.
+The blocks still marked preserved above are the migration's reconstruction
+text. `docs/reports/docs-structure-compression/verify.py` checked them at that
+card's own checkpoint; it no longer passes against the tree, failing at its first
+row (`AGENTS.md` → `docs/development/architecture.md`), so the markers pin
+nothing mechanically (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`). Edit such a
+block only to correct or compact the current rule, and move its migration text,
+markers included, verbatim into a checkpoint. No block on this page has been
+edited; wave 45's compaction of other pages is in the
+[wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md).
 Amendments to a rule on this page land here, under the rule's number, and are
 part of the rule — read them with it.
 
@@ -317,15 +321,10 @@ part of the rule — read them with it.
 ### 15k — appended, card `OWNED-FIELD-ROUTE-REACH` (wave 41)
 
 It supersedes nothing above — it makes two of constraint 15k's own sentences
-reachable, which `STABILITY-REEVAL-4` measured they were not.
-
-The copy rule of the sentence "`Copy` of a record declaring an owned field
-refuses whatever the state of its fields" was decided by **four unit tests and
-by nothing else**: `OwnershipOp::Copy` was constructed nowhere outside
-`crates/qcore-core/tests/unit/ownership.rs`, so no `.qcore` program could
-produce the operation the rule refuses, and the opening sentence "a record of
-scalars is a plain **copyable** value" was an assertion this project could not
-check in either direction.
+reachable, which `STABILITY-REEVAL-4` measured they were not: the copy rule
+("`Copy` of a record declaring an owned field refuses whatever the state of its
+fields") and "a record of scalars is a plain **copyable** value", whose
+operation, `OwnershipOp::Copy`, no `.qcore` program could produce before it.
 
 The route now spells the question: `let NAME = NAME;` — **the copy bind** —
 builds `OwnershipOp::Copy` for every name the ledger holds a binding for and

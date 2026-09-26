@@ -56,7 +56,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 5k | [gateway](gateway.md#constraint-5k) | A member release is admitted only as the last use of its place; its summaries are guarded at callers. |
 | 5l | [gateway](gateway.md#constraint-5l) | An intrusive-list iteration is modelled on its original spelling; a specification of an audited body is checked, never trusted. |
 | 6 | [gateway](gateway.md#constraint-6) | C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is… |
-| 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 272 across the pinned 185-unit corpus. A change… |
+| 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 34 across the pinned 185-unit corpus. A change… |
 | 8 | [gateway](gateway.md#constraint-8) | A declared contract must agree with the C the unit declares — in types… |
 | 9 | [gateway](gateway.md#constraint-9) | A fixture prelude is not a production declaration. A fixture result is… |
 | 10 | [gateway](gateway.md#constraint-10) | A store into an object that outlives the call is refused, not escaped.… |

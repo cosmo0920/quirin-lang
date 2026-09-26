@@ -38,10 +38,10 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
-| 45 | [Wave 45 continuation](wave-45-continuation.md) · [Earlier wave 45 records](wave-45.md) |
-| 44 | [Wave 44 records](wave-44.md) |
+| 45 | [Wave 45 continuation](wave-45-continuation.md) · [Earlier wave 45 records](wave-45.md) · [Earliest wave 45 records](wave-45-history.md) · compaction checkpoints: [rules](wave-45-compaction-checkpoints.md), status [part 1](wave-45-compaction-status.md) and [part 2](wave-45-compaction-status-prose.md) |
+| 44 | [Wave 44 records](wave-44.md) · [Earliest wave 44 records](wave-44-history.md) |
 | 43 | [Wave 43 records](wave-43.md); earlier wave-42 and wave-43 paragraphs are in the wave 41 continuation |
-| 41 | [Wave 41 continuation](wave-41-continuation.md) · [Earlier wave 41 records](wave-41.md) |
+| 41 | [Wave 41 continuation](wave-41-continuation.md) · [its earliest records](wave-41-continuation-history.md) · [Earlier wave 41 records](wave-41.md) · [Earliest wave 41 records](wave-41-history.md) |
 | 40 | [Wave 40 records](wave-40.md) · [compaction checkpoints](wave-40-compaction-checkpoints.md) |
 | 39 | [Wave 39 records](wave-39.md) |
 | 38 | [Wave 38 records](wave-38.md) |

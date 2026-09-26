@@ -1,0 +1,5 @@
+It supersedes nothing above — it makes two of constraint 15k's own sentences
+reachable, which `STABILITY-REEVAL-4` measured they were not: the copy rule
+("`Copy` of a record declaring an owned field refuses whatever the state of its
+fields") and "a record of scalars is a plain **copyable** value", whose
+operation, `OwnershipOp::Copy`, no `.qcore` program could produce before it.

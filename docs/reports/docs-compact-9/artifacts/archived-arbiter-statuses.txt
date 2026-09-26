@@ -1,0 +1,18 @@
+w44-assignment-destination-suffix-place {'Safe': 3, 'Unknown': 170, 'Unsafe': 8, 'data_only': 4} {'Safe': 297, 'Unknown': 4528, 'Unsafe': 9} {'leak': 19, 'summary_conflict': 1, 'unknown_alias': 3357, 'unsupported': 45343}
+w44-branch-condition-calls {'Safe': 3, 'Unknown': 135, 'Unsafe': 43, 'data_only': 4} {'Safe': 296, 'Unknown': 4453, 'Unsafe': 85} {'leak': 270, 'summary_conflict': 1, 'unknown_alias': 4457, 'unsupported': 45416}
+w44-c11-generic-selection {'Safe': 3, 'Unknown': 170, 'Unsafe': 8, 'data_only': 4} {'Safe': 301, 'Unknown': 4524, 'Unsafe': 9} {'leak': 34, 'summary_conflict': 1, 'unknown_alias': 3370, 'unsupported': 43854}
+w44-collection-allocation {'Safe': 3, 'Unknown': 168, 'Unsafe': 10, 'data_only': 4} {'Safe': 306, 'Unknown': 4516, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3507, 'unsupported': 43590}
+w44-corpus-callee-summaries {'Safe': 3, 'Unknown': 135, 'Unsafe': 43, 'data_only': 4} {'Safe': 296, 'Unknown': 4453, 'Unsafe': 85} {'leak': 271, 'summary_conflict': 1, 'unknown_alias': 4420, 'unsupported': 45721}
+w44-indirect-call-argument-access {'Safe': 3, 'Unknown': 169, 'Unsafe': 9, 'data_only': 4} {'Safe': 302, 'Unknown': 4522, 'Unsafe': 10} {'leak': 35, 'summary_conflict': 1, 'unknown_alias': 3392, 'unsupported': 43674}
+w44-indirect-chain-access {'Safe': 3, 'Unknown': 135, 'Unsafe': 43, 'data_only': 4} {'Safe': 294, 'Unknown': 4455, 'Unsafe': 85} {'leak': 271, 'summary_conflict': 1, 'unknown_alias': 4407, 'unsupported': 45774}
+w44-leak-pin-audit {'Safe': 3, 'Unknown': 169, 'Unsafe': 9, 'data_only': 4} {'Safe': 299, 'Unknown': 4525, 'Unsafe': 10} {'leak': 21, 'summary_conflict': 1, 'unknown_alias': 4473, 'unsupported': 45412}
+w44-libc-residuals {'Safe': 3, 'Unknown': 170, 'Unsafe': 8, 'data_only': 4} {'Safe': 300, 'Unknown': 4525, 'Unsafe': 9} {'leak': 19, 'summary_conflict': 1, 'unknown_alias': 3357, 'unsupported': 43885}
+w45-callee-summary-cascade {'Safe': 4, 'Unknown': 167, 'Unsafe': 10, 'data_only': 4} {'Safe': 389, 'Unknown': 4433, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3568, 'unsupported': 42924}
+w45-container-root-reach {'Safe': 5, 'Unknown': 168, 'Unsafe': 8, 'data_only': 4} {'Safe': 398, 'Unknown': 4427, 'Unsafe': 9} {'leak': 34, 'summary_conflict': 1, 'unknown_alias': 3571, 'unsupported': 41314}
+w45-fb-backlog-custody {'Safe': 5, 'Unknown': 168, 'Unsafe': 8, 'data_only': 4} {'Safe': 398, 'Unknown': 4427, 'Unsafe': 9} {'leak': 34, 'summary_conflict': 1, 'unknown_alias': 3570, 'unsupported': 41325}
+w45-fb-retry-lifetime {'Safe': 4, 'Unknown': 167, 'Unsafe': 10, 'data_only': 4} {'Safe': 389, 'Unknown': 4433, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3571, 'unsupported': 42702}
+w45-parenthesised-callee {'Safe': 4, 'Unknown': 167, 'Unsafe': 10, 'data_only': 4} {'Safe': 390, 'Unknown': 4432, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3567, 'unsupported': 42699}
+w45-return-expression-families {'Safe': 3, 'Unknown': 168, 'Unsafe': 10, 'data_only': 4} {'Safe': 382, 'Unknown': 4440, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3517, 'unsupported': 43215}
+w45-sub-object-stores {'Safe': 4, 'Unknown': 167, 'Unsafe': 10, 'data_only': 4} {'Safe': 390, 'Unknown': 4432, 'Unsafe': 12} {'leak': 37, 'summary_conflict': 1, 'unknown_alias': 3568, 'unsupported': 42694}
+
+[exit 0]

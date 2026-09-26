@@ -1,0 +1,11 @@
+    protects its saved successor `N` the same way and admits unlinking and
+    releasing the current element. That unlink is constraint 10f's foreign
+    unlink: where 10f's premises hold it gives the body live custody of the
+    element at a fresh site (an exit that still holds it leaks it, a second
+    release is a double release), and otherwise it refuses on its own.
+    Premises, stated not proved: the body does not write or address `C`/`N`
+    (checked lexically; declined otherwise); an element is not an identity the
+    body tracks until a 10f unlink binds it (the function is declined when one
+    call receives both `&X->…` of a name `X` that may bind a tracked identity
+    and the iterated head; that lexical guard does not see an element 10f has
+    bound, `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`); a callee handed
