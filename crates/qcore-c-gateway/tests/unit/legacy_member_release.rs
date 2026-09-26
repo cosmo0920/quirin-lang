@@ -560,8 +560,16 @@ fn interleaved_streams_always_get_their_uncached_answer() {
     assert_ne!(expected[0], expected[1]);
     for round in 0..4 {
         for (tokens, want) in [(&first, &expected[0]), (&second, &expected[1])] {
-            assert_eq!(*super::member_releasing_functions(tokens), *want, "round {round}");
-            assert_eq!(*super::member_releasing_functions(tokens), *want, "round {round}");
+            assert_eq!(
+                *super::member_releasing_functions(tokens),
+                *want,
+                "round {round}"
+            );
+            assert_eq!(
+                *super::member_releasing_functions(tokens),
+                *want,
+                "round {round}"
+            );
         }
     }
 }

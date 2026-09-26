@@ -6735,7 +6735,7 @@
   "workspace_tests": 5840,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 198,
+  "lean_audits": 199,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6843,6 +6843,7 @@
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMemberRelease.lean",
+   "AuditMemoKey.lean",
    "AuditMonkeyWaitProjection.lean",
    "AuditMonkeyWaitSourcePolicy.lean",
    "AuditMutexInvariant.lean",
@@ -6942,7 +6943,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-contract-revision-mode/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
