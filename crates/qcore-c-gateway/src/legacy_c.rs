@@ -12106,6 +12106,7 @@ fn transfer_base(
     // never linked or whose binding no longer agrees with its link. This is the
     // C00 premise in its read direction.
     if let LegacyInstruction::ContractCall {
+        arguments,
         aggregate_reads,
         aggregate_addresses,
         container,
@@ -12142,6 +12143,22 @@ fn transfer_base(
                 variable: owner.to_owned(),
             },
         });
+        // Card W45-FB-BACKLOG-CUSTODY: the refused call hands on what it was
+        // handed (`refused_operands::withdraw_refused_call`), before the
+        // bindings are poisoned.
+        refused_operands::withdraw_refused_call(
+            &mut state,
+            arguments
+                .iter()
+                .flatten()
+                .map(String::as_str)
+                .chain(aggregate_addresses.iter().map(String::as_str))
+                .chain(
+                    aggregate_reads
+                        .iter()
+                        .filter_map(|place| crate::aggregate_store::place_owner(place)),
+                ),
+        );
         for pointer in state.pointers.values_mut() {
             pointer.unknown = true;
             pointer.may_be_null = true;

@@ -489,6 +489,34 @@ pub(super) fn withdraw(state: &mut AbstractState, sites: &BTreeSet<usize>) {
     }
 }
 
+/// Card **W45-FB-BACKLOG-CUSTODY** (integration review): a contracted call the
+/// projection refuses *before its effects* — a member-address or bound-read
+/// actual whose aggregate does not resolve (cards O04-B09B10, O04-READ-BOUND)
+/// — is a refused statement, although it reports the unresolved identity
+/// (`UnknownAlias`) rather than `Unsupported`. The call may have published,
+/// stored or released what it was handed, so the live identities its actuals
+/// and the refused aggregates denote carry an unresolved effect, exactly as
+/// [`apply`] marks a refused statement's. Only ever adds to
+/// `unresolved_effect_sites`: it withdraws accusations and discharges nothing,
+/// and the node keeps its `UnknownAlias`, so the function is never `Safe`.
+pub(super) fn withdraw_refused_call<'a>(
+    state: &mut AbstractState,
+    places: impl IntoIterator<Item = &'a str>,
+) {
+    let sites = places
+        .into_iter()
+        .filter_map(|place| state.pointers.get(place))
+        .flat_map(|pointer| pointer.targets.iter().copied())
+        .filter(|site| {
+            state
+                .resources
+                .get(site)
+                .is_some_and(|status| status & LIVE != 0)
+        })
+        .collect::<BTreeSet<_>>();
+    withdraw(state, &sites);
+}
+
 /// The rule: after a node's transfer, if the node refused its statement, the
 /// identities the statement handed on before it ran carry an unresolved
 /// effect.
