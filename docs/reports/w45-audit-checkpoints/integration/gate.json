@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-AUDIT-CHECKPOINTS on merge 88000037 (onto main 12553fb3, after all wave-45 cards through W45-GATEWAY-MEMO-KEY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5921 core Rust passed / 0 failed / 11 ignored over 321 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 204 Lean audits; 358 root Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card adds crates.io dependencies (postcard, serde_norway, toml) and a build.rs in crates/qcore-audit; 02-test (cargo test --workspace --no-run) compiled them without a network fetch failure, confirming the offline build step passed. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts (32-identity) exits 0 with verdict_bearing_identical true; the contracts sidecar differs only by the two W45-USER-CONTRACT-PLUGINS wording leaves already on main (contract_revision.meaning, pending_human_review.meaning), matching docs/reports/w45-user-contract-plugins/integration/contracts-raw-diff.log exactly (see integration/34-contracts-raw-diff.log), so the baseline does not move.",
+ "workspace_tests": 5921,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 204,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

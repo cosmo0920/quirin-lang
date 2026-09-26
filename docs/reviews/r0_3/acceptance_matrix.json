@@ -6732,7 +6732,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Standing and provider gate for W45-AUDIT-CHECKPOINTS after merging main 12553fb3 (W45-FB-BACKLOG-CUSTODY, W45-USER-CONTRACT-PLUGINS, W45-GATEWAY-MEMO-KEY), measured by the card in its own worktree at 640d9ace with CARGO_INCREMENTAL=0, after the corpus measurements and never beside them; every exit captured to a file, not piped (private/gate-merged/). scripts/run_test_binaries.py: 309 units, 319 summaries, 5921 passed / 0 failed / 11 ignored. Provider workspace (cargo test --locked --offline): 129 passed / 0 failed / 1 ignored over 43 summaries. 204 Lean audits (this card adds AuditCheckpoints.lean). scripts/tests: 358 tests, first run 1 failure (test_the_derived_facts_are_recomputed_rather_than_carried: the committed matrix counted 203 Lean audits against 204 on disk), then the matrix was regenerated with this gate file and the suite rerun. providers/tests 15 OK. fmt and clippy (core and provider), both reevaluation examples, package build and verify (qcore.libevent), the offline workspace build and cargo clean --profile dev exit 0. Clang recorded beside this file in the same worktree. MOVES=no: the corpus arbiter's diagnostics are byte-identical to docs/reports/w45-fb-backlog-custody/integration/artifacts.",
+  "note": "Integration gate for W45-AUDIT-CHECKPOINTS on merge 88000037 (onto main 12553fb3, after all wave-45 cards through W45-GATEWAY-MEMO-KEY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5921 core Rust passed / 0 failed / 11 ignored over 321 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 204 Lean audits; 358 root Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card adds crates.io dependencies (postcard, serde_norway, toml) and a build.rs in crates/qcore-audit; 02-test (cargo test --workspace --no-run) compiled them without a network fetch failure, confirming the offline build step passed. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts (32-identity) exits 0 with verdict_bearing_identical true; the contracts sidecar differs only by the two W45-USER-CONTRACT-PLUGINS wording leaves already on main (contract_revision.meaning, pending_human_review.meaning), matching docs/reports/w45-user-contract-plugins/integration/contracts-raw-diff.log exactly (see integration/34-contracts-raw-diff.log), so the baseline does not move.",
   "workspace_tests": 5921,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
@@ -6949,7 +6949,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-audit-checkpoints/gate-merged/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-audit-checkpoints/integration/gate.json)"
  },
  "named_followups": [
   {
