@@ -283,7 +283,27 @@ the provider gate (constraint 18), and `pin --check` at both revisions. Each
 exit is captured to its own file, `CARGO_INCREMENTAL=0`, `cargo clean
 --profile dev` after the test step. Commands, exits and counts are in
 [gate.json](gate.json); logs are under the worktree-private
-`private/crr/gate/`.
+`private/crr/gate-final/`.
+
+Final gate on `0c44b274` (merged with `main` `675e7289`): every step exits 0
+except the provider test step.
+
+| Step | Result |
+|---|---|
+| submodule, fmt, clippy, both reevaluation probes, docs index, `contracts.py check`, package build and verify, provider fmt and clippy, release build | 0 each |
+| Rust suite (`scripts/run_test_binaries.py`) | 0: 310 units, 320 summaries; **5,937 passed**, 0 failed, 11 ignored |
+| Lean audits | 0: **205** passed |
+| Root Python tests; `providers/tests` | 0: **358**; **15** |
+| `pin --check` at `046accf6` and `66910c10`, `pin --verify-contracts` | 0 each |
+| Provider `cargo test` | **101**: one `configured_audit` test (`checked_function_contracts` 1 against 2); a rerun failed a different test of the same binary; the binary passes single-threaded (7/7), and a `--no-fail-fast` rerun of the step exits 0 with **129 passed**, 0 failed, 1 ignored |
+
+The provider failure is load-sensitive and not this card's: the fixture's
+verifier-plugin process runs under a 5 s timeout, the host's load average was
+40–47 on 16 CPUs from concurrent cards, the failing test varies between runs,
+and the card touches no provider or plugin code. The pre-merge gate on
+`e0bb2063` (discarded) passed the provider tests; it failed the root Python
+suite on the matrix's derived counts, repaired by regenerating them, and one
+`package_identity` test on an `ETXTBSY` race that passes in the final gate.
 
 ## 11. Follow-ups ([followups.json](followups.json))
 
