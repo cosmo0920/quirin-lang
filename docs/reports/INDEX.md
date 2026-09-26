@@ -902,6 +902,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |
 
+| [w45-test-hygiene](w45-test-hygiene/README.md) | W45-TEST-HYGIENE: tree-walking tests read tracked files only |
+
 | [w45-tsan-rows-load-sensitive](w45-tsan-rows-load-sensitive/README.md) | W45-TSAN-ROWS-LOAD-SENSITIVE: why two TSan rows failed under load, and the fix |
 
 | [w45-user-contract-plugins](w45-user-contract-plugins/README.md) | W45-USER-CONTRACT-PLUGINS: user-defined contracts and checker plugins, with a four-value verdict |

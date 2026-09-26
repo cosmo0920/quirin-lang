@@ -32,7 +32,7 @@ use qcore_verifier_host::{
     compose_verification, compose_verification_with_inventory,
 };
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::Arc;
 
 #[path = "../../../tests/support/tracked_files.rs"]
