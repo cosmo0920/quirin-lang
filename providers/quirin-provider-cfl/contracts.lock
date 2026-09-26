@@ -38,6 +38,38 @@
       ]
     },
     {
+      "function": "cfl_sds_len",
+      "module": "cfl/sds_lifetime.qcore",
+      "contract_sha256": "8cb934c5b6d2d63ffcc58ce03989d5d76c333552869f68cbb747c9ff04c0067c",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_sds.h",
+              "kind": "declaration",
+              "declaration_sha256": "26d8bc168ca0d1dafc92f050e1ccdcfe104583723dc4d3285c80caff6c807738"
+            },
+            {
+              "path": "lib/cfl/src/cfl_sds.c",
+              "kind": "definition",
+              "declaration_sha256": "26d8bc168ca0d1dafc92f050e1ccdcfe104583723dc4d3285c80caff6c807738",
+              "body_sha256": "21a6d4eca465b49bae36c3c9d071fcc8fdb1068b1953168d0af573b4f44d2d98"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cfl_time_now",
       "module": "cfl/time.qcore",
       "contract_sha256": "6f320509501456d9b499e641f0b8ec8e7c905ad4c9e2ef0e2264c81c6d9f8466",

@@ -351,6 +351,20 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("vsnprintf", 4),
         ("vprintf", 2),
         ("strerror", 1),
+        // Card W46-EXTERNAL-CALLEE-CONTRACTS: nine external callees, each the
+        // neutral element read off its own body at both audited revisions.
+        // `fcntl` carries the literal premise `cmd == 2` (`F_SETFD`) and a
+        // variadic data tail, neither of which is a mode; the other eight are
+        // pinned in their own library crates.
+        ("fcntl", 2),
+        ("mk_utils_libc_error", 3),
+        ("rd_atomic32_get", 1),
+        ("cfl_sds_len", 1),
+        ("mpack_finish_map", 1),
+        ("mpack_finish_array", 1),
+        ("mpack_write_true", 1),
+        ("mpack_write_false", 1),
+        ("mpack_write_bin", 3),
     ] {
         old.insert_contract(
             name,
@@ -1280,9 +1294,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // the already-selected `monkey/intrusive_list.qcore`. Rejected unchanged.
     // 49 -> 50 and 162 -> 174 by card W45-FB-BACKLOG-CUSTODY: the twelve
     // checked specifications of `fluent_bit/storage_backlog.qcore`.
+    // 174 -> 183 by card W46-EXTERNAL-CALLEE-CONTRACTS: nine neutral
+    // declarations appended to already-selected modules (`libc/unistd.qcore`,
+    // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
+    // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
+    // unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (50, 174, 216)
+        (50, 183, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

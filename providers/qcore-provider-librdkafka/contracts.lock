@@ -70,6 +70,33 @@
       ]
     },
     {
+      "function": "rd_atomic32_get",
+      "module": "librdkafka/memory.qcore",
+      "contract_sha256": "979f962b74a71d79acff900e1f77465979ddb042cfe49876fbb5ef6480821cb0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdatomic.h",
+              "kind": "definition",
+              "declaration_sha256": "4c2ddf521f0c19c01cc80574e5c54437254e8c5a60181ef975ce506927565add",
+              "body_sha256": "43cb7ff9a3b9ff81de09873915070b7cd1251fc0d3a87bee26f02ea7dd13c54b"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_calloc",
       "module": "librdkafka/memory.qcore",
       "contract_sha256": "d1aaf76a5219a10c9de2dbefea47348efa821ef76441046dac5312e91aed7d50",

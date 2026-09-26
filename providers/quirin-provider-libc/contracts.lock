@@ -72,6 +72,11 @@
       "contract_sha256": "1b9d7b267b8bb232deffdb9499168cbdf384907ae80069ad912e64fe9e2cd1d4"
     },
     {
+      "function": "fcntl",
+      "module": "libc/unistd.qcore",
+      "contract_sha256": "6127a36d7da8666bdb538ee4aaf9bd53020d2ad0a5fe7bccb6f515eeaa57481d"
+    },
+    {
       "function": "fflush",
       "module": "libc/stdio.qcore",
       "contract_sha256": "3bbe7b6aa1ebb59aef2125a06342cc125a181d01619d23ef3a392d75bdc4fe53"

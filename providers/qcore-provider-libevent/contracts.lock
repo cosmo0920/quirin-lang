@@ -188,6 +188,33 @@
           ]
         }
       ]
+    },
+    {
+      "function": "mk_utils_libc_error",
+      "module": "monkey/logging.qcore",
+      "contract_sha256": "72ea3ca55194e4970fb552b6d32a20c613aa390d43ea7c910f96fa26d3322d0c",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_utils.h",
+              "kind": "definition",
+              "declaration_sha256": "3d82fd0ca3a63a2a2c16e765b038b64e0fcbb4677eb37bd2738f58ee2e6673b4",
+              "body_sha256": "2fc976c65d6682f3ee9a5cb5a6d27b14f74167c0a81febe98fbb9e213823488e"
+            }
+          ]
+        }
+      ]
     }
   ],
   "flexible": []

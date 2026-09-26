@@ -124,3 +124,46 @@ contract {
     ensures normal resource_released(s, nullable);
     ensures normal resource_return_none();
 };
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `cfl_sds_len`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`). With
+// `mpack_write_bin` (`mpack/writer.qcore`) it is the last uncontracted call of
+// `pack_bytes` (`lib/ctraces/src/ctr_encode_msgpack.c:88-96`); its other five
+// call sites sit in functions with other blockers.
+//
+// ## The body, read from `lib/cfl/src/cfl_sds.c:193-200`
+//
+//     size_t cfl_sds_len(cfl_sds_t s)
+//     {
+//         if (s == NULL) {
+//             return 0;
+//         }
+//
+//         return (size_t) CFL_SDS_HEADER(s)->len;
+//     }
+//
+// It reads the length field of the string's header (a null string reads as
+// length zero) and returns it. It allocates, frees, stores and transfers
+// nothing: `s` is `resource_borrowed` and the `size_t` result is
+// `resource_return_none()`.
+//
+// ## ABI (constraint 8)
+//
+// `lib/cfl/include/cfl/cfl_sds.h:69` declares `size_t cfl_sds_len(cfl_sds_t s);`
+// with `typedef char *cfl_sds_t;` (`:32`): one object-pointer level,
+// `ptr<mut, u8>`, and `size_t` is `usize` under LP64. `lib/cfl/src/cfl_sds.c`
+// is not an analysed unit, so no body is checked against this declaration.
+//
+// NOT CLAIMED: that `s` addresses a live CFL string (the gateway's own
+// borrowed-liveness precondition decides that at each call site), or anything
+// about the header's contents.
+
+// --- the CFL dynamic string's length ----------------------------------------
+extern fn cfl_sds_len(s: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
