@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3cbd4f2ccd750000/docs/reports/docs-structure-compression/verify.py", line 42, in <module>
+    assert hashlib.sha256(payload.encode()).hexdigest() == row["sha256"], row
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'source': 'AGENTS.md', 'start': 3917, 'end': 10089, 'path': 'docs/development/architecture.md', 'key': 'architecture', 'sha256': '1b1c0fbaf5ca40c313ded135dc945853d8e3d04a7d8c510d019f05387604e52a', 'transforms': []}
+[exit 1]

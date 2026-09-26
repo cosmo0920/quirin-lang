@@ -1,0 +1,15 @@
+   Two precedents fix how the arms read. The **nullability-refinement** arm
+   keeps a faithful declaration: `rd_kafka_mem_free` declares
+   `Released{nullable}` where W4 derives `Released{nonnull}`, and `rd_free(NULL)`
+   reaches `free(NULL)`, so the declaration governs every call site and the
+   defining unit's own function stays `Unknown` — the gate working; declaring
+   `nonnull` to silence it would assert a precondition the body does not have
+   (constraint 4; card `W36-CORPUS-CONTRACTS-3`, `w36-corpus-contracts-3` §5.2). The **withdrawal** arm also
+   fails closed on a *reader* boundary, not only on a disagreement: the ABI
+   reader resolves a function-pointer **typedef** (the form
+   `CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF` taught it) but not an **inline
+   function-pointer parameter declarator**, so such a declaration
+   (`rd_kafka_topic_partition_list_sort`, card `W37-CORPUS-CONTRACTS-4`,
+   leaf-neutral) is withdrawn at every call site with
+   `abi-unreadable-declaration` (`LOADER-ABI-INLINE-FNPTR-DECLARATOR`,
+   `LOADER-ABI-UNDECLARED`'s neighbour).

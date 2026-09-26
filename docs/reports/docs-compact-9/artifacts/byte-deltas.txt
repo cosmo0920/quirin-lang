@@ -1,0 +1,35 @@
+docs/agents/gateway.md           4-4           84    337    +253  header
+docs/agents/gateway.md           147-230     6109   4858   -1251  Constraint 5c
+docs/agents/gateway.md           425-431      528    843    +315  Constraint 5l, the element-custody sentence and premise
+docs/agents/gateway.md           473-547     5491   2867   -2624  Constraint 7
+docs/agents/gateway.md           551-551       38      0     -38  Constraint 8, the preserved start marker
+docs/agents/gateway.md           581-604     1613   1074    -539  Constraint 8, the two first-exercise paragraphs
+docs/agents/diagnostics.md       43-43         47      0     -47  Diagnostics namespaces, the preserved start marker
+docs/agents/diagnostics.md       117-117     2916   1744   -1172  Table row `Q051`–`Q057`
+docs/agents/diagnostics.md       119-119     2222   1758    -464  Table row `Q068`–`Q079`
+docs/agents/diagnostics.md       120-120     2092   1508    -584  Table row `Q080`–`Q089`
+docs/agents/diagnostics.md       121-121     2150   1733    -417  Table row `Q090`–`Q096`
+docs/agents/diagnostics.md       128-128     3113   1940   -1173  Table row `Q600`
+docs/agents/diagnostics.md       137-137       45      0     -45  Diagnostics namespaces, the preserved end marker
+docs/agents/diagnostics.md       143-147      364    978    +614  The amendments preamble
+docs/agents/buffers-records.md   319-328      624    383    -241  15k amendment (`OWNED-FIELD-ROUTE-REACH`), its opening two paragraphs
+docs/agents/buffers-records.md   307-313      510    812    +302  The amendments preamble
+docs/STATUS.md                   3-12        1298   1105    -193  The provenance paragraph
+docs/STATUS.md                   25-25       1199    720    -479  Coverage row: Cycle 19 units
+docs/STATUS.md                   26-26       5037   1469   -3568  Coverage row: Projected functions
+docs/STATUS.md                   27-27       4847    613   -4234  Coverage row: Corpus diagnostics
+docs/STATUS.md                   28-28       1375    728    -647  Coverage row: Leak classification
+docs/STATUS.md                   29-29       1219    618    -601  Coverage row: Uncontracted-call refusals
+docs/STATUS.md                   30-30        506    776    +270  Coverage row: Condition-call refusals
+docs/STATUS.md                   31-31       1720    579   -1141  Coverage row: Indirect-access refusals
+docs/STATUS.md                   33-33       1297    551    -746  Coverage row: Return-expression refusals
+docs/STATUS.md                   34-34        378    252    -126  Coverage row: Unit reasons
+docs/STATUS.md                   42-42        979    765    -214  Coverage row: Contract corpus
+docs/STATUS.md                   44-44        797    878     +81  Coverage row: Native descriptor observation
+docs/STATUS.md                   45-45       2085   1342    -743  Coverage row: Fluent Bit system slice
+docs/STATUS.md                   48-48       2935    496   -2439  Coverage row: Registered follow-ups
+docs/STATUS.md                   65-78       1143   1050     -93  The raw-units paragraph
+docs/STATUS.md                   97-139      3328   2158   -1170  Latest validated gate, and the provider-contract narrative
+docs/STATUS.md                   141-189     4172    361   -3811  The follow-up chronicle
+
+[exit 0]

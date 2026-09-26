@@ -1,0 +1,34 @@
+{
+ "file": "docs/agents/buffers-records.md",
+ "base": "8c1f15eb",
+ "section": "buffers-records",
+ "heading": "`docs/agents/buffers-records.md`",
+ "edits": [
+  {
+   "start": 319,
+   "end": 328,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/br_15k.txt",
+   "moved": [
+    [
+     319,
+     328
+    ]
+   ],
+   "title": "15k amendment (`OWNED-FIELD-ROUTE-REACH`), its opening two paragraphs",
+   "note": "The rule keeps what the amendment makes reachable; the account of the unit tests moved."
+  },
+  {
+   "start": 307,
+   "end": 313,
+   "with": "docs/reports/docs-compact-9/artifacts/replacements/br_pre.txt",
+   "moved": [
+    [
+     307,
+     313
+    ]
+   ],
+   "title": "The amendments preamble",
+   "note": "Replaced with the same statement as `diagnostics.md`'s (integrator decision)."
+  }
+ ]
+}

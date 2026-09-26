@@ -1,0 +1,67 @@
+# Wave 45 records, earliest part
+
+[Development table of contents](../../../DEVELOPMENT.md) · [History index](README.md) · [Later records](wave-45.md)
+
+> The oldest paragraphs of [wave-45.md](wave-45.md), moved here verbatim at a
+> paragraph boundary by `DOCS-COMPACT-9` (wave 45) so that page stays below
+> 32 KiB; nothing was reworded. Counts and observations describe their
+> recorded dates. Current rules and headline status live in
+> [AGENTS.md](../../../AGENTS.md) and [STATUS.md](../../STATUS.md); each report
+> owns its evidence.
+
+**`W45-PARENTHESISED-CALLEE` (2026-09-26, base `1db9a569`).** A soundness fix in the legacy-C gateway ([report](../../reports/w45-parenthesised-callee/README.md), gateway constraint 10c). Every lexical call reader keyed on the pair `NAME (`, so a callee spelled any other way was invisible and its statement fell through to the classifier's final `NoOp`: `q_free(p); (q_free)(p);` was a certified `Safe` double release, `(zz)(p)` an uncontracted call skipped, `(q_free)(p)` a release reported as a leak, and `(k_close)(h, 0)` escaped the new review hold. The same arm swallowed a `for` init or increment clause, whose grouping tokens `split_for_clauses` strips (`q_free(p)` read as `q_free p`). Rule 1 rewrites `(`ᵏ`NAME`)ᵏ`(` to `NAME (` in every function body right after tokenizing, before the hold, both withdrawals, W4 and the certificate recheck read a call, and only where the group is a callee (not a typedef cast from a file-scope declarator reader that also catches attribute-suffixed and function-pointer typedefs, not an argument list); rule 2 refuses a call applied to anything but a name wherever the position (statement, condition, desugared condition, return) would otherwise be admitted; rule 3 refuses a `for` clause whose stripping is unfaithful unless it was already refused. Measured on the pinned corpus: no body calls through `(f)(x)` (the rule-1 census rewrites 0 sites; a first census, before the declarator reader, found 6,931 vector-type casts such as `(__m128i)(x)` misread as calls, the refusing direction, and led to it), and rule 3 refuses 5 clauses (4 `RD_MAP_FOREACH_ELEM` headers whose `rd_map_iter_*` calls were dropped, 1 `TAILQ_FOREACH` increment) in 5 functions already Unknown: 0 function or unit moves, leak 37, unknown_alias 3,568 → 3,567, unsupported 42,694 → 42,699. Lean `QCore.ParenthesisedCallee` (22 theorems). The `(k_close)` hold is pinned in `contract_deferred_review.rs`. Registered `W45-FOR-CLAUSE-ORIGINAL-SPELLING`, `W45-CALLEE-EXPRESSION-FORMS` and `W45-CALLEE-CAST-LEXICAL-PREMISE`.
+
+**`W45-CONTRACT-DEFERRED-REVIEW` (2026-09-26, base `6bd9b383`).** A resource-v1 contract, or one clause of it, can be marked as awaiting human review: `requires resource_review_pending("REASON"[, "OWNER"]);` or `ensures normal resource_review_pending(CLAUSE, "REASON"[, "OWNER"]);` ([report](../../reports/w45-contract-deferred-review/README.md), contract spec C06.1, grammar G05). The loader validates a marked declaration total-or-reject and then withholds it (`ResourceContracts::pending_review`, never the function map), so it discharges nothing and accuses nothing; C06 gains the status `PendingHumanReview` rather than reusing `Proposed`, and §L21.1 the eighth reason category `awaiting-human-review` (analyser subject), which a unit summary naming a held call takes ahead of every other. A clause-level marker holds the whole contract, because a v1 contract is applied as one conjunction and dropping one clause would let weaker ones decide. The gateway rewrites every call site of a pending callee to a marked undeclared name (the LOADER-ABI technique), the extern-call route's `Q023` names the review, and `quirin-audit current`/`contracts` and the arbiter publish a `pending_human_review` section with a console tally. Inheritance copies markers with clauses. `qcore-schemas` 14.0.0 → 15.0.0 (two exhaustive variants). Lean `QCore.ContractDeferredReview` (17 theorems). No production contract is marked: the arbiter's diagnostics are byte-identical to the W45-SUB-OBJECT-STORES baseline and the contract sidecar differs by exactly the additive key (`baseline_identity.py --additive-field`). Registered five `W45-REVIEW-*` follow-ups.
+
+**`W45-FB-BACKLOG-FAULT-INJECTION` (2026-09-26, base `6bd9b383`).** Native fault-injection observations for the two priority-1 backlog candidates the Codex accounting investigation named, on a real Fluent Bit build ([report](../../reports/w45-fb-backlog-fault-injection/README.md)). Source `864c3d97` cloned with `--no-hardlinks` and built twice with Clang 21.1.8 (Debug sha256 `ea5f21be…`; Debug+ASan `10392a47…`), the binary's `--version` embedding the pin, no source change. A filesystem backlog of 13 chunks fanned out to two output queues (one physical chunk shared) was the fixture, restored pristine before every watchdogged run. `FB-AUDIT-03-ZERO-PROGRESS` is **observed-local**: gdb forcing `cb_queue_chunks`' `cio_chunk_up_force` (`sb.c:633`) to return `CIO_ERROR` for every nonempty head made the collector enter once and never return across 400 interceptions (200 passes × 2 queues), while the valid-head control (15 enters/15 returns, drains 13) and the `CIO_CORRUPTED` control (removes wrappers, yields) both yield. `FB-AUDIT-03-PARTIAL-FANOUT` is **observed-local**: forcing the second wrapper's `flb_calloc` (`sb.c:121`) to fail during segregation left the first output's wrapper charged on a chunk that `sb_segregate_chunks` (`sb.c:472`) then freed (`cio_chunk.c:133`), and the next collector pass read the freed name — an ASan heap-use-after-free; the no-fault control is clean (26 wrappers, 0 ASan errors). Both are injected-premise local observations, not upstream defect or production-failure claims; no analyzer/contract/Lean change and no Quirin verdict moves. `FB-AUDIT-03-LEDGER-BOUND` and `FB-AUDIT-03-CROSS-OUTPUT-EVICTION` stay open with discharge conditions; `FB-BACKLOG-CUSTODY`, `FB-BACKLOG-ACCOUNTING` and `FB-ENGINE-PROGRESS` stay open.
+
+
+**`FB-SYSTEM-AUDIT-CARDS` (2026-09-26, base `9a380045`).** Three bounded investigations execute the user-selected system-audit direction beside ongoing analyzer implementation: source/build coverage, retry lifetime, and backpressure/accounting ([report and resume queue](../../reports/fb-system-audit-cards/README.md)). Eight reviewed Fluent Bit files at `864c3d97` match their historical `66910c10` file bytes and all 15 retained compile records preprocess, but only `flb_input_chunk.c` occurs in the archived 185-unit generic audit (64 functions: 9 Safe / 55 Unknown); the other seven files are absent rather than Unknown. Retry review records four candidates and a stubbed exact-function experiment observing timer retention on request-allocation failure; accounting review records conditional no-progress and partial fan-out cleanup candidates with explicit premises. No full-production defect, new verdict, Rust/Lean semantic implementation closure or throughput guarantee is claimed. Sol 6 medium handled the delegated investigations; an Astra medium callback experiment was tool-rejected before evidence. Each card preserves source hashes, commands, follow-ons and resume instructions; the report owns the combined standing gate and its actual outcomes.
+
+
+**`W45-RETURN-EXPRESSION-FAMILIES` (2026-09-25, base `b160d765`).** A re-census first: on main's baseline the return-position refusal is 495 leaves on 417 Unknown functions and the only reason of 147, mostly accessors refused for their operand's member typing ([report](../../reports/w45-return-expression-families/README.md), frozen [prediction](../../reports/w45-return-expression-families/PREDICTION.md)). Two families are admitted in `legacy_return_family.rs`. In a function whose definition declares a scalar value result, a return expression that is a read (no call, write, comma, brace or unary `&`; no tracked descriptor; untracked or scalar names, and a name the body may bind only as the root of one dereference C always evaluates) lowers to a typed read over its dereferenced bases and a `NoOp` exit: the value carries nothing. A cast of a whole call is classified as W4 classifies the call: a refusal is lowered to itself, a `None` result admitted, an `Owned` result only under pointer casts of a declared object pointer, escaping its fresh site; a derived or reallocated result under a cast, an integer cast of an owned one and every pointer-valued read keep the refusal. Lean `QCore.ReturnExpressionFamilies` (23 theorems). Arbiter: BEFORE byte-identical; 76 functions Unknown → Safe (72 sole-blocked, 4 callers of a newly summarized accessor), none to provisional Unsafe, units unchanged, leak 37 preserved; the refusal falls to 305 / 249 / 69; all 405 removed and 40 added leaves attributed. Retired `W43-RETURN-CALL-UNDER-CAST` and `W43-RETURN-TYPE-OPERATOR`; registered `W45-RETURN-POINTER-RESULT-READS` and `W45-RETURN-BOUND-BASE-POSITIONS`. The census-sink guard found W44's `QCORE_CALL_ARGUMENT_CENSUS` unlisted; it is listed now.
+
+**W45-CALLEE-SUMMARY-CASCADE (2026-09-26).** A cascade census of the 9,200
+uncontracted-call leaves on Unknown functions ranks each callee, and each
+blocker family of the callee bodies, by the Unknown functions its validation
+would unblock through summary chains: one callee unblocks at most 12, a
+cross-unit route over existing `Safe` bodies 2, and the indirect-access family
+186, most of it sub-object stores and return expressions owned by sibling
+cards. The card models the destructor body the census surfaced (gateway
+constraint 5k, `legacy_member_release.rs`, `QCore.MemberRelease`). Its first
+version read a released member as untracked and certified a double release
+`Safe`; the integration review returned it. A member release is now admitted
+only as the last use of its place: the base is a formal never copied, the
+place is released once and only null-tested before, no loop or `goto` can
+repeat it, and the base is released afterwards on every path, so a summary
+releases its formal. A pointer member null test is the typed read of its base,
+every dereferencing null test now obliges its bases (closing the pre-existing
+O04-B08 hole `AGGREGATE-NULL-TEST-AFTER-RELEASE`), and calls to undeclared
+unit callees that may release through a formal refuse an actual owning
+sub-custody. The arbiter reproduces the baseline byte for byte, then moves 7
+functions and `cio_error.c` Unknown → Safe with all 350 changed leaves
+attributed; no function leaves `Safe` and no leak or violation leaf moves; the
+sole-blocker population goes 412 → 411. The 110 releases the premises refuse
+and the typed reader's typedef limits (254 actuals) are registered.
+[Report](../../reports/w45-callee-summary-cascade/README.md).
+
+**W45-SUB-OBJECT-STORES (2026-09-26).** Censused the sub-object stores gateway
+constraint 5i refuses (10,490 distinct statements, 8,391 gate-refused, 6,912
+in Unknown functions; at most 64 of the 388 sole-blocked functions freeable)
+and lowered them as `LegacyInstruction::SubObjectStore` through a resolved
+typed base (`p->f`, `(p)->f`, `a[i].f`, `s.f`, `(&s)->f`, typedef-defined
+structs through `TypedAccessModel::record_tag`), admitting only stores that
+move no custody; every failing premise is the gate's refusal byte for byte, so
+a refused store still hands on. The escape of an owned identity into a
+caller-reachable record was implemented and withdrawn after three arbiter runs:
+it produced artifact leaks through derived summaries of stored formals
+(`cfl_list_add`, `mk_list_init`) and `release_after_escape` in `cio_file_open`,
+and it broke the O04-B08 and W44-LEAK-PIN-AUDIT pins that such a transfer is
+invisible at the call site. Result: `destroy_id` Unknown → Safe, `unsupported`
+43,590 → 43,360 (223 store leaves, 7 callee-summary leaves, nothing added),
+indirect family 17,710 / 3,324 / 388 → 17,487 / 3,307 / 387, leak 37 and every
+violation leaf unchanged. Lean `QCore.SubObjectStore` (18 theorems). Retired
+`W44-SUB-OBJECT-STORE-REFUSED`; registered seven measured residuals, the
+reader's (incomplete records, chains, roots, prefixes) dominating.
+[Report](../../reports/w45-sub-object-stores/README.md).
+

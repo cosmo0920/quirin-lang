@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for DOCS-COMPACT-9 on merge 0786584a (onto main 200fdcbe, after STABILITY-REEVAL-5 and every earlier wave-45 card), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5995 core Rust passed / 0 failed / 11 ignored over 331 summaries across 319 units (runner totals line: 'test binaries: 319 units, 331 summaries; 5995 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out', matching the strict `^test result: ` count and sums exactly); 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 207 Lean audits; 364 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran and 32-identity.log against docs/reports/w45-container-root-reach/integration/artifacts shows verdict_bearing_identical true with the diagnostics artifact byte_identical true (identity-vs-container-root-reach-baseline.json); this is a documentation-only card (MOVES=no) so the baseline does not move. The contracts artifact alone differs byte-for-byte from the pinned baseline; leaf_diff.py (34-contracts-raw-diff.log) shows the only differing top-level key is refuted_contracts, with entries: [], refuted_declarations: 0 and phases: 1, so it is accepted as non-verdict-bearing.",
+ "workspace_tests": 5995,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "lean_audits": 207,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -2,6 +2,10 @@
 
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
+Per-card history compacted out of rules 5c, 7 and 8 at wave 45, and 5l's corrected
+sentence, are kept verbatim
+in the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#gateway),
+which is not a second authority.
 
 <a id="constraint-4"></a>
 
@@ -144,7 +148,6 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 
 <a id="constraint-5c"></a>
 
-<!-- preserved:constraint-5c:start -->
 5c. **A constant `do … while (0)` is sequential composition, and the key is
     the token.** `do S while (0)` executes `S` exactly once (C11 §6.8.5.2),
     so its CFG header has `continuation` as its **only** successor and the
@@ -167,29 +170,23 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `condition_always_true: condition.is_empty()` sets the flag where the
     `for` header is read, and `self.nodes[header].successors = if
     *condition_always_true` is where it drops `continuation` from the
-    header's successors (lines 3325 and 5177 at `c33c7640`; the wave-36
-    close's 3312 and 5161 had already been moved by `SCALAR-ROUTE-EXIT-EDGE`,
-    so the citation is by identifier and the line numbers name the commit
-    they were measured at — `DOCS-COMPACT-7` §7.3 item 5). It is exact
-    (C11 §6.8.5.3) and `break` still reaches `continuation`, but it carries
-    neither a Lean statement nor a pin, and it is not owned by card
+    header's successors (cited by identifier, because line numbers drift: `DOCS-COMPACT-7` §7.3
+    item 5). It
+    is exact (C11 §6.8.5.3) and `break` still reaches `continuation`, but it
+    carries neither a Lean statement nor a pin, and it is not owned by card
     `C-GATEWAY-CONSTANT-DO-WHILE` (`FOREVER-FOR-EXIT-EDGE-UNOWNED`).
-    The 32 `unmodeled call,
-    aggregate or indirect access in do-while condition` leaves are a different
-    question and stay refused — measured unmoved at 32 across the re-pin.
-    Proved as `QCore.ConstantDoWhile`: `constant_do_while_is_its_body` the
+    The `unmodeled call, aggregate or indirect access in do-while condition`
+    leaves (28 on the current baseline, 32 at the card's re-pin) are a
+    different question and stay refused. Proved as `QCore.ConstantDoWhile`:
+    `constant_do_while_is_its_body` the
     `≡ S` equality, `removing_the_back_edge_only_removes_paths` and
     `the_successor_list_never_grows` the conservativity for **every**
     condition, `the_repeated_release_is_a_path_the_c_does_not_have` the
-    non-vacuity. Separately, and **not owned by that card**, a pre-existing
-    route already decides a `do`-`while` from a *modelled scalar value*; it
-    answers conservatively wherever measured and is pinned by
-    `a_modeled_scalar_condition_is_a_separate_pre_existing_route`
-    (`CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED`).
-    That neighbour is now owned by card `SCALAR-ROUTE-EXIT-EDGE` (wave 37), and
-    "conservatively wherever measured" was measured only on positively spelled
-    headers. The value route decides a loop header from a **modelled value**,
-    and deleting a loop header's **exit** edge orphans the function's exit
+    non-vacuity.
+    A separate route decides a loop header from a **modelled scalar value**
+    (pinned by `a_modeled_scalar_condition_is_a_separate_pre_existing_route`,
+    owned by card `SCALAR-ROUTE-EXIT-EDGE`, wave 37). Deleting a loop header's
+    **exit** edge orphans the function's exit
     node, so `report_leaks` never runs and `classify_diagnostics` returns
     `Safe` — measured for `while (!flag)`, `while (flag == 0)`, all three loop
     kinds and the known-non-null arm, swallowing a double release after the
@@ -203,31 +200,22 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     than inside the work list, because the arm is reached on intermediate
     iterates (constraint 6). The sibling **back** edge is deliberately
     unchanged (`SCALAR-ROUTE-BACK-EDGE-UNDEFENDED`), an `if`'s path sensitivity
-    is unchanged (154 corpus prunings), and `for (;;)` carries no exit
+    is unchanged, and `for (;;)` carries no exit
     successor for the rule to reach. Proved as
     `QCore.ScalarRouteExitEdge.the_exit_edge_is_never_removed`, with
     `the_rule_never_promotes_to_safe` for the other direction. Finally, removing a back edge
     **makes a function acyclic**, and that changes which route
     `legacy_joined_provenance::derive` takes for it (constraint 10b) — so this
-    rule silently changes *that* pre-pass's reach: **654** of 4,771 analysed
-    functions at this card's re-pin, with a measured diagnostic effect of zero.
-    Any widening of the key therefore moves two subsystems and must re-measure
-    both (`docs/reports/c-gateway-constant-do-while/scripts/acyclicity.py`,
-    `CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH`).
-    **Two clauses of this paragraph are the integrator's, not the card's**, and
-    the wave-35 close's `reconciliation.json` carries both before-and-after
-    texts: the card wrote that `derive` "returns no conditional-provenance facts
-    at all for a cyclic CFG", which wave 35's **second** arbiter
-    (`JOINED-PROVENANCE-CYCLES`) falsified later in the same wave by solving a
-    cyclic CFG with a greatest fixed point — landing that sentence verbatim
-    would have put a statement contradicting 10b into this file — and the card's
-    script path was its own gitignored `measure/`, replaced by the committed
-    copy it archived. The rule itself is unchanged, and the residual it names is
-    **answered** by that second arbiter's §8, which reproduced the 654
-    independently and measured the flip's cost at six functions and 20 leaves of
-    servable population — reach that moved to the topological pass, not reach
-    lost. `c-gateway-constant-do-while`, `joined-provenance-cycles`.
-<!-- preserved:constraint-5c:end -->
+    rule silently changes *that* pre-pass's reach (654 functions at the card's
+    re-pin, with a measured diagnostic effect of zero; reach that moves to the
+    topological pass, not reach lost, as `JOINED-PROVENANCE-CYCLES` §8
+    measured). Any widening of the key therefore moves two subsystems and must
+    re-measure both (`docs/reports/c-gateway-constant-do-while/scripts/acyclicity.py`,
+    `CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH`). The measurement chain, the
+    superseded `CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED` ownership and the
+    wave-35 close's two integrator clauses are in the wave-45 compaction
+    checkpoint. `c-gateway-constant-do-while`, `joined-provenance-cycles`,
+    `scalar-route-exit-edge`.
 
 <a id="constraint-5d"></a>
 
@@ -423,12 +411,16 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     (`C`, `&E->F`) to any call, or `C` or an element bound from it to a
     position its contract does not declare `Borrowed`; a **safe** iteration
     protects its saved successor `N` the same way and admits unlinking and
-    releasing the current element (whose custody then refuses on its own:
-    an element of a borrowed container is untracked). Premises, stated not
-    proved: the body does not write or address `C`/`N` (checked lexically;
-    declined otherwise); an element is not an identity the body tracks (the
-    function is declined when one call receives both `&X->…` of a name `X`
-    that may bind a tracked identity and the iterated head); a callee handed
+    releasing the current element. That unlink is constraint 10f's foreign
+    unlink: where 10f's premises hold it gives the body live custody of the
+    element at a fresh site (an exit that still holds it leaks it, a second
+    release is a double release), and otherwise it refuses on its own.
+    Premises, stated not proved: the body does not write or address `C`/`N`
+    (checked lexically; declined otherwise); an element is not an identity the
+    body tracks until a 10f unlink binds it (the function is declined when one
+    call receives both `&X->…` of a name `X` that may bind a tracked identity
+    and the iterated head; that lexical guard does not see an element 10f has
+    bound, `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK`); a callee handed
     the container does not unlink the protected node; a plain body is braced.
     **Do not** admit a header from its stripped clauses, bind an element from
     a cursor of a declined iteration, or widen case (2) to a written name.
@@ -470,85 +462,49 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 
 <a id="constraint-7"></a>
 
-<!-- preserved:constraint-7:start -->
-7. Leak diagnostics are **272** across the pinned 185-unit corpus. A change
+7. Leak diagnostics are **34** across the pinned 185-unit corpus
+   (`diagnostic_counts.leak` of the combined baseline
+   `docs/reports/w45-container-root-reach/integration/artifacts/`). A change
    that moves that number is a finding to attribute in the re-pin, not to
-   absorb. Through wave 30 it had moved four times, each deliberately and each
-   either in the *accusing* direction or by **deciding** a leaf. The current
-   six-row increase is attributed after that historical chain below.
-   271 → 272 (wave 17): `flb_input_chunk_get_direct_routes` L19399,
-   accusing, on a function and a unit already `Unsafe`, held provisional as
-   `CONSTRUCTOR-RESIDUALS-LEAK-271`. 272 → 273 (wave 20): `input_chunk_get`
-   L19849, accusing — modelling the constructor exposed a release through the
-   then-uncontracted `flb_input_chunk_destroy`. 273 → 272 (wave 22): that same
-   leaf decided by the faithful `flb_input_chunk_destroy` contract — a
-   **withdrawal**, not a discharge, since the release refuses at the call on
-   joined provenance and `input_chunk_get` goes provisional `Unsafe` →
-   `Unknown`; residual `AOM-DESTROY-JOINED-PROVENANCE`. 272 → **266**
-   (wave 23): the faithful **`nullable`**
-   `flb_input_chunk_destroy_direct_routes` contract (`nullable` where its
-   already-declared neighbour carries `nonnull`, because that body's third
-   statement is `if (!routes) { return; }`) retires six leaves of
-   `flb_input_chunk_get_direct_routes` — L19384, L19392, L19399, L19434,
-   L19489, L19505 — again by **withdrawal-by-refusal**: at each preceding call
-   site the projection cannot resolve the actual it is handed, so the site is
-   marked through the unresolved-effect mechanism and `report_leaks` skips it.
-   The cause is that every refused statement poisons every pointer binding in
-   the state, so an acquisition's binding does not survive to its release —
-   residual `AOM-SIBLINGS-BINDING-POISON`, whose repair moves those sites
-   toward the *discharging* arm, a direction invariant 1 constrains. That move
-   **DECIDES — withdraws** `CONSTRUCTOR-RESIDUALS-LEAK-271` at a measured cost
-   of **five** standing claims, not the six wave 17 recorded: the sixth leaf,
-   L19544, is on the success path where no destroy call runs, so it **stands**,
-   the function keeps its leak and its provisional `Unsafe`, and the pin reads
-   266 rather than 265. Nothing is promoted by any of the four: zero unit status
-   moves, zero function status moves. At the wave-25 re-measurement there was
-   **no fifth move**: the L19399 leaf wave 23 decided by *withdrawal* is decided instead by the **discharging** arm of that same contract, its first
-   firing anywhere in the pinned corpus: a strictly better answer to the same
-   question, changing no count, the pin still **266** with not one leak leaf
-   added or removed. The wave-27 arbiter also made **no further move**: it
-   re-pinned *presentation* only, and the 266 leak rows are exactly the 266 whose
-   description text was rewritten — each verified to be the substitution of the
-   **site alone**, the text on both sides of the phrase byte-identical. A leak
-   leaf's identity is still its preprocessed line.
+   absorb. Every move so far has been deliberate and of one of two kinds, and a
+   re-pin names which:
+   * **Accusing**: a newly modelled exit, path or call exposes a leak. Admitting
+     a previously unmodelled exit is an accusing move by construction, because
+     `report_leaks` **skips** an unmodelled exit; an admission card reaching
+     bodies that retain should expect the pin to rise, and that rise is a
+     finding to attribute, not a regression. (`C-GATEWAY-RETURN-CALL-W4`, the
+     first admission card to move no leaf, modelled wrappers that retain nothing.)
+   * **Deciding** a leaf, where a **withdrawal** — the site marked through the
+     unresolved-effect mechanism, so `report_leaks` skips it (`W44-LEAK-PIN-AUDIT`'s
+     refused hand-on rule, extended by constraint 5l (5)) — is not a **discharge**; only a
+     discharging contract or rule answers the leak itself.
+   No move has promoted anything: a withdrawn leak moves a provisional `Unsafe`
+   to `Unknown`, never to `Safe`, and no leak row is a validated upstream
+   defect claim. A declarative card that decides uncontracted-call leaves is
+   not automatically a leak-pin event (`W36-CORPUS-CONTRACTS-3` and
+   `W37-CORPUS-CONTRACTS-4` moved it not at all); the pin is then re-verified,
+   not re-derived. A leak leaf's identity is its preprocessed line, and a
+   presentation re-pin rewrites a description, not a leaf.
+   The pin read 266 from wave 23, 272 from the `C-GATEWAY-WAVE` re-pin into wave
+   43, and 271 from later wave-43 cards to `W44-LEAK-PIN-AUDIT`'s base, which classified
+   every leaf; its hand-on rule then withdrew 249 on the combined tree
+   (270 → 21), and the wave-44/45 cards moved it 21 → 19 → 34 → 35 → 37 → 34,
+   each move attributed in its card's report and archived arbiter. The
+   per-leaf chain through wave 37 is in the wave-45 compaction checkpoint;
+   its residuals stay registered: `AOM-DESTROY-JOINED-PROVENANCE`,
+   `AOM-SIBLINGS-BINDING-POISON` (whose repair moves sites toward the
+   *discharging* arm, a direction invariant 1 constrains) and
+   `CONSTRUCTOR-RESIDUALS-LEAK-271` (withdrawn by refusal at wave 23 for five
+   of its six leaves; L19544, on the success path, stands).
    `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
    `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1,
-   `aom-binding-poison` Headline and §5.2, `gateway-c-location` §5.3.
-   The current `C-GATEWAY-WAVE` re-pin advances **266 → 272**: six added
-   provisional leak leaves, no baseline leak leaf withdrawn. Two arise from
-   complete-expression frames and four from nullness refinement; every site is
-   listed in `docs/reports/c-gateway-wave/README.md`'s final measured result.
-   Four intermediate missing leaves were restored by the scalar-assignment
-   repair before publication. The original worklist schedule is retained;
-   neither the leak rows nor the new constant-loop repeated-release row is a
-   validated upstream defect claim.
-   At the wave-34 `C-GATEWAY-RETURN-CALL-W4` arbiter the pin is **unmoved at
-   272** — the first gateway *admission* card in this chain to move no leak leaf
-   in either direction. That is not luck and is worth the sentence: the exits it
-   newly models are allocator wrappers that retain nothing, so exposing them
-   accuses nobody. Admitting a previously unmodeled exit remains a move in the
-   accusing direction by construction, because `report_leaks` **skips** an
-   unmodeled exit; a future admission card reaching bodies that do retain should
-   expect the pin to rise, and that rise is a finding to attribute, not a
-   regression. `c-gateway-return-call-w4` §5.
-   Card `W36-CORPUS-CONTRACTS-3` (wave 36) moved the number **not at all**:
-   272 → 272 across a re-pin that added six declared contracts and moved 21
-   function statuses. A declarative card that decides 204 uncontracted-call
-   leaves is therefore not automatically a leak-pin event, and the pin was
-   re-verified rather than re-derived.
-   Card `W37-CORPUS-CONTRACTS-4` (wave 37) left the number unmoved a second
-   consecutive time: 272 → 272 across a re-pin adding ten declared contracts
-   and moving eight function statuses. Two declarative arbiters in a row have
-   now decided several hundred uncontracted-call leaves without touching the
-   leak pin, which is the expected shape when the declarations release
-   nothing; the pin was re-verified rather than re-derived.
-<!-- preserved:constraint-7:end -->
+   `aom-binding-poison` Headline and §5.2, `gateway-c-location` §5.3,
+   `c-gateway-wave`, `c-gateway-return-call-w4` §5, `w44-leak-pin-audit`.
 
 <a id="constraint-8"></a>
 
-<!-- preserved:constraint-8:start -->
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
@@ -578,30 +534,21 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
    W4 derives no summary for. The scalar projection assumes the LP64 model of
    the audited targets and the reader has no target (`LOADER-ABI-LP64`).
    `remaining-loader-abi`, `remaining-loader-abi-modes`.
-   The mode gate's `SummaryConflict`-only arm for a **nullability
-   refinement** was exercised for the first time by a *declaration* rather
-   than by the corpus: card `W36-CORPUS-CONTRACTS-3`'s `rd_kafka_mem_free`
-   declares `Released{nullable}` where W4 derives `Released{nonnull}`, and
-   the declaration is the faithful one — `rd_free(NULL)` reaches
-   `free(NULL)`. The declaration governs every call site, the defining unit's
-   own function moves `Safe → Unknown`, and **that is the gate working**: a
-   disagreement is reported, never silently resolved, and declaring `nonnull`
-   to silence it would assert a precondition the body does not have
-   (constraint 4). `w36-corpus-contracts-3` §5.2.
-   The ABI reader's **withdrawal** arm was exercised for the first time by a
-   *production declaration* in card `W37-CORPUS-CONTRACTS-4` (wave 37):
-   `rd_kafka_topic_partition_list_sort`'s C declaration spells its comparator
-   as an **inline function-pointer parameter declarator**, which the reader
-   does not parse — it resolves the function-pointer **typedef** form that
-   card `CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF` taught it, and nothing else — so
-   the declaration is withdrawn at every call site with
-   `abi-unreadable-declaration`. The withdrawal is **leaf-neutral**: all
-   eleven rows are same-position substitutions and no function's leaf count
-   changed. This is the
-   gate failing closed on a *reader* boundary rather than on a disagreement,
-   which is `LOADER-ABI-UNDECLARED`'s neighbour and is named
-   `LOADER-ABI-INLINE-FNPTR-DECLARATOR`.
-<!-- preserved:constraint-8:end -->
+   Two precedents fix how the arms read. The **nullability-refinement** arm
+   keeps a faithful declaration: `rd_kafka_mem_free` declares
+   `Released{nullable}` where W4 derives `Released{nonnull}`, and `rd_free(NULL)`
+   reaches `free(NULL)`, so the declaration governs every call site and the
+   defining unit's own function stays `Unknown` — the gate working; declaring
+   `nonnull` to silence it would assert a precondition the body does not have
+   (constraint 4; card `W36-CORPUS-CONTRACTS-3`, `w36-corpus-contracts-3` §5.2). The **withdrawal** arm also
+   fails closed on a *reader* boundary, not only on a disagreement: the ABI
+   reader resolves a function-pointer **typedef** (the form
+   `CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF` taught it) but not an **inline
+   function-pointer parameter declarator**, so such a declaration
+   (`rd_kafka_topic_partition_list_sort`, card `W37-CORPUS-CONTRACTS-4`,
+   leaf-neutral) is withdrawn at every call site with
+   `abi-unreadable-declaration` (`LOADER-ABI-INLINE-FNPTR-DECLARATOR`,
+   `LOADER-ABI-UNDECLARED`'s neighbour).
 
 <a id="constraint-9"></a>
 
