@@ -23,8 +23,8 @@
 //!    published. An exit then owes nothing for it.
 //! 2. **Refusals.** Everything else that could move custody refuses, with an
 //!    unresolved effect on what `B` may denote: an entry the reader cannot
-//!    name, a container not reached from an unrebound formal (a local, a
-//!    file-scope object, an object this body acquired), a binding that is
+//!    name, a container not reached from an unrebound formal (a local, an
+//!    object this body acquired; a static object is rule 5's), a binding that is
 //!    unknown, ambiguous, derived or possibly null, and an identity that is
 //!    not live — including a name-only formal site, which is how a borrowed
 //!    formal is seeded: publishing an object the body does not hold would
@@ -695,7 +695,10 @@ impl ForeignOrigins {
 /// by line, or `None` when the name is written any other way (an assignment,
 /// a step, its whole address taken) and so is not an element-only name.
 fn element_binding_lines(body: &[&super::Token], element: &str) -> Option<Vec<usize>> {
-    let texts = body.iter().map(|token| token.text.as_str()).collect::<Vec<_>>();
+    let texts = body
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
     let fused = fuse(&texts);
     let fused_texts = fused
         .iter()
@@ -909,6 +912,60 @@ mod tests {
             container(&["&", "other", "->", "pending"], &caller),
             Container::Other(_)
         ));
+    }
+
+    #[test]
+    fn a_static_container_is_its_own_storage_never_a_pointee() {
+        let caller = CallerFormals::read(&["return"], &formals(&["queue"]))
+            .with_statics(&formals(&["registry", "global", "queue"]));
+        assert_eq!(
+            container(&["&", "registry"], &caller),
+            Container::Static("registry".into())
+        );
+        assert_eq!(
+            container(&["&", "global", ".", "a", ".", "b"], &caller),
+            Container::Static("global".into())
+        );
+        // A formal of the same name shadows the static object.
+        assert_eq!(
+            container(&["&", "queue", "->", "items"], &caller),
+            Container::CallerFormal("queue".into())
+        );
+        for argument in [
+            &["&", "global", "->", "items"][..],
+            &["global"][..],
+            &["&", "other"][..],
+            &["&", "global", ".", "a", "->", "b"][..],
+        ] {
+            assert!(
+                matches!(container(argument, &caller), Container::Other(_)),
+                "{argument:?}"
+            );
+        }
+    }
+
+    fn tokens(text: &str) -> Vec<super::super::Token> {
+        super::super::tokenize(text)
+    }
+
+    #[test]
+    fn an_element_name_is_bound_only_by_statement_expressions() {
+        let body = tokens("e = ({ x; });\n q_use(e);\n e = ({ y; });");
+        let body = body.iter().collect::<Vec<_>>();
+        assert_eq!(element_binding_lines(&body, "e"), Some(vec![1, 3]));
+        for text in [
+            "e = ({ x; }); e = other;",
+            "e = ({ x; }); q_use(&e);",
+            "e = ({ x; }); e++;",
+            "struct item *e = NULL; e = ({ x; });",
+        ] {
+            let body = tokens(text);
+            let body = body.iter().collect::<Vec<_>>();
+            assert_eq!(element_binding_lines(&body, "e"), None, "{text}");
+        }
+        let body = tokens("q_use(e->payload);");
+        let body = body.iter().collect::<Vec<_>>();
+        assert_eq!(element_binding_lines(&body, "e"), Some(Vec::new()));
     }
 
     #[test]

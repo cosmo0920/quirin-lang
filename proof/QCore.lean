@@ -248,6 +248,7 @@ import QCore.ListIteration
 import QCore.CheckedSpecification
 import QCore.RefusedCallHandOn
 import QCore.ContainerPublication
+import QCore.ContainerRootReach
 import QCore.CountedUsers
 
 /-! The executable formal core of QCore-C revision 0.1. -/

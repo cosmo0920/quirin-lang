@@ -228,7 +228,10 @@ fn a_publication_into_a_local_only_container_is_refused() {
         let (status, diagnostics) = analyze(body);
         assert_eq!(status, AnalysisStatus::Unknown, "{body}\n{diagnostics:?}");
         assert!(
-            has_prefix(&diagnostics, "publication by `mk_list_add` into a container"),
+            has_prefix(
+                &diagnostics,
+                "publication by `mk_list_add` into a container"
+            ),
             "{body}\n{diagnostics:?}"
         );
         assert_eq!(leaks(&diagnostics), 0, "{body}\n{diagnostics:?}");
@@ -356,9 +359,8 @@ fn a_formal_whose_container_is_unnamed_stays_refused() {
     if !clang_available() {
         return;
     }
-    let (status, diagnostics) = analyze(
-        "void subject(struct item *e) { mk_list_del(&e->_head); q_free(e); }",
-    );
+    let (status, diagnostics) =
+        analyze("void subject(struct item *e) { mk_list_del(&e->_head); q_free(e); }");
     assert_ne!(status, AnalysisStatus::Safe, "{diagnostics:?}");
     assert!(has(&diagnostics, NOT_PUBLISHED), "{diagnostics:?}");
 }
