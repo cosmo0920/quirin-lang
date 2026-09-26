@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for STABILITY-REEVAL-5 on merge 653317ff (onto main 33558c67, after W45-AUDIT-SUBCOMMAND-PLUGINS and every earlier wave-45 card), measured by the integrator in its own worktree; every exit captured to a file, not piped. This card is an audit: documentation and ledger only, no Rust, no Lean and no test changed, so every measured count is unchanged from W45-AUDIT-SUBCOMMAND-PLUGINS. 5995 core Rust passed / 0 failed / 11 ignored over 331 summaries (test binaries: 319 units, 331 summaries; cross-checked against the runner's own totals line in 02-test.log, which agrees exactly); 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 207 Lean audits; 364 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. All load-sensitive rows (QP006, execution_quota, the 5 s plugin quota, standalone_host, vp04_vp07_vp08_process_lifecycle_and_payload_budgets, real_packages_preserve_unknown_and_reject_mutations, the configured_audit provider test `pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter`, package_identity) passed on the first run; no reruns were needed. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 106 s; baseline_identity.py against docs/reports/w45-container-root-reach/integration/artifacts exits 0 with verdict_bearing_identical true and diagnostics byte_identical true (identity-vs-container-root-reach-baseline.json), so the baseline does not move. The contracts sidecar is not byte-identical, as expected for every MOVES=no card since W45-REFUTED-CONTRACT-WITHDRAWAL added the refuted_contracts field: leaf_diff.py (34-contracts-raw-diff.log) shows exactly one differing top-level key, refuted_contracts, with entries: [], refuted_declarations: 0, phases: 1 (the empty refutation table on an unmoved corpus, not a verdict change). docs/STATUS.md's Registered follow-ups figure (512) was checked against dimensions.named_followups in a regenerated docs/reviews/r0_3/acceptance_matrix.json and already agreed (512); no edit was needed.",
+ "workspace_tests": 5995,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "lean_audits": 207,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
