@@ -365,8 +365,8 @@ pub(super) fn guard_unit_callees(
 /// [`double_release_description`].
 #[derive(Clone, Debug, Default)]
 pub(super) struct AdmissibleReleases {
-    places: BTreeSet<(String, String)>,
-    double_releases: BTreeMap<(String, String), String>,
+    places: Places,
+    double_releases: DoubleReleases,
 }
 
 impl AdmissibleReleases {
@@ -618,6 +618,13 @@ fn characterise(
     MemberEffect::Characterised { touched, released }
 }
 
+/// The admissible `(base, member)` places of one body.
+type Places = BTreeSet<(String, String)>;
+
+/// Card W45-SR5-SOUNDNESS: each place a later callee releases again, with
+/// that callee.
+type DoubleReleases = BTreeMap<(String, String), String>;
+
 /// P1–P4 over the body's tokens (without its outer braces), with card
 /// W45-SR5-SOUNDNESS's condition on every `R(B)`; `tokens` is the whole unit,
 /// where the callees' bodies are read.
@@ -626,10 +633,7 @@ fn admissible_places(
     texts: &[&str],
     formals: &BTreeSet<String>,
     contracts: &ResourceContracts,
-) -> (
-    BTreeSet<(String, String)>,
-    BTreeMap<(String, String), String>,
-) {
+) -> (Places, DoubleReleases) {
     let mut admitted = BTreeSet::new();
     let mut double_releases = BTreeMap::new();
     if texts.iter().any(|text| NON_LOCAL_JUMPS.contains(text)) {

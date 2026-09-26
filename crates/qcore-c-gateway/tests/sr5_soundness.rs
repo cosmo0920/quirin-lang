@@ -399,10 +399,9 @@ fn a_released_container_root_discharges_no_publication() {
         ),
         (
             "released before the publication",
-            format!(
-                "void subject(struct p_queue *q) {{ struct p_node *e = p_malloc(sizeof(struct p_node)); \
-                 if (!e) return; p_free(q); p_list_add(&e->_head, &q->pending); }}"
-            ),
+            "void subject(struct p_queue *q) { struct p_node *e = p_malloc(sizeof(struct p_node)); \
+             if (!e) return; p_free(q); p_list_add(&e->_head, &q->pending); }"
+                .to_owned(),
         ),
         (
             "released by a summary",
