@@ -1,8 +1,11 @@
 # W45-REFUTED-CONTRACT-WITHDRAWAL: a contract the audit refutes does not serve its callers
 
 Card W45-REFUTED-CONTRACT-WITHDRAWAL, 2026-09-26. Base `12553fb3` ("Record
-the w45-gateway-memo-key integration gate"); `main` `675e7289`
-(W45-AUDIT-CHECKPOINTS) merged in at `e359fd3c`, which is the measured code.
+the w45-gateway-memo-key integration gate"). `main` was merged in twice:
+`675e7289` (W45-AUDIT-CHECKPOINTS) at `e359fd3c`, then `edaeade7`
+(W45-CONTAINER-ROOT-REACH, and the user's `eac26af7`) at `368062bc`, which is
+the measured code. W45-CONTAINER-ROOT-REACH landed first with gateway rule 10f,
+so this card's rule is **10g**.
 [PREDICTION.md](PREDICTION.md) was frozen before implementation, in `8c094092`.
 
 ## Headline
@@ -25,14 +28,15 @@ the w45-gateway-memo-key integration gate"); `main` `675e7289`
   `ResourceContracts::refuted_by_body`. All four audit routes do this (`current`,
   `contracts`, configured, corpus arbiter).
 * **Corpus: no movement.** `resource-diagnostics.json` and
-  `chunk-contracts.json` are byte-identical to the baseline, because the table is
+  `chunk-contracts.json` are byte-identical to the baseline
+  (`w45-container-root-reach/integration/artifacts`), because the table is
   empty. The contracts sidecar gains one additive section. There are no
   corrections.
 * **Slice at `046accf6`: no status movement.** The table is {OR-7
   `flb_output_task_flush`, OR-1 `flb_output_task_singleplex_enqueue`}. The 10
   caller call rows are held: 3 functions × 2 variants, 4 of them cross-unit
-  through the table. All of these callers were already Unknown. unsupported goes
-  from 3,338 to 3,332.
+  through the table. All of these callers were already Unknown. Against
+  `main`'s slice, unsupported goes from 3,327 to 3,321.
 * **Ledger:**
   * `W45-FB-SINGLEPLEX-CUSTODY-DECLARED` is **retired** (discharged).
   * `W45-FB-CROSS-UNIT-USER-PREMISES` is **re-scoped**.
@@ -68,6 +72,20 @@ would label a faithful declaration as refuted.
 
 Container clauses (§C04.8) are never checked against a body, so they can be
 unchecked but never refuted (`W45-CONTAINER-CLAUSE-BODY-CHECK`).
+
+**Composition with W45-CONTAINER-ROOT-REACH's summary gate.** That card makes
+`observations_match_contract` refuse a body with a *foreign unlink*: a body that
+takes custody of an element of a container its caller supplied. Such a body
+publishes no W4 summary. So the custody-duty arm has no `SummaryConflict` to
+read, and the body neither establishes nor refutes a custody declaration: the
+declaration is unchecked and stays applied. The counted-user arm does not read a
+W4 summary and is unaffected. The control
+`crates/qcore-c-gateway/tests/refuted_contract_foreign_unlink.rs` pins this. A
+`drain` declared `resource_borrowed(q)` whose body unlinks and frees the queue's
+elements is Safe on its own row, carries no conflict and no refutation, and its
+caller's call is not held. That the declaration stays trusted there is the
+registered `W45-UNCHECKED-DECLARATIONS-TRUSTED`, not a refutation this rule
+misses.
 
 A declaration is **unchecked** in any of these cases, and stays applied as the
 declared premise of constraints 4 and 8:
@@ -251,23 +269,27 @@ that frees the object again was certified **Safe**. It is now Unknown.
 
 ### 5.1 Corpus arbiter
 
-`run_audit.py … --jobs 8` at `e359fd3c` (the pre-merge `a3677482` gave the same artifacts):
+`run_audit.py … --jobs 8` at `368062bc`, against the new baseline `w45-container-root-reach/integration/artifacts` (the earlier tips `a3677482` and `e359fd3c` gave the same artifacts against the backlog-custody baseline):
 [after-identity.json](artifacts/arbiter/after-identity.json),
-[contracts-delta.json](artifacts/arbiter/contracts-delta.json),
+[contracts-delta.json](artifacts/arbiter/contracts-delta.json) (against BEFORE),
+[contracts-delta-vs-baseline.json](artifacts/arbiter/contracts-delta-vs-baseline.json),
 [refuted-contracts-section.json](artifacts/arbiter/refuted-contracts-section.json).
 
 * `verdict_bearing_identical: true`. Diagnostics, `chunk-contracts` and `source`
   are byte-identical to the baseline. `source-effects` and `monkey-source.json`
-  are byte-identical to this worktree's BEFORE run.
-* Against BEFORE, the contracts sidecar differs by exactly `/refuted_contracts`:
+  are byte-identical to this worktree's BEFORE run (`source-effects` differs from
+  the archived baseline in checkout-path digests only, as in every worktree run).
+* Against BEFORE, and against the new baseline after the root alias, the
+  contracts sidecar differs by exactly `/refuted_contracts`:
   1 phase, 0 declarations, table digest `44136fa3…` (the empty table). The
   audit log gains the tally line.
 * Functions 398 / 9 / 4,427; units 5 / 8 / 168 / 4; leak 34; unknown_alias
-  3,570; unsupported 41,325; Pending 0. All are unchanged.
+  3,571; unsupported 41,314; Pending 0: the new baseline's figures, all
+  unchanged.
 * **No corrections.** No corpus body refutes its declaration. No row has
   `user_count_clauses`, and the one conflict is a refinement.
 * **Baseline:** no new baseline is archived, because nothing verdict-bearing
-  moved. `w45-fb-backlog-custody/integration/artifacts` stays the corpus
+  moved. `w45-container-root-reach/integration/artifacts` stays the corpus
   baseline, plus the additive sidecar section.
 
 ### 5.2 Fluent Bit system slice at `046accf6`
@@ -279,11 +301,16 @@ attempt-1 RUN BINARY --selection contract/profiles/fluent-bit/system-selection.j
 [moves](artifacts/slice/after-vs-before.json),
 [section](artifacts/slice/refuted-contracts-section.json).
 
-| | BEFORE | AFTER |
+BEFORE is `main`'s own slice, W45-CONTAINER-ROOT-REACH's archived AFTER
+(`docs/reports/w45-container-root-reach/artifacts/slice/after.json.gz`); the
+card-base comparison (3,338 → 3,332, before that card's foreign unlink) is
+[after-vs-card-base.json](artifacts/slice/after-vs-card-base.json).
+
+| | BEFORE (`main` `edaeade7`) | AFTER (`368062bc`) |
 |---|---:|---:|
 | Units Safe / Unsafe / Unknown | 0 / 2 / 13 | 0 / 2 / 13 |
 | Functions Safe / Unsafe / Unknown / not projected | 28 / 2 / 204 / 3 | 28 / 2 / 204 / 3 |
-| unsupported / unknown_alias / counted_user | 3,338 / 717 / 4 | **3,332** / 717 / 4 |
+| unsupported / unknown_alias / counted_user | 3,327 / 713 / 4 | **3,321** / 713 / 4 |
 
 **Table** (2 phases, digest `e727ccc6…`; the published rows' own refutations
 have the same digest):
@@ -309,7 +336,8 @@ and each figure below counts both variants:
 * **`flb_output_task_queue_flush_one`** (`src/flb_output.c`, in unit). At
   `:333`, the unattributed operation leaf becomes the hold leaf. Leaves: −2, +2.
 
-The net change is unsupported −6. The two OR functions keep their refutations
+The net change is unsupported −6, identical before and after the merge of
+W45-CONTAINER-ROOT-REACH: the same 10 held rows, the same leaves exchanged. The two OR functions keep their refutations
 and stay provisional Unsafe. OR-1's undecided success clause keeps its blocker
 text.
 
@@ -322,8 +350,8 @@ contracts sidecar are byte-identical to the `--jobs 8` run
 two-entry table, and composes a report and sidecar byte-identical to the whole
 run's ([checkpointed.json](artifacts/slice/checkpointed.json),
 [stderr](artifacts/slice/checkpointed.stderr.log)). Its console prints the
-first phase's composition too, which the whole run does not. The report at
-`e359fd3c` is byte-identical to the one at the pre-merge `a3677482`.
+first phase's composition too, which the whole run does not. Both `--jobs 1`
+and checkpointed runs were repeated at `368062bc`.
 
 ### 5.3 Criterion 3, the concrete case
 
@@ -404,7 +432,7 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
 
   Their only consumers are the two refutations. No Safe rests on either.
 * **Registered** ([followups.json](followups.json)): `named_followups` goes from
-  454 (on `main` `675e7289`) to 456. The checkpoint key first drafted as a
+  456 (on `main` `edaeade7`) to 458. The checkpoint key first drafted as a
   follow-up was implemented instead (§2.4).
   * `W45-CONTAINER-CLAUSE-BODY-CHECK`: 2 declarations.
   * `W45-UNCHECKED-DECLARATIONS-TRUSTED`: 22 corpus declarations, a lower bound.
@@ -415,7 +443,7 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
   holds callers in every unit. A declaration whose body no unit analyses is
   still never compared.
 * The corpus row is unchanged. `build_matrix.py .` regenerated the derived
-  counts: `lean_audits` 205, follow-ups 456. The gate figures are carried and
+  counts: `lean_audits` 206, follow-ups 458. The gate figures are carried and
   labelled as carried, for the integrator's `--gate`.
 
 ## 9. Gate
@@ -476,7 +504,7 @@ python3 docs/reports/w45-refuted-contract-withdrawal/scripts/slice_tally.py AFTE
 python3 docs/reports/w45-refuted-contract-withdrawal/scripts/or_rows.py REPORT
 python3 docs/reports/w43-return-expression/scripts/run_audit.py FRESH_DIR COMMIT --jobs 8
 python3 docs/reports/w43-return-expression/scripts/baseline_identity.py FRESH_DIR \
-  docs/reports/w45-fb-backlog-custody/integration/artifacts --root-alias WORKTREE=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da
+  docs/reports/w45-container-root-reach/integration/artifacts --root-alias WORKTREE=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da
 python3 docs/reports/w45-refuted-contract-withdrawal/scripts/sidecar_delta.py BEFORE_SIDECAR AFTER_SIDECAR
 python3 docs/reports/w45-refuted-contract-withdrawal/scripts/body_checked_census.py FRESH_DIR OUT.json
 docs/reports/w45-refuted-contract-withdrawal/scripts/archive.sh

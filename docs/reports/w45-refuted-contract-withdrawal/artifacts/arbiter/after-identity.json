@@ -1,11 +1,11 @@
 {
-  "run": "private/rw/arbiter-merged",
-  "baseline": "docs/reports/w45-fb-backlog-custody/integration/artifacts",
+  "run": "private/rw/arbiter-368",
+  "baseline": "docs/reports/w45-container-root-reach/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
-      "baseline_raw_sha256": "30daa224ffbaa00ab60530d84c71f66232888b8a2a29c420aa302adc3c80aa7d",
+      "run_sha256": "3b2fd4df24e2f5f58045b8809820ad7814ab8257cb1416ebcdd8268db4741033",
+      "baseline_raw_sha256": "3b2fd4df24e2f5f58045b8809820ad7814ab8257cb1416ebcdd8268db4741033",
       "archive_matches_manifest": true,
       "byte_identical": true
     },
@@ -19,7 +19,7 @@
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
       "run_sha256": "137c880f95f9e4c36f9df2ac46d23d30cf60ca788dfa493e9c3b2813d29b044a",
-      "baseline_raw_sha256": "efd4bde891ec67e0836366d6b717303f556043f2c1928dc941c9e231c825a25e",
+      "baseline_raw_sha256": "dc597fc2f0a8015985cc94df16a90946a2fbd9ab79e9814e8d95b1cab471c473",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": false
