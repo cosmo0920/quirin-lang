@@ -1,0 +1,495 @@
+//! W45-SR5-SOUNDNESS measurement probe. TEMPORARY: run once and removed; its
+//! source and output are archived under docs/reports/w45-sr5-soundness/probes/.
+//! Nothing asserts: every row prints its status and diagnostics.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, CCompilerDialect, LegacyDiagnosticKind, LegacyFunctionScope,
+    LegacyProgramSummary, ResourceContracts, UnrestrictedLegacyResult,
+    analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+use qcore_schemas::contract_revision::PinMismatchReason;
+
+fn load(extra: &[(&str, &str)]) -> ResourceContracts {
+    let mut sources = BTreeMap::from([
+        (
+            "q_base.qcore".to_owned(),
+            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+        ),
+        (
+            "q_nullable.qcore".to_owned(),
+            include_str!("fixtures/contracts/q_nullable.qcore").to_owned(),
+        ),
+    ]);
+    for (name, text) in extra {
+        sources.insert((*name).to_owned(), (*text).to_owned());
+    }
+    load_resource_contract_sources(&sources).expect("contracts load")
+}
+
+fn kinds(summary: &LegacyProgramSummary, function: &str) -> Vec<String> {
+    summary
+        .functions
+        .get(function)
+        .map(|f| {
+            f.diagnostics
+                .iter()
+                .map(|d| match &d.kind {
+                    LegacyDiagnosticKind::Unsupported { description } => {
+                        format!("Unsupported({description})")
+                    }
+                    other => format!("{other:?}").chars().take(160).collect(),
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn text_rows(label: &str, source: &str, entry: &str, functions: &[&str], contracts: &ResourceContracts) {
+    match analyze_legacy_c_translation_unit(source, entry, contracts) {
+        Ok(summary) => {
+            for function in functions {
+                let status = summary.functions.get(*function).map(|f| f.status);
+                let records = summary
+                    .functions
+                    .get(*function)
+                    .map(|f| {
+                        f.counted_users
+                            .iter()
+                            .map(|r| format!("{}={:?}", r.clause, r.verdict))
+                            .collect::<Vec<_>>()
+                    })
+                    .unwrap_or_default();
+                println!(
+                    "PROBE {label} [{function}]: status={status:?} diagnostics={:?}{}",
+                    kinds(&summary, function),
+                    if records.is_empty() { String::new() } else { format!(" clauses={records:?}") }
+                );
+            }
+        }
+        Err(error) => println!("PROBE {label}: tokenize error {error:?}"),
+    }
+}
+
+fn c11_row(label: &str, source: &str, scope: LegacyFunctionScope, contracts: &ResourceContracts) {
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            dialect: CCompilerDialect::Gnu17,
+            function_scope: scope,
+            ..Default::default()
+        },
+        "subject",
+        contracts,
+    );
+    match outcome {
+        Ok(result) => {
+            let verdict = result.verdict();
+            let summary = match &result {
+                UnrestrictedLegacyResult::Safe(certificate) => Some(&certificate.summary),
+                UnrestrictedLegacyResult::Unsafe(summary) => Some(summary),
+                UnrestrictedLegacyResult::Unknown { partial, .. } => partial.as_ref(),
+            };
+            let reason = match &result {
+                UnrestrictedLegacyResult::Unknown { reason, .. } => reason.clone(),
+                _ => String::new(),
+            };
+            let rows = summary
+                .map(|s| {
+                    s.functions
+                        .iter()
+                        .map(|(name, f)| format!("{name}={:?}{:?}", f.status, kinds(s, name)))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default();
+            println!("PROBE {label}: unit_verdict={verdict:?} reason={reason:?} functions={rows:?}");
+        }
+        Err(error) => println!("PROBE {label}: refused {error:?}"),
+    }
+}
+
+const DECLS: &str = "void *q_alloc(void); void q_free(void *); void q_nullable_free(void *); \
+int c; void zz(void *);\n";
+
+const RECORD: &str = "struct inner { int n; };\n\
+     struct node { void *buf; struct node *next; struct inner in; int n; };\n";
+
+const DESTROY: &str = "static void node_destroy(struct node *n) {\n\
+     if (n->buf) q_nullable_free(n->buf);\n\
+     q_nullable_free(n);\n}\n";
+
+const DESTROY_NEXT: &str = "static void node_destroy_next(struct node *n) {\n\
+     if (n->next) q_nullable_free(n->next);\n\
+     q_nullable_free(n);\n}\n";
+
+const DESTROY_ALIAS: &str = "static void node_destroy_alias(struct node *n) {\n\
+     void *b = n->buf;\n\
+     q_nullable_free(b);\n\
+     q_nullable_free(n);\n}\n";
+
+const DROP: &str = "static void node_drop(struct node *n) {\n\
+     node_destroy(n);\n}\n";
+
+const DECLARED_DESTROY: &str = "module contract;
+extern fn node_destroy(n: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_released(n, nullable); ensures normal resource_return_none(); };
+";
+
+const PRELUDE: &str = r#"
+#include <stddef.h>
+#define container_of(ptr, type, member) ({                      \
+      const typeof( ((type *)0)->member ) *__mptr = (ptr);      \
+      (type *)( (char *)__mptr - offsetof(type,member) );})
+struct mk_list { struct mk_list *prev, *next; };
+#define mk_list_entry( ptr, type, member ) container_of( ptr, type, member )
+#define mk_list_entry_first(ptr, type, member) container_of((ptr)->next, type, member)
+#define mk_list_foreach_safe(curr, n, head) \
+    for (curr = (head)->next, n = curr->next; curr != (head); curr = n, n = curr->next)
+void mk_list_add(struct mk_list *entry, struct mk_list *head);
+void mk_list_del(struct mk_list *entry);
+void *q_alloc(void); void q_free(void *); void q_use(void *);
+struct item { int size; void *payload; struct mk_list _head; };
+struct queue { struct mk_list items; struct mk_list done; int total; };
+"#;
+
+const LIST: &str = "module contract;
+extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
+extern fn mk_list_del(entry: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_unpublished(entry); ensures normal resource_return_none(); };
+extern fn q_use(p: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
+";
+
+const USERS: &str = r#"module contract;
+extern fn u_ref(t: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(t); ensures normal resource_user_added(t, refs); ensures normal resource_return_none(); };
+extern fn u_unref(t: ptr<mut, u8>, check: i32) -> unit
+contract { requires resource_contract_v1; requires resource_literal_argument(check, 0); ensures normal resource_borrowed(t); ensures normal resource_borrowed(check); ensures normal resource_user_dropped(t, refs); ensures normal resource_return_none(); };
+extern fn u_release(t: ptr<mut, u8>) -> unit
+contract { requires resource_contract_v1; ensures normal resource_borrowed(t); ensures normal resource_user_release_check(t, refs); ensures normal resource_return_none(); };
+extern fn hx(t: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(t); ensures normal resource_user_exit(t, 0, restored); ensures normal resource_return_none(); };
+extern fn cx(t: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(t); ensures normal resource_user_exit(t, 0, restored); ensures normal resource_return_none(); };
+extern fn helper_neutral(q: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(q); ensures normal resource_user_neutral(); ensures normal resource_return_none(); };
+"#;
+
+const USERS_PRELUDE: &str = "struct u_task { int refs; };\n\
+void u_ref(struct u_task *t); void u_unref(struct u_task *t, int check); void u_release(struct u_task *t);\n\
+int c; int g(int); int f(int);\n";
+
+#[test]
+fn w45_sr5_soundness_probes() {
+    let plain = load(&[]);
+    // ---- 1. Rule 5k: a member release and a callee that releases it. ----
+    let k = |label: &str, helpers: &str, body: &str, contracts: &ResourceContracts| {
+        text_rows(
+            label,
+            &format!("{DECLS}{RECORD}{helpers}void subject(struct node *n) {{ {body} }}\n"),
+            "subject",
+            &["subject"],
+            contracts,
+        );
+    };
+    k("5k-control-destroy", DESTROY, "node_destroy(n);", &plain);
+    k("5k-control-free", "", "if (n->buf) q_nullable_free(n->buf); q_nullable_free(n);", &plain);
+    k("5k-member-then-destroy", DESTROY, "q_nullable_free(n->buf); node_destroy(n);", &plain);
+    k("5k-tested-member-then-destroy", DESTROY, "if (n->buf) q_nullable_free(n->buf); node_destroy(n);", &plain);
+    k("5k-member-then-wrapper", &format!("{DESTROY}{DROP}"), "q_nullable_free(n->buf); node_drop(n);", &plain);
+    k("5k-destroy-then-member", DESTROY, "node_destroy(n); q_nullable_free(n->buf); q_nullable_free(n);", &plain);
+    k("5k-caller-alias", DESTROY, "void *b = n->buf; q_nullable_free(b); node_destroy(n);", &plain);
+    k("5k-callee-alias", DESTROY_ALIAS, "q_nullable_free(n->buf); node_destroy_alias(n);", &plain);
+    k("5k-callee-alias-control", DESTROY_ALIAS, "node_destroy_alias(n);", &plain);
+    k("5k-other-member", DESTROY_NEXT, "q_nullable_free(n->buf); node_destroy_next(n);", &plain);
+    k("5k-same-member-next", DESTROY_NEXT, "q_nullable_free(n->next); node_destroy_next(n);", &plain);
+    let declared = load(&[("destroy.qcore", DECLARED_DESTROY)]);
+    k("5k-declared-defined-destroy", DESTROY, "q_nullable_free(n->buf); node_destroy(n);", &declared);
+    k(
+        "5k-declared-undefined-destroy",
+        "void node_destroy(struct node *n);\n",
+        "q_nullable_free(n->buf); node_destroy(n);",
+        &declared,
+    );
+    // ---- 2. The held prefixes, spelled by the source and minted by the tool. ----
+    let mut pinned = load(&[("k.qcore", "module contract;\nextern fn k_close(h: ptr<mut, u8>) -> unit\ncontract { requires resource_contract_v1; ensures normal resource_released(h, nullable); ensures normal resource_return_none(); };\n")]);
+    pinned
+        .withhold_for_pin_mismatch(
+            "k_close",
+            "k.qcore".into(),
+            PinMismatchReason::SourceChanged,
+            Some("contracts.lock".into()),
+            "probe".into(),
+        )
+        .unwrap();
+    let h = |label: &str, body: &str, contracts: &ResourceContracts| {
+        text_rows(
+            label,
+            &format!(
+                "{DECLS}void k_close(void *); void qcore_pin_mismatch__zz(void *); \
+                 void qcore_review_pending__zz(void *); void qcore_pin_mismatch__k_close(void *);\n\
+                 void subject(void) {{ {body} }}\n"
+            ),
+            "subject",
+            &["subject"],
+            contracts,
+        );
+    };
+    h("held-control-uncontracted", "zz(0);", &plain);
+    h("held-pin-prefix", "qcore_pin_mismatch__zz(0);", &plain);
+    h("held-review-prefix", "qcore_review_pending__zz(0);", &plain);
+    h("held-genuine-pin", "k_close(0);", &pinned);
+    h("held-prefix-collides-with-withheld", "qcore_pin_mismatch__k_close(0);", &pinned);
+    h("held-prefix-beside-genuine", "k_close(0); qcore_pin_mismatch__zz(0);", &pinned);
+    text_rows(
+        "held-prefix-defined",
+        &format!("{DECLS}static void qcore_pin_mismatch__zz(void *p) {{ }}\nvoid subject(void) {{ qcore_pin_mismatch__zz(0); }}\n"),
+        "subject",
+        &["subject"],
+        &plain,
+    );
+    // ---- 4. Counted users. ----
+    let users = load(&[("users.qcore", USERS)]);
+    text_rows(
+        "cu-conditional-operand",
+        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c ? u_unref(t, 0) : (void)0; return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-conditional-and",
+        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); c && (u_unref(t, 0), 1); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-conditional-control",
+        &format!("{USERS_PRELUDE}int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-call-of-call",
+        &format!("{USERS_PRELUDE}typedef int (*fn_t)(int); fn_t pick(int);\n\
+                  int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); pick(1)(2); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users,
+    );
+    let users_pick = load(&[
+        ("users.qcore", USERS),
+        (
+            "pick.qcore",
+            "module contract;\nextern fn pick(n: i32) -> unit\ncontract { requires resource_contract_v1; ensures normal resource_borrowed(n); ensures normal resource_return_none(); };\n",
+        ),
+    ]);
+    text_rows(
+        "cu-call-of-contracted-call",
+        &format!("{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *); fn_t pick(int);\n\
+                  int hx(struct u_task *t) {{ u_ref(t); pick(1)(t); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users_pick,
+    );
+    text_rows(
+        "cu-call-of-defined-call",
+        &format!("{USERS_PRELUDE}typedef void (*fn_t)(struct u_task *);\n\
+                  static fn_t pick(int n) {{ return 0; }}\n\
+                  int hx(struct u_task *t) {{ u_ref(t); u_unref(t, 0); pick(1)(t); return 0; }}\n\
+                  int cx(struct u_task *t) {{ hx(t); return 0; }}\n"),
+        "cx",
+        &["hx", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-declared-neutral-loop-writes",
+        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ q->refs++; }} return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        "cx",
+        &["helper_neutral", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-declared-neutral-loop-op",
+        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ while (c) {{ u_ref(q); }} return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        "cx",
+        &["helper_neutral", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-declared-neutral-writes",
+        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ q->refs++; return 0; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        "cx",
+        &["helper_neutral", "cx"],
+        &users,
+    );
+    text_rows(
+        "cu-declared-neutral-control",
+        &format!("{USERS_PRELUDE}static int helper_neutral(struct u_task *q) {{ return q->refs; }}\n\
+                  int cx(struct u_task *t) {{ u_ref(t); helper_neutral(t); u_unref(t, 0); u_release(t); return 0; }}\n"),
+        "cx",
+        &["helper_neutral", "cx"],
+        &users,
+    );
+    // ---- 4. Rule 5j: the scalar read. ----
+    let s = |label: &str, body: &str| {
+        text_rows(
+            label,
+            &format!("{DECLS}struct s {{ int len; struct s *next; int arr[4]; }};\n{body}\n"),
+            "subject",
+            &["subject"],
+            &plain,
+        );
+    };
+    s("5j-control-one-deref", "int subject(struct s *q) { return q->len; }");
+    s("5j-control-two-arrows", "int subject(struct s *q) { return q->next->len; }");
+    s("5j-paren-star-arrow", "int subject(struct s **q) { return (*q)->len; }");
+    s("5j-paren-star-index", "int subject(int **q) { return (*q)[0]; }");
+    s("5j-star-star", "int subject(int **q) { return **q; }");
+    s("5j-paren-arrow-arrow", "int subject(struct s *q) { return (q->next)->len; }");
+    s("5j-star-paren-arrow", "int subject(struct s *q) { return *(q->arr); }");
+    s("5j-paren-dot", "int subject(struct s *q) { return (*q).len; }");
+    s(
+        "5j-local-paren-star-arrow",
+        "int subject(void) { struct s **q = q_alloc(); int n; q_free(q); return (*q)->len; }",
+    );
+    if qcore_c_gateway::clang_command().is_err() {
+        println!("PROBE clang absent: C11 cases not run");
+        return;
+    }
+    // ---- 3. Publication, then the root released. ----
+    let list = load(&[("list.qcore", LIST)]);
+    let c = |label: &str, body: &str| {
+        c11_row(label, &format!("{PRELUDE}\n{body}\n"), LegacyFunctionScope::default(), &list);
+    };
+    c(
+        "10d-root-released-after-publication",
+        "void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); q_free(q); }",
+    );
+    c(
+        "10d-control-publication",
+        "void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); }",
+    );
+    c(
+        "10d-root-released-before-publication",
+        "void subject(struct queue *q) { struct item *e = q_alloc(); q_free(q); mk_list_add(&e->_head, &q->items); }",
+    );
+    c(
+        "10d-root-released-by-summary",
+        "static void queue_destroy(struct queue *q) { q_free(q); }\n\
+         void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); queue_destroy(q); }",
+    );
+    c(
+        "10d-root-local-copy-released",
+        "void subject(struct queue *q) { struct mk_list *h = &q->items; struct item *e = q_alloc(); mk_list_add(&e->_head, h); q_free(q); }",
+    );
+    // ---- 4. 10d with 5l(2): container_of over a formal. ----
+    c(
+        "cof-link-helper-and-caller",
+        "static void link_it(void *arg, struct queue *q) { struct item *ctx = container_of(arg, struct item, _head); mk_list_add(&ctx->_head, &q->items); }\n\
+         void subject(struct queue *q) { struct item *e = q_alloc(); link_it(&e->_head, q); q_free(e); }",
+    );
+    c(
+        "cof-link-helper-alone",
+        "void subject(void *arg, struct queue *q) { struct item *ctx = container_of(arg, struct item, _head); mk_list_add(&ctx->_head, &q->items); }",
+    );
+    c(
+        "cof-control-literal-formal",
+        "void subject(struct item *arg, struct queue *q) { mk_list_add(&arg->_head, &q->items); }",
+    );
+    // ---- 4. 5l after the foreign unlink. ----
+    c(
+        "5l-republish-alias-head",
+        "void subject(struct queue *q) { struct mk_list *c, *n; struct mk_list *h = &q->items; struct item *e;\n\
+         mk_list_foreach_safe(c, n, &q->items) { e = mk_list_entry(c, struct item, _head); mk_list_del(&e->_head); mk_list_add(&e->_head, h); } }",
+    );
+    c(
+        "5l-republish-same-head",
+        "void subject(struct queue *q) { struct mk_list *c, *n; struct item *e;\n\
+         mk_list_foreach_safe(c, n, &q->items) { e = mk_list_entry(c, struct item, _head); mk_list_del(&e->_head); mk_list_add(&e->_head, &q->items); } }",
+    );
+    c(
+        "5l-control-unlink-free",
+        "void subject(struct queue *q) { struct mk_list *c, *n; struct item *e;\n\
+         mk_list_foreach_safe(c, n, &q->items) { e = mk_list_entry(c, struct item, _head); mk_list_del(&e->_head); q_free(e); } }",
+    );
+    c(
+        "5l-unlink-then-use-after-free",
+        "void subject(struct queue *q) { struct mk_list *c, *n; struct item *e;\n\
+         mk_list_foreach_safe(c, n, &q->items) { e = mk_list_entry(c, struct item, _head); mk_list_del(&e->_head); q_free(e); q_use(e); } }",
+    );
+    // ---- 4. 10f's static root, shadowed. ----
+    c(
+        "static-control-global",
+        "struct mk_list g;\nvoid subject(void) { struct item *e = q_alloc(); mk_list_add(&e->_head, &g); }",
+    );
+    c(
+        "static-control-local",
+        "struct mk_list g;\nvoid subject(void) { struct mk_list g; struct item *e = q_alloc(); mk_list_add(&e->_head, &g); }",
+    );
+    c(
+        "static-shadow-paren-initialiser",
+        "struct mk_list g;\nvoid subject(void) { struct mk_list g = { (struct mk_list *)0, (struct mk_list *)0 }; struct item *e = q_alloc(); mk_list_add(&e->_head, &g); }",
+    );
+    c(
+        "static-shadow-sizeof-array",
+        "struct mk_list g;\nvoid subject(void) { struct mk_list g[sizeof(int)]; struct item *e = q_alloc(); mk_list_add(&e->_head, &g[0]); }",
+    );
+    c(
+        "static-shadow-paren-declarator",
+        "struct mk_list g;\nvoid subject(void) { struct mk_list (g); struct item *e = q_alloc(); mk_list_add(&e->_head, &g); }",
+    );
+    // ---- 4. Pending against the unit Safe gates. ----
+    let h11 = |label: &str, body: &str, scope: LegacyFunctionScope, contracts: &ResourceContracts| {
+        c11_row(
+            label,
+            &format!("void k_close(void *); void qcore_pin_mismatch__zz(void *);\n{body}\n"),
+            scope,
+            contracts,
+        );
+    };
+    h11("unit-control-held-alone", "void subject(void) { k_close(0); }", LegacyFunctionScope::MainSourceDefinitions, &pinned);
+    h11(
+        "unit-control-if0-safe",
+        "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { }",
+        LegacyFunctionScope::MainSourceDefinitions,
+        &pinned,
+    );
+    h11(
+        "unit-if0-plus-held",
+        "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { k_close(0); }",
+        LegacyFunctionScope::MainSourceDefinitions,
+        &pinned,
+    );
+    h11(
+        "unit-kr-plus-held",
+        "int kr(a) int a; { return a; }\nvoid subject(void) { k_close(0); }",
+        LegacyFunctionScope::MainSourceDefinitions,
+        &pinned,
+    );
+    h11(
+        "unit-source-prefix-alone",
+        "void subject(void) { qcore_pin_mismatch__zz(0); }",
+        LegacyFunctionScope::MainSourceDefinitions,
+        &plain,
+    );
+    c11_row(
+        "5k-unit-member-then-destroy",
+        &format!("{DECLS}{RECORD}{DESTROY}void subject(struct node *n) {{ q_nullable_free(n->buf); node_destroy(n); }}\n"),
+        LegacyFunctionScope::default(),
+        &plain,
+    );
+}
