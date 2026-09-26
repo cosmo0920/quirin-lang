@@ -1,0 +1,490 @@
+{
+ "schema_version": 1,
+ "inputs": {
+  "slice_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/system-slice/resource-diagnostics.json",
+   "sha256": "335c2db69dd229044b56ebaa2c2e3d5101088fc9b7e3d0a6b1db2cb85aba326a",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "main_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json",
+   "sha256": "e8bc6bf3b8f3426b9249120adc666a5a6a8c4908d45e87cfc72d4f4d3f179a59",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "census_archive": {
+   "path": "docs/reports/w45-return-expression-families/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "642ea04f1e819e69bb95753ad78bcb8f5b9cc363691d2ceb0530c903034d0cb2",
+   "raw_sha256": "e458950b209b5822b0afd2ed081bb4e151c95307ea863b7e606273ea2b0a89da",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "baseline_archive": {
+   "path": "docs/reports/w45-sub-object-stores/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "3e5b97563941a29d2376348325c1b2c0655f78a5f814e43443a8752a03956e71",
+   "raw_sha256": "c762a4855c66d6d1c3fd155a199a761560a411df7041bb9b59ec10cdf5d83072",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  }
+ },
+ "scope": "measurement of Quirin audit rows; Unsafe is provisional; not a model, proof, native observation or upstream defect claim",
+ "reference": "baseline-archive@66910c10(pinned)",
+ "columns": {
+  "baseline-archive@66910c10(pinned)": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  },
+  "census-archive@66910c10(pinned)": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  },
+  "main-profile@864(current)#shared": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  },
+  "main-profile@864(current)#static": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  },
+  "system-slice@864(current)#shared": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  },
+  "system-slice@864(current)#static": {
+   "unit_status": "Unknown",
+   "reason_code": "unsupported-syntax",
+   "source_functions": 66,
+   "analysed": 64,
+   "not_projected": [
+    "sb_get_releasable_output_queue_space",
+    "sb_release_output_queue_space"
+   ],
+   "function_status": {
+    "Safe": 9,
+    "Unknown": 55
+   }
+  }
+ },
+ "functions_compared": 64,
+ "comparison_key": "per function: status and the multiset of (category, description, original source line) of its diagnostics; preprocessed line numbers and file-name spelling are excluded because the pinned route spells the origin by basename and preprocesses different headers",
+ "differences": [
+  {
+   "function": "append_to_ring_buffer",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 24,
+    "census-archive@66910c10(pinned)": 24,
+    "main-profile@864(current)#shared": 24,
+    "main-profile@864(current)#static": 24,
+    "system-slice@864(current)#shared": 24,
+    "system-slice@864(current)#static": 24
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "unmodeled call, aggregate or indirect access in branch condition",
+       3601,
+       1
+      ]
+     ],
+     "only_in_reference": [
+      [
+       "unknown_alias",
+       "unresolved resource identity `cr`",
+       3601,
+       1
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "function": "destroy_chunk_raw",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 3,
+    "census-archive@66910c10(pinned)": 5,
+    "main-profile@864(current)#shared": 3,
+    "main-profile@864(current)#static": 3,
+    "system-slice@864(current)#shared": 3,
+    "system-slice@864(current)#static": 3
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       3549,
+       1
+      ],
+      [
+       "unsupported",
+       "unmodeled call, aggregate or indirect access in branch condition",
+       3548,
+       1
+      ]
+     ],
+     "only_in_reference": []
+    }
+   }
+  },
+  {
+   "function": "flb_input_chunk_get_direct_routes",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 36,
+    "census-archive@66910c10(pinned)": 46,
+    "main-profile@864(current)#shared": 36,
+    "main-profile@864(current)#static": 36,
+    "system-slice@864(current)#shared": 36,
+    "system-slice@864(current)#static": 36
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2285,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2287,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2289,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2360,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2362,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2390,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2392,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2441,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2463,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       2473,
+       1
+      ]
+     ],
+     "only_in_reference": []
+    }
+   }
+  },
+  {
+   "function": "flb_input_chunk_map",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 91,
+    "census-archive@66910c10(pinned)": 90,
+    "main-profile@864(current)#shared": 91,
+    "main-profile@864(current)#static": 91,
+    "system-slice@864(current)#shared": 91,
+    "system-slice@864(current)#static": 91
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [],
+     "only_in_reference": [
+      [
+       "unknown_alias",
+       "unresolved resource identity `ic`",
+       1512,
+       1
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "function": "flb_input_chunk_prefers_physical_delete",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 3,
+    "census-archive@66910c10(pinned)": 5,
+    "main-profile@864(current)#shared": 3,
+    "main-profile@864(current)#static": 3,
+    "system-slice@864(current)#shared": 3,
+    "system-slice@864(current)#static": 3
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "unmodeled call, aggregate or indirect access in branch condition",
+       970,
+       1
+      ],
+      [
+       "unsupported",
+       "unmodeled call, aggregate or indirect access in branch condition",
+       981,
+       1
+      ]
+     ],
+     "only_in_reference": []
+    }
+   }
+  },
+  {
+   "function": "flb_input_chunk_ring_buffer_cleanup",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 3,
+    "census-archive@66910c10(pinned)": 4,
+    "main-profile@864(current)#shared": 3,
+    "main-profile@864(current)#static": 3,
+    "system-slice@864(current)#shared": 3,
+    "system-slice@864(current)#static": 3
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "unmodeled call, aggregate or indirect access in branch condition",
+       3665,
+       1
+      ]
+     ],
+     "only_in_reference": []
+    }
+   }
+  },
+  {
+   "function": "input_chunk_metadata_view",
+   "status": {
+    "baseline-archive@66910c10(pinned)": "Unknown",
+    "census-archive@66910c10(pinned)": "Unknown",
+    "main-profile@864(current)#shared": "Unknown",
+    "main-profile@864(current)#static": "Unknown",
+    "system-slice@864(current)#shared": "Unknown",
+    "system-slice@864(current)#static": "Unknown"
+   },
+   "diagnostic_multiset_equal_to_reference": {
+    "baseline-archive@66910c10(pinned)": true,
+    "census-archive@66910c10(pinned)": false,
+    "main-profile@864(current)#shared": true,
+    "main-profile@864(current)#static": true,
+    "system-slice@864(current)#shared": true,
+    "system-slice@864(current)#static": true
+   },
+   "diagnostic_counts": {
+    "baseline-archive@66910c10(pinned)": 6,
+    "census-archive@66910c10(pinned)": 10,
+    "main-profile@864(current)#shared": 6,
+    "main-profile@864(current)#static": 6,
+    "system-slice@864(current)#shared": 6,
+    "system-slice@864(current)#static": 6
+   },
+   "delta_against_reference": {
+    "census-archive@66910c10(pinned)": {
+     "only_here": [
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       328,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       331,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       333,
+       1
+      ],
+      [
+       "unsupported",
+       "indirect memory access is outside the resource projection",
+       347,
+       1
+      ]
+     ],
+     "only_in_reference": []
+    }
+   }
+  }
+ ]
+}

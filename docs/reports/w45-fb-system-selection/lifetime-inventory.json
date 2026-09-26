@@ -1,0 +1,873 @@
+{
+  "schema_version": 1,
+  "card": "W45-FB-SYSTEM-SELECTION",
+  "kind": "read-only source census (lifetime and synchronization inventory)",
+  "source": "/home/cosmo/Documents/GitHub/fluent-bit",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "scope": "This is source reading of the Fluent Bit checkout at the pinned revision only; it is not an audit verdict, not a Quirin result, not a model proof and not a native observation, and no entry in it (including every candidate label C*, N*, A*, BC-*, BX-*, S1) is an upstream defect finding.",
+  "method": "Line ranges verified with nl -ba / sed -n / Read against the pinned checkout; sha256sum recorded per cited file. No git, build or execution. Prior investigations (docs/reports/fb-system-audit-cards/retry, docs/reports/fb-system-audit-cards/accounting) were re-checked at the pin rather than copied; their candidates appear under failure_outcomes.cross_references with re-verified lines.",
+  "selection": {
+    "system_files": [
+      "plugins/in_storage_backlog/sb.c",
+      "src/flb_input_chunk.c",
+      "src/flb_storage.c",
+      "src/flb_task.c",
+      "src/flb_engine.c",
+      "src/flb_engine_dispatch.c",
+      "src/flb_scheduler.c",
+      "src/flb_output.c"
+    ],
+    "widening_rule": "Headers and flb_output_thread.c / flb_input.c / flb_config.c are cited only where a lifetime decision or shutdown ordering lives there. Any other target is recorded as outside_selection with its path and is used only as a callee summary or definition site."
+  },
+  "files": [
+    {"path": "plugins/in_storage_backlog/sb.c", "sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04", "role": "system_file"},
+    {"path": "src/flb_input_chunk.c", "sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e", "role": "system_file"},
+    {"path": "src/flb_storage.c", "sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b", "role": "system_file"},
+    {"path": "src/flb_task.c", "sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d", "role": "system_file"},
+    {"path": "src/flb_engine.c", "sha256": "8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33", "role": "system_file"},
+    {"path": "src/flb_engine_dispatch.c", "sha256": "b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3", "role": "system_file"},
+    {"path": "src/flb_scheduler.c", "sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49", "role": "system_file"},
+    {"path": "src/flb_output.c", "sha256": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819", "role": "system_file"},
+    {"path": "include/fluent-bit/flb_task.h", "sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d", "role": "header"},
+    {"path": "include/fluent-bit/flb_input_chunk.h", "sha256": "fc456c464b52cdcb9e59d6b5782d34e928c47c052b42e08a3e56c1904ac01b64", "role": "header"},
+    {"path": "include/fluent-bit/flb_scheduler.h", "sha256": "2a2e17f101dd21510ea535685daab99bb4ceccae78503dd7316f56ceb30e5138", "role": "header"},
+    {"path": "include/fluent-bit/flb_output.h", "sha256": "815dc3774c93718b95b5b9474f93d790accb2c0bb9d0c45a15cb40c8649cd51d", "role": "header"},
+    {"path": "include/fluent-bit/flb_output_thread.h", "sha256": "459b91e836173b116330ad975a63b315db04cf2ca52c0dd13f0f9a5605826e26", "role": "header"},
+    {"path": "include/fluent-bit/flb_storage.h", "sha256": "bfb7a5d42aa3317877987949830a6a16e7e7143008fbdaed68611a329e27ebfb", "role": "header"},
+    {"path": "src/flb_output_thread.c", "sha256": "932ed57899416bc8db9780328865fd5cdac45f4ec73cff6e006b90fb93258647", "role": "output_worker_handoff"},
+    {"path": "src/flb_input.c", "sha256": "2056b5856e4c2405ed959bf72f211c5d03fe7cc520f5ed174837ffd5d329ebd7", "role": "shutdown_ordering_and_collector_dispatch"},
+    {"path": "src/flb_config.c", "sha256": "1b7cc310ce3e3758a3df774ae5eb76584c11668dfcbae68a8f5eec56f77b3560", "role": "shutdown_ordering_and_task_map"},
+    {"path": "include/fluent-bit/flb_task_map.h", "sha256": "079b2973260d20d9dcd4efa63ed36e1a4804d11bba2125f356a8015c766568a8", "role": "outside_selection: task map slot struct definition only"},
+    {"path": "include/fluent-bit/flb_config.h", "sha256": "e9db1b022d746a70bc37f4e0dd37152d57bcfbbe58150043659050a29c7f7fee", "role": "outside_selection: task_map field and size limits only"},
+    {"path": "lib/chunkio/include/chunkio/cio_chunk.h", "sha256": "a210e185d9aee64556b5895145d9819cf2d58b32ec44af34fad49030785ce3ef", "role": "outside_selection: struct cio_chunk definition only"},
+    {"path": "lib/chunkio/src/cio_chunk.c", "sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8", "role": "outside_selection: cio_chunk_close summary only"},
+    {"path": "lib/monkey/include/monkey/mk_core/mk_list.h", "sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1", "role": "outside_selection: mk_list_del semantics only"}
+  ],
+  "identities": [
+    {
+      "id": "chunk",
+      "name": "ChunkIO chunk as used by Fluent Bit",
+      "struct": "struct cio_chunk",
+      "defined_at": "lib/chunkio/include/chunkio/cio_chunk.h:28-51 (outside_selection)",
+      "identity_key": "pointer (struct cio_chunk *); no generation field; name string (ch->name) unique only within its stream. sb.c compares wrappers by this pointer (sb.c:225); input chunks hold it as void *chunk (flb_input_chunk.h:96).",
+      "owner": "Storage ownership: the cio stream lists inside config->cio (ch->_head / ch->_state_head, cio_chunk.h:44-50), created by flb_storage_create (flb_storage.c:713-736) and destroyed by cio_destroy (flb_storage.c:1000). Delivery custody at Fluent Bit level: either one or more backlog wrappers (sb_out_chunk.chunk, non-owning, possibly several queues) or exactly one flb_input_chunk (ic->chunk) after flb_input_chunk_map.",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_storage_create", "file": "src/flb_storage.c", "lines": "L726-736", "what": "cio_load populates streams with persisted chunks from a previous run; cio_qsort orders them (loader body outside_selection)"},
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L408-433", "what": "iterates every chunk of every non-DLQ stream; cio_chunk_up_force brings a down chunk up; returns -3 if still not up"},
+          {"function": "cb_queue_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L630-652", "what": "queue-head chunk brought up with cio_chunk_up_force before mapping"},
+          {"function": "flb_engine_dispatch_retry", "file": "src/flb_engine_dispatch.c", "lines": "L98-118", "what": "flb_input_chunk_set_up and flb_input_chunk_flush bring the task's chunk up and lock it for a retry (state, not ownership)"}
+        ],
+        "publication": [
+          {"function": "sb_append_chunk_to_segregated_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L269-275", "what": "chunk pointer stored in a new wrapper that is linked into one output queue"},
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L477-481", "what": "after successful segregation the chunk is locked and put down"},
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1496", "what": "ic->chunk = chunk (adopted by a new input chunk)"},
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1775-1777", "what": "owning ic linked into in->chunks of the storage_backlog instance; per-output fs ledger charged"},
+          {"function": "flb_input_chunk_flush", "file": "src/flb_input_chunk.c", "lines": "L3796-3829", "what": "chunk up, cio_chunk_lock, content pointer returned, ic->busy set: the buffer is then referenced by task->event_chunk and output flushes"}
+        ],
+        "removal": [
+          {"function": "cio_chunk_close", "file": "lib/chunkio/src/cio_chunk.c", "lines": "L131-132", "what": "outside_selection: unlinks from stream lists inside close"}
+        ],
+        "destruction": [
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L413-428", "what": "CIO_CORRUPTED with storage_del_bad_chunks and a bad-checksum/size/layout error: cio_chunk_close(chunk, CIO_TRUE)"},
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L444-450", "what": "no route (-4): cio_chunk_close(chunk, CIO_FALSE), file kept"},
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L458-461", "what": "tag unreadable (-2): close with delete"},
+          {"function": "sb_segregate_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L467-474", "what": "other failure (-1 or -3): close, delete iff content size <= 0"},
+          {"function": "sb_release_output_queue_space", "file": "plugins/in_storage_backlog/sb.c", "lines": "L567-568", "what": "eviction: all wrappers removed, then cio_chunk_close(..., FLB_TRUE)"},
+          {"function": "cb_queue_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L645-646", "what": "corrupted: wrappers removed then close without delete"},
+          {"function": "cb_queue_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L668-670", "what": "bad metadata: wrappers removed then close with delete"},
+          {"function": "cb_queue_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L681-683", "what": "empty: wrappers removed then close with delete"},
+          {"function": "cb_queue_chunks", "file": "plugins/in_storage_backlog/sb.c", "lines": "L694-702", "what": "map failure: down, wrappers removed, close with delete"},
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1512-1516", "what": "routes_mask calloc failure: callee closes the chunk with delete before returning NULL (only NULL arm that closes)"},
+          {"function": "flb_input_chunk_destroy", "file": "src/flb_input_chunk.c", "lines": "L2797", "what": "cio_chunk_close(ic->chunk, del) when the owning ic is destroyed"},
+          {"function": "flb_storage_destroy", "file": "src/flb_storage.c", "lines": "L1000", "what": "cio_destroy frees any chunk still in the context (body outside_selection)"},
+          {"function": "cio_chunk_close", "file": "lib/chunkio/src/cio_chunk.c", "lines": "L111-138", "what": "outside_selection summary: frees ch->name and ch (L133-134)"}
+        ]
+      }
+    },
+    {
+      "id": "input_chunk",
+      "name": "input-chunk wrapper",
+      "struct": "struct flb_input_chunk",
+      "defined_at": "include/fluent-bit/flb_input_chunk.h:86-107",
+      "identity_key": "pointer; back-reference ic->task (flb_input_chunk.h:100) set at flb_task.c:629; no generation",
+      "owner": "in->chunks list of its input instance (ic->_head). Once a task exists, task->ic (flb_task.h:92) is the retiring reference: flb_task_destroy destroys the ic (flb_task.c:927-930).",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1486-1497", "what": "flb_calloc; fields set; fs_backlog=TRUE"},
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1507-1517", "what": "routes_mask allocation"}
+        ],
+        "publication": [
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1775-1777", "what": "mk_list_add into in->chunks; flb_input_chunk_update_output_instances charges fs_chunks_size"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L627-635", "what": "task_ic->task = task; task->ic = ic; task linked into i_ins->tasks"},
+          {"function": "flb_engine_dispatch", "file": "src/flb_engine_dispatch.c", "lines": "L351-397", "what": "non-busy ic selected, flushed (busy=TRUE) and handed to flb_task_create"}
+        ],
+        "removal": [
+          {"function": "flb_input_chunk_destroy", "file": "src/flb_input_chunk.c", "lines": "L2798", "what": "mk_list_del(&ic->_head)"}
+        ],
+        "destruction": [
+          {"function": "flb_input_chunk_destroy", "file": "src/flb_input_chunk.c", "lines": "L2704-2808", "what": "ledger subtract per routed output (L2717-2741), hash-table unlink (L2764-2789), chunk close (L2797), free routes_mask and ic (L2800-2805)"},
+          {"function": "flb_input_chunk_map", "file": "src/flb_input_chunk.c", "lines": "L1501-1504, L1512-1516, L1528-1530, L1548-1550, L1561-1563, L1581-1583, L1597-1599, L1608-1610, L1650-1654, L1750-1754", "what": "failure arms free the partially built ic before publication"},
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L927-930", "what": "task retires its ic"},
+          {"function": "flb_storage_input_destroy", "file": "src/flb_storage.c", "lines": "L632-635", "what": "instance teardown destroys remaining ics with del=FLB_FALSE"},
+          {"function": "flb_input_chunk_release_space", "file": "src/flb_input_chunk.c", "lines": "L700-721", "what": "eviction: via flb_task_destroy when task->users==0 (L706-709) or directly when no task (L718)"}
+        ]
+      }
+    },
+    {
+      "id": "backlog_wrapper",
+      "name": "storage_backlog per-output queue entry",
+      "struct": "struct sb_out_chunk",
+      "defined_at": "plugins/in_storage_backlog/sb.c:35-40",
+      "identity_key": "pointer; located for removal by (queue, chunk pointer), first match only (sb.c:222-245). Several wrappers in different queues share one chunk pointer. size field is the snapshot of cio_chunk_get_real_size at segregation (sb.c:317, 346).",
+      "owner": "sb_out_queue.chunks (sb.c:44) of exactly one queue; queues are in flb_sb.backlogs (sb.c:53). The wrapper does not own the chunk: sb_destroy_chunk frees only the wrapper (sb.c:131-134).",
+      "companion_identity": {"struct": "struct sb_out_queue", "defined_at": "plugins/in_storage_backlog/sb.c:42-46", "acquisition": "sb_allocate_backlogs sb.c:160-167 (one per output in config->outputs)", "publication": "sb.c:169-173 mk_list_add into context->backlogs", "removal": "sb_destroy_backlogs sb.c:188", "destruction": "sb_destroy_backlogs sb.c:192"},
+      "sites": {
+        "acquisition": [
+          {"function": "sb_allocate_chunk", "file": "plugins/in_storage_backlog/sb.c", "lines": "L114-129", "what": "flb_calloc; chunk/stream/size copied"},
+          {"function": "sb_append_chunk_to_segregated_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L269-273", "what": "allocation; NULL returns -1 before any link"}
+        ],
+        "publication": [
+          {"function": "sb_append_chunk_to_segregated_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L275-287", "what": "mk_list_add into backlog->chunks; fs_backlog_chunks_size += size (saturating)"},
+          {"function": "sb_append_chunk_to_segregated_backlogs", "file": "plugins/in_storage_backlog/sb.c", "lines": "L341-352", "what": "one wrapper per queue whose output route bit is set; early return -3 on a later allocation failure"}
+        ],
+        "removal": [
+          {"function": "sb_remove_chunk_from_segregated_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L222-245", "what": "first wrapper with matching chunk pointer unlinked; fs_backlog_chunks_size -= size (reset to 0 on underflow)"},
+          {"function": "sb_remove_chunk_from_segregated_backlogs", "file": "plugins/in_storage_backlog/sb.c", "lines": "L249-260", "what": "applies removal with destroy=TRUE to every queue currently in context->backlogs"}
+        ],
+        "destruction": [
+          {"function": "sb_remove_chunk_from_segregated_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L240-242", "what": "sb_destroy_chunk (flb_free) when destroy"},
+          {"function": "sb_destroy_backlogs / sb_destroy_backlog", "file": "plugins/in_storage_backlog/sb.c", "lines": "L136-147, L179-194", "what": "teardown path; see failure_outcomes BX-1 and BX-2"}
+        ]
+      }
+    },
+    {
+      "id": "task",
+      "name": "engine task",
+      "struct": "struct flb_task",
+      "defined_at": "include/fluent-bit/flb_task.h:86-102",
+      "identity_key": "pointer; also integer id = task-map index (flb_task.c:453-464), reusable, no generation; the output completion carries only the id (flb_task.h:47-51)",
+      "owner": "i_ins->tasks list (task->_head, flb_task.c:635) plus config->task_map[id].task. Liveness is governed by task->users (plain int, flb_task.h:90) and task->retries being empty (flb_task.h:171-176). task->lock (flb_task.h:101) protects route data only.",
+      "sites": {
+        "acquisition": [
+          {"function": "task_alloc", "file": "src/flb_task.c", "lines": "L446-450", "what": "flb_calloc"},
+          {"function": "task_alloc", "file": "src/flb_task.c", "lines": "L463-471", "what": "users=0, routes/retries init, mutex init"}
+        ],
+        "publication": [
+          {"function": "task_alloc", "file": "src/flb_task.c", "lines": "L453-459", "what": "map slot claimed and set to the task"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L628-635", "what": "linked to ic and to i_ins->tasks"},
+          {"function": "flb_output_task_flush", "file": "src/flb_output.c", "lines": "L422-426, L438-448", "what": "threaded: users++ then task pointer written to a worker pipe (flb_output_thread.c:450); non-threaded: out_flush->task set (flb_output.h:845), users++, out_flush pointer written to ch_self_events"},
+          {"function": "flb_output_return", "file": "include/fluent-bit/flb_output.h", "lines": "L1354-1373", "what": "task id + output id + return value encoded and written to the completion channel"},
+          {"function": "flb_output_task_queue_enqueue", "file": "src/flb_output.c", "lines": "L296-301", "what": "task pointer stored in a singleplex queue entry (with a temporary user added by the caller at L368)"}
+        ],
+        "removal": [
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L908-909", "what": "map slot cleared"},
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L922-925", "what": "unlinked from i_ins->tasks"}
+        ],
+        "destruction": [
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L899-948", "what": "routes, ic, retries, event chunk released, then flb_free(task) L947"},
+          {"function": "task_alloc", "file": "src/flb_task.c", "lines": "L454-456", "what": "no map id: free before publication"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L605-608, L611-616", "what": "early failure frees task after map_set_task_id without clearing the slot (see N6)"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L729-741, L806-816, L826-836, L876-889", "what": "later failures call flb_task_destroy(task, FLB_TRUE) (also retires ic with delete)"},
+          {"function": "flb_task_users_release", "file": "include/fluent-bit/flb_task.h", "lines": "L171-176", "what": "destroy iff users==0 and retries empty"},
+          {"function": "flb_task_retry_reschedule", "file": "src/flb_task.c", "lines": "L303-306", "what": "destroy iff users==0 and retries empty after retry destroy"},
+          {"function": "flb_engine_dispatch", "file": "src/flb_engine_dispatch.c", "lines": "L426-434", "what": "test-mode cleanup: users==0, no retries, no routes"},
+          {"function": "flb_input_chunk_release_space", "file": "src/flb_input_chunk.c", "lines": "L700-712", "what": "eviction destroys a task with users==0 even if retries are non-empty"},
+          {"function": "flb_engine_destroy_tasks", "file": "src/flb_engine.c", "lines": "L125-139", "what": "instance teardown destroys every task regardless of users (called at src/flb_input.c:1231)"}
+        ]
+      }
+    },
+    {
+      "id": "task_route",
+      "name": "per-output task route",
+      "struct": "struct flb_task_route",
+      "defined_at": "include/fluent-bit/flb_task.h:58-68",
+      "identity_key": "(task pointer, route->out pointer); lookups compare route->out == o_ins (flb_task.h:236-243, 256-259, 349-352); no generation",
+      "owner": "task->routes; status and retry_context mutated under task->lock from engine and worker threads",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L707-712", "what": "stored direct-route path allocation"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L806-816", "what": "direct-route path allocation (failure destroys task)"},
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L860-864", "what": "tag-route path allocation (failure: continue, route silently skipped)"}
+        ],
+        "publication": [
+          {"function": "flb_task_create", "file": "src/flb_task.c", "lines": "L714-718, L818-822, L866-870", "what": "status INACTIVE, linked into task->routes"},
+          {"function": "output_pre_cb_flush", "file": "include/fluent-bit/flb_output.h", "lines": "L768-783", "what": "under task->lock: DROPPED returns FLB_ERROR, otherwise route activated"},
+          {"function": "flb_output_return", "file": "include/fluent-bit/flb_output.h", "lines": "L1315-1324", "what": "under task->lock: route data set, route deactivated"},
+          {"function": "flb_input_chunk_drop_task_route", "file": "src/flb_input_chunk.c", "lines": "L870-895", "what": "under task->lock: INACTIVE route marked DROPPED during eviction"}
+        ],
+        "removal": [
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L912-918", "what": "retry_context_destroy callback, mk_list_del"},
+          {"function": "tasks_start", "file": "src/flb_engine_dispatch.c", "lines": "L260-269", "what": "test-mode output: route removed after formatter test"}
+        ],
+        "destruction": [
+          {"function": "flb_task_destroy", "file": "src/flb_task.c", "lines": "L919", "what": "flb_free(route)"},
+          {"function": "tasks_start", "file": "src/flb_engine_dispatch.c", "lines": "L268", "what": "flb_free(route)"}
+        ]
+      }
+    },
+    {
+      "id": "retry",
+      "name": "task retry",
+      "struct": "struct flb_task_retry",
+      "defined_at": "include/fluent-bit/flb_task.h:78-83",
+      "identity_key": "pointer; logically unique per (task, o_ins) because flb_task_retry_create searches task->retries first (flb_task.c:325-337); scheduler requests locate it by pointer equality (flb_scheduler.c:364, 381)",
+      "owner": "task->retries (retry->_head). Non-owning holders: flb_sched_request.data (flb_scheduler.c:306, 982) and flb_task_enqueued.retry (flb_output.c:296).",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_task_retry_create", "file": "src/flb_task.c", "lines": "L341-349", "what": "flb_malloc; attempts=1"},
+          {"function": "flb_task_retry_create", "file": "src/flb_task.c", "lines": "L355-358", "what": "existing retry reused, attempts++"}
+        ],
+        "publication": [
+          {"function": "flb_task_retry_create", "file": "src/flb_task.c", "lines": "L350", "what": "mk_list_add into task->retries"},
+          {"function": "flb_sched_request_create", "file": "src/flb_scheduler.c", "lines": "L306-311, L314", "what": "request->data = retry; request linked to requests_wait or requests"},
+          {"function": "flb_sched_retry_now", "file": "src/flb_scheduler.c", "lines": "L982-985", "what": "request->data = retry; scheduled now"},
+          {"function": "flb_output_task_queue_enqueue", "file": "src/flb_output.c", "lines": "L296-301", "what": "queued_task->retry = retry; queued"}
+        ],
+        "removal": [
+          {"function": "flb_task_retry_destroy", "file": "src/flb_task.c", "lines": "L273-282", "what": "scheduler request invalidated, route retry context cleared, unlinked"}
+        ],
+        "destruction": [
+          {"function": "flb_task_retry_destroy", "file": "src/flb_task.c", "lines": "L283", "what": "flb_free(retry)"},
+          {"function": "callers of flb_task_retry_destroy", "file": "(multiple)", "lines": "flb_task.c:331, 303, 429, 936; flb_engine_dispatch.c:135, 172; flb_engine.c:801; flb_output.c:292, 337", "what": "limit reached, reschedule failure, success/clean, task destroy, dispatch failures, schedule failure, singleplex enqueue/flush failure"}
+        ]
+      }
+    },
+    {
+      "id": "sched_request",
+      "name": "scheduler retry request",
+      "struct": "struct flb_sched_request",
+      "defined_at": "include/fluent-bit/flb_scheduler.h:79-86",
+      "identity_key": "pointer; searched by request->data (the retry pointer), first match in requests then requests_wait (flb_scheduler.c:354-388)",
+      "owner": "sched->requests (armed timerfd) or sched->requests_wait (not yet armed); timer->data points back to it (flb_scheduler.c:290)",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_sched_request_create", "file": "src/flb_scheduler.c", "lines": "L282-286", "what": "flb_malloc (after timer allocation)"},
+          {"function": "flb_sched_retry_now", "file": "src/flb_scheduler.c", "lines": "L966-971", "what": "flb_malloc; timer destroyed on failure"}
+        ],
+        "publication": [
+          {"function": "schedule_request_now", "file": "src/flb_scheduler.c", "lines": "L133-147", "what": "timerfd registered in config->evl; request linked to sched->requests"},
+          {"function": "schedule_request_wait", "file": "src/flb_scheduler.c", "lines": "L156-163", "what": "linked to sched->requests_wait"},
+          {"function": "schedule_request_promote", "file": "src/flb_scheduler.c", "lines": "L183-228", "what": "wait -> now; failures re-added to wait list"}
+        ],
+        "removal": [
+          {"function": "flb_sched_request_destroy", "file": "src/flb_scheduler.c", "lines": "L336", "what": "mk_list_del"}
+        ],
+        "destruction": [
+          {"function": "flb_sched_request_destroy", "file": "src/flb_scheduler.c", "lines": "L338-349", "what": "timer invalidated, request freed"},
+          {"function": "flb_sched_request_create", "file": "src/flb_scheduler.c", "lines": "L314-322", "what": "schedule_request_now failure: timer destroyed, request freed"},
+          {"function": "flb_sched_retry_now", "file": "src/flb_scheduler.c", "lines": "L985-993", "what": "same shape"},
+          {"function": "flb_sched_event_handler", "file": "src/flb_scheduler.c", "lines": "L599-604", "what": "destroyed after dispatch returns 0"},
+          {"function": "flb_sched_request_invalidate", "file": "src/flb_scheduler.c", "lines": "L362-385", "what": "destroyed when its retry is destroyed"},
+          {"function": "flb_sched_destroy", "file": "src/flb_scheduler.c", "lines": "L827-838", "what": "teardown of both lists"}
+        ]
+      }
+    },
+    {
+      "id": "sched_timer",
+      "name": "scheduler timer",
+      "struct": "struct flb_sched_timer",
+      "defined_at": "include/fluent-bit/flb_scheduler.h:52-76",
+      "identity_key": "pointer; the embedded struct mk_event is the first member so the event pointer is cast back to the timer (flb_scheduler.c:588); active flag guards invalidated timers (flb_scheduler.c:589-591)",
+      "owner": "sched->timers while live; sched->timers_drop after invalidation until flb_sched_timer_cleanup",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_sched_timer_create", "file": "src/flb_scheduler.c", "lines": "L874-888", "what": "flb_calloc; active=TRUE"}
+        ],
+        "publication": [
+          {"function": "flb_sched_timer_create", "file": "src/flb_scheduler.c", "lines": "L889", "what": "linked to sched->timers"},
+          {"function": "schedule_request_now", "file": "src/flb_scheduler.c", "lines": "L128-146", "what": "timer event registered in the engine loop as FLB_ENGINE_EV_SCHED"},
+          {"function": "flb_sched_timer_cb_create", "file": "src/flb_scheduler.c", "lines": "L653-686", "what": "callback timers (e.g. flb_engine.c:1383-1386 ring buffer collector)"}
+        ],
+        "removal": [
+          {"function": "flb_sched_timer_invalidate", "file": "src/flb_scheduler.c", "lines": "L894-902", "what": "timeout destroyed (via flb_sched_timer_cb_disable L720-728), active=FALSE, moved to timers_drop"},
+          {"function": "flb_sched_timer_destroy", "file": "src/flb_scheduler.c", "lines": "L907-909", "what": "unlinked"}
+        ],
+        "destruction": [
+          {"function": "flb_sched_timer_destroy", "file": "src/flb_scheduler.c", "lines": "L905-913", "what": "flb_free"},
+          {"function": "flb_sched_timer_cleanup", "file": "src/flb_scheduler.c", "lines": "L916-934", "what": "drop list freed; called after each engine loop round (flb_engine.c:1609-1611)"},
+          {"function": "flb_sched_destroy", "file": "src/flb_scheduler.c", "lines": "L840-853", "what": "teardown of timers and timers_drop"},
+          {"function": "failure arms", "file": "src/flb_scheduler.c", "lines": "L319, L676, L969, L990", "what": "destroyed when the request/timeout cannot be created; NOT at L282-286 (C1)"}
+        ]
+      }
+    },
+    {
+      "id": "output_flush",
+      "name": "output flush / coroutine context",
+      "struct": "struct flb_output_flush",
+      "defined_at": "include/fluent-bit/flb_output.h:585-601",
+      "identity_key": "pointer; out_flush->id is a 14-bit rolling counter (flb_output.c:239-266) not used by the completion key; completion identifies the flush only by (task id, output id) and the destroy step sweeps the whole flush_list_destroy (flb_output.c:664-667)",
+      "owner": "o_ins->flush_list (non-threaded) or th_ins->flush_list under th_ins->flush_mutex (threaded, flb_output_thread.h:84-92); moved to the corresponding flush_list_destroy on return",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_output_flush_create", "file": "include/fluent-bit/flb_output.h", "lines": "L825-848", "what": "flb_calloc, coroutine created, task/o_ins/buffer recorded"}
+        ],
+        "publication": [
+          {"function": "flb_output_flush_create", "file": "include/fluent-bit/flb_output.h", "lines": "L1261-1273", "what": "linked into flush_list (threaded under flush_mutex); TLS params set"},
+          {"function": "flb_output_task_flush", "file": "src/flb_output.c", "lines": "L447-448", "what": "non-threaded: out_flush pointer written to config->ch_self_events[1]"},
+          {"function": "flb_engine_start loop", "file": "src/flb_engine.c", "lines": "L1540-1552", "what": "pointer read from ch_self_events and coroutine resumed"},
+          {"function": "output worker loop", "file": "src/flb_output_thread.c", "lines": "L306-314", "what": "threaded: created and resumed in the worker"}
+        ],
+        "removal": [
+          {"function": "flb_output_flush_prepare_destroy", "file": "src/flb_output.c", "lines": "L220-237", "what": "flush_list -> flush_list_destroy (under flush_mutex when threaded); called from flb_output_return (flb_output.h:1382)"},
+          {"function": "flb_output_flush_destroy", "file": "include/fluent-bit/flb_output.h", "lines": "L654", "what": "mk_list_del"}
+        ],
+        "destruction": [
+          {"function": "flb_output_flush_destroy", "file": "include/fluent-bit/flb_output.h", "lines": "L650-657", "what": "coroutine destroyed, flb_free"},
+          {"function": "flb_output_flush_finished", "file": "src/flb_output.c", "lines": "L641-670", "what": "sweeps flush_list_destroy; engine calls it for non-threaded outputs (flb_engine.c:603-605), worker for threaded (flb_output_thread.c:92)"},
+          {"function": "flb_output_task_flush", "file": "src/flb_output.c", "lines": "L449-452", "what": "pipe write failure destroys the just-published flush"},
+          {"function": "flb_output_flush_create", "file": "include/fluent-bit/flb_output.h", "lines": "L834-836, L866-869, L1246-1253 (and further processor arms returning NULL between L870 and L1238)", "what": "creation failure arms free before publication"}
+        ]
+      }
+    },
+    {
+      "id": "singleplex_entry",
+      "name": "singleplex (synchronous output) queue entry",
+      "struct": "struct flb_task_enqueued",
+      "defined_at": "include/fluent-bit/flb_task.h:124-130",
+      "identity_key": "pointer; FIFO position in queue->pending / queue->in_progress (flb_task.h:110-113); in_progress holds at most one entry by construction (flb_output.c:377-380, 394-407) except on the N3 arm",
+      "owner": "o_ins->singleplex_queue (created flb_output.c:890-900) pending list, then in_progress list",
+      "sites": {
+        "acquisition": [
+          {"function": "flb_output_task_queue_enqueue", "file": "src/flb_output.c", "lines": "L288-295", "what": "flb_malloc; failure destroys the retry and returns -1"}
+        ],
+        "publication": [
+          {"function": "flb_output_task_queue_enqueue", "file": "src/flb_output.c", "lines": "L296-301", "what": "fields set; linked into pending"},
+          {"function": "flb_output_task_queue_flush_one", "file": "src/flb_output.c", "lines": "L321-323", "what": "moved pending -> in_progress"}
+        ],
+        "removal": [
+          {"function": "flb_output_task_singleplex_flush_next", "file": "src/flb_output.c", "lines": "L395-399", "what": "first in_progress entry unlinked"}
+        ],
+        "destruction": [
+          {"function": "flb_output_task_singleplex_flush_next", "file": "src/flb_output.c", "lines": "L400", "what": "flb_free(ended_task)"},
+          {"function": "flb_task_queue_destroy", "file": "src/flb_task.c", "lines": "L962-980", "what": "teardown frees entries without adjusting task users/retries; called from flb_output_instance_destroy (flb_output.c:548-551)"}
+        ]
+      }
+    },
+    {
+      "id": "task_map_slot",
+      "name": "task map slot / task id",
+      "struct": "struct flb_task_map (config->task_map[id])",
+      "defined_at": "include/fluent-bit/flb_task_map.h:25-27 (outside_selection); field include/fluent-bit/flb_config.h:356-357 (outside_selection)",
+      "identity_key": "integer index id; lowest free slot reused (flb_task.c:53-57); no generation; 14 bits in the completion key (flb_task.h:47-51) and map size capped at 16384 (flb_config.h:45-47) so ids fit",
+      "owner": "config->task_map array (grown by flb_config_task_map_grow, src/flb_config.c:1680-1688; realloc at 1636-1678)",
+      "sites": {
+        "acquisition": [
+          {"function": "map_get_task_id", "file": "src/flb_task.c", "lines": "L48-66", "what": "first NULL slot, else grow"}
+        ],
+        "publication": [
+          {"function": "map_set_task_id", "file": "src/flb_task.c", "lines": "L68-73", "what": "slot set (called at L459)"},
+          {"function": "flb_output_return", "file": "include/fluent-bit/flb_output.h", "lines": "L1354-1355", "what": "id encoded into the completion"},
+          {"function": "handle_output_event", "file": "src/flb_engine.c", "lines": "L580, L601", "what": "id decoded and used to look up the task (no NULL or generation check)"}
+        ],
+        "removal": [
+          {"function": "map_free_task_id", "file": "src/flb_task.c", "lines": "L75-78", "what": "slot set to NULL; called only from flb_task_destroy L909"}
+        ],
+        "destruction": [
+          {"function": "flb_config_exit", "file": "src/flb_config.c", "lines": "L766", "what": "flb_config_task_map_resize(config, 0) frees the array (L1644-1652)"}
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "E-ST-01",
+      "from": "flb_storage_create src/flb_storage.c:713-751",
+      "to": "cb_sb_init plugins/in_storage_backlog/sb.c:728-779 (via flb_input_new, outside_selection body src/flb_input.c:326)",
+      "carries": "cio context (container of every chunk) passed as plugin data; stored as ctx->cio (sb.c:756)",
+      "mechanism": "direct call (plugin init)",
+      "classification": "borrow",
+      "decided_by": "sb.c never destroys ctx->cio (cb_sb_exit sb.c:793-808 frees only backlogs, mask, ctx); cio_destroy happens only in flb_storage_destroy src/flb_storage.c:1000, called at src/flb_engine.c:1660 after flb_input_exit_all at :1650",
+      "synchronization": "single-threaded initialization; same config/engine thread"
+    },
+    {
+      "id": "E-BL-01",
+      "from": "flb_engine_start src/flb_engine.c:1392-1406",
+      "to": "sb_segregate_chunks plugins/in_storage_backlog/sb.c:376-486",
+      "carries": "chunk (every chunk of every non-DLQ stream of the shared cio context) -> backlog_wrapper",
+      "mechanism": "direct call before the event loop starts",
+      "classification": "transfer",
+      "decided_by": "delivery custody moves into wrappers linked into queue lists (sb.c:436, 269-275) whose owner frees them (sb.c:240-242); on success the chunk is locked and downed (sb.c:480-481); failure arms retire the chunk instead (sb.c:423, 448, 459, 469, 472); a -3 return aborts the whole pass (sb.c:431-433) and the engine fails startup (flb_engine.c:1400-1406)",
+      "synchronization": "engine thread; call at flb_engine.c:1398 precedes the loop at flb_engine.c:1414, so no collector or dispatch runs concurrently"
+    },
+    {
+      "id": "E-BL-02",
+      "from": "sb_append_chunk_to_segregated_backlog plugins/in_storage_backlog/sb.c:262-290",
+      "to": "sb_out_queue.chunks list (sb.c:275)",
+      "carries": "chunk pointer inside backlog_wrapper",
+      "mechanism": "list",
+      "classification": "borrow",
+      "decided_by": "the wrapper stores the chunk pointer (sb.c:123) but its destructor frees only the wrapper (sb.c:131-134); every chunk close is an explicit cio_chunk_close by the caller (sb.c:568, 646, 670, 683, 702). The wrapper itself is transferred into the queue (list owner frees at sb.c:240-242).",
+      "synchronization": "engine thread (callers E-BL-01, E-BL-09)"
+    },
+    {
+      "id": "E-BL-03",
+      "from": "cb_sb_init plugins/in_storage_backlog/sb.c:768-776",
+      "to": "cb_queue_chunks plugins/in_storage_backlog/sb.c:581-725 via outside_selection: flb_input_set_collector_time src/flb_input.c:2255 and flb_input_collector_fd src/flb_input.c:3256-3300, reached from flb_engine_handle_event src/flb_engine.c:985-989",
+      "carries": "flb_sb context (collector data) and, through it, all queues and wrappers",
+      "mechanism": "timer callback (1 s time collector) dispatched on the engine event loop",
+      "classification": "borrow",
+      "decided_by": "cb_queue_chunks does not free ctx; ctx is freed only in cb_sb_exit (sb.c:805) after flb_input_collector_pause (sb.c:797)",
+      "synchronization": "same engine event-loop thread as dispatch and the scheduler, under the premise that the storage_backlog instance is not threaded: plugin flags are only FLB_INPUT_PRIVATE (sb.c:824) and is_threaded is set only for FLB_INPUT_THREADED (src/flb_input.c:629-632); flb_engine_handle_event returns early once is_running is FALSE (flb_engine.c:962-964)"
+    },
+    {
+      "id": "E-BL-04",
+      "from": "cb_queue_chunks plugins/in_storage_backlog/sb.c:687-690",
+      "to": "flb_input_chunk_map src/flb_input_chunk.c:1455-1780 (non-NULL return)",
+      "carries": "chunk -> input_chunk",
+      "mechanism": "direct call",
+      "classification": "transfer",
+      "decided_by": "ic->chunk = chunk (flb_input_chunk.c:1496), ic linked into in->chunks (1775); the ic later retires the chunk in flb_input_chunk_destroy (2797); caller removes every backlog wrapper for the chunk (sb.c:712) and downs it (713)",
+      "synchronization": "engine thread (E-BL-03)"
+    },
+    {
+      "id": "E-BL-05",
+      "from": "cb_queue_chunks plugins/in_storage_backlog/sb.c:690-703",
+      "to": "flb_input_chunk_map src/flb_input_chunk.c:1455-1780 (NULL return)",
+      "carries": "chunk",
+      "mechanism": "direct call; ownership conveyed by return code",
+      "classification": "unresolved",
+      "decided_by": "ownership depends on which NULL arm was taken, but the caller cannot distinguish them: the arm at flb_input_chunk.c:1512-1516 closes (frees) the chunk, all other NULL arms (1501-1504, 1528-1530, 1548-1550, 1561-1563, 1581-1583, 1597-1599, 1608-1610, 1650-1654, 1750-1754) leave it open; cb_queue_chunks treats every NULL as caller-owned and reads/downs/closes it (sb.c:692-702). See failure_outcomes BC-1.",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-BL-06",
+      "from": "cb_queue_chunks plugins/in_storage_backlog/sb.c:709-713",
+      "to": "sb_remove_chunk_from_segregated_backlogs plugins/in_storage_backlog/sb.c:249-260",
+      "carries": "backlog_wrapper (all wrappers of the mapped chunk, in every queue)",
+      "mechanism": "direct call; list",
+      "classification": "retire",
+      "decided_by": "destroy=FLB_TRUE for every queue (sb.c:258) frees the matching wrapper (240-242). The comment at sb.c:709-711 says the reference is removed from this queue only, but the call removes it from all queues; the new ic's routes_mask covers the routed outputs (flb_input_chunk.c:1757-1773), so the obligation moves to the task rather than being dropped.",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-BL-07",
+      "from": "cb_queue_chunks error arms plugins/in_storage_backlog/sb.c:635-647, 663-671, 677-684, 691-703",
+      "to": "sb_remove_chunk_from_segregated_backlogs sb.c:249-260 then outside_selection: cio_chunk_close lib/chunkio/src/cio_chunk.c:111-138",
+      "carries": "backlog_wrapper, chunk",
+      "mechanism": "direct call",
+      "classification": "retire",
+      "decided_by": "pointer captured before wrapper removal (sb.c:639/668/681/700, comment 641-644), wrappers freed across all queues, then chunk closed (646 delete FALSE; 670, 683, 702 delete TRUE)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-BL-08",
+      "from": "cb_queue_chunks plugins/in_storage_backlog/sb.c:632-651",
+      "to": "outside_selection: cio_chunk_up_force (lib/chunkio, returning CIO_ERROR or CIO_RETRY)",
+      "carries": "chunk (queue head)",
+      "mechanism": "direct call",
+      "classification": "borrow",
+      "decided_by": "the CIO_ERROR/CIO_RETRY arm (sb.c:649-651) continues without changing total, the queue or empty_output_queue_count; no custody change (progress question is accounting candidate A1)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-BL-09",
+      "from": "flb_engine_start shutdown grace path src/flb_engine.c:1503-1516 (grace_count == 1 and storage_bl_flush_on_shutdown)",
+      "to": "sb_segregate_chunks plugins/in_storage_backlog/sb.c:376-486 (second call)",
+      "carries": "chunk, backlog_wrapper, sb_out_queue",
+      "mechanism": "direct call on the engine thread",
+      "classification": "unresolved",
+      "decided_by": "missing premise about which chunks exist and who owns them at shutdown: sb_allocate_backlogs appends a new queue per output (sb.c:155-174) without releasing the startup queues; sb_append_chunk_to_segregated_backlogs appends into every queue whose output bit is set, old and new (sb.c:341-352); the stream walk (sb.c:399-482) has no filter for chunks already wrapped, already mapped into an ic (flb_input_chunk.c:1496, 1775) or owned by live input chunks sharing the same cio context (flb_storage.c:583-592, 744). Whether such chunks are present, locked or up at grace_count==1 is not decided by the selected source. See S1.",
+      "synchronization": "engine thread; inputs were paused by flb_engine_stop_ingestion (flb_engine.c:1704-1711) — whether that pause includes the storage_backlog collector is decided in outside_selection code (flb_input_pause_all)"
+    },
+    {
+      "id": "E-BL-10",
+      "from": "flb_input_chunk_release_space_compound src/flb_input_chunk.c:1127-1130",
+      "to": "sb_release_output_queue_space plugins/in_storage_backlog/sb.c:525-578",
+      "carries": "backlog_wrapper, chunk",
+      "mechanism": "direct call (eviction under storage.total_limit_size)",
+      "classification": "retire",
+      "decided_by": "sb.c:567-568 removes every wrapper for the evicted chunk across all queues, then closes it with delete; one output's eviction therefore retires other outputs' wrappers of the same chunk",
+      "synchronization": "caller's thread. Engine thread when reached from input_chunk_append_raw for a non-threaded input or from the ring-buffer collector (flb_input_chunk.c:3741-3748; flb_engine.c:1604-1606). Callers of flb_input_chunk_append_raw_local (outside_selection: src/flb_input_log.c) are not enumerated, so the premise that eviction always runs on the engine thread is not established."
+    },
+    {
+      "id": "E-BL-11",
+      "from": "flb_engine_shutdown src/flb_engine.c:1648-1650 -> flb_input_instance_exit src/flb_input.c:2121-2124",
+      "to": "cb_sb_exit plugins/in_storage_backlog/sb.c:793-808 -> sb_destroy_backlogs sb.c:179-194",
+      "carries": "sb_out_queue, backlog_wrapper",
+      "mechanism": "direct call (teardown)",
+      "classification": "unresolved",
+      "decided_by": "queues are retired (sb.c:188, 192) but wrapper retirement is not decided: the queue is unlinked from context->backlogs (sb.c:188, mk_list_del semantics lib/monkey/include/monkey/mk_core/mk_list.h:145-150) before sb_destroy_backlog walks it (sb.c:190, 142-146), and sb_remove_chunk_from_segregated_backlogs only visits queues still linked (sb.c:255-259), so the queue's own wrappers are not reached (BX-1); removal in later queues writes backlog->ins->fs_backlog_chunks_size (sb.c:228-237) after flb_output_exit freed the output instances (flb_engine.c:1648 before 1650; flb_output.c:553-560) (BX-2). The required ordering premise (outputs outlive backlog teardown) is not provided by the source.",
+      "synchronization": "engine thread after the loop exits; output workers joined earlier (flb_output_thread.c:624-641)"
+    },
+    {
+      "id": "E-BL-12",
+      "from": "flb_engine_dispatch src/flb_engine_dispatch.c:351-397",
+      "to": "flb_task_create src/flb_task.c:551-897",
+      "carries": "input_chunk -> task",
+      "mechanism": "direct call",
+      "classification": "transfer",
+      "decided_by": "task->ic = ic and ic->task = task (flb_task.c:628-635); the task retires the ic in flb_task_destroy (927-930). On NULL with *err=TRUE before L629 the ic stays in in->chunks and is unlocked/downed by the caller (flb_engine_dispatch.c:405-413); on NULL after L635 the callee has already destroyed task and ic with delete (flb_task.c:739, 814, 834, 887) and the caller only continues (flb_engine_dispatch.c:414).",
+      "synchronization": "engine thread (flush timer flb_engine.c:968-972, manager stop flb_engine.c:948, shutdown flb_engine.c:1519)"
+    },
+    {
+      "id": "E-RT-01",
+      "from": "tasks_start src/flb_engine_dispatch.c:288-298",
+      "to": "flb_output_task_singleplex_enqueue src/flb_output.c:351-383 / flb_output_task_flush src/flb_output.c:415-464",
+      "carries": "task (+1 user or +1 temporary user)",
+      "mechanism": "direct call; return value ignored",
+      "classification": "transfer",
+      "decided_by": "user increments at flb_output.c:368, 423, 446 are returned by completion (flb_engine.c:687, 724, 775, 781, 864) or by queue advance (flb_output.c:329). The caller discards the return code, so failure arms are recorded under failure_outcomes (C2, N8).",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-02",
+      "from": "flb_output_task_flush (non-threaded) src/flb_output.c:438-448",
+      "to": "flb_engine_start FLB_ENGINE_EV_THREAD_ENGINE handler src/flb_engine.c:1540-1552",
+      "carries": "output_flush pointer (and task via out_flush->task)",
+      "mechanism": "event-loop channel write (config->ch_self_events, created at flb_engine.c:1152-1155) then coroutine switch (flb_coro_resume)",
+      "classification": "transfer",
+      "decided_by": "the flush is already owned by o_ins->flush_list (flb_output.h:1269); the pipe carries a pointer to it; it is retired through flb_output_return -> prepare_destroy (flb_output.h:1382, flb_output.c:220-237) and flb_output_flush_finished (flb_engine.c:603-605, flb_output.c:641-670)",
+      "synchronization": "same engine thread writes and reads the pipe; no lock needed within one thread"
+    },
+    {
+      "id": "E-RT-03",
+      "from": "flb_output_task_flush (threaded) src/flb_output.c:422-426 -> flb_output_thread_pool_flush src/flb_output_thread.c:431-458",
+      "to": "output worker loop FLB_ENGINE_EV_THREAD_OUTPUT src/flb_output_thread.c:288-316",
+      "carries": "task pointer (+1 user added on the engine thread at flb_output.c:423)",
+      "mechanism": "thread handoff via pipe (th_ins->ch_parent_events[1], flb_output_thread.c:450)",
+      "classification": "transfer",
+      "decided_by": "the user obligation is created before the write and is discharged only by the completion processed on the engine thread (E-RT-04); the worker never modifies task->users (all users mutations in the selection are at flb_output.c:329, 368, 423, 428, 446, 452; flb_engine.c:687, 724, 775, 781, 802, 864; flb_engine_dispatch.c:136 — engine thread)",
+      "synchronization": "pipe write -> pipe read; the source relies on OS pipe ordering for visibility of task fields the worker reads (task->i_ins at flb_output_thread.c:308, task->event_chunk at flb_output.h:846-852); route data is accessed under task->lock (flb_output.h:768-783, 1315-1324). No lock orders engine-side writes to task->event_chunk (flb_engine_dispatch.c:155) against worker reads of another in-flight route of the same task."
+    },
+    {
+      "id": "E-RT-04",
+      "from": "flb_output_return include/fluent-bit/flb_output.h:1285-1383",
+      "to": "handle_output_event src/flb_engine.c:545-868 (via worker handle_output_event src/flb_output_thread.c:62-105 and ins->ch_events, or directly via o_ins->ch_events[1] for non-threaded; engine batch reader src/flb_engine.c:870-914 dispatched at 1577-1583)",
+      "carries": "completion key (return value, task id, output id) — not a pointer",
+      "mechanism": "pipe (worker: ch_thread_events then forward to ins->ch_events; non-threaded: ins->ch_events directly, created at flb_output.c:1462-1482)",
+      "classification": "unresolved",
+      "decided_by": "the engine re-derives the task as config->task_map[task_id].task (flb_engine.c:601) and dereferences it without a NULL or generation check (606-615); ids are reusable (flb_task.c:53-57, 75-78). The premise that the emitting task is still the occupant of the slot rests on users>0 pinning the task: every in-loop destroy path checks users==0 (flb_task.h:173, flb_task.c:304, flb_engine_dispatch.c:428, flb_input_chunk.c:706), but the key carries no generation and the source does not state the invariant. See C4.",
+      "synchronization": "pipe write in worker/coroutine -> pipe read on the engine loop; the worker destroys its flush contexts (flb_output_thread.c:92) before forwarding (98)"
+    },
+    {
+      "id": "E-RT-05",
+      "from": "handle_output_event FLB_OK arm src/flb_engine.c:625-688",
+      "to": "flb_input_chunk_release_route src/flb_input_chunk.c:815-846; flb_task_retry_clean src/flb_task.c:419-437; flb_task_users_dec include/fluent-bit/flb_task.h:188-194",
+      "carries": "task user, retry (if any), per-output fs charge",
+      "mechanism": "direct call",
+      "classification": "retire",
+      "decided_by": "route charge subtracted and bit cleared (flb_input_chunk.c:830-843); retry destroyed with its scheduler request (flb_task.c:428-430, 274); users-- with release check (flb_engine.c:687) may destroy the task (flb_task.h:171-176)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-06",
+      "from": "handle_output_event FLB_RETRY arm src/flb_engine.c:729-781",
+      "to": "task->retries list via flb_task_retry_create src/flb_task.c:317-384",
+      "carries": "task lifetime obligation: one user -> retry membership",
+      "mechanism": "list",
+      "classification": "transfer",
+      "decided_by": "retry linked (flb_task.c:350) before users-- without release (flb_engine.c:781); a non-empty retries list keeps flb_task_users_release from destroying the task (flb_task.h:173)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-07",
+      "from": "handle_output_event src/flb_engine.c:784-785",
+      "to": "flb_sched_request_create src/flb_scheduler.c:268-326",
+      "carries": "retry pointer",
+      "mechanism": "list (scheduler request list) with timer registration",
+      "classification": "borrow",
+      "decided_by": "request->data = retry (flb_scheduler.c:306); the scheduler never frees request->data (request destroy frees only the request and invalidates its timer, 328-352); the retry remains owned by task->retries and invalidates its request on destruction (flb_task.c:274)",
+      "synchronization": "engine thread; the timer event fires on the same engine loop (flb_scheduler.c:133-146, flb_engine.c:1536-1539)"
+    },
+    {
+      "id": "E-RT-08",
+      "from": "handle_output_event schedule-failure arm src/flb_engine.c:792-803",
+      "to": "flb_task_retry_destroy src/flb_task.c:269-284; flb_task_users_release include/fluent-bit/flb_task.h:171-176",
+      "carries": "retry, task",
+      "mechanism": "direct call",
+      "classification": "retire",
+      "decided_by": "retry destroyed (801) and task released if no users and no retries remain (802)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-09",
+      "from": "FLB_SCHED_TIMER_FRAME arm src/flb_scheduler.c:606-610",
+      "to": "schedule_request_promote src/flb_scheduler.c:169-231",
+      "carries": "sched_request (and its timer)",
+      "mechanism": "timer callback; list-to-list move",
+      "classification": "transfer",
+      "decided_by": "request moved requests_wait -> requests with a timerfd (192-193, 200-202); on failure it returns to requests_wait (224-228); owner remains the scheduler throughout",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-10",
+      "from": "flb_engine_start FLB_ENGINE_EV_SCHED src/flb_engine.c:1536-1539 -> flb_sched_event_handler src/flb_scheduler.c:588-605",
+      "to": "flb_engine_dispatch_retry src/flb_engine_dispatch.c:86-178",
+      "carries": "retry pointer (borrowed from the request); request retired afterwards",
+      "mechanism": "timer callback on the engine loop",
+      "classification": "borrow",
+      "decided_by": "the handler passes req->data (599) and destroys the request only on ret==0 (602-604). Every -1 return of dispatch_retry retires the retry (flb_engine_dispatch.c:108-110 via flb_task.c:303; 135; 163-167 via flb_output.c:291-293 or 336-338; 172), and retry destruction invalidates this still-listed request (flb_task.c:274 -> flb_scheduler.c:362-367), so each request is retired once on the enumerated paths. The invalidated timer stays on timers_drop until flb_sched_timer_cleanup after the event batch (flb_engine.c:1418-1602 then 1609-1611); the active check (flb_scheduler.c:589-591) guards a same-round event.",
+      "synchronization": "engine thread; timers created on the parent loop use config->evl (flb_scheduler.c:133)"
+    },
+    {
+      "id": "E-RT-11",
+      "from": "flb_engine_dispatch_retry src/flb_engine_dispatch.c:158-168",
+      "to": "flb_output_task_singleplex_enqueue src/flb_output.c:351-383",
+      "carries": "task (+1 temporary user), retry pointer (stored in the entry)",
+      "mechanism": "list (singleplex pending/in_progress)",
+      "classification": "transfer",
+      "decided_by": "temporary user added (flb_output.c:368) and entry linked (296-301); the temporary user is removed when the entry is flushed (329); the retry pointer is borrowed by the entry (the entry never frees it; failure arms destroy it explicitly at 291-293 and 336-338)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-12",
+      "from": "flb_engine_dispatch_retry src/flb_engine_dispatch.c:169-174",
+      "to": "flb_output_task_flush src/flb_output.c:415-464",
+      "carries": "task (+1 user)",
+      "mechanism": "direct call, then E-RT-02 or E-RT-03",
+      "classification": "transfer",
+      "decided_by": "users++ at flb_output.c:423/446 on success; failure arms: non-threaded returns -1 after rollback (442-444, 449-460), threaded returns 0 after rollback (427-435, 463) — see N1, N2",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-13",
+      "from": "handle_output_event src/flb_engine.c:617-622",
+      "to": "flb_output_task_singleplex_flush_next src/flb_output.c:389-409 -> flb_output_task_queue_flush_one src/flb_output.c:309-345",
+      "carries": "singleplex_entry, task temporary user -> flush user",
+      "mechanism": "direct call; list",
+      "classification": "transfer",
+      "decided_by": "in_progress head retired (397-401); next pending moved to in_progress (321-323); temporary user dropped without release (329) and replaced by the flush user (423/446) on success",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-14",
+      "from": "flb_task_retry_destroy src/flb_task.c:269-284",
+      "to": "flb_sched_request_invalidate src/flb_scheduler.c:354-388",
+      "carries": "sched_request, sched_timer",
+      "mechanism": "direct call; list search by retry pointer",
+      "classification": "retire",
+      "decided_by": "first matching request in requests, else requests_wait, destroyed (365, 382) and its timer invalidated (346, 894-902); returns after the first match, so the premise 'at most one request per retry' is needed for complete retirement — it holds on the enumerated paths because the only place a second request is created for the same retry (flb_task_retry_reschedule, flb_task.c:297) is followed by the handler destroying the old one (flb_scheduler.c:602-604) with no retry destruction in between, and flb_engine_reschedule_retries invalidates before creating (flb_engine.c:169-170)",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-15",
+      "from": "flb_engine_reschedule_retries src/flb_engine.c:141-182 (called once at stop, 1436-1437)",
+      "to": "flb_sched_request_invalidate src/flb_scheduler.c:354-388; flb_sched_retry_now src/flb_scheduler.c:952-995",
+      "carries": "retry pointer",
+      "mechanism": "direct call",
+      "classification": "borrow",
+      "decided_by": "old request retired, new request borrows the same retry (982); tasks with users>0 are skipped (159-165); on retry_now failure the retry stays in task->retries with no request (171-174) — see N9",
+      "synchronization": "engine thread"
+    },
+    {
+      "id": "E-RT-16",
+      "from": "flb_input_chunk_release_space src/flb_input_chunk.c:700-713",
+      "to": "flb_task_destroy src/flb_task.c:899-948",
+      "carries": "task, its retries, their scheduler requests, ic, chunk",
+      "mechanism": "direct call (eviction)",
+      "classification": "retire",
+      "decided_by": "destroy when task->users==0 regardless of pending retries (706-709); flb_task_destroy retires retries (933-937) which invalidates their requests (flb_task.c:274)",
+      "synchronization": "caller thread; same premise gap as E-BL-10"
+    },
+    {
+      "id": "E-RT-17",
+      "from": "flb_task_retry_create src/flb_task.c:371-381; flb_engine_dispatch_retry src/flb_engine_dispatch.c:98, 118",
+      "to": "flb_input_chunk_set_up_down / flb_input_chunk_down / flb_input_chunk_set_up / flb_input_chunk_flush src/flb_input_chunk.c:3100-3148, 3786-3837",
+      "carries": "chunk up/down state and lock (storage)",
+      "mechanism": "direct call",
+      "classification": "borrow",
+      "decided_by": "state changes only, no close; the down transition is guarded by users<=1 (flb_task.c:371, comment 367-369) or a single route (379-381)",
+      "synchronization": "engine thread; whether a worker may still read the mapped buffer of another route when the chunk is downed or re-mapped (flb_input_chunk.c:3803-3809 comment) is not ordered by any visible lock"
+    },
+    {
+      "id": "E-SH-01",
+      "from": "flb_engine_shutdown src/flb_engine.c:1629-1691",
+      "to": "flb_output_exit src/flb_output.c:566-601 -> flb_output_thread_pool_destroy src/flb_output_thread.c:611-645 and flb_output_instance_destroy src/flb_output.c:466-563",
+      "carries": "output workers, singleplex_entry, output instance",
+      "mechanism": "direct call; thread join",
+      "classification": "unresolved",
+      "decided_by": "queue entries are freed (flb_output.c:548-551 -> flb_task.c:962-980) without returning their temporary task users or retries; instances freed (flb_output.c:560) while tasks, retries (retry->o_ins) and routes (route->out) still hold pointers to them until E-SH-02. pthread_join orders worker exit only on a successful stop write (flb_output_thread.c:632-640); on a failed write th_ins is freed without join (633-637), so no ordering is established for that worker.",
+      "synchronization": "join per worker on the success arm; none visible on the failure arm"
+    },
+    {
+      "id": "E-SH-02",
+      "from": "flb_engine_shutdown src/flb_engine.c:1650 -> flb_input_exit_all src/flb_input.c:2127-2144 -> flb_input_instance_destroy src/flb_input.c:1231, 1255-1256",
+      "to": "flb_engine_destroy_tasks src/flb_engine.c:125-139; flb_storage_input_destroy src/flb_storage.c:625-639",
+      "carries": "task, task_route, retry, sched_request, input_chunk, chunk",
+      "mechanism": "direct call (teardown)",
+      "classification": "retire",
+      "decided_by": "every task is destroyed regardless of users (flb_engine.c:134, flb_task_destroy with del=FLB_FALSE); retries invalidate requests against config->sched, which is destroyed later (flb_config.c:684-687); remaining ics destroyed without delete (flb_storage.c:632-635); cio context destroyed afterwards (flb_engine.c:1660). Open premise recorded in unresolved_summary: route->retry_context_destroy (flb_task.c:914-917) runs after the output plugin's cb_exit (flb_output.c:590-592); retry->o_ins and route->out are dangling but used only for pointer comparison (flb_task.h:256-259, 349-352) in this path.",
+      "synchronization": "engine thread after the loop returns; completions still queued in ins->ch_events are never read"
+    },
+    {
+      "id": "E-TM-01",
+      "from": "task_alloc src/flb_task.c:452-459",
+      "to": "config->task_map (map_set_task_id src/flb_task.c:68-73)",
+      "carries": "task_map_slot",
+      "mechanism": "list/array slot",
+      "classification": "transfer",
+      "decided_by": "slot cleared only by flb_task_destroy (909); early flb_task_create failure arms free the task without clearing (605-608, 611-616) — see N6",
+      "synchronization": "engine thread (task creation from flb_engine_dispatch)"
+    }
+  ],
+  "failure_outcomes": {
+    "by_identity": {
+      "chunk": [
+        {"label": "BC-1", "arm": "flb_input_chunk_map routes_mask allocation failure", "lines": "src/flb_input_chunk.c:1507-1517; plugins/in_storage_backlog/sb.c:690-703", "held_obligations": "callee closes (frees) the chunk and returns NULL; the caller logs chunk_instance->chunk->name (692-693), downs (694) and closes (702) the same pointer. Source-level candidate conditional on that calloc failing; not reproduced."},
+        {"label": "A2 (accounting cross-ref)", "arm": "partial fan-out insertion failure at segregation", "lines": "plugins/in_storage_backlog/sb.c:341-350 (return -3 after earlier queues received a wrapper); caller close sb.c:467-473", "held_obligations": "earlier wrappers remain linked with their charge while the chunk is closed; later traversal of those wrappers (sb.c:621-630) would use the closed pointer. Conditional; not reproduced."},
+        {"label": "segregation-abort", "arm": "chunk not up after up_force (non-CORRUPTED error)", "lines": "plugins/in_storage_backlog/sb.c:431-433; src/flb_engine.c:1400-1406", "held_obligations": "the pass returns -3 leaving already-built queues; the engine reports failure and calls flb_engine_shutdown"},
+        {"label": "corrupted-kept", "arm": "CIO_CORRUPTED without storage_del_bad_chunks or with another error code", "lines": "plugins/in_storage_backlog/sb.c:413-428", "held_obligations": "chunk left open in its stream, no wrapper, retired only by cio_destroy (flb_storage.c:1000)"}
+      ],
+      "input_chunk": [
+        {"label": "map-failure-arms", "arm": "every NULL return of flb_input_chunk_map", "lines": "src/flb_input_chunk.c:1501-1504, 1528-1530, 1548-1550, 1561-1563, 1581-1583, 1597-1599, 1608-1610, 1650-1654, 1750-1754", "held_obligations": "ic freed before publication; chunk left to the caller (except BC-1 arm)"},
+        {"label": "N7", "arm": "route allocation failure in flb_task_create", "lines": "src/flb_task.c:860-864 (continue), 876-889 (count==0 -> flb_task_destroy(task, FLB_TRUE)); also 707-712/729-741 and 806-816", "held_obligations": "a failed route allocation is indistinguishable from an unmatched route; if no route remains, the task is destroyed with del=TRUE, retiring the ic and deleting its chunk. *err stays FALSE on these arms, whereas flb_engine_dispatch.c:399-404 states allocation errors preserve the chunk (that comment covers only the *err=TRUE arms 593-616)."}
+      ],
+      "backlog_wrapper": [
+        {"label": "wrapper-alloc", "arm": "sb_allocate_chunk NULL", "lines": "plugins/in_storage_backlog/sb.c:269-273", "held_obligations": "nothing linked on this call; earlier queues of the same fan-out keep theirs (A2)"},
+        {"label": "BX-1", "arm": "teardown walk of an unlinked queue", "lines": "plugins/in_storage_backlog/sb.c:185-193 (unlink at 188 before walk at 190), 142-146, 255-259", "held_obligations": "the queue's own wrappers are not freed on this path and its output's fs_backlog_chunks_size is not decremented; process-teardown retention, source-level observation"},
+        {"label": "BX-2", "arm": "teardown after output exit", "lines": "src/flb_engine.c:1648-1650; src/flb_output.c:553-560; plugins/in_storage_backlog/sb.c:228-237", "held_obligations": "for a chunk still queued for two or more outputs at exit, removal from a later queue reads and writes backlog->ins (a freed flb_output_instance). Conditional on non-empty shared queues at shutdown; not reproduced."},
+        {"label": "S1", "arm": "second sb_segregate_chunks at shutdown", "lines": "src/flb_engine.c:1510-1515; plugins/in_storage_backlog/sb.c:155-174, 341-352, 399-482", "held_obligations": "duplicate queue per output and duplicate wrappers/charges for chunks already queued; possible wrapping of chunks already owned by an ic. Unresolved premise (E-BL-09)."},
+        {"label": "queue-alloc", "arm": "sb_allocate_backlogs calloc failure", "lines": "plugins/in_storage_backlog/sb.c:163-167, 394-397", "held_obligations": "already-built queues destroyed (empty at startup); segregation returns -2"}
+      ],
+      "task": [
+        {"label": "C2 (retry cross-ref)", "arm": "flb_output_task_queue_enqueue allocation failure", "lines": "src/flb_output.c:368 (users++), 371-374 (return -1 without users--), callee 288-295 (retry destroyed); callers flb_engine_dispatch.c:163-167 and 288-291 (return ignored)", "held_obligations": "temporary user stays; task and chunk retained until teardown. Re-verified at the pin."},
+        {"label": "C3 (retry cross-ref)", "arm": "queued flush fails after temporary user removed", "lines": "src/flb_output.c:325-341 (users-- without release at 329, retry destroyed at 336-338), 415-464; include/fluent-bit/flb_task.h:171-194", "held_obligations": "one-route task can remain mapped with users==0 and no retries, not reaped. Re-verified."},
+        {"label": "N1", "arm": "retry flush failure on the multiplex path", "lines": "src/flb_engine_dispatch.c:169-174; src/flb_output.c:442-444, 449-460; users already decremented at src/flb_engine.c:781", "held_obligations": "retry destroyed without flb_task_users_release; a task with no other user or retry remains unreaped until teardown. Same shape as C3; contrary guard: other active routes/retries. The authors' comment at flb_engine_dispatch.c:125-126 names this state for the neighbouring arm."},
+        {"label": "N2", "arm": "threaded flb_output_thread_pool_flush failure", "lines": "src/flb_output.c:422-435 then return 0 at 463; src/flb_output_thread.c:440-455; handler src/flb_scheduler.c:602-604", "held_obligations": "user rolled back but success reported: on the retry path the request is destroyed and the retry stays in task->retries with no request, counted by flb_task_running_count (flb_task.c:489) until teardown; on first dispatch the task stays RUNNING with users==0 (N8)."},
+        {"label": "N4", "arm": "worker-side flush creation failure", "lines": "src/flb_output_thread.c:306-313; user added at src/flb_output.c:423", "held_obligations": "no completion is emitted, so the user is never returned; for synchronous outputs the in_progress entry is never advanced. Conditional on flb_output_flush_create returning NULL in the worker."},
+        {"label": "N5", "arm": "completion pipe write failure", "lines": "include/fluent-bit/flb_output.h:1373-1376; src/flb_output_thread.c:98-102", "held_obligations": "error logged only; completion lost and the task user retained"},
+        {"label": "N8", "arm": "first-dispatch flush failure", "lines": "src/flb_engine_dispatch.c:288-298 (returns ignored), 313-315, 426-434 (cleanup requires routes empty)", "held_obligations": "task left RUNNING with users rolled back; not reaped until teardown"},
+        {"label": "N10", "arm": "ch_self_events read failure", "lines": "src/flb_engine.c:1544-1548", "held_obligations": "coroutine never resumed; flush stays in flush_list with its task user"},
+        {"label": "task-create-early", "arm": "event chunk or router context failure", "lines": "src/flb_task.c:605-608, 611-616", "held_obligations": "ic preserved by the caller (flb_engine_dispatch.c:405-413); map slot not cleared (N6)"}
+      ],
+      "task_route": [
+        {"label": "N7", "arm": "route allocation failure", "lines": "src/flb_task.c:860-864", "held_obligations": "route to that output silently dropped (no retry, no error)"}
+      ],
+      "retry": [
+        {"label": "retry-alloc-or-limit", "arm": "flb_task_retry_create NULL", "lines": "src/flb_task.c:328-333 (limit: existing retry destroyed), 341-345 (malloc); caller src/flb_engine.c:730-777", "held_obligations": "both arms converge on retry_clean + users-- with release (774-775)"},
+        {"label": "schedule-failure", "arm": "flb_sched_request_create -1", "lines": "src/flb_engine.c:792-803; src/flb_task.c:297-307", "held_obligations": "retry destroyed; task released or destroyed when no users/retries remain"},
+        {"label": "N9", "arm": "flb_sched_retry_now failure during stop", "lines": "src/flb_engine.c:169-178", "held_obligations": "request already invalidated; retry kept without a request (warning only); shutdown waits for grace since flb_task_running_count counts it"},
+        {"label": "N3", "arm": "synchronous non-threaded pipe write failure inside a queued flush", "lines": "src/flb_output.c:449-460 (flush_next at 456 frees the in_progress head at 397-401, which is queued_task, and may start the next entry), then flush_one reads queued_task->retry (336) and calls flush_next again (340)", "held_obligations": "freed entry read; the next entry's in_progress record may be retired while its flush is in flight. Conditional on FLB_OUTPUT_SYNCHRONOUS, non-threaded output and a ch_self_events write failure; not reproduced."}
+      ],
+      "sched_request": [
+        {"label": "C1 (retry cross-ref)", "arm": "request allocation failure after timer allocation", "lines": "src/flb_scheduler.c:276-286 (timer allocated and linked at 874-889, not destroyed on the 282-286 arm); analog destroys at 965-971; teardown 840-846", "held_obligations": "live timer retained in sched->timers until scheduler teardown. Re-verified."},
+        {"label": "now-failure", "arm": "schedule_request_now -1", "lines": "src/flb_scheduler.c:314-322, 985-993", "held_obligations": "timer and request both freed"},
+        {"label": "promote-failure", "arm": "schedule_request_now -1 during promotion", "lines": "src/flb_scheduler.c:193-205, 216-228", "held_obligations": "request kept on requests_wait for a later frame"}
+      ],
+      "sched_timer": [
+        {"label": "C1", "arm": "see sched_request C1", "lines": "src/flb_scheduler.c:276-286", "held_obligations": "timer with type unset and data NULL stays active in sched->timers"},
+        {"label": "cb-timeout", "arm": "mk_event_timeout_create -1", "lines": "src/flb_scheduler.c:672-678", "held_obligations": "timer destroyed"}
+      ],
+      "output_flush": [
+        {"label": "create-failure", "arm": "flush creation failure", "lines": "include/fluent-bit/flb_output.h:826-837, 866-870, 1246-1254; src/flb_output.c:442-444", "held_obligations": "freed before publication; engine-side caller returns -1 before users++"},
+        {"label": "pipe-failure", "arm": "ch_self_events write failure", "lines": "src/flb_output.c:449-460", "held_obligations": "published flush destroyed, user rolled back; N3 on synchronous outputs"}
+      ],
+      "singleplex_entry": [
+        {"label": "C2", "arm": "entry allocation failure", "lines": "src/flb_output.c:288-295", "held_obligations": "retry destroyed; the caller's temporary user leaks (C2)"},
+        {"label": "teardown", "arm": "queue destroyed at output exit", "lines": "src/flb_task.c:962-980; src/flb_output.c:548-551", "held_obligations": "entries freed; their task users/retries are left to E-SH-02"}
+      ],
+      "task_map_slot": [
+        {"label": "N6", "arm": "flb_task_create early failure after map_set_task_id", "lines": "src/flb_task.c:459, 605-608, 611-616 (flb_free(task) without map_free_task_id; contrast 909)", "held_obligations": "slot keeps a pointer to freed memory and is never reused by map_get_task_id (53-57); no completion is expected for that id since no flush started, so the visible consequence is slot capacity loss. Source-level observation."},
+        {"label": "grow-failure", "arm": "map full at 16384 or realloc failure", "lines": "src/flb_task.c:59-65; src/flb_config.c:1680-1688; src/flb_engine_dispatch.c:357-363", "held_obligations": "dispatch stops before flushing any chunk"}
+      ]
+    },
+    "cross_references": [
+      {"id": "C1", "source_report": "docs/reports/fb-system-audit-cards/retry/README.md", "reverified_lines": "src/flb_scheduler.c:275-286, 965-971, 827-853", "status_at_pin": "lines match the report"},
+      {"id": "C2", "source_report": "docs/reports/fb-system-audit-cards/retry/README.md", "reverified_lines": "src/flb_output.c:360-374, 288-295, 325-329; src/flb_engine_dispatch.c:157-167", "status_at_pin": "lines match; additionally applies to first dispatch at src/flb_engine_dispatch.c:288-291 whose return is ignored"},
+      {"id": "C3", "source_report": "docs/reports/fb-system-audit-cards/retry/README.md", "reverified_lines": "src/flb_output.c:325-341, 415-464; include/fluent-bit/flb_task.h:171-194", "status_at_pin": "lines match; the threaded arm returns 0 on failure (N2), so C3's retry-destroy only follows the non-threaded failure arms"},
+      {"id": "C4", "source_report": "docs/reports/fb-system-audit-cards/retry/README.md", "reverified_lines": "include/fluent-bit/flb_task.h:47-51; src/flb_engine.c:579-608; src/flb_task.c:48-78 (report cited 42-77; the helper functions span 48-78)", "status_at_pin": "hypothesis only; id width fits the 16384 map cap (flb_config.h:45-47)"},
+      {"id": "A1", "source_report": "docs/reports/fb-system-audit-cards/accounting/README.md", "reverified_lines": "plugins/in_storage_backlog/sb.c:601-651, 611-612, 649-651", "status_at_pin": "lines match; progress belongs to FB-ENGINE-PROGRESS, recorded here as edge E-BL-08"},
+      {"id": "A2", "source_report": "docs/reports/fb-system-audit-cards/accounting/README.md", "reverified_lines": "plugins/in_storage_backlog/sb.c:262-289, 341-350, 435-475", "status_at_pin": "lines match"},
+      {"id": "A3", "source_report": "docs/reports/fb-system-audit-cards/accounting/README.md", "reverified_lines": "plugins/in_storage_backlog/sb.c:317-324, 228-238; src/flb_input_chunk.c:1520-1614, 1749-1779", "status_at_pin": "lines match; the size_t < 0 guard at sb.c:319 cannot fire"},
+      {"id": "A4", "source_report": "docs/reports/fb-system-audit-cards/accounting/README.md", "reverified_lines": "src/flb_input_chunk.c:1115-1117, 1168-1170, 1173-1200, 1230-1245, 1299-1316", "status_at_pin": "lines match"}
+    ]
+  },
+  "slices": {
+    "FB-BACKLOG-CUSTODY": {
+      "functions": [
+        {"name": "sb_segregate_chunks", "at": "plugins/in_storage_backlog/sb.c:376-486"},
+        {"name": "sb_allocate_backlogs", "at": "plugins/in_storage_backlog/sb.c:149-177"},
+        {"name": "sb_append_chunk_to_segregated_backlogs", "at": "plugins/in_storage_backlog/sb.c:292-355"},
+        {"name": "sb_append_chunk_to_segregated_backlog", "at": "plugins/in_storage_backlog/sb.c:262-290"},
+        {"name": "sb_allocate_chunk", "at": "plugins/in_storage_backlog/sb.c:114-129"},
+        {"name": "sb_destroy_chunk", "at": "plugins/in_storage_backlog/sb.c:131-134"},
+        {"name": "sb_remove_chunk_from_segregated_backlog", "at": "plugins/in_storage_backlog/sb.c:214-247"},
+        {"name": "sb_remove_chunk_from_segregated_backlogs", "at": "plugins/in_storage_backlog/sb.c:249-260"},
+        {"name": "cb_queue_chunks", "at": "plugins/in_storage_backlog/sb.c:581-725"},
+        {"name": "sb_release_output_queue_space", "at": "plugins/in_storage_backlog/sb.c:525-578"},
+        {"name": "sb_destroy_backlogs", "at": "plugins/in_storage_backlog/sb.c:179-194"},
+        {"name": "sb_destroy_backlog", "at": "plugins/in_storage_backlog/sb.c:136-147"},
+        {"name": "flb_input_chunk_map (callee summary)", "at": "src/flb_input_chunk.c:1455-1780"},
+        {"name": "flb_input_chunk_destroy (callee summary)", "at": "src/flb_input_chunk.c:2704-2808"}
+      ],
+      "external_summaries_needed": ["outside_selection: cio_chunk_close lib/chunkio/src/cio_chunk.c:111-138 (frees chunk)", "outside_selection: cio_chunk_up_force / cio_chunk_is_up / cio_chunk_down / cio_chunk_lock (state only, return codes CIO_OK/CIO_ERROR/CIO_CORRUPTED/CIO_RETRY)", "outside_selection: mk_list_add/mk_list_del lib/monkey/include/monkey/mk_core/mk_list.h:145-150"],
+      "entry": "sb_segregate_chunks called from flb_engine_start (src/flb_engine.c:1398) with an initialized flb_sb context (cb_sb_init sb.c:728-779); subsequently cb_queue_chunks as the 1 s collector callback; eviction entry sb_release_output_queue_space from flb_input_chunk_release_space_compound (src/flb_input_chunk.c:1127-1130)",
+      "exit": "return of sb_segregate_chunks (0/-2/-3), return of each cb_queue_chunks invocation, and teardown cb_sb_exit -> sb_destroy_backlogs (sb.c:793-808)",
+      "identities": ["chunk", "backlog_wrapper", "input_chunk"],
+      "edges": ["E-BL-01", "E-BL-02", "E-BL-03", "E-BL-04", "E-BL-05", "E-BL-06", "E-BL-07", "E-BL-08", "E-BL-09", "E-BL-10", "E-BL-11", "E-ST-01"],
+      "obligations": [
+        {"id": "OB-1", "statement": "every wrapper allocated in sb_append_chunk_to_segregated_backlog is either linked into exactly one backlog->chunks list or not created (allocation failure returns before any link)", "decidable_from": "plugins/in_storage_backlog/sb.c:269-275", "needs": ["allocation result tracking", "list membership"]},
+        {"id": "OB-2", "statement": "no chunk is closed while any backlog wrapper still references it (the partial-insertion-failure mutation named by the card): on a -3 return of sb_append_chunk_to_segregated_backlogs the wrappers linked in earlier loop iterations must be removed before the caller closes the chunk", "decidable_from": "plugins/in_storage_backlog/sb.c:341-352, 436-475", "needs": ["loop-carried list membership", "per-arm caller path enumeration", "summary: cio_chunk_close frees"], "expected_at_pin": "refuted on the -3 arm (A2)"},
+        {"id": "OB-3", "statement": "each queue holds at most one wrapper per chunk pointer, so first-match removal (break at sb.c:244) retires all of a chunk's wrappers in that queue", "decidable_from": "plugins/in_storage_backlog/sb.c:222-245, 341-352 (one visit per queue per chunk)", "needs": ["list membership uniqueness", "a premise that sb_segregate_chunks runs once (E-BL-09 breaks it)"]},
+        {"id": "OB-4", "statement": "after a successful flb_input_chunk_map in cb_queue_chunks, no live wrapper references the chunk and exactly one ic owns it", "decidable_from": "plugins/in_storage_backlog/sb.c:687-713; src/flb_input_chunk.c:1496, 1775", "needs": ["callee summary of flb_input_chunk_map success arm", "cross-queue list membership"]},
+        {"id": "OB-5", "statement": "on a NULL return of flb_input_chunk_map the chunk is closed exactly once and not dereferenced after close", "decidable_from": "plugins/in_storage_backlog/sb.c:690-703; src/flb_input_chunk.c:1512-1516 and the other NULL arms", "needs": ["per-arm callee summary distinguishing close vs no-close (the return value alone is insufficient)"], "expected_at_pin": "refuted on the routes_mask arm (BC-1)"},
+        {"id": "OB-6", "statement": "in every cb_queue_chunks error arm the chunk pointer is captured before wrapper removal and chunk_instance is not used after sb_remove_chunk_from_segregated_backlogs frees it", "decidable_from": "plugins/in_storage_backlog/sb.c:635-647, 663-671, 677-684, 691-703, 709-713", "needs": ["use-after-free of wrapper (free inside callee)", "ordering of reads (692-693, 706-707) before removal"]},
+        {"id": "OB-7", "statement": "eviction retires every wrapper of an evicted chunk across all queues before closing it, and the safe iterator of the current queue is not invalidated by that cross-queue removal", "decidable_from": "plugins/in_storage_backlog/sb.c:551-573, 249-260", "needs": ["list membership", "OB-3 uniqueness", "iterator next-pointer validity"]},
+        {"id": "OB-8", "statement": "per output, fs_backlog_chunks_size equals the sum of size over its linked wrappers when no saturation or underflow reset occurred", "decidable_from": "plugins/in_storage_backlog/sb.c:277-287, 228-238", "needs": ["counter arithmetic tied to list membership", "saturation flags"], "note": "shared with FB-BACKLOG-ACCOUNTING"},
+        {"id": "OB-9", "statement": "every chunk reached at sb.c:436 ends the pass in exactly one state: wrapped in >=1 queue and locked+down; closed; left open without a wrapper (CIO_CORRUPTED kept); or the pass aborts with -3", "decidable_from": "plugins/in_storage_backlog/sb.c:408-482", "needs": ["path enumeration", "cio return-code summary"]},
+        {"id": "OB-10", "statement": "teardown retires every wrapper and touches only live output instances", "decidable_from": "plugins/in_storage_backlog/sb.c:136-147, 179-194, 228-237; src/flb_engine.c:1648-1650; src/flb_output.c:553-560", "needs": ["list membership after unlink", "cross-function shutdown ordering premise"], "expected_at_pin": "refuted for own-queue wrappers (BX-1); the output-lifetime premise is not provided (BX-2)"}
+      ]
+    },
+    "FB-RETRY-LIFETIME": {
+      "functions": [
+        {"name": "handle_output_event", "at": "src/flb_engine.c:545-868"},
+        {"name": "flb_task_retry_create", "at": "src/flb_task.c:317-384"},
+        {"name": "flb_task_retry_destroy", "at": "src/flb_task.c:269-284"},
+        {"name": "flb_task_retry_reschedule", "at": "src/flb_task.c:291-315"},
+        {"name": "flb_task_retry_clean", "at": "src/flb_task.c:419-437"},
+        {"name": "flb_sched_request_create", "at": "src/flb_scheduler.c:268-326"},
+        {"name": "flb_sched_request_destroy", "at": "src/flb_scheduler.c:328-352"},
+        {"name": "flb_sched_request_invalidate", "at": "src/flb_scheduler.c:354-388"},
+        {"name": "flb_sched_event_handler (FLB_SCHED_TIMER_REQUEST arm)", "at": "src/flb_scheduler.c:543-629 (arm 593-605)"},
+        {"name": "flb_engine_dispatch_retry", "at": "src/flb_engine_dispatch.c:86-178"},
+        {"name": "flb_output_task_singleplex_enqueue", "at": "src/flb_output.c:351-383"},
+        {"name": "flb_output_task_queue_enqueue", "at": "src/flb_output.c:280-303"},
+        {"name": "flb_output_task_queue_flush_one", "at": "src/flb_output.c:309-345"},
+        {"name": "flb_output_task_singleplex_flush_next", "at": "src/flb_output.c:389-409"},
+        {"name": "flb_output_task_flush", "at": "src/flb_output.c:415-464"}
+      ],
+      "helper_summaries_needed": ["flb_task_users_inc/dec/release include/fluent-bit/flb_task.h:171-194", "flb_task_destroy src/flb_task.c:899-948", "schedule_request_now/wait src/flb_scheduler.c:118-163", "flb_sched_timer_create/invalidate/destroy src/flb_scheduler.c:869-913", "flb_sched_retry_now src/flb_scheduler.c:952-995 and flb_engine_reschedule_retries src/flb_engine.c:141-182 (cancellation at stop)", "flb_output_thread_pool_flush src/flb_output_thread.c:431-458 (threaded arm)", "flb_output_flush_create/destroy include/fluent-bit/flb_output.h:796-1275, 650-657"],
+      "entry": "handle_output_event with a decoded FLB_RETRY completion (src/flb_engine.c:689) for one output route; re-entry through flb_sched_event_handler when the request timer fires (src/flb_scheduler.c:593-605)",
+      "exit": "one of: retry retired and task released/destroyed; retry pending with exactly one scheduler request; retry held by a singleplex entry or an in-flight flush holding a task user; teardown via E-SH-02",
+      "identities": ["task", "task_map_slot", "retry", "sched_request", "sched_timer", "singleplex_entry", "output_flush", "task_route"],
+      "edges": ["E-RT-04", "E-RT-05", "E-RT-06", "E-RT-07", "E-RT-08", "E-RT-09", "E-RT-10", "E-RT-11", "E-RT-12", "E-RT-13", "E-RT-14", "E-RT-15", "E-RT-17", "E-RT-02", "E-RT-03", "E-SH-02"],
+      "obligations": [
+        {"id": "OR-1", "statement": "task->users returns to its pre-call value on every failure return of flb_output_task_singleplex_enqueue", "decidable_from": "src/flb_output.c:368-374, 288-295", "needs": ["counter arithmetic", "callee failure summary"], "expected_at_pin": "refuted on the enqueue-allocation arm (C2)"},
+        {"id": "OR-2", "statement": "every timer allocated in flb_sched_request_create is either reachable from a linked request or destroyed before return", "decidable_from": "src/flb_scheduler.c:276-322, 874-889", "needs": ["allocation tracking", "list membership of sched->timers"], "expected_at_pin": "refuted on the request-allocation arm (C1)"},
+        {"id": "OR-3", "statement": "in the FLB_RETRY arm the task-lifetime obligation moved from users (decrement without release) to task->retries is discharged on schedule failure by retry destroy followed by flb_task_users_release", "decidable_from": "src/flb_engine.c:729-803; src/flb_task.c:350; include/fluent-bit/flb_task.h:171-176", "needs": ["counter arithmetic", "list size", "release-check summary"]},
+        {"id": "OR-4", "statement": "every return of flb_engine_dispatch_retry leaves the retry either with exactly one live scheduler request, or held by a singleplex entry / in-flight flush with a task user, or retired with the task released or still owned", "decidable_from": "src/flb_engine_dispatch.c:95-177; src/flb_scheduler.c:599-604", "needs": ["interprocedural summary of flb_output_task_flush including the threaded arm", "handler destroy-on-zero"], "expected_at_pin": "refuted for 169-174 (N1) and for the threaded 0-on-failure arm (N2)"},
+        {"id": "OR-5", "statement": "each scheduler request is destroyed exactly once: by the handler on 0, or by invalidation inside retry destruction on -1", "decidable_from": "src/flb_scheduler.c:593-605, 354-388; src/flb_task.c:273-283 and every -1 path of flb_engine_dispatch_retry", "needs": ["path enumeration across dispatch_retry callees", "at most one request per retry at invalidation (E-RT-14)"]},
+        {"id": "OR-6", "statement": "flb_output_task_queue_flush_one does not access queued_task after flb_output_task_flush returns -1, and advances the queue once", "decidable_from": "src/flb_output.c:321-341, 389-409, 449-460", "needs": ["list membership (in_progress head identity)", "free tracking inside callee"], "expected_at_pin": "refuted on the synchronous non-threaded pipe-failure arm (N3)"},
+        {"id": "OR-7", "statement": "flb_output_task_flush returns -1 exactly when it did not add a task user", "decidable_from": "src/flb_output.c:415-464", "needs": ["return-value/counter correlation"], "expected_at_pin": "refuted for the threaded arm (N2)"},
+        {"id": "OR-8", "statement": "at most one retry exists per (task, output); both NULL arms of flb_task_retry_create leave none for that output and the caller releases the completing user", "decidable_from": "src/flb_task.c:325-345; src/flb_engine.c:730-777", "needs": ["list search summary", "counter arithmetic"]},
+        {"id": "OR-9", "statement": "retry destruction invalidates its scheduler request before the retry is freed, and an invalidated timer is never dispatched nor freed before the current event batch ends", "decidable_from": "src/flb_task.c:273-283; src/flb_scheduler.c:336-349, 589-591, 894-902, 916-934; src/flb_engine.c:1418-1611", "needs": ["list membership", "event-loop round ordering premise"]},
+        {"id": "OR-10", "statement": "a completion discharges the user of the task generation that emitted it (stale/duplicate completion refused)", "decidable_from": "src/flb_engine.c:579-615; include/fluent-bit/flb_task.h:47-51; src/flb_task.c:48-78", "needs": ["cross-thread premise that users>0 pins the slot until the completion is handled", "a generation or an equivalent pinned-slot invariant, absent from the source"], "expected_at_pin": "not decidable from source alone (C4)"},
+        {"id": "OR-11", "statement": "flb_task_retry_reschedule failure retires the retry and destroys the task only when no users and no retries remain, and the caller then returns -1 so the handler does not destroy the already-invalidated request", "decidable_from": "src/flb_task.c:291-315; src/flb_engine_dispatch.c:108-114, 145-151; src/flb_scheduler.c:602-604", "needs": ["interprocedural path enumeration"]}
+      ]
+    }
+  },
+  "unresolved_summary": [
+    {"edge": "E-RT-04", "missing_premise": "completion identity: key is (ret, task id, output id) without generation; engine lookup config->task_map[id] has no NULL/generation check (src/flb_engine.c:601-606). Needs a stated invariant that an outstanding user pins the slot, or a generation."},
+    {"edge": "E-RT-03", "missing_premise": "engine->worker task handoff is ordered only by the pipe write/read (src/flb_output_thread.c:450, 290); engine-side writes to shared task state (task->event_chunk at src/flb_engine_dispatch.c:155, chunk up/lock/down at src/flb_input_chunk.c:3796-3809 and src/flb_task.c:371-381, route removal in test mode at src/flb_engine_dispatch.c:267-268) have no lock against a worker concurrently serving another route of the same task; task->lock covers only route data (include/fluent-bit/flb_output.h:768-783, 1315-1324)."},
+    {"edge": "E-RT-03/E-RT-04", "missing_premise": "task->users is a plain int (include/fluent-bit/flb_task.h:90, 179-194); all selected mutations are on the engine thread, but reads in src/flb_input_chunk.c:706, 870, 911, 3178 run on the caller thread of chunk append, which is not established for flb_input_chunk_append_raw_local callers (outside_selection: src/flb_input_log.c)."},
+    {"edge": "E-BL-10/E-RT-16", "missing_premise": "eviction (sb_release_output_queue_space, task destroy with pending retries) is on the engine thread only if every chunk-append entry is; not established for the outside_selection caller above."},
+    {"edge": "E-BL-05", "missing_premise": "ownership of the chunk after a NULL flb_input_chunk_map return depends on the callee arm (src/flb_input_chunk.c:1512-1516 closes; others do not) and is not conveyed to cb_queue_chunks."},
+    {"edge": "E-BL-09", "missing_premise": "shutdown re-segregation (src/flb_engine.c:1510-1515): which chunks exist in the shared cio context at grace_count==1, whether they are already wrapped or owned by an ic, and whether the storage_backlog collector is paused (flb_input_pause_all, outside_selection)."},
+    {"edge": "E-BL-11", "missing_premise": "backlog teardown runs after output instances are freed (src/flb_engine.c:1648 before 1650) and does not reach the unlinked queue's own wrappers; no source-level ordering keeps backlog->ins alive."},
+    {"edge": "E-SH-01", "missing_premise": "worker exit is ordered by pthread_join only when the stop write succeeds (src/flb_output_thread.c:632-640); the failure arm frees th_ins without join."},
+    {"edge": "E-SH-02", "missing_premise": "route->retry_context_destroy (src/flb_task.c:914-917) runs after the owning output plugin's cb_exit (src/flb_output.c:590-592); completions still queued in ins->ch_events at shutdown are never processed, so teardown relies on destroying tasks regardless of users (src/flb_engine.c:125-139)."},
+    {"edge": "E-RT-17", "missing_premise": "whether downing or re-locking a task's chunk for a retry (src/flb_task.c:371-381, src/flb_engine_dispatch.c:98-118) can overlap a worker reading the previously mapped buffer for another route; only the users<=1 guard is visible."}
+  ],
+  "counts": {
+    "identities": 11,
+    "sites": {"acquisition": 21, "publication": 38, "removal": 16, "destruction": 50, "total": 125, "note": "site entries, some of which list several line ranges"},
+    "edges": {"total": 33, "borrow": 8, "transfer": 12, "retire": 8, "unresolved": 5},
+    "obligations": {"FB-BACKLOG-CUSTODY": 10, "FB-RETRY-LIFETIME": 11}
+  },
+  "limits": [
+    "No execution, build, fault injection, Quirin check, Lean work or standing gate was performed for this file.",
+    "Candidate labels (C1-C4 from the retry report, A1-A4 from the accounting report, and BC-1, BX-1, BX-2, S1, N1-N10 from this reading) are conditional source-level paths; none is a reproduced behavior or an upstream defect.",
+    "outside_selection targets (chunkio, monkey lists, flb_input.c collector plumbing, flb_input_log.c) are used only as summaries or definition sites and were not audited."
+  ]
+}

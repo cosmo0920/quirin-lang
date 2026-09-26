@@ -288,6 +288,34 @@ The plain `quirin-audit [--jobs N] CONFIG.json` route takes the same
 writes the same kind of invocation record. In contracts-only mode with a
 `load_path` and no `providers` it loads all contracts too.
 
+### Choosing the units: an explicit selection
+
+`--selection FILE` (or `"selection"` in the configuration; both forms must
+agree) replaces the profile's `audit.json` groups with exact files. The
+profile is otherwise unchanged, so a unit keeps its configuration identity
+under either route; only the report label differs:
+
+```json
+{
+  "schema_version": 1,
+  "name": "fluent-bit-system",
+  "groups": [
+    {"library": "fluent_bit", "label": "fluent-bit-system",
+     "files": ["plugins/in_storage_backlog/sb.c", "src/flb_task.c"]}
+  ]
+}
+```
+
+Every distinct compilation configuration of a selected file is its own unit,
+so static and shared variants stay separate. A selected file with no
+compilation record, or missing from the checkout, is one `Unknown` unit with
+`reason_code: "environment-unavailable"`; it is never dropped. Paths must be
+plain relative `.c` paths, distinct across the file, and every group's library
+must be declared by the profile. The invocation record (`selection`) and the
+`.contracts.json` sidecar (`unit_selection`) name the file by path, SHA-256
+and contents. `contract/profiles/fluent-bit/system-selection.json` is the
+Fluent Bit system slice ([W45-FB-SYSTEM-SELECTION](../../docs/reports/w45-fb-system-selection/README.md)).
+
 ### Contracts only
 
 `--contracts-only`, or `"mode": "contracts-only"` in either configuration,

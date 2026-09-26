@@ -1,0 +1,95 @@
+fluent-bit-system 864c3d97f3589515285a19396ed8dfc85cda08ae (current checkout)
+Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence
+fluent-bit-system: 15 selected compilation configuration(s)
+  fluent-bit-system/plugins/in_storage_backlog/sb.c: Unsafe (20/20)
+    resource diagnostics: leak=1, unknown_alias=25, unsupported=143
+    cb_queue_chunks: plugins/in_storage_backlog/sb.c:599: unsupported: unsupported assignment expression
+    cb_queue_chunks: plugins/in_storage_backlog/sb.c:605: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cb_queue_chunks: plugins/in_storage_backlog/sb.c:611: unsupported: unmodeled call, aggregate or indirect access in loop condition
+    166 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_input_chunk.c: Unknown (64/66): resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=109, unsupported=528
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: indirect memory access is outside the resource projection
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    append_to_ring_buffer: src/flb_input_chunk.c:3584: unsupported: indirect memory access is outside the resource projection
+    634 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_input_chunk.c: Unknown (64/66): resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=109, unsupported=528
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: indirect memory access is outside the resource projection
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    append_to_ring_buffer: src/flb_input_chunk.c:3584: unsupported: indirect memory access is outside the resource projection
+    634 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_storage.c: Unknown (21/21): resource projection unresolved: 199 unsupported operation(s), 28 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=28, unsupported=199
+    cb_storage_metrics_collect: src/flb_storage.c:354: unsupported: call to uncontracted function `msgpack_pack_map`
+    cb_storage_metrics_collect: src/flb_storage.c:355: unsupported: call to uncontracted function `metrics_append_general`
+    cb_storage_metrics_collect: src/flb_storage.c:356: unsupported: call to uncontracted function `metrics_append_input`
+    224 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_storage.c: Unknown (21/21): resource projection unresolved: 199 unsupported operation(s), 28 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=28, unsupported=199
+    cb_storage_metrics_collect: src/flb_storage.c:354: unsupported: call to uncontracted function `msgpack_pack_map`
+    cb_storage_metrics_collect: src/flb_storage.c:355: unsupported: call to uncontracted function `metrics_append_general`
+    cb_storage_metrics_collect: src/flb_storage.c:356: unsupported: call to uncontracted function `metrics_append_input`
+    224 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_task.c: Unknown (19/19): resource projection unresolved: 257 unsupported operation(s), 45 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=45, unsupported=257
+    flb_task_create: src/flb_task.c:566: unsupported: unsupported assignment expression
+    flb_task_create: src/flb_task.c:589: unsupported: store through `*err` without an out-parameter contract
+    flb_task_create: src/flb_task.c:592: unsupported: call to uncontracted function `task_alloc`
+    299 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_task.c: Unknown (19/19): resource projection unresolved: 257 unsupported operation(s), 45 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=45, unsupported=257
+    flb_task_create: src/flb_task.c:566: unsupported: unsupported assignment expression
+    flb_task_create: src/flb_task.c:589: unsupported: store through `*err` without an out-parameter contract
+    flb_task_create: src/flb_task.c:592: unsupported: call to uncontracted function `task_alloc`
+    299 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_engine.c: Unknown (32/33): resource projection unresolved: 326 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=32, unsupported=326
+    calculate_chunk_capacity_percent: src/flb_engine.c:253: unsupported: unmodeled call, aggregate or indirect access in return expression
+    cb_engine_sched_timer: src/flb_engine.c:210: unsupported: indirect memory access is outside the resource projection
+    cb_engine_sched_timer: src/flb_engine.c:213: unsupported: indirect memory access is outside the resource projection
+    355 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_engine.c: Unknown (32/33): resource projection unresolved: 326 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=32, unsupported=326
+    calculate_chunk_capacity_percent: src/flb_engine.c:253: unsupported: unmodeled call, aggregate or indirect access in return expression
+    cb_engine_sched_timer: src/flb_engine.c:210: unsupported: indirect memory access is outside the resource projection
+    cb_engine_sched_timer: src/flb_engine.c:213: unsupported: indirect memory access is outside the resource projection
+    355 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_engine_dispatch.c: Unknown (5/5): resource projection unresolved: 72 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=72
+    flb_engine_dispatch: src/flb_engine_dispatch.c:345: unsupported: indirect memory access is outside the resource projection
+    flb_engine_dispatch: src/flb_engine_dispatch.c:351: unsupported: indirect memory access is outside the resource projection
+    flb_engine_dispatch: src/flb_engine_dispatch.c:351: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    77 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_engine_dispatch.c: Unknown (5/5): resource projection unresolved: 72 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=72
+    flb_engine_dispatch: src/flb_engine_dispatch.c:345: unsupported: indirect memory access is outside the resource projection
+    flb_engine_dispatch: src/flb_engine_dispatch.c:351: unsupported: indirect memory access is outside the resource projection
+    flb_engine_dispatch: src/flb_engine_dispatch.c:351: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    77 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_scheduler.c: Unknown (34/34): resource projection unresolved: 221 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=221
+    backoff_full_jitter: src/flb_scheduler.c:263: unsupported: nested call `ipow` inside a modeled call is outside the resource projection
+    backoff_full_jitter: src/flb_scheduler.c:264: unsupported: call to uncontracted function `random_uniform`
+    flb_sched_create: src/flb_scheduler.c:752: unsupported: indirect memory access is outside the resource projection
+    243 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_scheduler.c: Unknown (34/34): resource projection unresolved: 221 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=221
+    backoff_full_jitter: src/flb_scheduler.c:263: unsupported: nested call `ipow` inside a modeled call is outside the resource projection
+    backoff_full_jitter: src/flb_scheduler.c:264: unsupported: call to uncontracted function `random_uniform`
+    flb_sched_create: src/flb_scheduler.c:752: unsupported: indirect memory access is outside the resource projection
+    243 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_output.c: Unsafe (38/38)
+    resource diagnostics: leak=1, unknown_alias=65, unsupported=460
+    check_protocol: src/flb_output.c:135: unsupported: unsupported assignment expression
+    check_protocol: src/flb_output.c:142: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    flb_output_check: src/flb_output.c:1844: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    523 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-system/src/flb_output.c: Unsafe (38/38)
+    resource diagnostics: leak=1, unknown_alias=65, unsupported=460
+    check_protocol: src/flb_output.c:135: unsupported: unsupported assignment expression
+    check_protocol: src/flb_output.c:142: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    flb_output_check: src/flb_output.c:1844: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    523 more diagnostic(s); full inventory in optional resource report
+current revision: 8 source file(s), 15 configuration(s): 0 Safe / 3 provisional Unsafe / 12 Unknown / 0 data-only / 0 gateway failures
+preparation: 15 unit(s), 45 Clang invocation(s); -E -P 955034 us / syntax 1749969 us / line markers 894291 us

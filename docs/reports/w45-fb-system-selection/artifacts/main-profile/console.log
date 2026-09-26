@@ -1,0 +1,1073 @@
+fluent-bit 864c3d97f3589515285a19396ed8dfc85cda08ae (current checkout)
+Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence
+cmetrics: 31 selected compilation configuration(s)
+  cmetrics/lib/cmetrics/src/cmetrics.c: Unknown (6/6): resource projection unresolved: 75 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=75
+    cmt_create: lib/cmetrics/src/cmetrics.c:47: unsupported: call has an unmodeled formal address or borrowed expression
+    cmt_create: lib/cmetrics/src/cmetrics.c:49: unsupported: indirect memory access is outside the resource projection
+    cmt_create: lib/cmetrics/src/cmetrics.c:53: unsupported: indirect memory access is outside the resource projection
+    76 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_atomic_clang.c: Unknown (4/4): resource projection unresolved: 3 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=3
+    cmt_atomic_compare_exchange: lib/cmetrics/src/cmt_atomic_clang.c:30: unsupported: call to uncontracted function `__atomic_compare_exchange`
+    cmt_atomic_load: lib/cmetrics/src/cmt_atomic_clang.c:41: unsupported: call to uncontracted function `__atomic_load_n`
+    cmt_atomic_store: lib/cmetrics/src/cmt_atomic_clang.c:36: unsupported: call to uncontracted function `__atomic_store_n`
+  cmetrics/lib/cmetrics/src/cmt_cat.c: Unknown (23/23): resource projection unresolved: 209 unsupported operation(s), 23 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=23, unsupported=209
+    append_context: lib/cmetrics/src/cmt_cat.c:1037: unsupported: indirect memory access is outside the resource projection
+    append_context: lib/cmetrics/src/cmt_cat.c:1037: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    append_context: lib/cmetrics/src/cmt_cat.c:1038: unsupported: braced initializer, expression, or declaration is not modeled
+    229 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_counter.c: Unknown (7/7): resource projection unresolved: 28 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=28
+    cmt_counter_add: lib/cmetrics/src/cmt_counter.c:124: unsupported: indirect memory access is outside the resource projection
+    cmt_counter_add: lib/cmetrics/src/cmt_counter.c:128: unsupported: indirect memory access is outside the resource projection
+    cmt_counter_add: lib/cmetrics/src/cmt_counter.c:133: unsupported: call to uncontracted function `cmt_metric_add`
+    30 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_decode_msgpack.c: Unknown (80/80): resource projection unresolved: 348 unsupported operation(s), 50 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=50, unsupported=348
+    append_unpacked_counter_to_metrics_context: lib/cmetrics/src/cmt_decode_msgpack.c:1829: unknown_alias: unresolved resource identity `counter`
+    append_unpacked_counter_to_metrics_context: lib/cmetrics/src/cmt_decode_msgpack.c:1833: unsupported: indirect memory access is outside the resource projection
+    append_unpacked_counter_to_metrics_context: lib/cmetrics/src/cmt_decode_msgpack.c:1834: unsupported: indirect memory access is outside the resource projection
+    395 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_decode_opentelemetry.c: Unknown (40/40): resource projection unresolved: 394 unsupported operation(s), 65 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=65, unsupported=394
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_opentelemetry.c:541: unsupported: call to uncontracted function `create_label`
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_opentelemetry.c:547: unsupported: indirect memory access is outside the resource projection
+    append_new_metric_label_value: lib/cmetrics/src/cmt_decode_opentelemetry.c:557: unsupported: call to uncontracted function `create_label`
+    456 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_decode_prometheus_remote_write.c: Unknown (18/18): resource projection unresolved: 134 unsupported operation(s), 47 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=47, unsupported=134
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:112: unsupported: call to uncontracted function `create_map_label`
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:118: unsupported: indirect memory access is outside the resource projection
+    append_new_metric_label_value: lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:128: unsupported: call to uncontracted function `create_map_label`
+    178 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_decode_statsd.c: Unknown (15/15): resource projection unresolved: 99 unsupported operation(s), 42 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=42, unsupported=99
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_statsd.c:66: unsupported: call to uncontracted function `create_map_label`
+    append_new_map_label_key: lib/cmetrics/src/cmt_decode_statsd.c:72: unsupported: indirect memory access is outside the resource projection
+    append_new_metric_label_value: lib/cmetrics/src/cmt_decode_statsd.c:82: unsupported: call to uncontracted function `create_map_label`
+    138 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_cloudwatch_emf.c: Unknown (12/12): resource projection unresolved: 166 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=7, unsupported=166
+    cmt_encode_cloudwatch_emf_create: lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:527: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    cmt_encode_cloudwatch_emf_create: lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:529: unsupported: call to uncontracted function `pack_emf_payload`
+    cmt_encode_cloudwatch_emf_create: lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:531: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    170 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_influx.c: Unknown (9/9): resource projection unresolved: 102 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=102
+    append_histogram_metric_value: lib/cmetrics/src/cmt_encode_influx.c:62: unsupported: indirect memory access is outside the resource projection
+    append_histogram_metric_value: lib/cmetrics/src/cmt_encode_influx.c:65: unknown_alias: unresolved resource identity `buckets`
+    append_histogram_metric_value: lib/cmetrics/src/cmt_encode_influx.c:66: unknown_alias: unresolved resource identity `buckets`
+    103 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_msgpack.c: Unknown (11/11): resource projection unresolved: 204 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=204
+    cmt_encode_msgpack_create: lib/cmetrics/src/cmt_encode_msgpack.c:662: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    cmt_encode_msgpack_create: lib/cmetrics/src/cmt_encode_msgpack.c:664: unsupported: call to uncontracted function `pack_context`
+    cmt_encode_msgpack_create: lib/cmetrics/src/cmt_encode_msgpack.c:666: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    203 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry.c: Unknown (100/100): resource projection unresolved: 756 unsupported operation(s), 124 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=124, unsupported=756
+    append_attribute_to_data_point: lib/cmetrics/src/cmt_encode_opentelemetry.c:2490: unsupported: call to uncontracted function `append_attribute_to_numerical_data_point`
+    append_attribute_to_data_point: lib/cmetrics/src/cmt_encode_opentelemetry.c:2494: unsupported: call to uncontracted function `append_attribute_to_summary_data_point`
+    append_attribute_to_data_point: lib/cmetrics/src/cmt_encode_opentelemetry.c:2498: unsupported: call to uncontracted function `append_attribute_to_histogram_data_point`
+    877 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_opentelemetry_batch.c: Unknown (19/19): resource projection unresolved: 144 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=30, unsupported=144
+    append_original_payload: lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:568: unsupported: call to uncontracted function `cfl_sds_create_size`
+    append_original_payload: lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:574: unsupported: call to uncontracted function `cfl_sds_len_set`
+    append_original_payload: lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:575: unsupported: call to uncontracted function `batches_append`
+    171 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_prometheus.c: Unknown (15/15): resource projection unresolved: 204 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=204
+    add_label: lib/cmetrics/src/cmt_encode_prometheus.c:216: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    add_label: lib/cmetrics/src/cmt_encode_prometheus.c:217: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    add_label: lib/cmetrics/src/cmt_encode_prometheus.c:218: unsupported: call to uncontracted function `metric_escape`
+    213 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_prometheus_remote_write.c: Unknown (19/19): resource projection unresolved: 318 unsupported operation(s), 66 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=66, unsupported=318
+    append_entry_to_prometheus_label_list: lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:287: unsupported: resource call with a formal embedded in an unmodeled expression
+    append_entry_to_prometheus_label_list: lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:289: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    append_entry_to_prometheus_label_list: lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:290: unsupported: indirect memory access is outside the resource projection
+    381 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_splunk_hec.c: Unknown (19/19): resource projection unresolved: 227 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=20, unsupported=227
+    append_bucket_metric: lib/cmetrics/src/cmt_encode_splunk_hec.c:351: unsupported: call to uncontracted function `format_metric_name`
+    append_bucket_metric: lib/cmetrics/src/cmt_encode_splunk_hec.c:354: unsupported: call to uncontracted function `cmt_metric_hist_get_value`
+    append_bucket_metric: lib/cmetrics/src/cmt_encode_splunk_hec.c:355: unsupported: call to uncontracted function `double_to_string`
+    244 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_encode_text.c: Unknown (16/16): resource projection unresolved: 186 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=186
+    append_array_value: lib/cmetrics/src/cmt_encode_text.c:101: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    append_array_value: lib/cmetrics/src/cmt_encode_text.c:104: unsupported: call to uncontracted function `cfl_array_fetch_by_index`
+    append_array_value: lib/cmetrics/src/cmt_encode_text.c:110: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    187 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_exp_histogram.c: Unknown (5/5): resource projection unresolved: 49 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=13, unsupported=49
+    cmt_exp_histogram_create: lib/cmetrics/src/cmt_exp_histogram.c:56: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_exp_histogram_create: lib/cmetrics/src/cmt_exp_histogram.c:61: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_exp_histogram_create: lib/cmetrics/src/cmt_exp_histogram.c:66: unsupported: call to uncontracted function `cmt_log_print`
+    59 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_filter.c: Unknown (10/10): resource projection unresolved: 168 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=13, unsupported=168
+    cmt_filter: lib/cmetrics/src/cmt_filter.c:705: unsupported: call to uncontracted function `filter_context_fqname`
+    cmt_filter: lib/cmetrics/src/cmt_filter.c:708: unknown_alias: unresolved resource identity `ret`
+    cmt_filter: lib/cmetrics/src/cmt_filter.c:715: unsupported: call to uncontracted function `filter_context_label_key`
+    178 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_gauge.c: Unknown (8/8): resource projection unresolved: 32 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=32
+    cmt_gauge_add: lib/cmetrics/src/cmt_gauge.c:151: unsupported: indirect memory access is outside the resource projection
+    cmt_gauge_add: lib/cmetrics/src/cmt_gauge.c:154: unsupported: indirect memory access is outside the resource projection
+    cmt_gauge_add: lib/cmetrics/src/cmt_gauge.c:159: unsupported: call to uncontracted function `cmt_metric_add`
+    33 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_histogram.c: Unknown (12/12): resource projection unresolved: 54 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=54
+    check_buckets: lib/cmetrics/src/cmt_histogram.c:201: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cmt_histogram_buckets_create: lib/cmetrics/src/cmt_histogram.c:76: unsupported: call to uncontracted function `__builtin_va_start`
+    cmt_histogram_buckets_create: lib/cmetrics/src/cmt_histogram.c:77: unsupported: unmodeled increment or decrement expression
+    63 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_label.c: Unknown (4/4): resource projection unresolved: 19 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=19
+    cmt_labels_add_kv: lib/cmetrics/src/cmt_label.c:69: unsupported: indirect memory access is outside the resource projection
+    cmt_labels_add_kv: lib/cmetrics/src/cmt_label.c:73: unsupported: indirect memory access is outside the resource projection
+    cmt_labels_add_kv: lib/cmetrics/src/cmt_label.c:74: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    21 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_log.c: Unknown (2/3): resource projection unresolved: 6 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=6
+    cmt_log_print: lib/cmetrics/src/cmt_log.c:38: unknown_alias: unresolved resource identity `ctx`
+    cmt_log_print: lib/cmetrics/src/cmt_log.c:40: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cmt_log_print: lib/cmetrics/src/cmt_log.c:44: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    4 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_map.c: Unknown (18/18): resource projection unresolved: 145 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=19, unsupported=145
+    cmt_map_create: lib/cmetrics/src/cmt_map.c:123: unsupported: indirect memory access is outside the resource projection
+    cmt_map_create: lib/cmetrics/src/cmt_map.c:128: unsupported: indirect memory access is outside the resource projection
+    cmt_map_create: lib/cmetrics/src/cmt_map.c:129: unknown_alias: unresolved resource identity `map`
+    161 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_metric.c: Unknown (29/29): resource projection unresolved: 80 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=80
+    add: lib/cmetrics/src/cmt_metric.c:53: unsupported: call to uncontracted function `cmt_metric_get_value`
+    add: lib/cmetrics/src/cmt_metric.c:56: unsupported: call to uncontracted function `metric_exchange`
+    add: lib/cmetrics/src/cmt_metric.c:60: unsupported: indirect memory access is outside the resource projection
+    77 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_metric_histogram.c: Unknown (12/12): resource projection unresolved: 24 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=24
+    cmt_metric_hist_count_inc: lib/cmetrics/src/cmt_metric_histogram.c:100: unsupported: indirect memory access is outside the resource projection
+    cmt_metric_hist_count_inc: lib/cmetrics/src/cmt_metric_histogram.c:103: unsupported: call to uncontracted function `metric_hist_count_exchange`
+    cmt_metric_hist_count_set: lib/cmetrics/src/cmt_metric_histogram.c:116: unsupported: indirect memory access is outside the resource projection
+    21 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_mpack_utils.c: Unknown (7/7): resource projection unresolved: 47 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=47
+    cmt_mpack_consume_double_tag: lib/cmetrics/src/cmt_mpack_utils.c:35: unsupported: call to uncontracted function `mpack_read_tag`
+    cmt_mpack_consume_double_tag: lib/cmetrics/src/cmt_mpack_utils.c:37: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cmt_mpack_consume_double_tag: lib/cmetrics/src/cmt_mpack_utils.c:41: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    49 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_opts.c: Unknown (2/2): resource projection unresolved: 30 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=30
+    cmt_opts_exit: lib/cmetrics/src/cmt_opts.c:99: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cmt_opts_exit: lib/cmetrics/src/cmt_opts.c:100: unsupported: indirect memory access is outside the resource projection
+    cmt_opts_exit: lib/cmetrics/src/cmt_opts.c:103: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    27 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_summary.c: Unknown (12/12): resource projection unresolved: 50 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=7, unsupported=50
+    cmt_summary_count_set: lib/cmetrics/src/cmt_summary.c:259: unsupported: indirect memory access is outside the resource projection
+    cmt_summary_count_set: lib/cmetrics/src/cmt_summary.c:262: unsupported: call to uncontracted function `summary_count_exchange`
+    cmt_summary_create: lib/cmetrics/src/cmt_summary.c:50: unsupported: call to uncontracted function `cmt_log_print`
+    54 more diagnostic(s); full inventory in optional resource report
+  cmetrics/lib/cmetrics/src/cmt_time.c: Safe (1/1)
+  cmetrics/lib/cmetrics/src/cmt_untyped.c: Unknown (4/4): resource projection unresolved: 21 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=21
+    cmt_untyped_create: lib/cmetrics/src/cmt_untyped.c:35: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_untyped_create: lib/cmetrics/src/cmt_untyped.c:40: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_untyped_create: lib/cmetrics/src/cmt_untyped.c:45: unsupported: call to uncontracted function `cmt_log_print`
+    22 more diagnostic(s); full inventory in optional resource report
+ctraces: 17 selected compilation configuration(s)
+  ctraces/lib/ctraces/src/ctr_attributes.c: Unknown (9/9): resource projection unresolved: 10 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=10
+    ctr_attributes_count: lib/ctraces/src/ctr_attributes.c:51: unsupported: indirect memory access is outside the resource projection
+    ctr_attributes_create: lib/ctraces/src/ctr_attributes.c:28: unsupported: indirect memory access is outside the resource projection
+    ctr_attributes_create: lib/ctraces/src/ctr_attributes.c:32: unsupported: call to uncontracted function `cfl_kvlist_create`
+    8 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_decode_msgpack.c: Unknown (48/48): resource projection unresolved: 135 unsupported operation(s), 48 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=48, unsupported=135
+    ctr_decode_msgpack_create: lib/ctraces/src/ctr_decode_msgpack.c:738: unsupported: indirect memory access is outside the resource projection
+    ctr_decode_msgpack_create: lib/ctraces/src/ctr_decode_msgpack.c:740: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    ctr_decode_msgpack_create: lib/ctraces/src/ctr_decode_msgpack.c:746: unsupported: indirect memory access is outside the resource projection
+    180 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_decode_opentelemetry.c: Unknown (16/16): resource projection unresolved: 105 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=6, unsupported=105
+    convert_any_value: lib/ctraces/src/ctr_decode_opentelemetry.c:305: unsupported: unmodeled call, aggregate or indirect access in switch expression
+    convert_any_value: lib/ctraces/src/ctr_decode_opentelemetry.c:308: unsupported: indirect memory access is outside the resource projection
+    convert_any_value: lib/ctraces/src/ctr_decode_opentelemetry.c:317: unsupported: indirect memory access is outside the resource projection
+    108 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_encode_msgpack.c: Unknown (18/18): resource projection unresolved: 147 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=147
+    ctr_encode_msgpack_create: lib/ctraces/src/ctr_encode_msgpack.c:484: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    ctr_encode_msgpack_create: lib/ctraces/src/ctr_encode_msgpack.c:487: unsupported: call to uncontracted function `mpack_start_map`
+    ctr_encode_msgpack_create: lib/ctraces/src/ctr_encode_msgpack.c:493: unsupported: indirect memory access is outside the resource projection
+    145 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_encode_opentelemetry.c: Unknown (70/70): resource projection unresolved: 297 unsupported operation(s), 59 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=59, unsupported=297
+    create_export_service_request: lib/ctraces/src/ctr_encode_opentelemetry.c:1102: unsupported: indirect memory access is outside the resource projection
+    create_export_service_request: lib/ctraces/src/ctr_encode_opentelemetry.c:1104: unsupported: call to uncontracted function `initialize_export_service_request`
+    create_export_service_request: lib/ctraces/src/ctr_encode_opentelemetry.c:1109: unsupported: indirect memory access is outside the resource projection
+    353 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_encode_text.c: Unknown (15/15): resource projection unresolved: 175 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=175
+    ctr_encode_text_create: lib/ctraces/src/ctr_encode_text.c:430: unsupported: call to uncontracted function `cfl_sds_create_size`
+    ctr_encode_text_create: lib/ctraces/src/ctr_encode_text.c:436: unsupported: indirect memory access is outside the resource projection
+    ctr_encode_text_create: lib/ctraces/src/ctr_encode_text.c:436: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    177 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_id.c: Unknown (10/10): resource projection unresolved: 29 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=29
+    ctr_id_cmp: lib/ctraces/src/ctr_id.c:104: unsupported: indirect memory access is outside the resource projection
+    ctr_id_cmp: lib/ctraces/src/ctr_id.c:105: unsupported: indirect memory access is outside the resource projection
+    ctr_id_cmp: lib/ctraces/src/ctr_id.c:111: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    29 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_link.c: Unknown (7/7): resource projection unresolved: 20 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=6, unsupported=20
+    ctr_link_create: lib/ctraces/src/ctr_link.c:30: unsupported: indirect memory access is outside the resource projection
+    ctr_link_create: lib/ctraces/src/ctr_link.c:36: unsupported: call to uncontracted function `ctr_id_create`
+    ctr_link_create: lib/ctraces/src/ctr_link.c:37: unknown_alias: unresolved resource identity `link`
+    23 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_log.c: Unknown (2/3): resource projection unresolved: 6 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=6
+    ctr_log_print: lib/ctraces/src/ctr_log.c:35: unknown_alias: unresolved resource identity `ctx`
+    ctr_log_print: lib/ctraces/src/ctr_log.c:37: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    ctr_log_print: lib/ctraces/src/ctr_log.c:41: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    4 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_mpack_utils.c: Unknown (16/16): resource projection unresolved: 87 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=87
+    ctr_mpack_consume_binary_or_nil_tag: lib/ctraces/src/ctr_mpack_utils.c:47: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    ctr_mpack_consume_binary_or_nil_tag: lib/ctraces/src/ctr_mpack_utils.c:48: unsupported: call to uncontracted function `ctr_mpack_consume_binary_tag`
+    ctr_mpack_consume_binary_or_nil_tag: lib/ctraces/src/ctr_mpack_utils.c:50: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    89 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_random.c: Unsafe (1/1)
+    resource diagnostics: leak=1, unknown_alias=1
+    ctr_random_get: lib/ctraces/src/ctr_random.c:76: unknown_alias: unresolved resource identity `buf`
+    ctr_random_get: lib/ctraces/src/ctr_random.c:85: leak: live obligation acquired at lib/ctraces/src/ctr_random.c:66
+  ctraces/lib/ctraces/src/ctr_resource.c: Unknown (9/9): resource projection unresolved: 25 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=6, unsupported=25
+    ctr_resource_create: lib/ctraces/src/ctr_resource.c:30: unsupported: indirect memory access is outside the resource projection
+    ctr_resource_create: lib/ctraces/src/ctr_resource.c:34: unsupported: call to uncontracted function `ctr_attributes_create`
+    ctr_resource_create: lib/ctraces/src/ctr_resource.c:36: unsupported: call to uncontracted function `ctr_resource_destroy`
+    28 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_scope.c: Unknown (6/6): resource projection unresolved: 26 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=26
+    ctr_instrumentation_scope_create: lib/ctraces/src/ctr_scope.c:97: unsupported: indirect memory access is outside the resource projection
+    ctr_instrumentation_scope_create: lib/ctraces/src/ctr_scope.c:102: unsupported: indirect memory access is outside the resource projection
+    ctr_instrumentation_scope_create: lib/ctraces/src/ctr_scope.c:105: unsupported: indirect memory access is outside the resource projection
+    27 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_span.c: Unknown (40/40): resource projection unresolved: 87 unsupported operation(s), 14 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=14, unsupported=87
+    ctr_span_create: lib/ctraces/src/ctr_span.c:39: unsupported: indirect memory access is outside the resource projection
+    ctr_span_create: lib/ctraces/src/ctr_span.c:48: unsupported: indirect memory access is outside the resource projection
+    ctr_span_create: lib/ctraces/src/ctr_span.c:49: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    98 more diagnostic(s); full inventory in optional resource report
+  ctraces/lib/ctraces/src/ctr_utils.c: data-only gateway pass
+  ctraces/lib/ctraces/src/ctr_version.c: Safe (1/1)
+  ctraces/lib/ctraces/src/ctraces.c: Unknown (5/5): resource projection unresolved: 7 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=7
+    ctr_create: lib/ctraces/src/ctraces.c:49: unsupported: indirect memory access is outside the resource projection
+    ctr_create: lib/ctraces/src/ctraces.c:52: unsupported: indirect memory access is outside the resource projection
+    ctr_create: lib/ctraces/src/ctraces.c:53: unsupported: indirect memory access is outside the resource projection
+    6 more diagnostic(s); full inventory in optional resource report
+librdkafka: 94 selected compilation configuration(s)
+  librdkafka/lib/librdkafka-2.15.0/src/cJSON.c: Unknown (113/116): resource projection unresolved: 540 unsupported operation(s), 118 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=118, unsupported=540
+    add_item_to_array: lib/librdkafka-2.15.0/src/cJSON.c:2021: unsupported: indirect memory access is outside the resource projection
+    add_item_to_array: lib/librdkafka-2.15.0/src/cJSON.c:2025: unknown_alias: unresolved resource identity `child`
+    add_item_to_array: lib/librdkafka-2.15.0/src/cJSON.c:2028: unsupported: indirect memory access is outside the resource projection
+    655 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/crc32c.c: Unknown (12/12): resource projection unresolved: 65 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=65
+    crc32c_hw: lib/librdkafka-2.15.0/src/crc32c.c:251: unknown_alias: unresolved resource identity `buf`
+    crc32c_hw: lib/librdkafka-2.15.0/src/crc32c.c:256: unsupported: unsupported assignment expression
+    crc32c_hw: lib/librdkafka-2.15.0/src/crc32c.c:261: unsupported: call to uncontracted function `__asm__`
+    66 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/lz4.c: Unknown (87/87): resource projection unresolved: 482 unsupported operation(s), 27 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=27, unsupported=482
+    LZ4_NbCommonBytes: lib/librdkafka-2.15.0/src/lz4.c:566: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    LZ4_NbCommonBytes: lib/librdkafka-2.15.0/src/lz4.c:589: unsupported: unmodeled call, aggregate or indirect access in return expression
+    LZ4_NbCommonBytes: lib/librdkafka-2.15.0/src/lz4.c:603: unsupported: unmodeled call, aggregate or indirect access in return expression
+    506 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/lz4frame.c: Unknown (54/54): resource projection unresolved: 591 unsupported operation(s), 46 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=46, unsupported=591
+    LZ4F_calloc: lib/librdkafka-2.15.0/src/lz4frame.c:103: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    LZ4F_calloc: lib/librdkafka-2.15.0/src/lz4frame.c:104: unsupported: unmodeled call, aggregate or indirect access in return expression
+    LZ4F_calloc: lib/librdkafka-2.15.0/src/lz4frame.c:107: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    634 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/lz4hc.c: Unknown (58/58): resource projection unresolved: 390 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=16, unsupported=390
+    LZ4HC_FindLongerMatch: lib/librdkafka-2.15.0/src/lz4hc.c:1314: unsupported: braced initializer, expression, or declaration is not modeled
+    LZ4HC_FindLongerMatch: lib/librdkafka-2.15.0/src/lz4hc.c:1319: unsupported: call to uncontracted function `LZ4HC_InsertAndGetWiderMatch`
+    LZ4HC_FindLongerMatch: lib/librdkafka-2.15.0/src/lz4hc.c:1324: unsupported: indirect memory access is outside the resource projection
+    403 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/nanopb/pb_common.c: Unknown (11/12): resource projection unresolved: 58 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=58
+    advance_iterator: lib/librdkafka-2.15.0/src/nanopb/pb_common.c:126: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    advance_iterator: lib/librdkafka-2.15.0/src/nanopb/pb_common.c:142: unsupported: indirect memory access is outside the resource projection
+    advance_iterator: lib/librdkafka-2.15.0/src/nanopb/pb_common.c:143: unsupported: unsupported assignment expression
+    56 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/nanopb/pb_decode.c: Unknown (37/42): resource projection unresolved: 249 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=249
+    buf_read: lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:70: unsupported: indirect memory access is outside the resource projection
+    buf_read: lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:71: unsupported: indirect memory access is outside the resource projection
+    decode_basic_field: lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:401: unsupported: unmodeled call, aggregate or indirect access in return expression
+    250 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/nanopb/pb_encode.c: Unknown (30/31): resource projection unresolved: 164 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=164
+    buf_write: lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:54: unsupported: indirect memory access is outside the resource projection
+    buf_write: lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:55: unsupported: indirect memory access is outside the resource projection
+    default_extension_encoder: lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:477: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    166 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/opentelemetry/common.pb.c: data-only gateway pass
+  librdkafka/lib/librdkafka-2.15.0/src/opentelemetry/metrics.pb.c: data-only gateway pass
+  librdkafka/lib/librdkafka-2.15.0/src/opentelemetry/resource.pb.c: data-only gateway pass
+  librdkafka/lib/librdkafka-2.15.0/src/rdaddr.c: Unknown (4/4): resource projection unresolved: 44 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=44
+    rd_addrinfo_prepare: lib/librdkafka-2.15.0/src/rdaddr.c:113: unsupported: store through `*snode` without an out-parameter contract
+    rd_addrinfo_prepare: lib/librdkafka-2.15.0/src/rdaddr.c:114: unsupported: store through `*ssvc` without an out-parameter contract
+    rd_addrinfo_prepare: lib/librdkafka-2.15.0/src/rdaddr.c:120: unsupported: unmodeled expression may mutate a formal resource identity
+    50 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdavl.c: Unknown (9/9): resource projection unresolved: 41 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=6, unsupported=41
+    rd_avl_balance_node: lib/librdkafka-2.15.0/src/rdavl.c:63: unsupported: indirect memory access is outside the resource projection
+    rd_avl_balance_node: lib/librdkafka-2.15.0/src/rdavl.c:67: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_avl_balance_node: lib/librdkafka-2.15.0/src/rdavl.c:68: unsupported: indirect memory access is outside the resource projection
+    44 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdbase64.c: Unknown (4/5): resource projection unresolved: 22 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=22
+    rd_base64_decode: lib/librdkafka-2.15.0/src/rdbase64.c:169: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_base64_decode: lib/librdkafka-2.15.0/src/rdbase64.c:173: unsupported: indirect memory access is outside the resource projection
+    rd_base64_decode: lib/librdkafka-2.15.0/src/rdbase64.c:174: unsupported: indirect memory access is outside the resource projection
+    19 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdbuf.c: Unknown (55/55): resource projection unresolved: 420 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=420
+    do_unittest_erase: lib/librdkafka-2.15.0/src/rdbuf.c:1687: unsupported: braced initializer, expression, or declaration is not modeled
+    do_unittest_erase: lib/librdkafka-2.15.0/src/rdbuf.c:1795: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    do_unittest_erase: lib/librdkafka-2.15.0/src/rdbuf.c:1795: unsupported: unmodeled increment or decrement expression
+    426 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdcrc32.c: Unknown (1/1): resource projection unresolved: 2 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=2
+    rd_crc32_reflect: lib/librdkafka-2.15.0/src/rdcrc32.c:108: unsupported: unsupported assignment expression
+    rd_crc32_reflect: lib/librdkafka-2.15.0/src/rdcrc32.c:111: unsupported: unsupported assignment expression
+  librdkafka/lib/librdkafka-2.15.0/src/rddl.c: Unknown (5/5): resource projection unresolved: 12 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=12
+    rd_dl_close: lib/librdkafka-2.15.0/src/rddl.c:151: unsupported: call to uncontracted function `dlclose`
+    rd_dl_error: lib/librdkafka-2.15.0/src/rddl.c:53: unknown_alias: unresolved resource identity `__qcore_returned_value`
+    rd_dl_error: lib/librdkafka-2.15.0/src/rddl.c:53: unsupported: nullable resource `__qcore_returned_value` used by a non-null contract
+    18 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdfnv1a.c: Unknown (2/2): resource projection unresolved: 8 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=8
+    rd_fnv1a: lib/librdkafka-2.15.0/src/rdfnv1a.c:49: unsupported: unsupported assignment expression
+    rd_fnv1a: lib/librdkafka-2.15.0/src/rdfnv1a.c:53: unsupported: unrecognized assignment destination
+    unittest_fnv1a: lib/librdkafka-2.15.0/src/rdfnv1a.c:70: unknown_alias: unresolved resource identity `__qcore_literal__`
+    7 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdgz.c: Unknown (1/1): resource projection unresolved: 15 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=15
+    rd_gz_decompress: lib/librdkafka-2.15.0/src/rdgz.c:53: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_gz_decompress: lib/librdkafka-2.15.0/src/rdgz.c:59: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_gz_decompress: lib/librdkafka-2.15.0/src/rdgz.c:62: unsupported: indirect memory access is outside the resource projection
+    15 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdhdrhistogram.c: Unknown (36/36): resource projection unresolved: 172 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=13, unsupported=172
+    rd_hdr_countsIndex: lib/librdkafka-2.15.0/src/rdhdrhistogram.c:167: unsupported: indirect memory access is outside the resource projection
+    rd_hdr_countsIndex: lib/librdkafka-2.15.0/src/rdhdrhistogram.c:169: unsupported: indirect memory access is outside the resource projection
+    rd_hdr_countsIndexFor: lib/librdkafka-2.15.0/src/rdhdrhistogram.c:261: unsupported: call to uncontracted function `rd_hdr_getBucketIndex`
+    182 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdhttp.c: Unsafe (21/21)
+    resource diagnostics: leak=1, unknown_alias=20, unsupported=177
+    rd_http_error_new: lib/librdkafka-2.15.0/src/rdhttp.c:62: unsupported: call to uncontracted function `__builtin_va_start`
+    rd_http_error_new: lib/librdkafka-2.15.0/src/rdhttp.c:64: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_http_error_new: lib/librdkafka-2.15.0/src/rdhttp.c:66: unsupported: call to uncontracted function `__builtin_va_copy`
+    195 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka.c: Unknown (165/165): resource projection unresolved: 1698 unsupported operation(s), 80 unresolved alias(es), 1 custody summary conflict(s)
+    resource diagnostics: summary_conflict=1, unknown_alias=80, unsupported=1698
+    rd_kafka_1s_tmr_cb: lib/librdkafka-2.15.0/src/rdkafka.c:2198: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_1s_tmr_cb: lib/librdkafka-2.15.0/src/rdkafka.c:2201: unsupported: call to uncontracted function `rd_kafka_topic_scan_all`
+    rd_kafka_1s_tmr_cb: lib/librdkafka-2.15.0/src/rdkafka.c:2205: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    1776 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_admin.c: Unknown (354/354): resource projection unresolved: 2515 unsupported operation(s), 211 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=211, unsupported=2515
+    rd_kafka_AclBindingFilter_copy: lib/librdkafka-2.15.0/src/rdkafka_admin.c:5386: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_AclBindingFilter_copy: lib/librdkafka-2.15.0/src/rdkafka_admin.c:5389: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_kafka_AclBindingFilter_new: lib/librdkafka-2.15.0/src/rdkafka_admin.c:5323: unsupported: call to uncontracted function `rd_kafka_AclBinding_new0`
+    2723 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_assignment.c: Unknown (21/21): resource projection unresolved: 284 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=284
+    rd_kafka_assignment_add: lib/librdkafka-2.15.0/src/rdkafka_assignment.c:904: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_assignment_add: lib/librdkafka-2.15.0/src/rdkafka_assignment.c:907: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_assignment_add: lib/librdkafka-2.15.0/src/rdkafka_assignment.c:908: unsupported: call to uncontracted function `rd_kafka_share_assignment_add`
+    285 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_assignor.c: Unknown (38/38): resource projection unresolved: 350 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=20, unsupported=350
+    isFullyBalanced0: lib/librdkafka-2.15.0/src/rdkafka_assignor.c:1333: unsupported: indirect memory access is outside the resource projection
+    isFullyBalanced0: lib/librdkafka-2.15.0/src/rdkafka_assignor.c:1340: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_kafka_assignor_add: lib/librdkafka-2.15.0/src/rdkafka_assignor.c:536: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    367 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_aux.c: Unknown (35/35): resource projection unresolved: 53 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=11, unsupported=53
+    rd_kafka_Node_copy: lib/librdkafka-2.15.0/src/rdkafka_aux.c:300: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_Node_destroy: lib/librdkafka-2.15.0/src/rdkafka_aux.c:304: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_Node_destroy: lib/librdkafka-2.15.0/src/rdkafka_aux.c:305: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    61 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_background.c: Unknown (4/4): resource projection unresolved: 44 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=44
+    rd_kafka_background_queue_serve: lib/librdkafka-2.15.0/src/rdkafka_background.c:77: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_background_queue_serve: lib/librdkafka-2.15.0/src/rdkafka_background.c:79: unsupported: call to uncontracted function `rd_kafka_call_background_event_cb`
+    rd_kafka_background_queue_serve: lib/librdkafka-2.15.0/src/rdkafka_background.c:90: unsupported: call to uncontracted function `rd_kafka_poll_cb`
+    42 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_broker.c: Unknown (122/122): resource projection unresolved: 1602 unsupported operation(s), 40 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=40, unsupported=1602
+    rd_kafka_all_brokers_wakeup: lib/librdkafka-2.15.0/src/rdkafka_broker.c:6061: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_all_brokers_wakeup: lib/librdkafka-2.15.0/src/rdkafka_broker.c:6062: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_all_brokers_wakeup: lib/librdkafka-2.15.0/src/rdkafka_broker.c:6065: unsupported: indirect memory access is outside the resource projection
+    1639 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_buf.c: Unknown (19/19): resource projection unresolved: 165 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=165
+    rd_kafka_buf_calc_timeout: lib/librdkafka-2.15.0/src/rdkafka_buf.c:366: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_buf_calc_timeout: lib/librdkafka-2.15.0/src/rdkafka_buf.c:370: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_buf_calc_timeout: lib/librdkafka-2.15.0/src/rdkafka_buf.c:371: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    164 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_cert.c: Unknown (7/8): resource projection unresolved: 115 unsupported operation(s), 24 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=24, unsupported=115
+    rd_kafka_cert_destroy: lib/librdkafka-2.15.0/src/rdkafka_cert.c:76: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_cert_destroy: lib/librdkafka-2.15.0/src/rdkafka_cert.c:79: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_cert_destroy: lib/librdkafka-2.15.0/src/rdkafka_cert.c:80: unsupported: indirect memory access is outside the resource projection
+    136 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: Unknown (146/146): resource projection unresolved: 2155 unsupported operation(s), 98 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=98, unsupported=2155
+    PartitionMemberInfo_new: lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:250: unsupported: indirect memory access is outside the resource projection
+    PartitionMemberInfo_new: lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:251: unsupported: indirect memory access is outside the resource projection
+    PartitionMemberInfo_new: lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:253: unknown_alias: unresolved resource identity `pmi`
+    2250 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_conf.c: Unknown (91/91): resource projection unresolved: 728 unsupported operation(s), 63 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=63, unsupported=728
+    rd_kafka_anyconf_clear: lib/librdkafka-2.15.0/src/rdkafka_conf.c:2752: unsupported: call to uncontracted function `rd_kafka_anyconf_prop_desensitize`
+    rd_kafka_anyconf_clear: lib/librdkafka-2.15.0/src/rdkafka_conf.c:2754: unsupported: unmodeled call, aggregate or indirect access in switch expression
+    rd_kafka_anyconf_clear: lib/librdkafka-2.15.0/src/rdkafka_conf.c:2756: unsupported: indirect memory access is outside the resource projection
+    788 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_coord.c: Unknown (18/18): resource projection unresolved: 179 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=179
+    rd_kafka_coord_cache_add: lib/librdkafka-2.15.0/src/rdkafka_coord.c:119: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_coord_cache_add: lib/librdkafka-2.15.0/src/rdkafka_coord.c:120: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_coord_cache_add: lib/librdkafka-2.15.0/src/rdkafka_coord.c:122: unsupported: indirect memory access is outside the resource projection
+    186 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c: Unknown (18/18): resource projection unresolved: 28 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=11, unsupported=28
+    rd_kafka_error_copy: lib/librdkafka-2.15.0/src/rdkafka_error.c:87: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_error_copy: lib/librdkafka-2.15.0/src/rdkafka_error.c:88: unknown_alias: unresolved resource identity `error`
+    rd_kafka_error_copy: lib/librdkafka-2.15.0/src/rdkafka_error.c:89: unknown_alias: unresolved resource identity `error`
+    36 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_event.c: Unknown (38/38): resource projection unresolved: 65 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=65
+    rd_kafka_event_AlterConfigs_result: lib/librdkafka-2.15.0/src/rdkafka_event.c:341: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_event_AlterConsumerGroupOffsets_result: lib/librdkafka-2.15.0/src/rdkafka_event.c:451: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_event_AlterUserScramCredentials_result: lib/librdkafka-2.15.0/src/rdkafka_event.c:471: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    63 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_feature.c: Unknown (9/9): resource projection unresolved: 61 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=61
+    rd_kafka_ApiVersion_check: lib/librdkafka-2.15.0/src/rdkafka_feature.c:374: unsupported: call to uncontracted function `bsearch`
+    rd_kafka_ApiVersion_check: lib/librdkafka-2.15.0/src/rdkafka_feature.c:379: unsupported: unmodeled call, aggregate or indirect access in return expression
+    rd_kafka_ApiVersion_is_queryable: lib/librdkafka-2.15.0/src/rdkafka_feature.c:353: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    59 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: Unknown (47/47): resource projection unresolved: 1132 unsupported operation(s), 62 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=62, unsupported=1132
+    can_use_topic_ids: lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2492: unsupported: indirect memory access is outside the resource projection
+    can_use_topic_ids: lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2493: unsupported: unmodeled call, aggregate or indirect access in do-while condition
+    can_use_topic_ids: lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2494: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    1191 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_header.c: Unknown (11/11): resource projection unresolved: 42 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=42
+    rd_kafka_header_add: lib/librdkafka-2.15.0/src/rdkafka_header.c:82: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_header_add: lib/librdkafka-2.15.0/src/rdkafka_header.c:83: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_header_add: lib/librdkafka-2.15.0/src/rdkafka_header.c:93: unsupported: indirect memory access is outside the resource projection
+    49 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_idempotence.c: Unknown (18/18): resource projection unresolved: 163 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=163
+    rd_kafka_idemp_broker_any: lib/librdkafka-2.15.0/src/rdkafka_idempotence.c:109: unsupported: call to uncontracted function `rd_kafka_broker_any_up`
+    rd_kafka_idemp_broker_any: lib/librdkafka-2.15.0/src/rdkafka_idempotence.c:116: unsupported: store through `*errp` without an out-parameter contract
+    rd_kafka_idemp_broker_any: lib/librdkafka-2.15.0/src/rdkafka_idempotence.c:117: unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection
+    164 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_interceptor.c: Unknown (39/39): resource projection unresolved: 130 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=7, unsupported=130
+    rd_kafka_conf_interceptor_add_on_conf_destroy: lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:687: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_conf_interceptor_add_on_conf_dup: lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:677: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_conf_interceptor_add_on_conf_set: lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:667: unsupported: indirect memory access is outside the resource projection
+    134 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_lz4.c: Unknown (4/4): resource projection unresolved: 75 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=16, unsupported=75
+    rd_kafka_lz4_compress: lib/librdkafka-2.15.0/src/rdkafka_lz4.c:344: unknown_alias: unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`
+    rd_kafka_lz4_compress: lib/librdkafka-2.15.0/src/rdkafka_lz4.c:345: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_lz4_compress: lib/librdkafka-2.15.0/src/rdkafka_lz4.c:353: unsupported: braced initializer, expression, or declaration is not modeled
+    88 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c: Unknown (34/34): resource projection unresolved: 680 unsupported operation(s), 37 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=37, unsupported=680
+    rd_kafka_has_reliable_leader_epochs: lib/librdkafka-2.15.0/src/rdkafka_metadata.c:411: unsupported: call to uncontracted function `rd_kafka_broker_ApiVersion_at_least`
+    rd_kafka_metadata: lib/librdkafka-2.15.0/src/rdkafka_metadata.c:96: unsupported: call to uncontracted function `rd_timeout_init`
+    rd_kafka_metadata: lib/librdkafka-2.15.0/src/rdkafka_metadata.c:98: unsupported: indirect memory access is outside the resource projection
+    714 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c: Unknown (33/33): resource projection unresolved: 222 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=222
+    rd_kafka_metadata_cache_delete: lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:84: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_metadata_cache_delete: lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:85: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_metadata_cache_delete: lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:87: unsupported: indirect memory access is outside the resource projection
+    222 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock.c: Unknown (138/138): resource projection unresolved: 1217 unsupported operation(s), 71 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=71, unsupported=1217
+    rd_kafka_handle_mock_cluster: lib/librdkafka-2.15.0/src/rdkafka_mock.c:3410: unsupported: unmodeled call, aggregate or indirect access in return expression
+    rd_kafka_mock_broker_add: lib/librdkafka-2.15.0/src/rdkafka_mock.c:1940: unsupported: call to uncontracted function `rd_kafka_op_new0`
+    rd_kafka_mock_broker_add: lib/librdkafka-2.15.0/src/rdkafka_mock.c:1942: unsupported: indirect memory access is outside the resource projection
+    1285 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c: Unknown (57/57): resource projection unresolved: 450 unsupported operation(s), 26 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=26, unsupported=450
+    rd_kafka_mcgrp_rebalance_timer_cb: lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:492: unknown_alias: unresolved resource identity `arg`
+    rd_kafka_mcgrp_rebalance_timer_cb: lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:494: unsupported: call to uncontracted function `rd_kafka_mock_cgrp_classic_fsm_timeout`
+    rd_kafka_mock_cgrp_classic_check_state: lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:92: unsupported: indirect memory access is outside the resource projection
+    473 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c: Unknown (54/54): resource projection unresolved: 2071 unsupported operation(s), 196 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=196, unsupported=2071
+    rd_kafka_mock_Fetch_reply_tags_partition_write: lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:298: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_mock_Fetch_reply_tags_partition_write: lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:300: unsupported: call to uncontracted function `rd_kafka_mock_partition_next_leader_response`
+    rd_kafka_mock_Fetch_reply_tags_partition_write: lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:303: unsupported: indirect memory access is outside the resource projection
+    2264 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c: Unknown (37/37): resource projection unresolved: 318 unsupported operation(s), 24 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=24, unsupported=318
+    rd_kafka_mock_sgrp_expire_locks: lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c:1044: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_mock_sgrp_expire_locks: lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c:1045: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_mock_sgrp_expire_locks: lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c:1046: unknown_alias: unresolved resource identity `tmp`
+    339 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msg.c: Unknown (63/63): resource projection unresolved: 585 unsupported operation(s), 55 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=55, unsupported=585
+    rd_kafka_Produce_result_copy: lib/librdkafka-2.15.0/src/rdkafka_msg.c:1978: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_Produce_result_copy: lib/librdkafka-2.15.0/src/rdkafka_msg.c:1979: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_Produce_result_copy: lib/librdkafka-2.15.0/src/rdkafka_msg.c:1980: unsupported: indirect memory access is outside the resource projection
+    637 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c: Unknown (24/24): resource projection unresolved: 527 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=30, unsupported=527
+    rd_kafka_aborted_txn_cmp_by_pid: lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:1807: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_aborted_txn_node_destroy: lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:1816: unknown_alias: unresolved resource identity `_node_ptr`
+    rd_kafka_aborted_txn_node_destroy: lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:1817: unsupported: indirect memory access is outside the resource projection
+    554 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c: Unknown (23/23): resource projection unresolved: 311 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=311
+    rd_kafka_gzip_compress: lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:961: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_gzip_compress: lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:967: unsupported: call to uncontracted function `deflateInit2_`
+    rd_kafka_gzip_compress: lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:970: unsupported: indirect memory access is outside the resource projection
+    310 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_offset.c: Unknown (37/37): resource projection unresolved: 332 unsupported operation(s), 36 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=36, unsupported=332
+    mk_esc_filename: lib/librdkafka-2.15.0/src/rdkafka_offset.c:1233: unknown_alias: unresolved resource identity `in`
+    mk_esc_filename: lib/librdkafka-2.15.0/src/rdkafka_offset.c:1234: unknown_alias: unresolved resource identity `out`
+    mk_esc_filename: lib/librdkafka-2.15.0/src/rdkafka_offset.c:1236: unknown_alias: unresolved resource identity `s`
+    365 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_op.c: Unknown (25/25): resource projection unresolved: 269 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=269
+    rd_kafka_consumer_err: lib/librdkafka-2.15.0/src/rdkafka_op.c:678: unsupported: call to uncontracted function `__builtin_va_start`
+    rd_kafka_consumer_err: lib/librdkafka-2.15.0/src/rdkafka_op.c:680: unsupported: call to uncontracted function `__builtin_va_end`
+    rd_kafka_consumer_err: lib/librdkafka-2.15.0/src/rdkafka_op.c:682: unsupported: call to uncontracted function `rd_kafka_op_new0`
+    270 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_partition.c: Unknown (161/161): resource projection unresolved: 1128 unsupported operation(s), 63 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=63, unsupported=1128
+    rd_kafka_broker_consumer_toppar_serve: lib/librdkafka-2.15.0/src/rdkafka_partition.c:2144: unsupported: call to uncontracted function `rd_kafka_toppar_fetch_decide`
+    rd_kafka_fetch_pos2str: lib/librdkafka-2.15.0/src/rdkafka_partition.c:4946: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_fetch_pos2str: lib/librdkafka-2.15.0/src/rdkafka_partition.c:4950: unsupported: unmodeled call, aggregate or indirect access in return expression
+    1188 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_pattern.c: Unknown (12/12): resource projection unresolved: 37 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=37
+    rd_kafka_pattern_add: lib/librdkafka-2.15.0/src/rdkafka_pattern.c:42: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_pattern_add: lib/librdkafka-2.15.0/src/rdkafka_pattern.c:42: unsupported: unrecognized assignment destination
+    rd_kafka_pattern_destroy: lib/librdkafka-2.15.0/src/rdkafka_pattern.c:34: unsupported: indirect memory access is outside the resource projection
+    42 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_plugin.c: Unknown (5/5): resource projection unresolved: 34 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=34
+    rd_kafka_plugin_cmp: lib/librdkafka-2.15.0/src/rdkafka_plugin.c:47: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_plugin_cmp: lib/librdkafka-2.15.0/src/rdkafka_plugin.c:49: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_plugin_destroy: lib/librdkafka-2.15.0/src/rdkafka_plugin.c:129: unsupported: indirect memory access is outside the resource projection
+    35 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_queue.c: Unknown (42/42): resource projection unresolved: 289 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=289
+    rd_kafka_enq_once_trigger_destroy: lib/librdkafka-2.15.0/src/rdkafka_queue.c:1348: unknown_alias: unresolved resource identity `ptr`
+    rd_kafka_enq_once_trigger_destroy: lib/librdkafka-2.15.0/src/rdkafka_queue.c:1350: unsupported: call to uncontracted function `rd_kafka_enq_once_trigger`
+    rd_kafka_op_filter: lib/librdkafka-2.15.0/src/rdkafka_queue.c:363: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    311 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c: Unknown (34/34): resource projection unresolved: 454 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=454
+    rd_kafka_assign_co_partitioned: lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:415: unsupported: call to uncontracted function `rd_list_elem`
+    rd_kafka_assign_co_partitioned: lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:424: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_assign_co_partitioned: lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:425: unsupported: indirect memory access is outside the resource projection
+    461 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_request.c: Unknown (94/94): resource projection unresolved: 1838 unsupported operation(s), 92 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=92, unsupported=1838
+    rd_kafka_AclBinding_request_size: lib/librdkafka-2.15.0/src/rdkafka_request.c:5879: unsupported: unmodeled call, aggregate or indirect access in return expression
+    rd_kafka_AddOffsetsToTxnRequest: lib/librdkafka-2.15.0/src/rdkafka_request.c:6620: unsupported: call to uncontracted function `rd_kafka_broker_ApiVersion_supported`
+    rd_kafka_AddOffsetsToTxnRequest: lib/librdkafka-2.15.0/src/rdkafka_request.c:6626: unsupported: call to uncontracted function `rd_kafka_replyq_destroy`
+    1927 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c: Unknown (2/2): resource projection unresolved: 10 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=10
+    rd_kafka_roundrobin_assignor_assign_cb: lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c:68: unsupported: call to uncontracted function `qsort`
+    rd_kafka_roundrobin_assignor_assign_cb: lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c:72: unsupported: call to uncontracted function `qsort`
+    rd_kafka_roundrobin_assignor_assign_cb: lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c:75: unsupported: indirect memory access is outside the resource projection
+    7 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl.c: Unknown (23/23): resource projection unresolved: 108 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=108
+    rd_kafka_queue_get_sasl: lib/librdkafka-2.15.0/src/rdkafka_sasl.c:288: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_queue_get_sasl: lib/librdkafka-2.15.0/src/rdkafka_sasl.c:291: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_sasl_auth_done: lib/librdkafka-2.15.0/src/rdkafka_sasl.c:129: unsupported: indirect memory access is outside the resource projection
+    106 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c: Unknown (19/19): resource projection unresolved: 128 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=19, unsupported=128
+    rd_kafka_sasl_cyrus_cb_canon: lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c:458: unknown_alias: unresolved resource identity `context`
+    rd_kafka_sasl_cyrus_cb_canon: lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c:460: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_sasl_cyrus_cb_canon: lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c:462: unsupported: indirect memory access is outside the resource projection
+    144 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: Unknown (36/36): resource projection unresolved: 372 unsupported operation(s), 46 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=46, unsupported=372
+    check_oauthbearer_extension_key: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:278: unknown_alias: unresolved resource identity `c`
+    check_oauthbearer_extension_key: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:278: unknown_alias: unresolved resource identity `key`
+    check_oauthbearer_extension_key: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:279: unknown_alias: unresolved resource identity `c`
+    415 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c: Unsafe (28/28)
+    resource diagnostics: leak=25, unknown_alias=110, unsupported=335
+    rd_kafka_jwt_b64_decode_payload: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:141: unknown_alias: unresolved resource identity `converted_src`
+    rd_kafka_jwt_b64_decode_payload: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:145: unknown_alias: unresolved resource identity `converted_src`
+    rd_kafka_jwt_b64_decode_payload: lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:153: unsupported: unsupported assignment expression
+    467 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl_plain.c: Unknown (3/3): resource projection unresolved: 19 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=19
+    rd_kafka_sasl_plain_client_new: lib/librdkafka-2.15.0/src/rdkafka_sasl_plain.c:71: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_sasl_plain_client_new: lib/librdkafka-2.15.0/src/rdkafka_sasl_plain.c:72: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_sasl_plain_client_new: lib/librdkafka-2.15.0/src/rdkafka_sasl_plain.c:79: unsupported: indirect memory access is outside the resource projection
+    16 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c: Unsafe (19/19)
+    resource diagnostics: leak=1, unknown_alias=34, unsupported=177
+    rd_kafka_sasl_safe_string: lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:214: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_sasl_safe_string: lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:222: unknown_alias: unresolved resource identity `s`
+    rd_kafka_sasl_safe_string: lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:222: unknown_alias: unresolved resource identity `str`
+    209 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c: Unknown (52/52): resource projection unresolved: 260 unsupported operation(s), 18 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=18, unsupported=260
+    rd_kafka_share_ack_all: lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:251: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_share_ack_all: lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:251: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    rd_kafka_share_ack_all: lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:255: unsupported: indirect memory access is outside the resource projection
+    275 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_ssl.c: Unknown (34/38): resource projection unresolved: 356 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=356
+    rd_kafka_ssl_OSSL_PROVIDER_free: lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1809: unknown_alias: unresolved resource identity `ptr`
+    rd_kafka_ssl_OSSL_PROVIDER_free: lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1810: unsupported: call to uncontracted function `OSSL_PROVIDER_unload`
+    rd_kafka_ssl_PKEY_from_string: lib/librdkafka-2.15.0/src/rdkafka_ssl.c:758: unsupported: call to uncontracted function `BIO_new_mem_buf`
+    378 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c: Unknown (83/85): resource projection unresolved: 1249 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=1249
+    ConsumerGenerationPair_cmp_generation: lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:140: unsupported: indirect memory access is outside the resource projection
+    ConsumerGenerationPair_new: lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:133: unsupported: indirect memory access is outside the resource projection
+    ConsumerGenerationPair_new: lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:134: unsupported: indirect memory access is outside the resource projection
+    1271 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_subscription.c: Unknown (17/17): resource projection unresolved: 81 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=81
+    _invalid_topic_cb: lib/librdkafka-2.15.0/src/rdkafka_subscription.c:81: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    _invalid_topic_cb: lib/librdkafka-2.15.0/src/rdkafka_subscription.c:84: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    _invalid_topic_cb: lib/librdkafka-2.15.0/src/rdkafka_subscription.c:87: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    86 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_telemetry.c: Unknown (18/18): resource projection unresolved: 190 unsupported operation(s), 14 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=14, unsupported=190
+    rd_kafka_filter_broker_by_GetTelemetrySubscription: lib/librdkafka-2.15.0/src/rdkafka_telemetry.c:55: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_get_preferred_broker: lib/librdkafka-2.15.0/src/rdkafka_telemetry.c:71: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_get_preferred_broker: lib/librdkafka-2.15.0/src/rdkafka_telemetry.c:72: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    201 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c: Unknown (38/38): resource projection unresolved: 355 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=355
+    clear_unit_test_data: lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c:80: unsupported: indirect memory access is outside the resource projection
+    clear_unit_test_data: lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c:81: unsupported: indirect memory access is outside the resource projection
+    clear_unit_test_data: lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c:82: unsupported: indirect memory access is outside the resource projection
+    356 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c: Unknown (54/54): resource projection unresolved: 280 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=280
+    calculate_broker_avg_rtt: lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:133: unsupported: braced initializer, expression, or declaration is not modeled
+    calculate_broker_avg_rtt: lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:134: unsupported: indirect memory access is outside the resource projection
+    calculate_broker_max_rtt: lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:144: unsupported: braced initializer, expression, or declaration is not modeled
+    287 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_timer.c: Unknown (19/19): resource projection unresolved: 98 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=98
+    rd_kafka_timer_cmp: lib/librdkafka-2.15.0/src/rdkafka_timer.c:57: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_timer_exp_backoff: lib/librdkafka-2.15.0/src/rdkafka_timer.c:212: unsupported: call to uncontracted function `rd_kafka_timers_lock`
+    rd_kafka_timer_exp_backoff: lib/librdkafka-2.15.0/src/rdkafka_timer.c:214: unsupported: call to uncontracted function `rd_kafka_timer_unschedule`
+    95 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_topic.c: Unknown (47/47): resource projection unresolved: 583 unsupported operation(s), 22 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=22, unsupported=583
+    rd_kafka_local_topic_ids_to_list: lib/librdkafka-2.15.0/src/rdkafka_topic.c:2334: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_local_topic_ids_to_list: lib/librdkafka-2.15.0/src/rdkafka_topic.c:2335: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_local_topic_ids_to_list: lib/librdkafka-2.15.0/src/rdkafka_topic.c:2344: unsupported: indirect memory access is outside the resource projection
+    602 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_transport.c: Unknown (25/32): resource projection unresolved: 172 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=172
+    rd_kafka_transport_close: lib/librdkafka-2.15.0/src/rdkafka_transport.c:84: unknown_alias: unresolved resource identity `rktrans`
+    rd_kafka_transport_close: lib/librdkafka-2.15.0/src/rdkafka_transport.c:85: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_transport_close: lib/librdkafka-2.15.0/src/rdkafka_transport.c:86: unsupported: call to uncontracted function `rd_kafka_transport_ssl_close`
+    177 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c: Unknown (50/50): resource projection unresolved: 706 unsupported operation(s), 41 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=41, unsupported=706
+    rd_kafka_abort_transaction: lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:2793: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_abort_transaction: lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:2805: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_kafka_abort_transaction: lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:2807: unsupported: call to uncontracted function `rd_kafka_txn_curr_api_return0`
+    744 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdkafka_zstd.c: Unknown (2/2): resource projection unresolved: 48 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=48
+    rd_kafka_zstd_compress: lib/librdkafka-2.15.0/src/rdkafka_zstd.c:127: unknown_alias: unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`
+    rd_kafka_zstd_compress: lib/librdkafka-2.15.0/src/rdkafka_zstd.c:128: unsupported: indirect memory access is outside the resource projection
+    rd_kafka_zstd_compress: lib/librdkafka-2.15.0/src/rdkafka_zstd.c:132: unsupported: store through `*outbuf` without an out-parameter contract
+    54 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdlist.c: Unknown (43/43): resource projection unresolved: 165 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=165
+    rd_list_add: lib/librdkafka-2.15.0/src/rdlist.c:144: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    rd_list_add: lib/librdkafka-2.15.0/src/rdlist.c:145: unsupported: indirect memory access is outside the resource projection
+    rd_list_add: lib/librdkafka-2.15.0/src/rdlist.c:146: unsupported: unrecognized assignment destination
+    170 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdlog.c: Unknown (3/3): resource projection unresolved: 13 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=13
+    rd_hexdump: lib/librdkafka-2.15.0/src/rdlog.c:39: unsupported: unsupported assignment expression
+    rd_hexdump: lib/librdkafka-2.15.0/src/rdlog.c:47: unsupported: indirect memory access is outside the resource projection
+    rd_hexdump: lib/librdkafka-2.15.0/src/rdlog.c:48: unsupported: indirect memory access is outside the resource projection
+    10 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdmap.c: Unknown (26/26): resource projection unresolved: 124 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=124
+    mykey_cmp: lib/librdkafka-2.15.0/src/rdmap.c:278: unsupported: indirect memory access is outside the resource projection
+    person_cmp: lib/librdkafka-2.15.0/src/rdmap.c:344: unsupported: indirect memory access is outside the resource projection
+    person_hash: lib/librdkafka-2.15.0/src/rdmap.c:351: unknown_alias: unresolved resource identity `_key`
+    125 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdmurmur2.c: Unknown (2/2): resource projection unresolved: 15 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=15
+    rd_murmur2: lib/librdkafka-2.15.0/src/rdmurmur2.c:61: unsupported: unsupported assignment expression
+    rd_murmur2: lib/librdkafka-2.15.0/src/rdmurmur2.c:66: unsupported: unsupported assignment expression
+    rd_murmur2: lib/librdkafka-2.15.0/src/rdmurmur2.c:69: unsupported: indirect memory access is outside the resource projection
+    14 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdports.c: Unknown (2/2): resource projection unresolved: 2 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=2
+    rd_qsort_r: lib/librdkafka-2.15.0/src/rdports.c:56: unknown_alias: unresolved resource identity `compar`
+    rd_qsort_r: lib/librdkafka-2.15.0/src/rdports.c:57: unknown_alias: unresolved resource identity `arg`
+    rd_qsort_r: lib/librdkafka-2.15.0/src/rdports.c:58: unsupported: call to uncontracted function `qsort`
+    1 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdrand.c: Unknown (6/7): resource projection unresolved: 17 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=17
+    rd_array_shuffle: lib/librdkafka-2.15.0/src/rdrand.c:137: unsupported: call to uncontracted function `__builtin_alloca`
+    rd_array_shuffle: lib/librdkafka-2.15.0/src/rdrand.c:141: unsupported: unsupported assignment expression
+    rd_array_shuffle: lib/librdkafka-2.15.0/src/rdrand.c:142: unsupported: call to uncontracted function `rd_jitter`
+    14 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdregex.c: Unknown (4/4): resource projection unresolved: 5 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=5
+    rd_regex_comp: lib/librdkafka-2.15.0/src/rdregex.c:72: unsupported: indirect memory access is outside the resource projection
+    rd_regex_comp: lib/librdkafka-2.15.0/src/rdregex.c:75: unknown_alias: unresolved resource identity `re`
+    rd_regex_comp: lib/librdkafka-2.15.0/src/rdregex.c:76: unknown_alias: unresolved resource identity `re`
+    6 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdstring.c: Unknown (17/17): resource projection unresolved: 71 unsupported operation(s), 21 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=21, unsupported=71
+    _rd_strcasestr: lib/librdkafka-2.15.0/src/rdstring.c:322: unsupported: unmodeled call, aggregate or indirect access in return expression
+    _rd_strcasestr: lib/librdkafka-2.15.0/src/rdstring.c:348: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    _rd_strcasestr: lib/librdkafka-2.15.0/src/rdstring.c:358: unsupported: unmodeled call, aggregate or indirect access in do-while condition
+    89 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdunittest.c: Unknown (4/9): resource projection unresolved: 71 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=71
+    rd_unittest: lib/librdkafka-2.15.0/src/rdunittest.c:446: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_unittest: lib/librdkafka-2.15.0/src/rdunittest.c:501: unsupported: call to uncontracted function `rd_getenv`
+    rd_unittest: lib/librdkafka-2.15.0/src/rdunittest.c:504: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    76 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c: Unknown (27/27): resource projection unresolved: 402 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=402
+    unittest_share_acknowledge: lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:1068: unsupported: indirect memory access is outside the resource projection
+    unittest_share_acknowledge: lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:1074: unsupported: call to uncontracted function `ut_ack_create_share_consumer`
+    unittest_share_acknowledge: lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:1075: unsupported: braced initializer, expression, or declaration is not modeled
+    411 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdunittest_fetcher.c: Unknown (35/35): resource projection unresolved: 484 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=484
+    unittest_ack_details_all_accept: lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:407: unsupported: call to uncontracted function `ut_create_mock_rkshare`
+    unittest_ack_details_all_accept: lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:408: unsupported: call to uncontracted function `rd_kafka_Uuid_random`
+    unittest_ack_details_all_accept: lib/librdkafka-2.15.0/src/rdunittest_fetcher.c:413: unsupported: call to uncontracted function `ut_create_rktpar_with_id`
+    486 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c: Unknown (21/21): resource projection unresolved: 455 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=455
+    rd_kafka_unittest_msgset_errors: lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c:1500: unsupported: call to uncontracted function `unittest_msgset_crc_error_share_consumer`
+    rd_kafka_unittest_msgset_errors: lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c:1502: unsupported: call to uncontracted function `unittest_msgset_decompression_error_share_consumer`
+    rd_kafka_unittest_msgset_errors: lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c:1504: unsupported: call to uncontracted function `unittest_msgset_unsupported_magic_share_consumer`
+    454 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdvarint.c: Unknown (2/2): resource projection unresolved: 30 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=30
+    do_test_rd_uvarint_enc_i64: lib/librdkafka-2.15.0/src/rdvarint.c:39: unsupported: braced initializer, expression, or declaration is not modeled
+    do_test_rd_uvarint_enc_i64: lib/librdkafka-2.15.0/src/rdvarint.c:48: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    do_test_rd_uvarint_enc_i64: lib/librdkafka-2.15.0/src/rdvarint.c:49: unsupported: braced initializer, expression, or declaration is not modeled
+    27 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/rdxxhash.c: Unknown (46/46): resource projection unresolved: 268 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=268
+    XXH32: lib/librdkafka-2.15.0/src/rdxxhash.c:401: unsupported: call to uncontracted function `XXH_isLittleEndian`
+    XXH32: lib/librdkafka-2.15.0/src/rdxxhash.c:406: unsupported: call to uncontracted function `XXH32_endian_align`
+    XXH32: lib/librdkafka-2.15.0/src/rdxxhash.c:408: unsupported: call to uncontracted function `XXH32_endian_align`
+    275 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/snappy.c: Unsafe (53/57)
+    resource diagnostics: leak=3, unknown_alias=10, unsupported=213
+    append: lib/librdkafka-2.15.0/src/snappy.c:411: unsupported: indirect memory access is outside the resource projection
+    append: lib/librdkafka-2.15.0/src/snappy.c:418: unsupported: unmodeled call, aggregate or indirect access in loop condition
+    append: lib/librdkafka-2.15.0/src/snappy.c:421: unsupported: braced initializer, expression, or declaration is not modeled
+    223 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lib/librdkafka-2.15.0/src/tinycthread.c: Unknown (0/30): C function `_cnd_timedwait_win32` was not found
+  librdkafka/lib/librdkafka-2.15.0/src/tinycthread_extra.c: Unknown (12/14): resource projection unresolved: 16 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=16
+    cnd_timedwait_abs: lib/librdkafka-2.15.0/src/tinycthread_extra.c:151: unsupported: call to uncontracted function `rd_timeout_remains`
+    cnd_timedwait_abs: lib/librdkafka-2.15.0/src/tinycthread_extra.c:154: unsupported: call to uncontracted function `cnd_timedwait_ms`
+    cnd_timedwait_ms: lib/librdkafka-2.15.0/src/tinycthread_extra.c:102: unsupported: call to uncontracted function `rd_timeout_init`
+    13 more diagnostic(s); full inventory in optional resource report
+chunkio: 13 selected compilation configuration(s)
+  chunkio/lib/chunkio/src/chunkio.c: Unknown (13/13): resource projection unresolved: 80 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=11, unsupported=80
+    check_root_path: lib/chunkio/src/chunkio.c:53: unsupported: call to uncontracted function `cio_os_isdir`
+    check_root_path: lib/chunkio/src/chunkio.c:56: unsupported: call to uncontracted function `cio_os_mkpath`
+    check_root_path: lib/chunkio/src/chunkio.c:60: unsupported: call to uncontracted function `cio_log_print`
+    88 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_chunk.c: Unknown (30/30): resource projection unresolved: 78 unsupported operation(s), 34 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=34, unsupported=78
+    chunk_state_sync: lib/chunkio/src/cio_chunk.c:546: unsupported: indirect memory access is outside the resource projection
+    cio_chunk_close: lib/chunkio/src/cio_chunk.c:120: unsupported: call to uncontracted function `cio_error_reset`
+    cio_chunk_close: lib/chunkio/src/cio_chunk.c:122: unsupported: indirect memory access is outside the resource projection
+    109 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_error.c: Safe (4/4)
+  chunkio/lib/chunkio/src/cio_file.c: Unknown (32/32): resource projection unresolved: 173 unsupported operation(s), 37 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=37, unsupported=173
+    _cio_file_up: lib/chunkio/src/cio_file.c:819: unsupported: indirect memory access is outside the resource projection
+    _cio_file_up: lib/chunkio/src/cio_file.c:822: unsupported: indirect memory access is outside the resource projection
+    _cio_file_up: lib/chunkio/src/cio_file.c:828: unsupported: indirect memory access is outside the resource projection
+    207 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_file_unix.c: Unknown (15/15): resource projection unresolved: 57 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=11, unsupported=57
+    cio_file_native_apply_acl_and_settings: lib/chunkio/src/cio_file_unix.c:282: unsupported: indirect memory access is outside the resource projection
+    cio_file_native_apply_acl_and_settings: lib/chunkio/src/cio_file_unix.c:286: unsupported: indirect memory access is outside the resource projection
+    cio_file_native_apply_acl_and_settings: lib/chunkio/src/cio_file_unix.c:290: unsupported: indirect memory access is outside the resource projection
+    65 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_log.c: Unknown (2/3): resource projection unresolved: 6 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=6
+    cio_log_print: lib/chunkio/src/cio_log.c:34: unknown_alias: unresolved resource identity `ctx`
+    cio_log_print: lib/chunkio/src/cio_log.c:36: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cio_log_print: lib/chunkio/src/cio_log.c:40: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    4 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_memfs.c: Unknown (5/5): resource projection unresolved: 20 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=20
+    cio_memfs_close: lib/chunkio/src/cio_memfs.c:70: unknown_alias: unresolved resource identity `mf`
+    cio_memfs_close: lib/chunkio/src/cio_memfs.c:74: unsupported: indirect memory access is outside the resource projection
+    cio_memfs_close: lib/chunkio/src/cio_memfs.c:75: unsupported: indirect memory access is outside the resource projection
+    29 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_meta.c: Unknown (4/4): resource projection unresolved: 19 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=19
+    cio_meta_cmp: lib/chunkio/src/cio_meta.c:138: unsupported: indirect memory access is outside the resource projection
+    cio_meta_cmp: lib/chunkio/src/cio_meta.c:142: unknown_alias: unresolved resource identity `ch`
+    cio_meta_cmp: lib/chunkio/src/cio_meta.c:143: unsupported: indirect memory access is outside the resource projection
+    24 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_os.c: Unknown (2/3): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=1
+    cio_os_mkpath: lib/chunkio/src/cio_os.c:197: unsupported: call to uncontracted function `cio_os_mkpath`
+  chunkio/lib/chunkio/src/cio_scan.c: Unknown (3/3): resource projection unresolved: 30 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=30
+    cio_scan_dump: lib/chunkio/src/cio_scan.c:176: unsupported: indirect memory access is outside the resource projection
+    cio_scan_dump: lib/chunkio/src/cio_scan.c:179: unsupported: indirect memory access is outside the resource projection
+    cio_scan_dump: lib/chunkio/src/cio_scan.c:179: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    29 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_stats.c: Unknown (2/2): resource projection unresolved: 14 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=14
+    cio_stats_get: lib/chunkio/src/cio_stats.c:38: unsupported: indirect memory access is outside the resource projection
+    cio_stats_get: lib/chunkio/src/cio_stats.c:38: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    cio_stats_get: lib/chunkio/src/cio_stats.c:39: unsupported: braced initializer, expression, or declaration is not modeled
+    11 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_stream.c: Unknown (8/8): resource projection unresolved: 51 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=51
+    check_stream_path: lib/chunkio/src/cio_stream.c:65: unsupported: indirect memory access is outside the resource projection
+    check_stream_path: lib/chunkio/src/cio_stream.c:68: unsupported: indirect memory access is outside the resource projection
+    check_stream_path: lib/chunkio/src/cio_stream.c:71: unsupported: indirect memory access is outside the resource projection
+    57 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_utils.c: Unknown (3/4): resource projection unresolved: 11 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=11
+    cio_utils_read_file: lib/chunkio/src/cio_utils.c:239: unsupported: indirect memory access is outside the resource projection
+    cio_utils_read_file: lib/chunkio/src/cio_utils.c:247: unsupported: store through `*buf` without an out-parameter contract
+    cio_utils_recursive_delete: lib/chunkio/src/cio_utils.c:48: unsupported: braced initializer, expression, or declaration is not modeled
+    10 more diagnostic(s); full inventory in optional resource report
+fluent-bit-chunk: 2 selected compilation configuration(s)
+  fluent-bit-chunk/src/flb_input_chunk.c: Unknown (64/66): resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=109, unsupported=528
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: indirect memory access is outside the resource projection
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    append_to_ring_buffer: src/flb_input_chunk.c:3584: unsupported: indirect memory access is outside the resource projection
+    634 more diagnostic(s); full inventory in optional resource report
+  fluent-bit-chunk/src/flb_input_chunk.c: Unknown (64/66): resource projection unresolved: 528 unsupported operation(s), 109 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=109, unsupported=528
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: indirect memory access is outside the resource projection
+    append_to_ring_buffer: src/flb_input_chunk.c:3575: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    append_to_ring_buffer: src/flb_input_chunk.c:3584: unsupported: indirect memory access is outside the resource projection
+    634 more diagnostic(s); full inventory in optional resource report
+monkey-libevent: 29 selected compilation configuration(s)
+  monkey-libevent/lib/monkey/mk_core/mk_event.c: Unknown (14/14): resource projection unresolved: 19 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=19
+    mk_event_add: lib/monkey/mk_core/mk_event.c:110: unsupported: call to uncontracted function `_mk_event_add`
+    mk_event_channel_create: lib/monkey/mk_core/mk_event.c:187: unsupported: call to uncontracted function `abort`
+    mk_event_channel_create: lib/monkey/mk_core/mk_event.c:189: unsupported: call to uncontracted function `_mk_event_channel_create`
+    17 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_file.c: Unknown (2/2): resource projection unresolved: 6 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=6
+    mk_file_get_info: lib/monkey/mk_core/mk_file.c:45: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    mk_file_get_info: lib/monkey/mk_core/mk_file.c:46: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    mk_file_get_info: lib/monkey/mk_core/mk_file.c:67: unknown_alias: unresolved resource identity `f`
+    7 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_iov.c: Unknown (8/8): resource projection unresolved: 24 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=24
+    mk_iov_consume: lib/monkey/mk_core/mk_iov.c:185: unsupported: indirect memory access is outside the resource projection
+    mk_iov_consume: lib/monkey/mk_core/mk_iov.c:191: unsupported: indirect memory access is outside the resource projection
+    mk_iov_consume: lib/monkey/mk_core/mk_iov.c:192: unsupported: indirect memory access is outside the resource projection
+    26 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_memory.c: Unknown (5/5): resource projection unresolved: 13 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=13
+    mk_ptr_create: lib/monkey/mk_core/mk_memory.c:33: unsupported: indirect memory access is outside the resource projection
+    mk_ptr_create: lib/monkey/mk_core/mk_memory.c:36: unsupported: indirect memory access is outside the resource projection
+    mk_ptr_create: lib/monkey/mk_core/mk_memory.c:39: unsupported: indirect memory access is outside the resource projection
+    10 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_rconf.c: Unsafe (17/17)
+    resource diagnostics: leak=1, unknown_alias=57, unsupported=118
+    check_indent: lib/monkey/mk_core/mk_rconf.c:178: unsupported: unmodeled expression may mutate a formal resource identity
+    check_indent: lib/monkey/mk_core/mk_rconf.c:179: unsupported: unmodeled expression may mutate a formal resource identity
+    check_indent: lib/monkey/mk_core/mk_rconf.c:183: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    173 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_string.c: Unknown (16/20): resource projection unresolved: 54 unsupported operation(s), 18 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=18, unsupported=54
+    _mk_string_search: lib/monkey/mk_core/mk_string.c:215: unsupported: indirect memory access is outside the resource projection
+    _mk_string_search: lib/monkey/mk_core/mk_string.c:237: unsupported: unsupported assignment expression
+    _mk_string_search: lib/monkey/mk_core/mk_string.c:238: unsupported: unmodeled call, aggregate or indirect access in do-while condition
+    69 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_core/mk_utils.c: Unknown (7/11): resource projection unresolved: 19 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=19, unsupported=19
+    mk_print: lib/monkey/mk_core/mk_utils.c:207: unknown_alias: unresolved resource identity `__qcore_literal__`
+    mk_print: lib/monkey/mk_core/mk_utils.c:208: unknown_alias: unresolved resource identity `__qcore_literal__`
+    mk_print: lib/monkey/mk_core/mk_utils.c:209: unknown_alias: unresolved resource identity `__qcore_literal__`
+    35 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_cache.c: Unknown (2/2): resource projection unresolved: 16 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=16
+    mk_cache_worker_exit: lib/monkey/mk_server/mk_cache.c:65: unsupported: call to uncontracted function `mk_ptr_free`
+    mk_cache_worker_exit: lib/monkey/mk_server/mk_cache.c:66: unsupported: nested call `pthread_getspecific` inside a modeled call is outside the resource projection
+    mk_cache_worker_exit: lib/monkey/mk_server/mk_cache.c:69: unsupported: call to uncontracted function `mk_ptr_free`
+    14 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_clock.c: Unknown (6/8): resource projection unresolved: 31 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=31
+    _next_buffer: lib/monkey/mk_server/mk_clock.c:57: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    _next_buffer: lib/monkey/mk_server/mk_clock.c:58: unsupported: unmodeled call, aggregate or indirect access in return expression
+    _next_buffer: lib/monkey/mk_server/mk_clock.c:61: unsupported: unmodeled call, aggregate or indirect access in return expression
+    29 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_config.c: Unknown (13/13): resource projection unresolved: 156 unsupported operation(s), 36 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=36, unsupported=156
+    mk_config_free_all: lib/monkey/mk_server/mk_config.c:71: unsupported: call to uncontracted function `mk_vhost_free_all`
+    mk_config_free_all: lib/monkey/mk_server/mk_config.c:72: unsupported: call to uncontracted function `mk_mimetype_free_all`
+    mk_config_free_all: lib/monkey/mk_server/mk_config.c:75: unsupported: indirect memory access is outside the resource projection
+    189 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_fifo.c: Unknown (16/16): resource projection unresolved: 80 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=25, unsupported=80
+    fifo_drop_msg: lib/monkey/mk_server/mk_fifo.c:374: unsupported: indirect memory access is outside the resource projection
+    fifo_drop_msg: lib/monkey/mk_server/mk_fifo.c:375: unsupported: indirect memory access is outside the resource projection
+    fifo_is_msg_ready: lib/monkey/mk_server/mk_fifo.c:386: unsupported: indirect memory access is outside the resource projection
+    102 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_header.c: Unknown (5/5): resource projection unresolved: 77 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=9, unsupported=77
+    cb_stream_iov_extended_free: lib/monkey/mk_server/mk_header.c:161: unsupported: indirect memory access is outside the resource projection
+    cb_stream_iov_extended_free: lib/monkey/mk_server/mk_header.c:162: unsupported: call to uncontracted function `mk_iov_free`
+    mk_header_cb_finished: lib/monkey/mk_server/mk_header.c:131: unsupported: indirect memory access is outside the resource projection
+    83 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_http.c: Unknown (26/26): resource projection unresolved: 462 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=19, unsupported=462
+    cb_stream_page_finished: lib/monkey/mk_server/mk_http.c:1248: unsupported: indirect memory access is outside the resource projection
+    cb_stream_page_finished: lib/monkey/mk_server/mk_http.c:1250: unsupported: call to uncontracted function `mk_ptr_free`
+    cb_stream_page_finished: lib/monkey/mk_server/mk_http.c:1251: unknown_alias: unresolved resource identity `page`
+    478 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_http_parser.c: Unknown (18/18): resource projection unresolved: 144 unsupported operation(s), 64 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=64, unsupported=144
+    cb_copy_chunk: lib/monkey/mk_server/mk_http_parser.c:701: unsupported: indirect memory access is outside the resource projection
+    cb_debug_chunk_complete: lib/monkey/mk_server/mk_http_parser.c:519: unsupported: arguments beyond the declared parameters of `printf` are outside the resource projection
+    content_length_parse: lib/monkey/mk_server/mk_http_parser.c:234: unsupported: unsupported assignment expression
+    205 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_http_thread.c: Unknown (10/10): resource projection unresolved: 46 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=46
+    mk_http_thread_create: lib/monkey/mk_server/mk_http_thread.c:194: unsupported: call to uncontracted function `mk_sched_get_thread_conf`
+    mk_http_thread_create: lib/monkey/mk_server/mk_http_thread.c:199: unsupported: call to uncontracted function `mk_thread_new`
+    mk_http_thread_create: lib/monkey/mk_server/mk_http_thread.c:200: unknown_alias: unresolved resource identity `th`
+    55 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_kernel.c: Unknown (3/3): resource projection unresolved: 11 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=11
+    mk_kernel_version: lib/monkey/mk_server/mk_kernel.c:41: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    mk_kernel_version: lib/monkey/mk_server/mk_kernel.c:42: unsupported: call to uncontracted function `mk_utils_libc_error`
+    mk_kernel_version: lib/monkey/mk_server/mk_kernel.c:44: unsupported: indirect memory access is outside the resource projection
+    10 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_lib.c: Unsafe (26/26)
+    resource diagnostics: leak=2, unknown_alias=22, unsupported=127
+    bool_val: lib/monkey/mk_server/mk_lib.c:41: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    bool_val: lib/monkey/mk_server/mk_lib.c:44: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    chunk_header: lib/monkey/mk_server/mk_lib.c:630: unsupported: unrecognized assignment destination
+    148 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_mimetype.c: Unknown (7/7): resource projection unresolved: 50 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=10, unsupported=50
+    mk_mimetype_add: lib/monkey/mk_server/mk_mimetype.c:71: unknown_alias: unresolved resource identity `name`
+    mk_mimetype_add: lib/monkey/mk_server/mk_mimetype.c:72: unknown_alias: unresolved resource identity `p`
+    mk_mimetype_add: lib/monkey/mk_server/mk_mimetype.c:72: unsupported: indirect memory access is outside the resource projection
+    57 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_net.c: Unsafe (11/11)
+    resource diagnostics: leak=1, unknown_alias=17, unsupported=32
+    mk_net_conn_create: lib/monkey/mk_server/mk_net.c:253: unsupported: call to uncontracted function `mk_socket_create`
+    mk_net_conn_create: lib/monkey/mk_server/mk_net.c:255: unknown_alias: unresolved resource identity `conn`
+    mk_net_conn_create: lib/monkey/mk_server/mk_net.c:260: unsupported: call to uncontracted function `mk_socket_set_nonblocking`
+    47 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_plugin.c: Unknown (26/26): resource projection unresolved: 243 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=7, unsupported=243
+    mk_handler_param_get: lib/monkey/mk_server/mk_plugin.c:796: unsupported: indirect memory access is outside the resource projection
+    mk_handler_param_get: lib/monkey/mk_server/mk_plugin.c:798: unsupported: unmodeled call, aggregate or indirect access in return expression
+    mk_handler_param_get: lib/monkey/mk_server/mk_plugin.c:800: unsupported: unmodeled increment or decrement expression
+    247 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_scheduler.c: Unsafe (31/31)
+    resource diagnostics: leak=1, unknown_alias=18, unsupported=161
+    _next_target: lib/monkey/mk_server/mk_scheduler.c:60: unsupported: unsupported assignment expression
+    _next_target: lib/monkey/mk_server/mk_scheduler.c:64: unsupported: indirect memory access is outside the resource projection
+    _next_target: lib/monkey/mk_server/mk_scheduler.c:72: unsupported: indirect memory access is outside the resource projection
+    177 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_server.c: Unknown (12/12): resource projection unresolved: 137 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=6, unsupported=137
+    mk_server_capacity: lib/monkey/mk_server/mk_server.c:60: unsupported: call to uncontracted function `getrlimit`
+    mk_server_capacity: lib/monkey/mk_server/mk_server.c:67: unsupported: call to uncontracted function `setrlimit`
+    mk_server_fifo_worker_setup: lib/monkey/mk_server/mk_server.c:292: unsupported: call to uncontracted function `pthread_getspecific`
+    140 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_socket.c: Unknown (14/14): resource projection unresolved: 38 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=38
+    mk_socket_accept: lib/monkey/mk_server/mk_socket.c:391: unsupported: C operator `sizeof` requires type/operand analysis
+    mk_socket_accept: lib/monkey/mk_server/mk_socket.c:394: unsupported: call to uncontracted function `accept4`
+    mk_socket_bind: lib/monkey/mk_server/mk_socket.c:255: unsupported: call to uncontracted function `bind`
+    43 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_stream.c: Unknown (9/9): resource projection unresolved: 69 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=69
+    channel_write_in_file: lib/monkey/mk_server/mk_stream.c:57: unsupported: indirect memory access is outside the resource projection
+    mk_channel_clean: lib/monkey/mk_server/mk_stream.c:331: unsupported: indirect memory access is outside the resource projection
+    mk_channel_clean: lib/monkey/mk_server/mk_stream.c:331: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    70 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_user.c: Unknown (3/3): resource projection unresolved: 19 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=19
+    mk_user_init: lib/monkey/mk_server/mk_user.c:44: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    mk_user_init: lib/monkey/mk_server/mk_user.c:48: unsupported: indirect memory access is outside the resource projection
+    mk_user_init: lib/monkey/mk_server/mk_user.c:52: unsupported: indirect memory access is outside the resource projection
+    19 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_utils.c: Unknown (11/14): resource projection unresolved: 45 unsupported operation(s), 17 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=17, unsupported=45
+    mk_buffer_cat: lib/monkey/mk_server/mk_utils.c:405: unsupported: indirect memory access is outside the resource projection
+    mk_buffer_cat: lib/monkey/mk_server/mk_utils.c:408: unsupported: indirect memory access is outside the resource projection
+    mk_buffer_cat: lib/monkey/mk_server/mk_utils.c:409: unsupported: indirect memory access is outside the resource projection
+    59 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/mk_vhost.c: Unsafe (18/18)
+    resource diagnostics: leak=1, unknown_alias=48, unsupported=214
+    mk_vhost_close: lib/monkey/mk_server/mk_vhost.c:305: unsupported: call to uncontracted function `mk_vhost_fdt_close`
+    mk_vhost_destroy: lib/monkey/mk_server/mk_vhost.c:762: unsupported: indirect memory access is outside the resource projection
+    mk_vhost_destroy: lib/monkey/mk_server/mk_vhost.c:762: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    260 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/mk_server/monkey.c: Unknown (5/5): resource projection unresolved: 61 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=13, unsupported=61
+    mk_exit_all: lib/monkey/mk_server/monkey.c:239: unsupported: call to uncontracted function `mk_sched_broadcast_signal`
+    mk_exit_all: lib/monkey/mk_server/monkey.c:242: unsupported: call to uncontracted function `mk_sched_workers_join`
+    mk_exit_all: lib/monkey/mk_server/monkey.c:245: unsupported: call to uncontracted function `mk_plugin_exit_all`
+    71 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/lib/monkey/tls/tls_stub.c: Safe (5/5)
+current revision: 185 source file(s), 186 configuration(s): 4 Safe / 10 provisional Unsafe / 168 Unknown / 4 data-only / 0 gateway failures
+preparation: 186 unit(s), 558 Clang invocation(s); -E -P 9753910 us / syntax 16054497 us / line markers 9765471 us

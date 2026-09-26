@@ -103,6 +103,7 @@ pub fn run_current(
         historical_note: "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay",
         historical_reference_revision: PINNED_FLUENT_BIT_COMMIT,
         jobs,
+        selection: None,
     })
 }
 

@@ -1,0 +1,821 @@
+{
+ "schema_version": 1,
+ "inputs": {
+  "slice_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/system-slice/resource-diagnostics.json",
+   "sha256": "335c2db69dd229044b56ebaa2c2e3d5101088fc9b7e3d0a6b1db2cb85aba326a",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "main_report": {
+   "path": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-system-selection/attempt-1/main-profile-475bb547/resource-diagnostics.json",
+   "sha256": "e8bc6bf3b8f3426b9249120adc666a5a6a8c4908d45e87cfc72d4f4d3f179a59",
+   "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+  },
+  "census_archive": {
+   "path": "docs/reports/w45-return-expression-families/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "642ea04f1e819e69bb95753ad78bcb8f5b9cc363691d2ceb0530c903034d0cb2",
+   "raw_sha256": "e458950b209b5822b0afd2ed081bb4e151c95307ea863b7e606273ea2b0a89da",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "baseline_archive": {
+   "path": "docs/reports/w45-sub-object-stores/integration/artifacts/diagnostics.json.gz",
+   "gzip_sha256": "3e5b97563941a29d2376348325c1b2c0655f78a5f814e43443a8752a03956e71",
+   "raw_sha256": "c762a4855c66d6d1c3fd155a199a761560a411df7041bb9b59ec10cdf5d83072",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "inventory": {
+   "path": "docs/reports/w45-fb-system-selection/lifetime-inventory.json",
+   "sha256": "ab01c8749d3584da55051e5684dc0a26c8e6b6c1021b72df5740c5ceeea52c97"
+  }
+ },
+ "scope": "measurement of Quirin audit rows; Unsafe is provisional; not a model, proof, native observation or upstream defect claim",
+ "functions": [
+  {
+   "function": "flb_storage_create",
+   "files": [
+    "src/flb_storage.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:acquisition",
+    "edge:E-ST-01:from"
+   ]
+  },
+  {
+   "function": "sb_segregate_chunks",
+   "files": [
+    "plugins/in_storage_backlog/sb.c",
+    "src/flb_engine.c"
+   ],
+   "audit_status": "differs-by-file",
+   "inventory_uses": [
+    "chunk:acquisition",
+    "chunk:destruction",
+    "chunk:publication",
+    "edge:E-BL-01:to",
+    "edge:E-BL-09:to"
+   ]
+  },
+  {
+   "function": "cb_queue_chunks",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:acquisition",
+    "chunk:destruction",
+    "edge:E-BL-03:to",
+    "edge:E-BL-04:from",
+    "edge:E-BL-05:from",
+    "edge:E-BL-06:from",
+    "edge:E-BL-07:from",
+    "edge:E-BL-08:from"
+   ]
+  },
+  {
+   "function": "flb_engine_dispatch_retry",
+   "files": [
+    "src/flb_engine_dispatch.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:acquisition",
+    "edge:E-RT-10:to",
+    "edge:E-RT-11:from",
+    "edge:E-RT-12:from"
+   ]
+  },
+  {
+   "function": "sb_append_chunk_to_segregated_backlog",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unsafe",
+   "inventory_uses": [
+    "backlog_wrapper:acquisition",
+    "backlog_wrapper:publication",
+    "chunk:publication",
+    "edge:E-BL-02:from"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_map",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:destruction",
+    "chunk:publication",
+    "edge:E-BL-04:to",
+    "edge:E-BL-05:to",
+    "input_chunk:acquisition",
+    "input_chunk:destruction",
+    "input_chunk:publication"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_flush",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:publication"
+   ]
+  },
+  {
+   "function": "cio_chunk_close",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "chunk:destruction",
+    "chunk:removal"
+   ]
+  },
+  {
+   "function": "sb_release_output_queue_space",
+   "files": [
+    "plugins/in_storage_backlog/sb.c",
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "differs-by-file",
+   "inventory_uses": [
+    "chunk:destruction",
+    "edge:E-BL-10:to"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_destroy",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:destruction",
+    "input_chunk:destruction",
+    "input_chunk:removal"
+   ]
+  },
+  {
+   "function": "flb_storage_destroy",
+   "files": [
+    "src/flb_storage.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "chunk:destruction"
+   ]
+  },
+  {
+   "function": "flb_task_create",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-12:to",
+    "input_chunk:publication",
+    "task:destruction",
+    "task:publication",
+    "task_route:acquisition",
+    "task_route:publication"
+   ]
+  },
+  {
+   "function": "flb_engine_dispatch",
+   "files": [
+    "src/flb_engine_dispatch.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-12:from",
+    "input_chunk:publication",
+    "task:destruction"
+   ]
+  },
+  {
+   "function": "flb_task_destroy",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-16:to",
+    "input_chunk:destruction",
+    "task:destruction",
+    "task:removal",
+    "task_route:destruction",
+    "task_route:removal"
+   ]
+  },
+  {
+   "function": "flb_storage_input_destroy",
+   "files": [
+    "src/flb_storage.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "input_chunk:destruction"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_release_space",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-16:from",
+    "input_chunk:destruction",
+    "task:destruction"
+   ]
+  },
+  {
+   "function": "sb_allocate_chunk",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Safe",
+   "inventory_uses": [
+    "backlog_wrapper:acquisition"
+   ]
+  },
+  {
+   "function": "sb_append_chunk_to_segregated_backlogs",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "backlog_wrapper:publication"
+   ]
+  },
+  {
+   "function": "sb_remove_chunk_from_segregated_backlog",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "backlog_wrapper:destruction",
+    "backlog_wrapper:removal"
+   ]
+  },
+  {
+   "function": "sb_remove_chunk_from_segregated_backlogs",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "backlog_wrapper:removal",
+    "edge:E-BL-06:to",
+    "edge:E-BL-07:to"
+   ]
+  },
+  {
+   "function": "sb_destroy_backlogs",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "backlog_wrapper:destruction"
+   ]
+  },
+  {
+   "function": "task_alloc",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-TM-01:from",
+    "task:acquisition",
+    "task:destruction",
+    "task:publication"
+   ]
+  },
+  {
+   "function": "flb_output_task_flush",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-02:from",
+    "edge:E-RT-03:from",
+    "edge:E-RT-12:to",
+    "output_flush:destruction",
+    "output_flush:publication",
+    "task:publication"
+   ]
+  },
+  {
+   "function": "flb_output_return",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "edge:E-RT-04:from",
+    "task:publication",
+    "task_map_slot:publication",
+    "task_route:publication"
+   ]
+  },
+  {
+   "function": "flb_output_task_queue_enqueue",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unsafe",
+   "inventory_uses": [
+    "retry:publication",
+    "singleplex_entry:acquisition",
+    "singleplex_entry:publication",
+    "task:publication"
+   ]
+  },
+  {
+   "function": "flb_task_users_release",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "task:destruction"
+   ]
+  },
+  {
+   "function": "flb_task_retry_reschedule",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "task:destruction"
+   ]
+  },
+  {
+   "function": "flb_engine_destroy_tasks",
+   "files": [
+    "src/flb_engine.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-SH-02:to",
+    "task:destruction"
+   ]
+  },
+  {
+   "function": "output_pre_cb_flush",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "task_route:publication"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_drop_task_route",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "task_route:publication"
+   ]
+  },
+  {
+   "function": "tasks_start",
+   "files": [
+    "src/flb_engine_dispatch.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-01:from",
+    "task_route:destruction",
+    "task_route:removal"
+   ]
+  },
+  {
+   "function": "flb_task_retry_create",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-17:from",
+    "retry:acquisition",
+    "retry:publication"
+   ]
+  },
+  {
+   "function": "flb_sched_request_create",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-07:to",
+    "retry:publication",
+    "sched_request:acquisition",
+    "sched_request:destruction"
+   ]
+  },
+  {
+   "function": "flb_sched_retry_now",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "retry:publication",
+    "sched_request:acquisition",
+    "sched_request:destruction"
+   ]
+  },
+  {
+   "function": "flb_task_retry_destroy",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-08:to",
+    "edge:E-RT-14:from",
+    "retry:destruction",
+    "retry:removal"
+   ]
+  },
+  {
+   "function": "schedule_request_now",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_request:publication",
+    "sched_timer:publication"
+   ]
+  },
+  {
+   "function": "schedule_request_wait",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Safe",
+   "inventory_uses": [
+    "sched_request:publication"
+   ]
+  },
+  {
+   "function": "schedule_request_promote",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-09:to",
+    "sched_request:publication"
+   ]
+  },
+  {
+   "function": "flb_sched_request_destroy",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_request:destruction",
+    "sched_request:removal"
+   ]
+  },
+  {
+   "function": "flb_sched_event_handler",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_request:destruction"
+   ]
+  },
+  {
+   "function": "flb_sched_request_invalidate",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-14:to",
+    "edge:E-RT-15:to",
+    "sched_request:destruction"
+   ]
+  },
+  {
+   "function": "flb_sched_destroy",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_request:destruction",
+    "sched_timer:destruction"
+   ]
+  },
+  {
+   "function": "flb_sched_timer_create",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_timer:acquisition",
+    "sched_timer:publication"
+   ]
+  },
+  {
+   "function": "flb_sched_timer_cb_create",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_timer:publication"
+   ]
+  },
+  {
+   "function": "flb_sched_timer_invalidate",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_timer:removal"
+   ]
+  },
+  {
+   "function": "flb_sched_timer_destroy",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_timer:destruction",
+    "sched_timer:removal"
+   ]
+  },
+  {
+   "function": "flb_sched_timer_cleanup",
+   "files": [
+    "src/flb_scheduler.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "sched_timer:destruction"
+   ]
+  },
+  {
+   "function": "flb_output_flush_create",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "output_flush:acquisition",
+    "output_flush:destruction",
+    "output_flush:publication"
+   ]
+  },
+  {
+   "function": "flb_engine_start",
+   "files": [
+    "src/flb_engine.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-01:from",
+    "edge:E-BL-09:from",
+    "edge:E-RT-02:to",
+    "edge:E-RT-10:from",
+    "output_flush:publication"
+   ]
+  },
+  {
+   "function": "flb_output_flush_prepare_destroy",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "output_flush:removal"
+   ]
+  },
+  {
+   "function": "flb_output_flush_destroy",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "output_flush:destruction",
+    "output_flush:removal"
+   ]
+  },
+  {
+   "function": "flb_output_flush_finished",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "output_flush:destruction"
+   ]
+  },
+  {
+   "function": "flb_output_task_queue_flush_one",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "singleplex_entry:publication"
+   ]
+  },
+  {
+   "function": "flb_output_task_singleplex_flush_next",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-13:to",
+    "singleplex_entry:destruction",
+    "singleplex_entry:removal"
+   ]
+  },
+  {
+   "function": "flb_task_queue_destroy",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "singleplex_entry:destruction"
+   ]
+  },
+  {
+   "function": "map_get_task_id",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "task_map_slot:acquisition"
+   ]
+  },
+  {
+   "function": "map_set_task_id",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "task_map_slot:publication"
+   ]
+  },
+  {
+   "function": "handle_output_event",
+   "files": [
+    "src/flb_engine.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-04:to",
+    "edge:E-RT-05:from",
+    "edge:E-RT-06:from",
+    "edge:E-RT-07:from",
+    "edge:E-RT-08:from",
+    "edge:E-RT-13:from",
+    "task_map_slot:publication"
+   ]
+  },
+  {
+   "function": "map_free_task_id",
+   "files": [
+    "src/flb_task.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "task_map_slot:removal"
+   ]
+  },
+  {
+   "function": "flb_config_exit",
+   "files": [],
+   "audit_status": "outside-the-eight-files",
+   "inventory_uses": [
+    "task_map_slot:destruction"
+   ]
+  },
+  {
+   "function": "cb_sb_init",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-03:from",
+    "edge:E-ST-01:to"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_release_space_compound",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-10:from"
+   ]
+  },
+  {
+   "function": "flb_engine_shutdown",
+   "files": [
+    "src/flb_engine.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-11:from",
+    "edge:E-SH-01:from",
+    "edge:E-SH-02:from"
+   ]
+  },
+  {
+   "function": "cb_sb_exit",
+   "files": [
+    "plugins/in_storage_backlog/sb.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-BL-11:to"
+   ]
+  },
+  {
+   "function": "flb_output_task_singleplex_enqueue",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-01:to",
+    "edge:E-RT-11:to"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_release_route",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-05:to"
+   ]
+  },
+  {
+   "function": "flb_engine_reschedule_retries",
+   "files": [
+    "src/flb_engine.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-15:from"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_set_up_down",
+   "files": [
+    "src/flb_input_chunk.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-RT-17:to"
+   ]
+  },
+  {
+   "function": "flb_output_exit",
+   "files": [
+    "src/flb_output.c"
+   ],
+   "audit_status": "Unknown",
+   "inventory_uses": [
+    "edge:E-SH-01:to"
+   ]
+  }
+ ],
+ "totals": {
+  "functions_named": 69,
+  "audit_status": {
+   "Safe": 2,
+   "Unknown": 56,
+   "Unsafe": 2,
+   "differs-by-file": 2,
+   "outside-the-eight-files": 7
+  }
+ }
+}

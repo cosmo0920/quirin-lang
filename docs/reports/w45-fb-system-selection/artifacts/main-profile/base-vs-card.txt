@@ -1,0 +1,9 @@
+console.log (without preparation: timing line): identical 71f4887993258922 866ccb5a37534d7d
+exit: identical 9a271f2a916b0b6e 9a271f2a916b0b6e
+monkey-source.json: identical b48a9d4947cc1fe8 b48a9d4947cc1fe8
+resource-diagnostics.chunk-contracts.json: identical b48a9d4947cc1fe8 b48a9d4947cc1fe8
+resource-diagnostics.contracts.json: identical 51d1c94242bfc3dd 51d1c94242bfc3dd
+resource-diagnostics.invocation.json: DIFFERS eb412d4e8f17f62d 7c833081f671441d
+resource-diagnostics.json: identical e8bc6bf3b8f3426b e8bc6bf3b8f3426b
+resource-diagnostics.source-effects.json: identical b48a9d4947cc1fe8 b48a9d4947cc1fe8
+stderr.log: identical e3b0c44298fc1c14 e3b0c44298fc1c14

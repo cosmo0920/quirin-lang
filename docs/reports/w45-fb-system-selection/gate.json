@@ -1,0 +1,12 @@
+{
+ "note": "Standing gate of W45-FB-SYSTEM-SELECTION on commit 475bb547 (the final code; later commits are this report, its evidence and the shared records), measured in the card's own worktree with CARGO_INCREMENTAL=0 by scripts/gate.sh; every exit captured to a file, not piped; logs in the worktree-private private/w45-fb-system-selection/gate-475bb547/. Rust suite through scripts/run_test_binaries.py: 292 units, 302 summaries, 5725 passed / 0 failed / 11 ignored (base integration 5720; +5 new: 3 unit tests in unit_selection.rs, 2 CLI tests in tests/current_cli.rs). No provider path changed, so the provider gate does not apply. The pinned corpus arbiter ran separately (not concurrently with the suite) and reproduces the baseline's verdict-bearing diagnostics byte for byte (artifacts/arbiter/).",
+ "workspace_tests": 5725,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 193,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
