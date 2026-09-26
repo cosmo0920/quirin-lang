@@ -21,6 +21,9 @@ use qcore_core::std_socket_c_emit::STATUS_IPV6_UNAVAILABLE;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 const V4_ECHO: &str = include_str!("../../examples/sockets/inet_v4_echo.qcore");
 const V6_ECHO: &str = include_str!("../../examples/sockets/inet_v6_echo.qcore");
 const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
@@ -746,8 +749,18 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .expect("the repository root");
-    let mut files = Vec::new();
-    collect(root, &mut files);
+    // Card W45-TEST-HYGIENE: the census reads the tracked tree only. A walk of
+    // the working tree read an export left under `private/` (2026-09-26) and
+    // failed a correct tree; ignored and untracked content now changes nothing.
+    let files: Vec<std::path::PathBuf> = tracked_files::tracked_files(root)
+        .into_iter()
+        .filter(|path| {
+            matches!(
+                path.extension().and_then(|extension| extension.to_str()),
+                Some("qcore" | "qc")
+            )
+        })
+        .collect();
     assert!(
         files.len() > 400,
         "the census must see the whole fixture corpus, not a subset ({} files)",
@@ -783,39 +796,6 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
         ],
         "the address host rule must claim a span only inside this card's own examples"
     );
-
-    fn collect(directory: &std::path::Path, files: &mut Vec<std::path::PathBuf>) {
-        let Ok(entries) = std::fs::read_dir(directory) else {
-            return;
-        };
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                let name = path
-                    .file_name()
-                    .and_then(|name| name.to_str())
-                    .unwrap_or("");
-                if name == "target" || name == ".git" {
-                    continue;
-                }
-                // A subdirectory with its own `.git` entry is another checkout
-                // of this repository (a sibling git worktree under
-                // `.claude/worktrees/`, or an embedded checkout), not part of
-                // this tree: recursing into one double-counts its copies of
-                // the two published examples when the census runs from the
-                // primary checkout.
-                if path.join(".git").exists() {
-                    continue;
-                }
-                collect(&path, files);
-            } else if matches!(
-                path.extension().and_then(|extension| extension.to_str()),
-                Some("qcore" | "qc")
-            ) {
-                files.push(path);
-            }
-        }
-    }
 }
 
 // --- The published examples. ---

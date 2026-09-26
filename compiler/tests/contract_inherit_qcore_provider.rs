@@ -40,6 +40,9 @@ use qcore_frontend::frontend::parse_source_program;
 use qcore_schemas::contract::{DerivedExtent, ResourceReturnMode};
 use qcore_schemas::sha256_hex;
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 const LIBC: &str = "quirin-provider-libc";
 const LIBRDKAFKA: &str = "qcore-provider-librdkafka";
 const LIBEVENT: &str = "qcore-provider-libevent";
@@ -298,18 +301,11 @@ impl ScratchPackage {
         ));
         let _ = fs::remove_dir_all(&root);
         let source = repository().join("providers").join(krate);
-        let mut pending = vec![PathBuf::from("contracts")];
-        while let Some(relative) = pending.pop() {
-            fs::create_dir_all(root.join(&relative)).unwrap();
-            for entry in fs::read_dir(source.join(&relative)).unwrap() {
-                let entry = entry.unwrap();
-                let child = relative.join(entry.file_name());
-                if entry.path().is_dir() {
-                    pending.push(child);
-                } else {
-                    fs::write(root.join(&child), fs::read(entry.path()).unwrap()).unwrap();
-                }
-            }
+        // Card W45-TEST-HYGIENE: the package's tracked contract tree only.
+        for path in tracked_files::tracked_files(&source.join("contracts")) {
+            let child = root.join(path.strip_prefix(&source).unwrap());
+            fs::create_dir_all(child.parent().unwrap()).unwrap();
+            fs::write(child, fs::read(&path).unwrap()).unwrap();
         }
         fs::write(
             root.join("contracts.json"),

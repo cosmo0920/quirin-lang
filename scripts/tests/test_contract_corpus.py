@@ -5,14 +5,23 @@ import tempfile
 import unittest
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract_corpus
+from tracked_files import tracked_relative
+
+
+def tracked(root):
+    """The repository's tracked files (card W45-TEST-HYGIENE): the checks on
+    the real tree read these only, so an untracked or ignored `.qcore` under a
+    corpus root or `providers/` changes no result."""
+    return tracked_relative(root)
 
 
 class CanonicalCorpus(unittest.TestCase):
     def test_repository_has_one_canonical_copy_per_pinned_module(self):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
-        modules = contract_corpus.sources(root)
+        modules = contract_corpus.sources(root, tracked(root))
         # 108 -> 109: W43-LIBC-RESTRICT-PROTOTYPES adds libc/regex.qcore.
         # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qcore.
         # 110 -> 111: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
@@ -31,12 +40,15 @@ class CanonicalCorpus(unittest.TestCase):
         # Card W43-LIBC-CONTRACTS, user-directed placement rule: a libc/POSIX
         # function is declared only in providers/quirin-provider-libc.
         root = Path(__file__).resolve().parents[2]
-        self.assertEqual(contract_corpus.libc_placement_violations(root), [])
+        files = tracked(root)
+        self.assertEqual(contract_corpus.libc_placement_violations(root, files), [])
         names = contract_corpus.libc_names(root)
         self.assertGreater(len(names), 1000)
         owned = set()
-        for path in (root / contract_corpus.LIBC_CRATE / "contracts").rglob("*.qcore"):
-            owned |= set(contract_corpus.declared_functions(path))
+        prefix = contract_corpus.LIBC_CRATE + "/contracts/"
+        for relative in files:
+            if relative.startswith(prefix) and relative.endswith(".qcore"):
+                owned |= set(contract_corpus.declared_functions(root / relative))
         # Every name the libc crate declares is a listed libc/POSIX name.
         self.assertTrue(owned and owned <= names, sorted(owned - names))
 
@@ -81,7 +93,7 @@ class CanonicalCorpus(unittest.TestCase):
         # contract by `#include` of a published libc module plus
         # `contract inherit libc::NAME`; the libc text stays in the libc crate.
         root = Path(__file__).resolve().parents[2]
-        references, violations = contract_corpus.libc_inheritance(root)
+        references, violations = contract_corpus.libc_inheritance(root, tracked(root))
         self.assertEqual(violations, [])
         memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore"
         string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore"
@@ -162,6 +174,22 @@ class CanonicalCorpus(unittest.TestCase):
             index.write_text(json.dumps({"schema_version": 1, "roots": ["one"], "load_path": "load-path.json"}))
             with self.assertRaisesRegex(ValueError, "unsupported corpus index"):
                 contract_corpus.sources(root)
+
+    def test_a_tracked_listing_replaces_the_walk(self):
+        # Card W45-TEST-HYGIENE: given the tracked list, discovery reads only
+        # it; an untracked module under a root is not part of the corpus.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / "contract"
+            (directory / "one/export").mkdir(parents=True)
+            (directory / "one/api.qcore").write_text("module contract;")
+            (directory / "one/export/stale.qcore").write_text("module contract;")
+            (directory / "corpus.json").write_text(json.dumps({"schema_version": 1, "roots": ["one"]}))
+            self.assertEqual(list(contract_corpus.sources(root)), ["api.qcore", "export/stale.qcore"])
+            tracked_list = ["contract/corpus.json", "contract/one/api.qcore"]
+            self.assertEqual(list(contract_corpus.sources(root, tracked_list)), ["api.qcore"])
+            with self.assertRaisesRegex(ValueError, "empty corpus"):
+                contract_corpus.sources(root, ["contract/corpus.json"])
 
     def test_missing_root_duplicate_and_symlink_are_refused(self):
         with tempfile.TemporaryDirectory() as temporary:

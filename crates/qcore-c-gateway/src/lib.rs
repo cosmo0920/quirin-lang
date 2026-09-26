@@ -116,7 +116,13 @@ pub fn census_sink_variables() -> Vec<&'static str> {
 }
 
 #[cfg(all(test, feature = "indirect-census"))]
+#[path = "../../../tests/support/tracked_files.rs"]
+mod census_tracked_files;
+
+#[cfg(all(test, feature = "indirect-census"))]
 mod census_sink_inventory {
+    use super::census_tracked_files as tracked_files;
+
     /// Every source file that declares a process-global stream sink must have
     /// its path variable in [`super::census_sink_variables`], or a parallel
     /// audit would interleave that stream (integration of
@@ -126,9 +132,12 @@ mod census_sink_inventory {
         let listed = super::census_sink_variables();
         let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
         let mut missing = Vec::new();
-        for entry in std::fs::read_dir(&source).unwrap() {
-            let path = entry.unwrap().path();
-            if path.extension().is_none_or(|extension| extension != "rs") {
+        // Card W45-TEST-HYGIENE: the tracked files directly in `src/`; an
+        // untracked or ignored file there is not a source.
+        for path in tracked_files::tracked_files(&source) {
+            if path.parent() != Some(source.as_path())
+                || path.extension().is_none_or(|extension| extension != "rs")
+            {
                 continue;
             }
             let text = std::fs::read_to_string(&path).unwrap();

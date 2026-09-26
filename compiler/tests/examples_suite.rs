@@ -42,6 +42,9 @@ use std::collections::BTreeMap;
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 use qcore_compiler::{
     CompileOptions, CompiledModule, FileDiagnostic, SourceExecutionProfile, SourceFile,
     compile_files, format_diagnostic,
@@ -1275,15 +1278,31 @@ fn examples_root() -> std::path::PathBuf {
         .join("examples")
 }
 
-/// The family directories, sorted — every directory directly under `examples/`.
+/// `examples/`'s tracked files, as `/`-separated paths relative to it. The
+/// scan reads the tracked tree only (card W45-TEST-HYGIENE): an untracked or
+/// ignored directory under `examples/` is not a published family.
+fn tracked_example_paths() -> Vec<String> {
+    let root = examples_root();
+    tracked_files::tracked_files(&root)
+        .iter()
+        .map(|path| {
+            path.strip_prefix(&root)
+                .expect("under examples/")
+                .to_string_lossy()
+                .replace('\\', "/")
+        })
+        .collect()
+}
+
+/// The family directories, sorted — every directory directly under `examples/`
+/// that holds a tracked file.
 fn family_directories() -> Vec<String> {
-    let mut families: Vec<String> = std::fs::read_dir(examples_root())
-        .expect("examples/ is readable")
-        .map(|entry| entry.expect("a readable entry"))
-        .filter(|entry| entry.file_type().expect("a file type").is_dir())
-        .map(|entry| entry.file_name().to_string_lossy().into_owned())
+    let mut families: Vec<String> = tracked_example_paths()
+        .iter()
+        .filter_map(|path| path.split_once('/').map(|(family, _)| family.to_owned()))
         .collect();
     families.sort();
+    families.dedup();
     families
 }
 
@@ -1291,12 +1310,12 @@ fn family_directories() -> Vec<String> {
 /// `examples/extern/contracts/` holds a declared contract module, which is a
 /// support file rather than a published program, and its page says so.
 fn published_programs(family: &str) -> Vec<String> {
-    let mut programs: Vec<String> = std::fs::read_dir(examples_root().join(family))
-        .expect("a family directory is readable")
-        .map(|entry| entry.expect("a readable entry"))
-        .filter(|entry| entry.file_type().expect("a file type").is_file())
-        .map(|entry| entry.file_name().to_string_lossy().into_owned())
-        .filter(|name| name.ends_with(".qcore"))
+    let prefix = format!("{family}/");
+    let mut programs: Vec<String> = tracked_example_paths()
+        .iter()
+        .filter_map(|path| path.strip_prefix(&prefix))
+        .filter(|name| !name.contains('/') && name.ends_with(".qcore"))
+        .map(str::to_owned)
         .collect();
     programs.sort();
     programs

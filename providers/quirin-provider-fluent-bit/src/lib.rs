@@ -96,6 +96,10 @@ pub fn contract(path: &str) -> Option<&'static str> {
 }
 
 #[cfg(test)]
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -152,19 +156,15 @@ mod tests {
     fn index_is_exactly_the_contract_tree() {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("contracts");
         let mut on_disk = Vec::new();
-        let mut pending = vec![root.clone()];
-        while let Some(directory) = pending.pop() {
-            for entry in std::fs::read_dir(&directory).unwrap() {
-                let path = entry.unwrap().path();
-                assert!(!path.is_symlink(), "symbolic link: {}", path.display());
-                if path.is_dir() {
-                    pending.push(path);
-                } else {
-                    let name = path.strip_prefix(&root).unwrap().to_str().unwrap();
-                    let name = name.replace('\\', "/");
-                    on_disk.push((name, std::fs::read_to_string(&path).unwrap()));
-                }
-            }
+        // Card W45-TEST-HYGIENE: the tracked contract tree only; an
+        // untracked or ignored file under `contracts/` is not a module.
+        for path in super::tracked_files::tracked_files(&root) {
+            assert!(!path.is_symlink(), "symbolic link: {}", path.display());
+            let name = path.strip_prefix(&root).unwrap().to_str().unwrap();
+            on_disk.push((
+                name.replace('\\', "/"),
+                std::fs::read_to_string(&path).unwrap(),
+            ));
         }
         on_disk.sort();
         let indexed: Vec<_> = CONTRACTS

@@ -35,6 +35,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 const UNIT_CONTRACT: &str = "module contract; extern fn reset(ch: borrow<'call, mut, cio_chunk> use one)->unit contract { requires object_is_live; requires exclusive_object_access; requires field_is_boolean; ensures normal field == 1; };";
 
 /// One translation unit with two admitted bodies: a scalar-result reader and a
@@ -277,18 +280,23 @@ fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-fn production_sources(directory: &Path, collected: &mut Vec<PathBuf>) {
-    let Ok(entries) = std::fs::read_dir(directory) else {
-        return;
-    };
-    for entry in entries.filter_map(Result::ok) {
-        let path = entry.path();
-        if path.is_dir() {
-            production_sources(&path, collected);
-        } else if path.extension().is_some_and(|extension| extension == "rs") {
-            collected.push(path);
-        }
-    }
+/// Every tracked `.rs` file under a `src/` directory of `crates/*` or of
+/// `compiler/`. Card W45-TEST-HYGIENE: an untracked or ignored file there is
+/// not a production source.
+fn production_sources() -> Vec<PathBuf> {
+    let root = root();
+    tracked_files::tracked_files(&root.join("crates"))
+        .into_iter()
+        .filter(|path| {
+            let relative = path.strip_prefix(root.join("crates")).unwrap();
+            relative
+                .components()
+                .nth(1)
+                .is_some_and(|c| c.as_os_str() == "src")
+        })
+        .chain(tracked_files::tracked_files(&root.join("compiler/src")))
+        .filter(|path| path.extension().is_some_and(|extension| extension == "rs"))
+        .collect()
 }
 
 /// E03-B-O3's recorded vacuity, pinned rather than argued.
@@ -302,14 +310,7 @@ fn production_sources(directory: &Path, collected: &mut Vec<PathBuf>) {
 /// means by the count, and record the outcome under E03-B-O3.**
 #[test]
 fn no_production_derivation_states_a_schedule_or_operation_count() {
-    let mut sources = Vec::new();
-    for crate_directory in std::fs::read_dir(root().join("crates"))
-        .expect("workspace crates")
-        .filter_map(Result::ok)
-    {
-        production_sources(&crate_directory.path().join("src"), &mut sources);
-    }
-    production_sources(&root().join("compiler/src"), &mut sources);
+    let sources = production_sources();
     assert!(sources.len() > 50, "the census must actually read sources");
 
     let mut counts = Vec::new();

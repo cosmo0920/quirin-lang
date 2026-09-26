@@ -12,6 +12,9 @@ use std::{
 };
 
 use qcore_contract::contract_inclusion::elaborate_contract_module;
+
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
 use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
 
 fn index() -> (PathBuf, PathBuf, serde_json::Value) {
@@ -49,28 +52,24 @@ pub fn sources() -> BTreeMap<String, PathBuf> {
             "corpus root escapes repository: {}",
             root.display()
         );
-        let mut pending = vec![root.clone()];
-        while let Some(directory) = pending.pop() {
-            for entry in fs::read_dir(directory).unwrap() {
-                let path = entry.unwrap().path();
+        // Card W45-TEST-HYGIENE: the corpus is the tracked tree under each
+        // root; an untracked or ignored `.qcore` there is not a module.
+        for path in tracked_files::tracked_files(&root) {
+            assert!(
+                !path.is_symlink(),
+                "symbolic link in corpus: {}",
+                path.display()
+            );
+            if path.extension().is_some_and(|ext| ext == "qcore") {
+                let logical = path
+                    .strip_prefix(&root)
+                    .unwrap()
+                    .to_string_lossy()
+                    .replace('\\', "/");
                 assert!(
-                    !path.is_symlink(),
-                    "symbolic link in corpus: {}",
-                    path.display()
+                    sources.insert(logical.clone(), path).is_none(),
+                    "duplicate logical contract: {logical}"
                 );
-                if path.is_dir() {
-                    pending.push(path);
-                } else if path.extension().is_some_and(|ext| ext == "qcore") {
-                    let logical = path
-                        .strip_prefix(&root)
-                        .unwrap()
-                        .to_string_lossy()
-                        .replace('\\', "/");
-                    assert!(
-                        sources.insert(logical.clone(), path).is_none(),
-                        "duplicate logical contract: {logical}"
-                    );
-                }
             }
         }
     }

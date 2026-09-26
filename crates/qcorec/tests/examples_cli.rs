@@ -15,6 +15,9 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 /// The driver binary under test: `quirin` (card QUIRIN-RENAME; the crate
 /// stays `qcorec`). The pre-merge two-name fallback is gone because `env!`
 /// resolves even in the arm the match never takes, so it fails to compile
@@ -191,13 +194,19 @@ fn every_published_driver_command_line_names_a_real_file_and_works() {
     let root = examples().parent().unwrap().to_owned();
     let mut checked = 0;
     let mut emitted = 0;
-    let mut pages: Vec<PathBuf> = std::fs::read_dir(examples())
-        .expect("examples/ is readable")
-        .map(|entry| entry.expect("a readable entry").path())
-        .filter(|path| path.is_dir())
-        .map(|path| path.join("README.md"))
+    // Card W45-TEST-HYGIENE: a family is a directory under `examples/` with
+    // a tracked file; an untracked or ignored directory there is not one.
+    let mut pages: Vec<PathBuf> = tracked_files::tracked_files(&examples())
+        .iter()
+        .filter_map(|path| {
+            let mut components = path.strip_prefix(examples()).ok()?.components();
+            let family = components.next()?;
+            components.next()?;
+            Some(examples().join(family).join("README.md"))
+        })
         .collect();
     pages.sort();
+    pages.dedup();
     pages.push(examples().join("README.md"));
 
     for page in pages {
