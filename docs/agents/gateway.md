@@ -443,11 +443,15 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     specification. (5) A contracted call refused **before its effects** on a
     member-address or bound-read actual whose aggregate does not resolve
     (O04-B09B10, O04-READ-BOUND) reports `UnknownAlias`, not `Unsupported`, and
-    is a refused statement all the same: the live identities its actuals and
-    refused aggregates name carry an unresolved effect
-    (`refused_operands::withdraw_refused_call`), as W44-LEAK-PIN-AUDIT's hand-on
-    rule marks a refused statement's. It only withdraws accusations; the node
-    keeps its refusal. Without it a publication refused on a nullable base
+    is a refused statement all the same: the live identities it may move by
+    its contract — the actuals at custody positions, the entries of its
+    container effects and the bound reads it takes — carry an unresolved
+    effect (`refused_operands::withdraw_refused_call`), as W44-LEAK-PIN-AUDIT's
+    hand-on rule marks a refused statement's. A `Borrowed` actual with no
+    container effect is not handed on (the refusal is about the read's
+    liveness, not the call's effect; `borrow_residuals_boundary.rs` pins the
+    leak that keeps). It only withdraws accusations; the node keeps its
+    refusal. Without it a publication refused on a nullable base
     (`mk_list_add(&e->_head, …)` after an unchecked allocation) was accused of
     a leak. **Do not** widen it to every `UnknownAlias`: most report a read
     whose effect still applies. `QCore.ListIteration`,

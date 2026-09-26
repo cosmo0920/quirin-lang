@@ -494,9 +494,12 @@ pub(super) fn withdraw(state: &mut AbstractState, sites: &BTreeSet<usize>) {
 /// actual whose aggregate does not resolve (cards O04-B09B10, O04-READ-BOUND)
 /// — is a refused statement, although it reports the unresolved identity
 /// (`UnknownAlias`) rather than `Unsupported`. The call may have published,
-/// stored or released what it was handed, so the live identities its actuals
-/// and the refused aggregates denote carry an unresolved effect, exactly as
-/// [`apply`] marks a refused statement's. Only ever adds to
+/// stored or released what its contract lets it move, so the live identities
+/// the caller passes at those places — the actuals at custody positions, the
+/// entries of its container effects and the bound reads it takes — carry an
+/// unresolved effect, exactly as [`apply`] marks a refused statement's. An
+/// actual at a `Borrowed` position with no container effect is not handed on:
+/// the declared contract says the call moves nothing through it. Only ever adds to
 /// `unresolved_effect_sites`: it withdraws accusations and discharges nothing,
 /// and the node keeps its `UnknownAlias`, so the function is never `Safe`.
 pub(super) fn withdraw_refused_call<'a>(

@@ -12148,7 +12148,9 @@ fn transfer_base(
     // C00 premise in its read direction.
     if let LegacyInstruction::ContractCall {
         arguments,
+        contract,
         aggregate_reads,
+        aggregate_consumed,
         aggregate_addresses,
         container,
         ..
@@ -12184,21 +12186,36 @@ fn transfer_base(
                 variable: owner.to_owned(),
             },
         });
-        // Card W45-FB-BACKLOG-CUSTODY: the refused call hands on what it was
-        // handed (`refused_operands::withdraw_refused_call`), before the
-        // bindings are poisoned.
+        // Card W45-FB-BACKLOG-CUSTODY: the refused call hands on what its
+        // contract says it may move (`refused_operands::withdraw_refused_call`),
+        // before the bindings are poisoned: the actuals at custody positions,
+        // the entries of its container effects, and the bound reads it takes.
+        // A `Borrowed` read the contract moves nothing through is not handed
+        // on: the refusal is about the read's liveness, not the call's effect.
         refused_operands::withdraw_refused_call(
             &mut state,
-            arguments
+            contract
+                .parameters
                 .iter()
-                .flatten()
-                .map(String::as_str)
-                .chain(aggregate_addresses.iter().map(String::as_str))
+                .zip(arguments)
+                .filter(|(mode, _)| !matches!(mode, ResourceParameterMode::Borrowed))
+                .filter_map(|(_, argument)| argument.as_deref())
                 .chain(
-                    aggregate_reads
+                    container
                         .iter()
-                        .filter_map(|place| crate::aggregate_store::place_owner(place)),
-                ),
+                        .flat_map(|operands| operands.0.iter())
+                        .filter_map(|operand| match operand {
+                            container_publication::Operand::Published {
+                                entry: container_publication::Entry::Name(name),
+                                ..
+                            }
+                            | container_publication::Operand::Unpublished {
+                                entry: container_publication::Entry::Name(name),
+                            } => Some(name.as_str()),
+                            _ => None,
+                        }),
+                )
+                .chain(aggregate_consumed.iter().map(String::as_str)),
         );
         for pointer in state.pointers.values_mut() {
             pointer.unknown = true;

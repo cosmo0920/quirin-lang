@@ -274,9 +274,15 @@ access, and the hand-on rule withdrew the leak.
 **The repair** (`refused_operands::withdraw_refused_call`, called from the
 refusal branch in `legacy_c::transfer`):
 
-* a call refused there marks the live identities its actuals and refused
-  aggregates name with an unresolved effect, before the bindings are
-  poisoned;
+* a call refused there marks, before the bindings are poisoned, the live
+  identities its contract lets it move with an unresolved effect: the
+  actuals at custody positions, the entries of its container effects
+  (`mk_list_add`'s published entry) and the bound reads it takes;
+* a `Borrowed` actual with no container effect is not handed on. The refusal
+  is about the read's liveness, not the call's effect, and the existing
+  `borrow_residuals_boundary.rs` control, a read through a released owner,
+  keeps its leak. A first version that handed on every actual withdrew that
+  leak, and the gate caught it;
 * it only adds unresolved effects, so it only withdraws accusations;
 * the node keeps its `UnknownAlias`, so the function is never `Safe`;
 * it is not widened to every `UnknownAlias`, since most report a read whose

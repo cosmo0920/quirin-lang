@@ -16,7 +16,9 @@ refused call may have published was still accused at the exit: Monkey's
 standing `MK-LIST-ADD-BORROWED-PUBLICATION` leaves.
 
 The model: a node's refusal is now `unsupported || refusedCall`, and the rule
-is `RefusedHandOnCustody.apply` at that signal with `handed` the call's actuals.
+is `RefusedHandOnCustody.apply` at that signal with `handed` what the call's
+contract lets it move (custody positions, container entries, taken bound
+reads).
 
 ## What is proved
 
