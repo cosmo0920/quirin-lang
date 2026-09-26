@@ -320,9 +320,10 @@ reasons, the leaves inside the loop, and any loop-condition refusal. Its
   the output-event reader, whose bound is the constant 1.
 * **9 loops in 7 functions are in Safe functions**: `dlq_stream_total_size`,
   `sched_timer_coro_get_id` (two nested loops), `sched_timer_coro_get_by_id`,
-  `flb_sched_timer_coro_get`, and three `do { } while (0)` macro bodies.
-  Safe there is a resource verdict. It holds relative to the list-iteration
-  premises of gateway 5l and **says nothing about termination**.
+  `flb_sched_timer_coro_get`, and four `do { } while (0)` macro bodies in
+  three start-up functions. Safe there is a resource verdict; for the five
+  list traversals it holds relative to the list-iteration premises of
+  gateway 5l. It **says nothing about termination**.
 * **The recursion cycle EP-R1** runs through `flb_output_task_flush`, which
   is provisional Unsafe on its refuted OR-7 declaration
   ([W45-REFUTED-CONTRACT-WITHDRAWAL](../w45-refuted-contract-withdrawal/README.md)).

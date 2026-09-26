@@ -166,7 +166,7 @@
    "kind": "for (macro)",
    "depth": 0,
    "role": "lifecycle",
-   "entry": "sb_segregate_chunks (engine start sb.c via flb_engine.c:1434; shutdown flush flb_engine.c:1547)",
+   "entry": "sb_segregate_chunks (engine start, flb_engine.c:1434; shutdown flush, flb_engine.c:1547)",
    "class": "bounded",
    "bound": "|config->outputs|",
    "premises": [

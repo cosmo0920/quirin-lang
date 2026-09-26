@@ -70,7 +70,7 @@ ROWS = [
         express=L,
         note="sb_destroy_backlogs unlinks the backlog from context->backlogs (sb.c:188) before this call, so sb_remove_chunk_from_segregated_backlogs (which walks context->backlogs) does not remove this queue's wrappers: the traversal is over an unchanged list. Source-reading candidate for the custody card (this queue's wrappers are not freed at exit); not a progress question.")),
     ("plugins/in_storage_backlog/sb.c", "sb_allocate_backlogs", 155, dict(
-        role="lifecycle", entry="sb_segregate_chunks (engine start sb.c via flb_engine.c:1434; shutdown flush flb_engine.c:1547)",
+        role="lifecycle", entry="sb_segregate_chunks (engine start, flb_engine.c:1434; shutdown flush, flb_engine.c:1547)",
         cls="bounded", bound="|config->outputs|", premises=["PC"], progress="list cursor", express=L,
         note="inserts into context->backlogs, not into the traversed config->outputs")),
     ("plugins/in_storage_backlog/sb.c", "sb_destroy_backlogs", 185, dict(
