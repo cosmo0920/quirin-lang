@@ -331,7 +331,12 @@ fn a_refuted_body_keeps_its_own_refutation() {
     let bad = function(&summary, "w_bad");
     // The declaration stays in force for its own body: the row still carries
     // the refutation that convicts it, a provisional `Unsafe` candidate.
-    assert_eq!(bad.status, AnalysisStatus::Unsafe, "{:?}", descriptions(bad));
+    assert_eq!(
+        bad.status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        descriptions(bad)
+    );
     assert!(!bad.refutations.is_empty());
 }
 
@@ -340,9 +345,10 @@ fn a_refinement_conflict_is_not_a_refutation() {
     let summary = analyse(BODIES, "w_rel", &contracts());
     let rel = function(&summary, "w_rel");
     assert!(
-        rel.diagnostics
-            .iter()
-            .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::SummaryConflict { .. })),
+        rel.diagnostics.iter().any(|diagnostic| matches!(
+            diagnostic.kind,
+            LegacyDiagnosticKind::SummaryConflict { .. }
+        )),
         "{:?}",
         descriptions(rel)
     );
@@ -362,18 +368,27 @@ fn an_established_contract_still_serves_its_callers() {
     let ok = function(&summary, "c_ok");
     assert!(!held(ok, "w_ok"), "{:?}", descriptions(ok));
     assert!(
-        descriptions(ok)
-            .iter()
-            .any(|description| description.contains("`w_ok` returned a value its exit clauses do not cover")),
+        descriptions(ok).iter().any(|description| description
+            .contains("`w_ok` returned a value its exit clauses do not cover")),
         "{:?}",
         descriptions(ok)
     );
     let peek = function(&summary, "c_peek");
-    assert_eq!(peek.status, AnalysisStatus::Safe, "{:?}", descriptions(peek));
+    assert_eq!(
+        peek.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        descriptions(peek)
+    );
     // In the defining unit.
     let summary = analyse(&format!("{BODIES}\n{CALLERS}"), "c_peek", &contracts());
     let peek = function(&summary, "c_peek");
-    assert_eq!(peek.status, AnalysisStatus::Safe, "{:?}", descriptions(peek));
+    assert_eq!(
+        peek.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        descriptions(peek)
+    );
     assert!(!held(peek, "w_peek"));
 }
 
@@ -385,15 +400,19 @@ fn a_cross_unit_caller_relied_on_the_refuted_declarations_before_the_table() {
     // trusts both declarations and certifies both callers.
     let summary = analyse(CALLERS, "c_bad", &contracts());
     let keep = function(&summary, "c_keep");
-    assert_eq!(keep.status, AnalysisStatus::Safe, "{:?}", descriptions(keep));
+    assert_eq!(
+        keep.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        descriptions(keep)
+    );
     // The counted half of `w_bad` is applied too (its exit clauses fork the
     // caller's count), although its body refutes one of them.
     let bad = function(&summary, "c_bad");
     assert!(!held(bad, "w_bad"));
     assert!(
-        descriptions(bad)
-            .iter()
-            .any(|description| description.contains("`w_bad` returned a value its exit clauses do not cover")),
+        descriptions(bad).iter().any(|description| description
+            .contains("`w_bad` returned a value its exit clauses do not cover")),
         "{:?}",
         descriptions(bad)
     );
@@ -404,7 +423,12 @@ fn a_cross_unit_caller_is_held_through_the_table() {
     let summary = analyse(CALLERS, "c_bad", &with_table(&defining_table()));
     for (caller, callee) in [("c_bad", "w_bad"), ("c_keep", "w_keep")] {
         let row = function(&summary, caller);
-        assert_eq!(row.status, AnalysisStatus::Unknown, "{:?}", descriptions(row));
+        assert_eq!(
+            row.status,
+            AnalysisStatus::Unknown,
+            "{:?}",
+            descriptions(row)
+        );
         assert!(held(row, callee), "{caller}: {:?}", descriptions(row));
     }
 }
@@ -413,11 +437,21 @@ fn a_cross_unit_caller_is_held_through_the_table() {
 fn a_caller_in_the_defining_unit_is_held_without_any_table() {
     let summary = analyse(&format!("{BODIES}\n{CALLERS}"), "c_bad", &contracts());
     let bad = function(&summary, "c_bad");
-    assert_eq!(bad.status, AnalysisStatus::Unknown, "{:?}", descriptions(bad));
+    assert_eq!(
+        bad.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        descriptions(bad)
+    );
     assert!(held(bad, "w_bad"), "{:?}", descriptions(bad));
     // A duty contradiction keeps constraint 8's own key in its unit.
     let keep = function(&summary, "c_keep");
-    assert_eq!(keep.status, AnalysisStatus::Unknown, "{:?}", descriptions(keep));
+    assert_eq!(
+        keep.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        descriptions(keep)
+    );
     assert!(!held(keep, "w_keep"));
     assert!(
         descriptions(keep)
@@ -446,7 +480,12 @@ fn an_external_contract_with_no_body_is_unaffected() {
     let before = analyse(CALLERS, "c_extern", &contracts());
     let after = analyse(CALLERS, "c_extern", &with_table(&table));
     let (before, after) = (function(&before, "c_extern"), function(&after, "c_extern"));
-    assert_eq!(after.status, AnalysisStatus::Safe, "{:?}", descriptions(after));
+    assert_eq!(
+        after.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        descriptions(after)
+    );
     assert_eq!(before.diagnostics, after.diagnostics);
     // A table entry for a name with no declaration in force is dropped.
     let mut foreign = RefutationTable::new();
@@ -484,9 +523,19 @@ fn a_pin_mismatch_is_pending_a_refutation_unknown_and_their_join_unknown() {
         .unwrap();
     let summary = analyse(&source, "c_pinned", &contracts);
     let pinned = function(&summary, "c_pinned");
-    assert_eq!(pinned.status, AnalysisStatus::Pending, "{:?}", descriptions(pinned));
+    assert_eq!(
+        pinned.status,
+        AnalysisStatus::Pending,
+        "{:?}",
+        descriptions(pinned)
+    );
     let both = function(&summary, "c_both");
-    assert_eq!(both.status, AnalysisStatus::Unknown, "{:?}", descriptions(both));
+    assert_eq!(
+        both.status,
+        AnalysisStatus::Unknown,
+        "{:?}",
+        descriptions(both)
+    );
     assert!(held(both, "w_bad"));
 }
 
@@ -499,6 +548,10 @@ fn the_table_travels_in_the_environment_and_is_digested() {
     let serialized = serde_json::to_string(&contracts).unwrap();
     assert!(serialized.contains("refuted_by_body"));
     // Without a refutation the environment serializes exactly as before.
-    assert!(!serde_json::to_string(&self::contracts()).unwrap().contains("refuted_by_body"));
+    assert!(
+        !serde_json::to_string(&self::contracts())
+            .unwrap()
+            .contains("refuted_by_body")
+    );
     assert_ne!(table_digest(&table), table_digest(&RefutationTable::new()));
 }
