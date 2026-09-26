@@ -1,0 +1,130 @@
+{
+ "counts": {
+  "neither": 217,
+  "+release": 16,
+  "with-leave": 13,
+  "with-no-leave": 4,
+  "unlink": 1
+ },
+ "sites": [
+  {
+   "file": "lib/cmetrics/src/cmt_cat.c",
+   "line": 519,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_statsd.c",
+   "line": 149,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "line": 268,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "line": 622,
+   "unlink": false,
+   "release": true,
+   "leaves": false
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+   "line": 83,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 282,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 320,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 358,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 396,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 434,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "line": 472,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "line": 71,
+   "unlink": true,
+   "release": false,
+   "leaves": false
+  },
+  {
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "line": 1063,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/ctraces/src/ctr_encode_text.c",
+   "line": 302,
+   "unlink": false,
+   "release": true,
+   "leaves": false
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_config.c",
+   "line": 581,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_vhost.c",
+   "line": 397,
+   "unlink": false,
+   "release": true,
+   "leaves": false
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_vhost.c",
+   "line": 504,
+   "unlink": false,
+   "release": true,
+   "leaves": true
+  }
+ ]
+}

@@ -1,0 +1,1019 @@
+{
+ "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-89bbc648-without-module/resource-diagnostics.json",
+ "baseline_counts": {
+  "leak": 3,
+  "unknown_alias": 691,
+  "unsupported": 3347
+ },
+ "baseline_distinct": {
+  "NotProjected": 3,
+  "Safe": 29,
+  "Unknown": 203,
+  "Unsafe": 2
+ },
+ "baseline_functions": {
+  "NotProjected": 6,
+  "Safe": 56,
+  "Unknown": 389,
+  "Unsafe": 3
+ },
+ "baseline_units": {
+  "Unknown": 12,
+  "Unsafe": 3
+ },
+ "differing": [
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:646"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:670"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:683"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:702"
+     ],
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "plugins/in_storage_backlog/sb.c:616"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_get_event_type`",
+      "plugins/in_storage_backlog/sb.c:662"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_map`",
+      "plugins/in_storage_backlog/sb.c:690"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:645"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:669"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:682"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:701"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:615"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:636"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:659"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:664"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:678"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:692"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:706"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:712"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:620"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:636"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:664"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:678"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:692"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:706"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in for-loop condition",
+      "plugins/in_storage_backlog/sb.c:615"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition",
+      "plugins/in_storage_backlog/sb.c:611"
+     ],
+     [
+      "unsupported",
+      "unsupported assignment expression",
+      "plugins/in_storage_backlog/sb.c:599"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "cb_queue_chunks"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:646"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:670"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:683"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:702"
+     ],
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "plugins/in_storage_backlog/sb.c:616"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_get_event_type`",
+      "plugins/in_storage_backlog/sb.c:662"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_map`",
+      "plugins/in_storage_backlog/sb.c:690"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:645"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:669"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:682"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:701"
+     ],
+     [
+      "unsupported",
+      "declared specification of `cb_queue_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:581"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:615"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:636"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:659"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:664"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:678"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:692"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:706"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:712"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:620"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:636"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:664"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:678"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:692"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:706"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in for-loop condition",
+      "plugins/in_storage_backlog/sb.c:615"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition",
+      "plugins/in_storage_backlog/sb.c:611"
+     ],
+     [
+      "unsupported",
+      "unsupported assignment expression",
+      "plugins/in_storage_backlog/sb.c:599"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:169"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:173"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `context`",
+      "plugins/in_storage_backlog/sb.c:155"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_destroy_backlogs`",
+      "plugins/in_storage_backlog/sb.c:164"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:171"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_allocate_backlogs"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:169"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:173"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `context`",
+      "plugins/in_storage_backlog/sb.c:155"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_destroy_backlogs`",
+      "plugins/in_storage_backlog/sb.c:164"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_allocate_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:149"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:171"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unsafe",
+    [
+     [
+      "leak",
+      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
+      "plugins/in_storage_backlog/sb.c:289"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:278"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_append_chunk_to_segregated_backlog"
+   ],
+   "run": [
+    "Unsafe",
+    [
+     [
+      "leak",
+      "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
+      "plugins/in_storage_backlog/sb.c:289"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:262"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:278"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "call to uncontracted function `cio_chunk_get_real_size`",
+      "plugins/in_storage_backlog/sb.c:317"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_get_tag`",
+      "plugins/in_storage_backlog/sb.c:326"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_append_chunk_to_segregated_backlog`",
+      "plugins/in_storage_backlog/sb.c:346"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:308"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:313"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:314"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:315"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:343"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_append_chunk_to_segregated_backlogs"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "call to uncontracted function `cio_chunk_get_real_size`",
+      "plugins/in_storage_backlog/sb.c:317"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_input_chunk_get_tag`",
+      "plugins/in_storage_backlog/sb.c:326"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_append_chunk_to_segregated_backlog`",
+      "plugins/in_storage_backlog/sb.c:346"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_append_chunk_to_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:292"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:308"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:313"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:314"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:315"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:343"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:145"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_destroy_backlog"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "declared specification of `sb_destroy_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:136"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:145"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:192"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_destroy_backlog`",
+      "plugins/in_storage_backlog/sb.c:190"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:188"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_destroy_backlogs"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `backlog`",
+      "plugins/in_storage_backlog/sb.c:192"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_destroy_backlog`",
+      "plugins/in_storage_backlog/sb.c:190"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_destroy_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:179"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:188"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:568"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`",
+      "plugins/in_storage_backlog/sb.c:542"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:567"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:536"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:557"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_release_output_queue_space"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `underlying_chunk`",
+      "plugins/in_storage_backlog/sb.c:568"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`",
+      "plugins/in_storage_backlog/sb.c:542"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:567"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_release_output_queue_space` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:525"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:536"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:557"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:241"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:226"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:229"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:225"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_remove_chunk_from_segregated_backlog"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:241"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_remove_chunk_from_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:214"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:226"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:229"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:225"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlog`",
+      "plugins/in_storage_backlog/sb.c:258"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_remove_chunk_from_segregated_backlogs"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unsupported",
+      "call to uncontracted function `sb_remove_chunk_from_segregated_backlog`",
+      "plugins/in_storage_backlog/sb.c:258"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_remove_chunk_from_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:249"
+     ]
+    ]
+   ]
+  },
+  {
+   "baseline": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:423"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:448"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:459"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:469"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:472"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `context`",
+      "plugins/in_storage_backlog/sb.c:399"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `cio_chunk_lock`",
+      "plugins/in_storage_backlog/sb.c:480"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `cio_error_get`",
+      "plugins/in_storage_backlog/sb.c:415"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_allocate_backlogs`",
+      "plugins/in_storage_backlog/sb.c:394"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_append_chunk_to_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:436"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_get_context`",
+      "plugins/in_storage_backlog/sb.c:388"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:421"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:445"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:478"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:403"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:421"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:445"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:478"
+     ]
+    ]
+   ],
+   "key": [
+    "plugins/in_storage_backlog/sb.c",
+    "CMakeFiles/flb-plugin-in_storage_backlog.dir/sb.c.o",
+    "sb_segregate_chunks"
+   ],
+   "run": [
+    "Unknown",
+    [
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:423"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:448"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:459"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:469"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      "plugins/in_storage_backlog/sb.c:472"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `context`",
+      "plugins/in_storage_backlog/sb.c:399"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `cio_chunk_lock`",
+      "plugins/in_storage_backlog/sb.c:480"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `cio_error_get`",
+      "plugins/in_storage_backlog/sb.c:415"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_allocate_backlogs`",
+      "plugins/in_storage_backlog/sb.c:394"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_append_chunk_to_segregated_backlogs`",
+      "plugins/in_storage_backlog/sb.c:436"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `sb_get_context`",
+      "plugins/in_storage_backlog/sb.c:388"
+     ],
+     [
+      "unsupported",
+      "declared specification of `sb_segregate_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+      "plugins/in_storage_backlog/sb.c:376"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:421"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:445"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "plugins/in_storage_backlog/sb.c:478"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:403"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:421"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:445"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "plugins/in_storage_backlog/sb.c:478"
+     ]
+    ]
+   ]
+  }
+ ],
+ "named": {},
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-89bbc648/resource-diagnostics.json",
+ "run_counts": {
+  "leak": 3,
+  "unknown_alias": 691,
+  "unsupported": 3357
+ },
+ "run_distinct": {
+  "NotProjected": 3,
+  "Safe": 29,
+  "Unknown": 203,
+  "Unsafe": 2
+ },
+ "run_functions": {
+  "NotProjected": 6,
+  "Safe": 56,
+  "Unknown": 389,
+  "Unsafe": 3
+ },
+ "run_units": {
+  "Unknown": 12,
+  "Unsafe": 3
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "differences": 2,
+ "paths": [
+  "changed at /manifest: '{\\n  \"schema_version\": 2,\\n  \"load_path\": \"providers/contract-load-path.json\",\\n  \"' -> '{\\n  \"schema_version\": 2,\\n  \"load_path\": \"providers/contract-load-path.json\",\\n  \"'",
+  "only after: /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore"
+ ]
+}

@@ -400,3 +400,19 @@ fn a_recursive_specification_is_withdrawn() {
             if description.contains("recursive component")
     )));
 }
+
+#[test]
+fn a_call_handed_only_the_iterated_head_links_nothing() {
+    if !clang_available() {
+        return;
+    }
+    // `mk_list_size(&ctx->backlogs)` beside `mk_list_foreach(it, &ctx->backlogs)`:
+    // one actual, the head itself, so the guard does not decline.
+    let (_, diagnostics) = analyze(
+        "void subject(void *data) { struct queue *q = (struct queue *) data; struct mk_list *it; struct item *e;
+         q_use(&q->items);
+         mk_list_foreach(it, &q->items) { e = mk_list_entry(it, struct item, _head); q_use(e); } }",
+    );
+    assert!(!has(&diagnostics, FOR_REFUSAL), "{diagnostics:?}");
+    assert!(!has(&diagnostics, BRACED_REFUSAL), "{diagnostics:?}");
+}

@@ -1,0 +1,8 @@
+{
+  "variant": "declarations-only",
+  "binary_sha256": "04d610400414d4548cfdd2ed12be3b3e7ecc7611b15024a738790e9eb1f0dd9e",
+  "restored": {
+    "crates/qcore-c-gateway/src/legacy_list_iteration.rs": "850cb00285bc43bed67fe7370abab81ac5b1ae0ebc809b5b6c3b96068fff685e"
+  },
+  "exit": 0
+}

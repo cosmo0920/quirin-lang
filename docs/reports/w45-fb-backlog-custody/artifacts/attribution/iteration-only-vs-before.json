@@ -1,0 +1,111 @@
+{
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-74579af6/resource-diagnostics.json",
+ "totals": {
+  "after": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3567,
+   "unsupported": 42697
+  },
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3567,
+   "unsupported": 42699
+  }
+ },
+ "units": {
+  "after": {
+   "Unknown": 167,
+   "Safe": 4,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "before": {
+   "Unknown": 167,
+   "Safe": 4,
+   "Unsafe": 10,
+   "data_only": 4
+  }
+ },
+ "functions": {
+  "after": {
+   "Unknown": 4431,
+   "Safe": 391,
+   "Unsafe": 12
+  },
+  "before": {
+   "Unknown": 4432,
+   "Safe": 390,
+   "Unsafe": 12
+  }
+ },
+ "status_transitions": {
+  "Unknown -> Safe": 1
+ },
+ "functions_with_leaf_changes": 1,
+ "leaves_added": 0,
+ "leaves_removed": 2,
+ "added_by_description": {},
+ "removed_by_description": {
+  "unsupported: indirect memory access is outside the resource projection": {
+   "total": 1,
+   "by_line_shape": {
+    "list-header-line:loop:cfl_list_foreach": 1
+   }
+  },
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": {
+   "total": 1,
+   "by_line_shape": {
+    "list-header-line:loop:cfl_list_foreach": 1
+   }
+  }
+ },
+ "status_moves": [
+  {
+   "unit": "cmt_label.c",
+   "function": "cmt_labels_count",
+   "before": "Unknown",
+   "after": "Safe",
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5329,
+     "cmt_label.c:95"
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     5329,
+     "cmt_label.c:95"
+    ]
+   ]
+  }
+ ],
+ "added_leaves": [],
+ "removed_leaves": [
+  [
+   "cmt_label.c",
+   "cmt_labels_count",
+   "unsupported",
+   "indirect memory access is outside the resource projection",
+   5329,
+   "cmt_label.c:95",
+   1
+  ],
+  [
+   "cmt_label.c",
+   "cmt_labels_count",
+   "unsupported",
+   "unmodeled call, aggregate or indirect access in for-loop condition",
+   5329,
+   "cmt_label.c:95",
+   1
+  ]
+ ],
+ "added_leaks": [],
+ "added_violations": []
+}

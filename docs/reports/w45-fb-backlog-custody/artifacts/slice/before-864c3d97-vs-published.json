@@ -1,0 +1,36 @@
+{
+ "baseline": "docs/reports/w45-fb-system-selection/artifacts/system-slice/resource-diagnostics.json.gz",
+ "baseline_counts": {
+  "leak": 3,
+  "unknown_alias": 649,
+  "unsupported": 4269
+ },
+ "baseline_functions": {
+  "NotProjected": 6,
+  "Safe": 48,
+  "Unknown": 395,
+  "Unsafe": 3
+ },
+ "baseline_units": {
+  "Unknown": 12,
+  "Unsafe": 3
+ },
+ "differing": [],
+ "named": {},
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-1/slice-before-74579af6/resource-diagnostics.json",
+ "run_counts": {
+  "leak": 3,
+  "unknown_alias": 649,
+  "unsupported": 4269
+ },
+ "run_functions": {
+  "NotProjected": 6,
+  "Safe": 48,
+  "Unknown": 395,
+  "Unsafe": 3
+ },
+ "run_units": {
+  "Unknown": 12,
+  "Unsafe": 3
+ }
+}

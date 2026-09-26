@@ -657,18 +657,27 @@ pub(crate) fn function_facts(body: &[&str], bases: &UntrackedBases) -> FunctionF
             .iter()
             .map(|(start, end)| strip_groups(&body[*start..*end]))
             .collect::<Vec<_>>();
-        let links_tracked = arguments.iter().any(|argument| {
+        // The linked object and the list are two different actuals: a call
+        // handed only the head (`mk_list_size(&ctx->backlogs)`) links
+        // nothing into it.
+        let links_tracked = |argument: &[&str]| {
             matches!(argument, ["&", root, rest @ ..]
                 if is_name(root)
                     && matches!(rest.first(), Some(&"-") | Some(&"."))
                     && !bases.never_bound(root)
                     && !element_names.contains(*root))
-        });
-        let names_iterated_head = arguments
-            .iter()
-            .any(|argument| heads.iter().any(|head| head.as_slice() == *argument));
-        if links_tracked && names_iterated_head {
-            guard_holds = false;
+        };
+        let names_iterated_head =
+            |argument: &[&str]| heads.iter().any(|head| head.as_slice() == argument);
+        for (linked, object) in arguments.iter().enumerate() {
+            if links_tracked(object)
+                && arguments
+                    .iter()
+                    .enumerate()
+                    .any(|(other, head)| other != linked && names_iterated_head(head))
+            {
+                guard_holds = false;
+            }
         }
     }
     let written = (0..body.len())

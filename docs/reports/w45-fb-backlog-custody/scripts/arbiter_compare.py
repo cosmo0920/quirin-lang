@@ -135,6 +135,12 @@ def main():
         "added_by_description": group(added, a_origin),
         "removed_by_description": group(removed, b_origin),
         "status_moves": moved,
+        "added_leaves": sorted(
+            [list(leaf) + [a_origin.get(leaf), count] for leaf, count in added.items()]
+        ),
+        "removed_leaves": sorted(
+            [list(leaf) + [b_origin.get(leaf), count] for leaf, count in removed.items()]
+        ),
         "added_leaks": sorted(
             [list(leaf) + [a_origin.get(leaf)] for leaf in added if leaf[2] == "leak"]
         ),
