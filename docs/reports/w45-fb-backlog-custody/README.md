@@ -572,6 +572,27 @@ dev` runs after the test step. Commands, exits and counts are in
 [gate.json](gate.json). Logs are under the worktree-private
 `private/w45-fb-backlog-custody/`.
 
+Final gate on the merged tree `9e76fc64`: every step exited 0.
+
+| Step | Result |
+|---|---|
+| submodule; `cargo fmt --check`; `cargo clippy -D warnings`; both reevaluation probes | 0 each |
+| Rust suite (`scripts/run_test_binaries.py`) | 0: 300 units, 310 summaries; **5,845 passed**, 0 failed, 11 ignored |
+| `cargo clean --profile dev` | 0 |
+| Lean audits (`check_lean_audits.py`) | 0: **199** passed |
+| Root Python tests | 0: **358** tests |
+| `build_docs_index.py --check` | 0 |
+| Provider gate: `contracts.py check`, `package.py build` + `verify qcore.libevent`, `providers/tests`, provider `cargo test`, fmt and clippy | 0 each: 15 Python tests; 124 Rust tests passed, 0 failed |
+
+**The first attempt of that gate is discarded as validation evidence.**
+`std_socket_inet` failed because the private export of `main`'s tree, used for
+the BEFORE measurement, sat inside the worktree, and that test walks the
+repository for `.qcore` examples. The export was removed and the whole gate
+rerun.
+
+**The pre-merge gate** on the card's own base (`316cf766`) also exited 0
+everywhere: 5,818 passed, 197 Lean audits.
+
 ## Reproduce
 
 ```sh
