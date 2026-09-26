@@ -2880,6 +2880,8 @@ fn build_function_cfg_with(
                 .map(|token| token.text.as_str())
                 .collect::<Vec<_>>();
             container_publication::CallerFormals::read(&body, &formal_parameters)
+                // Card W45-CONTAINER-ROOT-REACH: static containers.
+                .with_statics(&publications.destinations)
         },
     );
     let mut parser = Parser {
@@ -2915,6 +2917,7 @@ fn build_function_cfg_with(
         list_facts,
         list_frames: Vec::new(),
         caller_formals,
+        element_origins: container_publication::ForeignOrigins::default(),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -2926,6 +2929,15 @@ fn build_function_cfg_with(
                 line: failure_line.max(line),
             })?;
     let mut cfg = CfgBuilder::build(function, &statements, publications);
+    // Card W45-CONTAINER-ROOT-REACH: the foreign unlinks, over the whole body.
+    if let Some(body_end) = matching(tokens, body_start, "{", "}") {
+        container_publication::settle_foreign_unlinks(
+            &mut cfg,
+            &parser.element_origins,
+            &tokens[body_start + 1..body_end],
+            &parser.caller_formals,
+        );
+    }
     let (scalars, mut pointers) = parser.typed_types.traversal_names();
     // A copy of an unbound *formal* pointer keeps its unresolved-alias answer:
     // W4 summary derivation reads exactly that answer as the signal to bind
@@ -4286,6 +4298,9 @@ struct Parser<'a> {
     /// only roots a publication's container may be reached from
     /// ([`container_publication::CallerFormals`]).
     caller_formals: container_publication::CallerFormals,
+    /// Card **W45-CONTAINER-ROOT-REACH**: the element bindings rule 5l
+    /// admitted, for the foreign unlink ([`container_publication::ForeignOrigins`]).
+    element_origins: container_publication::ForeignOrigins,
 }
 
 impl Parser<'_> {
@@ -5788,7 +5803,11 @@ impl Parser<'_> {
             }
             Some(_) => {
                 let tokens = self.consume_to_semicolon()?;
+                // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
+                // when it is the statement's final instruction.
+                self.element_origins.clear();
                 let instruction = self.classify_simple(&tokens);
+                self.element_origins.settle(&tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
                 self.census_statement(line, &tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
@@ -11585,7 +11604,18 @@ fn with_instruction(node: &LegacyCfgNode, instruction: &LegacyInstruction) -> Le
 pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec<usize> {
     match instruction {
         LegacyInstruction::Acquire { site, .. } => vec![*site],
-        LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
+        // Card W45-CONTAINER-ROOT-REACH: a foreign unlink's element site.
+        LegacyInstruction::ContractCall {
+            produced_sites,
+            container,
+            ..
+        } => produced_sites
+            .iter()
+            .copied()
+            .chain(container.iter().flat_map(|operands| {
+                container_publication::foreign_sites(operands).collect::<Vec<_>>()
+            }))
+            .collect(),
         LegacyInstruction::ElementStore {
             call: Some(call), ..
         } => instruction_produced_sites(call),
@@ -11603,9 +11633,17 @@ pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec
 pub(crate) fn offset_produced_sites(instruction: &mut LegacyInstruction, offset: usize) {
     match instruction {
         LegacyInstruction::Acquire { site, .. } => *site += offset,
-        LegacyInstruction::ContractCall { produced_sites, .. } => {
+        LegacyInstruction::ContractCall {
+            produced_sites,
+            container,
+            ..
+        } => {
             for site in produced_sites {
                 *site += offset;
+            }
+            // Card W45-CONTAINER-ROOT-REACH: a foreign unlink's element site.
+            if let Some(operands) = container {
+                container_publication::offset_foreign_sites(operands, offset);
             }
         }
         LegacyInstruction::ElementStore {
@@ -12187,6 +12225,7 @@ fn transfer_base(
                             }
                             | container_publication::Operand::Unpublished {
                                 entry: container_publication::Entry::Name(name),
+                                ..
                             } => Some(name.as_str()),
                             _ => None,
                         }),

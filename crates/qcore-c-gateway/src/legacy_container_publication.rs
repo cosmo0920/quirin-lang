@@ -43,14 +43,50 @@
 //!    body does not hold hands it custody nobody accounts for.
 //!
 //! The Lean model is `QCore.ContainerPublication`.
+//!
+//! # Card W45-CONTAINER-ROOT-REACH
+//!
+//! Two widenings, each under a stated premise (gateway constraint 10d, second
+//! paragraph; `QCore.ContainerRootReach`):
+//!
+//! 5. **Static containers** (P-CRR-STATIC). A container spelled `&G` or
+//!    `&G.F…`, where `G` is an object of static storage duration this body
+//!    does not shadow (a file-scope object or a `static` local), lives for the
+//!    program: publishing into it discharges exactly as a caller's container
+//!    does. A list link is additive, so no later store can lose the object the
+//!    way constraint 10's overwritten global slot can. A pointer-valued global
+//!    (`G->F`) is not static storage for its pointee and stays refused.
+//! 6. **Foreign unlink** (P-CRR-MEMBER, P-CRR-LINKED). `mk_list_del(&E->F)` of
+//!    an element `E` this body did not publish gives the body custody of the
+//!    element when every write of `E` is an admitted `container_of` binding
+//!    (rule 5l) over a container rooted at an unrebound formal, a local
+//!    initialised from one, or a static object ([`ForeignOrigins`]), and `E`
+//!    holds no binding at the unlink. The call is lowered with a fresh site
+//!    for the element ([`settle_foreign_unlinks`]). The element is then live
+//!    custody of this body: an exit that still holds it leaks it, a second
+//!    release is a double release, and a publication moves it on. The
+//!    premises: an object linked into a container is a heap object that
+//!    container owns (P-CRR-MEMBER), and it is still linked there when the
+//!    body unlinks it — no call between its binding and the unlink removed or
+//!    released it (P-CRR-LINKED, the unlink-side twin of P-ILI-CALLEE-FRAME).
+//!    A body with such an unlink publishes no summary and establishes no
+//!    specification ([`has_foreign_unlink`]): a caller would read `Borrowed`
+//!    for the container's formal although the body released what the
+//!    container held, and the caller's own published objects may be among
+//!    them.
+//!
+//! Every other container and entry keeps its refusal: a local list, a
+//! container a callee returned, one rooted at an element or at a rebound
+//! formal, a body-acquired owner, a formal's own object whose container is
+//! unnamed, and an embedded element.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{ContainerEffect, ResourceFunctionContract};
 
 use super::{
     AbstractState, Derivation, ESCAPED, LIVE, LegacyDiagnostic, LegacyDiagnosticKind,
-    mark_unresolved_effect,
+    LegacyInstruction, mark_unresolved_effect,
 };
 
 /// The object an entry actual designates.
@@ -67,6 +103,9 @@ pub enum Entry {
 pub enum Container {
     /// Reached from this formal, which the body never rebinds.
     CallerFormal(String),
+    /// Card W45-CONTAINER-ROOT-REACH: an object of static storage duration
+    /// (`&G`, `&G.F…`), which lives for the program (P-CRR-STATIC).
+    Static(String),
     /// Anything else, spelled as written.
     Other(String),
 }
@@ -82,7 +121,18 @@ pub enum Operand {
     },
     Unpublished {
         entry: Entry,
+        /// Card W45-CONTAINER-ROOT-REACH: set by [`settle_foreign_unlinks`]
+        /// when the entry is an element of an admitted container.
+        foreign: Option<Foreign>,
     },
+}
+
+/// An admitted foreign unlink: the fresh site the element's custody takes, and
+/// the containers its bindings reach it through, as spelled.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Foreign {
+    pub site: usize,
+    pub containers: Vec<String>,
 }
 
 /// Every container effect of one call, in parameter order.
@@ -102,6 +152,10 @@ pub struct CallerFormals {
     stable: BTreeSet<String>,
     derived: BTreeSet<String>,
     all: BTreeSet<String>,
+    /// Card W45-CONTAINER-ROOT-REACH: the names whose object has static
+    /// storage duration and which this body does not shadow
+    /// (`PublicationFacts::destinations`).
+    statics: BTreeSet<String>,
 }
 
 const WRITES: [&str; 12] = [
@@ -185,7 +239,20 @@ impl CallerFormals {
             stable,
             derived,
             all: formals.clone(),
+            statics: BTreeSet::new(),
         }
+    }
+
+    /// Card W45-CONTAINER-ROOT-REACH: the same reading, with the body's
+    /// static-storage names (P-CRR-STATIC). A formal or a derived local of
+    /// the same name shadows it.
+    pub fn with_statics(mut self, statics: &BTreeSet<String>) -> Self {
+        self.statics = statics
+            .iter()
+            .filter(|name| !self.all.contains(*name) && !self.derived.contains(*name))
+            .cloned()
+            .collect();
+        self
     }
 
     /// Whether `name` is a formal of this function, rebound or not.
@@ -283,7 +350,30 @@ fn container(argument: &[&str], formals: &CallerFormals) -> Container {
     };
     match root {
         Some(root) if formals.reaches_caller(root) => Container::CallerFormal(root.to_owned()),
-        _ => Container::Other(argument.join(" ")),
+        _ => match static_root(&argument) {
+            Some(root) if formals.statics.contains(root) => Container::Static(root.to_owned()),
+            _ => Container::Other(argument.join(" ")),
+        },
+    }
+}
+
+/// `& G` or `& G . F ( . F )*`: the root of an address inside a static
+/// object's own storage, never one reached through a pointer.
+fn static_root<'a>(argument: &[&'a str]) -> Option<&'a str> {
+    match argument {
+        ["&", root] if is_identifier(root) => Some(*root),
+        ["&", root, ".", rest @ ..]
+            if is_identifier(root)
+                && !rest.is_empty()
+                && rest.chunks(2).enumerate().all(|(index, pair)| match pair {
+                    [field] => index * 2 + 1 == rest.len() && is_identifier(field),
+                    [field, "."] => is_identifier(field),
+                    _ => false,
+                }) =>
+        {
+            Some(*root)
+        }
+        _ => None,
     }
 }
 
@@ -321,6 +411,7 @@ pub fn operands(
                 }
                 ContainerEffect::Unpublished => Operand::Unpublished {
                     entry: entry(argument(index)),
+                    foreign: None,
                 },
             })
             .collect(),
@@ -442,7 +533,7 @@ pub(super) fn apply(
                     }
                 };
                 match container {
-                    Container::CallerFormal(_) => {
+                    Container::CallerFormal(_) | Container::Static(_) => {
                         // What the object owns through a member or a stored
                         // child goes into the container with it, but an unlink
                         // could not hand it back: the owned objects are
@@ -487,7 +578,7 @@ pub(super) fn apply(
                     ),
                 }
             }
-            Operand::Unpublished { entry } => {
+            Operand::Unpublished { entry, foreign } => {
                 let restored = match entry {
                     Entry::Name(name) => match settled_site(state, name) {
                         Ok(Some(site))
@@ -498,6 +589,13 @@ pub(super) fn apply(
                             state.published.remove(&site);
                             true
                         }
+                        // Card W45-CONTAINER-ROOT-REACH, rule 6: an element of
+                        // an admitted container, holding no binding here,
+                        // becomes this body's custody at a fresh site.
+                        Ok(None) => foreign.as_ref().is_some_and(|foreign| {
+                            take_foreign_custody(name, foreign.site, state);
+                            true
+                        }),
                         _ => false,
                     },
                     Entry::Unnamed(_) => false,
@@ -521,6 +619,197 @@ pub(super) fn apply(
             }
         }
     }
+}
+
+/// Rule 6's effect: the element `name` denotes becomes this body's live
+/// custody at `site`, exactly as a non-null acquisition binds its destination
+/// (a strong update in a loop; prior unresolved effects are kept).
+fn take_foreign_custody(name: &str, site: usize, state: &mut AbstractState) {
+    state.resources.insert(site, LIVE);
+    state.nullable_sites.remove(&site);
+    state.published.remove(&site);
+    state.pointers.insert(
+        name.to_owned(),
+        super::AbstractPointer {
+            targets: BTreeSet::from([site]),
+            unknown: false,
+            may_be_null: false,
+            derivation: Derivation::Identity,
+        },
+    );
+}
+
+/// Card W45-CONTAINER-ROOT-REACH: the `container_of` bindings rule 5l
+/// admitted in one body, each keyed by the element name and the line of that
+/// name's token, with the container its pointer reaches as spelled (`None`
+/// when the pointer is no container's element this rule admits: a saved
+/// successor, or a never-bound formal).
+#[derive(Clone, Debug, Default)]
+pub(crate) struct ForeignOrigins {
+    admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
+    pending: Option<(String, Option<Vec<String>>)>,
+}
+
+impl ForeignOrigins {
+    /// The binding rule 5l is about to return for `element`.
+    pub(crate) fn propose(&mut self, element: &str, container: Option<Vec<String>>) {
+        self.pending = Some((element.to_owned(), container));
+    }
+
+    /// Forget any proposal: a statement's classification starts.
+    pub(crate) fn clear(&mut self) {
+        self.pending = None;
+    }
+
+    /// Keep the proposal only when the statement's final instruction is the
+    /// binding itself, keyed by the element token's line in `tokens`.
+    pub(crate) fn settle(&mut self, tokens: &[super::Token], instruction: &LegacyInstruction) {
+        let Some((element, container)) = self.pending.take() else {
+            return;
+        };
+        let LegacyInstruction::IndirectScalarAccess {
+            destination: Some(destination),
+            ..
+        } = instruction
+        else {
+            return;
+        };
+        if *destination != element {
+            return;
+        }
+        let Some(line) = tokens
+            .windows(2)
+            .find(|pair| pair[0].text == element && pair[1].text == "=")
+            .map(|pair| pair[0].line)
+        else {
+            return;
+        };
+        self.admitted
+            .entry((element, line))
+            .or_default()
+            .insert(container);
+    }
+}
+
+/// Every lexical `container_of` binding `E = ( {` of `element` in `body`,
+/// by line, or `None` when the name is written any other way (an assignment,
+/// a step, its whole address taken) and so is not an element-only name.
+fn element_binding_lines(body: &[&super::Token], element: &str) -> Option<Vec<usize>> {
+    let texts = body.iter().map(|token| token.text.as_str()).collect::<Vec<_>>();
+    let fused = fuse(&texts);
+    let fused_texts = fused
+        .iter()
+        .map(|(text, _)| text.as_str())
+        .collect::<Vec<_>>();
+    let mut lines = Vec::new();
+    for index in writes(&fused_texts, element) {
+        let binding = fused_texts.get(index + 1) == Some(&"=")
+            && fused_texts.get(index + 2) == Some(&"(")
+            && fused_texts.get(index + 3) == Some(&"{");
+        if !binding {
+            return None;
+        }
+        lines.push(body[fused[index].1].line);
+    }
+    Some(lines)
+}
+
+/// Rule 6's lowering, after the whole body is parsed: every unlink of a name
+/// whose every write is a binding rule 5l admitted over a container this body
+/// may modify — reached from an unrebound formal, a local initialised from
+/// one, or a static object — gets a fresh site for the element's custody.
+/// Every other unlink keeps `foreign: None`, which refuses exactly as before.
+pub(crate) fn settle_foreign_unlinks(
+    cfg: &mut super::LegacyCfg,
+    origins: &ForeignOrigins,
+    body: &[super::Token],
+    formals: &CallerFormals,
+) {
+    let body = body.iter().collect::<Vec<_>>();
+    let admissible = |element: &str| -> Option<Vec<String>> {
+        if formals.is_formal(element) || formals.statics.contains(element) {
+            return None;
+        }
+        let lines = element_binding_lines(&body, element)?;
+        if lines.is_empty() {
+            return None;
+        }
+        let mut containers = BTreeSet::new();
+        for line in lines {
+            let recorded = origins.admitted.get(&(element.to_owned(), line))?;
+            for container in recorded {
+                let spelling = container.as_ref()?;
+                let texts = spelling.iter().map(String::as_str).collect::<Vec<_>>();
+                match self::container(&texts, formals) {
+                    Container::CallerFormal(_) | Container::Static(_) => {
+                        containers.insert(texts.concat());
+                    }
+                    Container::Other(_) => return None,
+                }
+            }
+        }
+        Some(containers.into_iter().collect())
+    };
+    let mut next = super::first_free_site(cfg);
+    for node in &mut cfg.nodes {
+        let LegacyInstruction::ContractCall {
+            container: Some(operands),
+            ..
+        } = &mut node.instruction
+        else {
+            continue;
+        };
+        for operand in &mut operands.0 {
+            if let Operand::Unpublished {
+                entry: Entry::Name(name),
+                foreign,
+            } = operand
+                && let Some(containers) = admissible(name)
+            {
+                *foreign = Some(Foreign {
+                    site: next,
+                    containers,
+                });
+                next += 1;
+            }
+        }
+    }
+}
+
+/// The sites rule 6 lowered into one call's container effects.
+pub(crate) fn foreign_sites(operands: &Operands) -> impl Iterator<Item = usize> + '_ {
+    operands.0.iter().filter_map(|operand| match operand {
+        Operand::Unpublished {
+            foreign: Some(foreign),
+            ..
+        } => Some(foreign.site),
+        _ => None,
+    })
+}
+
+/// Shift those sites (the recursion combiner's disjointness).
+pub(crate) fn offset_foreign_sites(operands: &mut Operands, offset: usize) {
+    for operand in &mut operands.0 {
+        if let Operand::Unpublished {
+            foreign: Some(foreign),
+            ..
+        } = operand
+        {
+            foreign.site += offset;
+        }
+    }
+}
+
+/// Whether `cfg` lowers a foreign unlink. Such a body publishes no summary
+/// and establishes no specification: its callers would read `Borrowed` for
+/// the container's formal, although it released what the container held.
+pub(crate) fn has_foreign_unlink(cfg: &super::LegacyCfg) -> bool {
+    cfg.nodes.iter().any(|node| {
+        matches!(&node.instruction, LegacyInstruction::ContractCall {
+            container: Some(operands),
+            ..
+        } if foreign_sites(operands).next().is_some())
+    })
 }
 
 /// Rule 3's `return` half: a `return` of a published identity refuses, and
@@ -559,7 +848,7 @@ pub(super) fn unlinks_published(
 ) -> bool {
     operands.is_some_and(|operands| {
         operands.0.iter().any(|operand| {
-            matches!(operand, Operand::Unpublished { entry: Entry::Name(name) } if name == owner)
+            matches!(operand, Operand::Unpublished { entry: Entry::Name(name), .. } if name == owner)
         })
     }) && matches!(settled_site(state, owner), Ok(Some(site))
         if state.published.contains(&site) && state.resources.get(&site) == Some(&ESCAPED))
