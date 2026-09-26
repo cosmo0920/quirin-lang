@@ -1,0 +1,37 @@
+{
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "functions": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "not_projected": 3,
+  "categories": {
+   "unsupported": 3338,
+   "unknown_alias": 717,
+   "counted_user": 4
+  }
+ },
+ "before": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "functions": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "not_projected": 3,
+  "categories": {
+   "unsupported": 3338,
+   "unknown_alias": 717,
+   "counted_user": 4
+  }
+ },
+ "moves": []
+}

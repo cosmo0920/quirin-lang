@@ -1,0 +1,146 @@
+{
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "functions": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "not_projected": 3,
+  "categories": {
+   "unsupported": 3332,
+   "unknown_alias": 717,
+   "counted_user": 4
+  }
+ },
+ "before": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "functions": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "not_projected": 3,
+  "categories": {
+   "unsupported": 3338,
+   "unknown_alias": 717,
+   "counted_user": 4
+  }
+ },
+ "moves": [
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:186",
+     2
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:179",
+     2
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_engine_dispatch.c:179",
+     2
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+     "src/flb_engine_dispatch.c:186",
+     2
+    ],
+    [
+     "unsupported",
+     "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+     "src/flb_engine_dispatch.c:179",
+     2
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "tasks_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:327",
+     2
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:319",
+     2
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_engine_dispatch.c:319",
+     2
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_engine_dispatch.c:327",
+     2
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+     "src/flb_engine_dispatch.c:327",
+     2
+    ],
+    [
+     "unsupported",
+     "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+     "src/flb_engine_dispatch.c:319",
+     2
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_queue_flush_one",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+     "src/flb_output.c:333",
+     2
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+     "src/flb_output.c:333",
+     2
+    ]
+   ]
+  }
+ ]
+}
