@@ -247,6 +247,11 @@ pub enum LegacyInstruction {
         /// order of arguments unspecified. Every other nested call is refused
         /// where it stands, with card O04-B09B10's diagnostic.
         nested: Vec<NestedContractCall>,
+        /// Card **W45-FB-RETRY-LIFETIME**: the operands of the call's declared
+        /// container effects, applied after its borrowed reading
+        /// ([`container_publication`]). `None` for every call whose contract
+        /// in force has none.
+        container: Option<Box<container_publication::Operands>>,
     },
     BranchOnNull {
         source: String,
@@ -841,6 +846,15 @@ pub enum LegacyDiagnosticKind {
         acquisition_line: usize,
         kind: ResourceKind,
     },
+    /// Card W45-FB-RETRY-LIFETIME: a counted-user obligation a path refutes —
+    /// a declared exit clause contradicted on an exit that returns its value,
+    /// an uncovered exit that has not restored a count, or a user dropped
+    /// without a release check that reaches an exit with none re-added
+    /// ([`counted_users`]). A violation *candidate*, published in the
+    /// `counted_user` category.
+    CountedUser {
+        description: String,
+    },
     UnknownAlias {
         variable: String,
     },
@@ -920,6 +934,10 @@ pub struct LegacyFunctionSummary {
     pub cfg: LegacyCfg,
     /// Per-exit custody residuals, in CFG node order (O04).
     pub exits: Vec<LegacyExitResidual>,
+    /// Card W45-FB-RETRY-LIFETIME: the verdict of every counted-user clause
+    /// checked against this body. Empty for every function the pass leaves
+    /// alone.
+    pub counted_users: Vec<counted_users::ClauseRecord>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -2423,6 +2441,14 @@ pub(crate) struct PartialTranslationUnitAnalysis {
 #[path = "legacy_callee_scope.rs"]
 pub(crate) mod callee_scope;
 
+// Card W45-FB-RETRY-LIFETIME: intrusive-container publication.
+#[path = "legacy_container_publication.rs"]
+pub(crate) mod container_publication;
+
+// Card W45-FB-RETRY-LIFETIME: counted-user clauses.
+#[path = "legacy_counted_users.rs"]
+pub mod counted_users;
+
 fn analyze_legacy_c_translation_unit_selected_partial(
     source: &str,
     entry: &str,
@@ -2614,6 +2640,10 @@ fn analyze_defined_function(
             exit.custody = ExitCustody::Unknown;
         }
     }
+    // Card W45-FB-RETRY-LIFETIME: the counted-user clauses, checked against
+    // this body after its custody analysis. The identity in every environment
+    // that declares none.
+    counted_users::check(tokens, function, derivation.environment(), &mut summary);
     Ok(summary)
 }
 
@@ -2767,6 +2797,18 @@ fn build_function_cfg_with(
         }
         _ => sub_object_store::RecordRoots::default(),
     };
+    // Card W45-FB-RETRY-LIFETIME: the unrebound formals, from the body's own
+    // tokens.
+    let caller_formals = matching(tokens, body_start, "{", "}").map_or_else(
+        container_publication::CallerFormals::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            container_publication::CallerFormals::read(&body, &formal_parameters)
+        },
+    );
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2797,6 +2839,7 @@ fn build_function_cfg_with(
         return_facts,
         sub_object_roots,
         callee_types,
+        caller_formals,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4153,6 +4196,10 @@ struct Parser<'a> {
     /// Card **W45-PARENTHESISED-CALLEE**: the typedef names this function
     /// trusts as types ([`parenthesised_callee::TypeNames`]).
     callee_types: parenthesised_callee::TypeNames,
+    /// Card **W45-FB-RETRY-LIFETIME**: the formals no statement rebinds, the
+    /// only roots a publication's container may be reached from
+    /// ([`container_publication::CallerFormals`]).
+    caller_formals: container_publication::CallerFormals,
 }
 
 impl Parser<'_> {
@@ -6206,6 +6253,9 @@ impl Parser<'_> {
                             .parameters
                             .iter()
                             .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                        // Card W45-FB-RETRY-LIFETIME: a container effect
+                        // moves custody despite borrowed modes.
+                        && !contract.has_container_effect()
                         // An owned result would be a tracked identity stored
                         // into a record: it keeps the refusal.
                         && matches!(contract.result, ResourceReturnMode::None)
@@ -7372,7 +7422,15 @@ impl Parser<'_> {
                         }
                     }
                 }
+                // Card W45-FB-RETRY-LIFETIME: a declared container effect's
+                // operands, read from the actuals as spelled.
+                let container = container_publication::operands(
+                    &contract,
+                    raw_arguments.as_deref(),
+                    &self.caller_formals,
+                );
                 return LegacyInstruction::ContractCall {
+                    container,
                     function: function.to_owned(),
                     destination,
                     arguments,
@@ -8991,6 +9049,12 @@ struct AbstractState {
     /// collection part of this state claims nothing and joins as the
     /// identity; the edge, and every other map on it, is kept.
     collection_vacuous: bool,
+    /// Card **W45-FB-RETRY-LIFETIME**: the sites this path published into a
+    /// caller's container ([`container_publication`]). Joined by intersection,
+    /// so a site is published only when every arriving path published it.
+    /// Empty in every function that calls no declared publication, which keeps
+    /// the join, and with it the work-list schedule, as it was (constraint 6).
+    published: BTreeSet<usize>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -9109,6 +9173,7 @@ impl AbstractState {
                 .extend(children.iter().copied());
         }
         self.join_field_links(incoming);
+        container_publication::join(&mut self.published, &incoming.published);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -10368,6 +10433,7 @@ fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
                 | LegacyDiagnosticKind::UseAfterRelease { .. }
                 | LegacyDiagnosticKind::KindMismatchedRelease { .. }
                 | LegacyDiagnosticKind::UseAfterClose { .. }
+                | LegacyDiagnosticKind::CountedUser { .. }
         )
     });
     let unknown_found = diagnostics.iter().any(|diagnostic| {
@@ -10814,6 +10880,7 @@ pub(crate) fn analyze_cfg_with_entry(
             fixed_point_steps: steps,
             cfg,
             exits,
+            counted_users: Vec::new(),
         },
         observations,
     )
@@ -11942,6 +12009,7 @@ fn transfer_base(
     if let LegacyInstruction::ContractCall {
         aggregate_reads,
         aggregate_addresses,
+        container,
         ..
     } = &node.instruction
         && let Some(owner) = aggregate_reads
@@ -11957,6 +12025,14 @@ fn transfer_base(
                     .map(String::as_str)
                     .find(|owner| {
                         resolved_aggregate_owner(&state, owner, &context.caller_sites).is_none()
+                            // Card W45-FB-RETRY-LIFETIME: the unlink of an
+                            // object this path published is the one use of a
+                            // published object's member address.
+                            && !container_publication::unlinks_published(
+                                container.as_deref(),
+                                owner,
+                                &state,
+                            )
                     })
             })
     {
@@ -12395,6 +12471,7 @@ fn transfer_base(
             aggregate_addresses: _,
             alias_reads: _,
             nested,
+            container,
         } => {
             // Card O04-TRACE: the admitted nested call's declared effects, in
             // order, before the enclosing call's. It produces nothing, so its
@@ -12466,6 +12543,18 @@ fn transfer_base(
                     &context.site_kinds,
                     diagnostics,
                 ),
+            }
+            // Card W45-FB-RETRY-LIFETIME: the declared container effect, after
+            // the call's borrowed reading.
+            if let Some(operands) = container {
+                container_publication::apply(
+                    function,
+                    node.line,
+                    called,
+                    operands,
+                    &mut state,
+                    diagnostics,
+                );
             }
         }
         LegacyInstruction::OpaqueValue {
@@ -12922,6 +13011,27 @@ fn apply_resource_action(
     }
     for site in pointer.targets {
         let status = state.resources.get(&site).copied().unwrap_or(0);
+        // Card W45-FB-RETRY-LIFETIME: a published object belongs to its
+        // container; transferring it again is refused, not accused. A release
+        // of it keeps the `release_after_escape` report below.
+        if escape
+            && container_publication::refuse_escape_of_published(
+                function,
+                line,
+                source,
+                site,
+                state,
+                diagnostics,
+            )
+        {
+            let published = AbstractPointer {
+                targets: BTreeSet::from([site]),
+                ..AbstractPointer::default()
+            };
+            mark_unresolved_effect(state, &published);
+            state.unmodeled = true;
+            continue;
+        }
         if escape && status != LIVE {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),

@@ -1,0 +1,63 @@
+module contract;
+
+// Fluent Bit singleplex output queue — obligations OR-1 and OR-7 of the
+// FB-RETRY-LIFETIME slice, stated as checked resource-v1 declarations with the
+// counted-user exit clauses of contract specification §C04.7 (card
+// W45-FB-RETRY-LIFETIME).
+//
+// Bound by function name and by the declared signature below; the revision
+// binding, line citations and digests are in the card report, never here.
+//
+// These are SPECIFICATIONS of bodies the audit analyses. `quirin-audit`
+// checks each exit clause against the function's own body in the output
+// unit and publishes a verdict per clause (`user_count_clauses`): held,
+// refuted (a provisional `Unsafe` candidate, never an upstream defect) or
+// undecided (`Unknown`, with the blocker). A caller applies the declaration
+// only where the body it is defined by holds against it.
+//
+// ## OR-1: `flb_output_task_singleplex_enqueue`
+//
+// The function adds a temporary task user, then enqueues. On every return of
+// -1 the user count must be back where it was (`restored`); on a return of 0
+// the enqueued entry holds the added user (`added`).
+//
+// Custody: `retry` is consumed on every path — destroyed when the enqueue
+// fails, held by the queued entry otherwise — so it is declared
+// `resource_consumed(retry, nullable)`. Every other pointer is borrowed.
+//
+// Reachability premise: in-tree output plugins never set
+// `FLB_OUTPUT_SYNCHRONOUS`, so this function runs in production only for an
+// output (a proxy plugin) that does. Any verdict on it holds under that
+// premise.
+
+extern fn flb_output_task_singleplex_enqueue(queue: ptr<mut, u8>, retry: ptr<mut, u8>, task: ptr<mut, u8>, out_ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(queue);
+    ensures normal resource_consumed(retry, nullable);
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(out_ins);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_user_exit(task, -1, restored);
+    ensures normal resource_user_exit(task, 0, added);
+    ensures normal resource_return_none();
+};
+
+// ## OR-7: `flb_output_task_flush`
+//
+// The function returns -1 exactly when it added no user: every return of -1
+// leaves the count `restored`, and every return of 0 has `added` one user,
+// which the engine releases when it processes the flush's status.
+//
+// Custody: none of the three pointers is taken.
+
+extern fn flb_output_task_flush(task: ptr<mut, u8>, out_ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(out_ins);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_user_exit(task, -1, restored);
+    ensures normal resource_user_exit(task, 0, added);
+    ensures normal resource_return_none();
+};

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "W45-FB-OR6-ELEMENT-IDENTITY",
+    "title": "OR-6 (queued_task not used after the flush fails) is not stated: a container element recovered with container_of has no identity, and no summary says a callee frees one",
+    "why": "Card W45-FB-RETRY-LIFETIME stated OR-1 and OR-7 as checked provider contracts but not OR-6. `flb_output_task_queue_flush_one` obtains `queued_task` from `mk_list_entry_first(&queue->pending, ...)`, a container_of expression the gateway reads as an unresolved identity, and the free that would make `queued_task->retry` a use after free happens inside `flb_output_task_singleplex_flush_next` (N3, source reading at 046accf6: unchanged bodies, flb_output.c:312-351 and 392-411). Neither the element identity nor a callee summary that frees the first in-progress element is in the vocabulary. Size: 1 obligation, 2 functions. DISCHARGE: an element-identity rule for `mk_list_entry*` over a published container (coordinated with FB-BACKLOG-CUSTODY's iteration mechanism) and a per-arm callee summary stating the element released, with Lean parity, then a contract for OR-6 decided by `quirin-audit`.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-FB-OR7-FLUSH-CREATE-OPAQUE",
+    "title": "OR-7's -1 clause on flb_output_task_flush is undecided: flb_output_flush_create's body reaches an uncontracted callee",
+    "why": "The counted-user derivation of the header-inline `flb_output_flush_create` stops at `flb_output_flush_id_get` -> `flb_output_thread_instance_get`, which has no contract and no body in the output unit, so every non-threaded path of `flb_output_task_flush` has an undecided count and `resource_user_exit(task, -1, restored)` is undecided (the 0 clause is refuted on the threaded arm regardless). Size: 1 clause. DISCHARGE: a declaration of the user effect (neutral) of the callees the derivation reaches, or the unit that defines them in the selection, then a re-measured clause.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-FB-OR1-FLUSH-ONE-UNATTRIBUTED",
+    "title": "OR-1's success clause is undecided on the `return flb_output_task_queue_flush_one(...)` exit: the callee's counter operations are on a container element",
+    "why": "`flb_output_task_singleplex_enqueue`'s clause `resource_user_exit(task, 0, added)` holds on the `return 0` exit and is undecided on the exit returning `flb_output_task_queue_flush_one(...)`, whose drop and flush act on `queued_task->task`, not a formal. OR-1 itself (the -1 clause) is decided refuted. Size: 1 clause. DISCHARGE: W45-FB-OR6-ELEMENT-IDENTITY's element identity plus an exit clause for flush_one checked against its body.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-FB-USERS-RELEASE-CHECK",
+    "title": "flb_task_users_release and flb_task_users_dec(task, FLB_TRUE) stay uncontracted: a release check may destroy a borrowed formal",
+    "why": "The counted-user vocabulary has `resource_user_dropped_checked` and `resource_user_release_check`, but declaring them for Fluent Bit would let a caller keep using a task the check may have destroyed: no custody mode states 'may release the borrowed object'. The FLB_TRUE call sites therefore stay outside `flb_task_users_dec`'s literal premise (4 leaves in the system slice at 046accf6 read `call to flb_task_users_dec outside its declared literal-argument premise`) and `flb_task_users_release` is undeclared. DISCHARGE: a may-destroy custody mode for a borrowed position with gateway and Lean parity, then the two declarations checked against their header bodies.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-FB-CROSS-UNIT-USER-PREMISES",
+    "title": "Two counted-user declarations are applied in the output unit as cross-unit premises no analysed body checks there",
+    "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-FB-SINGLEPLEX-CUSTODY-DECLARED",
+    "title": "The custody half of the two OR declarations is applied at callers while their bodies do not validate against it",
+    "why": "`flb_output_task_singleplex_enqueue` declares `resource_consumed(retry, nullable)` (faithful by reading: destroyed on the enqueue failure, held by the queued entry otherwise) and `flb_output_task_flush` declares its three pointers borrowed. The counted-user clauses are checked against the bodies, but the custody analysis of each body falls back to the contract-free run (uncontracted `flb_output_task_queue_enqueue`, refused indirect accesses), so the custody half is a declared premise at the callers in flb_engine.c and flb_engine_dispatch.c. DISCHARGE: the two bodies validating under their declared custody, or a check-only declaration form that callers never apply.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-CONTAINER-ROOT-REACH",
+    "title": "A publication discharges only into a container reached from an unrebound formal or a local initialised from one; the MK-LIST corpus leaves need more",
+    "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. Size: 4 leak leaves. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+    "id": "W45-COUNTED-USERS-LOOPS",
+    "title": "The counted-user pass leaves every clause of a body with a loop, switch, goto or label undecided",
+    "why": "The pass enumerates straight-line paths only (gateway constraint 10e). The five singleplex functions have none; `handle_output_event`, `flb_engine_dispatch_retry` and the other retry-route functions of the FB-RETRY-LIFETIME slice do, and their counter operations act on locals (unattributed) as well. DISCHARGE: a bounded loop rule (a body whose loop touches no tracked count or opaque call is skipped) with Lean parity, measured on the retry slice.",
+    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  }
+]

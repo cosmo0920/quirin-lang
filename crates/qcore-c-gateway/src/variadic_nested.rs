@@ -209,6 +209,8 @@ pub(crate) fn admitted_nested_calls(
                 .parameters
                 .iter()
                 .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+            // Card W45-FB-RETRY-LIFETIME: a container effect is not the identity.
+            || contract.has_container_effect()
         {
             return None;
         }

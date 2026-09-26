@@ -1,0 +1,214 @@
+{
+ "old": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-1/fluent-bit-clang-source",
+ "new": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-lifetime/attempt-2/fluent-bit-clang-source",
+ "files": {
+  "src/flb_output.c": {
+   "old_sha256": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819",
+   "new_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+   "added_lines": 93,
+   "removed_lines": 1,
+   "functions": {
+    "flb_output_task_queue_enqueue": {
+     "old_line": 280,
+     "new_line": 283,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_output_task_queue_flush_one": {
+     "old_line": 309,
+     "new_line": 312,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_output_task_singleplex_enqueue": {
+     "old_line": 351,
+     "new_line": 354,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_output_task_singleplex_flush_next": {
+     "old_line": 389,
+     "new_line": 392,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_output_task_flush": {
+     "old_line": 415,
+     "new_line": 466,
+     "body_identical": false,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_output_task_flush_error": {
+     "old_line": null,
+     "new_line": 425,
+     "body_identical": false,
+     "present": [
+      false,
+      true
+     ]
+    }
+   }
+  },
+  "src/flb_scheduler.c": {
+   "old_sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+   "new_sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+   "added_lines": 0,
+   "removed_lines": 0
+  },
+  "src/flb_engine.c": {
+   "old_sha256": "8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33",
+   "new_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+   "added_lines": 36,
+   "removed_lines": 0
+  },
+  "src/flb_engine_dispatch.c": {
+   "old_sha256": "b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3",
+   "new_sha256": "3fdae998c1ce17d8277881ca3151006fe939e0686d57760fdf999064cc740015",
+   "added_lines": 30,
+   "removed_lines": 0
+  },
+  "src/flb_task.c": {
+   "old_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "new_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "added_lines": 0,
+   "removed_lines": 0,
+   "functions": {
+    "flb_task_retry_destroy": {
+     "old_line": 269,
+     "new_line": 269,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  "include/fluent-bit/flb_task.h": {
+   "old_sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+   "new_sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+   "added_lines": 0,
+   "removed_lines": 0,
+   "functions": {
+    "flb_task_users_release": {
+     "old_line": 171,
+     "new_line": 171,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_task_users_inc": {
+     "old_line": 179,
+     "new_line": 179,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "flb_task_users_dec": {
+     "old_line": 188,
+     "new_line": 188,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  "include/fluent-bit/flb_output.h": {
+   "old_sha256": "815dc3774c93718b95b5b9474f93d790accb2c0bb9d0c45a15cb40c8649cd51d",
+   "new_sha256": "715b72c299d91e1c65fd56cb5e831cc97c77358fe44070626c7ea156c69edf94",
+   "added_lines": 29,
+   "removed_lines": 1
+  },
+  "src/flb_output_thread.c": {
+   "old_sha256": "932ed57899416bc8db9780328865fd5cdac45f4ec73cff6e006b90fb93258647",
+   "new_sha256": "b6d1e7ad71b909557eb5fc0d59396585573c9d84d24c183d5ecd2121e19b2b16",
+   "added_lines": 7,
+   "removed_lines": 0,
+   "functions": {
+    "flb_output_thread_pool_flush": {
+     "old_line": 431,
+     "new_line": 438,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  "src/flb_input_chunk.c": {
+   "old_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+   "new_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+   "added_lines": 62,
+   "removed_lines": 5
+  },
+  "src/flb_storage.c": {
+   "old_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+   "new_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+   "added_lines": 0,
+   "removed_lines": 0
+  },
+  "plugins/in_storage_backlog/sb.c": {
+   "old_sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+   "new_sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+   "added_lines": 0,
+   "removed_lines": 0
+  },
+  "lib/monkey/include/monkey/mk_core/mk_list.h": {
+   "old_sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1",
+   "new_sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1",
+   "added_lines": 0,
+   "removed_lines": 0,
+   "functions": {
+    "mk_list_add": {
+     "old_line": 63,
+     "new_line": 63,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "mk_list_del": {
+     "old_line": 145,
+     "new_line": 145,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    },
+    "__mk_list_del": {
+     "old_line": 139,
+     "new_line": 139,
+     "body_identical": true,
+     "present": [
+      true,
+      true
+     ]
+    }
+   }
+  }
+ }
+}

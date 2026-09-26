@@ -1,0 +1,1134 @@
+{
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "functions": {
+   "Safe": 24,
+   "Unknown": 208,
+   "Unsafe": 2
+  },
+  "distinct_functions": 234,
+  "not_projected": [
+   [
+    "src/flb_engine.c",
+    "sb_segregate_chunks"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "sb_get_releasable_output_queue_space"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "sb_release_output_queue_space"
+   ]
+  ],
+  "diagnostic_counts": {
+   "counted_user": 4,
+   "unknown_alias": 685,
+   "unsupported": 4325
+  },
+  "slice": {
+   "flb_output_task_flush": {
+    "file": "src/flb_output.c",
+    "status": "Unsafe",
+    "diagnostics": [
+     [
+      "counted_user",
+      "`resource_user_exit(task, 0, added)` is refuted: a path returning 0 has added 0 users of `task`",
+      "src/flb_output.c:541"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_flush_destroy`",
+      "src/flb_output.c:526"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_flush_error`",
+      "src/flb_output.c:504"
+     ],
+     [
+      "unsupported",
+      "counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit",
+      "src/flb_output.c:513"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:483"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:493"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:510"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:522"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:531"
+     ]
+    ]
+   },
+   "flb_output_task_queue_enqueue": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_output.c:295"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_output.c:299"
+     ]
+    ]
+   },
+   "flb_output_task_queue_flush_one": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "src/flb_output.c:324"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_singleplex_flush_next`",
+      "src/flb_output.c:343"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:318"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:325"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:326"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:340"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "src/flb_output.c:339"
+     ]
+    ]
+   },
+   "flb_output_task_singleplex_enqueue": {
+    "file": "src/flb_output.c",
+    "status": "Unsafe",
+    "diagnostics": [
+     [
+      "counted_user",
+      "`resource_user_exit(task, -1, restored)` is refuted: a path returning -1 has added 1 users of `task`",
+      "src/flb_output.c:376"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_queue_enqueue`",
+      "src/flb_output.c:374"
+     ],
+     [
+      "unsupported",
+      "counted users undecided: `resource_user_exit(task, 0, added)`: `flb_output_task_queue_flush_one` calls `flb_log_check`: `flb_log_check` calls `flb_worker_log_level`: call to `flb_worker_log_level`, which has no contract in force and no body in this unit",
+      "src/flb_output.c:382"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:380"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:382"
+     ]
+    ]
+   },
+   "flb_output_task_singleplex_flush_next": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unknown_alias",
+      "unresolved resource identity `ended_task`",
+      "src/flb_output.c:403"
+     ],
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "src/flb_output.c:400"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_queue_flush_one`",
+      "src/flb_output.c:409"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:398"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:402"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:407"
+     ]
+    ]
+   }
+  },
+  "user_count_clauses": {
+   "flb_output_task_flush": [
+    {
+     "clause": "callee `flb_task_users_dec`: resource_user_dropped(task, users)",
+     "line": 0,
+     "origin": null,
+     "reason": "",
+     "verdict": "held"
+    },
+    {
+     "clause": "callee `flb_task_users_inc`: resource_user_added(task, users)",
+     "line": 0,
+     "origin": null,
+     "reason": "",
+     "verdict": "held"
+    },
+    {
+     "clause": "implicit: every uncovered exit restores the users of `task`",
+     "line": 0,
+     "origin": null,
+     "reason": "",
+     "verdict": "held"
+    },
+    {
+     "clause": "resource_user_exit(task, -1, restored)",
+     "line": 17923,
+     "origin": "src/flb_output.c:513",
+     "reason": "`flb_output_flush_create` calls `flb_output_flush_id_get`: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit",
+     "verdict": "undecided"
+    },
+    {
+     "clause": "resource_user_exit(task, 0, added)",
+     "line": 17941,
+     "origin": "src/flb_output.c:541",
+     "reason": "a path returning 0 has added 0 users of `task`",
+     "verdict": "refuted"
+    }
+   ],
+   "flb_output_task_singleplex_enqueue": [
+    {
+     "clause": "callee `flb_task_users_inc`: resource_user_added(task, users)",
+     "line": 0,
+     "origin": null,
+     "reason": "",
+     "verdict": "held"
+    },
+    {
+     "clause": "implicit: every uncovered exit restores the users of `task`",
+     "line": 0,
+     "origin": null,
+     "reason": "",
+     "verdict": "held"
+    },
+    {
+     "clause": "resource_user_exit(task, -1, restored)",
+     "line": 17845,
+     "origin": "src/flb_output.c:376",
+     "reason": "a path returning -1 has added 1 users of `task`",
+     "verdict": "refuted"
+    },
+    {
+     "clause": "resource_user_exit(task, 0, added)",
+     "line": 17849,
+     "origin": "src/flb_output.c:382",
+     "reason": "`flb_output_task_queue_flush_one` calls `flb_log_check`: `flb_log_check` calls `flb_worker_log_level`: call to `flb_worker_log_level`, which has no contract in force and no body in this unit",
+     "verdict": "undecided"
+    }
+   ],
+   "flb_task_retry_destroy": [
+    {
+     "clause": "resource_user_neutral()",
+     "line": 0,
+     "origin": null,
+     "reason": "`flb_task_retry_destroy` calls `flb_sched_request_invalidate`: call to `flb_sched_request_invalidate`, which has no contract in force and no body in this unit",
+     "verdict": "undecided"
+    }
+   ]
+  }
+ },
+ "before": {
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 3
+  },
+  "functions": {
+   "Safe": 25,
+   "Unknown": 207,
+   "Unsafe": 2
+  },
+  "distinct_functions": 234,
+  "not_projected": [
+   [
+    "src/flb_engine.c",
+    "sb_segregate_chunks"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "sb_get_releasable_output_queue_space"
+   ],
+   [
+    "src/flb_input_chunk.c",
+    "sb_release_output_queue_space"
+   ]
+  ],
+  "diagnostic_counts": {
+   "leak": 3,
+   "unknown_alias": 661,
+   "unsupported": 4331
+  },
+  "slice": {
+   "flb_output_task_flush": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_flush_destroy`",
+      "src/flb_output.c:526"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_flush_error`",
+      "src/flb_output.c:504"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_thread_pool_flush`",
+      "src/flb_output.c:477"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_task_users_dec`",
+      "src/flb_output.c:479"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_task_users_dec`",
+      "src/flb_output.c:506"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_task_users_dec`",
+      "src/flb_output.c:527"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:483"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:493"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:510"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:522"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:531"
+     ]
+    ]
+   },
+   "flb_output_task_queue_enqueue": {
+    "file": "src/flb_output.c",
+    "status": "Unsafe",
+    "diagnostics": [
+     [
+      "leak",
+      "live obligation acquired at src/flb_output.c:291",
+      "src/flb_output.c:305"
+     ],
+     [
+      "unknown_alias",
+      "unresolved resource identity `retry`",
+      "src/flb_output.c:299"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_task_retry_destroy`",
+      "src/flb_output.c:295"
+     ]
+    ]
+   },
+   "flb_output_task_queue_flush_one": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "src/flb_output.c:324"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_singleplex_flush_next`",
+      "src/flb_output.c:343"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:318"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:325"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:326"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:332"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:333"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:340"
+     ],
+     [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      "src/flb_output.c:339"
+     ]
+    ]
+   },
+   "flb_output_task_singleplex_enqueue": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_queue_enqueue`",
+      "src/flb_output.c:374"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:380"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:382"
+     ]
+    ]
+   },
+   "flb_output_task_singleplex_flush_next": {
+    "file": "src/flb_output.c",
+    "status": "Unknown",
+    "diagnostics": [
+     [
+      "unknown_alias",
+      "unresolved resource identity `ended_task`",
+      "src/flb_output.c:403"
+     ],
+     [
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled",
+      "src/flb_output.c:400"
+     ],
+     [
+      "unsupported",
+      "call to uncontracted function `flb_output_task_queue_flush_one`",
+      "src/flb_output.c:409"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:398"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:402"
+     ],
+     [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      "src/flb_output.c:407"
+     ]
+    ]
+   }
+  },
+  "user_count_clauses": {}
+ },
+ "moved": [
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_append_chunk_to_segregated_backlog",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at plugins/in_storage_backlog/sb.c:269",
+     "plugins/in_storage_backlog/sb.c:289",
+     1
+    ]
+   ],
+   "added": []
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_engine.c:817",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_engine.c:703",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_engine.c:740",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_engine.c:791",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_engine.c:797",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_engine.c:880",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_engine.c:817",
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_task_users_dec` outside its declared literal-argument premise",
+     "src/flb_engine.c:703",
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_task_users_dec` outside its declared literal-argument premise",
+     "src/flb_engine.c:740",
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_task_users_dec` outside its declared literal-argument premise",
+     "src/flb_engine.c:791",
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_task_users_dec` outside its declared literal-argument premise",
+     "src/flb_engine.c:880",
+     1
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_task_users_dec` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine.c:797",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_engine_dispatch.c:151",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_engine_dispatch.c:188",
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_engine_dispatch.c:186",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_engine_dispatch.c:151",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_engine_dispatch.c:188",
+     1
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:186",
+     1
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:179",
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled expression may mutate a formal resource identity",
+     "src/flb_engine_dispatch.c:156",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "function": "tasks_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:327",
+     1
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_singleplex_enqueue` on `task`, which is not a formal this function never rebinds",
+     "src/flb_engine_dispatch.c:319",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_create",
+   "before": "Safe",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    [
+     "unsupported",
+     "publication by `mk_list_add` of `ic`, which owns linked objects",
+     "src/flb_input_chunk.c:2611",
+     1
+    ],
+    [
+     "unsupported",
+     "transfer of `ic`, which a container holds after its publication",
+     "src/flb_input_chunk.c:2632",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "nullable resource `ic` used by a non-null contract",
+     "src/flb_input_chunk.c:2926",
+     1
+    ],
+    [
+     "unsupported",
+     "nullable resource `ic` used by a non-null contract",
+     "src/flb_input_chunk.c:2944",
+     1
+    ],
+    [
+     "unsupported",
+     "nullable resource `ic` used by a non-null contract",
+     "src/flb_input_chunk.c:2952",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ic`",
+     "src/flb_input_chunk.c:2896",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ic`",
+     "src/flb_input_chunk.c:2899",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_chunk_create`",
+     "src/flb_input_chunk.c:2894",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_prepare_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_output.c:232",
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_output.c:237",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `out_flush`",
+     "src/flb_output.c:238",
+     1
+    ],
+    [
+     "unsupported",
+     "unlink by `mk_list_del` of `out_flush`, which this function has not published",
+     "src/flb_output.c:232",
+     1
+    ],
+    [
+     "unsupported",
+     "unlink by `mk_list_del` of `out_flush`, which this function has not published",
+     "src/flb_output.c:237",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_instance_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_output.c:631",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "unlink by `mk_list_del` of `ins`, which this function has not published",
+     "src/flb_output.c:631",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "before": "Unknown",
+   "after": "Unsafe",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_output_thread_pool_flush`",
+     "src/flb_output.c:477",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_output.c:479",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_output.c:506",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_users_dec`",
+     "src/flb_output.c:527",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "counted_user",
+     "`resource_user_exit(task, 0, added)` is refuted: a path returning 0 has added 0 users of `task`",
+     "src/flb_output.c:541",
+     1
+    ],
+    [
+     "unsupported",
+     "counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit",
+     "src/flb_output.c:513",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_queue_enqueue",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at src/flb_output.c:291",
+     "src/flb_output.c:305",
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_output.c:295",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_output.c:295",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_queue_flush_one",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    [
+     "unsupported",
+     "counted-user operation by `flb_output_task_flush` on `queued_task -> task`, which is not a formal this function never rebinds",
+     "src/flb_output.c:333",
+     1
+    ],
+    [
+     "unsupported",
+     "counted-user operation by `flb_task_users_dec` on `queued_task -> task`, which is not a formal this function never rebinds",
+     "src/flb_output.c:332",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_singleplex_enqueue",
+   "before": "Unknown",
+   "after": "Unsafe",
+   "removed": [],
+   "added": [
+    [
+     "counted_user",
+     "`resource_user_exit(task, -1, restored)` is refuted: a path returning -1 has added 1 users of `task`",
+     "src/flb_output.c:376",
+     1
+    ],
+    [
+     "unsupported",
+     "counted users undecided: `resource_user_exit(task, 0, added)`: `flb_output_task_queue_flush_one` calls `flb_log_check`: `flb_log_check` calls `flb_worker_log_level`: call to `flb_worker_log_level`, which has no contract in force and no body in this unit",
+     "src/flb_output.c:382",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_request_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_scheduler.c:336",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "unlink by `mk_list_del` of `req`, which this function has not published",
+     "src/flb_scheduler.c:336",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "schedule_request_now",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `request`",
+     "src/flb_scheduler.c:147",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_task.c:936",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_task.c:936",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_task.c:429",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_task.c:429",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_task.c:331",
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled increment or decrement expression",
+     "src/flb_task.c:356",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_task.c:331",
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled expression may mutate a formal resource identity",
+     "src/flb_task.c:356",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "src/flb_task.c:282",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "unlink by `mk_list_del` of `retry`, which this function has not published",
+     "src/flb_task.c:282",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_task_retry_destroy`",
+     "src/flb_task.c:303",
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `retry`",
+     "src/flb_task.c:303",
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_task.c",
+   "function": "task_alloc",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    [
+     "unsupported",
+     "counted-user operation `task -> users =` on `task`, which is not a formal this function never rebinds",
+     "src/flb_task.c:467",
+     1
+    ]
+   ]
+  }
+ ],
+ "status_moves": {
+  "Unsafe -> Unknown": 2,
+  "Safe -> Unknown": 1,
+  "Unknown -> Unsafe": 2
+ }
+}

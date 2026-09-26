@@ -101,6 +101,7 @@ fn key(kind: &LegacyDiagnosticKind) -> String {
         LegacyDiagnosticKind::UseAfterClose { kind, .. } => {
             format!("use_after_close:{}", kind.spelling())
         }
+        LegacyDiagnosticKind::CountedUser { .. } => "counted_user".to_owned(),
         LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
         LegacyDiagnosticKind::SummaryConflict { .. } => "summary_conflict".to_owned(),
     }

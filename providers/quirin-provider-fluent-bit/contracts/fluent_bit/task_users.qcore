@@ -1,0 +1,110 @@
+module contract;
+
+// Fluent Bit task users — resource-projection vocabulary version 1 with the
+// counted-user clauses of contract specification §C04.7 (card
+// W45-FB-RETRY-LIFETIME).
+//
+// Bound by function name and by the declared signature below. No revision,
+// line number or file digest belongs to this module: the evidence binding it
+// to an audited source lives in the card report. A signature that differs at
+// another revision is withdrawn by the declared-ABI check (fail-closed).
+//
+// ## The counter
+//
+// A task holds a count of its users in the member `users`. The header-inline
+// operations of `fluent-bit/flb_task.h` read:
+//
+//     static inline void flb_task_users_inc(struct flb_task *task)
+//     {
+//         task->users++;
+//     }
+//
+//     static inline void flb_task_users_dec(struct flb_task *task, int release_check)
+//     {
+//         task->users--;
+//         if (release_check == FLB_TRUE) {
+//             flb_task_users_release(task);   /* may destroy the task */
+//         }
+//     }
+//
+// An addition is an obligation, a drop discharges it, and a drop with
+// `release_check == FLB_FALSE` leaves the task possibly unreferenced until a
+// caller runs the release check.
+//
+// ## Checked, not trusted
+//
+// Both bodies are defined in every unit that includes the header, so a
+// consumer checks each declaration against the body it sees and applies it at
+// a call only where it holds there (gateway constraint 10e). The drop is
+// declared only for the call sites passing the literal `0` (`FLB_FALSE`
+// after preprocessing): under that premise the release branch is not taken,
+// and the body is exactly one decrement. A call passing `FLB_TRUE` is outside
+// the premise and stays uncontracted, because the release check it runs may
+// destroy the task, which this vocabulary does not yet state of a borrowed
+// formal (registered residual W45-FB-USERS-RELEASE-CHECK).
+//
+// `flb_task_users_release` is deliberately not declared, for the same reason.
+
+extern fn flb_task_users_inc(task: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_user_added(task, users);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_task_users_dec(task: ptr<mut, u8>, release_check: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(release_check, 0);
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(release_check);
+    ensures normal resource_user_dropped(task, users);
+    ensures normal resource_return_none();
+};
+
+// ## Retry destruction
+//
+//     void flb_task_retry_destroy(struct flb_task_retry *retry)
+//     {
+//         flb_sched_request_invalidate(retry->parent->config, retry);
+//         flb_task_clear_route_retry_context(retry->parent, retry->o_ins);
+//         mk_list_del(&retry->_head);
+//         flb_free(retry);
+//     }
+//
+// It frees the retry it is handed (non-null: the first statement reads
+// through it) and changes no task's user count. Its body is defined in the
+// task unit, where both halves are checked against it; in every other unit
+// the declaration is the cross-unit premise every declared contract is.
+
+extern fn flb_task_retry_destroy(retry: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(retry, nonnull);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+// ## Thread-pool dispatch
+//
+//     int flb_output_thread_pool_flush(struct flb_task *task,
+//                                      struct flb_output_instance *out_ins,
+//                                      struct flb_config *config)
+//
+// Picks a worker round-robin and writes the task pointer to the worker's
+// pipe; returns -1 when no worker is available or the write fails, 0
+// otherwise. It changes no user count and takes no custody. Its body is
+// defined in the output-thread unit, outside the system selection, so in the
+// audited slice this declaration is a cross-unit premise that no analysed
+// body checks (registered residual W45-FB-THREAD-POOL-FLUSH-UNCHECKED).
+
+extern fn flb_output_thread_pool_flush(task: ptr<mut, u8>, out_ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(out_ins);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};

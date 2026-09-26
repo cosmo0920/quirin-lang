@@ -1209,6 +1209,19 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card W45-FB-RETRY-LIFETIME: Monkey's list unlink, as the ChunkIO frame
+    // contract states its link-cell writes and the resource-v1 view states the
+    // retired publication (§C04.8). Different vocabularies; neither entails
+    // the other (the frame contract's `no_object_release` is compatible with
+    // an unlink that releases nothing).
+    RegisteredRelation {
+        function: "mk_list_del",
+        detailed: "chunkio/list_unlink.qcore",
+        view: "monkey/intrusive_list.qcore",
+        check: RelationCheck::LifecycleProfiles,
+        assumed_premises: &[],
+        finding: None,
+    },
     // ChunkIO error reset: the generic configured frame policy and the
     // retained Chunk-flavour policy.
     RegisteredRelation {

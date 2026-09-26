@@ -1,0 +1,48 @@
+functions {'before': {'Unknown': 4432, 'Safe': 390, 'Unsafe': 12}, 'after': {'Unknown': 4433, 'Safe': 389, 'Unsafe': 12}}
+units {'before': {'Unknown': 167, 'Safe': 4, 'Unsafe': 10, 'data_only': 4}, 'after': {'Unknown': 167, 'Safe': 4, 'Unsafe': 10, 'data_only': 4}}
+categories before [('leak', 37), ('summary_conflict', 1), ('unknown_alias', 3567), ('unsupported', 42699)]
+categories after  [('leak', 37), ('summary_conflict', 1), ('unknown_alias', 3571), ('unsupported', 42702)]
+leaves removed 11 added 18
+function moves 1
+  flb_input_chunk.c :: flb_input_chunk_create: Safe -> Unknown
+unit moves 0
+cio_chunk.c :: chunk_state_sync
+  - L2382 unsupported: indirect memory access is outside the resource projection
+  + L2382 unsupported: unlink by `mk_list_del` of `ch`, which this function has not published
+  + L2385 unknown_alias: unresolved resource identity `ch`
+  + L2388 unknown_alias: unresolved resource identity `ch`
+cio_chunk.c :: cio_chunk_close
+  - L2083 unsupported: indirect memory access is outside the resource projection
+  - L2084 unsupported: indirect memory access is outside the resource projection
+  + L2083 unsupported: unlink by `mk_list_del` of `ch`, which this function has not published
+  + L2084 unsupported: unlink by `mk_list_del` of `ch`, which this function has not published
+cio_chunk.c :: cio_chunk_open
+  - L2052 unsupported: indirect memory access is outside the resource projection
+  + L2042 unsupported: publication by `mk_list_add` of `ch`, which owns linked objects
+  + L2052 unknown_alias: unresolved resource identity `ch`
+cio_stream.c :: cio_stream_create
+  + L2214 unsupported: publication by `mk_list_add` of `st`, which this function does not hold as one live object
+cio_stream.c :: cio_stream_destroy
+  - L2224 unsupported: indirect memory access is outside the resource projection
+  + L2224 unsupported: unlink by `mk_list_del` of `st`, which this function has not published
+flb_input_chunk.c :: flb_input_chunk_create
+  + L19629 unsupported: publication by `mk_list_add` of `ic`, which owns linked objects
+  + L19647 unsupported: transfer of `ic`, which a container holds after its publication
+flb_input_chunk.c :: input_chunk_get
+  - L19847 unsupported: nullable resource `ic` used by a non-null contract
+  - L19851 unsupported: nullable resource `ic` used by a non-null contract
+  + L19835 unsupported: call to uncontracted function `flb_input_chunk_create`
+  + L19837 unknown_alias: unresolved resource identity `ic`
+  + L19840 unknown_alias: unresolved resource identity `ic`
+mk_server/mk_http_parser.c :: header_lookup
+  - L5618 unsupported: indirect memory access is outside the resource projection
+  + L5618 unsupported: unlink by `mk_list_del` of `header`, which this function has not published
+mk_server/mk_http_thread.c :: mk_http_thread_destroy
+  - L6135 unsupported: indirect memory access is outside the resource projection
+  + L6135 unsupported: unlink by `mk_list_del` of `mth`, which this function has not published
+mk_server/mk_http_thread.c :: mk_http_thread_purge
+  - L6122 unsupported: indirect memory access is outside the resource projection
+  + L6122 unsupported: unlink by `mk_list_del` of `mth`, which this function has not published
+mk_server/mk_scheduler.c :: mk_sched_add_connection
+  - L6593 unknown_alias: unresolved resource identity `conn`
+  + L6593 unsupported: call to uncontracted function `mk_sched_conn_timeout_add`

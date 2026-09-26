@@ -2488,9 +2488,24 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
     "(", IDENT, ",", IDENT, ",", nullability, ")"
   | "resource_return_none", "(", ")"
   | "resource_return_owned", "(", nullability, ")"
-  | "resource_return_reallocated", "(", IDENT, ",", nullability, ")" ;
+  | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
+  | counted_user_predicate
+  | container_predicate ;
 nullability = "nullable" | "nonnull" ;
+(* card W45-FB-RETRY-LIFETIME, contract specification C04.7 and C04.8 *)
+counted_user_predicate =
+    ("resource_user_added" | "resource_user_dropped"
+     | "resource_user_dropped_checked" | "resource_user_release_check"),
+    "(", IDENT, ",", IDENT, ")"              (* parameter, counter member *)
+  | "resource_user_neutral", "(", ")"
+  | "resource_user_exit", "(", IDENT, ",", integer_literal, ",",
+    ("added" | "restored" | "dropped"), ")" ;
+container_predicate =
+    "resource_published", "(", IDENT, ",", IDENT, ")"   (* entry, container *)
+  | "resource_unpublished", "(", IDENT, ")" ;
 ```
+
+The counted-user and container predicates (card W45-FB-RETRY-LIFETIME) carry static conditions of their own: every parameter they name is a `resource_borrowed` pointer parameter; a publication's container is a distinct parameter with no container predicate of its own; a parameter carries at most one counted-user operation and at most one container predicate; `resource_user_neutral()` appears at most once and never beside another counted-user predicate; an exit clause requires an integer result type, its `integer_literal` follows the canonical-literal rule above, one parameter and returned value carry at most one clause, and a parameter carries either an operation or exit clauses, never both. Every violation rejects the whole module.
 
 Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, an owned reallocation source, and — for `literal_argument_premise` — a parameter name the same declaration declares (of any admitted type, pointer included: see contract specification C04.5), at most one premise per parameter, and a `DIGITS` run the lexer produces as a single integer token with no leading zero, which excludes suffixed, alternate-base and octal spellings; `-0` is likewise rejected, so the declared literal is canonical. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
 

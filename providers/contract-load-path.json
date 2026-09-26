@@ -196,9 +196,11 @@
         "fluent_bit/input_chunk_total_size.qcore",
         "fluent_bit/logging.qcore",
         "fluent_bit/memory.qcore",
+        "fluent_bit/output_singleplex.qcore",
         "fluent_bit/resource_memory.qcore",
         "fluent_bit/resource_string.qcore",
         "fluent_bit/routes_mask.qcore",
+        "fluent_bit/task_users.qcore",
         "fluent_bit/time.qcore"
       ],
       "published": {},
@@ -211,9 +213,11 @@
         "fluent_bit/input_chunk_sizes.qcore",
         "fluent_bit/input_chunk_total_size.qcore",
         "fluent_bit/logging.qcore",
+        "fluent_bit/output_singleplex.qcore",
         "fluent_bit/resource_memory.qcore",
         "fluent_bit/resource_string.qcore",
         "fluent_bit/routes_mask.qcore",
+        "fluent_bit/task_users.qcore",
         "fluent_bit/time.qcore"
       ]
     },

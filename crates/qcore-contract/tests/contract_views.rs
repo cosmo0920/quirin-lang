@@ -42,8 +42,8 @@ fn refused(modules: &BTreeMap<String, String>, expected: &str) {
 #[test]
 fn every_registered_relation_holds_on_the_corpus() {
     let report = check_registry(&modules(), REGISTERED_RELATIONS).unwrap();
-    assert_eq!(report.census.len(), 10);
-    assert_eq!(report.relations.len(), 12);
+    assert_eq!(report.census.len(), 11);
+    assert_eq!(report.relations.len(), 13);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
@@ -55,7 +55,7 @@ fn every_registered_relation_holds_on_the_corpus() {
     assert_eq!(
         kinds,
         BTreeMap::from([
-            ("lifecycle_profiles", 1),
+            ("lifecycle_profiles", 2),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),
