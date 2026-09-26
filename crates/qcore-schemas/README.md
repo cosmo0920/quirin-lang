@@ -465,3 +465,22 @@ unchanged** for data without a marker or a withheld pin: such an environment
 serializes without either field, and no existing reason text classifies
 differently (the projection summary's pin component is named only when
 positive). Plugin protocol 1 and evidence versions 1 and 2 are unchanged.
+
+## The four-value verdict (17.0.0)
+
+Card W45-USER-CONTRACT-PLUGINS (language specification §L21.2, contract
+specification C11.1). The verdict gains a fourth value, `Pending`, approved by
+the user on 2026-09-26.
+
+| Addition | Kind |
+|---|---|
+| `ReasonCategory::PluginClaimUncertified` (`plugin-claim-uncertified`, subject: analyser) | new variant on an exhaustively matched enum; the closed vocabulary grows from nine to ten |
+| `ReasonCategory::is_human_resolvable` | new method: exactly `awaiting-human-review`, `contract-pin-mismatch`, `plugin-claim-uncertified` |
+| `Verdict` (`Safe < Pending < Unknown < Unsafe`), `PendingReason`, `VerdictReason`, `ReasonedVerdict`, `Chain`, `ChainKind`, `ChainLink` (module `verdict`) | new types: the verdict semigroup |
+
+The new reason variant is source-incompatible for exhaustive matches, so this
+is a major bump by the exhaustive-variant precedent. **Existing wire bytes are
+unchanged**: no existing reason text classifies differently, no task digest
+moves, and `ReasonedVerdict` and `Chain` serialize only (a deserializer would be
+a second, unchecked constructor). Plugin protocol 1 and evidence versions 1
+and 2 are unchanged.

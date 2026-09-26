@@ -37,6 +37,11 @@ See the [unit-provider evidence](../docs/reports/w5-cmetrics-unit-provider/READM
 
 ## Contract ownership
 
+User-defined contracts live in the user's own crates, outside this
+repository; [`quirin-provider-plugin`](quirin-provider-plugin/README.md) is
+their SDK (card W45-USER-CONTRACT-PLUGINS). It owns no contracts and is not on
+the load path.
+
 Provider crates own their supplied Quirin contracts under `contracts/`, beside
 `src/` and `provider-template.json`. `contracts.json` records their package paths
 and SHA-256 values. The ownership map is `providers/contracts.py`.

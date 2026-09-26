@@ -67,6 +67,11 @@ pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
 #[path = "legacy_pin_hold.rs"]
 pub mod pin_hold;
 
+// Card W45-USER-CONTRACT-PLUGINS: the four-value verdict. Function and unit
+// statuses are folds of the verdict semigroup; a held call is `Pending`.
+#[path = "legacy_verdict.rs"]
+pub mod verdict;
+
 // Card W45-PARENTHESISED-CALLEE: `(f)(x)` is `f(x)`, and any other callee
 // that is not a name refuses. Everything the card adds lives there; this file
 // only carries the hooks marked with the card's name.
@@ -809,6 +814,10 @@ pub enum AnalysisStatus {
     Safe,
     Unsafe,
     Unknown,
+    /// Card W45-USER-CONTRACT-PLUGINS: not decided, awaiting a named human
+    /// act — every unresolved diagnostic is a call held for a withheld
+    /// contract ([`verdict`]). Never `Safe`; ordered below `Unknown`.
+    Pending,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -2091,11 +2100,16 @@ fn analyze_preprocessed_unrestricted_c11(
     }
     match summary.status {
         AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
-        AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
-            preprocessed_source,
-            reason: unresolved_projection_reason(&summary),
-            partial: Some(summary),
-        }),
+        // Card W45-USER-CONTRACT-PLUGINS: a `Pending` unit is published
+        // through the same variant; `UnrestrictedLegacyResult::verdict` reads
+        // it back from the summary's status.
+        AnalysisStatus::Unknown | AnalysisStatus::Pending => {
+            Ok(UnrestrictedLegacyResult::Unknown {
+                preprocessed_source,
+                reason: unresolved_projection_reason(&summary),
+                partial: Some(summary),
+            })
+        }
         AnalysisStatus::Safe => {
             // Fail-closed (unit **E01-TAIL**, residual E01-F1-DENOM). A `Safe`
             // verdict here is a claim over the *selected scope* — the
@@ -2598,20 +2612,9 @@ fn analyze_legacy_c_translation_unit_selected_partial(
             Err(error) => return Err(error),
         }
     }
-    let status = if functions
-        .values()
-        .any(|summary| summary.status == AnalysisStatus::Unsafe)
-    {
-        AnalysisStatus::Unsafe
-    } else if !projection_failures.is_empty()
-        || functions
-            .values()
-            .any(|summary| summary.status == AnalysisStatus::Unknown)
-    {
-        AnalysisStatus::Unknown
-    } else {
-        AnalysisStatus::Safe
-    };
+    // Card W45-USER-CONTRACT-PLUGINS: the fold of the verdict semigroup,
+    // which is the three-way decision this replaced on every status it had.
+    let status = verdict::unit_status(functions.values(), !projection_failures.is_empty());
     Ok(PartialTranslationUnitAnalysis {
         summary: LegacyProgramSummary {
             entry: effective_entry,
@@ -10562,35 +10565,8 @@ fn denote_pointer(pointer: &AbstractPointer) -> crate::may_alias::Denotation<'_>
 }
 
 fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
-    let unsafe_found = diagnostics.iter().any(|diagnostic| {
-        matches!(
-            diagnostic.kind,
-            LegacyDiagnosticKind::Leak { .. }
-                | LegacyDiagnosticKind::DoubleRelease { .. }
-                | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
-                | LegacyDiagnosticKind::CustodyConflict { .. }
-                | LegacyDiagnosticKind::InvalidRelease { .. }
-                | LegacyDiagnosticKind::UseAfterRelease { .. }
-                | LegacyDiagnosticKind::KindMismatchedRelease { .. }
-                | LegacyDiagnosticKind::UseAfterClose { .. }
-                | LegacyDiagnosticKind::CountedUser { .. }
-        )
-    });
-    let unknown_found = diagnostics.iter().any(|diagnostic| {
-        matches!(
-            diagnostic.kind,
-            LegacyDiagnosticKind::UnknownAlias { .. }
-                | LegacyDiagnosticKind::Unsupported { .. }
-                | LegacyDiagnosticKind::SummaryConflict { .. }
-        )
-    });
-    if unsafe_found {
-        AnalysisStatus::Unsafe
-    } else if unknown_found {
-        AnalysisStatus::Unknown
-    } else {
-        AnalysisStatus::Safe
-    }
+    // Card W45-USER-CONTRACT-PLUGINS: the fold of each diagnostic's verdict.
+    verdict::classify(diagnostics)
 }
 
 /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: what decides a collection's

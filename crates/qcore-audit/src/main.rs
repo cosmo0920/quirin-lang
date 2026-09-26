@@ -10,6 +10,7 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::no_build::USAGE);
         eprintln!("       {}", qcore_audit::contract_pin::USAGE);
         eprintln!("       {}", qcore_audit::revision_compare::USAGE);
+        eprintln!("       {}", qcore_audit::plugin_cli::USAGE);
         return ExitCode::FAILURE;
     };
     if path == "prepare" {
@@ -41,6 +42,20 @@ fn main() -> ExitCode {
             }
         }
         return qcore_audit::current_cli::main(rest);
+    }
+    if path == "plugin" {
+        // Card W45-USER-CONTRACT-PLUGINS: the resource views of user crates.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::plugin_cli::main(rest);
     }
     if path == "pin" || path == "compare" {
         // Card W45-CONTRACT-REVISION-MODE: write or check contract locks after
@@ -299,9 +314,10 @@ fn main() -> ExitCode {
     match qcore_audit::run_config_with_jobs(&PathBuf::from(path), jobs) {
         Ok(counts) => {
             println!(
-                "{} units: {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
+                "{} units: {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
                 counts.units,
                 counts.safe_units,
+                counts.pending_units,
                 counts.unsafe_units,
                 counts.unknown_units,
                 counts.data_only_units,

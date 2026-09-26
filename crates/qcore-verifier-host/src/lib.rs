@@ -48,6 +48,11 @@ pub use confinement::{AdmittedPath, Confinement, ConfinementPolicy, PathAccess, 
 pub mod execution_policy;
 pub use execution_policy::{EXECUTION_POLICY_VERSION, ExecutionPolicy, ExecutionPolicyError};
 
+// Card W45-USER-CONTRACT-PLUGINS: a checker plugin's answer, classified into
+// the four-value verdict by the certificate firewall.
+pub mod plugin_firewall;
+pub use plugin_firewall::{CounterexampleChecker, PluginClaim};
+
 pub mod process_quota;
 pub use process_quota::{
     DeclaredKindRole, MAX_EXECUTION_PROCESSES, MechanismAvailability, MechanismProbe, ProcessQuota,
@@ -2192,11 +2197,35 @@ impl VerifierRegistry {
         task: &VerificationTask,
         checker: Option<&dyn WitnessChecker>,
     ) -> VerificationOutcome {
+        match self.dispatch_v2(request, task) {
+            Ok((manifest, response)) => {
+                self.check_response_v2(manifest, request, task, checker, response)
+            }
+            Err(refusal) => *refusal,
+        }
+    }
+
+    /// The gates and the provider call of [`Self::verify_v2`], up to the
+    /// firewall: the provider's raw response, or the refusal that stopped the
+    /// request first. Card W45-USER-CONTRACT-PLUGINS reads the raw proposal
+    /// through this, so the plugin firewall (`plugin_firewall`) can tell an
+    /// uncertified claim from a failure; nothing here accepts anything.
+    fn dispatch_v2(
+        &self,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+    ) -> Result<(&PluginManifest, VerificationResponseV2), Box<VerificationOutcome>> {
+        fn unknown<T>(
+            code: &str,
+            message: impl Into<String>,
+        ) -> Result<T, Box<VerificationOutcome>> {
+            Err(Box::new(VerificationOutcome::unknown(code, message)))
+        }
         if let Err(error) = request.validate() {
-            return VerificationOutcome::unknown("QP001", error.to_string());
+            return unknown("QP001", error.to_string());
         }
         if let Err(error) = task.validate() {
-            return VerificationOutcome::unknown("QP001", error.to_string());
+            return unknown("QP001", error.to_string());
         }
         if task.task_digest() != request.task_digest
             || request.unit != task.unit
@@ -2210,7 +2239,7 @@ impl VerifierRegistry {
                     .cloned()
                     .collect::<Vec<_>>()
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "the request's task digest is not the digest of the core-derived task",
             );
@@ -2218,15 +2247,12 @@ impl VerifierRegistry {
         if let Some(input) = &request.source_effect
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
-                "QP001",
-                "source projection is not bound to the core task",
-            );
+            return unknown("QP001", "source projection is not bound to the core task");
         }
         if let Some(input) = &request.reactor_program
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "reactor program projection is not bound to the core task",
             );
@@ -2234,7 +2260,7 @@ impl VerifierRegistry {
         if let Some(input) = &request.teardown_source
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "teardown source projection is not bound to the core task",
             );
@@ -2242,7 +2268,7 @@ impl VerifierRegistry {
         if let Some(input) = &request.call_use_source
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "call-use source projection is not bound to the core task",
             );
@@ -2250,7 +2276,7 @@ impl VerifierRegistry {
         if let Some(input) = &request.cleanup_replay_source
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "cleanup replay projection is not bound to the core task",
             );
@@ -2258,7 +2284,7 @@ impl VerifierRegistry {
         if let Some(input) = &request.composition_source
             && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP001",
                 "composition projection is not bound to the core task",
             );
@@ -2266,7 +2292,7 @@ impl VerifierRegistry {
         // A capability whose derivation could not classify every construct can
         // never reach `Safe`, whatever a provider returns (design §1.4).
         if task.is_incomplete_for(request.capability) {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP016",
                 format!(
                     "the core derivation is incomplete for `{}`; no witness can discharge \
@@ -2276,13 +2302,13 @@ impl VerifierRegistry {
             );
         }
         let Some(entry) = self.entries.get(&request.plugin_id) else {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP002",
                 format!("plugin `{}` is not installed", request.plugin_id),
             );
         };
         if !entry.enabled {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP003",
                 format!("plugin `{}` is disabled", request.plugin_id),
             );
@@ -2295,19 +2321,18 @@ impl VerifierRegistry {
                 .evidence_versions
                 .contains(&request.evidence_version)
         {
-            return VerificationOutcome::unknown("QP004", "incompatible protocol version");
+            return unknown("QP004", "incompatible protocol version");
         }
         if !manifest.supports(request.capability, &request.target) {
-            return VerificationOutcome::unknown(
+            return unknown(
                 "QP005",
                 "plugin does not declare the requested capability and target profile",
             );
         }
-        let response = match entry.provider.verify_v2(request) {
-            Ok(response) => response,
-            Err(error) => return VerificationOutcome::unknown("QP006", error.to_string()),
-        };
-        self.check_response_v2(manifest, request, task, checker, response)
+        match entry.provider.verify_v2(request) {
+            Ok(response) => Ok((manifest, response)),
+            Err(error) => unknown("QP006", error.to_string()),
+        }
     }
 
     fn check_response_v2(

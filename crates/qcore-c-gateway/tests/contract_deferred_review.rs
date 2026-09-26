@@ -1,7 +1,9 @@
 //! Card W45-CONTRACT-DEFERRED-REVIEW — a declared contract, or one of its
-//! clauses, awaiting human review holds every call site that would apply it
-//! at `Unknown`, under the dedicated `awaiting-human-review` reason
-//! (`docs/reports/w45-contract-deferred-review/README.md`).
+//! clauses, awaiting human review holds every call site that would apply it,
+//! under the dedicated `awaiting-human-review` reason
+//! (`docs/reports/w45-contract-deferred-review/README.md`). Since card
+//! W45-USER-CONTRACT-PLUGINS a function whose only unresolved diagnostics are
+//! held calls is `Pending` (never `Safe`, below `Unknown`); it was `Unknown`.
 //!
 //! **The family is held out.** A `k_*` API unrelated to every production
 //! library, declared inline: no fixture file and no production contract moves.
@@ -119,7 +121,7 @@ fn safe_with_the_contract_and_unknown_awaiting_review_without_it() {
     // The whole contract deferred.
     let deferred = analyse(BALANCED, &load(&close_deferred()));
     let w = function(&deferred, "w");
-    assert_eq!(w.status, AnalysisStatus::Unknown);
+    assert_eq!(w.status, AnalysisStatus::Pending);
     assert_eq!(held(w), ["k_close"]);
     assert!(unsupported(w).contains(&hold_description("k_close")));
     // Only the load-bearing clause deferred.
@@ -129,7 +131,7 @@ fn safe_with_the_contract_and_unknown_awaiting_review_without_it() {
             "ensures normal resource_released(h, nonnull);",
         )),
     );
-    assert_eq!(function(&clause, "w").status, AnalysisStatus::Unknown);
+    assert_eq!(function(&clause, "w").status, AnalysisStatus::Pending);
     assert_eq!(held(function(&clause, "w")), ["k_close"]);
 }
 
@@ -144,12 +146,12 @@ fn a_deferred_clause_is_never_silently_dropped() {
     ] {
         let summary = analyse(BALANCED, &load(&clause_deferred(clause)));
         let w = function(&summary, "w");
-        assert_eq!(w.status, AnalysisStatus::Unknown, "{clause}");
+        assert_eq!(w.status, AnalysisStatus::Pending, "{clause}");
         assert_eq!(held(w), ["k_close"], "{clause}");
     }
 }
 
-/// A would-be provisional `Unsafe` through a deferred contract is `Unknown`.
+/// A would-be provisional `Unsafe` through a deferred contract is `Pending`.
 #[test]
 fn a_deferred_contract_accuses_nothing() {
     // The deferred release: the double release the bare contract alleges, and
@@ -163,7 +165,7 @@ fn a_deferred_contract_accuses_nothing() {
     for body in [TWICE, BALANCED] {
         let summary = analyse(body, &deferred);
         let w = function(&summary, "w");
-        assert_eq!(w.status, AnalysisStatus::Unknown, "{body}");
+        assert_eq!(w.status, AnalysisStatus::Pending, "{body}");
         assert!(!held(w).is_empty(), "{body}");
         assert!(
             w.diagnostics.iter().all(|diagnostic| matches!(
@@ -185,7 +187,7 @@ fn a_deferred_contract_accuses_nothing() {
         "    ensures normal resource_review_pending(resource_return_owned(nullable), \"why\");",
     ));
     let summary = analyse(LEAKED, &open_deferred);
-    assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
+    assert_eq!(function(&summary, "w").status, AnalysisStatus::Pending);
     assert_eq!(held(function(&summary, "w")), ["k_open"]);
 }
 
@@ -224,7 +226,7 @@ fn a_defined_callee_does_not_lift_the_hold_from_its_callers() {
     ]))
     .unwrap();
     let summary = analyze_legacy_c_translation_unit(&source, "w", &contracts).unwrap();
-    assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
+    assert_eq!(function(&summary, "w").status, AnalysisStatus::Pending);
     assert_eq!(held(function(&summary, "w")), ["k_close"]);
 }
 
@@ -276,7 +278,7 @@ fn a_child_inheriting_a_deferred_clause_is_held_at_its_own_call_sites() {
     let source = "void *k_open(void);\nvoid app_close(void *h, int n);\n\
                   void w(void) { void *h; h = k_open(); if (!h) { return; } app_close(h, 0); }";
     let summary = analyze_legacy_c_translation_unit(source, "w", &contracts).unwrap();
-    assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
+    assert_eq!(function(&summary, "w").status, AnalysisStatus::Pending);
     assert_eq!(held(function(&summary, "w")), ["app_close"]);
 }
 
@@ -300,7 +302,12 @@ fn the_unit_reason_names_the_held_calls_under_their_own_code() {
         ..Default::default()
     };
     match analyze_unrestricted_c11(&unit, "w", &load(&close_deferred())).unwrap() {
-        UnrestrictedLegacyResult::Unknown { reason, .. } => {
+        result @ UnrestrictedLegacyResult::Unknown { .. } => {
+            // Card W45-USER-CONTRACT-PLUGINS: the unit is `Pending`.
+            assert_eq!(result.verdict(), qcore_schemas::verdict::Verdict::Pending);
+            let UnrestrictedLegacyResult::Unknown { reason, .. } = result else {
+                unreachable!()
+            };
             assert!(
                 reason.ends_with(", 1 call(s) held awaiting human review"),
                 "{reason}"
@@ -356,7 +363,7 @@ fn a_parenthesised_call_of_a_pending_callee_is_held() {
     // Deferred, it is held under the review reason, never a leak.
     let deferred = analyse(&parenthesised, &load(&close_deferred()));
     let w = function(&deferred, "w");
-    assert_eq!(w.status, AnalysisStatus::Unknown);
+    assert_eq!(w.status, AnalysisStatus::Pending);
     assert_eq!(held(w), ["k_close"]);
     assert!(
         !w.diagnostics

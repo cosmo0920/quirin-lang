@@ -5647,6 +5647,8 @@ fn legacy_status_label(status: &AnalysisStatus) -> &'static str {
         AnalysisStatus::Safe => "safe",
         AnalysisStatus::Unsafe => "unsafe",
         AnalysisStatus::Unknown => "unknown",
+        // Card W45-USER-CONTRACT-PLUGINS: no CT fixture holds a call.
+        AnalysisStatus::Pending => "pending",
     }
 }
 

@@ -139,6 +139,8 @@ fn outcome_of(body: &str, name: &str) -> (&'static str, Vec<String>) {
             AnalysisStatus::Safe => "Safe",
             AnalysisStatus::Unsafe => "Unsafe",
             AnalysisStatus::Unknown => "Unknown",
+            // Card W45-USER-CONTRACT-PLUGINS: no fixture here holds a call.
+            AnalysisStatus::Pending => "Pending",
         }
     };
     (status, keys)

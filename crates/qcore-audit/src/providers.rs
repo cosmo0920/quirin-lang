@@ -42,6 +42,14 @@
 //! the unchanged manifest loader. A selection equal to a hand-written
 //! manifest therefore loads the same environment, keyed the same way.
 //!
+//! **User load paths (card W45-USER-CONTRACT-PLUGINS).** A load path that
+//! extends a shipped one (`qcore_contract::load_path_manifest`) adds the
+//! user's own crates. Every selected module is then lowered as a
+//! `crate:module` reference, since a shipped crate's files do not sit beside
+//! the user's manifest; a user module that declares a function a shipped crate
+//! also declares refuses unless the manifest overrides it explicitly, and each
+//! override is recorded ([`crate::user_plugins`]).
+//!
 //! Lean model: `proof/QCore/ProviderSelection.lean`.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -51,7 +59,9 @@ use std::path::{Path, PathBuf};
 use qcore_contract::contract_inclusion::{
     CONTRACT_CRATE_PREFIX, EXECUTABLE_CONTRACT_CRATE_PREFIX, uses_contract_inclusion,
 };
-use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
+use qcore_contract::load_path_manifest::{
+    LoadPathExtension, LoadPathManifest, load_contract_load_path_manifest,
+};
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
 use serde_json::{Value, json};
@@ -120,6 +130,9 @@ pub struct ResolvedProviders {
     manifest_text: String,
     load_path_sha256: String,
     sources: BTreeSet<SelectionSource>,
+    /// Card W45-USER-CONTRACT-PLUGINS: the user load path's additions and the
+    /// overrides this selection applies; `None` for a shipped load path.
+    user: Option<(LoadPathExtension, Value)>,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -181,6 +194,12 @@ pub fn resolve_providers(
         .map_err(|error| format!("contract load path {}: {error}", load_path.display()))?;
     let manifest: LoadPathManifest =
         load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
+    // Card W45-USER-CONTRACT-PLUGINS: a shipped crate of a user load path has
+    // its root beside the extended manifest, not beside this one.
+    let shipped_directory = manifest
+        .extension
+        .as_ref()
+        .and_then(|extension| extension.base.parent().map(Path::to_path_buf));
     let known = || {
         manifest
             .contract_roots
@@ -274,7 +293,11 @@ pub fn resolve_providers(
         let root = manifest
             .contract_roots
             .get(&name)
-            .and_then(|root| root.strip_prefix(directory).ok())
+            .and_then(|root| {
+                root.strip_prefix(directory)
+                    .ok()
+                    .or_else(|| root.strip_prefix(shipped_directory.as_deref()?).ok())
+            })
             .map(crate::repository_path)
             .ok_or_else(|| format!("provider `{name}` has no contract root"))?;
         closure.insert(
@@ -314,13 +337,22 @@ pub fn resolve_providers(
              only `{CONTRACT_CRATE_PREFIX}*` crates"
         ));
     }
+    let user = match &manifest.extension {
+        Some(extension) => Some((
+            extension.clone(),
+            crate::user_plugins::check_overrides(&manifest, extension, &modules)?,
+        )),
+        None => None,
+    };
     let lowered = LoweredManifest {
         schema_version: 2,
         load_path: &format!("{directory_name}/{file_name}"),
         modules: modules
             .iter()
             .map(|module| {
-                if module.uses_inclusion {
+                // Card W45-USER-CONTRACT-PLUGINS: on a user load path every
+                // module is a `crate:module` reference.
+                if module.uses_inclusion || user.is_some() {
                     format!("{}:{}", module.crate_name, module.module)
                 } else {
                     format!(
@@ -345,6 +377,7 @@ pub fn resolve_providers(
         manifest_text,
         load_path_sha256: sha256_hex(&load_path_bytes),
         sources: BTreeSet::from([source]),
+        user,
     })
 }
 
@@ -393,7 +426,15 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
     };
     let mut crates = serde_json::Map::new();
     let mut union = Vec::new();
-    for name in manifest.contract_roots.keys() {
+    // Card W45-USER-CONTRACT-PLUGINS: on a user load path only the user's own
+    // crates are probed; the extended load path's views are its own.
+    let probed = manifest.contract_roots.keys().filter(|name| {
+        manifest
+            .extension
+            .as_ref()
+            .is_none_or(|extension| extension.user_crates.contains(*name))
+    });
+    for name in probed {
         let krate = manifest
             .load_path
             .crate_named(name)
@@ -500,6 +541,13 @@ impl ResolvedProviders {
         self.kind
     }
 
+    /// Card W45-USER-CONTRACT-PLUGINS: the user load path's additions, when
+    /// the selection was resolved on one.
+    #[must_use]
+    pub fn extension(&self) -> Option<&LoadPathExtension> {
+        self.user.as_ref().map(|(extension, _)| extension)
+    }
+
     /// Crate names of the dependency closure, sorted.
     pub fn closure_names(&self) -> impl Iterator<Item = &str> {
         self.closure.iter().map(|krate| krate.name.as_str())
@@ -521,11 +569,15 @@ impl ResolvedProviders {
             "modules": self.modules.iter().map(|module| json!({
                 "crate": module.crate_name, "module": module.module,
                 "sha256": module.sha256,
-                "loaded_as": if module.uses_inclusion { "reference" } else { "path" },
+                "loaded_as": if module.uses_inclusion || self.user.is_some() { "reference" } else { "path" },
             })).collect::<Vec<_>>(),
             "lowered_manifest_sha256": sha256_hex(self.manifest_text.as_bytes()),
             "rule": "each entry is NAME (the crate's declared resource view: the owned modules the resource-contract loader accepts, generated and checked by providers/contracts.py, in load-path order) or NAME:MODULE; with no selection, a contracts-only run selects every load-path crate whole (selection all-loaded); the dependency closure is resolved, recorded and is the include resolution scope, and a dependency's own modules are not selected by being a dependency; the selection is lowered to the schema-2 manifest recorded as `contract_manifest` and loaded by the unchanged manifest loader",
         });
+        // Card W45-USER-CONTRACT-PLUGINS: omitted for a shipped load path.
+        if let Some((_, user)) = &self.user {
+            record["user_load_path"] = user.clone();
+        }
         if let Some(path) = profile_manifest {
             record["profile_contract_manifest"] = json!({
                 "path": path,
@@ -548,6 +600,8 @@ pub struct ContractInput {
     manifest_path: PathBuf,
     manifest_text: String,
     providers: Option<Value>,
+    /// Card W45-USER-CONTRACT-PLUGINS: a user load path's additions.
+    extension: Option<LoadPathExtension>,
 }
 
 impl ContractInput {
@@ -557,6 +611,7 @@ impl ContractInput {
             manifest_path: path.to_path_buf(),
             manifest_text: fs::read_to_string(path).map_err(|error| error.to_string())?,
             providers: None,
+            extension: None,
         })
     }
 
@@ -568,6 +623,7 @@ impl ContractInput {
             manifest_path: resolved.manifest_path().to_path_buf(),
             manifest_text: resolved.manifest_text().to_owned(),
             providers: Some(resolved.record(profile_manifest)),
+            extension: resolved.extension().cloned(),
         }
     }
 
@@ -585,6 +641,13 @@ impl ContractInput {
     #[must_use]
     pub fn provider_record(&self) -> Option<&Value> {
         self.providers.as_ref()
+    }
+
+    /// Card W45-USER-CONTRACT-PLUGINS: the user load path's additions (its
+    /// checker bindings among them), when providers were resolved on one.
+    #[must_use]
+    pub fn extension(&self) -> Option<&LoadPathExtension> {
+        self.extension.as_ref()
     }
 
     /// Load the environment with the unchanged manifest loader.
