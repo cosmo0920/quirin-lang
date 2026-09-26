@@ -1,0 +1,13 @@
+[wd] RETRY_CREATE n=1
+[wd] TIME dispatch 1790433786.138024744
+[wd] DISPATCH_RETRY n=1 task_id=0 attempts=1
+[wd] RETRY_CREATE n=2
+[wd] TIME dispatch 1790433788.134742734
+[wd] DISPATCH_RETRY n=2 task_id=0 attempts=2
+[wd] RETRY_CREATE n=3
+[wd] TIME dispatch 1790433791.134319682
+[wd] DISPATCH_RETRY n=3 task_id=0 attempts=3
+[wd] RETRY_CREATE n=4
+[wd] TIME dropped 1790433791.144625539
+[wd] DROPPED (cannot be retried) n=1
+[wd] SUMMARY run=C3 dispatches=3 forced=0 reschedules=0 retry_creates=4 dropped=1 max_attempts=3

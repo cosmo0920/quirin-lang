@@ -1,0 +1,70 @@
+{
+  "card": "W45-FB-ENGINE-PROGRESS",
+  "base": "37e1b82d926bac7bb614034ea73a915d5580104b",
+  "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "closes": [],
+  "does_not_close": ["FB-BACKLOG-CUSTODY", "FB-BACKLOG-ACCOUNTING", "FB-RETRY-LIFETIME"],
+  "plan_card": {
+    "id": "FB-ENGINE-PROGRESS",
+    "first_stage": "done: census of 121 slice loops, 1 recursion cycle and 5 revisit sites at 046accf6; E1-E3 observed-local with controls C1-C3",
+    "implementation": "not cut here; registered as W45-FB-ENGINE-PROGRESS-MEASURE"
+  },
+  "registered": [
+    {
+      "id": "W45-FB-ENGINE-PROGRESS-MEASURE",
+      "title": "Checked counted-loop measure for the engine slice (the FB-ENGINE-PROGRESS implementation card)",
+      "why": "The census (docs/reports/w45-fb-engine-progress/census/census.json) finds 29 of 121 slice loops whose bound is a local counted-loop shape (3 against a constant, 11 against an unwritten local/parameter/field, 10 against a uint16_t count, 1 right-shift, 4 do-while(0)), 87 whose bound is a list length that needs a list-finiteness contract premise, and 4 with no measure. W45-FB-ENGINE-PROGRESS cut no implementation: a measure is a new analyzer rule with a Lean theorem, and the card was measurement-first.",
+      "discharge": "Property: for a `for` loop whose counter is a local integer set to c0 in the init clause, tested `counter < B` where B is a literal or macro constant, a local or formal not assigned or address-taken in the loop, or a uint16_t value, advanced by exactly one `counter++` per iteration and not otherwise written or address-taken in the body, the checker records the bound B - c0 as a checked measure (Rust rule plus a registered Lean theorem that the measure is non-negative and strictly decreases). It records a bound fact beside the resource verdict and moves no verdict; no progress verdict. Slice: src/flb_engine.c handle_output_events (:909, accepted, <= FLB_ENGINE_OUTPUT_EVENT_BATCH_SIZE = 1), src/flb_input_chunk.c flb_input_chunk_get_direct_routes (:2286, accepted, <= 65535), src/flb_task.c flb_task_create (:652, accepted, <= 65535). Refusing controls, each Unknown: plugins/in_storage_backlog/sb.c cb_queue_chunks (:611, no counter), src/flb_scheduler.c ipow (:237, without an exp >= 0 precondition), random_uniform (:106). Corpus byte-identical unless attributed.",
+      "source": "docs/reports/w45-fb-engine-progress/README.md"
+    },
+    {
+      "id": "W45-FB-BACKLOG-TRANSIENT-STICKY-ERROR",
+      "title": "One transient fstat failure leaves the backlog collector without yielding: observed-local at 046accf6",
+      "why": "E2: on an unmodified Debug build at 046accf6, gdb made ONE collector-originated cio_file_update_size (lib/chunkio/src/cio_file.c:853) take its failure arm (fs_size = 0, CIO_ERROR). _cio_file_up returns CIO_ERROR there without closing the descriptor it just opened (cio_file.c:853-856), so every later cio_chunk_up_force of that chunk failed at 'file descriptor already exists' (cio_file.c:827-830; 11,999 such log lines), and cb_queue_chunks (sb.c:611-722) entered once and did not return across 12,000 observations (6.8 s, 0 flush-timer dispatches). Control C2 (one transient open failure, which leaves no descriptor) queued all 13 chunks and yielded 10 of 10 passes. Injected-premise native observation, NOT an upstream defect or production-hang claim; no Quirin verdict moves.",
+      "discharge": "The investigation question is discharged observed-local. A production-relevant claim needs an unforced trigger (a real fstat failure on an open chunk descriptor, or the mmap-failure arm, see W45-FB-CIO-MAP-FAILED-STATE) on a pinned build; the semantic bound is W45-FB-ENGINE-PROGRESS-MEASURE's refusing control and stays Unknown.",
+      "source": "docs/reports/w45-fb-engine-progress/README.md"
+    },
+    {
+      "id": "W45-FB-RETRY-UNSPENT-RESCHEDULE",
+      "title": "A retry whose chunk cannot be brought up is rescheduled without spending an attempt: observed-local",
+      "why": "E3: gdb set the result of flb_input_chunk_set_up to -1 in flb_engine_dispatch_retry (src/flb_engine_dispatch.c:114-115) on every retry dispatch (the value cio_chunk_up returns at storage.max_chunks_up, cio_file.c:837-841). With retry_limit 3 the retry was dispatched 12 times in 26 s with attempts = 1 throughout, 11 reschedules and no drop; the callback returned each time. Control C3 (no fault) spent attempts 1, 2, 3 and dropped the chunk ('cannot be retried') 5 s after the first retry. Cross-invocation revisit under an injected persistent premise, NOT an upstream defect claim; the source comment (flb_engine_dispatch.c:116-123) states the reschedule is intended.",
+      "discharge": "Observation discharged observed-local. A progress claim needs a stated release premise (up slots eventually free) or a checked policy; no verdict moves.",
+      "source": "docs/reports/w45-fb-engine-progress/README.md"
+    },
+    {
+      "id": "W45-FB-RING-BUFFER-DRAIN-UNBOUNDED",
+      "title": "Ring-buffer collector drain has no per-call batch limit (census EP-L047, unresolved)",
+      "why": "flb_input_chunk_ring_buffer_collector's inner `while (1)` (src/flb_input_chunk.c:3746-3780) runs on the engine thread and exits only when the ring buffer is empty or the input pauses; threaded inputs write the ring buffer concurrently. Under PR (no concurrent producer) it is bounded by the ring buffer's capacity; without it no bound holds. Not exercised natively.",
+      "discharge": "A native run with a threaded input producing at or above the drain rate, recording the drain's iterations per call and engine flush dispatches, with a quiescent-producer control; or a reading that establishes a producer-side bound.",
+      "source": "docs/reports/w45-fb-engine-progress/census/census.json"
+    },
+    {
+      "id": "W45-FB-SCHED-RANDOM-RANGE",
+      "title": "random_uniform's rejection loop needs 1 <= range <= RAND_MAX (census EP-L096, unresolved)",
+      "why": "src/flb_scheduler.c:106-108 terminates with probability 1 only when range = min(cap, base * 2^n) - base + 1 lies in [1, RAND_MAX]; range = 0 (cap = base - 1) divides by zero at :102, before the loop, and limit = 0 (a condition that is always true) needs range > RAND_MAX, reachable only by int overflow. A grep of src/ at 046accf6 found no ordering check between scheduler.cap and scheduler.base (source reading only).",
+      "discharge": "A reading of every configuration path that sets sched_base/sched_cap establishing the range premise, or a native trace with scheduler.cap < scheduler.base recording the outcome, with a default-configuration control.",
+      "source": "docs/reports/w45-fb-engine-progress/census/census.json"
+    },
+    {
+      "id": "W45-FB-ENGINE-REVISITS-UNEXERCISED",
+      "title": "Cross-invocation revisit sites EP-V2, EP-V3, EP-V4 not exercised",
+      "why": "Census revisit rows: EP-V2 retry deferred without spending an attempt while flush_in_flight >= flush_in_flight_limit (src/flb_engine_dispatch.c:101-111), EP-V3 a chunk whose flush yields no buffer or tag skipped on every flush (flb_engine_dispatch.c:396-421), EP-V4 a request that cannot be scheduled re-added to requests_wait every frame (src/flb_scheduler.c:193-228). Each callback returns; each revisit ends only if its premise is released.",
+      "discharge": "Per site, a native trace under the persistent premise with a control, as E3/C3 did for EP-V1, or a reading that the premise is always released.",
+      "source": "docs/reports/w45-fb-engine-progress/census/census.json"
+    },
+    {
+      "id": "W45-FB-CIO-MAP-FAILED-STATE",
+      "title": "After an mmap failure the chunk may read as up with map = MAP_FAILED (source reading, out of scope)",
+      "why": "Source reading at 046accf6, not exercised: cio_file_native_map assigns cf->map = mmap(...) and returns CIO_ERROR on MAP_FAILED without resetting cf->map (lib/chunkio/src/cio_file_unix.c:100-106); cio_file_native_is_mapped tests cf->map != NULL (include/chunkio/cio_file_native.h:34), and _cio_file_up leaves the descriptor open on CIO_ERROR (cio_file.c:863-882), so cio_chunk_is_up could report the chunk up with an invalid map. Found while reading the progress candidate; a memory-safety question for a ChunkIO custody card, not a progress finding and not an upstream defect claim.",
+      "discharge": "A native trace forcing one real mmap failure (not a gdb early return) on a backlog chunk, recording cio_chunk_is_up and the next access, with a control; or a reading that the state cannot be reached.",
+      "source": "docs/reports/w45-fb-engine-progress/README.md"
+    },
+    {
+      "id": "W45-FB-BACKLOG-EXIT-WRAPPERS",
+      "title": "sb_destroy_backlogs unlinks a queue before destroying it, so its own wrappers are not removed (source reading, out of scope)",
+      "why": "Source reading at 046accf6: sb_destroy_backlogs (plugins/in_storage_backlog/sb.c:185-193) removes the backlog from context->backlogs (:188) before sb_destroy_backlog (:190), whose sb_remove_chunk_from_segregated_backlogs walks context->backlogs (:255), so the destroyed queue's own wrappers are neither unlinked nor freed before flb_free(backlog). Exit path only; a custody question for FB-BACKLOG-CUSTODY, not a progress finding and not an upstream defect claim.",
+      "discharge": "An exit-time trace (ASan leak report or wrapper counts) with a fan-out fixture and a control, or a reading that another path frees the wrappers.",
+      "source": "docs/reports/w45-fb-engine-progress/census/census.json"
+    }
+  ]
+}
