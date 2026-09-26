@@ -1,0 +1,194 @@
+Breakpoint 1 at 0x16bb7b: file /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_output.c, line 892.
+Breakpoint 2 at 0x1685ba: file /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_output.c, line 289.
+Breakpoint 3 at 0x18c72f: file /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_task.c, line 906.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+Fluent Bit v5.1.3
+* Copyright (C) 2015-2026 The Fluent Bit Authors
+* Fluent Bit is a CNCF graduated project under the Fluent organization
+* https://fluentbit.io
+
+______ _                  _    ______ _ _           _____  __  
+|  ___| |                | |   | ___ (_) |         |  ___|/  | 
+| |_  | |_   _  ___ _ __ | |_  | |_/ /_| |_  __   _|___ \ `| | 
+|  _| | | | | |/ _ \ '_ \| __| | ___ \ | __| \ \ / /   \ \ | | 
+| |   | | |_| |  __/ | | | |_  | |_/ / | |_   \ V //\__/ /_| |_
+\_|   |_|\__,_|\___|_| |_|\__| \____/|_|\__|   \_/ \____(_)___/
+
+
+C2: simulated FLB_OUTPUT_SYNCHRONOUS on output instance 0x55555686be30
+[2026/09/26 12:51:32.574] [ info] Configuration:
+[2026/09/26 12:51:32.574] [ info]  flush time     | 1.000000 seconds
+[2026/09/26 12:51:32.574] [ info]  grace          | 5 seconds
+[2026/09/26 12:51:32.574] [ info]  daemon         | 0
+[2026/09/26 12:51:32.574] [ info] ___________
+[2026/09/26 12:51:32.574] [ info]  inputs:
+[2026/09/26 12:51:32.574] [ info]      dummy
+[2026/09/26 12:51:32.574] [ info] ___________
+[2026/09/26 12:51:32.574] [ info]  filters:
+[2026/09/26 12:51:32.574] [ info] ___________
+[2026/09/26 12:51:32.574] [ info]  outputs:
+[2026/09/26 12:51:32.574] [ info]      retry.0
+[2026/09/26 12:51:32.574] [ info] ___________
+[2026/09/26 12:51:32.574] [ info]  collectors:
+[New Thread 0x7ffff64fa6c0 (LWP 2075201)]
+[New Thread 0x7ffff5cf96c0 (LWP 2075202)]
+[2026/09/26 12:51:32.575] [ info] [fluent bit] version=5.1.3, commit=864c3d97f3, pid=2075185
+[2026/09/26 12:51:32.575] [debug] [engine] coroutine stack size: 65536 bytes (64.0K)
+[2026/09/26 12:51:32.575] [ info] [storage] ver=1.5.4, type=memory, sync=normal, checksum=off, max_chunks_up=128
+[2026/09/26 12:51:32.575] [ info] [simd    ] SSE2
+[2026/09/26 12:51:32.575] [ info] [cmetrics] version=2.2.2
+[2026/09/26 12:51:32.575] [ info] [ctraces ] version=0.7.1
+[2026/09/26 12:51:32.575] [ info] [input:dummy:dummy.0] initializing
+[2026/09/26 12:51:32.575] [ info] [input:dummy:dummy.0] storage_strategy='memory' (memory only)
+[2026/09/26 12:51:32.575] [debug] [dummy:dummy.0] created event channels: read=21 write=22
+[2026/09/26 12:51:32.575] [debug] [retry:retry.0] created event channels: read=23 write=24
+[2026/09/26 12:51:32.575] [ info] [sp] stream processor started
+[2026/09/26 12:51:32.575] [ info] [engine] Shutdown Grace Period=5, Shutdown Input Grace Period=2
+[2026/09/26 12:51:34.125] [debug] [task] created task=0x7ffff0030b30 id=0 OK
+[Switching to Thread 0x7ffff64fa6c0 (LWP 2075201)]
+C2: task 0x7ffff0030b30 users=1 queued_task=(nil) retry=(nil)
+[2026/09/26 12:51:34.126] [error] [/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_output.c:290 errno=25] Inappropriate ioctl for device
+[2026/09/26 12:51:35.125] [debug] [task] created task=0x7ffff0030fa0 id=1 OK
+[2026/09/26 12:51:35.126] [debug] [output:retry:retry.0] retry 1/3
+[2026/09/26 12:51:35.126] [debug] [out flush] cb_destroy coro_id=0
+[2026/09/26 12:51:35.126] [debug] [retry] new retry created for task_id=1 attempts=1
+[2026/09/26 12:51:35.126] [ warn] [engine] failed to flush chunk '2075185-1790394694.126762884.flb', retry in 8 seconds: task_id=1, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:36.125] [debug] [task] created task=0x7ffff0031830 id=2 OK
+[2026/09/26 12:51:36.126] [debug] [output:retry:retry.0] retry 2/3
+[2026/09/26 12:51:36.126] [debug] [out flush] cb_destroy coro_id=1
+[2026/09/26 12:51:36.126] [debug] [retry] new retry created for task_id=2 attempts=1
+[2026/09/26 12:51:36.126] [ warn] [engine] failed to flush chunk '2075185-1790394695.126163206.flb', retry in 6 seconds: task_id=2, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:37.125] [debug] [task] created task=0x7ffff0031e90 id=3 OK
+[2026/09/26 12:51:37.126] [debug] [output:retry:retry.0] retry 3/3
+[2026/09/26 12:51:37.126] [debug] [out flush] cb_destroy coro_id=2
+[2026/09/26 12:51:37.126] [debug] [retry] new retry created for task_id=3 attempts=1
+[2026/09/26 12:51:37.126] [ warn] [engine] failed to flush chunk '2075185-1790394696.126088114.flb', retry in 8 seconds: task_id=3, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:38.125] [debug] [task] created task=0x7ffff00324d0 id=4 OK
+[2026/09/26 12:51:38.126] [debug] [output:retry:retry.0] flush
+[2026/09/26 12:51:38.126] [debug] [out flush] cb_destroy coro_id=3
+[2026/09/26 12:51:38.126] [debug] [task] destroy task=0x7ffff00324d0 (task_id=4)
+[2026/09/26 12:51:39.125] [debug] [task] created task=0x7ffff00324d0 id=4 OK
+[2026/09/26 12:51:39.126] [debug] [output:retry:retry.0] retry 1/3
+[2026/09/26 12:51:39.126] [debug] [out flush] cb_destroy coro_id=4
+[2026/09/26 12:51:39.126] [debug] [retry] new retry created for task_id=4 attempts=1
+[2026/09/26 12:51:39.126] [ warn] [engine] failed to flush chunk '2075185-1790394698.126059167.flb', retry in 9 seconds: task_id=4, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:40.125] [debug] [task] created task=0x7ffff00301b0 id=5 OK
+[2026/09/26 12:51:40.126] [debug] [output:retry:retry.0] retry 2/3
+[2026/09/26 12:51:40.126] [debug] [out flush] cb_destroy coro_id=5
+[2026/09/26 12:51:40.126] [debug] [retry] new retry created for task_id=5 attempts=1
+[2026/09/26 12:51:40.126] [ warn] [engine] failed to flush chunk '2075185-1790394699.126170455.flb', retry in 7 seconds: task_id=5, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:41.125] [debug] [task] created task=0x7ffff00307f0 id=6 OK
+[2026/09/26 12:51:41.126] [debug] [output:retry:retry.0] retry 3/3
+[2026/09/26 12:51:41.126] [debug] [out flush] cb_destroy coro_id=6
+[2026/09/26 12:51:41.126] [debug] [retry] new retry created for task_id=6 attempts=1
+[2026/09/26 12:51:41.126] [ warn] [engine] failed to flush chunk '2075185-1790394700.126210118.flb', retry in 9 seconds: task_id=6, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:42.125] [debug] [task] created task=0x7ffff0032ed0 id=7 OK
+[2026/09/26 12:51:42.126] [debug] [output:retry:retry.0] flush
+[2026/09/26 12:51:42.126] [debug] [out flush] cb_destroy coro_id=7
+[2026/09/26 12:51:42.126] [ info] [engine] flush chunk '2075185-1790394695.126163206.flb' succeeded at retry 1: task_id=2, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:42.126] [debug] [task] destroy task=0x7ffff0031830 (task_id=2)
+[2026/09/26 12:51:42.126] [debug] [output:retry:retry.0] retry 1/3
+[2026/09/26 12:51:42.126] [debug] [out flush] cb_destroy coro_id=8
+[2026/09/26 12:51:42.126] [debug] [retry] new retry created for task_id=7 attempts=1
+[2026/09/26 12:51:42.126] [ warn] [engine] failed to flush chunk '2075185-1790394701.125994251.flb', retry in 7 seconds: task_id=7, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:43.126] [debug] [task] created task=0x7ffff0031830 id=2 OK
+[2026/09/26 12:51:43.126] [debug] [output:retry:retry.0] retry 2/3
+[2026/09/26 12:51:43.126] [debug] [out flush] cb_destroy coro_id=9
+[2026/09/26 12:51:43.126] [debug] [task] task_id=1 reached retry-attempts limit 1/1
+[2026/09/26 12:51:43.126] [error] [engine] chunk '2075185-1790394694.126762884.flb' cannot be retried: task_id=1, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:43.126] [debug] [task] destroy task=0x7ffff0030fa0 (task_id=1)
+[2026/09/26 12:51:43.126] [debug] [output:retry:retry.0] retry 3/3
+[2026/09/26 12:51:43.126] [debug] [out flush] cb_destroy coro_id=10
+[2026/09/26 12:51:43.126] [debug] [retry] new retry created for task_id=2 attempts=1
+[2026/09/26 12:51:43.126] [ warn] [engine] failed to flush chunk '2075185-1790394702.126077096.flb', retry in 11 seconds: task_id=2, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:44.125] [debug] [task] created task=0x7ffff0031510 id=1 OK
+[2026/09/26 12:51:44.126] [debug] [output:retry:retry.0] flush
+[2026/09/26 12:51:44.126] [debug] [out flush] cb_destroy coro_id=11
+[2026/09/26 12:51:44.126] [debug] [task] destroy task=0x7ffff0031510 (task_id=1)
+
+Thread 1 "fluent-bit" received signal SIGTERM, Terminated.
+[2026/09/26 12:51:44] [engine] caught signal (SIGTERM)
+[2026/09/26 12:51:44.849] [debug] [task] created task=0x7ffff0031510 id=1 OK
+[2026/09/26 12:51:44.849] [ warn] [engine] service will shutdown in max 5 seconds
+[2026/09/26 12:51:44.850] [debug] [engine] task 0 already scheduled to run, not re-scheduling it.
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff0031fe0 for task 3
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff0032010 for task 4
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff0030300 for task 5
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff00308f0 for task 6
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff0032ea0 for task 7
+[2026/09/26 12:51:44.850] [debug] [engine] re-scheduled retry=0x7ffff0031170 for task 2
+[2026/09/26 12:51:44.850] [debug] [engine] task 1 already scheduled to run, not re-scheduling it.
+[2026/09/26 12:51:44.850] [ info] [engine] pausing all inputs..
+[2026/09/26 12:51:44.850] [ info] [input] pausing dummy.0
+[2026/09/26 12:51:44.850] [debug] [output:retry:retry.0] retry 1/3
+[2026/09/26 12:51:44.850] [debug] [out flush] cb_destroy coro_id=12
+[2026/09/26 12:51:44.850] [debug] [retry] new retry created for task_id=1 attempts=1
+[2026/09/26 12:51:44.850] [ warn] [engine] failed to flush chunk '2075185-1790394704.126189804.flb', retry in 1 seconds: task_id=1, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:44.850] [debug] [output:retry:retry.0] retry 2/3
+[2026/09/26 12:51:44.850] [debug] [out flush] cb_destroy coro_id=13
+[2026/09/26 12:51:44.850] [debug] [task] task_id=3 reached retry-attempts limit 1/1
+[2026/09/26 12:51:44.850] [error] [engine] chunk '2075185-1790394696.126088114.flb' cannot be retried: task_id=3, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:44.850] [debug] [task] destroy task=0x7ffff0031e90 (task_id=3)
+[2026/09/26 12:51:44.850] [debug] [output:retry:retry.0] retry 3/3
+[2026/09/26 12:51:44.850] [debug] [out flush] cb_destroy coro_id=14
+[2026/09/26 12:51:44.850] [debug] [task] task_id=4 reached retry-attempts limit 1/1
+[2026/09/26 12:51:44.850] [error] [engine] chunk '2075185-1790394698.126059167.flb' cannot be retried: task_id=4, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:44.850] [debug] [task] destroy task=0x7ffff00324d0 (task_id=4)
+[2026/09/26 12:51:44.850] [debug] [output:retry:retry.0] flush
+[2026/09/26 12:51:44.850] [debug] [out flush] cb_destroy coro_id=15
+[2026/09/26 12:51:44.850] [ info] [engine] flush chunk '2075185-1790394699.126170455.flb' succeeded at retry 1: task_id=5, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:44.850] [debug] [task] destroy task=0x7ffff00301b0 (task_id=5)
+[2026/09/26 12:51:44.850] [debug] [output:retry:retry.0] retry 1/3
+[2026/09/26 12:51:44.850] [debug] [out flush] cb_destroy coro_id=16
+[2026/09/26 12:51:44.850] [debug] [task] task_id=6 reached retry-attempts limit 1/1
+[2026/09/26 12:51:44.850] [error] [engine] chunk '2075185-1790394700.126210118.flb' cannot be retried: task_id=6, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:44.851] [debug] [task] destroy task=0x7ffff00307f0 (task_id=6)
+[2026/09/26 12:51:44.851] [debug] [output:retry:retry.0] retry 2/3
+[2026/09/26 12:51:44.851] [debug] [out flush] cb_destroy coro_id=17
+[2026/09/26 12:51:44.851] [debug] [task] task_id=7 reached retry-attempts limit 1/1
+[2026/09/26 12:51:44.851] [error] [engine] chunk '2075185-1790394701.125994251.flb' cannot be retried: task_id=7, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:44.851] [debug] [task] destroy task=0x7ffff0032ed0 (task_id=7)
+[2026/09/26 12:51:44.851] [debug] [output:retry:retry.0] retry 3/3
+[2026/09/26 12:51:44.851] [debug] [out flush] cb_destroy coro_id=18
+[2026/09/26 12:51:44.851] [debug] [task] task_id=2 reached retry-attempts limit 1/1
+[2026/09/26 12:51:44.851] [error] [engine] chunk '2075185-1790394702.126077096.flb' cannot be retried: task_id=2, input=dummy.0 > output=retry.0
+[2026/09/26 12:51:44.851] [debug] [task] destroy task=0x7ffff0031830 (task_id=2)
+[2026/09/26 12:51:45.125] [ info] [engine] pending chunk count: memory=2, filesystem=0; grace_timer=1
+[2026/09/26 12:51:45.126] [ info] [task] dummy/dummy.0 has 2 pending task(s):
+[2026/09/26 12:51:45.126] [ info] [task]   task_id=0 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:45.126] [ info] [task]   task_id=1 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:45.126] [debug] [output:retry:retry.0] flush
+[2026/09/26 12:51:45.126] [debug] [out flush] cb_destroy coro_id=19
+[2026/09/26 12:51:45.126] [ info] [engine] flush chunk '2075185-1790394704.126189804.flb' succeeded at retry 1: task_id=1, input=dummy.0 > output=retry.0 (out_id=0)
+[2026/09/26 12:51:45.126] [debug] [task] destroy task=0x7ffff0031510 (task_id=1)
+[2026/09/26 12:51:46.125] [ info] [engine] pending chunk count: memory=1, filesystem=0; grace_timer=2
+[2026/09/26 12:51:46.125] [ info] [task] dummy/dummy.0 has 1 pending task(s):
+[2026/09/26 12:51:46.125] [ info] [task]   task_id=0 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:47.125] [ info] [engine] pending chunk count: memory=1, filesystem=0; grace_timer=3
+[2026/09/26 12:51:47.125] [ info] [task] dummy/dummy.0 has 1 pending task(s):
+[2026/09/26 12:51:47.125] [ info] [task]   task_id=0 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:48.125] [ info] [engine] pending chunk count: memory=1, filesystem=0; grace_timer=4
+[2026/09/26 12:51:48.125] [ info] [task] dummy/dummy.0 has 1 pending task(s):
+[2026/09/26 12:51:48.125] [ info] [task]   task_id=0 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:49.125] [ info] [engine] pending chunk count: memory=1, filesystem=0; grace_timer=5
+[2026/09/26 12:51:49.125] [ info] [task] dummy/dummy.0 has 1 pending task(s):
+[2026/09/26 12:51:49.125] [ info] [task]   task_id=0 still running on route(s): retry/retry.0 
+[2026/09/26 12:51:49.125] [ info] [engine] service has stopped (1 pending tasks)
+[2026/09/26 12:51:49.125] [ info] [input] pausing dummy.0
+C2: task 0x7ffff0030b30 destroyed, users=1
+#0  flb_task_destroy (task=0x7ffff0030b30, del=0) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_task.c:906
+#1  0x00005555556db28c in flb_engine_destroy_tasks (tasks=0x55555685d918) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_engine.c:134
+#2  0x00005555556a36ad in flb_input_instance_destroy (ins=0x55555685d720) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_input.c:1231
+#3  0x00005555556a5ef6 in flb_input_exit_all (config=0x555556840340) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_input.c:2142
+#4  0x00005555556dd176 in flb_engine_shutdown (config=0x555556840340) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_engine.c:1650
+#5  0x00005555556dc7d4 in flb_engine_start (config=0x555556840340) at /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-retry-fault-injection/attempt-1/src/src/flb_engine.c:1525
+[2026/09/26 12:51:49.138] [debug] [task] destroy task=0x7ffff0030b30 (task_id=0)
+[Thread 0x7ffff64fa6c0 (LWP 2075201) exited]
+[Thread 0x7ffff5cf96c0 (LWP 2075202) exited]
+[0] [[1790394697.126063837, {}], {"message"=>"dummy"}]
+[0] [[1790394695.126130404, {}], {"message"=>"dummy"}]
+[0] [[1790394703.126220433, {}], {"message"=>"dummy"}]
+[0] [[1790394699.126099281, {}], {"message"=>"dummy"}]
+[0] [[1790394704.126158425, {}], {"message"=>"dummy"}]
+[Inferior 1 (process 2075185) exited normally]

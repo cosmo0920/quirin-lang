@@ -1,0 +1,164 @@
+{
+  "card": "W45-FB-RETRY-FAULT-INJECTION",
+  "kind": "native_observation_only",
+  "quirin_base": {
+    "worktree_head_at_run": "5e9630feb75308ac13629775b439cb64f6729b30",
+    "main": "5e9630feb75308ac13629775b439cb64f6729b30",
+    "note": "no analyzer/contract/provider/Lean change; no Quirin verdict moves from any native observation here"
+  },
+  "source": {
+    "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "user_checkout": "/home/cosmo/Documents/GitHub/fluent-bit",
+    "user_checkout_head_verified": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "no_source_change": true,
+    "checkout_never_written_or_rebuilt_by_this_card": true
+  },
+  "binary": {
+    "path": "private/w45-fb/w45-fb-retry-fault-injection/attempt-1/build/bin/fluent-bit (outside this worktree, under the repository's private/ tree; prepared before this card, not rebuilt by it)",
+    "sha256": "fc5ab4b5ac970ac3f22b833c4b9d89be00ff2fa7bc280995b4abf783b2b87d33",
+    "sha256_verified_before_run_batch": true,
+    "toolchain": "Clang 21.1.8, Debug, -O0 -g3 -fno-omit-frame-pointer, -DFLB_OUT_RETRY=On",
+    "build_logs": "private/w45-fb/w45-fb-retry-fault-injection/attempt-1/logs/ (build.exit=0, configure.exit=0; prepared before this card)"
+  },
+  "fixture": {
+    "command_template": "gdb -q -batch -x <script> --args <bin> -i dummy -p rate=1 -o retry -p retry=3 -m '*' -f 1 -v",
+    "input": "in-tree dummy (rate=1)",
+    "output": "in-tree retry (retry=3), the only in-tree output that returns FLB_RETRY for the first N flushes of each chunk",
+    "no_storage_path": true,
+    "no_network_destinations": true
+  },
+  "harness_bug_found_and_fixed": {
+    "symptom": "SIGTERM appeared to have no effect: no '[engine] caught signal' line, no shutdown sequence, process exited near-instantly with no teardown breakpoints firing",
+    "root_cause": "the driver captured $! after `timeout ... gdb ... &`, which is timeout's PID, not gdb's; `pgrep -P` on that PID returned gdb itself, so kill -TERM was sent to gdb (killing the whole ptraced tree) instead of to the fluent-bit inferior",
+    "diagnosis": "a plain (non-gdb) SIGTERM control run showed normal ~50ms graceful shutdown with full teardown logging; a minimal gdb script breaking only on flb_sched_destroy/flb_config_exit confirmed those breakpoints fire once the PID resolution is corrected",
+    "fix": "resolve gdb's real PID as the child of the timeout PID, then the inferior's PID as the child of gdb's PID, before sending SIGTERM",
+    "scope": "this is a bug in this card's own run harness, not in any script from the run guide; all candidate runs recorded below post-date the fix"
+  },
+  "candidates": {
+    "FB-RETRY-TIMER-ALLOC-FAULT": {
+      "run_guide_id": "C1",
+      "classification": "observed-local",
+      "fault_point": "src/flb_scheduler.c:283 (request-allocation null check in flb_sched_request_create; timer already linked into sched->timers at :275-280/889)",
+      "mechanism": "gdb breakpoint at flb_scheduler.c:283 (fires once via a guard variable) sets `request = 0` for the fault run only, forcing the same branch a real flb_malloc failure would take; a second breakpoint at flb_sched_destroy walks sched->timers at teardown",
+      "simulation": false,
+      "control": {
+        "log": "runs/c1-control.log",
+        "sha256": "3d1a84f08ed673dcb320b610edfa853887d580c7924956d3cdea8819f331b013",
+        "key_lines": [
+          "C1: timer 0x7ffff0031060 linked, request 0x7ffff00349a0",
+          "C1: 4 timers on sched->timers at teardown (types 2 and 4 only; no type=0/data=(nil), no leftover type=1)"
+        ]
+      },
+      "fault": {
+        "log": "runs/c1-fault.log",
+        "sha256": "2597de13d83587c3007e5d58264ec4214025374d94b368b693acd21197a4b406",
+        "key_lines": [
+          "C1: timer 0x7ffff0031060 linked, request (nil)",
+          "[ warn] [engine] retry for chunk '...' could not be scheduled: input=dummy.0 > output=retry.0",
+          "C1: timer 0x7ffff0031060 type=0 data=(nil)",
+          "C1: 5 timers on sched->timers at teardown"
+        ]
+      },
+      "contrary_guard_from_codex_report": "not a permanent leak, because teardown reclaims the timer -- HELD (timer freed inside flb_sched_destroy, not before, not after process exit)",
+      "gdb_scripts": ["runs/gdb/c1-control.gdb", "runs/gdb/c1-fault.gdb"]
+    },
+    "FB-SINGLEPLEX-QUEUE-ALLOC-FAULT": {
+      "run_guide_id": "C2",
+      "classification": "observed-local",
+      "simulation": true,
+      "simulation_caveat": "no in-tree output plugin sets FLB_OUTPUT_SYNCHRONOUS (2048) at this revision; forced on the retry output instance via a breakpoint at flb_output.c:892",
+      "fault_point": "src/flb_output.c:289 (queued_task null check in flb_output_task_queue_enqueue, after the temporary user was added at :368)",
+      "mechanism": "gdb breakpoint at flb_output.c:289 sets `queued_task = 0` for the fault run only; run twice, first-dispatch condition `$c2_done == 0` and retry condition `$c2_done == 0 && retry != 0`",
+      "variants": {
+        "first_dispatch": {
+          "control": {
+            "log": "runs/c2-control-first.log",
+            "sha256": "9c7f2936ed4b5dc0a7896811d8adb1c3a53d91a7a44fd215e8d9d88d9ec7daad",
+            "key_lines": [
+              "C2: task 0x7ffff0030b30 users=1 queued_task=0x7ffff00369f0 retry=(nil)",
+              "C2: task 0x7ffff0030b30 destroyed, users=0 (at 12:51:17.140, before SIGTERM at 12:51:18)"
+            ]
+          },
+          "fault": {
+            "log": "runs/c2-fault-first.log",
+            "sha256": "c9cf51604652d3fb8795ed288b387d4bfe2814b3c278cdbb68b74916f97aa939",
+            "key_lines": [
+              "C2: task 0x7ffff0030b30 users=1 queued_task=(nil) retry=(nil)",
+              "[ info] [engine] service has stopped (1 pending tasks)",
+              "C2: task 0x7ffff0030b30 destroyed, users=1 (at grace-period expiry, 5s after SIGTERM)"
+            ]
+          }
+        },
+        "retry": {
+          "control": {
+            "log": "runs/c2-control-retry.log",
+            "sha256": "103e65fed69d41121570dbd83ef949690645b1c3cae977fc4d604fad74b27ed7",
+            "key_lines": [
+              "C2(retry): task 0x7ffff0030b30 users=1 queued_task=0x7ffff0033fb0 retry=0x7ffff0030cd0",
+              "C2(retry): task 0x7ffff0030b30 destroyed, users=0 (via flb_task_users_release -> flb_task_destroy, before SIGTERM)"
+            ]
+          },
+          "fault": {
+            "log": "runs/c2-fault-retry.log",
+            "sha256": "af7f320c62958986dc59fe15001130e0017d561267659e906c32644780b08bd9",
+            "key_lines": [
+              "C2(retry): task 0x7ffff0030b30 users=1 queued_task=(nil) retry=0x7ffff0030cd0",
+              "[ info] [engine] service has stopped (1 pending tasks)",
+              "C2(retry): task 0x7ffff0030b30 destroyed, users=1 (at grace-period expiry)"
+            ]
+          }
+        }
+      },
+      "contrary_guard_from_codex_report": "input teardown ultimately destroys tasks despite the count, so the bounded consequence is retention until teardown, not a leak -- HELD in both variants",
+      "gdb_scripts": ["runs/gdb/c2-control-first.gdb", "runs/gdb/c2-fault-first.gdb", "runs/gdb/c2-control-retry.gdb", "runs/gdb/c2-fault-retry.gdb"]
+    },
+    "FB-SINGLEPLEX-RETRY-FLUSH-FAULT": {
+      "run_guide_id": "C3",
+      "classification": "observed-local",
+      "simulation": true,
+      "simulation_caveat": "same forced FLB_OUTPUT_SYNCHRONOUS as C2",
+      "fault_point": "src/flb_output.c:330 (flb_output_task_flush call in flb_output_task_queue_flush_one, after the temporary user was dropped at :329)",
+      "mechanism": "breakpoint at flb_output_task_flush's entry, conditioned on the queued task's pointer, forces `return -1` at entry for the fault run only, simulating a flush-creation/pipe-write failure",
+      "script_fix": {
+        "guide_text": "type `step` to enter flb_output_task_flush, then `return -1`, answer y, then `continue`",
+        "problem": "the call at flb_output.c:330-332 spans multiple source lines for argument evaluation; a single `step` from the line-330 breakpoint only advances within that same call's argument lines rather than entering the callee, so `return -1` would pop the wrong frame",
+        "evidence_of_failure": "runs/c3-fault-attempt1-discarded.log (stalled at the intermediate source line, SIGTERM sent but no clean resume)",
+        "fix": "added a second breakpoint directly at the entry of flb_output_task_flush, conditioned on the queued task's pointer, and issued `return -1` there instead",
+        "fault_point_unchanged": true
+      },
+      "queueing_setup": "with the output forced synchronous, flb_output_task_flush's non-threaded arm is asynchronous by construction (writes an out_flush pointer through config->ch_self_events and returns 0 immediately; the callback runs on a later event-loop tick), so a second task's scheduled retry naturally lands in the singleplex queue's pending list behind the one still in-progress -- no extra input or raised rate was needed",
+      "control": {
+        "log": "runs/c3-control.log",
+        "sha256": "c91f819b7b0121de2ee3b8d2fa595ffb9f3d96dab6eedae830a2a8c35d33ca49",
+        "key_lines": [
+          "C3: queued retry flush of task 0x7ffff0030b30, users=0",
+          "[ info] [engine] flush chunk '...' succeeded at retry 1: task_id=0",
+          "C3: task 0x7ffff0030b30 destroyed, users=0 (flb_task_users_release -> flb_task_destroy, del=1, ~14s before SIGTERM)"
+        ]
+      },
+      "fault": {
+        "log": "runs/c3-fault.log",
+        "sha256": "7dd34f3e59188692825e39f039c96ccd2f05650c3e7850ebbbe13f440db7fce3",
+        "key_lines": [
+          "C3: queued retry flush of task 0x7ffff0030b30, users=0 (before forced flush failure)",
+          "C3: forcing flb_output_task_flush(task=0x7ffff0030b30) to return -1 at entry",
+          "[debug] [retry] task retry=0x7ffff0030cd0, invalidated from the scheduler",
+          "[task] dummy/dummy.0 has 2 pending task(s): task_id=0 still running on route(s): retry/retry.0",
+          "C3: task 0x7ffff0030b30 destroyed, users=0 (flb_engine_destroy_tasks <- flb_input_instance_destroy, del=0, at grace-period expiry, 5s after SIGTERM)"
+        ]
+      },
+      "discarded_attempt": {
+        "log": "runs/c3-fault-attempt1-discarded.log",
+        "sha256": "5d2d45d14910e98fbc13535e829342a726532b31fac824a04d3b6dbb214614d1",
+        "note": "literal guide recipe (single `step` from the multi-line call site) stalled before reaching SIGTERM; superseded by the fixed script above"
+      },
+      "contrary_guard_from_codex_report": "other active routes or retries are a contrary guard; this run deliberately used a single-route setup so that guard does not apply, isolating the candidate. The teardown-reaps-everything guard held: freed at input-instance destruction (del=0), not permanently lost, no crash or use-after-free",
+      "gdb_scripts": ["runs/gdb/c3-control.gdb", "runs/gdb/c3-fault.gdb"]
+    }
+  },
+  "out_of_scope": {
+    "FB-STALE-COMPLETION-REACHABILITY": "C4; not attempted by this card, per the run guide and per the task brief",
+    "FB-RETRY-LIFETIME": "the separate semantic implementation card; stays open. A native observation does not discharge a Rust/Lean implementation card, and none was made here."
+  },
+  "boundaries": "Each fault is an injected premise (a gdb-forced null pointer or forced return value) on a locally built, unmodified-source debug binary observed under a debugger. These are local observations of the three named candidates under those premises. They are NOT upstream defect claims, NOT confirmed production bugs, and NOT statements about production failure rates. Nothing was sent upstream. No Quirin verdict is derived from these observations. C2 and C3 additionally simulate a synchronous output flag that no in-tree plugin sets."
+}
