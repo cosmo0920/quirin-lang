@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 449
+  "named_followups": 451
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6736,7 +6736,7 @@
   "workspace_tests": 5903,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 203,
+  "lean_audits": 204,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6776,6 +6776,7 @@
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
    "AuditContainerPublication.lean",
+   "AuditContainerRootReach.lean",
    "AuditContractBundle.lean",
    "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
@@ -6948,7 +6949,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-gateway-memo-key/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
