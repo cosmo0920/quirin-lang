@@ -1,0 +1,23 @@
+[
+ {
+  "id": "W45-FORMAL-ENTRY-UNLINK",
+  "title": "Rule 10d refuses mk_list_del of a formal's own object whose container is unnamed",
+  "why": "Card W45-CONTAINER-ROOT-REACH admits the foreign unlink only for an element reached through a container this body names and may modify (U1). A destructor that unlinks and releases the object its caller passed (`cio_chunk_close`, `flb_input_chunk_destroy`, `flb_task_retry_destroy`, `flb_sched_request_destroy`, ...) names no container, and the caller may hold that object published, as an untracked element or as its own custody; a `Released` summary would accuse a caller that published it (release after escape) although the callee unlinked it first. Size: corpus 12 sites in 11 functions (9 rule-10d leaves, 3 behind a refused call), slice 10 sites in 9 functions (8 rule-10d leaves). DISCHARGE: a summary vocabulary stating 'unlinks, then releases, its argument' that a caller applies to a published object as an unlink followed by a release, with Lean parity and the arbiter.",
+  "source": "docs/reports/w45-container-root-reach/README.md",
+  "recorded_by": "W45-CONTAINER-ROOT-REACH"
+ },
+ {
+  "id": "W45-FOREIGN-UNLINK-SUMMARY",
+  "title": "A body with an admitted foreign unlink publishes no summary and establishes no specification",
+  "why": "Gateway constraint 10d rule 6 withholds every summary of a body that takes custody of an element of a container its caller supplied: a caller holding the container would otherwise read `Borrowed` (or `Released`) for it and keep restoring its own published objects that the callee released (QCore.ContainerRootReach.the_borrowed_summary_would_hide_a_double_release). Its measured cost: `flb_task_queue_destroy` (slice) keeps one leaf, the unresolved identity of the `queue` it frees, which W4 would otherwise discharge as `Released(queue)`; `flb_output_task_singleplex_flush_next` has no summary for OR-6. DISCHARGE: a summary clause stating that the call may release what a formal's containers hold, applied at callers by dropping every published site reachable through that argument (the published set loses them; a later unlink refuses), with Lean parity.",
+  "source": "docs/reports/w45-container-root-reach/README.md",
+  "recorded_by": "W45-CONTAINER-ROOT-REACH"
+ },
+ {
+  "id": "W45-FOREIGN-UNLINK-RESIDUAL-SHAPES",
+  "title": "Foreign unlinks rule 6 still refuses, and the member uses of a foreign element",
+  "why": "Measured after W45-CONTAINER-ROOT-REACH: (1) an element of a container a callee returned, Monkey's thread-local lists (`mk_server_listen_free`, `mk_vhost_fdt_worker_exit`: 2 corpus leaves); (2) an element name also written another way (`mk_vhost_destroy`'s `halias = NULL`: 1 corpus leaf); (3) an element name bound over a local list as well as a formal's (`schedule_request_promote`: 3 slice leaves, one on the local list itself); (4) an embedded array element (`header_lookup`'s `&p->headers[i]`: 1 corpus leaf); (5) a static head, which rule 5l does not read (0 census sites); (6) after an admitted foreign unlink the element is a tracked identity whose pointer members this body never linked, so a member release or null test of it (`mk_mem_free(file->path)`, `if (ep->file)`, `queued_task->retry`) refuses and poisons the element before its own release: in 8 corpus functions (10 elements) and 2 slice functions the element's release or read keeps an unresolved identity (a third slice function, `sb_destroy_backlogs`, hands its element to the uncontracted `sb_destroy_backlog` first). DISCHARGE: per part, a root premise for a callee's container (a declared static-duration return), an element-binding reader over initialised names, a container-of reader for embedded elements, rule 5l's static heads, and a member-custody premise for an element's unlinked members (the P-B08-SHALLOW analogue), each with Lean parity and the arbiter.",
+  "source": "docs/reports/w45-container-root-reach/README.md",
+  "recorded_by": "W45-CONTAINER-ROOT-REACH"
+ }
+]

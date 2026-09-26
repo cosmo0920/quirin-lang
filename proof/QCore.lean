@@ -248,6 +248,7 @@ import QCore.ListIteration
 import QCore.CheckedSpecification
 import QCore.RefusedCallHandOn
 import QCore.ContainerPublication
+import QCore.ContainerRootReach
 import QCore.CountedUsers
 import QCore.Checkpoints
 

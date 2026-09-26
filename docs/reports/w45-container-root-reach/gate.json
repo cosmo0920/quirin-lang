@@ -1,0 +1,82 @@
+{
+  "card": "W45-CONTAINER-ROOT-REACH",
+  "script": "docs/reports/w45-container-root-reach/scripts/gate.sh",
+  "environment": {
+    "CARGO_INCREMENTAL": "0"
+  },
+  "final": {
+    "commit": "0c44b274",
+    "note": "merged tree (base 12553fb3 + main 675e7289, W45-AUDIT-CHECKPOINTS); every commit after it adds only this file and the report's gate section",
+    "logs": "private/crr/gate-final/",
+    "steps": {
+      "submodule": 0,
+      "tests": 0,
+      "clean-dev": 0,
+      "fmt": 0,
+      "clippy": 0,
+      "reevaluation-probe": 0,
+      "reevaluation-followup": 0,
+      "lean": 0,
+      "python": 0,
+      "docs-index": 0,
+      "contracts-check": 0,
+      "package-build": 0,
+      "package-verify": 0,
+      "provider-python": 0,
+      "provider-tests": 101,
+      "provider-fmt": 0,
+      "provider-clippy": 0,
+      "release-build": 0,
+      "pin-check-046accf6": 0,
+      "pin-check-66910c10": 0,
+      "pin-verify-contracts": 0,
+      "clang-version": 0
+    },
+    "rust_suite": "test binaries: 310 units, 320 summaries; 5937 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out",
+    "rust_suite_log": "private/test-binaries/20260926T122504Z-3088895/summary.json",
+    "lean_audits_passed": 205,
+    "python_tests": 358,
+    "provider_python_tests": 15,
+    "provider_tests": {
+      "gate_step": "exit 101: qcore-provider-conformance configured_audit, pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter (checked_function_contracts 1 against 2); cargo stopped at that binary",
+      "rerun_same_binary": "exit 101, the same test (provider-tests reruns: private/crr/configured-audit-rerun.log)",
+      "rerun_same_binary_single_threaded": "exit 0, 7 passed (private/crr/configured-audit-rerun2.log)",
+      "rerun_step": "exit 101, a different test of the same binary (configured_helper_is_imported_from_its_real_pinned_compile_entry) failed; provider-tests-rerun.log",
+      "rerun_step_no_fail_fast": "exit 0: 129 passed, 0 failed, 1 ignored (provider-tests-nofailfast.log)",
+      "reading": "load-sensitive, not this card's: the fixture's verifier-plugin process has a 5 s timeout and the host load average was 40-47 on 16 CPUs from concurrent cards; which configured_audit test fails varies between runs, it passes single-threaded and in the no-fail-fast rerun, it passed in this card's pre-merge gate, and the card touches no provider or plugin code"
+    },
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)"
+  },
+  "discarded": [
+    {
+      "commit": "e0bb2063",
+      "note": "pre-merge gate: the root Python suite failed on the matrix's derived counts (named_followups 449 against 451, Lean audit files 203 against 204), repaired by regenerating through docs/reports/remaining-d02/build_matrix.py (ec6b005e); the Rust suite failed one test, qcore-verifier-host package_identity a_byte_identical_replacement_is_still_refused, with Spawn(\"Text file busy (os error 26)\"), an ETXTBSY race on a freshly written executable that passes in the final gate. Every other step exited 0, provider tests included.",
+      "logs": "private/crr/gate/",
+      "steps": {
+        "submodule": 0,
+        "tests": 101,
+        "clean-dev": 0,
+        "fmt": 0,
+        "clippy": 0,
+        "reevaluation-probe": 0,
+        "reevaluation-followup": 0,
+        "lean": 0,
+        "python": 1,
+        "docs-index": 0,
+        "contracts-check": 0,
+        "package-build": 0,
+        "package-verify": 0,
+        "provider-python": 0,
+        "provider-tests": 0,
+        "provider-fmt": 0,
+        "provider-clippy": 0,
+        "release-build": 0,
+        "pin-check-046accf6": 0,
+        "pin-check-66910c10": 0,
+        "pin-verify-contracts": 0,
+        "clang-version": 0
+      },
+      "rust_suite": "test binaries: 309 units, 319 summaries; 5918 passed; 1 failed; 11 ignored"
+    }
+  ]
+}

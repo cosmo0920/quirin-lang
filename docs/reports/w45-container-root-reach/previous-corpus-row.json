@@ -1,0 +1,29 @@
+{
+  "note": "W45-FB-BACKLOG-CUSTODY integration, 2026-09-25. The card (measured against docs/reports/w45-fb-retry-lifetime/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-retry-lifetime/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1480 added 99 functions 14 units 5); functions moved (combined): [('cio_memfs_scan_dump', ('Unknown', 'Safe')), ('cio_stats_get', ('Unknown', 'Safe')), ('cio_stats_print_summary', ('Unknown', 'Safe')), ('cio_stream_get', ('Unknown', 'Safe')), ('cio_stream_size_chunks_up', ('Unknown', 'Safe')), ('cmt_labels_count', ('Unknown', 'Safe')), ('is_file_included', ('Unknown', 'Safe')), ('mk_http_error', ('Unknown', 'Unsafe')), ('mk_rconf_meta_get', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unsafe', 'Unknown')), ('mk_vhost_create', ('Unsafe', 'Unknown')), ('mk_vhost_lookup', ('Unknown', 'Safe')), ('mk_vhost_set_property', ('Unsafe', 'Unknown')), ('mk_vhost_set_single', ('Unsafe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 9 functions Unknown to Safe (cio_memfs_scan_dump, cio_stats_get, cio_stats_print_summary, cio_stream_get, cio_stream_size_chunks_up, cmt_labels_count, is_file_included, mk_rconf_meta_get, mk_vhost_lookup); 4 provisional Unsafe to Unknown (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single), their MK-LIST-ADD-BORROWED-PUBLICATION leaks withdrawn by the refused-call hand-on fix; 1 Unknown to provisional Unsafe (mk_http_error, an unclosed open() descriptor, not a defect claim). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-backlog-custody/integration/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 5,
+  "provisional_unsafe": 8,
+  "unknown": 168,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 34,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w45-fb-backlog-custody/integration/artifacts/",
+  "source": "docs/reports/w45-fb-backlog-custody/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-retry-lifetime/integration/artifacts",
+  "unknown_alias_diagnostics": 3570,
+  "unsupported_diagnostics": 41325,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 398,
+    "provisional_unsafe": 9,
+    "unknown": 4427
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 167,
+    "none": 17,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

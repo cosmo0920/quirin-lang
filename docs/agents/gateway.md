@@ -775,12 +775,13 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     unresolved identity, so W4 binds it and derives `Consumed`: **do not** let
     it fall back to the borrowed reading, which is constraint 10's launder. Any
     other container, entry or binding refuses with an unresolved effect: a
-    local or file-scope list does not outlive the call, and a body-acquired
+    local list does not outlive the call (a static one is 10f's), and a body-acquired
     owner would need an owner/child relation `mk_list` does not have. An
     object that owns linked members is published with them withdrawn, never
     cascaded as escaped, because an unlink could not hand them back. A release
     of a published object keeps `release_after_escape`; a `return` of it and
-    an unlink of anything not published on every reaching path refuse. Every
+    an unlink of anything not published on every reaching path refuse (10f
+    admits an element of a formal's container). Every
     route that admits a call as the identity because its modes are `Borrowed`
     (nested calls, desugared conditions, neutral positions, sub-object store
     values) must refuse a container effect (`has_container_effect`). The
@@ -810,3 +811,34 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     proved. A derived custody summary is compared with a declaration's custody
     projection only. `QCore.CountedUsers`;
     [report](../reports/w45-fb-retry-lifetime/README.md).
+
+<a id="constraint-10f"></a>
+
+10f. **A container outlives the call only by a stated root, and an unlinked
+    element is custody taken once.** Card W45-CONTAINER-ROOT-REACH
+    (`legacy_container_publication.rs`, rules 5–6) widens 10d under stated
+    premises. (1) A publication into `&G` or `&G.F…`, `G` an unshadowed
+    object of static storage duration (`PublicationFacts::destinations`),
+    discharges as a caller's container does (P-CRR-STATIC); a list link is
+    additive, so constraint 10's lost-slot argument does not apply, and
+    `G->F` stays refused. (2) `mk_list_del(&E->F)` of an element this body did
+    not publish gives the body live custody of `E` at a fresh site when every
+    write of `E` is a `container_of` binding rule 5l admitted as the
+    statement's final instruction, over an iteration cursor (not a saved
+    successor) or a `(H)->next`/`->prev` lookup, each container rooted at an
+    unrebound formal, a local initialised from one, or a static object; and
+    `E` holds no binding at the unlink. An exit that still holds it leaks it,
+    a second release is a double release, a second unlink refuses, and a
+    publication moves it on. Premises, stated not proved: an object linked in
+    a container is a heap object the container owns (P-CRR-MEMBER), and no
+    call between its binding and the unlink removed or released it
+    (P-CRR-LINKED). (3) A body with such an unlink publishes no summary and
+    establishes no specification (`has_foreign_unlink` in the W4 gate): a
+    caller would read `Borrowed` for the container's formal and keep
+    restoring its own published objects the callee released. **Do not**
+    admit a formal's own object with no named container, a container a
+    callee returned, a local container, an element name written any other
+    way, or an embedded element, and do not drop the summary gate without a
+    caller-side rule that forgets the published sites the call may release.
+    `QCore.ContainerRootReach`;
+    [report](../reports/w45-container-root-reach/README.md).
