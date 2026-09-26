@@ -1433,10 +1433,12 @@ mod tests {
         for (_, bytes) in sections {
             out.extend_from_slice(&bytes);
         }
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL moved the schema to 2, so the
+        // future version is 3.
         assert!(
             Checkpoint::from_bytes(&out)
                 .unwrap_err()
-                .contains("unsupported checkpoint schema version 2")
+                .contains("unsupported checkpoint schema version 3")
         );
     }
 
