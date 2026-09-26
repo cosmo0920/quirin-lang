@@ -421,6 +421,30 @@ impl AuditReport {
                         .collect::<Vec<_>>()
                         .into();
                 }
+                // Card W45-REFUTED-CONTRACT-WITHDRAWAL: what this body refutes
+                // of its own declaration, the input of the refutation table.
+                // Omitted when there is none, so every other row is
+                // byte-identical.
+                if !function.refutations.is_empty() {
+                    row["contract_refutations"] = function
+                        .refutations
+                        .iter()
+                        .map(|refutation| {
+                            json!({
+                                "kind": refutation.kind.as_str(),
+                                "clause": refutation.clause,
+                                "line": refutation.line,
+                                "origin": if refutation.line == 0 {
+                                    Value::Null
+                                } else {
+                                    Self::origin(locations, file, refutation.line)
+                                },
+                                "reason": refutation.reason,
+                            })
+                        })
+                        .collect::<Vec<_>>()
+                        .into();
+                }
                 functions.push(row);
             }
         }

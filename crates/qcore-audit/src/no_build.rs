@@ -604,6 +604,10 @@ pub struct NoBuildAudit {
     root: PathBuf,
     compiler: ClangIdentity,
     contracts: ResourceContracts,
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the loaded contracts before any
+    /// refutation table, and the table the published phase applied.
+    loaded_contracts: ResourceContracts,
+    refuted: qcore_schemas::contract_refutation::RefutationTable,
     pins: crate::contract_revision::PinEvaluation,
     assumed: AssumedConfiguration,
     dependencies: BTreeMap<String, String>,
@@ -627,6 +631,15 @@ pub struct UnitProducts {
     counts: AuditCounts,
     reason: Option<&'static str>,
     file: Value,
+}
+
+impl UnitProducts {
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: this unit's rows, from which a
+    /// phase's refutation table is read.
+    #[must_use]
+    pub fn unit_rows(&self) -> &[Value] {
+        self.report.unit_rows()
+    }
 }
 
 impl NoBuildAudit {
@@ -733,6 +746,8 @@ impl NoBuildAudit {
         Ok(Self {
             root,
             compiler: ClangIdentity::capture()?,
+            loaded_contracts: contracts.clone(),
+            refuted: qcore_schemas::contract_refutation::RefutationTable::new(),
             contracts,
             pins,
             assumed,
@@ -787,6 +802,17 @@ impl NoBuildAudit {
                 .join(" "),
             file: unit.path.clone(),
         })
+    }
+
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: analyse every later unit under
+    /// the loaded contracts with `table` recorded (the empty table restores
+    /// them as loaded).
+    pub fn set_refuted_table(
+        &mut self,
+        table: &qcore_schemas::contract_refutation::RefutationTable,
+    ) {
+        self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
+        self.refuted = table.clone();
     }
 
     /// Analyse one unit without touching the accumulated state.
@@ -1001,6 +1027,11 @@ impl NoBuildAudit {
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
         println!("{}", crate::contract_revision::tally(&revision));
         self.sidecar["contract_revision"] = revision;
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its
+        // digest and the calls it held, tallied and published the same way.
+        let refuted = crate::refuted_contracts::section(&self.refuted, &self.report);
+        println!("{}", crate::refuted_contracts::tally(&refuted));
+        self.sidecar["refuted_contracts"] = refuted;
         // Card W45-USER-CONTRACT-PLUGINS: printed only when a checker ran.
         if self.sidecar["plugin_checks"].is_object() {
             println!(
@@ -1241,25 +1272,50 @@ pub fn run_units(
     for unit in units {
         *counts_per_library.entry(unit.library.as_str()).or_default() += 1;
     }
-    run_ordered(
-        units.iter().collect::<Vec<_>>(),
-        jobs,
-        Some(dispatch),
-        |unit| (unit, audit.evaluate(unit)),
-        |(unit, outcome)| {
-            if printed.as_deref() != Some(unit.library.as_str()) {
-                println!(
-                    "{}: {} selected unit(s)",
-                    unit.library,
-                    counts_per_library[unit.library.as_str()]
-                );
-                printed = Some(unit.library.clone());
-            }
-            print!("{}", outcome.output);
-            products.push(outcome.result?);
-            Ok::<(), String>(())
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
+    // contracts and, when a body refutes its own declaration, phase two under
+    // the refutation table; only the published phase is folded, in unit order.
+    let phases = crate::refuted_contracts::run_two_phases(
+        |table| {
+            audit.set_refuted_table(table);
+            let mut outcomes = Vec::new();
+            let stopped = run_ordered(
+                units.iter().collect::<Vec<_>>(),
+                jobs,
+                Some(dispatch.clone()),
+                |unit| (unit, audit.evaluate(unit)),
+                |(unit, outcome): (&Unit, UnitOutcome)| {
+                    let failed = outcome.result.is_err();
+                    outcomes.push((unit, outcome));
+                    if failed { Err(()) } else { Ok(()) }
+                },
+            )
+            .err();
+            (outcomes, stopped)
         },
-    )?;
+        |outcomes| {
+            crate::refuted_contracts::table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
+        },
+    );
+    audit.set_refuted_table(&phases.applied);
+    for (unit, outcome) in phases.results {
+        if printed.as_deref() != Some(unit.library.as_str()) {
+            println!(
+                "{}: {} selected unit(s)",
+                unit.library,
+                counts_per_library[unit.library.as_str()]
+            );
+            printed = Some(unit.library.clone());
+        }
+        print!("{}", outcome.output);
+        products.push(outcome.result?);
+    }
     for product in products {
         audit.absorb(product)?;
     }

@@ -79,6 +79,10 @@ pub struct CurrentAudit {
     revision: String,
     compiler: ClangIdentity,
     contracts: ResourceContracts,
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the loaded contracts before any
+    /// refutation table, and the table the published phase applied.
+    loaded_contracts: ResourceContracts,
+    refuted: qcore_schemas::contract_refutation::RefutationTable,
     pins: crate::contract_revision::PinEvaluation,
     dependencies: BTreeMap<String, String>,
     source_profile_sha256: String,
@@ -100,6 +104,15 @@ pub struct EntryProducts {
     source: Option<PathBuf>,
     report: AuditReport,
     counts: AuditCounts,
+}
+
+impl EntryProducts {
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: this configuration's unit rows,
+    /// from which a phase's refutation table is read.
+    #[must_use]
+    pub fn unit_rows(&self) -> &[serde_json::Value] {
+        self.report.unit_rows()
+    }
 }
 
 impl CurrentAudit {
@@ -192,6 +205,8 @@ impl CurrentAudit {
             checkout,
             revision,
             compiler: ClangIdentity::capture()?,
+            loaded_contracts: contracts.clone(),
+            refuted: qcore_schemas::contract_refutation::RefutationTable::new(),
             contracts,
             pins,
             dependencies,
@@ -204,6 +219,17 @@ impl CurrentAudit {
 
     pub fn revision(&self) -> &str {
         &self.revision
+    }
+
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: analyse every later unit under
+    /// the loaded contracts with `table` recorded (the empty table restores
+    /// them as loaded).
+    pub fn set_refuted_table(
+        &mut self,
+        table: &qcore_schemas::contract_refutation::RefutationTable,
+    ) {
+        self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
+        self.refuted = table.clone();
     }
 
     /// expected_source is the path in the selected Git checkout corresponding
@@ -491,6 +517,11 @@ impl CurrentAudit {
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
         println!("{}", crate::contract_revision::tally(&revision));
         self.assumptions["contract_revision"] = revision;
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its
+        // digest and the calls it held, tallied and published the same way.
+        let refuted = crate::refuted_contracts::section(&self.refuted, &self.report);
+        println!("{}", crate::refuted_contracts::tally(&refuted));
+        self.assumptions["refuted_contracts"] = refuted;
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
                 fs::create_dir_all(parent).map_err(|error| error.to_string())?;

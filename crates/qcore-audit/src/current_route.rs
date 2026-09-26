@@ -62,6 +62,7 @@ pub struct CurrentRoute<'a> {
 }
 
 /// One configured-route compilation configuration, in selection order.
+#[derive(Clone)]
 struct ConfiguredTask<'a> {
     group: usize,
     library: &'a str,
@@ -244,34 +245,59 @@ pub fn run_current_route(route: &CurrentRoute<'_>) -> Result<bool, String> {
             })
             .collect::<Vec<_>>(),
     );
-    run_ordered(
-        tasks,
-        route.jobs,
-        Some(dispatch),
-        |task| {
-            let group = task.group;
-            let outcome = match (&task.expected_source, task.input) {
-                (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
-                (Ok(expected_source), TaskInput::Configured(entry)) => {
-                    audit.evaluate_entry(task.library, expected_source, entry, task.unresolved)
-                }
-                (Err(error), TaskInput::Configured(_)) => EntryOutcome {
-                    output: String::new(),
-                    result: Err(error.clone()),
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: every task is analysed under the
+    // loaded contracts and, when a body refutes its own declaration, once more
+    // under the refutation table; only the published phase is printed and
+    // folded, in task order, stopping at its first error as before.
+    let phases = crate::refuted_contracts::run_two_phases(
+        |table| {
+            audit.set_refuted_table(table);
+            let mut outcomes = Vec::new();
+            let stopped = run_ordered(
+                tasks.clone(),
+                route.jobs,
+                Some(dispatch.clone()),
+                |task| {
+                    let group = task.group;
+                    let outcome = match (&task.expected_source, task.input) {
+                        (_, TaskInput::Absent(file)) => audit.evaluate_absent(task.library, file),
+                        (Ok(expected_source), TaskInput::Configured(entry)) => audit
+                            .evaluate_entry(task.library, expected_source, entry, task.unresolved),
+                        (Err(error), TaskInput::Configured(_)) => EntryOutcome {
+                            output: String::new(),
+                            result: Err(error.clone()),
+                        },
+                    };
+                    (group, outcome)
                 },
-            };
-            (group, outcome)
+                |(group, outcome): (usize, EntryOutcome)| {
+                    let failed = outcome.result.is_err();
+                    outcomes.push((group, outcome));
+                    if failed { Err(()) } else { Ok(()) }
+                },
+            )
+            .err();
+            (outcomes, stopped)
         },
-        |(group, outcome)| {
-            for header in &headers[printed_headers..=group] {
-                println!("{header}");
-            }
-            printed_headers = printed_headers.max(group + 1);
-            print!("{}", outcome.output);
-            products.push(outcome.result?);
-            Ok::<(), String>(())
+        |outcomes| {
+            crate::refuted_contracts::table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
         },
-    )?;
+    );
+    audit.set_refuted_table(&phases.applied);
+    for (group, outcome) in phases.results {
+        for header in &headers[printed_headers..=group] {
+            println!("{header}");
+        }
+        printed_headers = printed_headers.max(group + 1);
+        print!("{}", outcome.output);
+        products.push(outcome.result?);
+    }
     for header in &headers[printed_headers..] {
         println!("{header}");
     }

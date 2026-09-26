@@ -67,6 +67,12 @@ pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
 #[path = "legacy_pin_hold.rs"]
 pub mod pin_hold;
 
+// Card W45-REFUTED-CONTRACT-WITHDRAWAL: a declared contract its own analysed
+// body refutes is withdrawn from every caller, in its unit and, through the
+// audit's refutation table, in every other unit.
+#[path = "legacy_refuted_contract.rs"]
+pub mod refuted_contract;
+
 // Card W45-USER-CONTRACT-PLUGINS: the four-value verdict. Function and unit
 // statuses are folds of the verdict semigroup; a held call is `Pending`.
 #[path = "legacy_verdict.rs"]
@@ -965,6 +971,10 @@ pub struct LegacyFunctionSummary {
     /// checked against this body. Empty for every function the pass leaves
     /// alone.
     pub counted_users: Vec<counted_users::ClauseRecord>,
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutations of this
+    /// function's declaration by its own body. Empty for every undeclared
+    /// function and every declaration its body does not refute.
+    pub refutations: Vec<refuted_contract::BodyRefutation>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -2517,6 +2527,13 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
     let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the audit's refutation table, read
+    // here because the ABI gate below rebuilds the environment without it.
+    let refuted_table = contracts
+        .refuted_by_body()
+        .keys()
+        .cloned()
+        .collect::<BTreeSet<_>>();
     // Card LOADER-ABI. A declared contract whose parameter/result ABI
     // projections this unit's own C declaration contradicts is withdrawn here,
     // before anything reads either: the call sites are rewritten to a marked
@@ -2578,10 +2595,12 @@ fn analyze_legacy_c_translation_unit_selected_partial(
         callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
     // Card W45-FB-BACKLOG-CUSTODY: a checked specification stays in the
     // environment the gate derives over only while its body establishes it.
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: then every call site of a refuted
+    // declaration is held, and the unit is settled over the held stream.
     let checked_spec::Settled {
         gate,
         withdrawn: withdrawn_specifications,
-    } = checked_spec::settle(&tokens, &scope, contracts);
+    } = refuted_contract::settle(&tokens, &scope, contracts, &refuted_table);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
@@ -2604,6 +2623,10 @@ fn analyze_legacy_c_translation_unit_selected_partial(
                     summary.diagnostics.dedup();
                     summary.status = classify_diagnostics(&summary.diagnostics);
                 }
+                // Card W45-REFUTED-CONTRACT-WITHDRAWAL: what the row records
+                // against its own declaration, for the audit's table.
+                summary.refutations =
+                    refuted_contract::refutations(&summary, derivation.environment());
                 functions.insert(name, summary);
             }
             Err(error @ LegacyCError::MalformedFunction { .. }) => {
@@ -7128,6 +7151,16 @@ impl Parser<'_> {
                 writes: self.refused_writes(&texts),
             };
         }
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: likewise for a declaration its
+        // own analysed body refutes.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| refuted_contract::held_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: refuted_contract::hold_description(callee),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
         // *before* the lexical access gate, so the statement reports why the
         // declaration did not cover it rather than the access the withdrawn
@@ -7596,6 +7629,14 @@ impl Parser<'_> {
             if let Some(callee) = pin_hold::held_callee(function) {
                 return LegacyInstruction::Unknown {
                     description: pin_hold::hold_description(callee),
+                    writes: self.refused_writes(&texts),
+                };
+            }
+            // Card W45-REFUTED-CONTRACT-WITHDRAWAL: likewise for a refuted
+            // declaration.
+            if let Some(callee) = refuted_contract::held_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: refuted_contract::hold_description(callee),
                     writes: self.refused_writes(&texts),
                 };
             }
@@ -10997,6 +11038,7 @@ pub(crate) fn analyze_cfg_with_entry(
             cfg,
             exits,
             counted_users: Vec::new(),
+            refutations: Vec::new(),
         },
         observations,
     )

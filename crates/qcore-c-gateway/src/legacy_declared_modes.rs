@@ -380,6 +380,12 @@ pub(crate) struct ModeAgreement {
 }
 
 impl ModeAgreement {
+    /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the names this gate withdrew,
+    /// which keep this gate's own refusal key in their unit.
+    pub(crate) fn withdrawn_names(&self) -> impl Iterator<Item = &String> {
+        self.withdrawn.keys()
+    }
+
     /// Every decision, as census rows.
     fn rows(&self) -> Vec<ModeAgreementRow> {
         let mut rows = Vec::new();

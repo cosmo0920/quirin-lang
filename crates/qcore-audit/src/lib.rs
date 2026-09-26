@@ -33,6 +33,7 @@ pub mod prepare;
 mod prepare_json;
 pub mod projection;
 pub mod providers;
+pub mod refuted_contracts;
 pub mod report;
 pub mod revision_compare;
 mod source_audit;
@@ -497,29 +498,60 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             .collect::<Vec<_>>(),
     );
     let retain_units = source_contracts.is_some();
-    parallel::run_ordered(
-        tasks,
-        parallel::effective_jobs(jobs),
-        Some(dispatch),
-        |(library, entry)| {
-            let mut out = String::new();
-            let result = configured_unit(ConfiguredUnit {
-                library,
-                entry: &entry,
-                checkout: &checkout,
-                profile: &profile,
-                selected_head: selected_head.as_deref(),
-                compiler: &compiler,
-                task_dependencies: &task_dependencies,
-                contracts: &contracts,
-                source_profile_sha256: &source_profile_sha256,
-                fragment: AuditReport::new(&revision),
-                retain_unit: retain_units,
-                out: &mut out,
-            });
-            (out, result.map(|products| (library, entry, products)))
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
+    // contracts and, when a body refutes its own declaration, phase two under
+    // the refutation table; only the published phase is folded, in unit order.
+    let phases = refuted_contracts::run_two_phases(
+        |table| {
+            let contracts = refuted_contracts::with_table(&contracts, table);
+            let mut outcomes = Vec::new();
+            let stopped = parallel::run_ordered(
+                tasks.clone(),
+                parallel::effective_jobs(jobs),
+                Some(dispatch.clone()),
+                |(library, entry): (&String, CompileEntry)| {
+                    let mut out = String::new();
+                    let result = configured_unit(ConfiguredUnit {
+                        library,
+                        entry: &entry,
+                        checkout: &checkout,
+                        profile: &profile,
+                        selected_head: selected_head.as_deref(),
+                        compiler: &compiler,
+                        task_dependencies: &task_dependencies,
+                        contracts: &contracts,
+                        source_profile_sha256: &source_profile_sha256,
+                        fragment: AuditReport::new(&revision),
+                        retain_unit: retain_units,
+                        out: &mut out,
+                    });
+                    (out, result.map(|products| (library, entry, products)))
+                },
+                |outcome: (
+                    String,
+                    Result<(&String, CompileEntry, UnitProducts), String>,
+                )| {
+                    let failed = outcome.1.is_err();
+                    outcomes.push(outcome);
+                    if failed { Err(()) } else { Ok(()) }
+                },
+            )
+            .err();
+            (outcomes, stopped)
         },
-        |(out, result)| {
+        |outcomes| {
+            refuted_contracts::table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, result)| result.as_ref().ok())
+                    .flat_map(|(_, _, products)| products.report.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
+        },
+    );
+    let refuted_table = phases.applied;
+    for (out, result) in phases.results {
+        {
             print!("{out}");
             let (library, entry, products) = result?;
             let UnitProducts {
@@ -547,9 +579,8 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 };
                 audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
             }
-            Ok::<(), String>(())
-        },
-    )?;
+        }
+    }
     if let Some(audit) = source_contracts {
         report.set_source_contracts(audit.finish());
     }
@@ -604,6 +635,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
     // flexible assumptions, beside the contract sources they are read from.
     assumptions["contract_revision"] = contract_revision::section(&contracts, &pins, &report);
+    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table and the
+    // calls it held.
+    assumptions["refuted_contracts"] = refuted_contracts::section(&refuted_table, &report);
     report.write(&report_path)?;
     fs::write(
         report_path.with_extension("assumptions.json"),

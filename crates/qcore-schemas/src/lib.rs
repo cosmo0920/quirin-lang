@@ -7,6 +7,7 @@
 //! only; the trusted core re-exports these types for compatibility.
 
 pub mod contract;
+pub mod contract_refutation;
 pub mod contract_revision;
 pub mod digest;
 pub mod identity;
