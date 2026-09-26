@@ -1,0 +1,38 @@
+[wd] TIME first-collector-entry 1790433681.135288044
+[wd] ENTER cb_queue_chunks enter=1 returns=0 obs=0 queued=0
+[wd] INJECT one-shot cio_file_native_open -> CIO_ERROR fd=-1 path=/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/run/storage/dummy.0/439332-1790433490.852637696.flb
+[wd] OBS up_force ret=-1 obs=1 enter=1 returns=0 queued=0 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=2 enter=1 returns=0 queued=0 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=3 enter=1 returns=0 queued=1 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=4 enter=1 returns=0 queued=2 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=5 enter=1 returns=0 queued=3 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=6 enter=1 returns=0 queued=4 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=7 enter=1 returns=0 queued=5 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=8 enter=1 returns=0 queued=6 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=9 enter=1 returns=0 queued=7 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=10 enter=1 returns=0 queued=8 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=11 enter=1 returns=0 queued=9 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=12 enter=1 returns=0 queued=10 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=13 enter=1 returns=0 queued=11 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=0 obs=14 enter=1 returns=0 queued=12 fd_exists_arm=0 already_mapped_arm=0
+[wd] RETURN cb_queue_chunks returns=1 enter=1 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=2 returns=1 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=2 enter=2 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=3 returns=2 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=3 enter=3 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=4 returns=3 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=4 enter=4 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=5 returns=4 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=5 enter=5 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=6 returns=5 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=6 enter=6 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=7 returns=6 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=7 enter=7 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=8 returns=7 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=8 enter=8 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=9 returns=8 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=9 enter=9 obs=14 queued=13
+[wd] ENTER cb_queue_chunks enter=10 returns=9 obs=14 queued=13
+[wd] RETURN cb_queue_chunks returns=10 enter=10 obs=14 queued=13
+[wd] TIME summary 1790433690.133798252
+[wd] SUMMARY run=C2 enter=10 returns=10 up_force_obs=14 nonzero=1 injected=1 fd_exists_arm=0 already_mapped_arm=0 queued=13 engine_flushes=9

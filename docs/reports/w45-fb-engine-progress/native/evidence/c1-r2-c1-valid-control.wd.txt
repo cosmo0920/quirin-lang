@@ -1,0 +1,36 @@
+[wd] TIME first-collector-entry 1790433667.138949455
+[wd] ENTER cb_queue_chunks enter=1 returns=0 obs=0 queued=0
+[wd] OBS up_force ret=0 obs=1 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=0 obs=2 enter=1 returns=0 queued=1
+[wd] OBS up_force ret=0 obs=3 enter=1 returns=0 queued=2
+[wd] OBS up_force ret=0 obs=4 enter=1 returns=0 queued=3
+[wd] OBS up_force ret=0 obs=5 enter=1 returns=0 queued=4
+[wd] OBS up_force ret=0 obs=6 enter=1 returns=0 queued=5
+[wd] OBS up_force ret=0 obs=7 enter=1 returns=0 queued=6
+[wd] OBS up_force ret=0 obs=8 enter=1 returns=0 queued=7
+[wd] OBS up_force ret=0 obs=9 enter=1 returns=0 queued=8
+[wd] OBS up_force ret=0 obs=10 enter=1 returns=0 queued=9
+[wd] OBS up_force ret=0 obs=11 enter=1 returns=0 queued=10
+[wd] OBS up_force ret=0 obs=12 enter=1 returns=0 queued=11
+[wd] OBS up_force ret=0 obs=13 enter=1 returns=0 queued=12
+[wd] RETURN cb_queue_chunks returns=1 enter=1 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=2 returns=1 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=2 enter=2 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=3 returns=2 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=3 enter=3 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=4 returns=3 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=4 enter=4 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=5 returns=4 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=5 enter=5 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=6 returns=5 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=6 enter=6 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=7 returns=6 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=7 enter=7 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=8 returns=7 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=8 enter=8 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=9 returns=8 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=9 enter=9 obs=13 queued=13
+[wd] ENTER cb_queue_chunks enter=10 returns=9 obs=13 queued=13
+[wd] RETURN cb_queue_chunks returns=10 enter=10 obs=13 queued=13
+[wd] TIME summary 1790433676.140407493
+[wd] SUMMARY run=C1 enter=10 returns=10 up_force_obs=13 nonzero=0 queued=13 engine_flushes=9

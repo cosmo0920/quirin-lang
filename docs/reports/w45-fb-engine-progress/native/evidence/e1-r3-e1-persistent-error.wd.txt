@@ -1,0 +1,23 @@
+[wd] TIME first-collector-entry 1790433705.137135869
+[wd] ENTER cb_queue_chunks enter=1 returns=0 obs=0 queued=0
+[wd] OBS up_force ret=-1 obs=1 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=2 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=3 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=4 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=5 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=6 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=1000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=2000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=3000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=4000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=5000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=6000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=7000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=8000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=9000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=10000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=11000 enter=1 returns=0 queued=0
+[wd] OBS up_force ret=-1 obs=12000 enter=1 returns=0 queued=0
+[wd] CAP reached: up_force_obs=12000
+[wd] TIME summary 1790433710.255284148
+[wd] SUMMARY run=E1 enter=1 returns=0 up_force_obs=12000 nonzero=12000 injected=12000 queued=0 engine_flushes=0

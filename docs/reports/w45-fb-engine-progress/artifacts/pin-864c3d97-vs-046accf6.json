@@ -1,0 +1,106 @@
+{
+ "old": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit",
+ "new": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/fluent-bit-clang-source",
+ "files": [
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "old_sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+   "new_sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+   "identical": true
+  },
+  {
+   "file": "lib/chunkio/src/cio_file.c",
+   "old_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+   "new_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+   "identical": true
+  },
+  {
+   "file": "lib/chunkio/src/cio_chunk.c",
+   "old_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+   "new_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+   "identical": true
+  },
+  {
+   "file": "lib/chunkio/src/cio_file_unix.c",
+   "old_sha256": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0",
+   "new_sha256": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0",
+   "identical": true
+  },
+  {
+   "file": "src/flb_engine.c",
+   "old_sha256": "8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33",
+   "new_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+   "identical": false,
+   "changed_lines": 36,
+   "hunks": [
+    "@@ -61,0 +62,11 @@",
+    "@@ -582,0 +594,5 @@",
+    "@@ -1159,0 +1176,20 @@"
+   ]
+  },
+  {
+   "file": "src/flb_engine_dispatch.c",
+   "old_sha256": "b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3",
+   "new_sha256": "3fdae998c1ce17d8277881ca3151006fe939e0686d57760fdf999064cc740015",
+   "identical": false,
+   "changed_lines": 30,
+   "hunks": [
+    "@@ -96,0 +97,16 @@",
+    "@@ -247,0 +264,14 @@"
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "old_sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+   "new_sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+   "identical": true
+  },
+  {
+   "file": "src/flb_task.c",
+   "old_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "new_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "identical": true
+  },
+  {
+   "file": "src/flb_output.c",
+   "old_sha256": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819",
+   "new_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+   "identical": false,
+   "changed_lines": 94,
+   "hunks": [
+    "@@ -193,0 +194,3 @@",
+    "@@ -411,0 +415,48 @@",
+    "@@ -433,0 +485,4 @@",
+    "@@ -443 +498,21 @@",
+    "@@ -460,0 +536,3 @@",
+    "@@ -852,0 +931 @@",
+    "@@ -1116,0 +1196,3 @@",
+    "@@ -1693,0 +1776,10 @@"
+   ]
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "old_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+   "new_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+   "identical": false,
+   "changed_lines": 67,
+   "hunks": [
+    "@@ -1920,0 +1921,9 @@",
+    "@@ -2022 +2031,4 @@",
+    "@@ -2887,0 +2900,14 @@",
+    "@@ -2895,0 +2922,11 @@",
+    "@@ -2907,0 +2945,3 @@",
+    "@@ -3274 +3314,3 @@",
+    "@@ -3286,2 +3328,5 @@",
+    "@@ -3289 +3334,10 @@",
+    "@@ -3428,0 +3483,3 @@"
+   ]
+  },
+  {
+   "file": "src/flb_storage.c",
+   "old_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+   "new_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+   "identical": true
+  }
+ ]
+}

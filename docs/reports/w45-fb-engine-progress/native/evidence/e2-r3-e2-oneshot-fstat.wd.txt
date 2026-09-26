@@ -1,0 +1,24 @@
+[wd] TIME first-collector-entry 1790433711.135357242
+[wd] ENTER cb_queue_chunks enter=1 returns=0 obs=0 queued=0
+[wd] INJECT one-shot cio_file_update_size -> CIO_ERROR (fstat failure arm) fd=20 path=/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/run/storage/dummy.0/439332-1790433490.852637696.flb
+[wd] OBS up_force ret=-1 obs=1 enter=1 returns=0 queued=0 fd_exists_arm=0 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=2 enter=1 returns=0 queued=0 fd_exists_arm=1 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=3 enter=1 returns=0 queued=0 fd_exists_arm=2 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=4 enter=1 returns=0 queued=0 fd_exists_arm=3 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=5 enter=1 returns=0 queued=0 fd_exists_arm=4 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=6 enter=1 returns=0 queued=0 fd_exists_arm=5 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=1000 enter=1 returns=0 queued=0 fd_exists_arm=999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=2000 enter=1 returns=0 queued=0 fd_exists_arm=1999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=3000 enter=1 returns=0 queued=0 fd_exists_arm=2999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=4000 enter=1 returns=0 queued=0 fd_exists_arm=3999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=5000 enter=1 returns=0 queued=0 fd_exists_arm=4999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=6000 enter=1 returns=0 queued=0 fd_exists_arm=5999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=7000 enter=1 returns=0 queued=0 fd_exists_arm=6999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=8000 enter=1 returns=0 queued=0 fd_exists_arm=7999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=9000 enter=1 returns=0 queued=0 fd_exists_arm=8999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=10000 enter=1 returns=0 queued=0 fd_exists_arm=9999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=11000 enter=1 returns=0 queued=0 fd_exists_arm=10999 already_mapped_arm=0
+[wd] OBS up_force ret=-1 obs=12000 enter=1 returns=0 queued=0 fd_exists_arm=11999 already_mapped_arm=0
+[wd] CAP reached: up_force_obs=12000
+[wd] TIME summary 1790433717.924912266
+[wd] SUMMARY run=E2 enter=1 returns=0 up_force_obs=12000 nonzero=12000 injected=1 fd_exists_arm=11999 already_mapped_arm=0 queued=0 engine_flushes=0

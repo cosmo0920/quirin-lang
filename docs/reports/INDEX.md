@@ -886,6 +886,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-fb-backlog-fault-injection](w45-fb-backlog-fault-injection/README.md) | W45-FB-BACKLOG-FAULT-INJECTION — native fault-injection observations |
 
+| [w45-fb-engine-progress](w45-fb-engine-progress/README.md) | W45-FB-ENGINE-PROGRESS: do the engine callbacks make progress? |
+
 | [w45-fb-retry-fault-injection](w45-fb-retry-fault-injection/README.md) | W45-FB-RETRY-FAULT-INJECTION — native fault-injection observations (C1-C3) |
 
 | [w45-fb-retry-lifetime](w45-fb-retry-lifetime/README.md) | W45-FB-RETRY-LIFETIME: counted users and container publication, decided on the singleplex queue |

@@ -1,0 +1,330 @@
+{
+ "card": "W45-FB-ENGINE-PROGRESS",
+ "kind": "native observation under injected premises; no Quirin verdict moves",
+ "source": {
+  "revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "user_checkout": "/home/cosmo/Documents/GitHub/fluent-bit (read only)",
+  "clone": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/fluent-bit-clang-source",
+  "clone_method": "quirin-audit prepare: git clone --no-hardlinks --no-checkout, then checkout --detach at the revision (crates/qcore-audit/src/prepare.rs:327-364)",
+  "status_check": "prepare re-run over the same --output after the native build: it refuses a clone whose HEAD differs from the pin, that has tracked changes (git status --porcelain --untracked-files=no) or that borrows objects; exit 0",
+  "status_check_log": "prepare-attempt-1-recheck-after-native-build.log",
+  "status_check_scope": "tracked files; untracked files are not checked (the native build is out of tree)",
+  "no_source_change": true
+ },
+ "toolchain": {
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "cmake": "cmake version 4.2.3",
+  "ninja": "1.13.2",
+  "gdb": "GNU gdb (Ubuntu 17.1-2ubuntu1) 17.1"
+ },
+ "build": {
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug",
+  "configure_command": "cmake -G Ninja -S /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/fluent-bit-clang-source -B /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++ -DFLB_EXAMPLES=Off -DFLB_SHARED_LIB=Off -DFLB_JEMALLOC=Off -DFLB_WASM=Off -DFLB_LUAJIT=Off -DFLB_STREAM_PROCESSOR=Off -DFLB_TESTS_INTERNAL=Off -DFLB_TESTS_RUNTIME=Off",
+  "configure_exit": "0",
+  "build_command": "ninja -C /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug -j 8 fluent-bit",
+  "build_exit": "0",
+  "binary_sha256": "7e535c9e964fe76597cf72f5ef700743fa90b442e917f1aebe6b3658db9a6f00",
+  "binary_version": "Fluent Bit v5.1.3 Git commit: 046accf6aded7906f66a1baf0202da349e521736",
+  "script": "scripts/native-build.sh"
+ },
+ "fixture": {
+  "generator": "scripts/make-fixture.sh (native/conf/phase1-generate.conf)",
+  "generator_exit": "124",
+  "generator_watchdog": "timeout --signal=TERM -k 5 12 (exit 124 expected)",
+  "listing": [
+   "./dummy.0/439332-1790433490.852637696.flb 36864",
+   "./dummy.0/439332-1790433491.125605126.flb 36864",
+   "./dummy.0/439332-1790433492.125661847.flb 36864",
+   "./dummy.0/439332-1790433493.130556069.flb 36864",
+   "./dummy.0/439332-1790433494.125571957.flb 36864",
+   "./dummy.0/439332-1790433495.125698589.flb 36864",
+   "./dummy.0/439332-1790433496.125615286.flb 36864",
+   "./dummy.0/439332-1790433497.125591827.flb 36864",
+   "./dummy.0/439332-1790433498.125620615.flb 36864",
+   "./dummy.0/439332-1790433499.125649764.flb 36864",
+   "./dummy.0/439332-1790433500.125657463.flb 36864",
+   "./dummy.0/439332-1790433501.125619105.flb 36864",
+   "./dummy.0/439332-1790433502.125664745.flb 36864"
+  ],
+  "pristine_sha256_listing_sha256": "76e230f7d3427a5c5b17064056a3b1582883d99fffed81e580023e5909554f77",
+  "restore": "scripts/run-native.sh copies storage-pristine to storage before every backlog run and refuses the run unless the SHA-256 listing of the restored chunks equals the pristine listing"
+ },
+ "runs": [
+  {
+   "experiment": "C1",
+   "role": "valid progressing control",
+   "run": "r2-c1-valid-control",
+   "runner": "scripts/run-native.sh attempt-1 r2-c1-valid-control c1-valid-control.gdb 120",
+   "command": "timeout -k 5 120 gdb -batch -x native/gdb/c1-valid-control.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/phase2-backlog.conf",
+   "watchdog_pid": "443573",
+   "exit": "0",
+   "gdb_script": "native/gdb/c1-valid-control.gdb",
+   "gdb_script_sha256": "f2abea43534a864d14c8d890efa514b5a253bd5fb81c60a12aa2887e96513d68",
+   "config": "native/conf/phase2-backlog.conf",
+   "config_sha256": "bf8da2146e1c3f0bff7f105b35a32ce05701b111124ceee2f068a48e257c66e5",
+   "fixture_restore_sha256": "76e230f7d3427a5c5b17064056a3b1582883d99fffed81e580023e5909554f77",
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/r2-c1-valid-control.log",
+   "log_sha256": "1819e7ea4f294361cffec4870ab613db5d95cd37f4363de50880b1d0bc341cf8",
+   "log_bytes": 19709,
+   "excerpt": "native/evidence/c1-r2-c1-valid-control.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=C1 enter=10 returns=10 up_force_obs=13 nonzero=0 queued=13 engine_flushes=9"
+   ],
+   "wall_clock": [
+    "[wd] TIME first-collector-entry 1790433667.138949455",
+    "[wd] TIME summary 1790433676.140407493"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 13,
+    "fd_exists": 0,
+    "reschedule": 0,
+    "cannot_be_retried": 0,
+    "failed_to_flush": 38
+   }
+  },
+  {
+   "experiment": "E1",
+   "role": "zero-progress failure outcome, persistent CIO_ERROR premise",
+   "run": "r3-e1-persistent-error",
+   "runner": "scripts/run-native.sh attempt-1 r3-e1-persistent-error e1-persistent-error.gdb 150",
+   "command": "timeout -k 5 150 gdb -batch -x native/gdb/e1-persistent-error.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/phase2-backlog.conf",
+   "watchdog_pid": "444618",
+   "exit": "0",
+   "gdb_script": "native/gdb/e1-persistent-error.gdb",
+   "gdb_script_sha256": "21234f2e83b567da58d857fa9eb5e26f7bdbe7f33ca947661f8432356c42c92d",
+   "config": "native/conf/phase2-backlog.conf",
+   "config_sha256": "bf8da2146e1c3f0bff7f105b35a32ce05701b111124ceee2f068a48e257c66e5",
+   "fixture_restore_sha256": "76e230f7d3427a5c5b17064056a3b1582883d99fffed81e580023e5909554f77",
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/r3-e1-persistent-error.log",
+   "log_sha256": "00d881842a60e28e83aaff71a535c4fdad95c7cee69487cdcc793c874d3b4707",
+   "log_bytes": 6466,
+   "excerpt": "native/evidence/e1-r3-e1-persistent-error.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=E1 enter=1 returns=0 up_force_obs=12000 nonzero=12000 injected=12000 queued=0 engine_flushes=0"
+   ],
+   "wall_clock": [
+    "[wd] TIME first-collector-entry 1790433705.137135869",
+    "[wd] TIME summary 1790433710.255284148"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 0,
+    "fd_exists": 0,
+    "reschedule": 0,
+    "cannot_be_retried": 0,
+    "failed_to_flush": 0
+   }
+  },
+  {
+   "experiment": "E2",
+   "role": "zero-progress failure outcome from one transient fstat failure",
+   "run": "r3-e2-oneshot-fstat",
+   "runner": "scripts/run-native.sh attempt-1 r3-e2-oneshot-fstat e2-oneshot-fstat.gdb 150",
+   "command": "timeout -k 5 150 gdb -batch -x native/gdb/e2-oneshot-fstat.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/phase2-backlog.conf",
+   "watchdog_pid": "444702",
+   "exit": "0",
+   "gdb_script": "native/gdb/e2-oneshot-fstat.gdb",
+   "gdb_script_sha256": "f6c99bbe54483bab92b8bca68e8a2b6427ebd90a6cb696e0cff16fc80ef82ef4",
+   "config": "native/conf/phase2-backlog.conf",
+   "config_sha256": "bf8da2146e1c3f0bff7f105b35a32ce05701b111124ceee2f068a48e257c66e5",
+   "fixture_restore_sha256": "76e230f7d3427a5c5b17064056a3b1582883d99fffed81e580023e5909554f77",
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/r3-e2-oneshot-fstat.log",
+   "log_sha256": "bd57651af2d9bd9c85dc562a4c04191d84fd10086b67e7c5235a081b484f944b",
+   "log_bytes": 1531801,
+   "excerpt": "native/evidence/e2-r3-e2-oneshot-fstat.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=E2 enter=1 returns=0 up_force_obs=12000 nonzero=12000 injected=1 fd_exists_arm=11999 already_mapped_arm=0 queued=0 engine_flushes=0"
+   ],
+   "wall_clock": [
+    "[wd] TIME first-collector-entry 1790433711.135357242",
+    "[wd] TIME summary 1790433717.924912266"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 0,
+    "fd_exists": 11999,
+    "reschedule": 0,
+    "cannot_be_retried": 0,
+    "failed_to_flush": 0
+   }
+  },
+  {
+   "experiment": "C2",
+   "role": "control: one transient open failure that leaves no descriptor",
+   "run": "r2-c2-oneshot-open",
+   "runner": "scripts/run-native.sh attempt-1 r2-c2-oneshot-open c2-oneshot-open.gdb 120",
+   "command": "timeout -k 5 120 gdb -batch -x native/gdb/c2-oneshot-open.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/phase2-backlog.conf",
+   "watchdog_pid": "444156",
+   "exit": "0",
+   "gdb_script": "native/gdb/c2-oneshot-open.gdb",
+   "gdb_script_sha256": "c08245be1908f3a071b6f44e6e45e32ff085221fd878af50dcb3894857a26628",
+   "config": "native/conf/phase2-backlog.conf",
+   "config_sha256": "bf8da2146e1c3f0bff7f105b35a32ce05701b111124ceee2f068a48e257c66e5",
+   "fixture_restore_sha256": "76e230f7d3427a5c5b17064056a3b1582883d99fffed81e580023e5909554f77",
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/r2-c2-oneshot-open.log",
+   "log_sha256": "44cc776cbee0cf14dbbcb4f38e7964ba9da87e97420c8d991e697ee47301a4b5",
+   "log_bytes": 20473,
+   "excerpt": "native/evidence/c2-r2-c2-oneshot-open.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=C2 enter=10 returns=10 up_force_obs=14 nonzero=1 injected=1 fd_exists_arm=0 already_mapped_arm=0 queued=13 engine_flushes=9"
+   ],
+   "wall_clock": [
+    "[wd] TIME first-collector-entry 1790433681.135288044",
+    "[wd] TIME summary 1790433690.133798252"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 13,
+    "fd_exists": 0,
+    "reschedule": 0,
+    "cannot_be_retried": 0,
+    "failed_to_flush": 35
+   }
+  },
+  {
+   "experiment": "E3",
+   "role": "revisit after an error outcome: retry chunk cannot be brought up",
+   "run": "e3-retry-setup-error",
+   "runner": "scripts/run-native-retry.sh attempt-1 e3-retry-setup-error e3-retry-setup-error.gdb 120",
+   "command": "timeout -k 5 120 gdb -batch -x native/gdb/e3-retry-setup-error.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/retry.conf",
+   "watchdog_pid": "447056",
+   "exit": "0",
+   "gdb_script": "native/gdb/e3-retry-setup-error.gdb",
+   "gdb_script_sha256": "4095a491fc50da020edd4ba2c494fd4fe5b38ac04005f6cfad7787721f8227e9",
+   "config": "native/conf/retry.conf",
+   "config_sha256": "fb0ff836619f3020674b5efbf83aae6bee0b483344b41bc88458f50e1441c3c2",
+   "fixture_restore_sha256": null,
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/e3-retry-setup-error.log",
+   "log_sha256": "0a68e3420e8086b569b48972437bacf4b4894c4a05c1bbfa65fc687f1e66e549",
+   "log_bytes": 5686,
+   "excerpt": "native/evidence/e3-e3-retry-setup-error.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=E3 dispatches=12 forced=11 reschedules=11 retry_creates=1 dropped=0 max_attempts=1"
+   ],
+   "wall_clock": [
+    "[wd] TIME dispatch 1790433795.136034972",
+    "[wd] TIME dispatch 1790433797.132990058",
+    "[wd] TIME dispatch 1790433800.135123390",
+    "[wd] TIME dispatch 1790433803.133894763",
+    "[wd] TIME dispatch 1790433806.133838901",
+    "[wd] TIME dispatch 1790433808.134071977",
+    "[wd] TIME dispatch 1790433810.133097574",
+    "[wd] TIME dispatch 1790433812.134543950",
+    "[wd] TIME dispatch 1790433815.134000972",
+    "[wd] TIME dispatch 1790433817.134549501",
+    "[wd] TIME dispatch 1790433819.133718328",
+    "[wd] TIME dispatch 1790433821.132790122"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 0,
+    "fd_exists": 0,
+    "reschedule": 11,
+    "cannot_be_retried": 0,
+    "failed_to_flush": 1
+   }
+  },
+  {
+   "experiment": "C3",
+   "role": "retry control: attempts spent until retry_limit",
+   "run": "c3-retry-control",
+   "runner": "scripts/run-native-retry.sh attempt-1 c3-retry-control c3-retry-control.gdb 90",
+   "command": "timeout -k 5 90 gdb -batch -x native/gdb/c3-retry-control.gdb --args /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-debug/bin/fluent-bit -c native/conf/retry.conf",
+   "watchdog_pid": "446786",
+   "exit": "0",
+   "gdb_script": "native/gdb/c3-retry-control.gdb",
+   "gdb_script_sha256": "493e975724baf029a5705f6d6bcd1cbac7d61351abcca91f55ec629c760a6105",
+   "config": "native/conf/retry.conf",
+   "config_sha256": "fb0ff836619f3020674b5efbf83aae6bee0b483344b41bc88458f50e1441c3c2",
+   "fixture_restore_sha256": null,
+   "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-engine-progress/attempt-1/native-logs/c3-retry-control.log",
+   "log_sha256": "56768635761c4ccf7d775f8c6265b804bb13730e8cec821f9b81da5db2420e3d",
+   "log_bytes": 4462,
+   "excerpt": "native/evidence/c3-c3-retry-control.wd.txt",
+   "summary": [
+    "[wd] SUMMARY run=C3 dispatches=3 forced=0 reschedules=0 retry_creates=4 dropped=1 max_attempts=3"
+   ],
+   "wall_clock": [
+    "[wd] TIME dispatch 1790433786.138024744",
+    "[wd] TIME dispatch 1790433788.134742734",
+    "[wd] TIME dispatch 1790433791.134319682",
+    "[wd] TIME dropped 1790433791.144625539"
+   ],
+   "fluent_bit_log_counts": {
+    "queueing": 0,
+    "fd_exists": 0,
+    "reschedule": 0,
+    "cannot_be_retried": 1,
+    "failed_to_flush": 3
+   }
+  }
+ ],
+ "superseded_runs": [
+  {
+   "run": "c1-valid-control",
+   "experiment": "C1",
+   "difference": "bare `break cb_queue_chunks` (2 locations)",
+   "exit": "0",
+   "log_sha256": "7b1edfa5e9ad65ab0c3970b922f5d17c0f6ef4d309201a35b5877c79b622b069",
+   "summary": [
+    "[wd] SUMMARY run=C1 enter=10 returns=10 up_force_obs=13 nonzero=0 queued=13"
+   ]
+  },
+  {
+   "run": "c1b-valid-control",
+   "experiment": "C1",
+   "difference": "no flush counter",
+   "exit": "0",
+   "log_sha256": "4ae3ec47328a6accbd04645aec2b01755b5d9c9ad0b1f40dd2576b48e0956944",
+   "summary": [
+    "[wd] SUMMARY run=C1 enter=10 returns=10 up_force_obs=13 nonzero=0 queued=13"
+   ]
+  },
+  {
+   "run": "e1-persistent-error",
+   "experiment": "E1",
+   "difference": "cap 400, no flush counter",
+   "exit": "0",
+   "log_sha256": "13d436947cd0b2bd29557e621eb2f4b38073e79d592d64ea6c96c0985d251f16",
+   "summary": [
+    "[wd] SUMMARY run=E1 enter=1 returns=0 up_force_obs=400 nonzero=400 injected=400 queued=0"
+   ]
+  },
+  {
+   "run": "e2-oneshot-fstat",
+   "experiment": "E2",
+   "difference": "cap 400, no flush counter",
+   "exit": "0",
+   "log_sha256": "4c3a3ca6b5307b30ebb30c0ab0aa6c2bf57503d4665c0b8ca29bd06328ef3391",
+   "summary": [
+    "[wd] SUMMARY run=E2 enter=1 returns=0 up_force_obs=400 nonzero=400 injected=1 fd_exists_arm=399 already_mapped_arm=0 queued=0"
+   ]
+  },
+  {
+   "run": "c2-oneshot-open",
+   "experiment": "C2",
+   "difference": "no flush counter",
+   "exit": "0",
+   "log_sha256": "602271d387e1a181c72841554d61a130ea8961d54c66a73f152c3095fbca6270",
+   "summary": [
+    "[wd] SUMMARY run=C2 enter=10 returns=10 up_force_obs=14 nonzero=1 injected=1 fd_exists_arm=0 already_mapped_arm=0 queued=13"
+   ]
+  },
+  {
+   "run": "r2-e1-persistent-error",
+   "experiment": "E1",
+   "difference": "cap 2000 (0.93 s of wall time: too short for the 1 s flush timer)",
+   "exit": "0",
+   "log_sha256": "f4fa16ee4f2b4941964df58fda99363032877fc400b082a9e196523cd3b7563d",
+   "summary": [
+    "[wd] SUMMARY run=E1 enter=1 returns=0 up_force_obs=2000 nonzero=2000 injected=2000 queued=0 engine_flushes=0"
+   ]
+  },
+  {
+   "run": "r2-e2-oneshot-fstat",
+   "experiment": "E2",
+   "difference": "cap 2000 (1.13 s of wall time)",
+   "exit": "0",
+   "log_sha256": "78ddf07282224f45e28dfab63f19a48b038cd93513f96452039a67816336cf41",
+   "summary": [
+    "[wd] SUMMARY run=E2 enter=1 returns=0 up_force_obs=2000 nonzero=2000 injected=1 fd_exists_arm=1999 already_mapped_arm=0 queued=0 engine_flushes=0"
+   ]
+  }
+ ]
+}
