@@ -3,7 +3,7 @@
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
 2026-09-26 from the W45-SUB-OBJECT-STORES integration arbiter on the combined tree
 (units, functions, diagnostics, unit reasons, indirect-access and return-expression rows),
-the functions and diagnostics rows re-checked the same day at W45-PARENTHESISED-CALLEE's AFTER run on its base, the units, functions, diagnostics, contract-corpus and Fluent Bit slice rows re-derived at W45-FB-BACKLOG-CUSTODY's final arbiter and slice on its merge with `main` `2f9131a8`, the diagnostics, slice and follow-up rows at W45-CONTAINER-ROOT-REACH's AFTER runs on its base `12553fb3`, with the
+the functions and diagnostics rows re-checked the same day at W45-PARENTHESISED-CALLEE's AFTER run on its base, the units, functions, diagnostics, contract-corpus and Fluent Bit slice rows re-derived at W45-FB-BACKLOG-CUSTODY's final arbiter and slice on its merge with `main` `2f9131a8`, the diagnostics rows re-derived at W45-CONTAINER-ROOT-REACH's integration arbiter on its merge with `main` `5fe036f2`, the slice and follow-up rows at its AFTER runs on its base `12553fb3`, with the
 condition-call row from W44-BRANCH-CONDITION-CALLS and the leak-classification row from the
 W44-LEAK-PIN-AUDIT card on its base; contract-corpus rows re-derived on 2026-09-25 at the integrations; native-descriptor
 rows from W43-DESCRIPTOR-NATIVE-CHECK; the follow-up count at W44-INDIRECT-CALL-ARGUMENT-ACCESS on that merge. This is the concise status
@@ -68,8 +68,8 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w45-fb-backlog-custody/integration/artifacts/`, the
-combined-tree run of that integration (its predecessor `docs/reports/w45-fb-retry-lifetime/integration/artifacts` is frozen); an arbiter must
+The baseline is `docs/reports/w45-container-root-reach/integration/artifacts/`, the
+combined-tree run of that integration (its predecessor `docs/reports/w45-fb-backlog-custody/integration/artifacts` is frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and

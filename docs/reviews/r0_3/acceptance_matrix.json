@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-CONTAINER-ROOT-REACH, 2026-09-26. BEFORE (base 12553fb3) reproduces the W45-FB-BACKLOG-CUSTODY integration diagnostics byte for byte. Rule 10d admits static containers (0 corpus sites) and the foreign unlink of an element reached through a formal's container. Every delta is attributed (12 leaves removed, 2 added): 11 `unlink by mk_list_del` refusals in 9 teardown functions and `mk_server_listen_exit`'s unresolved `listen` at its release are gone; `mk_vhost_destroy` adds 2 unresolved identities of `ep` at member null tests of the now-tracked element. Functions 398/9/4,427 and units unchanged; leak 34 unchanged; no Safe -> non-Safe move. Previous row preserved in docs/reports/w45-container-root-reach/previous-corpus-row.json.",
+   "note": "W45-CONTAINER-ROOT-REACH integration, 2026-09-25. The card (measured against docs/reports/w45-fb-backlog-custody/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-backlog-custody/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 12 added 2 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card removed 11 foreign-unlink refusal leaves and mk_server_listen_exit's discharged release leaf, and added 2 unresolved-identity leaves in mk_vhost_destroy, with no status moves. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-container-root-reach/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 5,
    "provisional_unsafe": 8,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 34,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-container-root-reach/artifacts/arbiter/",
-   "source": "docs/reports/w45-container-root-reach/README.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts/",
+   "baseline": "docs/reports/w45-container-root-reach/integration/artifacts/",
+   "source": "docs/reports/w45-container-root-reach/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts",
    "unknown_alias_diagnostics": 3571,
    "unsupported_diagnostics": 41314,
    "double_release_diagnostics": 0,
@@ -6732,8 +6732,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-AUDIT-CHECKPOINTS on merge 88000037 (onto main 12553fb3, after all wave-45 cards through W45-GATEWAY-MEMO-KEY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5921 core Rust passed / 0 failed / 11 ignored over 321 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 204 Lean audits; 358 root Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card adds crates.io dependencies (postcard, serde_norway, toml) and a build.rs in crates/qcore-audit; 02-test (cargo test --workspace --no-run) compiled them without a network fetch failure, confirming the offline build step passed. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts (32-identity) exits 0 with verdict_bearing_identical true; the contracts sidecar differs only by the two W45-USER-CONTRACT-PLUGINS wording leaves already on main (contract_revision.meaning, pending_human_review.meaning), matching docs/reports/w45-user-contract-plugins/integration/contracts-raw-diff.log exactly (see integration/34-contracts-raw-diff.log), so the baseline does not move.",
-  "workspace_tests": 5921,
+  "note": "Integration gate for W45-CONTAINER-ROOT-REACH on merge 5fe036f2 (onto main eac26af7, after all wave-45 cards through W45-AUDIT-CHECKPOINTS, plus the user's macOS test fix), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5937 core Rust passed / 0 failed / 11 ignored over 322 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 205 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5937,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
   "lean_audits": 205,
@@ -6950,7 +6950,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-container-root-reach/integration/gate.json)"
  },
  "named_followups": [
   {
