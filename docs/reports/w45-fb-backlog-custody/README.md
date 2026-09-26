@@ -2,7 +2,9 @@
 
 Card W45-FB-BACKLOG-CUSTODY, 2026-09-26. Base `74579af6`; `main` merged in
 twice: `84ebad57` (W45-FB-RETRY-LIFETIME) at `95b7399e`, then `2f9131a8`
-(W45-CONTRACT-REVISION-MODE) at `d6c1f756`, which is the measured code. P1.1
+(W45-CONTRACT-REVISION-MODE) at `d6c1f756`. The measured code is `6b07bd5d`
+(the narrowed §2.5; its arbiter and slice reports are byte-identical to
+`d6c1f756`'s). P1.1
 of the [Fluent Bit system plan](../../plans/fluent-bit-system-coverage/README.md),
 on the slice [W45-FB-SYSTEM-SELECTION §5](../w45-fb-system-selection/README.md)
 chose.
@@ -307,7 +309,7 @@ links an unchecked or refused-path allocation into its caller's configuration
 
 ## 3. Corpus arbiter (185 units)
 
-Final run on `d6c1f756`: [artifacts/arbiter/](artifacts/arbiter/), the new
+Final run on `6b07bd5d`: [artifacts/arbiter/](artifacts/arbiter/), the new
 baseline (`run.json`, manifest digests). BEFORE is `main` `2f9131a8`, which
 reproduces the unchanged W45-FB-RETRY-LIFETIME baseline (§1). The contracts
 sidecar against it is in
@@ -400,7 +402,7 @@ QCORE_CLANG=/usr/lib/llvm-21/bin/clang quirin-audit current \
   --profile-directory contract/profiles/fluent-bit \
   --compile-database OUT/attempt-2/fluent-bit-clang-production/compile_commands.json \
   --selection contract/profiles/fluent-bit/system-selection.json \
-  --report OUT/attempt-2/slice-after-d6c1f756/resource-diagnostics.json --jobs 8
+  --report OUT/attempt-2/slice-after-6b07bd5d/resource-diagnostics.json --jobs 8
 ```
 
 `OUT` is `/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody`.

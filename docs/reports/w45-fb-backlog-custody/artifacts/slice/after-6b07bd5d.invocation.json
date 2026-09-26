@@ -9,7 +9,7 @@
     "--compile-database",
     "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/fluent-bit-clang-production/compile_commands.json",
     "--report",
-    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-d6c1f756/resource-diagnostics.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-6b07bd5d/resource-diagnostics.json",
     "--selection",
     "contract/profiles/fluent-bit/system-selection.json",
     "--jobs",
@@ -50,7 +50,7 @@
   "reports": {
     "binding_directory": null,
     "monkey_source_report": null,
-    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-d6c1f756/resource-diagnostics.json"
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-custody/attempt-2/slice-after-6b07bd5d/resource-diagnostics.json"
   },
   "schema_version": 1,
   "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
