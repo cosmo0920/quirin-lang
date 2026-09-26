@@ -1,0 +1,39 @@
+[
+  {
+    "function": "box_count",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_drop",
+    "status": "Unknown",
+    "diagnostics": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `item`",
+        "line": 11,
+        "origin": "queue.c:16"
+      }
+    ]
+  },
+  {
+    "function": "box_keep",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_two",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_drop",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_keep",
+    "status": "Safe",
+    "diagnostics": []
+  }
+]

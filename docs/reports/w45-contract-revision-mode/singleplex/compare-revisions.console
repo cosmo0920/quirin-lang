@@ -1,0 +1,1 @@
+compare: contracts in force +0 -0 ~0; pin mismatches 0 -> 0; obligations +70 -0; violation detected 0, violation withdrawn 0, coverage lost 0, coverage gained 0; units +0 -0

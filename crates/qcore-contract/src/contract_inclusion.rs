@@ -1276,10 +1276,11 @@ impl Resolution<'_> {
             };
         signatures_agree(child, parent_declaration)
             .map_err(|message| self.error(InclusionCode::Qi010, message))?;
+        // Card W45-CONTRACT-REVISION-MODE: a revision mode is not inherited.
         let clauses = rename_clauses(
             &parameter_names(parent_declaration),
             &parameter_names(child),
-            &parent_clauses,
+            &crate::contract_revision::strip_revision_markers(&parent_clauses),
         )
         .map_err(|message| self.error(InclusionCode::Qi012, message))?;
         let mut chain = vec![ContractInheritanceLink {

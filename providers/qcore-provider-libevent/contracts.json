@@ -23,7 +23,7 @@
       "crate": "quirin-provider-libc",
       "version": "0.1.0",
       "module": "libc/memory.qcore",
-      "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
     }
   }
 }

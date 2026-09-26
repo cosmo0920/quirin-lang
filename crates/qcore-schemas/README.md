@@ -445,3 +445,23 @@ serializes without `pending_review`, no existing reason text classifies
 differently, and no `DerivationIncomplete` or task digest moves (no producer
 names the new category). Plugin protocol 1 and evidence versions 1 and 2 are
 unchanged.
+
+## Contract revision modes (16.0.0)
+
+Card W45-CONTRACT-REVISION-MODE (contract specification C06.2). A declared
+resource-v1 contract, or one clause of it, may say `resource_revision(pinned)`
+or `resource_revision(flexible)`; pinned is the default. An audit withholds a
+pinned contract whose lock the audited source does not match.
+
+| Addition | Kind |
+|---|---|
+| `ReasonCategory::ContractPinMismatch` (`contract-pin-mismatch`, subject: analyser) | new variant on an exhaustively matched enum; the closed vocabulary grows from eight to nine |
+| `RevisionMode`, `RevisionScope`, `RevisionMarker`, `DeclaredRevision`, `PinMismatchReason`, `PinMismatch` (module `contract_revision`) | new types |
+| `ResourceContracts::revision` (`declared_revisions`, `revision_mode`) and `ResourceContracts::pin_mismatch` (`withhold_for_pin_mismatch`) | new private fields with accessors, each skipped when empty |
+
+The new reason variant is source-incompatible for exhaustive matches, so this
+is a major bump by the exhaustive-variant precedent. **Existing wire bytes are
+unchanged** for data without a marker or a withheld pin: such an environment
+serializes without either field, and no existing reason text classifies
+differently (the projection summary's pin component is named only when
+positive). Plugin protocol 1 and evidence versions 1 and 2 are unchanged.

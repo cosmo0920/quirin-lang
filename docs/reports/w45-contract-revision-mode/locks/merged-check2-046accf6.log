@@ -1,0 +1,11 @@
+pin: qcore-provider-chunkio at git 046accf6aded7906f66a1baf0202da349e521736: 6 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-chunkio/contracts.lock)
+pin: qcore-provider-cmetrics at git 046accf6aded7906f66a1baf0202da349e521736: 4 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-cmetrics/contracts.lock)
+pin: qcore-provider-ctraces at git 046accf6aded7906f66a1baf0202da349e521736: 1 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-ctraces/contracts.lock)
+pin: qcore-provider-libevent at git 046accf6aded7906f66a1baf0202da349e521736: 6 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-libevent/contracts.lock)
+pin: qcore-provider-librdkafka at git 046accf6aded7906f66a1baf0202da349e521736: 10 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/qcore-provider-librdkafka/contracts.lock)
+pin: quirin-provider-cfl at git 046accf6aded7906f66a1baf0202da349e521736: 2 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-cfl/contracts.lock)
+pin: quirin-provider-fluent-bit at git 046accf6aded7906f66a1baf0202da349e521736: 28 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-fluent-bit/contracts.lock)
+pin: quirin-provider-libc at git 046accf6aded7906f66a1baf0202da349e521736: 0 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-libc/contracts.lock)
+pin: quirin-provider-mpack at git 046accf6aded7906f66a1baf0202da349e521736: 4 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-mpack/contracts.lock)
+pin: quirin-provider-msgpack at git 046accf6aded7906f66a1baf0202da349e521736: 1 recorded, 0 in force through another revision, 0 not in force, 0 stale (providers/quirin-provider-msgpack/contracts.lock)
+exit 0

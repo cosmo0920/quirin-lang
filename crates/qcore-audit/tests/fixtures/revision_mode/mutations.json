@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "fixture": "queue.c",
+  "contracts": "queue.qcore",
+  "meaning": "controlled mutations of a generic held-out fixture (card W45-CONTRACT-REVISION-MODE); each edit replaces exactly one occurrence; `function` is the mutated body; `harmless` mutations must stay accepted under flexible contracts, the others must be caught (violation-detected) or reported as coverage-lost, never accepted; under pinned contracts every body change must put the mutated function's contract out of force",
+  "mutations": [
+    {
+      "name": "base",
+      "function": null,
+      "kind": "none",
+      "edits": []
+    },
+    {
+      "name": "rename-local",
+      "function": "box_count",
+      "kind": "harmless",
+      "edits": [
+        ["    struct ticket *ticket = ticket_take();\n    if (!ticket) {", "    struct ticket *slot = ticket_take();\n    if (!slot) {"],
+        ["    if (fail) {\n        ticket_return(ticket);", "    if (fail) {\n        ticket_return(slot);"],
+        ["    ticket_return(ticket);\n    return 0;", "    ticket_return(slot);\n    return 0;"]
+      ]
+    },
+    {
+      "name": "reorder-independent",
+      "function": "box_two",
+      "kind": "harmless",
+      "edits": [
+        ["    if (first) {\n        ticket_return(first);\n    }\n    if (second) {\n        ticket_return(second);\n    }", "    if (second) {\n        ticket_return(second);\n    }\n    if (first) {\n        ticket_return(first);\n    }"]
+      ]
+    },
+    {
+      "name": "dropped-release",
+      "function": "box_drop",
+      "kind": "defect",
+      "edits": [
+        ["    item_touch(item);\n    item_free(item);", "    item_touch(item);"]
+      ]
+    },
+    {
+      "name": "missing-counter-rollback",
+      "function": "box_count",
+      "kind": "defect",
+      "edits": [
+        ["    if (fail) {\n        ticket_return(ticket);\n        return -1;", "    if (fail) {\n        return -1;"]
+      ]
+    },
+    {
+      "name": "changed-transfer",
+      "function": "box_keep",
+      "kind": "defect",
+      "edits": [
+        ["    item_touch(item);\n    sink_keep(item);", "    item_touch(item);\n    item_touch(item);"]
+      ]
+    },
+    {
+      "name": "premature-destroy",
+      "function": "box_drop",
+      "kind": "defect",
+      "edits": [
+        ["    item_touch(item);\n    item_free(item);", "    item_free(item);\n    item_touch(item);"]
+      ]
+    }
+  ]
+}

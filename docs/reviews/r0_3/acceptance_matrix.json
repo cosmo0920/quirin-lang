@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "15.0.0",
+  "qcore_schemas_rust_api": "16.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 428
+  "named_followups": 434
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6735,7 +6735,7 @@
   "workspace_tests": 5815,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 197,
+  "lean_audits": 198,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6777,6 +6777,7 @@
    "AuditContractBundle.lean",
    "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
+   "AuditContractRevisionMode.lean",
    "AuditContractViewProjection.lean",
    "AuditCountedUsers.lean",
    "AuditCt01OwnedTransfer.lean",
@@ -6941,7 +6942,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-retry-lifetime/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -9879,6 +9880,48 @@
    "why": "The pass enumerates straight-line paths only (gateway constraint 10e). The five singleplex functions have none; `handle_output_event`, `flb_engine_dispatch_retry` and the other retry-route functions of the FB-RETRY-LIFETIME slice do, and their counter operations act on locals (unattributed) as well. DISCHARGE: a bounded loop rule (a body whose loop touches no tracked count or opaque call is skipped) with Lean parity, measured on the retry slice.",
    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
    "recorded_by": "W45-FB-RETRY-LIFETIME"
+  },
+  {
+   "id": "W45-REVISION-PIN-ROUTES",
+   "title": "Pins are evaluated by quirin-audit's routes and the corpus arbiter only",
+   "why": "`qcore_audit::contract_revision::apply_pins` runs in `quirin-audit current`, `quirin-audit contracts`, the configured `quirin-audit CONFIG.json` route and `cycle19_fluent_bit_libraries_audit`. A caller of the gateway API, the checked extern-call route (`source.extern-call.v1`) and the other compiler examples apply the environment they are given, in which no pin was evaluated, so a pinned contract there is applied as loaded. Contract spec C06.2 states the boundary. DISCHARGE: an inventory of every verdict-publishing route, each either evaluating pins against its audited source or refusing a pinned contract it cannot evaluate, with a test per route.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-REVISION-LOCK-NOT-PACKAGED",
+   "title": "Contract locks live in the provider crates' source trees and are not packaged",
+   "why": "Audits load resource contracts through the load path, where each crate's `contracts.lock` sits beside its `Cargo.toml`; `providers/contracts.py check` verifies each lock against the current contract texts (`quirin-audit pin --verify-contracts`). The five executable provider packages carry their contracts unchanged and no lock, because no audit loads resource contracts from an installed package today. DISCHARGE: when an audit route loads resource contracts from an installed package, package the crate's lock with a SHA-256 pin in its inventory, verify it in `providers/package.py verify`, and evaluate pins from it.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-REVISION-SCANNER-LEXICAL",
+   "title": "The pinned-source identity is lexical and whole-tree",
+   "why": "`crates/qcore-audit/src/c_identity.rs` reads every `.c` and `.h` blob of the audited HEAD and records every top-level declaration and definition of a pinned name, without preprocessing. Any textual change to any such site, including a renamed local, a moved prototype or a new declaration in an unrelated file, puts the contract out of force (the fail-closed direction), and a conditional group that closes an outer brace makes every body in its file run to the end of the file. A site the scanner does not recognise as top-level (a definition produced by a macro, say) is not part of the identity. DISCHARGE: an identity bound to the preprocessed definitions the audit's own units see, with a measured comparison on the Fluent Bit corpus of false mismatches and of missed sites against this scanner.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-REVISION-HOLD-REPORTING",
+   "title": "A call held for a pin mismatch is counted as a recorded refusal and listed under the diagnostic category `unsupported`",
+   "why": "As for a pending review (W45-REVIEW-HELD-CALL-SITE-COUNT, W45-REVIEW-HELD-DIAGNOSTIC-CATEGORY), the `contract_revision` section's held counts are recorded held-call refusals, a lower bound on textual call sites, and `diagnostics.json` lists a held call under `category: unsupported`; the unit `reason_code` is `contract-pin-mismatch`. DISCHARGE: discharged together with those two residuals, the pin hold counted and categorised by the same mechanism.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-REVIEW-PREFIX-COLLISION-UNPINNED",
+   "title": "The review hold's claim that no corpus symbol begins with its rewrite prefix has no test",
+   "why": "`crates/qcore-c-gateway/src/legacy_review_hold.rs` documents its `qcore_review_pending__` prefix as asserted by the tests to occur in no corpus symbol; no test asserts it (found by W45-CONTRACT-REVISION-MODE, whose `qcore_pin_mismatch__` prefix documents the refusing-only consequence of a collision instead). A collision can only make a call read as held, which is `Unknown`, so no verdict moves towards Safe or Unsafe. DISCHARGE: either a test over the corpus inputs asserting neither prefix occurs, or the review hold's comment corrected to the refusing-only argument.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-REVISION-COMPARE-MATCHED-IDENTITY",
+   "title": "`quirin-audit compare` does not report a pinned contract moving between reviewed identities",
+   "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
+   "source": "docs/reports/w45-contract-revision-mode/README.md",
+   "recorded_by": "W45-CONTRACT-REVISION-MODE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

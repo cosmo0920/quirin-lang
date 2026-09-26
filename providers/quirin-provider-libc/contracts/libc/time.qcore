@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <time.h> and <sys/time.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
@@ -33,6 +39,7 @@ module contract;
 extern fn time(timer: ptr<mut, u8>) -> i64
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(timer);
     ensures normal resource_return_none();
 };
@@ -40,6 +47,7 @@ contract {
 extern fn timegm(tp: ptr<mut, u8>) -> i64
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(tp);
     ensures normal resource_return_none();
 };
@@ -62,6 +70,7 @@ contract {
 extern fn gmtime_r(timer: ptr<const, u8>, tp: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(timer);
     ensures normal resource_borrowed(tp);
     ensures normal resource_return_alias(tp, nullable);
@@ -70,6 +79,7 @@ contract {
 extern fn localtime_r(timer: ptr<const, u8>, tp: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(timer);
     ensures normal resource_borrowed(tp);
     ensures normal resource_return_alias(tp, nullable);
@@ -97,6 +107,7 @@ contract {
 extern fn strftime(s: ptr<mut, u8>, maxsize: usize, format: ptr<const, u8>, tp: ptr<const, u8>) -> usize
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(maxsize);
     ensures normal resource_borrowed(format);
@@ -107,6 +118,7 @@ contract {
 extern fn gettimeofday(tv: ptr<mut, u8>, tz: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(tv);
     ensures normal resource_borrowed(tz);
     ensures normal resource_return_none();

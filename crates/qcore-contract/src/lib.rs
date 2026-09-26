@@ -10,6 +10,7 @@ pub mod bundle;
 pub mod contract_inclusion;
 pub mod contract_loader;
 pub mod contract_observation;
+pub mod contract_revision;
 pub mod contract_views;
 pub mod descriptor_contract_binding;
 pub mod descriptor_observation;

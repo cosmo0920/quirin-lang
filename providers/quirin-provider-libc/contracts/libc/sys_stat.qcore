@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <sys/stat.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about POSIX (trust boundary
@@ -31,6 +37,7 @@ module contract;
 extern fn fstat(fd: i32, buf: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(fd);
     ensures normal resource_borrowed(buf);
     ensures normal resource_return_none();
@@ -39,6 +46,7 @@ contract {
 extern fn mkdir(path: ptr<const, u8>, mode: u32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(path);
     ensures normal resource_borrowed(mode);
     ensures normal resource_return_none();
@@ -47,6 +55,7 @@ contract {
 extern fn umask(mask: u32) -> u32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(mask);
     ensures normal resource_return_none();
 };
@@ -67,6 +76,7 @@ contract {
 extern fn stat(file: ptr<const, u8>, buf: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(buf);
     ensures normal resource_return_none();

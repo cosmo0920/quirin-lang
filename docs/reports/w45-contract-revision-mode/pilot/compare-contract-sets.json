@@ -1,0 +1,219 @@
+{
+  "after": {
+    "contracts_sha256": "8a4b2a8c3ca37c7570078b44df472ddc7879bf7486a711597d908683eb06c185",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-contract-revision-mode/rev-046accf6/variant2-slice/resource-diagnostics.json",
+    "report_sha256": "fffccd4ac05bc4959d748e0a7262da51d613c520189819b4c3b2f5fbf0dfee19",
+    "revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "source": {
+      "kind": "git",
+      "revision": "046accf6aded7906f66a1baf0202da349e521736"
+    }
+  },
+  "assumptions": {
+    "flexible_trusted": {
+      "added": [],
+      "removed": []
+    },
+    "standing": {
+      "after": [
+        {
+          "contracts": 100,
+          "name": "libc-c-standard-abi"
+        }
+      ],
+      "before": [
+        {
+          "contracts": 100,
+          "name": "libc-c-standard-abi"
+        }
+      ]
+    }
+  },
+  "before": {
+    "contracts_sha256": "012c41d07cad283a2caf51efe79e828c1b18194aaf8a223e9662dca0be2f728e",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-contract-revision-mode/rev-046accf6/card2-slice/resource-diagnostics.json",
+    "report_sha256": "cfecdb23d79453aa00efe98eec41b03462b3fa88ed43916a65769133ec980188",
+    "revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "source": {
+      "kind": "git",
+      "revision": "046accf6aded7906f66a1baf0202da349e521736"
+    }
+  },
+  "contracts_in_force": {
+    "added": [],
+    "changed": [
+      {
+        "after": {
+          "contract_sha256": "8827dc33fadf0e6beb19d825637e40357fa793739ab62600bb6d8ca271bb78f3",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "5fe7f48a4f15261dae3e2779b2521b2caa44b61b7442c950711c0d44f9141354",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_destroy"
+      },
+      {
+        "after": {
+          "contract_sha256": "f7f57d9b0d46f992fa0b9f29242f2cf2c89d93d7625c5bc1221db8d8d67fb9bb",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "a13bbc5958e4ef6442b284e82ae98d43d3857cd78470882c598bda45ba154fa2",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_destroy_direct_routes"
+      },
+      {
+        "after": {
+          "contract_sha256": "b2467049032d97942255907d9b5faf9642647a89f80c3f153781cfc124b94d7f",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "fedbda90012ba980b541c22dc8213ad3d63c37490829fcef18c0e1cbd4e0eed5",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_get_name"
+      },
+      {
+        "after": {
+          "contract_sha256": "0bbb3c2da6dc877693838e2805aaa859ba03ea499d78caee99a4eaf0f94b73fc",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "cefdbb5fa8a0bbc2d4d7600fb8b8529809251988dbcaca71a0482f1379ce0d1b",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_get_real_size"
+      },
+      {
+        "after": {
+          "contract_sha256": "4c425ed7c2bab3a42480bf7df9861cdb261c1516b02511947d602a0944e5ae6d",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "1f50bfd70bb0e590227f44e07d86679ede77d058b06aef942ca9e3afe21c9d75",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_get_size"
+      },
+      {
+        "after": {
+          "contract_sha256": "8a497bf01b050d54cdb66764f81be3c530c119e3b89730f2852b2fe188deb2fd",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "dde554289008ea4d237be5c4cdb949ae08642e5789a53570290d9159acf4f47b",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "flb_input_chunk_total_size"
+      },
+      {
+        "after": {
+          "contract_sha256": "bfc89ed545b290954535c594cb04a703e4faa373b42780e63410a3f455c0083e",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "41c12f61c53960bac2fb70dcf99a75c59409b73202fef5bd9f5fa95d73f96979",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "generate_chunk_name"
+      },
+      {
+        "after": {
+          "contract_sha256": "5efaef00dd461d1c535a4efde1bf24bb5601e6956bf0a77ace06bde4fc07af22",
+          "mode": "flexible",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-variant2/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore",
+          "status": "flexible-checked"
+        },
+        "before": {
+          "contract_sha256": "756424bcff1f9779b1cea8687faf2a9e1b18c060503b772aa567df41d19c586b",
+          "mode": "pinned",
+          "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore",
+          "status": "pinned-in-force"
+        },
+        "function": "input_chunk_write_header"
+      }
+    ],
+    "removed": []
+  },
+  "counts": {
+    "contracts_added": 0,
+    "contracts_changed": 8,
+    "contracts_removed": 0,
+    "coverage_gained": 0,
+    "coverage_lost": 0,
+    "functions_added": 0,
+    "functions_removed": 0,
+    "obligations_added": 0,
+    "obligations_removed": 0,
+    "other_moves": 0,
+    "pin_mismatches_after": 0,
+    "pin_mismatches_before": 0,
+    "units_added": 0,
+    "units_removed": 0,
+    "violation_detected": 0,
+    "violation_withdrawn": 0
+  },
+  "meaning": "change report between two audit runs (card W45-CONTRACT-REVISION-MODE): `violation_detected` lists functions that moved to Unsafe and `coverage_lost` functions that moved from Safe to Unknown; the two are never pooled, and a provisional Unsafe is not a validated upstream defect; obligations are per-function diagnostics compared as (category, description) multisets without lines; contracts are compared by status, mode and normalised text digest from each run's contract_revision section",
+  "obligations": {
+    "added": [],
+    "removed": []
+  },
+  "pin_mismatches": {
+    "after": [],
+    "before": [],
+    "new": [],
+    "resolved": []
+  },
+  "schema_version": 1,
+  "sources": {
+    "missing": {
+      "after": [],
+      "before": []
+    },
+    "units": {
+      "added": [],
+      "common": 15,
+      "removed": []
+    }
+  },
+  "verdict_moves": {
+    "coverage_gained": [],
+    "coverage_lost": [],
+    "functions_added": [],
+    "functions_removed": [],
+    "other": [],
+    "units": [],
+    "violation_detected": [],
+    "violation_withdrawn": []
+  }
+}
