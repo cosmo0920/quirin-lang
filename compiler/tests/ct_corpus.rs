@@ -5677,6 +5677,7 @@ fn legacy_diagnostic_label(kind: &LegacyDiagnosticKind) -> String {
         LegacyDiagnosticKind::UseAfterClose {
             acquisition_line, ..
         } => format!("use-after-close:{acquisition_line}"),
+        LegacyDiagnosticKind::CountedUser { description } => format!("counted-user:{description}"),
         LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown-alias:{variable}"),
         LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
         LegacyDiagnosticKind::SummaryConflict { .. } => "summary-conflict".to_owned(),

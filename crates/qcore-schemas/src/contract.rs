@@ -181,6 +181,98 @@ pub struct ResourceFunctionContract {
     /// reallocated result. Heap by default, and omitted when heap.
     #[serde(default, skip_serializing_if = "ResourceKind::is_heap")]
     pub result_kind: ResourceKind,
+    /// Card W45-FB-RETRY-LIFETIME: what the call does to an intrusive
+    /// container's membership of the object a `resource_borrowed` parameter
+    /// designates (contract specification §C04.8). Omitted when empty, so every
+    /// contract without one serializes byte for byte as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub container_effects: BTreeMap<usize, ContainerEffect>,
+    /// Card W45-FB-RETRY-LIFETIME: the counted-user clauses (contract
+    /// specification §C04.7). Omitted when empty.
+    #[serde(default, skip_serializing_if = "CountedUserClauses::is_empty")]
+    pub counted_users: CountedUserClauses,
+}
+
+/// Card **W45-FB-RETRY-LIFETIME**: an intrusive-container effect on the object
+/// an argument designates (contract specification §C04.8).
+///
+/// The parameter keeps its `resource_borrowed` custody mode for every rule that
+/// reads modes (the ABI projection, the admission of a member address). The
+/// effect is what moves custody: a consumer that does not apply it MUST refuse
+/// the call rather than read it as a borrow.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "effect")]
+pub enum ContainerEffect {
+    /// `resource_published(entry, container)`: the object whose member (or
+    /// which) `entry` designates is linked into the container reached through
+    /// `container_parameter`, and the container holds it from then on.
+    Published { container_parameter: usize },
+    /// `resource_unpublished(entry)`: the object is unlinked from the container
+    /// that holds it, and custody returns to the caller.
+    Unpublished,
+}
+
+/// Card **W45-FB-RETRY-LIFETIME**: one counted-user operation on the object a
+/// `resource_borrowed` pointer parameter designates (§C04.7).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UserEffect {
+    /// `resource_user_added(p)`: one user is added; the caller owes its drop.
+    Added,
+    /// `resource_user_dropped(p)`: one user is dropped and no release check
+    /// runs, so the object may be left unreferenced until one does.
+    Dropped,
+    /// `resource_user_dropped_checked(p)`: one user is dropped and the release
+    /// check runs; the object may be destroyed.
+    DroppedChecked,
+    /// `resource_user_release_check(p)`: the release check alone; the object
+    /// may be destroyed when it has no user left.
+    ReleaseCheck,
+}
+
+/// Card **W45-FB-RETRY-LIFETIME**: one declared counter operation: its effect
+/// and the member that holds the count (`resource_user_added(task, users)`
+/// counts in `task->users`).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct UserOperation {
+    pub effect: UserEffect,
+    pub counter: String,
+}
+
+/// Card **W45-FB-RETRY-LIFETIME**: `resource_user_exit(p, RETURNED, DELTA)`.
+///
+/// On every normal return whose value is the integer `returned`, the call has
+/// added `delta` users (net: `-1`, `0` or `1`) to the object parameter
+/// `parameter` designates. A body defined in the analysed unit is checked
+/// against it; a caller applies it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct UserExitClause {
+    pub parameter: usize,
+    pub returned: i64,
+    pub delta: i8,
+}
+
+/// Card **W45-FB-RETRY-LIFETIME**: every counted-user clause of one declaration.
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct CountedUserClauses {
+    /// The operation performed on each parameter, by index.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub effects: BTreeMap<usize, UserOperation>,
+    /// `resource_user_neutral()`: the call adds, drops and checks no user of
+    /// any object.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub neutral: bool,
+    /// The declared exit clauses, in declaration order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub exits: Vec<UserExitClause>,
+}
+
+impl CountedUserClauses {
+    /// Whether the declaration states nothing about counted users.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.effects.is_empty() && !self.neutral && self.exits.is_empty()
+    }
 }
 
 /// Written by hand so that a contract with no kind prints exactly as the
@@ -199,6 +291,12 @@ impl std::fmt::Debug for ResourceFunctionContract {
         if !self.result_kind.is_heap() {
             debug.field("result_kind", &self.result_kind);
         }
+        if !self.container_effects.is_empty() {
+            debug.field("container_effects", &self.container_effects);
+        }
+        if !self.counted_users.is_empty() {
+            debug.field("counted_users", &self.counted_users);
+        }
         debug.finish()
     }
 }
@@ -214,7 +312,28 @@ impl ResourceFunctionContract {
             result,
             parameter_kinds: BTreeMap::new(),
             result_kind: ResourceKind::Heap,
+            container_effects: BTreeMap::new(),
+            counted_users: CountedUserClauses::default(),
         }
+    }
+
+    /// Card W45-FB-RETRY-LIFETIME: whether the call has an intrusive-container
+    /// effect. Every route that admits a call as the identity on custody
+    /// because its modes are all `Borrowed` MUST refuse such a call instead.
+    #[must_use]
+    pub fn has_container_effect(&self) -> bool {
+        !self.container_effects.is_empty()
+    }
+
+    /// Card W45-FB-RETRY-LIFETIME: the same contract without its container
+    /// and counted-user clauses — the part a derived custody summary can
+    /// state, and so the part it is compared with.
+    #[must_use]
+    pub fn custody_projection(&self) -> Self {
+        let mut projection = self.clone();
+        projection.container_effects.clear();
+        projection.counted_users = CountedUserClauses::default();
+        projection
     }
 
     /// The same contract with parameter `index` of kind `kind`.

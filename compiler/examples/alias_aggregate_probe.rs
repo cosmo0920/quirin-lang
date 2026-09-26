@@ -339,6 +339,9 @@ fn describe(diagnostic: &LegacyDiagnostic) -> String {
             "use after release of the {} acquired at L{acquisition_line}",
             kind.spelling()
         ),
+        LegacyDiagnosticKind::CountedUser { description } => {
+            format!("counted user: {description}")
+        }
         LegacyDiagnosticKind::UnknownAlias { variable } => {
             format!("unresolved resource identity `{variable}`")
         }

@@ -258,7 +258,12 @@ pub(crate) fn derive_custody_summaries(
                         match contracts.contract(&name) {
                             // An explicit contract always wins. A disagreement
                             // is reported, never silently resolved either way.
-                            Some(declared) if *declared != contract => {
+                            // Card W45-FB-RETRY-LIFETIME: a derived summary
+                            // states custody only, so the declaration's
+                            // container and counted-user clauses are not part
+                            // of the comparison; the counted-user pass checks
+                            // them against the body instead.
+                            Some(declared) if declared.custody_projection() != contract => {
                                 derivation
                                     .conflicts
                                     .insert(name.clone(), (contract.clone(), declared.clone()));

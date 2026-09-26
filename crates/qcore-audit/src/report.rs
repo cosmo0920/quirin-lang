@@ -540,6 +540,11 @@ fn diagnostic_description(
                 site(*acquisition_line)
             ),
         ),
+        // Card W45-FB-RETRY-LIFETIME: a refuted counted-user obligation.
+        // Provisional, like every other defect category here.
+        LegacyDiagnosticKind::CountedUser { description } => {
+            ("counted_user", description.clone())
+        }
         LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
             "summary_conflict",
             format!(
