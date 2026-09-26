@@ -348,19 +348,22 @@ exists for every selected unit.
 
 ## 7. Gate
 
-Measured on `e1259190` plus the records; logs under `private/w45-fb-retry-lifetime/`
-(worktree-private).
+Measured on `74d30db3` (`scripts/gate.sh`, `CARGO_INCREMENTAL=0`, every exit
+to its own file); logs under the worktree-private
+`private/w45-fb-retry-lifetime/gate-74d30db3/`; [`gate.json`](gate.json). The
+arbiter and slice binaries are `e1259190`'s; `74d30db3` differs in code only
+by a clippy needless-borrow fix.
 
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | exit 0 |
-| Rust suite, first pass (`scripts/run_test_binaries.py`) | exit 101: 5,801 passed, 14 failed (pins this card moves, and the load-sensitive `standalone_host` row), 11 ignored — `private/test-binaries/20260926T054944Z-2877880/` |
-| Pins updated; `standalone_host` alone | exit 0, 3 passed (constraint 16's sixth row, verified in isolation, not weakened) |
-| Rust suite, final | see [`gate.json`](gate.json) |
-| `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings` | see `gate.json` |
-| `reevaluation_probe`, `reevaluation_followup` | see `gate.json` |
+| Rust suite (`scripts/run_test_binaries.py`) | exit 0: 298 units, 308 summaries; **5,815 passed**, 0 failed, 11 ignored (`private/test-binaries/20260926T063018Z-3446288/`) |
+| `cargo clean --profile dev` | exit 0 |
+| `cargo fmt --all -- --check` / `cargo clippy --all-targets -- -D warnings` | exit 0 / exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
 | Lean audits | exit 0, **197** passed |
-| Python suite, `build_docs_index.py --check` | see `gate.json` |
+| Python suite / `build_docs_index.py --check` | exit 0, **358** OK / exit 0 |
+| Earlier attempt (before the pins) | exit 101: 5,801 passed, 14 failed — 13 contract-count pins this card moves, 1 the load-sensitive `standalone_host` row, which passed alone (3/3; constraint 16, not weakened) |
 | Provider gate: `cargo test` / `fmt --check` / `clippy -D warnings` (providers workspace) | exit 0 (124 passed) / 0 / 0 |
 | `providers/package.py build`, `verify` ×5 | exit 0; 0 ×5 |
 | `providers/contracts.py sync`, then `check` | exit 0, 0 |
