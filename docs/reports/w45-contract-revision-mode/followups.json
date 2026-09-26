@@ -1,0 +1,44 @@
+[
+  {
+    "id": "W45-REVISION-PIN-ROUTES",
+    "title": "Pins are evaluated by quirin-audit's routes and the corpus arbiter only",
+    "why": "`qcore_audit::contract_revision::apply_pins` runs in `quirin-audit current`, `quirin-audit contracts`, the configured `quirin-audit CONFIG.json` route and `cycle19_fluent_bit_libraries_audit`. A caller of the gateway API, the checked extern-call route (`source.extern-call.v1`) and the other compiler examples apply the environment they are given, in which no pin was evaluated, so a pinned contract there is applied as loaded. Contract spec C06.2 states the boundary. DISCHARGE: an inventory of every verdict-publishing route, each either evaluating pins against its audited source or refusing a pinned contract it cannot evaluate, with a test per route.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+    "id": "W45-REVISION-LOCK-NOT-PACKAGED",
+    "title": "Contract locks live in the provider crates' source trees and are not packaged",
+    "why": "Audits load resource contracts through the load path, where each crate's `contracts.lock` sits beside its `Cargo.toml`; `providers/contracts.py check` verifies each lock against the current contract texts (`quirin-audit pin --verify-contracts`). The five executable provider packages carry their contracts unchanged and no lock, because no audit loads resource contracts from an installed package today. DISCHARGE: when an audit route loads resource contracts from an installed package, package the crate's lock with a SHA-256 pin in its inventory, verify it in `providers/package.py verify`, and evaluate pins from it.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+    "id": "W45-REVISION-SCANNER-LEXICAL",
+    "title": "The pinned-source identity is lexical and whole-tree",
+    "why": "`crates/qcore-audit/src/c_identity.rs` reads every `.c` and `.h` blob of the audited HEAD and records every top-level declaration and definition of a pinned name, without preprocessing. Any textual change to any such site, including a renamed local, a moved prototype or a new declaration in an unrelated file, puts the contract out of force (the fail-closed direction), and a conditional group that closes an outer brace makes every body in its file run to the end of the file. A site the scanner does not recognise as top-level (a definition produced by a macro, say) is not part of the identity. DISCHARGE: an identity bound to the preprocessed definitions the audit's own units see, with a measured comparison on the Fluent Bit corpus of false mismatches and of missed sites against this scanner.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+    "id": "W45-REVISION-HOLD-REPORTING",
+    "title": "A call held for a pin mismatch is counted as a recorded refusal and listed under the diagnostic category `unsupported`",
+    "why": "As for a pending review (W45-REVIEW-HELD-CALL-SITE-COUNT, W45-REVIEW-HELD-DIAGNOSTIC-CATEGORY), the `contract_revision` section's held counts are recorded held-call refusals, a lower bound on textual call sites, and `diagnostics.json` lists a held call under `category: unsupported`; the unit `reason_code` is `contract-pin-mismatch`. DISCHARGE: discharged together with those two residuals, the pin hold counted and categorised by the same mechanism.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+    "id": "W45-REVIEW-PREFIX-COLLISION-UNPINNED",
+    "title": "The review hold's claim that no corpus symbol begins with its rewrite prefix has no test",
+    "why": "`crates/qcore-c-gateway/src/legacy_review_hold.rs` documents its `qcore_review_pending__` prefix as asserted by the tests to occur in no corpus symbol; no test asserts it (found by W45-CONTRACT-REVISION-MODE, whose `qcore_pin_mismatch__` prefix documents the refusing-only consequence of a collision instead). A collision can only make a call read as held, which is `Unknown`, so no verdict moves towards Safe or Unsafe. DISCHARGE: either a test over the corpus inputs asserting neither prefix occurs, or the review hold's comment corrected to the refusing-only argument.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+    "id": "W45-REVISION-COMPARE-MATCHED-IDENTITY",
+    "title": "`quirin-audit compare` does not report a pinned contract moving between reviewed identities",
+    "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
+    "source": "docs/reports/w45-contract-revision-mode/README.md",
+    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  }
+]

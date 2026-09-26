@@ -1,0 +1,46 @@
+[
+  {
+    "function": "box_count",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_drop",
+    "status": "Unknown",
+    "diagnostics": [
+      {
+        "category": "summary_conflict",
+        "description": "inferred custody summary ResourceFunctionContract { parameters: [Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }; the declared contract governs every call site",
+        "line": 9,
+        "origin": "queue.c:14"
+      }
+    ]
+  },
+  {
+    "function": "box_keep",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "box_two",
+    "status": "Safe",
+    "diagnostics": []
+  },
+  {
+    "function": "user_drop",
+    "status": "Unknown",
+    "diagnostics": [
+      {
+        "category": "unsupported",
+        "description": "call to `box_drop` whose declared contract was withdrawn against the summary derived from its body in this translation unit (mode-parameter-contradiction)",
+        "line": 49,
+        "origin": "queue.c:58"
+      }
+    ]
+  },
+  {
+    "function": "user_keep",
+    "status": "Safe",
+    "diagnostics": []
+  }
+]

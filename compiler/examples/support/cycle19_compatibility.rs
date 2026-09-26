@@ -162,7 +162,17 @@ pub fn run(
     let contract_manifest = contract_manifest
         .or(default_manifest.as_deref())
         .ok_or("source-set profile supplies no resource contracts")?;
-    let contracts = load_resource_contract_manifest(contract_manifest)?;
+    let mut contracts = load_resource_contract_manifest(contract_manifest)?;
+    // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
+    // its lock over the audited Fluent Bit source before any unit is analysed.
+    let pins = qcore_audit::contract_revision::apply_pins(
+        &mut contracts,
+        &qcore_audit::contract_revision::ModuleOwners::for_manifest(
+            contract_manifest,
+            &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
+        )?,
+        &root,
+    )?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: kept so the pending-review section can
     // be added once the report it counts is complete.
     let mut contract_sidecar = None;
@@ -379,8 +389,16 @@ pub fn run(
     // every other byte of the sidecar is the one written before the analysis.
     let pending = qcore_audit::pending_review::section(&contracts, &report);
     println!("{}", qcore_audit::pending_review::tally(&pending));
+    // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
+    // flexible assumptions, tallied and added the same additive way.
+    let revision_section = qcore_audit::contract_revision::section(&contracts, &pins, &report);
+    println!(
+        "{}",
+        qcore_audit::contract_revision::tally(&revision_section)
+    );
     if let Some((sidecar, mut inputs)) = contract_sidecar {
         inputs["pending_human_review"] = pending;
+        inputs["contract_revision"] = revision_section;
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }

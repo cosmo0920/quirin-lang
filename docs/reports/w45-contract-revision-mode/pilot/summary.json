@@ -1,0 +1,203 @@
+{
+  "base_vs_card": {
+    "rev-864c3d97": {
+      "report_byte_identical": false,
+      "report_identical_after_masking_contract_source_digests": true,
+      "report_sha256": "905745153fc0626aa85861ad475c9b6d0f6a158305f5ea7742c8bc58847e388a",
+      "sidecar_additive_key_present": true,
+      "libc_texts_restored": 16,
+      "sidecar_identical_after_restoring_the_card_edits": true,
+      "differing_keys": []
+    },
+    "rev-046accf6": {
+      "report_byte_identical": false,
+      "report_identical_after_masking_contract_source_digests": true,
+      "report_sha256": "cfecdb23d79453aa00efe98eec41b03462b3fa88ed43916a65769133ec980188",
+      "sidecar_additive_key_present": true,
+      "libc_texts_restored": 16,
+      "sidecar_identical_after_restoring_the_card_edits": true,
+      "differing_keys": []
+    }
+  },
+  "compare_console": {
+    "revisions": "compare: contracts in force +0 -0 ~0; pin mismatches 0 -> 0; obligations +76 -2; violation detected 0, violation withdrawn 0, coverage lost 0, coverage gained 0; units +0 -0",
+    "contract_sets": "compare: contracts in force +0 -0 ~8; pin mismatches 0 -> 0; obligations +0 -0; violation detected 0, violation withdrawn 0, coverage lost 0, coverage gained 0; units +0 -0",
+    "variant_revisions": "compare: contracts in force +0 -0 ~0; pin mismatches 0 -> 0; obligations +76 -2; violation detected 0, violation withdrawn 0, coverage lost 0, coverage gained 0; units +0 -0"
+  },
+  "sections": {
+    "rev-864c3d97/card2-slice": {
+      "source": {
+        "kind": "git",
+        "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+      },
+      "counts": {
+        "flexible_checked": 0,
+        "flexible_trusted": 0,
+        "held_call_sites": 0,
+        "held_functions": 0,
+        "pinned": 55,
+        "pinned_in_force": 55,
+        "pinned_not_in_force": 0,
+        "standing_libc": 100
+      },
+      "pin_mismatches": [],
+      "flexible_checked": [],
+      "standing": [
+        {
+          "name": "libc-c-standard-abi",
+          "owner": "quirin-provider-libc",
+          "contracts": 100
+        }
+      ],
+      "in_force_by_identity": {
+        "046accf6 + 66910c10": 54,
+        "66910c10": 1
+      },
+      "ctr_destroy": {
+        "in_force": true,
+        "matched_reviewed_at": [
+          {
+            "kind": "git",
+            "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+          }
+        ],
+        "reason": null
+      }
+    },
+    "rev-864c3d97/variant2-slice": {
+      "source": {
+        "kind": "git",
+        "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae"
+      },
+      "counts": {
+        "flexible_checked": 8,
+        "flexible_trusted": 0,
+        "held_call_sites": 0,
+        "held_functions": 0,
+        "pinned": 47,
+        "pinned_in_force": 47,
+        "pinned_not_in_force": 0,
+        "standing_libc": 100
+      },
+      "pin_mismatches": [],
+      "flexible_checked": [
+        "flb_input_chunk_destroy",
+        "flb_input_chunk_destroy_direct_routes",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_get_real_size",
+        "flb_input_chunk_get_size",
+        "flb_input_chunk_total_size",
+        "generate_chunk_name",
+        "input_chunk_write_header"
+      ],
+      "standing": [
+        {
+          "name": "libc-c-standard-abi",
+          "owner": "quirin-provider-libc",
+          "contracts": 100
+        }
+      ],
+      "in_force_by_identity": {
+        "046accf6 + 66910c10": 46,
+        "66910c10": 1
+      },
+      "ctr_destroy": {
+        "in_force": true,
+        "matched_reviewed_at": [
+          {
+            "kind": "git",
+            "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+          }
+        ],
+        "reason": null
+      }
+    },
+    "rev-046accf6/card2-slice": {
+      "source": {
+        "kind": "git",
+        "revision": "046accf6aded7906f66a1baf0202da349e521736"
+      },
+      "counts": {
+        "flexible_checked": 0,
+        "flexible_trusted": 0,
+        "held_call_sites": 0,
+        "held_functions": 0,
+        "pinned": 55,
+        "pinned_in_force": 55,
+        "pinned_not_in_force": 0,
+        "standing_libc": 100
+      },
+      "pin_mismatches": [],
+      "flexible_checked": [],
+      "standing": [
+        {
+          "name": "libc-c-standard-abi",
+          "owner": "quirin-provider-libc",
+          "contracts": 100
+        }
+      ],
+      "in_force_by_identity": {
+        "046accf6": 1,
+        "046accf6 + 66910c10": 54
+      },
+      "ctr_destroy": {
+        "in_force": true,
+        "matched_reviewed_at": [
+          {
+            "kind": "git",
+            "revision": "046accf6aded7906f66a1baf0202da349e521736"
+          }
+        ],
+        "reason": null
+      }
+    },
+    "rev-046accf6/variant2-slice": {
+      "source": {
+        "kind": "git",
+        "revision": "046accf6aded7906f66a1baf0202da349e521736"
+      },
+      "counts": {
+        "flexible_checked": 8,
+        "flexible_trusted": 0,
+        "held_call_sites": 0,
+        "held_functions": 0,
+        "pinned": 47,
+        "pinned_in_force": 47,
+        "pinned_not_in_force": 0,
+        "standing_libc": 100
+      },
+      "pin_mismatches": [],
+      "flexible_checked": [
+        "flb_input_chunk_destroy",
+        "flb_input_chunk_destroy_direct_routes",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_get_real_size",
+        "flb_input_chunk_get_size",
+        "flb_input_chunk_total_size",
+        "generate_chunk_name",
+        "input_chunk_write_header"
+      ],
+      "standing": [
+        {
+          "name": "libc-c-standard-abi",
+          "owner": "quirin-provider-libc",
+          "contracts": 100
+        }
+      ],
+      "in_force_by_identity": {
+        "046accf6": 1,
+        "046accf6 + 66910c10": 46
+      },
+      "ctr_destroy": {
+        "in_force": true,
+        "matched_reviewed_at": [
+          {
+            "kind": "git",
+            "revision": "046accf6aded7906f66a1baf0202da349e521736"
+          }
+        ],
+        "reason": null
+      }
+    }
+  }
+}

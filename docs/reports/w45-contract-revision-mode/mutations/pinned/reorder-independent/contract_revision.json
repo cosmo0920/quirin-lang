@@ -1,0 +1,113 @@
+{
+  "counts": {
+    "flexible_checked": 0,
+    "flexible_trusted": 0,
+    "held_call_sites": 0,
+    "held_functions": 0,
+    "pinned": 10,
+    "pinned_in_force": 9,
+    "pinned_not_in_force": 1,
+    "standing_libc": 0
+  },
+  "pin_mismatches": [
+    {
+      "contract_sha256": "2e7e0bcc8212315872a70b6bbc607a1e316cb84db7ba800df9e2bbb9e9b0eb7c",
+      "detail": "the audited source's sites match no reviewed identity (reviewed at directory: differs in queue.c)",
+      "found_sites": [
+        {
+          "body_sha256": "9f36e845351d20a88eb713037347d1c7ff69fc53754db1b2b6bee8ae984c29f0",
+          "declaration_sha256": "e078cbadaed51f8dfcbc845ddc7467787b62a53edeee25b4efb0f6388eab080d",
+          "kind": "definition",
+          "path": "queue.c"
+        }
+      ],
+      "function": "box_two",
+      "held_call_sites": 0,
+      "held_functions": 0,
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "directory"
+            }
+          ],
+          "sites": [
+            {
+              "body_sha256": "efa8f56c610f56f41705188038da86ca8f67d864cf7a3c2a1da71f817a0e93a8",
+              "declaration_sha256": "e078cbadaed51f8dfcbc845ddc7467787b62a53edeee25b4efb0f6388eab080d",
+              "kind": "definition",
+              "path": "queue.c"
+            }
+          ]
+        }
+      ],
+      "lock": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/contracts.lock",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "module_sha256": "ce2e045b96159dd0541cda8655b489bbbac7b941f9201e48e8da32158db5efed",
+      "owner": null,
+      "reason": "source-changed"
+    }
+  ],
+  "contracts": {
+    "box_count": {
+      "contract_sha256": "1d11a7d9ac3236eb681a4acd7d4fc16a6cefa95e78ea4923ca5ea605916b3860",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "box_drop": {
+      "contract_sha256": "745cc1be597e26722e1b1ac002c041f37c049700690b20d0106616554bf91315",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "box_keep": {
+      "contract_sha256": "4114b9a842a10378313c2c8cef5c64c6847e49c74ab7c3c6ecf74172a476d2b8",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "box_two": {
+      "contract_sha256": "2e7e0bcc8212315872a70b6bbc607a1e316cb84db7ba800df9e2bbb9e9b0eb7c",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "not-in-force"
+    },
+    "item_free": {
+      "contract_sha256": "f010982aeceb82e5ac0b041c11afc8a6e73c5c94f3bac3aba332e68376d15824",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "item_new": {
+      "contract_sha256": "ce93e44457a34f1abb6963d05fec965774e29eb7b16f4952a3ac4d4aaa5b25c3",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "item_touch": {
+      "contract_sha256": "d78dedf539fe5d1894d08e49dc0ccb7e4788e99515cf17c0bf88575650b37aad",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "sink_keep": {
+      "contract_sha256": "054b8c2ecbb746f97b1c8ff91aef86d730f6885151ecbf88d3ca61945a6d77ca",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "ticket_return": {
+      "contract_sha256": "41651779191d8a94d024f82f6387e76cfa837f98f083172c29f9ffc57c55a929",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    },
+    "ticket_take": {
+      "contract_sha256": "6a116c7a5f36387e98ece971f98ecf291530b68f8f40cd8e08f8b57cf985cc81",
+      "mode": "pinned",
+      "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/pinned/contracts/queue.qcore",
+      "status": "pinned-in-force"
+    }
+  }
+}

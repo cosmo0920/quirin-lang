@@ -1,0 +1,13 @@
+pin: contracts: 0 pinned, 10 flexible; recorded at directory; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a62306402232bf00f/private/rm-mut-v2/flexible/contracts/contracts.lock
+  ~ box_count: flexible
+  ~ box_drop: flexible
+  ~ box_keep: flexible
+  ~ box_two: flexible
+  ~ item_free: flexible
+  ~ item_new: flexible
+  ~ item_touch: flexible
+  ~ sink_keep: flexible
+  ~ ticket_return: flexible
+  ~ ticket_take: flexible
+
+exit 0

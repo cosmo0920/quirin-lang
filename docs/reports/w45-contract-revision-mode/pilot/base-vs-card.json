@@ -1,0 +1,20 @@
+{
+  "rev-864c3d97": {
+    "report_byte_identical": false,
+    "report_identical_after_masking_contract_source_digests": true,
+    "report_sha256": "905745153fc0626aa85861ad475c9b6d0f6a158305f5ea7742c8bc58847e388a",
+    "sidecar_additive_key_present": true,
+    "libc_texts_restored": 16,
+    "sidecar_identical_after_restoring_the_card_edits": true,
+    "differing_keys": []
+  },
+  "rev-046accf6": {
+    "report_byte_identical": false,
+    "report_identical_after_masking_contract_source_digests": true,
+    "report_sha256": "cfecdb23d79453aa00efe98eec41b03462b3fa88ed43916a65769133ec980188",
+    "sidecar_additive_key_present": true,
+    "libc_texts_restored": 16,
+    "sidecar_identical_after_restoring_the_card_edits": true,
+    "differing_keys": []
+  }
+}

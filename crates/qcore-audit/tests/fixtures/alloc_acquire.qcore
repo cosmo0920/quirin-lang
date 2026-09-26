@@ -1,9 +1,12 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: a synthetic external API with no source to
+// pin against, so every contract binds by name (`revision flexible`).
 // Single acquisition contract for the audit-report inventory unit tests.
 
 extern fn alloc() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_owned(nonnull);
 };

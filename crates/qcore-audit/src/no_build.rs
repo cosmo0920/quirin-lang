@@ -603,6 +603,7 @@ pub struct NoBuildAudit {
     root: PathBuf,
     compiler: ClangIdentity,
     contracts: ResourceContracts,
+    pins: crate::contract_revision::PinEvaluation,
     assumed: AssumedConfiguration,
     dependencies: BTreeMap<String, String>,
     profile_sha256: String,
@@ -637,7 +638,17 @@ impl NoBuildAudit {
         assumed: AssumedConfiguration,
     ) -> Result<Self, String> {
         let root = root.canonicalize().map_err(|error| error.to_string())?;
-        let contracts = input.load()?;
+        let mut contracts = input.load()?;
+        // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared
+        // with its lock over the source root before any unit is analysed.
+        let pins = crate::contract_revision::apply_pins(
+            &mut contracts,
+            &crate::contract_revision::ModuleOwners::for_manifest(
+                input.manifest_path(),
+                input.manifest_text(),
+            )?,
+            &root,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         // The no-build "source profile": the selection and the assumed
         // configuration. Every compile-task identity and every certificate's
@@ -703,6 +714,7 @@ impl NoBuildAudit {
             root,
             compiler: ClangIdentity::capture()?,
             contracts,
+            pins,
             assumed,
             dependencies,
             profile_sha256,
@@ -963,6 +975,11 @@ impl NoBuildAudit {
         let pending = crate::pending_review::section(&self.contracts, &self.report);
         println!("{}", crate::pending_review::tally(&pending));
         self.sidecar["pending_human_review"] = pending;
+        // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
+        // flexible assumptions, tallied and published the same way.
+        let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
+        println!("{}", crate::contract_revision::tally(&revision));
+        self.sidecar["contract_revision"] = revision;
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
                 fs::create_dir_all(parent).map_err(|error| error.to_string())?;

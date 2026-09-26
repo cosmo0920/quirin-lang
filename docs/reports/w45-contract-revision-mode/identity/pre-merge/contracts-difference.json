@@ -1,0 +1,10 @@
+{
+  "additive_key_present": true,
+  "libc_modules_restored": 16,
+  "included_libc_parents_restored": [
+    "quirin-provider-libc:libc/memory.qcore",
+    "quirin-provider-libc:libc/string.qcore"
+  ],
+  "identical_after_restoring_the_card_edits": true,
+  "top_level_keys_differing": []
+}

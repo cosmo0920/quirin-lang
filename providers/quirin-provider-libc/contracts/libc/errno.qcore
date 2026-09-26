@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // The C library's `errno` accessor — resource-projection vocabulary version 1.
 //
 // Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about
@@ -70,6 +76,7 @@ module contract;
 extern fn __errno_location() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
@@ -102,6 +109,7 @@ contract {
 extern fn strerror(errnum: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(errnum);
     ensures normal resource_return_none();
 };

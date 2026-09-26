@@ -1,0 +1,66 @@
+pin: qcore-provider-chunkio: 6 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/qcore-provider-chunkio/contracts.lock
+  ~ cio_chunk_close: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cio_chunk_down: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cio_chunk_get_content_size: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cio_chunk_is_up: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cio_chunk_open: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cio_chunk_up_force: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: qcore-provider-cmetrics: 4 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/qcore-provider-cmetrics/contracts.lock
+  ~ cmt_destroy: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cmt_metric_get_timestamp: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cmt_metric_set_double: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cmt_mpack_consume_uint_tag: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: qcore-provider-ctraces: 1 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/qcore-provider-ctraces/contracts.lock
+  ~ ctr_destroy: new identity at git 046accf6aded7906f66a1baf0202da349e521736
+pin: qcore-provider-libevent: 5 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/qcore-provider-libevent/contracts.lock
+  ~ mk_list_add: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mk_mem_alloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mk_mem_alloc_z: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mk_mem_free: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mk_print: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: qcore-provider-librdkafka: 10 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/qcore-provider-librdkafka/contracts.lock
+  ~ LZ4_resetStream: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cJSON_Delete: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_calloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_free: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_kafka_mem_free: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_kafka_topic_partition_list_sort: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_malloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_realloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_strdup: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ rd_strndup: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: quirin-provider-cfl: 2 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/quirin-provider-cfl/contracts.lock
+  ~ cfl_sds_destroy: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ cfl_time_now: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: quirin-provider-fluent-bit: 22 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/quirin-provider-fluent-bit/contracts.lock
+  ~ flb_calloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_errno_print: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_free: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_hash_table_add: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_destroy: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_destroy_direct_routes: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_get_name: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_get_real_size: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_get_size: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_input_chunk_total_size: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_log_check: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_log_print: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_malloc: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_routes_mask_get_size: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_routes_mask_set_by_tag: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_sds_create_len: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_sds_destroy: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_strdup: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_strndup: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ flb_time_now: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ generate_chunk_name: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ input_chunk_write_header: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: quirin-provider-libc: 0 pinned, 100 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/quirin-provider-libc/contracts.lock
+pin: quirin-provider-mpack: 4 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/quirin-provider-mpack/contracts.lock
+  ~ mpack_write_cstr: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mpack_write_double: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mpack_write_i64: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+  ~ mpack_write_str: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+pin: quirin-provider-msgpack: 1 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote providers/quirin-provider-msgpack/contracts.lock
+  ~ msgpack_packer_init: git 046accf6aded7906f66a1baf0202da349e521736 recorded beside git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+exit 0

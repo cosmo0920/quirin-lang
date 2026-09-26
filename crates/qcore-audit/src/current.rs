@@ -79,6 +79,7 @@ pub struct CurrentAudit {
     revision: String,
     compiler: ClangIdentity,
     contracts: ResourceContracts,
+    pins: crate::contract_revision::PinEvaluation,
     dependencies: BTreeMap<String, String>,
     source_profile_sha256: String,
     assumptions: Value,
@@ -126,7 +127,17 @@ impl CurrentAudit {
     ) -> Result<Self, String> {
         let checkout = checkout.canonicalize().map_err(|error| error.to_string())?;
         let revision = crate::checkout_head(&checkout)?;
-        let contracts = input.load()?;
+        let mut contracts = input.load()?;
+        // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared
+        // with its lock over the checkout's HEAD before any unit is analysed.
+        let pins = crate::contract_revision::apply_pins(
+            &mut contracts,
+            &crate::contract_revision::ModuleOwners::for_manifest(
+                input.manifest_path(),
+                input.manifest_text(),
+            )?,
+            &checkout,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         let source_profile_sha256 = profile.manifest_digest().to_owned();
         let dependencies = BTreeMap::from([
@@ -176,6 +187,7 @@ impl CurrentAudit {
             revision,
             compiler: ClangIdentity::capture()?,
             contracts,
+            pins,
             dependencies,
             source_profile_sha256,
             assumptions,
@@ -464,6 +476,11 @@ impl CurrentAudit {
         let pending = crate::pending_review::section(&self.contracts, &self.report);
         println!("{}", crate::pending_review::tally(&pending));
         self.assumptions["pending_human_review"] = pending;
+        // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
+        // flexible assumptions, tallied and published the same way.
+        let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
+        println!("{}", crate::contract_revision::tally(&revision));
+        self.assumptions["contract_revision"] = revision;
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
                 fs::create_dir_all(parent).map_err(|error| error.to_string())?;

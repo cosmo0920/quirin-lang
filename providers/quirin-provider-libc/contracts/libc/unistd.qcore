@@ -1,5 +1,11 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
 // <unistd.h> -- resource-projection vocabulary version 1.
 //
 // Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library and POSIX
@@ -46,6 +52,7 @@ module contract;
 extern fn sleep(seconds: u32) -> u32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(seconds);
     ensures normal resource_return_none();
 };
@@ -53,6 +60,7 @@ contract {
 extern fn usleep(useconds: u32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(useconds);
     ensures normal resource_return_none();
 };
@@ -60,6 +68,7 @@ contract {
 extern fn sysconf(name: i32) -> i64
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(name);
     ensures normal resource_return_none();
 };
@@ -67,30 +76,35 @@ contract {
 extern fn getpagesize() -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
 extern fn geteuid() -> u32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
 extern fn getegid() -> u32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
 extern fn setsid() -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_none();
 };
 
 extern fn access(name: ptr<const, u8>, kind: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(name);
     ensures normal resource_borrowed(kind);
     ensures normal resource_return_none();
@@ -99,6 +113,7 @@ contract {
 extern fn unlink(name: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(name);
     ensures normal resource_return_none();
 };
@@ -106,6 +121,7 @@ contract {
 extern fn read(fd: i32, buf: ptr<mut, u8>, nbytes: usize) -> isize
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(fd);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(nbytes);
@@ -115,6 +131,7 @@ contract {
 extern fn write(fd: i32, buf: ptr<const, u8>, n: usize) -> isize
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(fd);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(n);
@@ -159,6 +176,7 @@ contract {
 extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(oflag);
     ensures normal resource_variadic_data_tail();
@@ -169,6 +187,7 @@ contract {
 extern fn close(fd: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_released(fd, valid);
     ensures normal resource_kind(fd, descriptor);
     ensures normal resource_return_none();

@@ -1,17 +1,21 @@
 module contract;
 
+// Card W45-CONTRACT-REVISION-MODE: a synthetic external API with no source to
+// pin against, so every contract binds by name (`revision flexible`).
 // Paired acquisition/release contract for the second-source-set regressions.
 // Declared assumptions about an external allocator API; they verify no body.
 
 extern fn alloc() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_return_owned(nonnull);
 };
 
 extern fn dispose(p: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_released(p, nonnull);
     ensures normal resource_return_none();
 };

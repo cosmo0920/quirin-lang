@@ -566,6 +566,16 @@ pub struct ResourceContracts {
     /// as it did before the card.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pending_review: BTreeMap<String, PendingHumanReview>,
+    /// Card W45-CONTRACT-REVISION-MODE: the revision markers of every
+    /// declaration that carries one, keyed by function name. A declaration
+    /// absent here is pinned by default. Omitted when empty.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    revision: BTreeMap<String, crate::contract_revision::DeclaredRevision>,
+    /// Card W45-CONTRACT-REVISION-MODE: pinned declarations withheld because
+    /// the audited source does not match their lock, keyed by function name
+    /// and disjoint from `functions`. Omitted when empty.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pin_mismatch: BTreeMap<String, crate::contract_revision::PinMismatch>,
 }
 
 impl ResourceContracts {
@@ -579,6 +589,8 @@ impl ResourceContracts {
             source_assumptions: BTreeMap::new(),
             inclusion_evidence: BTreeMap::new(),
             pending_review: BTreeMap::new(),
+            revision: BTreeMap::new(),
+            pin_mismatch: BTreeMap::new(),
         }
     }
 
@@ -633,6 +645,80 @@ impl ResourceContracts {
     /// the function map.
     pub fn set_pending_review(&mut self, pending: BTreeMap<String, PendingHumanReview>) {
         self.pending_review = pending;
+    }
+
+    /// Card W45-CONTRACT-REVISION-MODE: the revision markers of every
+    /// declaration that carries one. Every other declaration is pinned.
+    #[must_use]
+    pub fn declared_revisions(
+        &self,
+    ) -> &BTreeMap<String, crate::contract_revision::DeclaredRevision> {
+        &self.revision
+    }
+
+    /// Declares the environment's revision markers. The contract loader
+    /// rechecks them against the retained source text.
+    pub fn set_declared_revisions(
+        &mut self,
+        revision: BTreeMap<String, crate::contract_revision::DeclaredRevision>,
+    ) {
+        self.revision = revision;
+    }
+
+    /// The effective revision mode of a declaration: pinned unless its
+    /// markers make it flexible.
+    #[must_use]
+    pub fn revision_mode(&self, name: &str) -> crate::contract_revision::RevisionMode {
+        self.revision
+            .get(name)
+            .map_or(crate::contract_revision::RevisionMode::Pinned, |declared| {
+                declared.mode
+            })
+    }
+
+    /// Card W45-CONTRACT-REVISION-MODE: pinned declarations withheld because
+    /// the audited source does not match their lock. None of them is in
+    /// [`Self::functions`].
+    #[must_use]
+    pub fn pin_mismatch(&self) -> &BTreeMap<String, crate::contract_revision::PinMismatch> {
+        &self.pin_mismatch
+    }
+
+    /// Withhold one pinned declaration of the function map because its pin
+    /// does not match: the contract leaves `functions` and is recorded under
+    /// [`Self::pin_mismatch`] with its module, reason and detail.
+    ///
+    /// # Errors
+    ///
+    /// Refuses a name that is not in the function map (already withheld,
+    /// pending review, or never declared) and a declaration that is not
+    /// pinned: a flexible contract is never withheld for its pin.
+    pub fn withhold_for_pin_mismatch(
+        &mut self,
+        name: &str,
+        module: String,
+        reason: crate::contract_revision::PinMismatchReason,
+        lock: Option<String>,
+        detail: String,
+    ) -> Result<(), String> {
+        if self.revision_mode(name) != crate::contract_revision::RevisionMode::Pinned {
+            return Err(format!("`{name}` is flexible and has no pin to mismatch"));
+        }
+        let contract = self
+            .functions
+            .remove(name)
+            .ok_or_else(|| format!("`{name}` is not a contract in force"))?;
+        self.pin_mismatch.insert(
+            name.to_owned(),
+            crate::contract_revision::PinMismatch {
+                module,
+                contract,
+                reason,
+                lock,
+                detail,
+            },
+        );
+        Ok(())
     }
 
     #[must_use]
