@@ -35,6 +35,18 @@ GROUNDS = {
         "group's and the run's verdicts are the folds of the whole run's unit statuses). Composition "
         "stays byte-identical to the whole run (report, section 6)."
     ),
+    "W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY": (
+        "W45-GATEWAY-MEMO-KEY",
+        "Its discharge condition: \"compare the token stream (or a cryptographic digest of it) on a "
+        "hit, with a test\". Card W45-GATEWAY-MEMO-KEY (integrated at main 12553fb3) makes the "
+        "per-thread member-release memo in crates/qcore-c-gateway/src/legacy_member_release.rs serve "
+        "an entry only on full token equality, with forced-collision tests and the Lean model "
+        "QCore.MemoKey (AuditMemoKey.lean); the corpus baseline "
+        "docs/reports/w45-fb-backlog-custody/integration/artifacts/ is unchanged. It also inventoried "
+        "every cache in the gateway, audit, contract and core crates and found no other that serves on "
+        "a hash (docs/reports/w45-gateway-memo-key/README.md), which closes the one cross-unit state "
+        "the W45-AUDIT-CHECKPOINTS independence audit had found."
+    ),
 }
 
 

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 455
+  "named_followups": 454
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -10059,13 +10059,6 @@
    "id": "W45-CHECKPOINT-RESUME-PREPARATION-DUPLICATE",
    "title": "The resume fingerprint repeats the preparation of `CurrentAudit::evaluate_entry` in a second function",
    "why": "`checkpoint_run::fingerprint_task` recomputes a unit's compile configuration and preparation facts without analysing it, by repeating the preparation steps of `current.rs`'s `evaluate_entry_into` (left untouched because W45-CONTRACT-REVISION-MODE was editing it). A divergence can only disable reuse, never reuse a wrong result, because the analyzer binary digest is in the identity and the fingerprints are compared whole; the fixture and corpus runs show reuse working end to end. A group recomputed under `--resume` also prepares its units twice. DISCHARGE: one shared preparation function used by both paths, the prepared unit passed on to the analysis, and a test comparing the two fingerprints on prepared, refused and absent units.",
-   "source": "docs/reports/w45-audit-checkpoints/README.md",
-   "recorded_by": "W45-AUDIT-CHECKPOINTS"
-  },
-  {
-   "id": "W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY",
-   "title": "The gateway's per-thread member-release memo is keyed by a 64-bit hash of the token texts",
-   "why": "`member_releasing_functions` in `crates/qcore-c-gateway/src/legacy_member_release.rs` caches its last answer per thread under a `DefaultHasher` digest of the token texts and returns the cached set on a key match without comparing the tokens. A 64-bit collision between two units analysed on one thread would hand one unit the other's set: the only state found by W45-AUDIT-CHECKPOINTS's independence audit that can cross units, and it would also break the job-count identity of W44-AUDIT-PARALLEL-UNITS. DISCHARGE: compare the token stream (or a cryptographic digest of it) on a hit, with a test.",
    "source": "docs/reports/w45-audit-checkpoints/README.md",
    "recorded_by": "W45-AUDIT-CHECKPOINTS"
   },

@@ -39,7 +39,7 @@ each, each separately digested:
 | 5 | `verdicts` | per unit: `status`, `functions` (each function's summary: verdict, diagnostics, counted-user clauses), `diagnostic_counts`, and any row member no other step names |
 | 6 | `certificates` | per unit: whether a published `Safe` rests on a certificate bound to the unit's compile-task identity, or the binding was refused (derived from the rows) |
 | 7 | `contracts` | the contract set in force (manifest and source digests, per-module digests, provider selection, mode, lock digests, pending-review counts) and what the run-final sections read of this group: held calls per callee (`awaiting-human-review` and `contract-pin-mismatch`) and the analysed function names |
-| 8 | `result` | the group's header line, each unit's console lines, its tallies (without timings), its per-category diagnostic counts, the checkout sources its units stand for |
+| 8 | `result` | the group's header line, each unit's console lines, its tallies (without timings, with the `Pending` count), its per-category diagnostic counts, the checkout sources its units stand for, and the group's **verdict**: the join (`qcore_schemas::verdict::Verdict::fold`) of its units' verdicts |
 | 9 | `provenance` | wall time, sampled peak and process high-water RSS, the job count, the three preparation timings: measurements, outside identity and outside every composed verdict |
 
 Sections 3–5 hold one entry per unit, in unit order; each entry is the row's
@@ -94,7 +94,10 @@ group of one run:
   selection and evidence records' digests, every `contracts.lock` the pin
   evaluation read with its SHA-256, and the digest of the pin evaluation's
   section template (which contracts are pinned, in force or withheld over
-  which reviewed sites; card W45-CONTRACT-REVISION-MODE);
+  which reviewed sites; card W45-CONTRACT-REVISION-MODE), and the digest of
+  the checker-plugin section when a checker ran (card
+  W45-USER-CONTRACT-PLUGINS: a plugin's verdict enters every function that
+  applies its contract);
 - the Clang identity (program, version, target);
 - every `QCORE_*` environment variable except `QCORE_AUDIT_JOBS`.
 
@@ -125,11 +128,21 @@ files are exactly one run's plan: every checkpoint agrees on the run identity,
 the `global` section and the plan; each group appears once; none is missing; no
 unit is in two groups. It then merges the small results (tallies and
 per-category counts are summed, sources and held-call rows united, analysed
-function names united), writes the report's head, and streams the rows one
+function names united; the run's verdict is the join of the groups' verdicts,
+and a group whose recorded verdict differs from the one its tallies imply is
+refused), writes the report's head, and streams the rows one
 group at a time. It writes the report, its `.contracts.json` sidecar (with the
 `pending_human_review` and `contract_revision` sections rendered from the
 merged facts, `source_file_count` and `configuration_count`), and the explicit
-Unknown sidecars, and prints the whole run's console transcript. The
+Unknown sidecars, and prints the whole run's console transcript (with the
+checker-plugin tally when a checker ran). It reports the run's verdict on
+standard error and in `checkpoint-run.json`.
+
+**Unit verdicts.** A row's status maps to the four-value verdict of
+§L21.2: `Safe`, `Pending`, `Unknown` and `Unsafe` are themselves; a
+`gateway_failure`, or any status this build does not know, is `Unknown`; a
+`data_only` unit, which defines no function and so carries no obligation, is
+`Safe`, the join's identity. The
 `preparation:` console line sums the recorded timings, which are measurements.
 
 ## Text decomposition

@@ -9,5 +9,16 @@
     },
     "discharged_by": "W45-AUDIT-CHECKPOINTS",
     "ground": "Its discharge condition: \"the checkpoint compose calls `qcore_schemas::verdict` for every group verdict, with a test that a composed group equals the fold of its members' verdicts and that a `Pending` member keeps the group from `Safe`\". Each `.qo` result section now records its group's verdict as `Verdict::fold` of its units' verdicts (`checkpoint::unit_verdict`), and `compose::fold_verdicts` joins the group verdicts with `Verdict::join` (`Safe` the identity) into the run verdict, refusing a group whose recorded verdict disagrees with the verdict its tallies imply. Tests: `compose::tests::a_composed_verdict_is_the_fold_of_its_members` (every two-way split of a unit list folds to the whole list's verdict; a `Pending` member keeps a group from `Safe`), `a_group_whose_verdict_disagrees_with_its_tallies_is_refused`, and the fixture test `a_re_pin_invalidates_every_checkpoint` (unlocked pinned contracts make units `Pending`; the group's and the run's verdicts are the folds of the whole run's unit statuses). Composition stays byte-identical to the whole run (report, section 6)."
+  },
+  {
+    "entry": {
+      "id": "W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY",
+      "title": "The gateway's per-thread member-release memo is keyed by a 64-bit hash of the token texts",
+      "why": "`member_releasing_functions` in `crates/qcore-c-gateway/src/legacy_member_release.rs` caches its last answer per thread under a `DefaultHasher` digest of the token texts and returns the cached set on a key match without comparing the tokens. A 64-bit collision between two units analysed on one thread would hand one unit the other's set: the only state found by W45-AUDIT-CHECKPOINTS's independence audit that can cross units, and it would also break the job-count identity of W44-AUDIT-PARALLEL-UNITS. DISCHARGE: compare the token stream (or a cryptographic digest of it) on a hit, with a test.",
+      "source": "docs/reports/w45-audit-checkpoints/README.md",
+      "recorded_by": "W45-AUDIT-CHECKPOINTS"
+    },
+    "discharged_by": "W45-GATEWAY-MEMO-KEY",
+    "ground": "Its discharge condition: \"compare the token stream (or a cryptographic digest of it) on a hit, with a test\". Card W45-GATEWAY-MEMO-KEY (integrated at main 12553fb3) makes the per-thread member-release memo in crates/qcore-c-gateway/src/legacy_member_release.rs serve an entry only on full token equality, with forced-collision tests and the Lean model QCore.MemoKey (AuditMemoKey.lean); the corpus baseline docs/reports/w45-fb-backlog-custody/integration/artifacts/ is unchanged. It also inventoried every cache in the gateway, audit, contract and core crates and found no other that serves on a hash (docs/reports/w45-gateway-memo-key/README.md), which closes the one cross-unit state the W45-AUDIT-CHECKPOINTS independence audit had found."
   }
 ]
