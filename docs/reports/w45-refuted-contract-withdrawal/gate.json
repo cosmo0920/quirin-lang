@@ -1,36 +1,65 @@
 {
   "card": "W45-REFUTED-CONTRACT-WITHDRAWAL",
-  "measured_tip": "c6de5e51",
+  "measured_tip": "5bb3664b",
   "base": "12553fb3",
-  "merged_main": "675e7289",
-  "command": "docs/reports/w45-refuted-contract-withdrawal/scripts/gate.sh private/w45-refuted-contract-withdrawal/gate-c6de5e51",
-  "environment": "CARGO_INCREMENTAL=0; every exit captured to its own file, none piped; logs worktree-private under private/w45-refuted-contract-withdrawal/gate-c6de5e51/; provider packages built in a temporary directory outside the repository and removed",
+  "merged_main": [
+    "675e7289",
+    "edaeade7"
+  ],
+  "command": "docs/reports/w45-refuted-contract-withdrawal/scripts/gate.sh private/w45-refuted-contract-withdrawal/gate-5bb3664b",
+  "environment": "CARGO_INCREMENTAL=0; every exit captured to its own file, none piped; logs worktree-private under private/w45-refuted-contract-withdrawal/gate-5bb3664b/; provider packages built in a temporary directory outside the repository and removed",
   "steps": {
     "submodule": 0,
-    "tests": {"exit": 0, "totals": "310 units, 320 summaries; 5936 passed; 0 failed; 11 ignored", "log_directory": "private/test-binaries/20260926T131032Z-3755305/"},
+    "tests": {
+      "exit": 0,
+      "totals": "312 units, 322 summaries; 5953 passed; 0 failed; 11 ignored",
+      "log_directory": "private/test-binaries/20260926T134539Z-4016050/"
+    },
     "clean-dev": 0,
     "fmt": 0,
     "clippy": 0,
     "reevaluation-probe": 0,
     "reevaluation-followup": 0,
-    "lean": {"exit": 0, "audits": 205},
-    "python": {"exit": 0, "tests": 358},
+    "lean": {
+      "exit": 0,
+      "audits": 206
+    },
+    "python": {
+      "exit": 0,
+      "tests": 358
+    },
     "docs-index": 0,
     "contracts-check": 0,
     "package-build": 0,
     "package-verify": 0,
-    "provider-python": {"exit": 0, "tests": 15},
-    "provider-tests": {"exit": 0, "totals": "129 passed; 0 failed; 1 ignored over 43 summaries"},
+    "provider-python": {
+      "exit": 0,
+      "tests": 15
+    },
+    "provider-tests": {
+      "exit": 0,
+      "totals": "129 passed; 0 failed; 1 ignored over 43 summaries"
+    },
     "provider-fmt": 0,
     "provider-clippy": 0,
     "clang-version": 0
   },
   "discarded_attempts": [
-    {"tip": "e747c546", "note": "pre-merge gate: every step 0 except provider-tests 101: configured_source_contract's two process-provider tests timed out (QP006 provider timed out) under host load from concurrent cards; load-sensitive (constraint 16), not weakened; they pass in the final gate"},
-    {"tip": "0d4f42f1", "note": "post-merge gate: tests 101 with 5935 passed / 1 failed: checkpoint::tests::a_future_schema_version_is_refused pinned the future version as 2, which this card made current; the pin moved to 3 in c6de5e51 (every other step 0)"}
+    {
+      "tip": "e747c546",
+      "note": "pre-merge gate: every step 0 except provider-tests 101: configured_source_contract's two process-provider tests timed out (QP006 provider timed out) under host load from concurrent cards; load-sensitive (constraint 16), not weakened; they pass in the final gate"
+    },
+    {
+      "tip": "0d4f42f1",
+      "note": "post-merge gate: tests 101 with 5935 passed / 1 failed: checkpoint::tests::a_future_schema_version_is_refused pinned the future version as 2, which this card made current; the pin moved to 3 in c6de5e51 (every other step 0)"
+    },
+    {
+      "tip": "c6de5e51",
+      "note": "green (5936 passed, 205 Lean audits) before main edaeade7 (W45-CONTAINER-ROOT-REACH) was merged; superseded by this gate on the merged tree"
+    }
   ],
   "measurements": {
-    "arbiter": "run_audit.py at e359fd3c: verdict_bearing_identical true against docs/reports/w45-fb-backlog-custody/integration/artifacts; the contracts sidecar differs from BEFORE only by /refuted_contracts",
-    "slice": "quirin-audit current at 046accf6 with the e359fd3c binary: units 0/2/13, functions 28/2/204/3; --jobs 1 and checkpointed runs byte-identical"
+    "arbiter": "run_audit.py at 368062bc: verdict_bearing_identical true against docs/reports/w45-container-root-reach/integration/artifacts; the contracts sidecar differs from it (after the root alias) only by /refuted_contracts",
+    "slice": "quirin-audit current at 046accf6 with the 368062bc binary: units 0/2/13, functions 28/2/204/3; against main's slice (w45-container-root-reach AFTER) the same 10 held rows, unsupported 3,327 -> 3,321; --jobs 1 and checkpointed runs byte-identical"
   }
 }

@@ -448,18 +448,18 @@ not an extraction of the Rust (trust boundary 28). The Rust side is pinned by
 
 ## 9. Gate
 
-Run on `c6de5e51` with `scripts/gate.sh`. Every exit goes to its own file, with
+Run on `5bb3664b` (the tree merged with `main` `edaeade7`) with `scripts/gate.sh`. Every exit goes to its own file, with
 `CARGO_INCREMENTAL=0`. Logs are worktree-private under
-`private/w45-refuted-contract-withdrawal/gate-c6de5e51/`
+`private/w45-refuted-contract-withdrawal/gate-5bb3664b/`
 ([gate.json](gate.json)). The provider packages are built outside the
 repository and then removed.
 
 | Step | Result |
 |---|---|
 | submodule; fmt; clippy `-D warnings`; both reevaluation probes | 0 each |
-| Rust suite (`scripts/run_test_binaries.py`) | 0: 310 units, 320 summaries; **5,936 passed**, 0 failed, 11 ignored |
+| Rust suite (`scripts/run_test_binaries.py`) | 0: 312 units, 322 summaries; **5,953 passed**, 0 failed, 11 ignored |
 | `cargo clean --profile dev` | 0 |
-| Lean audits | 0: **205** passed |
+| Lean audits | 0: **206** passed |
 | Root Python tests; `build_docs_index.py --check` | 0: **358** tests; 0 |
 | Provider gate: `contracts.py check`, package build and verify, `providers/tests`, provider `cargo test`, fmt, clippy | 0 each: 15 Python tests; 129 Rust passed, 0 failed, 1 ignored |
 
@@ -472,6 +472,8 @@ repository and then removed.
 * **`0d4f42f1` (after the merge).** The suite exited 101 with 1 failure.
   `checkpoint::tests::a_future_schema_version_is_refused` pinned the "future"
   schema as 2, which this card makes current. The pin moved to 3.
+* **`c6de5e51`** was green (5,936 passed, 205 Lean audits) before `main`
+  `edaeade7` was merged; this gate on the merged tree supersedes it.
 
 **Pins moved deliberately:**
 
