@@ -651,10 +651,12 @@ pub fn apply_pins(
         })
         .map(|(name, ..)| name.clone())
         .collect::<BTreeSet<_>>();
-    let tree = SourceTree::read(source_root)?;
-    evaluation.source_kind = tree.kind.to_owned();
-    evaluation.source_revision.clone_from(&tree.revision);
-    let found = tree.sites(&wanted);
+    // Card W45-AUDIT-CHECKPOINTS: the sites are read one file at a time, so
+    // the evaluation never holds the whole checkout's source.
+    let scan = SourceTree::read_sites(source_root, &wanted)?;
+    evaluation.source_kind = scan.kind.to_owned();
+    evaluation.source_revision = scan.revision;
+    let found = scan.sites;
     for (name, module, owner, lock_path, digest) in pending {
         let lock = lock_path.as_ref().and_then(|path| locks.get(path));
         let entry = lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name));
