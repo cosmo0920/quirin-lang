@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-CONTRACT-REVISION-MODE on merge 2f03dee1 (onto main 84ebad57, after all wave-45 cards through W45-FB-RETRY-LIFETIME), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5840 core Rust passed / 0 failed / 11 ignored over 312 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 198 Lean audits; 358 root Python tests (scripts/tests) and 15 package Python tests (providers/tests), each rerun standalone after the gate and OK. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card is MOVES=no: the corpus arbiter ran on the merged tree and 32-identity (baseline_identity.py against docs/reports/w45-fb-retry-lifetime/integration/artifacts) exits 0 with verdict_bearing_identical true. Its per-artifact detail shows diagnostics, chunk-contracts, source-effects and the monkey-source record all byte-identical to PREV; only the contracts sidecar (resource-diagnostics.contracts.json) differs, exactly as this card intends: it adds the contract_revision key, marks the 16 libc contract modules revision flexible, and that changes the retained text and digest of the two included libc parents, memory.qcore and string.qcore. The card's own checker (docs/reports/w45-contract-revision-mode/scripts/contracts_difference.py), run against the arbiter output and PREV with the worktree's own path as both ROOT and CANONICAL, confirms this and nothing more: additive_key_present true, libc_modules_restored 16, included_libc_parents_restored [quirin-provider-libc:libc/memory.qcore, quirin-provider-libc:libc/string.qcore], identical_after_restoring_the_card_edits true, top_level_keys_differing empty (exit 0). So the verdicts do not move, the corpus is not re-archived, and the combined baseline stays docs/reports/w45-fb-retry-lifetime/integration/artifacts. build_matrix.py . --gate <this file> regenerates docs/reviews/r0_3/acceptance_matrix.json's gate block from these counts; the carried named_followups is unaffected by this card.",
-  "workspace_tests": 5840,
+  "note": "Standing and provider gate for W45-AUDIT-CHECKPOINTS, measured by the card in its own worktree (at 182d4b21, which merges main 2f9131a8) with CARGO_INCREMENTAL=0; every exit captured to a file, not piped (private/gate-final/). scripts/run_test_binaries.py: 303 units, 313 summaries, 5855 passed / 0 failed / 11 ignored. Provider workspace (cargo test --locked --offline): 124 passed / 0 / 0 over 39 summaries. 199 Lean audits (the card adds AuditCheckpoints.lean). scripts/tests: 358 tests, first run 1 failure (test_the_derived_facts_are_recomputed_rather_than_carried: the committed matrix's lean_audits was 198 against 199 on disk), then this matrix was regenerated with this gate file and the suite rerun (see the report's Gate section). providers/tests 15 OK. fmt and clippy (core and provider), both reevaluation examples, package build and verify (qcore.libevent), the offline workspace build and cargo clean --profile dev exit 0. Clang recorded beside this file in the same worktree. MOVES=no: the corpus arbiter's diagnostics are byte-identical to docs/reports/w45-fb-retry-lifetime/integration/artifacts.",
+  "workspace_tests": 5855,
   "provider_tests": 124,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 198,
+  "lean_audits": 199,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6761,6 +6761,7 @@
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
+   "AuditCheckpoints.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6942,7 +6943,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-contract-revision-mode/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-audit-checkpoints/gate/gate.json)"
  },
  "named_followups": [
   {

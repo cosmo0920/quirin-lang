@@ -351,7 +351,29 @@ bytes (`0bc5ff04…`, measured once, private).
 
 ## 11. Gate
 
-⟨GATE⟩
+Run at `182d4b21` in this worktree, `CARGO_INCREMENTAL=0`, each exit to a
+file (`private/gate-final/`), after the corpus measurements and never beside
+them. Recorded in [gate/gate.json](gate/gate.json), with Clang beside it.
+
+| Command | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 303 units, 313 summaries; 5,855 passed, 0 failed, 11 ignored (`private/test-binaries/20260926T091617Z-1386047/`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 199 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` | **1**, then 0 | 358 tests; the first run failed `test_the_derived_facts_are_recomputed_rather_than_carried` because the committed matrix counted 198 Lean audits against 199 on disk; the matrix was regenerated with `build_matrix.py . --gate gate/gate.json` and the rerun passed |
+| `providers/package.py build`, `verify qcore.libevent` | 0, 0 | |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 124 passed, 0 failed, 0 ignored over 39 summaries |
+| provider `fmt --check`, `clippy -D warnings` | 0, 0 | |
+| `python3 -m unittest discover -s providers/tests` | 0 | 15 tests |
+| `cargo build --workspace --locked --offline` | 0 | |
+| `cargo clean --profile dev` | 0 | |
+| `scripts/build_docs_index.py --check` | 0 | |
+
+The provider gate ran because `providers/Cargo.lock` changed (the new
+crates reach it through the conformance crate's `qcore-audit` dependency).
 
 ## 12. Follow-ups
 
