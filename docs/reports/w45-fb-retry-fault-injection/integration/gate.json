@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-FB-RETRY-FAULT-INJECTION on merge 53a3fcec (onto main 10fd4e55, after all wave-45 cards through W45-TSAN-ROWS-LOAD-SENSITIVE), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5788 core Rust passed / 0 failed / 11 ignored over 297 summaries, including task_route_tsan itself at 20 passed / 0 failed / 1 ignored; 124 provider Rust passed / 0 / 0 over 39 summaries; 195 Lean audits; 358 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 82 s and baseline_identity.py against docs/reports/w45-parenthesised-callee/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move: this card is a records-only merge (native fault-injection observations for retry candidates C1-C3, docs/reports and docs/development/increments only), with no verdict-bearing surface touched.",
+ "workspace_tests": 5788,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 195,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
