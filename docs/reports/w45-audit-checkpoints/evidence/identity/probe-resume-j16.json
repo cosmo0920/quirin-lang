@@ -1,0 +1,42 @@
+{
+  "run": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/probe-resume-j16",
+  "baseline": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/probe-whole-archive",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "1db31a62c78e85da38185c07390d0b55710639cfaa65ff250ae45cb6641d9249",
+      "baseline_raw_sha256": "1db31a62c78e85da38185c07390d0b55710639cfaa65ff250ae45cb6641d9249",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "a1d98b6ac8514d0ddbd72ec6e76f362e08bb20c9c6cdf2a1091d5aaf5b62abbe",
+      "baseline_raw_sha256": "a1d98b6ac8514d0ddbd72ec6e76f362e08bb20c9c6cdf2a1091d5aaf5b62abbe",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "baseline_raw_sha256": "9fe993674eac03ed25f38e4e7d899079433d429cc5fefb02c1ab5ca3a3857055",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": true
+}

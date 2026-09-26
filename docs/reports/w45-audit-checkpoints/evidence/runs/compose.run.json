@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/target/release/quirin-audit",
+    "checkpoint",
+    "compose",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/chunkio.qo",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/cmetrics.qo",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/ctraces.qo",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/fluent-bit-chunk.qo",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/librdkafka.qo",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/qo-j16/monkey-libevent.qo",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/compose/resource-diagnostics.json",
+    "--monkey-source-report",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-final/compose/monkey-source.json"
+  ],
+  "binary_sha256": "bf00612c687ca547d91b3d8928d9b72f6f8a5ff79b92daa139b5512b9ed2e9ac",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_AUDIT_JOBS": "unset"
+  },
+  "start": "2026-09-26T08:30:41.236619+00:00",
+  "exit": 0,
+  "end": "2026-09-26T08:30:41.360575+00:00",
+  "peak_rss_kib": 32192,
+  "wall_clock": "0:00.12"
+}

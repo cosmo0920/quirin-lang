@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 434
+  "named_followups": 441
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -9922,6 +9922,55 @@
    "why": "Since the integration review of W45-CONTRACT-REVISION-MODE a pinned lock entry holds several reviewed identities, and each run's `contract_revision` section records the one a contract in force matched (`matched_reviewed_at`). `quirin-audit compare` compares contracts by mode, status and text digest only, so a contract in force at both runs through different identities (`ctr_destroy` in the pilot, through the 66910c10 identity at 864c3d97 and the 046accf6 identity at 046accf6) is not listed as changed. DISCHARGE: `compare` lists each contract in force whose matched identity differs between the runs, with both identities' revisions, and a test pins it on a two-revision fixture.",
    "source": "docs/reports/w45-contract-revision-mode/README.md",
    "recorded_by": "W45-CONTRACT-REVISION-MODE"
+  },
+  {
+   "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",
+   "title": "The pinned `--pinned-evidence` replay (the corpus arbiter) has no per-group checkpoints",
+   "why": "W45-AUDIT-CHECKPOINTS checkpoints `quirin-audit current`, measured on the 185-unit corpus inputs. The arbiter itself, `cycle19_fluent_bit_libraries_audit --pinned-evidence` (`compiler/examples/support/cycle19_compatibility.rs`), keeps its whole-run fold: its ChunkIO library prelude and postlude share typed, non-serializable certificates across a library's units, its native and teardown results feed the chunk-contracts sidecar across groups, and its Monkey gate runs between the Fluent Bit groups and Monkey. The report's independence audit finds each of these composable (group-local, an ordered concatenation, or a step that belongs to the Monkey group) but none is implemented. DISCHARGE: per-group checkpoints for the pinned route whose composition is byte-identical to the arbiter's five artifacts under `baseline_identity.py`, or the route retired at G4 parity.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-CONTRACTS-AND-CONFIGURED-ROUTES",
+   "title": "`quirin-audit contracts` and `quirin-audit CONFIG.json` take no `--checkpoint-dir`",
+   "why": "Only the `current` route is checkpointed; the no-build contracts route (`no_build.rs`) and the configured route (`run_config_with_jobs` in `lib.rs`) fold their units whole, so their peak memory is still the whole corpus's. Both files were being edited by W45-CONTRACT-REVISION-MODE when the card ran, so the hooks were deferred. DISCHARGE: the same group-by-group sealing, resume and composition on both routes, each with a byte-identity test against its whole run.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-CERTIFICATE-BODIES",
+   "title": "Checkpoints record the certificate binding outcome, not certificate bodies or callee summaries",
+   "why": "The `certificates` section is derived from the published rows (a Safe resting on a certificate bound to the compile-task identity, a refused binding, or none). The certificate itself (`LegacySafetyCertificate`) and the gateway's interprocedural callee summaries are not serde types, and the current route publishes neither, so no checkpoint carries them and the per-function summary step is the published function row. Nothing composed depends on them. DISCHARGE: serializable certificate and summary types, a checkpoint section for each (schema version 2), and decomposition covering them.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-JOBS-MEMORY",
+   "title": "Checkpoints bound the retained results, not the working set: memory scales with `--jobs`, and the setup phase sets the one-job peak",
+   "why": "A checkpointed run holds one group's results, but that group's units run `--jobs` at a time, each holding its own analysis and Clang output. On the 185-unit corpus the checkpointed peak RSS is 182, 406 and 912 MiB at 1, 4 and 16 jobs against the whole run's 182, 397 and 930 (report, Memory). At one job the process peak is reached before the first group: every group's sampled peak is at most 114.7 MiB, and the route's setup (which since W45-CONTRACT-REVISION-MODE includes the pin evaluation reading the checkout's source tree) is not divided by groups. Before that merge the same comparison measured 168 against 110 MiB. The only control inside a group is `--jobs`. DISCHARGE: a memory-aware admission of units in flight (a resident-set budget or a per-unit weight bound) and a setup phase whose peak is below one group's, measured on the corpus; or a recorded decision that `--jobs` is the control.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-RESUME-PREPARATION-DUPLICATE",
+   "title": "The resume fingerprint repeats the preparation of `CurrentAudit::evaluate_entry` in a second function",
+   "why": "`checkpoint_run::fingerprint_task` recomputes a unit's compile configuration and preparation facts without analysing it, by repeating the preparation steps of `current.rs`'s `evaluate_entry_into` (left untouched because W45-CONTRACT-REVISION-MODE was editing it). A divergence can only disable reuse, never reuse a wrong result, because the analyzer binary digest is in the identity and the fingerprints are compared whole; the fixture and corpus runs show reuse working end to end. A group recomputed under `--resume` also prepares its units twice. DISCHARGE: one shared preparation function used by both paths, the prepared unit passed on to the analysis, and a test comparing the two fingerprints on prepared, refused and absent units.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY",
+   "title": "The gateway's per-thread member-release memo is keyed by a 64-bit hash of the token texts",
+   "why": "`member_releasing_functions` in `crates/qcore-c-gateway/src/legacy_member_release.rs` caches its last answer per thread under a `DefaultHasher` digest of the token texts and returns the cached set on a key match without comparing the tokens. A 64-bit collision between two units analysed on one thread would hand one unit the other's set: the only state found by W45-AUDIT-CHECKPOINTS's independence audit that can cross units, and it would also break the job-count identity of W44-AUDIT-PARALLEL-UNITS. DISCHARGE: compare the token stream (or a cryptographic digest of it) on a hit, with a test.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-GROUPS-IN-FLIGHT",
+   "title": "A checkpointed run has one group in flight, so a group's longest unit idles the other jobs",
+   "why": "The checkpointed `current` run analyses one group at a time to bound memory; every group ends when its longest unit ends, while the whole run overlaps groups. On the 185-unit corpus it cost nothing at 16 jobs (115.8 s against 130.8 s whole, a noisy host) or 1 job, but doubled the wall time at 4 jobs (288.1 s against 141.7 s), where librdkafka's group alone took 230 s. DISCHARGE: an explicit bound of groups in flight (for example `--max-groups-in-flight M`, M groups analysed concurrently, each sealed and dropped in plan order), measured for wall time and peak memory at 1, 4 and 16 jobs.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

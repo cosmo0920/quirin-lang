@@ -12,6 +12,7 @@ entry point and heading links.
 | Numbered constraints and operational policy | [Rule router](../agents/README.md) |
 | Historical cycle evidence | [Cycle status and recorded evidence](cycle-status.md) |
 | Build, Lean and Windows setup | [Build and test](build-and-test.md) |
+| Per-group audit checkpoints (`.qo`): format, resume, composition | [Audit checkpoints](audit-checkpoints.md) |
 | Current record location and every historical group | [Increment history index](increments/README.md) |
 
 Current agent rules are routed by [AGENTS.md](../../AGENTS.md), and headline
