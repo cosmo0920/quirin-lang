@@ -43,7 +43,7 @@
     {
       "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
       "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
-      "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree (main 84ebad57 + W45-FB-BACKLOG-CUSTODY) rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. The class also still accuses mk_rconf_section_entry_add and mk_vhost_fdt_worker_init in the corpus, whose containers are not reached from a formal (W45-CONTAINER-ROOT-REACH). DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
+      "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1.",
       "source": "docs/reports/w45-fb-backlog-custody/README.md",
       "recorded_by": "W45-FB-BACKLOG-CUSTODY"
     },
@@ -57,7 +57,7 @@
     {
       "id": "W45-MK-HTTP-ERROR-FD-LEAK",
       "title": "mk_http_error: descriptor from open() on the custom-error-page arm is never closed (provisional Unsafe candidate)",
-      "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and not closed or stored before the return at :1315; the source's own comment reads 'This fd seems to be leaked'. Unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
+      "why": "W45-FB-BACKLOG-CUSTODY's declaration reader exposes, in lib/monkey/mk_server/mk_http.c (pinned corpus), a leak of the descriptor fd opened at :1301 and neither closed nor stored before the return at :1315 on the custom-error-page arm; the source's own comment reads 'This fd seems to be leaked'. It is the card's one added leak after its refused-call hand-on repair; unit mk_server/mk_http.c moves Unknown -> provisional Unsafe. Not an upstream defect claim. DISCHARGE: a native observation with a control on a bound build, or a refuting source argument.",
       "source": "docs/reports/w45-fb-backlog-custody/README.md",
       "recorded_by": "W45-FB-BACKLOG-CUSTODY"
     },
@@ -68,5 +68,8 @@
       "source": "docs/reports/w45-fb-backlog-custody/README.md",
       "recorded_by": "W45-FB-BACKLOG-CUSTODY"
     }
+  ],
+  "notes": [
+    "MK-LIST-ADD-BORROWED-PUBLICATION: the refused-call hand-on repair (gateway 5l clause 5) withdraws its four standing leaves (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) to Unknown; none is discharged. Not retired by this card."
   ]
 }

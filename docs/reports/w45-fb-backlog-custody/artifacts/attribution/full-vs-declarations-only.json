@@ -1,15 +1,15 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-95b7399e/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-95b7399e/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/after-d6c1f756/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-d6c1f756/resource-diagnostics.json",
  "totals": {
   "after": {
-   "leak": 40,
+   "leak": 34,
    "summary_conflict": 1,
    "unknown_alias": 3570,
    "unsupported": 41325
   },
   "before": {
-   "leak": 40,
+   "leak": 34,
    "summary_conflict": 1,
    "unknown_alias": 3568,
    "unsupported": 42106
@@ -17,28 +17,28 @@
  },
  "units": {
   "after": {
-   "Unknown": 165,
+   "Unknown": 168,
    "Safe": 5,
-   "Unsafe": 11,
+   "Unsafe": 8,
    "data_only": 4
   },
   "before": {
-   "Unknown": 166,
+   "Unknown": 169,
    "Safe": 4,
-   "Unsafe": 11,
+   "Unsafe": 8,
    "data_only": 4
   }
  },
  "functions": {
   "after": {
-   "Unknown": 4421,
+   "Unknown": 4427,
    "Safe": 398,
-   "Unsafe": 15
+   "Unsafe": 9
   },
   "before": {
-   "Unknown": 4430,
+   "Unknown": 4436,
    "Safe": 389,
-   "Unsafe": 15
+   "Unsafe": 9
   }
  },
  "status_transitions": {

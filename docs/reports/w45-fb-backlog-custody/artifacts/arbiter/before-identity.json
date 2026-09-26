@@ -1,5 +1,5 @@
 {
-  "run": "private/bc/arbiter/before-84ebad57b",
+  "run": "private/bc/arbiter/before-2f9131a8",
   "baseline": "docs/reports/w45-fb-retry-lifetime/integration/artifacts",
   "artifacts": {
     "diagnostics": {
@@ -18,15 +18,15 @@
     },
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
-      "run_sha256": "2f9e436398449ecd22b9657ef9df219389ff469fca39f4eb6db56453575fa8e9",
+      "run_sha256": "47d68a8e83d4c973701f437b4fd914f31c4b36b8fc582e554913c16e4cdf7c39",
       "baseline_raw_sha256": "b6489afec863a1f30d9481be891b61f02e34163954c205bd89b9ae10555a17e3",
       "archive_matches_manifest": true,
       "byte_identical": false,
-      "identical_after_root_alias": true
+      "identical_after_root_alias": false
     },
     "source-effects": {
       "file": "resource-diagnostics.source-effects.json",
-      "run_sha256": "2ff49ab3f3fee1596436eda035a6f8f77b60280876109d78de22950f446727e8",
+      "run_sha256": "114f5bdd00b839c957bc897be7038b316c2780db8788bbd1ac43b7518b4d029e",
       "baseline_raw_sha256": "f43b5a9c860457a03bc1b88ac64380460b4abecc4da239460804f9750eebcf35",
       "archive_matches_manifest": true,
       "byte_identical": false,

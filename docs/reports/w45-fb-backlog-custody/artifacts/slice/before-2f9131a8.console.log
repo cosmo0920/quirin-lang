@@ -92,5 +92,6 @@ fluent-bit-system: 15 selected compilation configuration(s)
     flb_output_check: src/flb_output.c:1936: unsupported: unmodeled call, aggregate or indirect access in branch condition
     541 more diagnostic(s); full inventory in optional resource report
 current revision: 8 source file(s), 15 configuration(s): 0 Safe / 2 provisional Unsafe / 13 Unknown / 0 data-only / 0 gateway failures
-preparation: 15 unit(s), 45 Clang invocation(s); -E -P 1795911 us / syntax 3790721 us / line markers 2049183 us
+preparation: 15 unit(s), 45 Clang invocation(s); -E -P 3134531 us / syntax 5972928 us / line markers 3609182 us
 pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call site(s) held Unknown (awaiting-human-review)
+contract revision: 62 pinned (62 in force, 0 not in force), 0 flexible checked, 0 flexible trusted, 100 libc under the standing assumption; 0 function(s) and 0 call site(s) held Unknown (contract-pin-mismatch)

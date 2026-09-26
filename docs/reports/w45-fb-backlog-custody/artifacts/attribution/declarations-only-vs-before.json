@@ -1,9 +1,9 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-95b7399e/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-84ebad57b/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-declarations-only-d6c1f756/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-2f9131a8/resource-diagnostics.json",
  "totals": {
   "after": {
-   "leak": 40,
+   "leak": 34,
    "summary_conflict": 1,
    "unknown_alias": 3568,
    "unsupported": 42106
@@ -17,9 +17,9 @@
  },
  "units": {
   "after": {
-   "Unknown": 166,
+   "Unknown": 169,
    "Safe": 4,
-   "Unsafe": 11,
+   "Unsafe": 8,
    "data_only": 4
   },
   "before": {
@@ -31,9 +31,9 @@
  },
  "functions": {
   "after": {
-   "Unknown": 4430,
+   "Unknown": 4436,
    "Safe": 389,
-   "Unsafe": 15
+   "Unsafe": 9
   },
   "before": {
    "Unknown": 4433,
@@ -42,11 +42,12 @@
   }
  },
  "status_transitions": {
-  "Unknown -> Unsafe": 3
+  "Unsafe -> Unknown": 4,
+  "Unknown -> Unsafe": 1
  },
- "functions_with_leaf_changes": 121,
- "leaves_added": 95,
- "leaves_removed": 691,
+ "functions_with_leaf_changes": 125,
+ "leaves_added": 93,
+ "leaves_removed": 695,
  "added_by_description": {
   "unknown_alias: unresolved resource identity `request`": {
    "total": 9,
@@ -210,12 +211,6 @@
     "other-line": 1
    }
   },
-  "leak: live obligation acquired at mk_core/mk_rconf.c:91": {
-   "total": 1,
-   "by_line_shape": {
-    "unclassified": 1
-   }
-  },
   "unknown_alias: unresolved resource identity `new`": {
    "total": 1,
    "by_line_shape": {
@@ -325,12 +320,6 @@
    }
   },
   "unknown_alias: unresolved resource identity `ht`": {
-   "total": 1,
-   "by_line_shape": {
-    "other-line": 1
-   }
-  },
-  "leak: live obligation acquired at mk_server/mk_vhost.c:95": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -588,7 +577,25 @@
     "other-line": 1
    }
   },
+  "leak: live obligation acquired at mk_core/mk_rconf.c:456": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
   "unknown_alias: unresolved resource identity `status`": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:468": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:493": {
    "total": 1,
    "by_line_shape": {
     "other-line": 1
@@ -617,64 +624,27 @@
    "by_line_shape": {
     "other-line": 1
    }
+  },
+  "leak: live obligation acquired at mk_server/mk_vhost.c:609": {
+   "total": 1,
+   "by_line_shape": {
+    "unclassified": 1
+   }
   }
  },
  "status_moves": [
   {
    "unit": "mk_core/mk_rconf.c",
-   "function": "mk_rconf_section_entry_add",
-   "before": "Unknown",
-   "after": "Unsafe",
-   "added": [
-    [
-     "leak",
-     "live obligation acquired at mk_core/mk_rconf.c:91",
-     0,
-     null
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `new`",
-     1830,
-     "mk_core/mk_rconf.c:95"
-    ],
-    [
-     "unsupported",
-     "call to uncontracted function `mk_string_dup`",
-     1828,
-     "mk_core/mk_rconf.c:92"
-    ],
-    [
-     "unsupported",
-     "call to uncontracted function `mk_string_dup`",
-     1829,
-     "mk_core/mk_rconf.c:93"
-    ]
-   ],
+   "function": "mk_rconf_read",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
    "removed": [
     [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     1823,
-     "mk_core/mk_rconf.c:83"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     1828,
-     "mk_core/mk_rconf.c:92"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     1829,
-     "mk_core/mk_rconf.c:93"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     1830,
-     "mk_core/mk_rconf.c:95"
+     "leak",
+     "live obligation acquired at mk_core/mk_rconf.c:456",
+     2101,
+     "mk_core/mk_rconf.c:465"
     ]
    ]
   },
@@ -719,120 +689,47 @@
    ]
   },
   {
-   "unit": "mk_server/mk_vhost.c",
-   "function": "mk_vhost_fdt_worker_init",
-   "before": "Unknown",
-   "after": "Unsafe",
-   "added": [
-    [
-     "leak",
-     "live obligation acquired at mk_server/mk_vhost.c:95",
-     6000,
-     "mk_server/mk_vhost.c:117"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `fdt`",
-     5985,
-     "mk_server/mk_vhost.c:96"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `fdt`",
-     5996,
-     "mk_server/mk_vhost.c:111"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `hc`",
-     5991,
-     "mk_server/mk_vhost.c:106"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `hc`",
-     5992,
-     "mk_server/mk_vhost.c:107"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `hc`",
-     5993,
-     "mk_server/mk_vhost.c:108"
-    ],
-    [
-     "unknown_alias",
-     "unresolved resource identity `ht`",
-     5988,
-     "mk_server/mk_vhost.c:101"
-    ]
-   ],
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_create",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
    "removed": [
     [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5979,
-     "mk_server/mk_vhost.c:83"
-    ],
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:468",
+     6762,
+     "mk_server/mk_lib.c:485"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_set_property",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
     [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5985,
-     "mk_server/mk_vhost.c:96"
-    ],
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:493",
+     6780,
+     "mk_server/mk_lib.c:506"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
     [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5988,
-     "mk_server/mk_vhost.c:101"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5991,
-     "mk_server/mk_vhost.c:106"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5992,
-     "mk_server/mk_vhost.c:107"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5993,
-     "mk_server/mk_vhost.c:108"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5996,
-     "mk_server/mk_vhost.c:111"
-    ],
-    [
-     "unsupported",
-     "indirect memory access is outside the resource projection",
-     5999,
-     "mk_server/mk_vhost.c:115"
-    ],
-    [
-     "unsupported",
-     "unmodeled call, aggregate or indirect access in branch condition",
-     5976,
-     "mk_server/mk_vhost.c:67"
-    ],
-    [
-     "unsupported",
-     "unmodeled increment or decrement expression",
-     5986,
-     "mk_server/mk_vhost.c:99"
-    ],
-    [
-     "unsupported",
-     "unmodeled increment or decrement expression",
-     5989,
-     "mk_server/mk_vhost.c:104"
+     "leak",
+     "live obligation acquired at mk_server/mk_vhost.c:609",
+     0,
+     null
     ]
    ]
   }
@@ -1151,15 +1048,6 @@
    "unlink by `mk_list_del` of `entry`, which this function has not published",
    2227,
    "mk_core/mk_rconf.c:716",
-   1
-  ],
-  [
-   "mk_core/mk_rconf.c",
-   "mk_rconf_section_entry_add",
-   "leak",
-   "live obligation acquired at mk_core/mk_rconf.c:91",
-   0,
-   null,
    1
   ],
   [
@@ -1529,15 +1417,6 @@
    "unlink by `mk_list_del` of `fdt`, which this function has not published",
    6014,
    "mk_server/mk_vhost.c:134",
-   1
-  ],
-  [
-   "mk_server/mk_vhost.c",
-   "mk_vhost_fdt_worker_init",
-   "leak",
-   "live obligation acquired at mk_server/mk_vhost.c:95",
-   6000,
-   "mk_server/mk_vhost.c:117",
    1
   ],
   [
@@ -6170,6 +6049,15 @@
   ],
   [
    "mk_core/mk_rconf.c",
+   "mk_rconf_read",
+   "leak",
+   "live obligation acquired at mk_core/mk_rconf.c:456",
+   2101,
+   "mk_core/mk_rconf.c:465",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
    "mk_rconf_section_entry_add",
    "unsupported",
    "indirect memory access is outside the resource projection",
@@ -6980,11 +6868,29 @@
   ],
   [
    "mk_server/mk_lib.c",
+   "mk_vhost_create",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:468",
+   6762,
+   "mk_server/mk_lib.c:485",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
    "mk_vhost_lookup",
    "unsupported",
    "unmodeled call, aggregate or indirect access in branch condition",
    6731,
    "mk_server/mk_lib.c:442",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
+   "mk_vhost_set_property",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:493",
+   6780,
+   "mk_server/mk_lib.c:506",
    1
   ],
   [
@@ -7913,17 +7819,18 @@
    6263,
    "mk_server/mk_vhost.c:466",
    1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_set_single",
+   "leak",
+   "live obligation acquired at mk_server/mk_vhost.c:609",
+   0,
+   null,
+   1
   ]
  ],
  "added_leaks": [
-  [
-   "mk_core/mk_rconf.c",
-   "mk_rconf_section_entry_add",
-   "leak",
-   "live obligation acquired at mk_core/mk_rconf.c:91",
-   0,
-   null
-  ],
   [
    "mk_server/mk_http.c",
    "mk_http_error",
@@ -7931,14 +7838,6 @@
    "live obligation acquired at mk_server/mk_http.c:1301",
    6951,
    "mk_server/mk_http.c:1315"
-  ],
-  [
-   "mk_server/mk_vhost.c",
-   "mk_vhost_fdt_worker_init",
-   "leak",
-   "live obligation acquired at mk_server/mk_vhost.c:95",
-   6000,
-   "mk_server/mk_vhost.c:117"
   ]
  ],
  "added_violations": []

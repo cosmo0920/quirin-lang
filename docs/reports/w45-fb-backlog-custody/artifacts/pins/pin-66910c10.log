@@ -1,0 +1,13 @@
+pin: quirin-provider-fluent-bit: 40 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/providers/quirin-provider-fluent-bit/contracts.lock
+  ~ cb_queue_chunks: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_allocate_backlogs: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_allocate_chunk: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_append_chunk_to_segregated_backlog: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_append_chunk_to_segregated_backlogs: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_destroy_backlog: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_destroy_backlogs: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_destroy_chunk: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_release_output_queue_space: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_remove_chunk_from_segregated_backlog: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_remove_chunk_from_segregated_backlogs: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ sb_segregate_chunks: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736

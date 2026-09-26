@@ -1,9 +1,9 @@
 {
- "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only-95b7399e/resource-diagnostics.json",
- "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-84ebad57b/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/variant-iteration-only-d6c1f756/resource-diagnostics.json",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1494bdf26ad0fa36/private/bc/arbiter/before-2f9131a8/resource-diagnostics.json",
  "totals": {
   "after": {
-   "leak": 37,
+   "leak": 33,
    "summary_conflict": 1,
    "unknown_alias": 3571,
    "unsupported": 42700
@@ -17,9 +17,9 @@
  },
  "units": {
   "after": {
-   "Unknown": 167,
+   "Unknown": 170,
    "Safe": 4,
-   "Unsafe": 10,
+   "Unsafe": 7,
    "data_only": 4
   },
   "before": {
@@ -31,9 +31,9 @@
  },
  "functions": {
   "after": {
-   "Unknown": 4432,
+   "Unknown": 4436,
    "Safe": 390,
-   "Unsafe": 12
+   "Unsafe": 8
   },
   "before": {
    "Unknown": 4433,
@@ -42,11 +42,12 @@
   }
  },
  "status_transitions": {
-  "Unknown -> Safe": 1
+  "Unknown -> Safe": 1,
+  "Unsafe -> Unknown": 4
  },
- "functions_with_leaf_changes": 1,
+ "functions_with_leaf_changes": 5,
  "leaves_added": 0,
- "leaves_removed": 2,
+ "leaves_removed": 6,
  "added_by_description": {},
  "removed_by_description": {
   "unsupported: indirect memory access is outside the resource projection": {
@@ -59,6 +60,30 @@
    "total": 1,
    "by_line_shape": {
     "list-header-line:loop:cfl_list_foreach": 1
+   }
+  },
+  "leak: live obligation acquired at mk_core/mk_rconf.c:456": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:468": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_lib.c:493": {
+   "total": 1,
+   "by_line_shape": {
+    "other-line": 1
+   }
+  },
+  "leak: live obligation acquired at mk_server/mk_vhost.c:609": {
+   "total": 1,
+   "by_line_shape": {
+    "unclassified": 1
    }
   }
  },
@@ -83,6 +108,66 @@
      "cmt_label.c:95"
     ]
    ]
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_core/mk_rconf.c:456",
+     2101,
+     "mk_core/mk_rconf.c:465"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_create",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:468",
+     6762,
+     "mk_server/mk_lib.c:485"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_set_property",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_lib.c:493",
+     6780,
+     "mk_server/mk_lib.c:506"
+    ]
+   ]
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "before": "Unsafe",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    [
+     "leak",
+     "live obligation acquired at mk_server/mk_vhost.c:609",
+     0,
+     null
+    ]
+   ]
   }
  ],
  "added_leaves": [],
@@ -103,6 +188,42 @@
    "unmodeled call, aggregate or indirect access in for-loop condition",
    5329,
    "cmt_label.c:95",
+   1
+  ],
+  [
+   "mk_core/mk_rconf.c",
+   "mk_rconf_read",
+   "leak",
+   "live obligation acquired at mk_core/mk_rconf.c:456",
+   2101,
+   "mk_core/mk_rconf.c:465",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
+   "mk_vhost_create",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:468",
+   6762,
+   "mk_server/mk_lib.c:485",
+   1
+  ],
+  [
+   "mk_server/mk_lib.c",
+   "mk_vhost_set_property",
+   "leak",
+   "live obligation acquired at mk_server/mk_lib.c:493",
+   6780,
+   "mk_server/mk_lib.c:506",
+   1
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_set_single",
+   "leak",
+   "live obligation acquired at mk_server/mk_vhost.c:609",
+   0,
+   null,
    1
   ]
  ],

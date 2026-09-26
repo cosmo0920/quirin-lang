@@ -244,6 +244,7 @@ import QCore.ContractRevisionMode
 import QCore.ParenthesisedCallee
 import QCore.ListIteration
 import QCore.CheckedSpecification
+import QCore.RefusedCallHandOn
 import QCore.ContainerPublication
 import QCore.CountedUsers
 

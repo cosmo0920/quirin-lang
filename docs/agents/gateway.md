@@ -438,8 +438,21 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     set still standing; otherwise it is withdrawn and the defining row
     carries `declared specification of … is not established`. **Do not**
     apply one on a body the unit does not define, and do not accept one
-    beside a `SummaryConflict`. `QCore.ListIteration`,
-    `QCore.CheckedSpecification`; [report](../reports/w45-fb-backlog-custody/README.md).
+    beside a `SummaryConflict`. It composes with the revision (C06.2) and
+    review (C06.1) markers: an unpinned or withheld declaration is never a
+    specification. (5) A contracted call refused **before its effects** on a
+    member-address or bound-read actual whose aggregate does not resolve
+    (O04-B09B10, O04-READ-BOUND) reports `UnknownAlias`, not `Unsupported`, and
+    is a refused statement all the same: the live identities its actuals and
+    refused aggregates name carry an unresolved effect
+    (`refused_operands::withdraw_refused_call`), as W44-LEAK-PIN-AUDIT's hand-on
+    rule marks a refused statement's. It only withdraws accusations; the node
+    keeps its refusal. Without it a publication refused on a nullable base
+    (`mk_list_add(&e->_head, …)` after an unchecked allocation) was accused of
+    a leak. **Do not** widen it to every `UnknownAlias`: most report a read
+    whose effect still applies. `QCore.ListIteration`,
+    `QCore.CheckedSpecification`, `QCore.RefusedCallHandOn`;
+    [report](../reports/w45-fb-backlog-custody/README.md).
 
 <a id="constraint-6"></a>
 
