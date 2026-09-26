@@ -90,18 +90,25 @@ bound: a modeled access can still fail its obligations.
 
 ## 3. Priority queue
 
-| Order | Card | Kind | Prerequisite | Intended decision |
-|---|---|---|---|---|
-| P0 | W45-SR5-SOUNDNESS | Soundness repair (running) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
-| P1 | ACCESS-PATH-CENSUS | Measurement | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
-| P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | P1 | One typed access-path layer for statements, run beside the shape routes until parity, then retire them |
-| P3 | ACCESS-PATH-POSITIONS | Semantic implementation | P2 | The same layer in conditions, returns and call arguments |
-| P4 | CALLEE-CLOSURE | Measurement, then contracts | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
-| P5 | FIELD-CUSTODY | Candidate only | P0; the owned-field Lean model | Pointer-valued stores into fields; not scheduled |
-| P6 | ALIAS-RESIDUALS | Candidate only | P1's overlap figures | The 1,359 functions blocked by `unknown_alias`; a separate plan |
+| Order | Card | Kind | Effort | Prerequisite | Intended decision |
+|---|---|---|---|---|---|
+| P0 | W45-SR5-SOUNDNESS | Soundness repair | High (done, `85a35431`) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
+| P1 | ACCESS-PATH-CENSUS | Measurement | Medium | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
+| P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High | P1 | One typed access-path layer for statements, run beside the shape routes until parity, then retire them |
+| P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High | P2 | The same layer in conditions, returns and call arguments |
+| P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
+| P5 | FIELD-CUSTODY | Candidate only | High | P0; the owned-field Lean model | Pointer-valued stores into fields; not scheduled |
+| P6 | ALIAS-RESIDUALS | Candidate only | Medium (planning) | P1's overlap figures | The 1,359 functions blocked by `unknown_alias`; a separate plan |
 
 P1 is the only card that can be dispatched now, once P0 lands. Each later card's
 brief must carry P1's function lists and predictions.
+
+**Effort tiers.** Every card carries an effort level:
+- **High:** cards whose error could publish a wrong Safe. That covers analyzer or gateway semantics, provider contracts, Lean, soundness repairs and stability reviews.
+- **Medium:** measurement, census, native-observation, documentation and records-only cards.
+- **Gate helpers** run on a smaller model at medium effort.
+
+Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CALLEE-CONTRACTS) at High.
 
 ### P1: ACCESS-PATH-CENSUS
 - **Reuse the census route.** Reuse the existing census machinery (the
