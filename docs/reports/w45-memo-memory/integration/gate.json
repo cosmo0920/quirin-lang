@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-MEMO-MEMORY on merge 8e457436 (onto main 37e1b82d, after W45-REFUTED-CONTRACT-WITHDRAWAL, W45-CONTAINER-ROOT-REACH and earlier wave-45 cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. This card removes the member-release memo, cutting the 16-job peak by 243 MiB, and does not move the corpus. 5951 core Rust passed / 0 failed / 11 ignored over 324 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 206 Lean audits; 358 root Python tests; 15 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset; 16 on this host) in 174s and baseline_identity.py against docs/reports/w45-container-root-reach/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-container-root-reach-baseline.json). The contracts sidecar was not byte-identical to that baseline, as expected: main had already added the refuted_contracts section since that baseline was taken; leaf_diff.py against the baseline's contracts.json.gz confirmed the only differing top-level key is refuted_contracts, with entries: [], refuted_declarations: 0 and phases: 1 (34-contracts-raw-diff.log), so the corpus itself does not move.",
+ "workspace_tests": 5951,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 358,
+ "lean_audits": 206,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
