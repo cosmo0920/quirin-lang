@@ -652,7 +652,7 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     assert_eq!(resolved.manifest_path().parent(), manifest_path.parent());
     let from_manifest = load_resource_contract_manifest(&manifest_path).unwrap();
     let from_selection = ContractInput::providers(&resolved, None).load().unwrap();
-    assert_eq!(from_selection.source_assumptions().len(), 47);
+    assert_eq!(from_selection.source_assumptions().len(), 48);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),

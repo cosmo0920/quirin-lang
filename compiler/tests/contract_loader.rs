@@ -522,6 +522,31 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "fileno",
         ResourceFunctionContract::new([P::Borrowed], R::None),
     );
+    // Card W45-FB-BACKLOG-CUSTODY: the twelve checked specifications of
+    // `fluent_bit/storage_backlog.qcore`; ten borrow every argument and return
+    // no custody (the canonical form below drops their trailing `Borrowed`s).
+    old.insert_contract(
+        "sb_allocate_chunk",
+        ResourceFunctionContract::new([], R::Owned { nullable: true }),
+    );
+    old.insert_contract(
+        "sb_destroy_chunk",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
+    for name in [
+        "sb_destroy_backlog",
+        "sb_allocate_backlogs",
+        "sb_destroy_backlogs",
+        "sb_remove_chunk_from_segregated_backlog",
+        "sb_remove_chunk_from_segregated_backlogs",
+        "sb_append_chunk_to_segregated_backlog",
+        "sb_append_chunk_to_segregated_backlogs",
+        "sb_segregate_chunks",
+        "sb_release_output_queue_space",
+        "cb_queue_chunks",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1171,9 +1196,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 152 -> 155 by card W44-LIBC-RESIDUALS: `vsnprintf` and `vprintf`
     // appended to `libc/stdio.qcore` and `strerror` to `libc/errno.qcore`, all
     // already selected. Selection and rejected unchanged.
+    // 47 -> 48 and 155 -> 167 by card W45-FB-BACKLOG-CUSTODY: the twelve
+    // checked specifications of `fluent_bit/storage_backlog.qcore`.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (47, 155, 216)
+        (48, 167, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
