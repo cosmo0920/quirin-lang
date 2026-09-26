@@ -41,6 +41,7 @@ any implementation. Gateway constraint 10f; contract specification unchanged
 |---|---|
 | Arbiter BEFORE (`12553fb3`, `run_audit.py --jobs 8`) | Reproduces [w45-fb-backlog-custody/integration/artifacts](../w45-fb-backlog-custody/integration/artifacts/): `resource-diagnostics.json`, chunk contracts and Monkey source byte-identical; the contracts sidecar differs only in two `meaning` strings later cards reworded; `verdict_bearing_identical: true` ([before-identity.json](artifacts/arbiter/before-identity.json)) |
 | Slice BEFORE at `046accf6` (fresh private clone attempt-1, `scripts/prepare-attempt.sh`, exit 0) | units 0 / 2 / 13; functions 28 / 2 / 204 / 3; unsupported 3,338, unknown_alias 717, counted_user 4: the published figures ([before.json.gz](artifacts/slice/before.json.gz)) |
+| After merging `main` `675e7289` (W45-AUDIT-CHECKPOINTS) at `45bea57e` | the arbiter's five artifacts are byte-identical to this card's AFTER ([merged-identity.json](artifacts/arbiter/merged-identity.json)) and the slice report is byte-identical to its AFTER |
 
 ## 2. Census (criterion 1)
 
