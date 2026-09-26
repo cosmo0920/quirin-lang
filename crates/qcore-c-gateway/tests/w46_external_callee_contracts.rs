@@ -86,10 +86,22 @@ fn rdkafka_section() -> String {
 fn production() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
         ("libc/unistd.qcore".to_owned(), normalize_newlines(UNISTD)),
-        ("libc/memory.qcore".to_owned(), normalize_newlines(LIBC_MEMORY)),
-        ("mpack/writer.qcore".to_owned(), normalize_newlines(MPACK_WRITER)),
-        ("cfl/sds_lifetime.qcore".to_owned(), normalize_newlines(CFL_SDS)),
-        ("monkey/logging.qcore".to_owned(), normalize_newlines(MONKEY_LOGGING)),
+        (
+            "libc/memory.qcore".to_owned(),
+            normalize_newlines(LIBC_MEMORY),
+        ),
+        (
+            "mpack/writer.qcore".to_owned(),
+            normalize_newlines(MPACK_WRITER),
+        ),
+        (
+            "cfl/sds_lifetime.qcore".to_owned(),
+            normalize_newlines(CFL_SDS),
+        ),
+        (
+            "monkey/logging.qcore".to_owned(),
+            normalize_newlines(MONKEY_LOGGING),
+        ),
         ("librdkafka/w46_atomic.qcore".to_owned(), rdkafka_section()),
     ]))
     .unwrap_or_else(|error| panic!("production contract text rejected: {error}"))
@@ -108,7 +120,10 @@ fn without_card() -> ResourceContracts {
             "libc/unistd.qcore".to_owned(),
             cut(UNISTD, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
-        ("libc/memory.qcore".to_owned(), normalize_newlines(LIBC_MEMORY)),
+        (
+            "libc/memory.qcore".to_owned(),
+            normalize_newlines(LIBC_MEMORY),
+        ),
         (
             "mpack/writer.qcore".to_owned(),
             cut(MPACK_WRITER, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
@@ -198,12 +213,7 @@ fn use_after_close(summary: &LegacyFunctionSummary) -> usize {
     summary
         .diagnostics
         .iter()
-        .filter(|diagnostic| {
-            matches!(
-                diagnostic.kind,
-                LegacyDiagnosticKind::UseAfterClose { .. }
-            )
-        })
+        .filter(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::UseAfterClose { .. }))
         .count()
 }
 
@@ -303,7 +313,12 @@ fn a_borrowed_position_releases_nothing_so_an_owned_actual_still_leaks() {
     ];
     for body in bodies {
         let summary = summary(body, "l");
-        assert_eq!(summary.status, AnalysisStatus::Unsafe, "{body}: {:?}", summary.diagnostics);
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Unsafe,
+            "{body}: {:?}",
+            summary.diagnostics
+        );
         assert_eq!(leaks(&summary), 1, "{body}: {:?}", summary.diagnostics);
     }
 }
@@ -319,7 +334,12 @@ fn a_released_heap_actual_is_refused_not_accepted() {
     ];
     for body in bodies {
         let summary = summary(body, "u");
-        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}: {:?}", summary.diagnostics);
+        assert_ne!(
+            summary.status,
+            AnalysisStatus::Safe,
+            "{body}: {:?}",
+            summary.diagnostics
+        );
     }
 }
 
@@ -335,7 +355,12 @@ fn fcntl_is_declared_only_at_f_setfd() {
             "int p(const char *path) {{ int fd; int r; fd = open(path, 0); if (fd == -1) {{ return -1; }} r = fcntl(fd, {command}); close(fd); return r; }}"
         );
         let summary = summary(&body, "p");
-        assert_eq!(summary.status, AnalysisStatus::Unknown, "{command}: {:?}", summary.diagnostics);
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Unknown,
+            "{command}: {:?}",
+            summary.diagnostics
+        );
         assert!(
             unsupported(&summary).iter().any(|d| d == OUTSIDE_PREMISE),
             "{command}: {:?}",
@@ -343,11 +368,13 @@ fn fcntl_is_declared_only_at_f_setfd() {
         );
     }
     // A command that only reaches `2` through arithmetic is not the literal.
-    let summary = summary(
-        "void p(int fd) { fcntl(fd, 1 + 1, FD_CLOEXEC); }",
-        "p",
+    let summary = summary("void p(int fd) { fcntl(fd, 1 + 1, FD_CLOEXEC); }", "p");
+    assert_ne!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
     );
-    assert_ne!(summary.status, AnalysisStatus::Safe, "{:?}", summary.diagnostics);
 }
 
 #[test]
@@ -360,7 +387,12 @@ fn fcntl_at_f_setfd_borrows_the_descriptor() {
         "void k(const char *path) { int fd; fd = open(path, 0); if (fd == -1) { return; } fcntl(fd, F_SETFD, FD_CLOEXEC); }",
         "k",
     );
-    assert_eq!(leak.status, AnalysisStatus::Unsafe, "{:?}", leak.diagnostics);
+    assert_eq!(
+        leak.status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        leak.diagnostics
+    );
     assert_eq!(leaks(&leak), 1, "{:?}", leak.diagnostics);
 
     // A use after `close` is a use-after-release candidate.
@@ -368,7 +400,12 @@ fn fcntl_at_f_setfd_borrows_the_descriptor() {
         "void k(const char *path) { int fd; fd = open(path, 0); if (fd == -1) { return; } close(fd); fcntl(fd, F_SETFD, FD_CLOEXEC); }",
         "k",
     );
-    assert_eq!(after.status, AnalysisStatus::Unsafe, "{:?}", after.diagnostics);
+    assert_eq!(
+        after.status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        after.diagnostics
+    );
     assert_eq!(use_after_close(&after), 1, "{:?}", after.diagnostics);
 
     // Opened, flagged and closed: Safe.
