@@ -1,0 +1,13 @@
+{
+  "note": "Standing and provider gate for W45-AUDIT-CHECKPOINTS after merging main 12553fb3 (W45-FB-BACKLOG-CUSTODY, W45-USER-CONTRACT-PLUGINS, W45-GATEWAY-MEMO-KEY), measured by the card in its own worktree at 640d9ace with CARGO_INCREMENTAL=0, after the corpus measurements and never beside them; every exit captured to a file, not piped (private/gate-merged/). scripts/run_test_binaries.py: 309 units, 319 summaries, 5921 passed / 0 failed / 11 ignored. Provider workspace (cargo test --locked --offline): 129 passed / 0 failed / 1 ignored over 43 summaries. 204 Lean audits (this card adds AuditCheckpoints.lean). scripts/tests: 358 tests, first run 1 failure (test_the_derived_facts_are_recomputed_rather_than_carried: the committed matrix counted 203 Lean audits against 204 on disk), then the matrix was regenerated with this gate file and the suite rerun. providers/tests 15 OK. fmt and clippy (core and provider), both reevaluation examples, package build and verify (qcore.libevent), the offline workspace build and cargo clean --profile dev exit 0. Clang recorded beside this file in the same worktree. MOVES=no: the corpus arbiter's diagnostics are byte-identical to docs/reports/w45-fb-backlog-custody/integration/artifacts.",
+  "workspace_tests": 5921,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 358,
+  "lean_audits": 204,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

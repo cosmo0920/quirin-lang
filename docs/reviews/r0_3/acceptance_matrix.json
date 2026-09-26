@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 449
+  "named_followups": 454
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6732,11 +6732,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-GATEWAY-MEMO-KEY on merge def46837 (onto main b22425ec, after all wave-45 cards through W45-USER-CONTRACT-PLUGINS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The card's own gate (docs/reports/w45-gateway-memo-key/gate.json) measured the full Rust suite at its pre-repair tip cf26c45f (5842 passed / 1 failed load-sensitive / 11 ignored / 312 summaries) and never reran it whole at its repaired tip d05a4b4e, which only touched rustfmt and the matrix's derived lean_audits; this gate's 02-test is therefore the first, and authoritative, full-suite run at the merged tip. 5903 core Rust passed / 0 failed / 11 ignored over 320 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries (unchanged from the prior integration: providers/ is untouched by this merge); 203 Lean audits (AuditMemoKey.lean adds 1 over the 202 in the prior integration); 358 root Python tests (08-python exits 1 before matrix regeneration: the single failure is the stale-derived-facts check on lean_audits, 202 committed vs 203 produced, resolved by build_matrix.py --gate below); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus stays verdict-identical: `32-identity` (baseline_identity.py against docs/reports/w45-fb-backlog-custody/integration/artifacts, this integration's PREV) exits 0 with verdict_bearing_identical true; `diagnostics`, `chunk-contracts`, `source-effects` and `source` are byte-identical, only `contracts` differs (not verdict-bearing). No corpus move: this card is a cache-soundness fix in the gateway's memo lookup, not a diagnostic or provider change, so no new baseline is archived and MOVES=no; the combined tree stays docs/reports/w45-fb-backlog-custody/integration/artifacts.",
-  "workspace_tests": 5903,
+  "note": "Standing and provider gate for W45-AUDIT-CHECKPOINTS after merging main 12553fb3 (W45-FB-BACKLOG-CUSTODY, W45-USER-CONTRACT-PLUGINS, W45-GATEWAY-MEMO-KEY), measured by the card in its own worktree at 640d9ace with CARGO_INCREMENTAL=0, after the corpus measurements and never beside them; every exit captured to a file, not piped (private/gate-merged/). scripts/run_test_binaries.py: 309 units, 319 summaries, 5921 passed / 0 failed / 11 ignored. Provider workspace (cargo test --locked --offline): 129 passed / 0 failed / 1 ignored over 43 summaries. 204 Lean audits (this card adds AuditCheckpoints.lean). scripts/tests: 358 tests, first run 1 failure (test_the_derived_facts_are_recomputed_rather_than_carried: the committed matrix counted 203 Lean audits against 204 on disk), then the matrix was regenerated with this gate file and the suite rerun. providers/tests 15 OK. fmt and clippy (core and provider), both reevaluation examples, package build and verify (qcore.libevent), the offline workspace build and cargo clean --profile dev exit 0. Clang recorded beside this file in the same worktree. MOVES=no: the corpus arbiter's diagnostics are byte-identical to docs/reports/w45-fb-backlog-custody/integration/artifacts.",
+  "workspace_tests": 5921,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 203,
+  "lean_audits": 204,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6763,6 +6763,7 @@
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
    "AuditCheckedSpecification.lean",
+   "AuditCheckpoints.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -6948,7 +6949,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-gateway-memo-key/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-audit-checkpoints/gate-merged/gate.json)"
  },
  "named_followups": [
   {
@@ -9986,13 +9987,6 @@
    "recorded_by": "W45-FB-BACKLOG-CUSTODY"
   },
   {
-   "id": "W45-CHECKPOINT-COMPOSE-SEMIGROUP",
-   "title": "Checkpoint composition does not yet fold group verdicts with the verdict semigroup",
-   "why": "Card W45-AUDIT-CHECKPOINTS, running concurrently, adds `.qo` checkpoints with divide-and-conquer composition. Language spec §L21.2 states that a group verdict over checkpoints composes with the same join, and `qcore_schemas::verdict` exposes it (`Verdict::fold`, `ReasonedVerdict::fold`, `Chain` with `ChainKind::UnitGroup`); this card did not edit the checkpoint modules. DISCHARGE: the checkpoint compose calls `qcore_schemas::verdict` for every group verdict, with a test that a composed group equals the fold of its members' verdicts and that a `Pending` member keeps the group from `Safe`.",
-   "source": "docs/reports/w45-user-contract-plugins/README.md",
-   "recorded_by": "W45-USER-CONTRACT-PLUGINS"
-  },
-  {
    "id": "W45-PLUGIN-CERTIFICATE-CHECKER",
    "title": "No trusted-core certificate checker exists for a user-contract checker plugin's Safe claim",
    "why": "The firewall counts a plugin's `Safe` only with a certificate the registry issues from a trusted-core `WitnessChecker` replay. `quirin-audit` registers none for the `quirin.user-contract-check.v1` task, so every plugin `Safe` it sees is `Pending` (`plugin-claim-uncertified`, QP008 or QP016); the certified row is exercised only through the library route with a test double of a checker. DISCHARGE: a versioned trusted-core checker for a precisely scoped user-contract claim, with independently replayable evidence, positive, negative and mutation tests, and the command line registering it.",
@@ -10033,6 +10027,48 @@
    "why": "A binding names a package, and `ProcessProvider::from_package` runs it under the default profile (`unenforced-legacy`: process-group containment, deadline and output bound, no declared rlimits or confinement); the sidecar records the profile and limits. A user load path cannot yet request `linux-rlimit-v1` or `linux-confined-v1`. DISCHARGE: a binding field selecting the profile (and a confinement policy), refusing one the host cannot enforce, with the refusal tested.",
    "source": "docs/reports/w45-user-contract-plugins/README.md",
    "recorded_by": "W45-USER-CONTRACT-PLUGINS"
+  },
+  {
+   "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",
+   "title": "The pinned `--pinned-evidence` replay (the corpus arbiter) has no per-group checkpoints",
+   "why": "W45-AUDIT-CHECKPOINTS checkpoints `quirin-audit current`, measured on the 185-unit corpus inputs. The arbiter itself, `cycle19_fluent_bit_libraries_audit --pinned-evidence` (`compiler/examples/support/cycle19_compatibility.rs`), keeps its whole-run fold: its ChunkIO library prelude and postlude share typed, non-serializable certificates across a library's units, its native and teardown results feed the chunk-contracts sidecar across groups, and its Monkey gate runs between the Fluent Bit groups and Monkey. The report's independence audit finds each of these composable (group-local, an ordered concatenation, or a step that belongs to the Monkey group) but none is implemented. DISCHARGE: per-group checkpoints for the pinned route whose composition is byte-identical to the arbiter's five artifacts under `baseline_identity.py`, or the route retired at G4 parity.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-CONTRACTS-AND-CONFIGURED-ROUTES",
+   "title": "`quirin-audit contracts` and `quirin-audit CONFIG.json` take no `--checkpoint-dir`",
+   "why": "Only the `current` route is checkpointed; the no-build contracts route (`no_build.rs`) and the configured route (`run_config_with_jobs` in `lib.rs`) fold their units whole, so their peak memory is still the whole corpus's. Both files were being edited by W45-CONTRACT-REVISION-MODE when the card ran, so the hooks were deferred. DISCHARGE: the same group-by-group sealing, resume and composition on both routes, each with a byte-identity test against its whole run.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-CERTIFICATE-BODIES",
+   "title": "Checkpoints record the certificate binding outcome, not certificate bodies or callee summaries",
+   "why": "The `certificates` section is derived from the published rows (a Safe resting on a certificate bound to the compile-task identity, a refused binding, or none). The certificate itself (`LegacySafetyCertificate`) and the gateway's interprocedural callee summaries are not serde types, and the current route publishes neither, so no checkpoint carries them and the per-function summary step is the published function row. Nothing composed depends on them. DISCHARGE: serializable certificate and summary types, a checkpoint section for each (schema version 2), and decomposition covering them.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-JOBS-MEMORY",
+   "title": "Checkpoints bound the retained results, not the working set: inside a group, memory scales with `--jobs`",
+   "why": "A checkpointed run holds one group's results, but that group's units run `--jobs` at a time, each holding its own analysis and Clang output. On the 185-unit corpus, after the pin evaluation's source read was made to stream (it had held the checkout's 85 MiB of C twice and set a 182 MiB setup peak), the checkpointed peak RSS is 111, 331 and 872 MiB at 1, 4 and 16 jobs against the whole run's 172, 392 and 928; at every job count the peak is librdkafka's group (report, Memory). The only control inside a group is `--jobs`. DISCHARGE: a memory-aware admission of units in flight (a resident-set budget or a per-unit weight bound) measured on the corpus, or a recorded decision that `--jobs` is the control.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-RESUME-PREPARATION-DUPLICATE",
+   "title": "The resume fingerprint repeats the preparation of `CurrentAudit::evaluate_entry` in a second function",
+   "why": "`checkpoint_run::fingerprint_task` recomputes a unit's compile configuration and preparation facts without analysing it, by repeating the preparation steps of `current.rs`'s `evaluate_entry_into` (left untouched because W45-CONTRACT-REVISION-MODE was editing it). A divergence can only disable reuse, never reuse a wrong result, because the analyzer binary digest is in the identity and the fingerprints are compared whole; the fixture and corpus runs show reuse working end to end. A group recomputed under `--resume` also prepares its units twice. DISCHARGE: one shared preparation function used by both paths, the prepared unit passed on to the analysis, and a test comparing the two fingerprints on prepared, refused and absent units.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-CHECKPOINT-GROUPS-IN-FLIGHT",
+   "title": "A checkpointed run has one group in flight, so a group's longest unit idles the other jobs",
+   "why": "The checkpointed `current` run analyses one group at a time to bound memory; every group ends when its longest unit ends, while the whole run overlaps groups. On the 185-unit corpus it cost nothing at 16 jobs (115.8 s against 130.8 s whole, a noisy host) or 1 job, but doubled the wall time at 4 jobs (288.1 s against 141.7 s), where librdkafka's group alone took 230 s. DISCHARGE: an explicit bound of groups in flight (for example `--max-groups-in-flight M`, M groups analysed concurrently, each sealed and dropped in plan order), measured for wall time and peak memory at 1, 4 and 16 jobs.",
+   "source": "docs/reports/w45-audit-checkpoints/README.md",
+   "recorded_by": "W45-AUDIT-CHECKPOINTS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

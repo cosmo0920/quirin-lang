@@ -249,5 +249,6 @@ import QCore.CheckedSpecification
 import QCore.RefusedCallHandOn
 import QCore.ContainerPublication
 import QCore.CountedUsers
+import QCore.Checkpoints
 
 /-! The executable formal core of QCore-C revision 0.1. -/

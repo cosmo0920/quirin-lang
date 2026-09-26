@@ -1,0 +1,6 @@
+checkpoint cmetrics: reused (identity equal)
+checkpoint ctraces: reused (identity equal)
+checkpoint librdkafka: reused (identity equal)
+checkpoint chunkio: reused (identity equal)
+checkpoint fluent-bit-chunk: reused (identity equal)
+checkpoint monkey-libevent: reused (identity equal)

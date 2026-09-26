@@ -1,0 +1,14 @@
+whole-j4 exit 0
+whole-j1 exit 0
+ck-j16 exit 0
+ck-j4 exit 0
+ck-j1 exit 0
+compose exit 0
+resume-j16 exit 0
+probe-resume-j16 vs probe-whole exit 0
+arbiter vs w45-fb-retry-lifetime exit 0
+verify qo-j16 exit 0
+verify qo-j4 exit 0
+verify qo-j1 exit 0
+verify qo-resume exit 0
+verify qo-probe exit 0
