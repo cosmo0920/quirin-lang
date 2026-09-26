@@ -1,0 +1,276 @@
+{
+ "reference": "arbiter-base-1",
+ "all_identical": true,
+ "runs": [
+  {
+   "run": "arbiter-base-1",
+   "binary_sha256": "7981c726f6b39683b37804142e94c38c86997153b308e5e1e48a0902dfd1b3ce",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 127.5,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-base-2",
+   "binary_sha256": "7981c726f6b39683b37804142e94c38c86997153b308e5e1e48a0902dfd1b3ce",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 135.0,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-base-3",
+   "binary_sha256": "7981c726f6b39683b37804142e94c38c86997153b308e5e1e48a0902dfd1b3ce",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 109.8,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-fix-1",
+   "binary_sha256": "a0cc996f205300fe88db11c83deb6176e986b62ac6a6dd03d2ebffae8ec59b7f",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 123.8,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-fix-2",
+   "binary_sha256": "a0cc996f205300fe88db11c83deb6176e986b62ac6a6dd03d2ebffae8ec59b7f",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 188.8,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-fix-3",
+   "binary_sha256": "a0cc996f205300fe88db11c83deb6176e986b62ac6a6dd03d2ebffae8ec59b7f",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 117.7,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-off-1",
+   "binary_sha256": "581fbe0b311b3a557571e542bc7f6772c57cc5818670f2a6b1b0b091f11a4fc5",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 117.7,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-off-2",
+   "binary_sha256": "581fbe0b311b3a557571e542bc7f6772c57cc5818670f2a6b1b0b091f11a4fc5",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 112.7,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  },
+  {
+   "run": "arbiter-off-3",
+   "binary_sha256": "581fbe0b311b3a557571e542bc7f6772c57cc5818670f2a6b1b0b091f11a4fc5",
+   "jobs": "8",
+   "exit": 0,
+   "wall_seconds": 119.6,
+   "artifacts": {
+    "resource-diagnostics.json": {
+     "sha256": "250d75bb68e89f27aec86b77309addd5b85002c75330f806c75ee5f46ac9e954",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.contracts.json": {
+     "sha256": "fb1c214f282a1271971f49cacbf02ded2c38a9ff11746c31d8621d667fbe2600",
+     "identical_to_reference": true
+    },
+    "resource-diagnostics.source-effects.json": {
+     "sha256": "db1626921b2e5165fa07e022f36bb0ddd0673961ae72869d256da82d33bd0706",
+     "identical_to_reference": true
+    },
+    "monkey-source.json": {
+     "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "identical_to_reference": true
+    }
+   },
+   "audit_log_identical_after_own_path": true
+  }
+ ]
+}

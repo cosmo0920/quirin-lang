@@ -886,6 +886,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-fb-system-selection](w45-fb-system-selection/README.md) | W45-FB-SYSTEM-SELECTION: the Fluent Bit engine, backlog and retry files in a current audit |
 
+| [w45-gateway-memo-key](w45-gateway-memo-key/README.md) | W45-GATEWAY-MEMO-KEY: no cached analysis answer is served on a hash match alone |
+
 | [w45-parenthesised-callee](w45-parenthesised-callee/README.md) | W45-PARENTHESISED-CALLEE: a callee that is not spelled `NAME (` |
 
 | [w45-return-expression-families](w45-return-expression-families/README.md) | W45-RETURN-EXPRESSION-FAMILIES — the refused return expressions that block functions alone |

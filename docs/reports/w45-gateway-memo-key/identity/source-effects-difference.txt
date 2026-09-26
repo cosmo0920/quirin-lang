@@ -1,0 +1,160 @@
+/results[16]/bounds/resource_contracts:685cbcf86628412b2587fe35/max_operations
+  run:      "<absent>"
+  baseline: null
+/results[16]/bounds/resource_contracts:685cbcf86628412b2587fe35/observed_runs_only
+  run:      "<absent>"
+  baseline: false
+/results[16]/bounds/resource_contracts:685cbcf86628412b2587fe35/path_exploration/kind
+  run:      "<absent>"
+  baseline: "bounded_paths"
+/results[16]/bounds/resource_contracts:685cbcf86628412b2587fe35/path_exploration/paths
+  run:      "<absent>"
+  baseline: 4
+/results[16]/bounds/resource_contracts:685cbcf86628412b2587fe35/schedules_explored
+  run:      "<absent>"
+  baseline: null
+/results[16]/bounds/resource_contracts:a139647c68e1587c6312c7a2/max_operations
+  run:      null
+  baseline: "<absent>"
+/results[16]/bounds/resource_contracts:a139647c68e1587c6312c7a2/observed_runs_only
+  run:      false
+  baseline: "<absent>"
+/results[16]/bounds/resource_contracts:a139647c68e1587c6312c7a2/path_exploration/kind
+  run:      "bounded_paths"
+  baseline: "<absent>"
+/results[16]/bounds/resource_contracts:a139647c68e1587c6312c7a2/path_exploration/paths
+  run:      4
+  baseline: "<absent>"
+/results[16]/bounds/resource_contracts:a139647c68e1587c6312c7a2/schedules_explored
+  run:      null
+  baseline: "<absent>"
+/results[16]/evidence/coverage[0]
+  run:      "resource_contracts:a139647c68e1587c6312c7a2"
+  baseline: "resource_contracts:685cbcf86628412b2587fe35"
+/results[16]/evidence/unit/build_digest
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[16]/import_identity/configuration_digest
+  run:      "7a144ff28ccca14d1e7599bfc079baf65f535f9557214cd3a37e162b2e71a1d7"
+  baseline: "78163708b90b5b640d2211498a99e8713ad26e48c381caf9086cffce49f3963f"
+/results[16]/import_identity/helpers/cio_error_reset/configuration_digest
+  run:      "7a144ff28ccca14d1e7599bfc079baf65f535f9557214cd3a37e162b2e71a1d7"
+  baseline: "78163708b90b5b640d2211498a99e8713ad26e48c381caf9086cffce49f3963f"
+/results[16]/task/contract_sources/qcore:boolean-field-import:v1
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[16]/task/obligations[0]/obligation_id
+  run:      "resource_contracts:a139647c68e1587c6312c7a2"
+  baseline: "resource_contracts:685cbcf86628412b2587fe35"
+/results[16]/task/unit/build_digest
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[16]/witness/task_digest
+  run:      "5def2fadd3b2217f4c0ae926b2d04d8029d999531a437dc8436fc62c5d80ac91"
+  baseline: "c2f9ad8244d8259fcd7a5c0c78bab738d8404d4231aac862130b267525dae0c7"
+/results[24]/bounds/resource_contracts:3aeb4661d9e98f505ca9af22/max_operations
+  run:      "<absent>"
+  baseline: null
+/results[24]/bounds/resource_contracts:3aeb4661d9e98f505ca9af22/observed_runs_only
+  run:      "<absent>"
+  baseline: false
+/results[24]/bounds/resource_contracts:3aeb4661d9e98f505ca9af22/path_exploration/kind
+  run:      "<absent>"
+  baseline: "bounded_paths"
+/results[24]/bounds/resource_contracts:3aeb4661d9e98f505ca9af22/path_exploration/paths
+  run:      "<absent>"
+  baseline: 4
+/results[24]/bounds/resource_contracts:3aeb4661d9e98f505ca9af22/schedules_explored
+  run:      "<absent>"
+  baseline: null
+/results[24]/bounds/resource_contracts:f3b8b92baf3518f5749bfd8a/max_operations
+  run:      null
+  baseline: "<absent>"
+/results[24]/bounds/resource_contracts:f3b8b92baf3518f5749bfd8a/observed_runs_only
+  run:      false
+  baseline: "<absent>"
+/results[24]/bounds/resource_contracts:f3b8b92baf3518f5749bfd8a/path_exploration/kind
+  run:      "bounded_paths"
+  baseline: "<absent>"
+/results[24]/bounds/resource_contracts:f3b8b92baf3518f5749bfd8a/path_exploration/paths
+  run:      4
+  baseline: "<absent>"
+/results[24]/bounds/resource_contracts:f3b8b92baf3518f5749bfd8a/schedules_explored
+  run:      null
+  baseline: "<absent>"
+/results[24]/evidence/coverage[0]
+  run:      "resource_contracts:f3b8b92baf3518f5749bfd8a"
+  baseline: "resource_contracts:3aeb4661d9e98f505ca9af22"
+/results[24]/evidence/unit/build_digest
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[24]/import_identity/configuration_digest
+  run:      "7a144ff28ccca14d1e7599bfc079baf65f535f9557214cd3a37e162b2e71a1d7"
+  baseline: "78163708b90b5b640d2211498a99e8713ad26e48c381caf9086cffce49f3963f"
+/results[24]/import_identity/helpers/cio_error_reset/configuration_digest
+  run:      "7a144ff28ccca14d1e7599bfc079baf65f535f9557214cd3a37e162b2e71a1d7"
+  baseline: "78163708b90b5b640d2211498a99e8713ad26e48c381caf9086cffce49f3963f"
+/results[24]/task/contract_sources/qcore:boolean-field-import:v1
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[24]/task/obligations[0]/obligation_id
+  run:      "resource_contracts:f3b8b92baf3518f5749bfd8a"
+  baseline: "resource_contracts:3aeb4661d9e98f505ca9af22"
+/results[24]/task/unit/build_digest
+  run:      "3f368f1c93f81ef1b9b30553de91350d52784705152bbec7e28caf867a02428e"
+  baseline: "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099"
+/results[24]/witness/task_digest
+  run:      "a7fad014b6d08dcef5c2b81f9453c0ec6d90287d5f64135cd2101b77c98734d7"
+  baseline: "eb616ac816e7696adfad28f2a53c780aed5949bbc41a3dc5d11d41ea8f61ed8f"
+/results[63]/bounds/resource_contracts:58892f2bb2d3b213b0e70a25/max_operations
+  run:      null
+  baseline: "<absent>"
+/results[63]/bounds/resource_contracts:58892f2bb2d3b213b0e70a25/observed_runs_only
+  run:      false
+  baseline: "<absent>"
+/results[63]/bounds/resource_contracts:58892f2bb2d3b213b0e70a25/path_exploration/kind
+  run:      "bounded_paths"
+  baseline: "<absent>"
+/results[63]/bounds/resource_contracts:58892f2bb2d3b213b0e70a25/path_exploration/paths
+  run:      4
+  baseline: "<absent>"
+/results[63]/bounds/resource_contracts:58892f2bb2d3b213b0e70a25/schedules_explored
+  run:      null
+  baseline: "<absent>"
+/results[63]/bounds/resource_contracts:d93567ac19262b06b3ca95cc/max_operations
+  run:      "<absent>"
+  baseline: null
+/results[63]/bounds/resource_contracts:d93567ac19262b06b3ca95cc/observed_runs_only
+  run:      "<absent>"
+  baseline: false
+/results[63]/bounds/resource_contracts:d93567ac19262b06b3ca95cc/path_exploration/kind
+  run:      "<absent>"
+  baseline: "bounded_paths"
+/results[63]/bounds/resource_contracts:d93567ac19262b06b3ca95cc/path_exploration/paths
+  run:      "<absent>"
+  baseline: 4
+/results[63]/bounds/resource_contracts:d93567ac19262b06b3ca95cc/schedules_explored
+  run:      "<absent>"
+  baseline: null
+/results[63]/evidence/coverage[0]
+  run:      "resource_contracts:58892f2bb2d3b213b0e70a25"
+  baseline: "resource_contracts:d93567ac19262b06b3ca95cc"
+/results[63]/evidence/unit/build_digest
+  run:      "cbdaa47dddc708645c3bc4fa7f1e2f67b12079626fb6ac383905edd7ffa5d3bd"
+  baseline: "4722530d7dbb9f69447840a38ba5995a59d4b79afb5d8c15cd3a0510ac39f560"
+/results[63]/import_identity/configuration_digest
+  run:      "5921386c7e012573ea89c2ef098a6a2de88b3c6001e6528a2ed7b10dcd690cf1"
+  baseline: "9d59585d4529f952282e61ea56c3f54b72398bfe5d3d2c7e341e82fa88b96d7c"
+/results[63]/task/contract_sources/qcore:boolean-field-import:v1
+  run:      "cbdaa47dddc708645c3bc4fa7f1e2f67b12079626fb6ac383905edd7ffa5d3bd"
+  baseline: "4722530d7dbb9f69447840a38ba5995a59d4b79afb5d8c15cd3a0510ac39f560"
+/results[63]/task/obligations[0]/obligation_id
+  run:      "resource_contracts:58892f2bb2d3b213b0e70a25"
+  baseline: "resource_contracts:d93567ac19262b06b3ca95cc"
+/results[63]/task/unit/build_digest
+  run:      "cbdaa47dddc708645c3bc4fa7f1e2f67b12079626fb6ac383905edd7ffa5d3bd"
+  baseline: "4722530d7dbb9f69447840a38ba5995a59d4b79afb5d8c15cd3a0510ac39f560"
+/results[63]/witness/task_digest
+  run:      "b858a7ab2fe2ae6c64fe3e5cec1e9c44f8cb3104a7042b8ddf829d4045f11bda"
+  baseline: "fc26eac27e32e84ea3994c546b180a1054d1995b242c5bafefc30fcacbce8530"
+differing leaves: 53
