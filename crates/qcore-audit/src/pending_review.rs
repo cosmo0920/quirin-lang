@@ -32,64 +32,148 @@ pub const MEANING: &str = "declared contracts, or clauses of them, marked `resou
 /// The `pending_human_review` section for one finished report.
 #[must_use]
 pub fn section(contracts: &ResourceContracts, report: &AuditReport) -> Value {
-    // (callee) -> held call sites, and the distinct (library, file, function)
-    // rows holding at least one of them.
-    let mut call_sites = BTreeMap::<String, usize>::new();
-    let mut functions = BTreeMap::<String, BTreeSet<(String, String, String)>>::new();
-    for unit in report.unit_rows() {
-        let library = unit["library"].as_str().unwrap_or_default();
-        let file = unit["file"].as_str().unwrap_or_default();
-        for function in unit["functions"].as_array().into_iter().flatten() {
-            let name = function["function"].as_str().unwrap_or_default();
-            for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
-                let Some(callee) = diagnostic["description"].as_str().and_then(held_call) else {
-                    continue;
-                };
-                *call_sites.entry(callee.to_owned()).or_default() += 1;
-                functions.entry(callee.to_owned()).or_default().insert((
-                    library.to_owned(),
-                    file.to_owned(),
-                    name.to_owned(),
-                ));
+    render(
+        &markers(contracts),
+        &HeldCalls::from_rows(report.unit_rows()),
+    )
+}
+
+/// The held-call refusals recorded in a set of unit rows: per callee, the call
+/// sites held and the distinct `(library, file, function)` rows holding at
+/// least one of them.
+///
+/// Card **W45-AUDIT-CHECKPOINTS**: the tally is a per-row fold, so the tally of
+/// a whole report is the [`HeldCalls::absorb`] of its groups' tallies (sums of
+/// call sites, unions of function rows). A per-group checkpoint records its
+/// group's tally, and composition merges them into exactly the whole run's.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct HeldCalls {
+    pub call_sites: BTreeMap<String, usize>,
+    pub functions: BTreeMap<String, BTreeSet<(String, String, String)>>,
+}
+
+impl HeldCalls {
+    /// The tally of `rows`.
+    #[must_use]
+    pub fn from_rows(rows: &[Value]) -> Self {
+        let mut held = Self::default();
+        for unit in rows {
+            let library = unit["library"].as_str().unwrap_or_default();
+            let file = unit["file"].as_str().unwrap_or_default();
+            for function in unit["functions"].as_array().into_iter().flatten() {
+                let name = function["function"].as_str().unwrap_or_default();
+                for diagnostic in function["diagnostics"].as_array().into_iter().flatten() {
+                    let Some(callee) = diagnostic["description"].as_str().and_then(held_call)
+                    else {
+                        continue;
+                    };
+                    *held.call_sites.entry(callee.to_owned()).or_default() += 1;
+                    held.functions
+                        .entry(callee.to_owned())
+                        .or_default()
+                        .insert((library.to_owned(), file.to_owned(), name.to_owned()));
+                }
             }
         }
+        held
     }
-    let mut entries = Vec::new();
-    let mut markers = 0usize;
+
+    /// Add `other`'s call sites and unite its function rows.
+    pub fn absorb(&mut self, other: Self) {
+        for (callee, count) in other.call_sites {
+            *self.call_sites.entry(callee).or_default() += count;
+        }
+        for (callee, rows) in other.functions {
+            self.functions.entry(callee).or_default().extend(rows);
+        }
+    }
+}
+
+/// One review marker as the section publishes it, without its held counts.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PendingMarker {
+    pub function: String,
+    /// `contract` or `clause`.
+    pub scope: String,
+    pub clause: Option<String>,
+    pub reason: String,
+    pub owner: Option<String>,
+    pub module: String,
+    pub module_sha256: Option<String>,
+}
+
+/// The markers of one contract environment, in publication order, and the
+/// number of declarations carrying them.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct PendingMarkers {
+    pub declarations: usize,
+    pub markers: Vec<PendingMarker>,
+}
+
+/// The markers `contracts` declares: a function of the environment alone.
+#[must_use]
+pub fn markers(contracts: &ResourceContracts) -> PendingMarkers {
+    let mut markers = Vec::new();
     for (function, pending) in contracts.pending_review() {
         let digest = contracts
             .source_assumptions()
             .get(&pending.module)
             .map(|text| sha256_hex(text.as_bytes()));
-        let held_functions = functions.get(function).map_or(0, BTreeSet::len);
-        let held_call_sites = call_sites.get(function).copied().unwrap_or(0);
         for deferral in &pending.deferrals {
-            markers += 1;
             let (scope, clause) = match &deferral.scope {
-                ReviewScope::Contract => ("contract", Value::Null),
-                ReviewScope::Clause { clause } => ("clause", json!(clause)),
+                ReviewScope::Contract => ("contract", None),
+                ReviewScope::Clause { clause } => ("clause", Some(clause.clone())),
             };
-            entries.push(json!({
-                "function": function,
-                "scope": scope,
-                "clause": clause,
-                "reason": deferral.reason,
-                "owner": deferral.owner,
-                "module": pending.module,
-                "module_sha256": digest,
-                "held_functions": held_functions,
-                "held_call_sites": held_call_sites,
-            }));
+            markers.push(PendingMarker {
+                function: function.clone(),
+                scope: scope.to_owned(),
+                clause,
+                reason: deferral.reason.clone(),
+                owner: deferral.owner.clone(),
+                module: pending.module.clone(),
+                module_sha256: digest.clone(),
+            });
         }
     }
-    let held_functions = functions.values().flatten().collect::<BTreeSet<_>>().len();
+    PendingMarkers {
+        declarations: contracts.pending_review().len(),
+        markers,
+    }
+}
+
+/// The section for `markers` over the held calls `held`.
+#[must_use]
+pub fn render(markers: &PendingMarkers, held: &HeldCalls) -> Value {
+    let entries = markers
+        .markers
+        .iter()
+        .map(|marker| {
+            json!({
+                "function": marker.function,
+                "scope": marker.scope,
+                "clause": marker.clause,
+                "reason": marker.reason,
+                "owner": marker.owner,
+                "module": marker.module,
+                "module_sha256": marker.module_sha256,
+                "held_functions": held.functions.get(&marker.function).map_or(0, BTreeSet::len),
+                "held_call_sites": held.call_sites.get(&marker.function).copied().unwrap_or(0),
+            })
+        })
+        .collect::<Vec<_>>();
+    let held_functions = held
+        .functions
+        .values()
+        .flatten()
+        .collect::<BTreeSet<_>>()
+        .len();
     json!({
         "meaning": MEANING,
         "reason_code": AWAITING_HUMAN_REVIEW,
-        "declarations": contracts.pending_review().len(),
-        "markers": markers,
+        "declarations": markers.declarations,
+        "markers": markers.markers.len(),
         "held_functions": held_functions,
-        "held_call_sites": call_sites.values().sum::<usize>(),
+        "held_call_sites": held.call_sites.values().sum::<usize>(),
         "entries": entries,
     })
 }

@@ -34,7 +34,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::io::{Read, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
@@ -134,84 +134,11 @@ impl SourceTree {
     }
 
     fn read_git(root: &Path, spelling: &str) -> Result<Self, String> {
-        let commit = format!("{spelling}^{{commit}}");
-        let revision = String::from_utf8_lossy(&git(root, &["rev-parse", "--verify", &commit])?)
-            .trim()
-            .to_owned();
-        let listing = git(root, &["ls-tree", "-r", "-z", "--full-tree", &revision])?;
-        let mut blobs = Vec::new();
-        for entry in listing.split(|byte| *byte == 0).filter(|e| !e.is_empty()) {
-            let entry = String::from_utf8_lossy(entry);
-            let Some((meta, path)) = entry.split_once('\t') else {
-                return Err(format!("unreadable git tree entry `{entry}`"));
-            };
-            let mut fields = meta.split(' ');
-            let (_, kind, object) = (fields.next(), fields.next(), fields.next());
-            if kind == Some("blob") && is_c_file(path) {
-                let object =
-                    object.ok_or_else(|| format!("unreadable git tree entry `{entry}`"))?;
-                blobs.push((path.to_owned(), object.to_owned()));
-            }
-        }
-        let mut child = Command::new("git")
-            .arg("-C")
-            .arg(root)
-            .args(["cat-file", "--batch"])
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|error| format!("git cat-file: {error}"))?;
-        let mut stdin = child.stdin.take().ok_or("git cat-file: no stdin")?;
-        let request = blobs
-            .iter()
-            .map(|(_, object)| format!("{object}\n"))
-            .collect::<String>();
-        let writer = std::thread::spawn(move || stdin.write_all(request.as_bytes()));
-        let mut output = Vec::new();
-        child
-            .stdout
-            .take()
-            .ok_or("git cat-file: no stdout")?
-            .read_to_end(&mut output)
-            .map_err(|error| format!("git cat-file: {error}"))?;
-        writer
-            .join()
-            .map_err(|_| "git cat-file: writer panicked".to_owned())?
-            .map_err(|error| format!("git cat-file: {error}"))?;
-        let status = child
-            .wait()
-            .map_err(|error| format!("git cat-file: {error}"))?;
-        if !status.success() {
-            return Err("git cat-file failed".into());
-        }
         let mut files = BTreeMap::new();
-        let mut rest = output.as_slice();
-        for (path, object) in &blobs {
-            let newline = rest
-                .iter()
-                .position(|byte| *byte == b'\n')
-                .ok_or("git cat-file: truncated output")?;
-            let header = String::from_utf8_lossy(&rest[..newline]).into_owned();
-            let mut fields = header.split(' ');
-            if fields.next() != Some(object.as_str()) || fields.next() != Some("blob") {
-                return Err(format!("git cat-file: unexpected header `{header}`"));
-            }
-            let size = fields
-                .next()
-                .and_then(|size| size.parse::<usize>().ok())
-                .ok_or_else(|| format!("git cat-file: unexpected header `{header}`"))?;
-            let start = newline + 1;
-            let end = start + size;
-            if rest.len() < end + 1 {
-                return Err("git cat-file: truncated output".into());
-            }
-            files.insert(
-                path.clone(),
-                String::from_utf8_lossy(&rest[start..end]).into_owned(),
-            );
-            rest = &rest[end + 1..];
-        }
+        let revision = visit_git(root, spelling, &mut |path, text| {
+            files.insert(path.to_owned(), text);
+            Ok(())
+        })?;
         Ok(Self {
             kind: "git",
             revision: Some(revision),
@@ -220,49 +147,52 @@ impl SourceTree {
     }
 
     fn read_directory(root: &Path) -> Result<Self, String> {
-        fn walk(
-            root: &Path,
-            directory: &Path,
-            files: &mut BTreeMap<String, String>,
-        ) -> Result<(), String> {
-            let mut entries = fs::read_dir(directory)
-                .map_err(|error| format!("{}: {error}", directory.display()))?
-                .collect::<Result<Vec<_>, _>>()
-                .map_err(|error| format!("{}: {error}", directory.display()))?;
-            entries.sort_by_key(std::fs::DirEntry::file_name);
-            for entry in entries {
-                let name = entry.file_name();
-                let name = name.to_string_lossy();
-                let kind = entry
-                    .file_type()
-                    .map_err(|error| format!("{}: {error}", entry.path().display()))?;
-                if kind.is_symlink() || name.starts_with('.') {
-                    continue;
-                }
-                let path = entry.path();
-                if kind.is_dir() {
-                    walk(root, &path, files)?;
-                } else if kind.is_file() && is_c_file(&name) {
-                    let relative = path
-                        .strip_prefix(root)
-                        .map_err(|_| format!("{} escapes the tree", path.display()))?
-                        .components()
-                        .map(|part| part.as_os_str().to_string_lossy().into_owned())
-                        .collect::<Vec<_>>()
-                        .join("/");
-                    let bytes =
-                        fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-                    files.insert(relative, String::from_utf8_lossy(&bytes).into_owned());
-                }
-            }
-            Ok(())
-        }
         let mut files = BTreeMap::new();
-        walk(root, root, &mut files)?;
+        visit_directory(root, &mut |path, text| {
+            files.insert(path.to_owned(), text);
+            Ok(())
+        })?;
         Ok(Self {
             kind: "directory",
             revision: None,
             files,
+        })
+    }
+
+    /// The sites of every name in `names`, as [`Self::read`] then
+    /// [`Self::sites`] give them, reading one file at a time and never
+    /// holding the tree (card **W45-AUDIT-CHECKPOINTS**: the audit's setup
+    /// used to hold every `.c`/`.h` blob of the checkout twice, which set the
+    /// process's peak memory). The sites of each name are sorted, so the
+    /// order the files are read in does not matter.
+    ///
+    /// # Errors
+    ///
+    /// As [`Self::read`].
+    pub fn read_sites(root: &Path, names: &BTreeSet<String>) -> Result<SiteScan, String> {
+        let mut sites: BTreeMap<String, Vec<SourceSite>> = names
+            .iter()
+            .map(|name| (name.clone(), Vec::new()))
+            .collect();
+        let mut visit = |path: &str, text: String| {
+            for (name, site) in file_sites(path, &text, names) {
+                sites.entry(name).or_default().push(site);
+            }
+            Ok(())
+        };
+        let (kind, revision) = if root.join(".git").exists() {
+            ("git", Some(visit_git(root, "HEAD", &mut visit)?))
+        } else {
+            visit_directory(root, &mut visit)?;
+            ("directory", None)
+        };
+        for list in sites.values_mut() {
+            list.sort();
+        }
+        Ok(SiteScan {
+            kind,
+            revision,
+            sites,
         })
     }
 
@@ -284,6 +214,150 @@ impl SourceTree {
         }
         sites
     }
+}
+
+/// What [`SourceTree::read_sites`] found: how the tree was read and the sites.
+#[derive(Clone, Debug)]
+pub struct SiteScan {
+    /// As [`SourceTree::kind`].
+    pub kind: &'static str,
+    /// As [`SourceTree::revision`].
+    pub revision: Option<String>,
+    /// As [`SourceTree::sites`].
+    pub sites: BTreeMap<String, Vec<SourceSite>>,
+}
+
+/// Visit every `.c`/`.h` blob of `spelling` in the checkout at `root`, one at a
+/// time, streaming `git cat-file --batch`; returns the resolved revision.
+fn visit_git(
+    root: &Path,
+    spelling: &str,
+    visit: &mut dyn FnMut(&str, String) -> Result<(), String>,
+) -> Result<String, String> {
+    let commit = format!("{spelling}^{{commit}}");
+    let revision = String::from_utf8_lossy(&git(root, &["rev-parse", "--verify", &commit])?)
+        .trim()
+        .to_owned();
+    let listing = git(root, &["ls-tree", "-r", "-z", "--full-tree", &revision])?;
+    let mut blobs = Vec::new();
+    for entry in listing.split(|byte| *byte == 0).filter(|e| !e.is_empty()) {
+        let entry = String::from_utf8_lossy(entry);
+        let Some((meta, path)) = entry.split_once('\t') else {
+            return Err(format!("unreadable git tree entry `{entry}`"));
+        };
+        let mut fields = meta.split(' ');
+        let (_, kind, object) = (fields.next(), fields.next(), fields.next());
+        if kind == Some("blob") && is_c_file(path) {
+            let object = object.ok_or_else(|| format!("unreadable git tree entry `{entry}`"))?;
+            blobs.push((path.to_owned(), object.to_owned()));
+        }
+    }
+    let mut child = Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(["cat-file", "--batch"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| format!("git cat-file: {error}"))?;
+    let mut stdin = child.stdin.take().ok_or("git cat-file: no stdin")?;
+    let request = blobs
+        .iter()
+        .map(|(_, object)| format!("{object}\n"))
+        .collect::<String>();
+    let writer = std::thread::spawn(move || stdin.write_all(request.as_bytes()));
+    let mut output = BufReader::new(child.stdout.take().ok_or("git cat-file: no stdout")?);
+    let read = (|| -> Result<(), String> {
+        let mut header = Vec::new();
+        for (path, object) in &blobs {
+            header.clear();
+            output
+                .read_until(b'\n', &mut header)
+                .map_err(|error| format!("git cat-file: {error}"))?;
+            if header.pop() != Some(b'\n') {
+                return Err("git cat-file: truncated output".into());
+            }
+            let header = String::from_utf8_lossy(&header).into_owned();
+            let mut fields = header.split(' ');
+            if fields.next() != Some(object.as_str()) || fields.next() != Some("blob") {
+                return Err(format!("git cat-file: unexpected header `{header}`"));
+            }
+            let size = fields
+                .next()
+                .and_then(|size| size.parse::<usize>().ok())
+                .ok_or_else(|| format!("git cat-file: unexpected header `{header}`"))?;
+            let mut body = vec![0u8; size + 1];
+            output
+                .read_exact(&mut body)
+                .map_err(|_| "git cat-file: truncated output".to_owned())?;
+            if body.pop() != Some(b'\n') {
+                return Err("git cat-file: truncated output".into());
+            }
+            visit(path, String::from_utf8_lossy(&body).into_owned())?;
+        }
+        Ok(())
+    })();
+    // Drain whatever is left so the child can exit, whatever happened above.
+    let _ = std::io::copy(&mut output, &mut std::io::sink());
+    let written = writer
+        .join()
+        .map_err(|_| "git cat-file: writer panicked".to_owned())?;
+    let status = child
+        .wait()
+        .map_err(|error| format!("git cat-file: {error}"))?;
+    read?;
+    written.map_err(|error| format!("git cat-file: {error}"))?;
+    if !status.success() {
+        return Err("git cat-file failed".into());
+    }
+    Ok(revision)
+}
+
+/// Visit every `.c`/`.h` file under `root` in a sorted walk that skips
+/// dot-entries and symbolic links, one file at a time.
+fn visit_directory(
+    root: &Path,
+    visit: &mut dyn FnMut(&str, String) -> Result<(), String>,
+) -> Result<(), String> {
+    fn walk(
+        root: &Path,
+        directory: &Path,
+        visit: &mut dyn FnMut(&str, String) -> Result<(), String>,
+    ) -> Result<(), String> {
+        let mut entries = fs::read_dir(directory)
+            .map_err(|error| format!("{}: {error}", directory.display()))?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|error| format!("{}: {error}", directory.display()))?;
+        entries.sort_by_key(std::fs::DirEntry::file_name);
+        for entry in entries {
+            let name = entry.file_name();
+            let name = name.to_string_lossy();
+            let kind = entry
+                .file_type()
+                .map_err(|error| format!("{}: {error}", entry.path().display()))?;
+            if kind.is_symlink() || name.starts_with('.') {
+                continue;
+            }
+            let path = entry.path();
+            if kind.is_dir() {
+                walk(root, &path, visit)?;
+            } else if kind.is_file() && is_c_file(&name) {
+                let relative = path
+                    .strip_prefix(root)
+                    .map_err(|_| format!("{} escapes the tree", path.display()))?
+                    .components()
+                    .map(|part| part.as_os_str().to_string_lossy().into_owned())
+                    .collect::<Vec<_>>()
+                    .join("/");
+                let bytes =
+                    fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+                visit(&relative, String::from_utf8_lossy(&bytes).into_owned())?;
+            }
+        }
+        Ok(())
+    }
+    walk(root, root, visit)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -652,7 +726,10 @@ fn file_sites(path: &str, text: &str, names: &BTreeSet<String>) -> Vec<(String, 
 mod tests {
     use std::collections::BTreeSet;
 
-    use super::{SiteKind, file_sites};
+    use std::fs;
+    use std::process::Command;
+
+    use super::{SiteKind, SourceTree, file_sites};
 
     fn names(list: &[&str]) -> BTreeSet<String> {
         list.iter().map(|name| (*name).to_owned()).collect()
@@ -723,5 +800,62 @@ mod tests {
         assert!(listed.iter().filter(|(name, _)| *name == "g").count() >= 1);
         // `f(2)` inside `h` is a call, not a site.
         assert_eq!(listed.iter().filter(|(name, _)| *name == "f").count(), 1);
+    }
+
+    /// Card W45-AUDIT-CHECKPOINTS: reading one file at a time finds exactly
+    /// the sites the whole-tree read finds, for a Git checkout (whose working
+    /// tree differs from `HEAD`) and for a plain directory.
+    #[test]
+    fn streamed_sites_equal_the_whole_tree_sites() {
+        let root =
+            std::env::temp_dir().join(format!("qcore-identity-stream-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        let files = [
+            ("a.c", "int f(int a) { return a; }\nstatic int g(void);\n"),
+            ("sub/b.h", "int f(int a);\nint g(void);\n"),
+            ("sub/deep/c.c", "int g(void) { return f(1); }\n"),
+            ("notes.txt", "int f(int a) { return 0; }\n"),
+        ];
+        for (path, text) in files {
+            let path = root.join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        }
+        let wanted = names(&["f", "g", "absent"]);
+        let directory = SourceTree::read(&root).unwrap();
+        let streamed = SourceTree::read_sites(&root, &wanted).unwrap();
+        assert_eq!(streamed.kind, "directory");
+        assert_eq!(streamed.sites, directory.sites(&wanted));
+        assert_eq!(streamed.sites["f"].len(), 2);
+        let run = |args: &[&str]| {
+            let output = Command::new("git")
+                .arg("-C")
+                .arg(&root)
+                .args(args)
+                .output()
+                .unwrap();
+            assert!(output.status.success(), "{output:?}");
+        };
+        run(&["init", "--quiet"]);
+        run(&["add", "."]);
+        run(&[
+            "-c",
+            "user.name=Identity Fixture",
+            "-c",
+            "user.email=identity@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "fixture",
+        ]);
+        // The working tree moves away from HEAD; both reads use HEAD's blobs.
+        fs::write(root.join("a.c"), "int f(int a) { return a + 1; }\n").unwrap();
+        let tree = SourceTree::read(&root).unwrap();
+        let streamed = SourceTree::read_sites(&root, &wanted).unwrap();
+        assert_eq!(streamed.kind, "git");
+        assert_eq!(streamed.revision, tree.revision);
+        assert_eq!(streamed.sites, tree.sites(&wanted));
+        assert_eq!(streamed.sites, directory.sites(&wanted));
+        let _ = fs::remove_dir_all(&root);
     }
 }

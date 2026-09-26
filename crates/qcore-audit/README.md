@@ -643,6 +643,39 @@ and its `Unsafe` only with a validated witness, and otherwise either is
 applies a bound contract, and the sidecar carries a `plugin_checks` section.
 The SDK is [`providers/quirin-provider-plugin`](../../providers/quirin-provider-plugin/README.md).
 
+## Checkpoints: group by group, resume, compose
+
+`quirin-audit current … --checkpoint-dir D` analyses the route's library
+groups one at a time and seals each into `D/<label>.qo`, dropping the group's
+state before the next, so peak memory is bounded by one group; the report is
+then composed from the checkpoints and is byte-identical to the whole run's.
+`--resume` reuses each group whose identity (analyzer build, contract set and
+locks, configuration, environment, revision, and every unit's compile-task
+identity and preparation facts) is unchanged, and recomputes the rest, saying
+why. Checkpointing is off by default and never changes a verdict.
+
+```sh
+quirin-audit current --checkout … --profile-directory … --report out/r.json \
+  --checkpoint-dir out/qo [--resume] --jobs 16
+quirin-audit checkpoint verify out/qo/*.qo
+quirin-audit checkpoint compose out/qo/*.qo --report again/r.json
+quirin-audit checkpoint decompose out/qo/chunkio.qo --format yaml --output chunkio.yaml
+quirin-audit checkpoint recompose chunkio.yaml --format yaml --output chunkio.qo
+```
+
+A `.qo` file is `QO`, a big-endian format version, a guard, a postcard header
+listing ten sections (identity, plan, global, preparation, lowering, verdicts,
+certificates, contracts, result, provenance) with their lengths and SHA-256,
+the header's own SHA-256, and the postcard-encoded sections. A truncated,
+tampered or version-mismatched file is refused whole. Every section but
+`provenance` (wall time, peak memory, timings) is deterministic, so runs at any
+`--jobs` agree on the content digest `verify` prints. Each group records its
+verdict, the join of its units' (`Safe < Pending < Unknown < Unsafe`), and
+`compose` reports the run's verdict, the join of the groups'. The full specification,
+including the YAML/TOML mapping, is
+[docs/development/audit-checkpoints.md](../../docs/development/audit-checkpoints.md)
+([report](../../docs/reports/w45-audit-checkpoints/README.md)).
+
 ## Configured source-contract processes
 
 Add an explicit `source_contracts` object to the audit configuration:

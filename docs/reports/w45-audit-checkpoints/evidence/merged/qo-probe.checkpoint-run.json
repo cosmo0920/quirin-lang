@@ -1,0 +1,57 @@
+{
+  "groups": [
+    {
+      "content_sha256": "d73ad1c401a869ca9509e6c8e75d7d4bde6f6a5cc31c162f78f47bbba7f0a08d",
+      "decision": "reused",
+      "group": "cmetrics",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 136768,
+      "wall_time_ms": 473
+    },
+    {
+      "content_sha256": "872f91591f9bd0c4c51a5975ba86bf873a6470a75a49c9e5ac9aed3c5c77a209",
+      "decision": "reused",
+      "group": "ctraces",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 142836,
+      "wall_time_ms": 281
+    },
+    {
+      "content_sha256": "d71f95c8268e9453df7a0b5a6904ef3fd4f22d2aa1e58b397bbbe62ab350f2f4",
+      "decision": "reused",
+      "group": "librdkafka",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 438584,
+      "wall_time_ms": 2685
+    },
+    {
+      "content_sha256": "2c679de4746dc69689a7944df4d09d3867597f1d61d1b3afdd704878fa507a43",
+      "decision": "recomputed",
+      "group": "chunkio",
+      "reason": "unit 0 (lib/chunkio/src/chunkio.c): compile configuration differs",
+      "sampled_peak_rss_kib": 302184,
+      "wall_time_ms": 1870
+    },
+    {
+      "content_sha256": "fe75600970bab12261ed4f40b1773556f7c1f3f28226d49ba0321476c0e8db70",
+      "decision": "reused",
+      "group": "fluent-bit-chunk",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 301928,
+      "wall_time_ms": 192
+    },
+    {
+      "content_sha256": "b98148feb47469ba2dc27ea95169df09a392eac06bac69bd7bee8ce7dceae232",
+      "decision": "reused",
+      "group": "monkey-libevent",
+      "reason": "identity equal",
+      "sampled_peak_rss_kib": 306532,
+      "wall_time_ms": 340
+    }
+  ],
+  "jobs": 16,
+  "process_peak_rss_kib": 437776,
+  "schema_version": 1,
+  "scope": "provenance of one checkpointed run: which groups were reused or recomputed and why, with measured wall time and sampled peak memory; not an input to any verdict",
+  "verdict": "Unsafe"
+}

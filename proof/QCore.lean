@@ -250,5 +250,6 @@ import QCore.RefusedCallHandOn
 import QCore.ContainerPublication
 import QCore.ContainerRootReach
 import QCore.CountedUsers
+import QCore.Checkpoints
 
 /-! The executable formal core of QCore-C revision 0.1. -/

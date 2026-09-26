@@ -1,0 +1,14 @@
+cmetrics yaml decompose=0 recompose=0 bytes=identical text_bytes=2562923
+cmetrics toml decompose=0 recompose=0 bytes=identical text_bytes=2266185
+ctraces yaml decompose=0 recompose=0 bytes=identical text_bytes=1363050
+ctraces toml decompose=0 recompose=0 bytes=identical text_bytes=1255361
+librdkafka yaml decompose=0 recompose=0 bytes=identical text_bytes=13737832
+librdkafka toml decompose=0 recompose=0 bytes=identical text_bytes=11580324
+chunkio yaml decompose=0 recompose=0 bytes=identical text_bytes=1070884
+chunkio toml decompose=0 recompose=0 bytes=identical text_bytes=1008034
+fluent-bit-chunk yaml decompose=0 recompose=0 bytes=identical text_bytes=926788
+fluent-bit-chunk toml decompose=0 recompose=0 bytes=identical text_bytes=865314
+monkey-libevent yaml decompose=0 recompose=0 bytes=identical text_bytes=1649859
+monkey-libevent toml decompose=0 recompose=0 bytes=identical text_bytes=1480704
+checkpoint refused: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a99e1ae248e9aa1bf/private/measure-merged/roundtrip/edited.yaml: the text's contents do not match its recorded manifest (section(s) ["identity", "plan", "global", "preparation", "lowering", "verdicts", "certificates", "contracts", "result"] differ): it was edited or is incomplete
+edited recompose exit 1

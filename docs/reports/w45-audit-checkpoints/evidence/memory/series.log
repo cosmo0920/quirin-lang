@@ -1,0 +1,32 @@
+== ck-j1 09:42:37
+{"exit": 0, "peak_rss_kib": 114068, "wall_clock": "15:58.61"}
+== whole-j1 09:58:36
+{"exit": 0, "peak_rss_kib": 175656, "wall_clock": "18:36.12"}
+== resume-j1 10:17:12
+{"exit": 0, "peak_rss_kib": 105432, "wall_clock": "0:56.94"}
+== ck-j4 10:18:09
+{"exit": 0, "peak_rss_kib": 338900, "wall_clock": "4:46.00"}
+== whole-j4 10:22:55
+{"exit": 0, "peak_rss_kib": 401128, "wall_clock": "4:39.08"}
+== ck-j16 10:27:34
+{"exit": 0, "peak_rss_kib": 892836, "wall_clock": "4:46.62"}
+== whole-j16 10:32:21
+{"exit": 0, "peak_rss_kib": 950188, "wall_clock": "2:06.85"}
+== compose 10:34:28
+{"exit": 0, "peak_rss_kib": 31900, "wall_clock": "0:00.15"}
+== arbiter 10:34:28
+arbiter exit 0
+== identity 10:36:28
+ck-j1 vs current-whole exit 0
+whole-j1 vs current-whole exit 0
+resume-j1 vs current-whole exit 0
+ck-j4 vs current-whole exit 0
+whole-j4 vs current-whole exit 0
+ck-j16 vs current-whole exit 0
+whole-j16 vs current-whole exit 0
+compose vs current-whole exit 0
+arbiter vs w45-fb-retry-lifetime exit 0
+arbiter resource-diagnostics.contracts.json vs pre-streaming arbiter cmp 0
+arbiter resource-diagnostics.source-effects.json vs pre-streaming arbiter cmp 0
+verify exit 0
+== done 10:36:30
