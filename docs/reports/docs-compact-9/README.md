@@ -198,7 +198,38 @@ three `wave-41.md` claims sit in its head, and the two
 
 ## 7. Gate
 
-Filled in from the run below; exits in [`gate/`](gate/).
+One detached run on the draft tree (`026caf65`), `CARGO_INCREMENTAL=0`, each
+step's exit written to its own file and nothing piped; exits, the totals line
+and the Clang recording are in [`gate/`](gate/), logs private under
+`private/dc9-gate/` and `private/test-binaries/20260926T163033Z-1790014/`.
+
+| Step | Exit | Result |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | `third_party/libevent` at `d82464a2` |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 319 units, 331 summaries; **5,995 passed, 0 failed, 11 ignored** |
+| `cargo clean --profile dev` | 0 | after the test step, as briefed |
+| `python3 scripts/check_lean_audits.py` | 0 | Passed 207 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 364 tests, OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | index matches all report directories |
+| `python3 scripts/task_context.py --base 8c1f15eb …` | 0 | packet generated; the report's scripts are unknown paths, so every topic is selected |
+| `clang --version` | 0 | Ubuntu clang 21.1.8, run in this worktree |
+
+The pass, fail and ignored counts equal the W45-AUDIT-SUBCOMMAND-PLUGINS
+integration gate's on the same code; that record says 333 summaries where this
+runner's totals line says 331, a difference in how summaries were counted that
+this card did not investigate. Constraint 16's rows in this workspace all
+passed on the first run (`a_declared_process_limit_stops_the_fixture_from_forking`,
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths`,
+`memory_growth_beyond_the_declared_limit_is_bounded`, and beside them
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`,
+`a_forced_override_never_weakens_an_execution`); the provider workspace was not
+run, since no provider file changed. The Python suite's task-context tests read
+`STATUS.md` and the rule pages through the packet builder, and passed; no test
+pins a heading or anchor this card moved, so no test was adjusted.
 
 ## 8. For the integrator
 
