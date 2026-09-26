@@ -236,12 +236,29 @@ while repairing 5j; 4 textual shapes in the pinned tree, no corpus move).
 
 ## 8. Gate
 
-[scripts/gate.sh](scripts/gate.sh), detached, at `e4f10653`, `CARGO_INCREMENTAL=0`,
-every exit in its own file, logs worktree-private under `measure/gate-e4f10653/`;
+[scripts/gate.sh](scripts/gate.sh), detached, at `650f07a7`, `CARGO_INCREMENTAL=0`,
+every exit in its own file, logs worktree-private under `measure/gate-650f07a7/`;
 exits and the Clang recording copied into [gate/](gate/). Figures in
 [gate.json](gate.json).
 
-GATE_TABLE
+| Step | Exit | Figure |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | `third_party/libevent` at `d82464a2` |
+| `python3 scripts/run_test_binaries.py` | 0 | **321 units, 333 summaries; 6,014 passed; 0 failed; 11 ignored** (`private/test-binaries/20260926T174009Z-2391655/`); +19 tests, +2 units against 5,995 / 319 |
+| `cargo clean --profile dev` | 0 | |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **Passed 210 Lean audits** (207 + 3) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **Ran 364, OK**, after the matrix regeneration |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| `clang --version` | 0 | Ubuntu clang version 21.1.8 (6ubuntu1) |
+
+An earlier run at `e4f10653` measured the same test and Lean figures with clippy
+101 (`type_complexity`, `useless_format`), fixed at `cb822dca`; its Python and
+docs-index failures were the unregenerated matrix and index. The matrix was
+regenerated with `build_matrix.py . --gate docs/reports/w45-sr5-soundness/gate.json`
+(named followups 505, Lean audits 210, contract modules 114).
 
 The provider gate was not run: nothing under `providers/` changed (constraint 18
 not engaged), and no contract was added or changed, so no pin is due.

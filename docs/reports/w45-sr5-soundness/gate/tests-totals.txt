@@ -1,0 +1,1 @@
+test binaries: 321 units, 333 summaries; 6014 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out
