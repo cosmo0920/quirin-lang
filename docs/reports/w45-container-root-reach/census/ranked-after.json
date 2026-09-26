@@ -1,0 +1,2654 @@
+{
+ "by_shape": {
+  "corpus": {
+   "C1": {
+    "first_blockers": {
+     "10d-entry": 4,
+     "call-refused": 12,
+     "identity": 12,
+     "none": 4
+    },
+    "function_names": [
+     "chunk_state_sync",
+     "cio_chunk_open",
+     "cio_stream_create",
+     "flb_input_chunk_create",
+     "flb_input_chunk_map",
+     "header_lookup",
+     "mk_config_listener_add",
+     "mk_fifo_queue_create",
+     "mk_fifo_worker_create",
+     "mk_http_request_init",
+     "mk_mimetype_add",
+     "mk_plugin_load",
+     "mk_rconf_meta_add",
+     "mk_rconf_read",
+     "mk_rconf_section_add",
+     "mk_request_premature_close",
+     "mk_sched_worker_cb_add",
+     "mk_vhost_create",
+     "mk_vhost_init",
+     "mk_vhost_set_property",
+     "mk_vhost_set_single",
+     "qsort_stream"
+    ],
+    "functions": 22,
+    "sites": 32
+   },
+   "C3": {
+    "first_blockers": {
+     "call-refused": 2,
+     "identity": 6
+    },
+    "function_names": [
+     "mk_server_listen_init",
+     "mk_string_split_line",
+     "mk_vhost_create",
+     "mk_vhost_read",
+     "mk_vhost_set_single"
+    ],
+    "functions": 5,
+    "sites": 8
+   },
+   "C4": {
+    "first_blockers": {
+     "call-refused": 9,
+     "identity": 1
+    },
+    "function_names": [
+     "mk_http_sched_read",
+     "mk_http_thread_create",
+     "mk_http_thread_purge",
+     "mk_plugin_load",
+     "mk_sched_event_free",
+     "mk_vhost_handler"
+    ],
+    "functions": 6,
+    "sites": 10
+   },
+   "C5": {
+    "first_blockers": {
+     "identity": 1
+    },
+    "function_names": [
+     "mk_vhost_fdt_worker_init"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "C6": {
+    "first_blockers": {
+     "identity": 1
+    },
+    "function_names": [
+     "mk_rconf_section_entry_add"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "U0": {
+    "first_blockers": {
+     "identity": 1
+    },
+    "function_names": [
+     "cio_chunk_open"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "U1": {
+    "first_blockers": {
+     "10d-unlink": 1,
+     "call-refused": 4,
+     "none": 11
+    },
+    "function_names": [
+     "mk_config_listeners_free",
+     "mk_fifo_worker_destroy_all",
+     "mk_http_request_free_list",
+     "mk_plugin_exit_stages",
+     "mk_rconf_free",
+     "mk_rconf_free_entries",
+     "mk_sched_worker_cb_free",
+     "mk_server_listen_exit",
+     "mk_string_split_free",
+     "mk_vhost_destroy",
+     "mk_vhost_handler_free",
+     "qsort_stream"
+    ],
+    "functions": 12,
+    "sites": 16
+   },
+   "U1-plain": {
+    "first_blockers": {
+     "call-refused": 1
+    },
+    "function_names": [
+     "mk_plugin_exit_all"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "U3": {
+    "first_blockers": {
+     "10d-unlink": 2
+    },
+    "function_names": [
+     "mk_server_listen_free",
+     "mk_vhost_fdt_worker_exit"
+    ],
+    "functions": 2,
+    "sites": 2
+   },
+   "U6": {
+    "first_blockers": {
+     "10d-unlink": 9,
+     "call-refused": 3
+    },
+    "function_names": [
+     "chunk_state_sync",
+     "cio_chunk_close",
+     "cio_stream_destroy",
+     "flb_input_chunk_destroy",
+     "flb_input_chunk_destroy_corrupted",
+     "mk_fifo_queue_destroy",
+     "mk_http_session_remove",
+     "mk_http_thread_destroy",
+     "mk_http_thread_purge",
+     "mk_plugin_unregister",
+     "mk_vhost_destroy"
+    ],
+    "functions": 11,
+    "sites": 12
+   },
+   "U7": {
+    "first_blockers": {
+     "10d-unlink": 1
+    },
+    "function_names": [
+     "header_lookup"
+    ],
+    "functions": 1,
+    "sites": 1
+   }
+  },
+  "slice": {
+   "C1": {
+    "first_blockers": {
+     "10d-entry": 3,
+     "call-refused": 3,
+     "identity": 4,
+     "none": 7
+    },
+    "function_names": [
+     "flb_input_chunk_create",
+     "flb_input_chunk_map",
+     "flb_output_coro_add",
+     "flb_output_flush_prepare_destroy",
+     "flb_output_new",
+     "flb_output_task_queue_enqueue",
+     "flb_output_task_queue_flush_one",
+     "flb_output_upstream_set",
+     "flb_sched_timer_create",
+     "flb_sched_timer_invalidate",
+     "flb_task_create",
+     "flb_task_retry_create",
+     "sb_allocate_backlogs",
+     "sb_append_chunk_to_segregated_backlog",
+     "schedule_request_now",
+     "schedule_request_promote",
+     "schedule_request_wait"
+    ],
+    "functions": 17,
+    "sites": 17
+   },
+   "C3": {
+    "first_blockers": {
+     "call-refused": 3
+    },
+    "function_names": [
+     "flb_task_create"
+    ],
+    "functions": 1,
+    "sites": 3
+   },
+   "C4": {
+    "first_blockers": {
+     "identity": 1
+    },
+    "function_names": [
+     "flb_output_flush_prepare_destroy"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "C5": {
+    "first_blockers": {
+     "none": 2
+    },
+    "function_names": [
+     "schedule_request_promote"
+    ],
+    "functions": 1,
+    "sites": 2
+   },
+   "U1": {
+    "first_blockers": {
+     "10d-unlink": 2,
+     "call-refused": 1,
+     "none": 7
+    },
+    "function_names": [
+     "flb_output_plugin_property_check",
+     "flb_output_task_queue_flush_one",
+     "flb_output_task_singleplex_flush_next",
+     "flb_task_destroy",
+     "flb_task_queue_destroy",
+     "sb_destroy_backlogs",
+     "sb_remove_chunk_from_segregated_backlog",
+     "schedule_request_promote"
+    ],
+    "functions": 8,
+    "sites": 10
+   },
+   "U4": {
+    "first_blockers": {
+     "10d-unlink": 1
+    },
+    "function_names": [
+     "schedule_request_promote"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "U5": {
+    "first_blockers": {
+     "call-refused": 1
+    },
+    "function_names": [
+     "tasks_start"
+    ],
+    "functions": 1,
+    "sites": 1
+   },
+   "U6": {
+    "first_blockers": {
+     "10d-unlink": 8,
+     "call-refused": 2
+    },
+    "function_names": [
+     "flb_input_chunk_destroy",
+     "flb_input_chunk_destroy_corrupted",
+     "flb_output_flush_prepare_destroy",
+     "flb_output_instance_destroy",
+     "flb_sched_request_destroy",
+     "flb_sched_timer_destroy",
+     "flb_sched_timer_invalidate",
+     "flb_task_destroy",
+     "flb_task_retry_destroy"
+    ],
+    "functions": 9,
+    "sites": 10
+   }
+  }
+ },
+ "sites": [
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_head",
+    "&st->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "cio_chunk_open",
+   "leaves": [
+    "unsupported: publication by `mk_list_add` of `ch`, which owns linked objects"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_chunk.c:75",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "identity",
+   "function": "cio_chunk_open",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ch`"
+   ],
+   "scope": "corpus",
+   "shape": "U0",
+   "site": "cio_chunk.c:89",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_state_head",
+    "&st->chunks_up"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "cio_chunk_open",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ch`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_chunk.c:102",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_state_head",
+    "&st->chunks_down"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "cio_chunk_open",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ch`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_chunk.c:105",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ch->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "cio_chunk_close",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "cio_chunk.c:131",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ch->_state_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "cio_chunk_close",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "cio_chunk.c:132",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ch->_state_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "chunk_state_sync",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "cio_chunk.c:546",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_state_head",
+    "&st->chunks_up"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "chunk_state_sync",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ch`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_chunk.c:549",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ch->_state_head",
+    "&st->chunks_down"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "chunk_state_sync",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ch`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_chunk.c:552",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&ctx->streams"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "cio_stream_create",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `st`",
+    "unsupported: publication by `mk_list_add` of `st`, which this function does not hold as one live object"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "cio_stream.c:174",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "cio_stream_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `st`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "cio_stream.c:189",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&chunk->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "qsort_stream",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "chunkio.c:246",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&chunk->_head",
+    "&stream->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "qsort_stream",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "chunkio.c:255",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ic->_head",
+    "&in->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "flb_input_chunk_map",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ic`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "flb_input_chunk.c:1775",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ic->_head",
+    "&in->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "flb_input_chunk_create",
+   "leaves": [
+    "unsupported: publication by `mk_list_add` of `ic`, which owns linked objects"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "flb_input_chunk.c:2599",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ic->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "flb_input_chunk.c:2691",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ic->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_input_chunk_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "flb_input_chunk.c:2798",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&new->_head",
+    "&section->entries"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_rconf_section_entry_add",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `new`"
+   ],
+   "scope": "corpus",
+   "shape": "C6",
+   "site": "mk_core/mk_rconf.c:95",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&meta->_head",
+    "&conf->metas"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_rconf_meta_add",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `meta`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_core/mk_rconf.c:171",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&file->_head",
+    "&conf->includes"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_rconf_read",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `file`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_core/mk_rconf.c:463",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&file->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_rconf_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_core/mk_rconf.c:675",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&entry->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_rconf_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_core/mk_rconf.c:683",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&section->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_rconf_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_core/mk_rconf.c:692",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&entry->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_rconf_free_entries",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_core/mk_rconf.c:716",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&new->_head",
+    "&conf->sections"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_rconf_section_add",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `new`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_core/mk_rconf.c:738",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&new->_head",
+    "list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_string_split_line",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `new`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_core/mk_string.c:385",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&entry->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_string_split_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_core/mk_string.c:399",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->in_headers._head",
+    "&request->stream.inputs"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_http_request_init",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_http.c:106",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&sr->_head",
+    "&cs->request_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_request_premature_close",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_http.c:268",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&cs->request_list"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_http_session_remove",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_http.c:1444",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_http_request_free_list",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_http.c:1535",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&sr->_head",
+    "&cs->request_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_http_sched_read",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_http.c:1613",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&mth->_head",
+    "&sched->threads"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_http_thread_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_http_thread.c:214",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&mth->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_http_thread_purge",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `mth`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_http_thread.c:245",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&mth->_head",
+    "&sched->threads_purge"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_http_thread_purge",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `sched`"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_http_thread.c:246",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&mth->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_http_thread_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `mth`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_http_thread.c:264",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&fdt->_head",
+    "list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_fdt_worker_init",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `fdt`"
+   ],
+   "scope": "corpus",
+   "shape": "C5",
+   "site": "mk_server/mk_vhost.c:111",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&fdt->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_vhost_fdt_worker_exit",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `fdt`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U3",
+   "site": "mk_server/mk_vhost.c:134",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&new_alias->_head",
+    "&host->server_names"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_read",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `new_alias`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_vhost.c:414",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&err_page->_head",
+    "&host->error_pages"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_read",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `err_page`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_vhost.c:491",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&h_param->_head",
+    "&h_handler->params"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_vhost_read",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_vhost.c:542",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&h_handler->_head",
+    "&host->handlers"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_vhost_read",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_vhost.c:554",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&halias->_head",
+    "&host->server_names"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_set_single",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `halias`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_vhost.c:611",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&host->_head",
+    "&server->hosts"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_set_single",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `host`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_vhost.c:626",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&p_host->_head",
+    "&server->hosts"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "mk_vhost_init",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_vhost.c:663",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&p_host->_head",
+    "&server->hosts"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "mk_vhost_init",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_vhost.c:699",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&param->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_vhost_handler_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_vhost.c:742",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&halias->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_vhost_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `halias`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_vhost.c:765",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ep->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_vhost_destroy",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_vhost.c:785",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&vh->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_vhost_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `vh`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_vhost.c:801",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&l->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_config_listeners_free",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_config.c:62",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&listen->_head",
+    "&server->listeners"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "mk_config_listener_add",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `listen`",
+    "unsupported: publication by `mk_list_add` of `listen`, which this function does not hold as one live object"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_config.c:596",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&event->_head",
+    "&sched->event_free_queue"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_sched_event_free",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_scheduler.c:828",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&wcb->_head",
+    "&server->sched_worker_callbacks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_sched_worker_cb_add",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_scheduler.c:845",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&wcb->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_sched_worker_cb_free",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_scheduler.c:857",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&header->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "header_lookup",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `header`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U7",
+   "site": "mk_server/mk_http_parser.c:284",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&header->_head",
+    "&p->header_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "header_lookup",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_http_parser.c:287",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&header_extra->_head",
+    "&p->header_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "header_lookup",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_http_parser.c:466",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&halias->_head",
+    "&h->server_names"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_create",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `halias`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_lib.c:481",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&h->_head",
+    "&ctx->server->hosts"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_vhost_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_lib.c:482",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ha->_head",
+    "&vh->server_names"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_vhost_set_property",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ha`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_lib.c:499",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&handler->_head",
+    "&vh->handlers"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_vhost_handler",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_lib.c:561",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&server->stage10_handler"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:221",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_parent_head",
+    "&plugin->stage_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_plugin.c:222",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&server->stage20_handler"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:228",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_parent_head",
+    "&plugin->stage_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_plugin.c:229",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&server->stage30_handler"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:235",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_parent_head",
+    "&plugin->stage_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_plugin.c:236",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&server->stage40_handler"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:242",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_parent_head",
+    "&plugin->stage_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_plugin.c:243",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head",
+    "&server->stage50_handler"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:249",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&st->_parent_head",
+    "&plugin->stage_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C4",
+   "site": "mk_server/mk_plugin.c:250",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&plugin->_head",
+    "&server->plugins"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_load",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_plugin.c:256",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&p->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_unregister",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_plugin.c:265",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_exit_stages",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_plugin.c:529",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&st->_parent_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_exit_stages",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_plugin.c:532",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&plugin->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_plugin_exit_all",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U1-plain",
+   "site": "mk_server/mk_plugin.c:552",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&fw->_head",
+    "&ctx->workers"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_fifo_worker_create",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `fw`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_fifo.c:82",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&q->_head",
+    "&ctx->queues"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "mk_fifo_queue_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_fifo.c:192",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&q->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "mk_fifo_queue_destroy",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "corpus",
+   "shape": "U6",
+   "site": "mk_server/mk_fifo.c:216",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&fw->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_fifo_worker_destroy_all",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_fifo.c:267",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&listener->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "mk_server_listen_free",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `listener`, which this function has not published"
+   ],
+   "scope": "corpus",
+   "shape": "U3",
+   "site": "mk_server/mk_server.c:144",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&listen->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "mk_server_listen_exit",
+   "leaves": [],
+   "scope": "corpus",
+   "shape": "U1",
+   "site": "mk_server/mk_server.c:162",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&listener->_head",
+    "listeners"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_server_listen_init",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `listener`"
+   ],
+   "scope": "corpus",
+   "shape": "C3",
+   "site": "mk_server/mk_server.c:247",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&new_mime->_head",
+    "&server->mimetype_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "mk_mimetype_add",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `new_mime`"
+   ],
+   "scope": "corpus",
+   "shape": "C1",
+   "site": "mk_server/mk_mimetype.c:110",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&backlog->_head",
+    "&context->backlogs"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "sb_allocate_backlogs",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `backlog`"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "plugins/in_storage_backlog/sb.c:173",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&backlog->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "sb_destroy_backlogs",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "plugins/in_storage_backlog/sb.c:188",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&chunk->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "sb_remove_chunk_from_segregated_backlog",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "plugins/in_storage_backlog/sb.c:226",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&chunk->_head",
+    "&backlog->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "sb_append_chunk_to_segregated_backlog",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "plugins/in_storage_backlog/sb.c:275",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ic->_head",
+    "&in->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "flb_input_chunk_map",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `ic`"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_input_chunk.c:1775",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ic->_head",
+    "&in->chunks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "flb_input_chunk_create",
+   "leaves": [
+    "unsupported: publication by `mk_list_add` of `ic`, which owns linked objects"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_input_chunk.c:2611",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ic->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_input_chunk_destroy_corrupted",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_input_chunk.c:2703",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ic->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_input_chunk_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_input_chunk.c:2810",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&retry->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_task_retry_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `retry`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_task.c:282",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&retry->_head",
+    "&task->retries"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "flb_task_retry_create",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `retry`",
+    "unsupported: publication by `mk_list_add` of `retry`, which this function does not hold as one live object"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_task.c:350",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&task->_head",
+    "&i_ins->tasks"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "flb_task_create",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_task.c:635",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&route->_head",
+    "&task->routes"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_task_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C3",
+   "site": "src/flb_task.c:718",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&route->_head",
+    "&task->routes"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_task_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C3",
+   "site": "src/flb_task.c:822",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&route->_head",
+    "&task->routes"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_task_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C3",
+   "site": "src/flb_task.c:870",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&route->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "flb_task_destroy",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_task.c:918",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&task->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_task_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `task`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_task.c:924",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&queued_task->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "flb_task_queue_destroy",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_task.c:969",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&queued_task->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "flb_task_queue_destroy",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_task.c:975",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&route->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "tasks_start",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "U5",
+   "site": "src/flb_engine_dispatch.c:297",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head",
+    "&sched->requests"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "schedule_request_now",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `request`"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_scheduler.c:147",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head",
+    "&sched->requests_wait"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "schedule_request_wait",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_scheduler.c:161",
+   "status": [
+    "Safe"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "schedule_request_promote",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `request`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_scheduler.c:192",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&request->_head",
+    "&failed_requests"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "schedule_request_promote",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C5",
+   "site": "src/flb_scheduler.c:195",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "schedule_request_promote",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `request`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_scheduler.c:200",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&request->_head",
+    "&failed_requests"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "schedule_request_promote",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C5",
+   "site": "src/flb_scheduler.c:204",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&request->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "schedule_request_promote",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `request`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U4",
+   "site": "src/flb_scheduler.c:226",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&request->_head",
+    "&sched->requests_wait"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "schedule_request_promote",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_scheduler.c:227",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&req->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_sched_request_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `req`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_scheduler.c:336",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&timer->_head",
+    "&sched->timers"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_sched_timer_create",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_scheduler.c:889",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&timer->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "flb_sched_timer_invalidate",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_scheduler.c:900",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&timer->_head",
+    "&timer->sched->timers_drop"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_sched_timer_invalidate",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_scheduler.c:901",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&timer->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "call-refused",
+   "function": "flb_sched_timer_destroy",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_scheduler.c:909",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&out_flush->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_output_flush_prepare_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `out_flush`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_output.c:232",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&out_flush->_head",
+    "&th_ins->flush_list_destroy"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "flb_output_flush_prepare_destroy",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `th_ins`"
+   ],
+   "scope": "slice",
+   "shape": "C4",
+   "site": "src/flb_output.c:233",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&out_flush->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_output_flush_prepare_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `out_flush`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_output.c:237",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&out_flush->_head",
+    "&ins->flush_list_destroy"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "identity",
+   "function": "flb_output_flush_prepare_destroy",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `out_flush`"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:238",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&out_flush->_head",
+    "&ins->flush_list"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "flb_output_coro_add",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:276",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&queued_task->_head",
+    "&queue->pending"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "flb_output_task_queue_enqueue",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:304",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&queued_task->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "flb_output_task_queue_flush_one",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_output.c:325",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&queued_task->_head",
+    "&queue->in_progress"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "none",
+   "function": "flb_output_task_queue_flush_one",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:326",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&ended_task->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "flb_output_task_singleplex_flush_next",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_output.c:402",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": false,
+   "arguments": [
+    "&ins->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "10d-unlink",
+   "function": "flb_output_instance_destroy",
+   "leaves": [
+    "unsupported: unlink by `mk_list_del` of `ins`, which this function has not published"
+   ],
+   "scope": "slice",
+   "shape": "U6",
+   "site": "src/flb_output.c:631",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&instance->_head",
+    "&config->outputs"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "10d-entry",
+   "function": "flb_output_new",
+   "leaves": [
+    "unknown_alias: unresolved resource identity `instance`",
+    "unsupported: publication by `mk_list_add` of `instance`, which this function does not hold as one live object"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:989",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&kv->_head"
+   ],
+   "call": "mk_list_del",
+   "first_blocker": "none",
+   "function": "flb_output_plugin_property_check",
+   "leaves": [],
+   "scope": "slice",
+   "shape": "U1",
+   "site": "src/flb_output.c:1459",
+   "status": [
+    "Unknown"
+   ]
+  },
+  {
+   "admitted_after": true,
+   "arguments": [
+    "&u->base._head",
+    "&ins->upstreams"
+   ],
+   "call": "mk_list_add",
+   "first_blocker": "call-refused",
+   "function": "flb_output_upstream_set",
+   "leaves": [
+    "unsupported: indirect memory access is outside the resource projection"
+   ],
+   "scope": "slice",
+   "shape": "C1",
+   "site": "src/flb_output.c:2015",
+   "status": [
+    "Unknown"
+   ]
+  }
+ ]
+}

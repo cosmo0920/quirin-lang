@@ -125,6 +125,9 @@ pub(crate) struct Frame {
     pub(crate) protected: BTreeSet<String>,
     /// The protected link nodes, spelled `& E -> F` / `& E . F`.
     pub(crate) links: BTreeSet<Vec<String>>,
+    /// Card W45-CONTAINER-ROOT-REACH: the head's token texts, for the
+    /// container an element of this iteration is reached through.
+    pub(crate) head: Vec<String>,
 }
 
 impl Frame {
@@ -865,6 +868,7 @@ impl super::Parser<'_> {
             successor: shape.successor.clone(),
             protected: BTreeSet::from([protected]),
             links: BTreeSet::new(),
+            head: shape.head.clone(),
         });
         let body = self.parse_statement_body();
         self.list_frames.pop();
@@ -903,12 +907,25 @@ impl super::Parser<'_> {
             return None;
         }
         let pointer = shape.pointer.iter().map(String::as_str).collect::<Vec<_>>();
+        // Card W45-CONTAINER-ROOT-REACH: the container this element is reached
+        // through — an iteration's current cursor or a head's first or last
+        // node — and nothing for a saved successor or a never-bound formal.
+        let mut origin = None;
         let (bases, chains) = match pointer.as_slice() {
             [name]
                 if self.list_frames.iter().any(|frame| {
                     frame.cursor == *name || frame.successor.as_deref() == Some(*name)
                 }) =>
             {
+                origin = self
+                    .list_frames
+                    .iter()
+                    .rev()
+                    .find(|frame| {
+                        frame.cursor == *name || frame.successor.as_deref() == Some(*name)
+                    })
+                    .filter(|frame| frame.cursor == *name)
+                    .map(|frame| frame.head.clone());
                 for frame in &mut self.list_frames {
                     if frame.protected_cursor() == *name {
                         frame.protected.insert(shape.destination.clone());
@@ -948,6 +965,7 @@ impl super::Parser<'_> {
                             &self.typed_types,
                             &self.typed_bases,
                         )?;
+                        origin = Some(owned(&pointer[1..close]));
                         (read.bases, read.chains)
                     }
                     _ => return None,
@@ -955,6 +973,7 @@ impl super::Parser<'_> {
             }
             _ => return None,
         };
+        self.element_origins.propose(&shape.destination, origin);
         Some(LegacyInstruction::IndirectScalarAccess {
             alias_reads: bases
                 .iter()

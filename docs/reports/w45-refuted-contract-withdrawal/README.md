@@ -7,7 +7,7 @@ the w45-gateway-memo-key integration gate"); `main` `675e7289`
 
 ## Headline
 
-* **Rule** (contract spec §C06.4, gateway constraint 10f). A declared contract
+* **Rule** (contract spec §C06.4, gateway constraint 10g). A declared contract
   of a function whose body the audit analyses is **refuted** by that body when
   either of two things holds:
   * a counted-user clause of the function's own row is refuted, whether

@@ -1,0 +1,326 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3338,
+   "unknown_alias": 717,
+   "counted_user": 4
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "function_rows": {
+   "Unknown": 390,
+   "Safe": 54,
+   "Unsafe": 4
+  },
+  "distinct_functions_worst": {
+   "Unknown": 204,
+   "Safe": 28,
+   "Unsafe": 2
+  },
+  "categories": {
+   "unsupported": 3327,
+   "unknown_alias": 713,
+   "counted_user": 4
+  }
+ },
+ "removed_leaves": 18,
+ "added_leaves": 3,
+ "moving_functions": 10,
+ "status_moves": [],
+ "unit_moves": [],
+ "removed": [
+  {
+   "function": [
+    "plugins/in_storage_backlog/sb.c",
+    0,
+    "sb_destroy_backlogs"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `backlog`, which this function has not published",
+    "plugins/in_storage_backlog/sb.c:188"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "plugins/in_storage_backlog/sb.c",
+    0,
+    "sb_remove_chunk_from_segregated_backlog"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `chunk`, which this function has not published",
+    "plugins/in_storage_backlog/sb.c:226"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    0,
+    "flb_output_plugin_property_check"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `kv`, which this function has not published",
+    "src/flb_output.c:1459"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    0,
+    "flb_output_task_queue_flush_one"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_output.c:325"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    0,
+    "flb_output_task_singleplex_flush_next"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `ended_task`, which this function has not published",
+    "src/flb_output.c:402"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    0,
+    "flb_output_task_singleplex_flush_next"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ended_task`",
+    "src/flb_output.c:403"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    1,
+    "flb_output_plugin_property_check"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `kv`, which this function has not published",
+    "src/flb_output.c:1459"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    1,
+    "flb_output_task_queue_flush_one"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_output.c:325"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    1,
+    "flb_output_task_singleplex_flush_next"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `ended_task`, which this function has not published",
+    "src/flb_output.c:402"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    1,
+    "flb_output_task_singleplex_flush_next"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ended_task`",
+    "src/flb_output.c:403"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    0,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_task.c:969"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    0,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_task.c:970"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    0,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_task.c:975"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    0,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_task.c:976"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    1,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_task.c:969"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    1,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_task.c:970"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    1,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unsupported",
+    "unlink by `mk_list_del` of `queued_task`, which this function has not published",
+    "src/flb_task.c:975"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_task.c",
+    1,
+    "flb_task_queue_destroy"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_task.c:976"
+   ],
+   "count": 1
+  }
+ ],
+ "added": [
+  {
+   "function": [
+    "plugins/in_storage_backlog/sb.c",
+    0,
+    "sb_remove_chunk_from_segregated_backlog"
+   ],
+   "leaf": [
+    "unsupported",
+    "nullable resource `chunk` used by a non-null contract",
+    "plugins/in_storage_backlog/sb.c:241"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    0,
+    "flb_output_task_queue_flush_one"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_output.c:339"
+   ],
+   "count": 1
+  },
+  {
+   "function": [
+    "src/flb_output.c",
+    1,
+    "flb_output_task_queue_flush_one"
+   ],
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `queued_task`",
+    "src/flb_output.c:339"
+   ],
+   "count": 1
+  }
+ ]
+}

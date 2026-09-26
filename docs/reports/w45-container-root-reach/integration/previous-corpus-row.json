@@ -1,0 +1,29 @@
+{
+ "note": "W45-CONTAINER-ROOT-REACH, 2026-09-26. BEFORE (base 12553fb3) reproduces the W45-FB-BACKLOG-CUSTODY integration diagnostics byte for byte. Rule 10d admits static containers (0 corpus sites) and the foreign unlink of an element reached through a formal's container. Every delta is attributed (12 leaves removed, 2 added): 11 `unlink by mk_list_del` refusals in 9 teardown functions and `mk_server_listen_exit`'s unresolved `listen` at its release are gone; `mk_vhost_destroy` adds 2 unresolved identities of `ep` at member null tests of the now-tracked element. Functions 398/9/4,427 and units unchanged; leak 34 unchanged; no Safe -> non-Safe move. Previous row preserved in docs/reports/w45-container-root-reach/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 5,
+ "provisional_unsafe": 8,
+ "unknown": 168,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 34,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w45-container-root-reach/artifacts/arbiter/",
+ "source": "docs/reports/w45-container-root-reach/README.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts/",
+ "unknown_alias_diagnostics": 3571,
+ "unsupported_diagnostics": 41314,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 398,
+  "provisional_unsafe": 9,
+  "unknown": 4427
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 167,
+  "none": 17,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

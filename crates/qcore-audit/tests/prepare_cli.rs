@@ -157,7 +157,12 @@ fn the_monkey_step_prepares_records_and_reuses_only_an_unchanged_copy() {
     let out = fixture.root.join("inputs");
     let first = fixture.monkey(&out);
     assert!(first.status.success(), "{}", stderr(&first));
-    let database = out.join("monkey-build/compile_commands.json");
+    // Preparation reports the physical output path, resolving temp-directory
+    // symlinks such as /var -> /private/var on macOS.
+    let database = out
+        .join("monkey-build/compile_commands.json")
+        .canonicalize()
+        .unwrap();
     assert_eq!(
         String::from_utf8_lossy(&first.stdout).trim(),
         database.to_str().unwrap()

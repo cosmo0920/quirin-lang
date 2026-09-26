@@ -1,5 +1,5 @@
 //! Card **W45-REFUTED-CONTRACT-WITHDRAWAL**: a declared contract its own body
-//! refutes serves no caller (contract spec §C06.4, gateway constraint 10f).
+//! refutes serves no caller (contract spec §C06.4, gateway constraint 10g).
 //!
 //! # The gap
 //!

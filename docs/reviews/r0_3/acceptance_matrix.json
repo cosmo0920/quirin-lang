@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 456
+  "named_followups": 458
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W45-FB-BACKLOG-CUSTODY integration, 2026-09-25. The card (measured against docs/reports/w45-fb-retry-lifetime/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-retry-lifetime/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1480 added 99 functions 14 units 5); functions moved (combined): [('cio_memfs_scan_dump', ('Unknown', 'Safe')), ('cio_stats_get', ('Unknown', 'Safe')), ('cio_stats_print_summary', ('Unknown', 'Safe')), ('cio_stream_get', ('Unknown', 'Safe')), ('cio_stream_size_chunks_up', ('Unknown', 'Safe')), ('cmt_labels_count', ('Unknown', 'Safe')), ('is_file_included', ('Unknown', 'Safe')), ('mk_http_error', ('Unknown', 'Unsafe')), ('mk_rconf_meta_get', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unsafe', 'Unknown')), ('mk_vhost_create', ('Unsafe', 'Unknown')), ('mk_vhost_lookup', ('Unknown', 'Safe')), ('mk_vhost_set_property', ('Unsafe', 'Unknown')), ('mk_vhost_set_single', ('Unsafe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 9 functions Unknown to Safe (cio_memfs_scan_dump, cio_stats_get, cio_stats_print_summary, cio_stream_get, cio_stream_size_chunks_up, cmt_labels_count, is_file_included, mk_rconf_meta_get, mk_vhost_lookup); 4 provisional Unsafe to Unknown (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single), their MK-LIST-ADD-BORROWED-PUBLICATION leaks withdrawn by the refused-call hand-on fix; 1 Unknown to provisional Unsafe (mk_http_error, an unclosed open() descriptor, not a defect claim). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-fb-backlog-custody/integration/previous-corpus-row.json.",
+   "note": "W45-CONTAINER-ROOT-REACH integration, 2026-09-25. The card (measured against docs/reports/w45-fb-backlog-custody/integration/artifacts) composed onto the combined tree docs/reports/w45-fb-backlog-custody/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 12 added 2 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card removed 11 foreign-unlink refusal leaves and mk_server_listen_exit's discharged release leaf, and added 2 unresolved-identity leaves in mk_vhost_destroy, with no status moves. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w45-container-root-reach/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 5,
    "provisional_unsafe": 8,
@@ -6642,10 +6642,10 @@
    "projected_functions": 4834,
    "leak_diagnostics": 34,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w45-fb-backlog-custody/integration/artifacts/",
-   "source": "docs/reports/w45-fb-backlog-custody/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-retry-lifetime/integration/artifacts",
-   "unknown_alias_diagnostics": 3570,
-   "unsupported_diagnostics": 41325,
+   "baseline": "docs/reports/w45-container-root-reach/integration/artifacts/",
+   "source": "docs/reports/w45-container-root-reach/integration/integration-confirmation.md; preceding baseline docs/reports/w45-fb-backlog-custody/integration/artifacts",
+   "unknown_alias_diagnostics": 3571,
+   "unsupported_diagnostics": 41314,
    "double_release_diagnostics": 0,
    "function_statuses": {
     "safe": 398,
@@ -6732,11 +6732,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-AUDIT-CHECKPOINTS on merge 88000037 (onto main 12553fb3, after all wave-45 cards through W45-GATEWAY-MEMO-KEY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5921 core Rust passed / 0 failed / 11 ignored over 321 summaries; 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 204 Lean audits; 358 root Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. This card adds crates.io dependencies (postcard, serde_norway, toml) and a build.rs in crates/qcore-audit; 02-test (cargo test --workspace --no-run) compiled them without a network fetch failure, confirming the offline build step passed. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts (32-identity) exits 0 with verdict_bearing_identical true; the contracts sidecar differs only by the two W45-USER-CONTRACT-PLUGINS wording leaves already on main (contract_revision.meaning, pending_human_review.meaning), matching docs/reports/w45-user-contract-plugins/integration/contracts-raw-diff.log exactly (see integration/34-contracts-raw-diff.log), so the baseline does not move.",
-  "workspace_tests": 5921,
+  "note": "Integration gate for W45-CONTAINER-ROOT-REACH on merge 5fe036f2 (onto main eac26af7, after all wave-45 cards through W45-AUDIT-CHECKPOINTS, plus the user's macOS test fix), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5937 core Rust passed / 0 failed / 11 ignored over 322 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 205 Lean audits; 358 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-fb-backlog-custody/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5937,
   "provider_tests": 129,
   "python_evidence_validator_tests": 358,
-  "lean_audits": 205,
+  "lean_audits": 206,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6777,6 +6777,7 @@
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
    "AuditContainerPublication.lean",
+   "AuditContainerRootReach.lean",
    "AuditContractBundle.lean",
    "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
@@ -9836,7 +9837,7 @@
   {
    "id": "W45-FB-OR6-ELEMENT-IDENTITY",
    "title": "OR-6 (queued_task not used after the flush fails) is not stated: a container element recovered with container_of has no identity, and no summary says a callee frees one",
-   "why": "Card W45-FB-RETRY-LIFETIME stated OR-1 and OR-7 as checked provider contracts but not OR-6. `flb_output_task_queue_flush_one` obtains `queued_task` from `mk_list_entry_first(&queue->pending, ...)`, a container_of expression the gateway reads as an unresolved identity, and the free that would make `queued_task->retry` a use after free happens inside `flb_output_task_singleplex_flush_next` (N3, source reading at 046accf6: unchanged bodies, flb_output.c:312-351 and 392-411). Neither the element identity nor a callee summary that frees the first in-progress element is in the vocabulary. Size: 1 obligation, 2 functions. DISCHARGE: an element-identity rule for `mk_list_entry*` over a published container (coordinated with FB-BACKLOG-CUSTODY's iteration mechanism) and a per-arm callee summary stating the element released, with Lean parity, then a contract for OR-6 decided by `quirin-audit`.",
+   "why": "Card W45-FB-RETRY-LIFETIME stated OR-1 and OR-7 as checked provider contracts but not OR-6. `flb_output_task_queue_flush_one` obtains `queued_task` from `mk_list_entry_first(&queue->pending, ...)`, a container_of expression the gateway reads as an unresolved identity, and the free that would make `queued_task->retry` a use after free happens inside `flb_output_task_singleplex_flush_next` (N3, source reading at 046accf6: unchanged bodies, flb_output.c:312-351 and 392-411). Neither the element identity nor a callee summary that frees the first in-progress element is in the vocabulary. Size: 1 obligation, 2 functions. DISCHARGE: an element-identity rule for `mk_list_entry*` over a published container (coordinated with FB-BACKLOG-CUSTODY's iteration mechanism) and a per-arm callee summary stating the element released, with Lean parity, then a contract for OR-6 decided by `quirin-audit`. ADVANCED by W45-CONTAINER-ROOT-REACH (2026-09-26): after its foreign unlink `flb_output_task_queue_flush_one`'s `queued_task` is a tracked identity (it is re-published into `in_progress`, and its read at flb_output.c:339 is refused as a read through a published object), and `flb_output_task_singleplex_flush_next`'s unlink and free of `ended_task` are modelled; but a body with a foreign unlink publishes no summary (W45-FOREIGN-UNLINK-SUMMARY), so no caller learns that flush_next frees the element. OR-6 stays not stated.",
    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
    "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
@@ -9864,14 +9865,14 @@
   {
    "id": "W45-FB-CROSS-UNIT-USER-PREMISES",
    "title": "Two counted-user declarations are applied in the output unit as cross-unit premises no analysed body checks there",
-   "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed. RE-SCOPED by W45-REFUTED-CONTRACT-WITHDRAWAL (2026-09-26, contract spec C06.4, gateway constraint 10f): both declarations are now named in every run's `refuted_contracts` terms as unchecked, not refuted — `flb_task_retry_destroy`'s neutral clause is undecided where its body is analysed and `flb_output_thread_pool_flush` has no analysed body — so they stay applied as declared premises. Their only consumers in the slice are the two refutations (OR-1, OR-7), which are provisional Unsafe candidates on the OR functions' own rows; no Safe rests on either, and every caller of the two OR functions is now held Unknown (`contract-refuted-by-body`). Discharge condition unchanged; the general residual (unchecked declarations of analysed bodies applied as trusted premises) is W45-UNCHECKED-DECLARATIONS-TRUSTED.",
+   "why": "`flb_output_thread_pool_flush` (`resource_user_neutral`, body in src/flb_output_thread.c, outside the system selection) is never checked in the slice; `flb_task_retry_destroy` (`resource_released(retry, nonnull)`, `resource_user_neutral`) is checked in src/flb_task.c, where its neutral clause is undecided because `flb_sched_request_invalidate` is uncontracted. OR-7's refutation rests on the first, OR-1's on the second (through the derived neutrality of `flb_output_task_queue_enqueue`). Both bodies were read at 046accf6 and change no user count. DISCHARGE: add flb_output_thread.c to a selection and declare or derive the neutrality of flb_sched_request_invalidate and flb_task_clear_route_retry_context, so both clauses hold where their bodies are analysed. RE-SCOPED by W45-REFUTED-CONTRACT-WITHDRAWAL (2026-09-26, contract spec C06.4, gateway constraint 10g): both declarations are now named in every run's `refuted_contracts` terms as unchecked, not refuted — `flb_task_retry_destroy`'s neutral clause is undecided where its body is analysed and `flb_output_thread_pool_flush` has no analysed body — so they stay applied as declared premises. Their only consumers in the slice are the two refutations (OR-1, OR-7), which are provisional Unsafe candidates on the OR functions' own rows; no Safe rests on either, and every caller of the two OR functions is now held Unknown (`contract-refuted-by-body`). Discharge condition unchanged; the general residual (unchecked declarations of analysed bodies applied as trusted premises) is W45-UNCHECKED-DECLARATIONS-TRUSTED.",
    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
    "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
   {
    "id": "W45-CONTAINER-ROOT-REACH",
    "title": "A publication discharges only into a container reached from an unrebound formal or a local initialised from one; the MK-LIST corpus leaves need more",
-   "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. Size: 4 leak leaves. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf.",
+   "why": "Gateway constraint 10d refuses a publication into any other container. The 4 corpus leak leaves registered under MK-LIST-ADD-BORROWED-PUBLICATION (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single) were not withdrawn: in each the linking statement is refused upstream (indirect memory access) or the container lies inside an object the body acquired, which needs an owner/child relation mk_list lacks. Size: 4 leak leaves. DISCHARGE: a nested-container relation (a published child of a body-acquired owner that the owner's own publication carries) with Lean parity, and an arbiter attributing each withdrawn leaf. RE-SCOPED by W45-CONTAINER-ROOT-REACH (2026-09-26): its census of every mk_list_add site (corpus and slice) found no publication refused for its container, so widening container roots reaches none of the 4 functions. mk_rconf_read, mk_vhost_create, mk_vhost_set_property and mk_vhost_set_single publish into formal-chain containers (or, for mk_vhost_create's alias, a body-acquired owner) and are blocked by the entry: an uncontracted mk_string_dup store into the object refuses and poisons its binding before the link. Static containers are now admitted (P-CRR-STATIC, 0 census sites). What stays open here: the owner relation (a publication into a body-acquired owner that is itself published or returned: 8 corpus sites in 5 functions, 3 slice sites in 1 function, none a first blocker) and the entry blockers above. DISCHARGE unchanged for the owner relation; the 4 leaves need the string-duplication contracts first.",
    "source": "docs/reports/w45-fb-retry-lifetime/README.md",
    "recorded_by": "W45-FB-RETRY-LIFETIME"
   },
@@ -9974,13 +9975,6 @@
    "recorded_by": "W45-FB-BACKLOG-CUSTODY"
   },
   {
-   "id": "W45-FB-BACKLOG-FOREIGN-UNLINK",
-   "title": "Rule 10d refuses unlinking an entry this function did not publish; it blocks the backlog's retirement legs (OB-3, OB-7, OB-10) and 17 corpus leaves in 14 teardown functions",
-   "why": "sb_remove_chunk_from_segregated_backlog and sb_destroy_backlogs unlink wrappers (queues) that another function published (sb_append_chunk_to_segregated_backlog, sb_allocate_backlogs); W45-FB-RETRY-LIFETIME's rule 10d refuses 'unlink by mk_list_del of X, which this function has not published'. W45-FB-BACKLOG-CUSTODY's safe-iteration admission makes 17 such element unlinks reachable in 14 corpus teardown functions (mk_rconf_free, mk_vhost_destroy, flb_input_chunk_destroy, ...), each an exchange for an earlier refusal, fail-closed. DISCHARGE: an unlink of an element of a container the caller owns or borrows, stated against the container's membership (a caller-side publication premise or a container-element identity), with parity and a corpus re-pin.",
-   "source": "docs/reports/w45-fb-backlog-custody/README.md",
-   "recorded_by": "W45-FB-BACKLOG-CUSTODY"
-  },
-  {
    "id": "W45-PLUGIN-CERTIFICATE-CHECKER",
    "title": "No trusted-core certificate checker exists for a user-contract checker plugin's Safe claim",
    "why": "The firewall counts a plugin's `Safe` only with a certificate the registry issues from a trusted-core `WitnessChecker` replay. `quirin-audit` registers none for the `quirin.user-contract-check.v1` task, so every plugin `Safe` it sees is `Pending` (`plugin-claim-uncertified`, QP008 or QP016); the certified row is exercised only through the library route with a test double of a checker. DISCHARGE: a versioned trusted-core checker for a precisely scoped user-contract claim, with independently replayable evidence, positive, negative and mutation tests, and the command line registering it.",
@@ -10063,6 +10057,27 @@
    "why": "The checkpointed `current` run analyses one group at a time to bound memory; every group ends when its longest unit ends, while the whole run overlaps groups. On the 185-unit corpus it cost nothing at 16 jobs (115.8 s against 130.8 s whole, a noisy host) or 1 job, but doubled the wall time at 4 jobs (288.1 s against 141.7 s), where librdkafka's group alone took 230 s. DISCHARGE: an explicit bound of groups in flight (for example `--max-groups-in-flight M`, M groups analysed concurrently, each sealed and dropped in plan order), measured for wall time and peak memory at 1, 4 and 16 jobs.",
    "source": "docs/reports/w45-audit-checkpoints/README.md",
    "recorded_by": "W45-AUDIT-CHECKPOINTS"
+  },
+  {
+   "id": "W45-FORMAL-ENTRY-UNLINK",
+   "title": "Rule 10d refuses mk_list_del of a formal's own object whose container is unnamed",
+   "why": "Card W45-CONTAINER-ROOT-REACH admits the foreign unlink only for an element reached through a container this body names and may modify (U1). A destructor that unlinks and releases the object its caller passed (`cio_chunk_close`, `flb_input_chunk_destroy`, `flb_task_retry_destroy`, `flb_sched_request_destroy`, ...) names no container, and the caller may hold that object published, as an untracked element or as its own custody; a `Released` summary would accuse a caller that published it (release after escape) although the callee unlinked it first. Size: corpus 12 sites in 11 functions (9 rule-10d leaves, 3 behind a refused call), slice 10 sites in 9 functions (8 rule-10d leaves). DISCHARGE: a summary vocabulary stating 'unlinks, then releases, its argument' that a caller applies to a published object as an unlink followed by a release, with Lean parity and the arbiter.",
+   "source": "docs/reports/w45-container-root-reach/README.md",
+   "recorded_by": "W45-CONTAINER-ROOT-REACH"
+  },
+  {
+   "id": "W45-FOREIGN-UNLINK-SUMMARY",
+   "title": "A body with an admitted foreign unlink publishes no summary and establishes no specification",
+   "why": "Gateway constraint 10d rule 6 withholds every summary of a body that takes custody of an element of a container its caller supplied: a caller holding the container would otherwise read `Borrowed` (or `Released`) for it and keep restoring its own published objects that the callee released (QCore.ContainerRootReach.the_borrowed_summary_would_hide_a_double_release). Its measured cost: `flb_task_queue_destroy` (slice) keeps one leaf, the unresolved identity of the `queue` it frees, which W4 would otherwise discharge as `Released(queue)`; `flb_output_task_singleplex_flush_next` has no summary for OR-6. DISCHARGE: a summary clause stating that the call may release what a formal's containers hold, applied at callers by dropping every published site reachable through that argument (the published set loses them; a later unlink refuses), with Lean parity.",
+   "source": "docs/reports/w45-container-root-reach/README.md",
+   "recorded_by": "W45-CONTAINER-ROOT-REACH"
+  },
+  {
+   "id": "W45-FOREIGN-UNLINK-RESIDUAL-SHAPES",
+   "title": "Foreign unlinks rule 6 still refuses, and the member uses of a foreign element",
+   "why": "Measured after W45-CONTAINER-ROOT-REACH: (1) an element of a container a callee returned, Monkey's thread-local lists (`mk_server_listen_free`, `mk_vhost_fdt_worker_exit`: 2 corpus leaves); (2) an element name also written another way (`mk_vhost_destroy`'s `halias = NULL`: 1 corpus leaf); (3) an element name bound over a local list as well as a formal's (`schedule_request_promote`: 3 slice leaves, one on the local list itself); (4) an embedded array element (`header_lookup`'s `&p->headers[i]`: 1 corpus leaf); (5) a static head, which rule 5l does not read (0 census sites); (6) after an admitted foreign unlink the element is a tracked identity whose pointer members this body never linked, so a member release or null test of it (`mk_mem_free(file->path)`, `if (ep->file)`, `queued_task->retry`) refuses and poisons the element before its own release: in 8 corpus functions (10 elements) and 2 slice functions the element's release or read keeps an unresolved identity (a third slice function, `sb_destroy_backlogs`, hands its element to the uncontracted `sb_destroy_backlog` first). DISCHARGE: per part, a root premise for a callee's container (a declared static-duration return), an element-binding reader over initialised names, a container-of reader for embedded elements, rule 5l's static heads, and a member-custody premise for an element's unlinked members (the P-B08-SHALLOW analogue), each with Lean parity and the arbiter.",
+   "source": "docs/reports/w45-container-root-reach/README.md",
+   "recorded_by": "W45-CONTAINER-ROOT-REACH"
   },
   {
    "id": "W45-CONTAINER-CLAUSE-BODY-CHECK",

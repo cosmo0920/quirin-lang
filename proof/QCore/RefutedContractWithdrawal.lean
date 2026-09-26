@@ -4,7 +4,7 @@ import QCore.VerdictSemigroup
 # A declared contract its own body refutes serves no caller
 
 Card **W45-REFUTED-CONTRACT-WITHDRAWAL** (contract spec §C06.4, gateway
-constraint 10f). A declared contract of a function whose body an audit
+constraint 10g). A declared contract of a function whose body an audit
 analyses is checked against that body; when the body refutes it (a refuted
 counted-user clause of its own row, or a contradicted custody duty) every call
 that would apply it is **held**: rewritten to an undeclared name whose refusal

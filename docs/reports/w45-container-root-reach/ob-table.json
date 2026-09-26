@@ -1,0 +1,595 @@
+{
+ "functions": {
+  "plugins/in_storage_backlog/sb.c::cb_queue_chunks": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `cb_queue_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 7,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`": 4,
+     "unknown_alias: unresolved resource identity `underlying_chunk`": 4,
+     "unsupported: unsupported assignment expression": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_event_type`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_map`": 1
+    },
+    "diagnostic_count": 26
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `cb_queue_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 7,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`": 4,
+     "unknown_alias: unresolved resource identity `underlying_chunk`": 4,
+     "unsupported: unsupported assignment expression": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in loop condition": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_event_type`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_map`": 1
+    },
+    "diagnostic_count": 26
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": {
+   "before": {
+    "status": "Safe",
+    "leg": "no specification (row Safe)",
+    "specification": [],
+    "violations": [],
+    "blockers": {},
+    "diagnostic_count": 0
+   },
+   "after": {
+    "status": "Safe",
+    "leg": "held",
+    "specification": [],
+    "violations": [],
+    "blockers": {},
+    "diagnostic_count": 0
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    },
+    "diagnostic_count": 2
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_append_chunk_to_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    },
+    "diagnostic_count": 2
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_append_chunk_to_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 4,
+     "unsupported: call to uncontracted function `cio_chunk_get_real_size`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: call to uncontracted function `sb_append_chunk_to_segregated_backlog`": 1
+    },
+    "diagnostic_count": 9
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_append_chunk_to_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 4,
+     "unsupported: call to uncontracted function `cio_chunk_get_real_size`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: call to uncontracted function `sb_append_chunk_to_segregated_backlog`": 1
+    },
+    "diagnostic_count": 9
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_destroy_backlog": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_destroy_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    },
+    "diagnostic_count": 2
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_destroy_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    },
+    "diagnostic_count": 2
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_destroy_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: unlink by `mk_list_del` of `backlog`, which this function has not published": 1,
+     "unsupported: call to uncontracted function `sb_destroy_backlog`": 1,
+     "unknown_alias: unresolved resource identity `backlog`": 1
+    },
+    "diagnostic_count": 4
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_destroy_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: call to uncontracted function `sb_destroy_backlog`": 1,
+     "unknown_alias: unresolved resource identity `backlog`": 1
+    },
+    "diagnostic_count": 3
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_destroy_chunk": {
+   "before": {
+    "status": "Safe",
+    "leg": "no specification (row Safe)",
+    "specification": [],
+    "violations": [],
+    "blockers": {},
+    "diagnostic_count": 0
+   },
+   "after": {
+    "status": "Safe",
+    "leg": "held",
+    "specification": [],
+    "violations": [],
+    "blockers": {},
+    "diagnostic_count": 0
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_release_output_queue_space": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_release_output_queue_space` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 2,
+     "unsupported: call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`": 1,
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`": 1,
+     "unknown_alias: unresolved resource identity `underlying_chunk`": 1
+    },
+    "diagnostic_count": 6
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_release_output_queue_space` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 2,
+     "unsupported: call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`": 1,
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlogs`": 1,
+     "unknown_alias: unresolved resource identity `underlying_chunk`": 1
+    },
+    "diagnostic_count": 6
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_remove_chunk_from_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: unlink by `mk_list_del` of `chunk`, which this function has not published": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity `chunk`": 1
+    },
+    "diagnostic_count": 5
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_remove_chunk_from_segregated_backlog` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity `chunk`": 1,
+     "unsupported: nullable resource `chunk` used by a non-null contract": 1
+    },
+    "diagnostic_count": 5
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_remove_chunk_from_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlog`": 1
+    },
+    "diagnostic_count": 2
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_remove_chunk_from_segregated_backlogs` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unsupported: call to uncontracted function `sb_remove_chunk_from_segregated_backlog`": 1
+    },
+    "diagnostic_count": 2
+   }
+  },
+  "plugins/in_storage_backlog/sb.c::sb_segregate_chunks": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [
+     "declared specification of `sb_segregate_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unknown_alias: unresolved resource identity `chunk`": 5,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+     "unsupported: indirect memory access is outside the resource projection": 3,
+     "unsupported: call to uncontracted function `sb_get_context`": 1,
+     "unsupported: call to uncontracted function `sb_allocate_backlogs`": 1,
+     "unknown_alias: unresolved resource identity `context`": 1,
+     "unsupported: call to uncontracted function `cio_error_get`": 1,
+     "unsupported: call to uncontracted function `sb_append_chunk_to_segregated_backlogs`": 1,
+     "unsupported: call to uncontracted function `cio_chunk_lock`": 1
+    },
+    "diagnostic_count": 19
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "unknown",
+    "specification": [
+     "declared specification of `sb_segregate_chunks` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it"
+    ],
+    "violations": [],
+    "blockers": {
+     "unknown_alias: unresolved resource identity `chunk`": 5,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+     "unsupported: indirect memory access is outside the resource projection": 3,
+     "unsupported: call to uncontracted function `sb_get_context`": 1,
+     "unsupported: call to uncontracted function `sb_allocate_backlogs`": 1,
+     "unknown_alias: unresolved resource identity `context`": 1,
+     "unsupported: call to uncontracted function `cio_error_get`": 1,
+     "unsupported: call to uncontracted function `sb_append_chunk_to_segregated_backlogs`": 1,
+     "unsupported: call to uncontracted function `cio_chunk_lock`": 1
+    },
+    "diagnostic_count": 19
+   }
+  },
+  "src/flb_input_chunk.c::flb_input_chunk_destroy": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 12,
+     "unknown_alias: unresolved resource identity `ic`": 2,
+     "unsupported: call to uncontracted function `flb_input_chunk_set_up`": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_output_size_subtract`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published": 1
+    },
+    "diagnostic_count": 19
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 12,
+     "unknown_alias: unresolved resource identity `ic`": 2,
+     "unsupported: call to uncontracted function `flb_input_chunk_set_up`": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_output_size_subtract`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published": 1
+    },
+    "diagnostic_count": 19
+   }
+  },
+  "src/flb_input_chunk.c::flb_input_chunk_map": {
+   "before": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 31,
+     "unknown_alias: unresolved resource identity `ic`": 26,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 11,
+     "unknown_alias: unresolved resource identity `direct_matches`": 7,
+     "unsupported: call to uncontracted function `cio_chunk_write_at`": 3,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+     "unknown_alias: unresolved resource identity `direct_routes`": 2,
+     "unknown_alias: unresolved resource identity `chunk`": 1,
+     "unsupported: call to uncontracted function `flb_mp_validate_log_chunk`": 1,
+     "unsupported: call to uncontracted function `flb_mp_validate_metric_chunk`": 1,
+     "unknown_alias: unresolved resource identity `records`": 1,
+     "unsupported: call to uncontracted function `flb_mp_count_log_records`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_direct_routes`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_update_output_instances`": 1,
+     "unsupported: nullable resource `ic` used by a non-null contract": 1
+    },
+    "diagnostic_count": 91
+   },
+   "after": {
+    "status": "Unknown",
+    "leg": "no specification (row Unknown)",
+    "specification": [],
+    "violations": [],
+    "blockers": {
+     "unsupported: indirect memory access is outside the resource projection": 31,
+     "unknown_alias: unresolved resource identity `ic`": 26,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 11,
+     "unknown_alias: unresolved resource identity `direct_matches`": 7,
+     "unsupported: call to uncontracted function `cio_chunk_write_at`": 3,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+     "unknown_alias: unresolved resource identity `direct_routes`": 2,
+     "unknown_alias: unresolved resource identity `chunk`": 1,
+     "unsupported: call to uncontracted function `flb_mp_validate_log_chunk`": 1,
+     "unsupported: call to uncontracted function `flb_mp_validate_metric_chunk`": 1,
+     "unknown_alias: unresolved resource identity `records`": 1,
+     "unsupported: call to uncontracted function `flb_mp_count_log_records`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_tag`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_get_direct_routes`": 1,
+     "unsupported: call to uncontracted function `flb_input_chunk_update_output_instances`": 1,
+     "unsupported: nullable resource `ic` used by a non-null contract": 1
+    },
+    "diagnostic_count": 91
+   }
+  }
+ },
+ "obligations": {
+  "OB-1": {
+   "relation": "wrapper linked into exactly one queue",
+   "residual": "W45-FB-BACKLOG-PUBLICATION-BLOCKED (list publication, owned by W45-FB-RETRY-LIFETIME)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": "no specification (row Safe)",
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_allocate_chunk": "held",
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "unknown"
+    }
+   }
+  },
+  "OB-2": {
+   "relation": "no chunk closed while a wrapper refers to it; all-or-nothing fan-out on the -3 arm",
+   "residual": "W45-FB-BACKLOG-REFERENCE-VOCABULARY (reference relation, return-conditioned clause, element identity)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_segregate_chunks": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_segregate_chunks": "unknown"
+    }
+   }
+  },
+  "OB-3": {
+   "relation": "at most one wrapper per chunk in a queue",
+   "residual": "W45-FB-BACKLOG-REFERENCE-VOCABULARY (list membership uniqueness)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_chunk": "no specification (row Safe)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_chunk": "held"
+    }
+   }
+  },
+  "OB-4": {
+   "relation": "after a mapped chunk, no live wrapper refers to it and one input chunk owns it",
+   "residual": "W45-FB-BACKLOG-MAP-ARMS (per-arm disposition of flb_input_chunk_map)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "no specification (row Unknown)",
+     "src/flb_input_chunk.c::flb_input_chunk_map": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "unknown",
+     "src/flb_input_chunk.c::flb_input_chunk_map": "no specification (row Unknown)"
+    }
+   }
+  },
+  "OB-5": {
+   "relation": "chunk closed exactly once on a NULL map return",
+   "residual": "W45-FB-BACKLOG-MAP-ARMS (per-arm disposition of flb_input_chunk_map)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "no specification (row Unknown)",
+     "src/flb_input_chunk.c::flb_input_chunk_map": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "unknown",
+     "src/flb_input_chunk.c::flb_input_chunk_map": "no specification (row Unknown)"
+    }
+   }
+  },
+  "OB-6": {
+   "relation": "no wrapper used after the callee frees it",
+   "residual": "W45-FB-BACKLOG-REACHABLE-RELEASE (objects released through what an argument reaches)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::cb_queue_chunks": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs": "unknown"
+    }
+   }
+  },
+  "OB-7": {
+   "relation": "eviction retires every wrapper before the close; the saved successor stays valid",
+   "residual": "W45-FB-BACKLOG-REACHABLE-RELEASE and P-ILI-CALLEE-FRAME",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_release_output_queue_space": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_release_output_queue_space": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs": "unknown"
+    }
+   }
+  },
+  "OB-8": {
+   "relation": "per-output byte counter equals the sum over linked wrappers",
+   "residual": "FB-BACKLOG-ACCOUNTING (quantitative clauses, C09)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog": "unknown"
+    }
+   }
+  },
+  "OB-9": {
+   "relation": "each chunk ends the pass in exactly one state",
+   "residual": "W45-FB-BACKLOG-CIO-RETURN-CODES (ChunkIO return-code summaries)",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_segregate_chunks": "no specification (row Unknown)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_segregate_chunks": "unknown"
+    }
+   }
+  },
+  "OB-10": {
+   "relation": "teardown retires every wrapper and touches only live output instances",
+   "residual": "W45-FB-SYNC-PREMISES (shutdown ordering across files) and W45-FB-BACKLOG-REACHABLE-RELEASE",
+   "before": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_destroy_backlog": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs": "no specification (row Unknown)",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_chunk": "no specification (row Safe)"
+    }
+   },
+   "after": {
+    "verdict": "unknown",
+    "legs": {
+     "plugins/in_storage_backlog/sb.c::sb_destroy_backlog": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs": "unknown",
+     "plugins/in_storage_backlog/sb.c::sb_destroy_chunk": "held"
+    }
+   }
+  }
+ }
+}

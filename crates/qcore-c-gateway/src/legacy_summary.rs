@@ -1039,6 +1039,11 @@ pub(crate) fn observations_match_contract(
     if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
         return false;
     }
+    // Card W45-CONTAINER-ROOT-REACH: a body that took custody of an element of
+    // a container its caller supplied tells its callers nothing it could say.
+    if crate::legacy_c::container_publication::has_foreign_unlink(&summary.cfg) {
+        return false;
+    }
     // (2) A function with no reachable exit describes no call behavior.
     if observations.is_empty() {
         return false;

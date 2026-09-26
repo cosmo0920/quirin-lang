@@ -26,7 +26,7 @@ RETIRED = "W45-FB-SINGLEPLEX-CUSTODY-DECLARED"
 RESCOPED = "W45-FB-CROSS-UNIT-USER-PREMISES"
 RESCOPING = (
     " RE-SCOPED by W45-REFUTED-CONTRACT-WITHDRAWAL (2026-09-26, contract spec C06.4, gateway "
-    "constraint 10f): both declarations are now named in every run's `refuted_contracts` terms as "
+    "constraint 10g): both declarations are now named in every run's `refuted_contracts` terms as "
     "unchecked, not refuted — `flb_task_retry_destroy`'s neutral clause is undecided where its body is "
     "analysed and `flb_output_thread_pool_flush` has no analysed body — so they stay applied as declared "
     "premises. Their only consumers in the slice are the two refutations (OR-1, OR-7), which are "

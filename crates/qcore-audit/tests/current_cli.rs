@@ -458,9 +458,18 @@ fn the_sidecar_reproduces_the_provider_selection() {
             "quirin-provider-alpha:alpha/heap.qcore"
         ])
     );
+    // The CLI resolves relative arguments against current_dir(), which resolves
+    // temp-directory symlinks (e.g. /var -> /private/var on macOS). Preserve the
+    // declared manifest suffix: only the working-directory root is canonical.
     assert_eq!(
         selection["profile_contract_manifest"]["path"],
-        json!(fixture.0.join("profiles/sample/../../contracts.json"))
+        json!(
+            fixture
+                .0
+                .canonicalize()
+                .unwrap()
+                .join("profiles/sample/../../contracts.json")
+        )
     );
     // Names, versions, roles and the closure.
     let crates = selection["crates"].as_array().unwrap();

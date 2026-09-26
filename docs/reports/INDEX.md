@@ -876,6 +876,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-callee-summary-cascade](w45-callee-summary-cascade/README.md) | W45-CALLEE-SUMMARY-CASCADE: which callee bodies unblock whom, and the destructor body modeled |
 
+| [w45-container-root-reach](w45-container-root-reach/README.md) | W45-CONTAINER-ROOT-REACH: where a container outlives the function, and the foreign unlink |
+
 | [w45-contract-deferred-review](w45-contract-deferred-review/README.md) | W45-CONTRACT-DEFERRED-REVIEW: contracts whose evaluation is postponed to a human |
 
 | [w45-contract-revision-mode](w45-contract-revision-mode/README.md) | W45-CONTRACT-REVISION-MODE: pinned and flexible contracts, pinned by default |
