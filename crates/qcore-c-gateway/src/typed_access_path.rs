@@ -156,8 +156,9 @@ pub(crate) struct StatementPlan {
 /// lazily, only after a statement has reached an access-related refusal.
 pub(crate) struct StatementIndex {
     source: Arc<String>,
-    function: Value,
+    function: Arc<Value>,
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
+    by_line: BTreeMap<usize, Vec<Vec<usize>>>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -177,8 +178,46 @@ struct SourceContext {
     frontend_debug: Arc<String>,
     dialect: CCompilerDialect,
     request: LegacyCertificateRequest,
-    ast: OnceCell<Option<Value>>,
-    fields: OnceCell<Arc<BTreeMap<String, Option<FieldFacts>>>>,
+    ast: OnceCell<Option<AstIndex>>,
+}
+
+/// Keep only facts later typed-path lookups can use. Clang's complete JSON AST
+/// is still needed while parsing and collecting fields, but need not live for
+/// every CFG built from this translation unit.
+struct AstIndex {
+    functions: BTreeMap<String, Vec<Arc<Value>>>,
+    fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
+    line_starts: Vec<usize>,
+}
+
+impl AstIndex {
+    fn from_ast(mut ast: Value, source: &str) -> Self {
+        let mut fields = BTreeMap::new();
+        collect_field_facts(&ast, &mut fields);
+        let mut functions: BTreeMap<String, Vec<Arc<Value>>> = BTreeMap::new();
+        if let Some(Value::Array(top_level)) =
+            ast.as_object_mut().and_then(|obj| obj.remove("inner"))
+        {
+            for node in top_level {
+                if kind(&node) == "FunctionDecl"
+                    && children(&node)
+                        .iter()
+                        .any(|child| kind(child) == "CompoundStmt")
+                    && let Some(name) = node["name"].as_str()
+                {
+                    functions
+                        .entry(name.to_owned())
+                        .or_default()
+                        .push(Arc::new(node));
+                }
+            }
+        }
+        Self {
+            functions,
+            fields: Arc::new(fields),
+            line_starts: line_starts(source),
+        }
+    }
 }
 
 /// Keep the exact analysed source in the worker that builds this unit's CFGs.
@@ -208,7 +247,6 @@ pub(crate) fn enter_source(
             dialect,
             request,
             ast: OnceCell::new(),
-            fields: OnceCell::new(),
         }))
     }))
 }
@@ -237,31 +275,32 @@ impl StatementIndex {
                         dialect: context.dialect,
                         ..C11TranslationUnit::default()
                     };
-                    translation_unit_ast(&context.source, &unit).ok()
+                    translation_unit_ast(&context.source, &unit)
+                        .ok()
+                        .map(|ast| AstIndex::from_ast(ast, &context.source))
                 })
                 .as_ref()?;
-            let mut functions = children(ast)
-                .iter()
-                .filter(|node| {
-                    kind(node) == "FunctionDecl"
-                        && node["name"].as_str() == Some(function)
-                        && children(node)
-                            .iter()
-                            .any(|child| kind(child) == "CompoundStmt")
-                })
-                .collect::<Vec<_>>();
-            if functions.len() != 1 {
+            let [function] = ast.functions.get(function)?.as_slice() else {
                 return None;
+            };
+            let mut candidates = Vec::new();
+            let body_index = children(function)
+                .iter()
+                .position(|node| kind(node) == "CompoundStmt")?;
+            let mut path = vec![body_index];
+            statements(&children(function)[body_index], &mut path, &mut candidates);
+            let mut by_line: BTreeMap<usize, Vec<Vec<usize>>> = BTreeMap::new();
+            for path in candidates {
+                let node = node_at_path(function, &path)?;
+                if let Some(line) = node_line(node, context.source.len(), &ast.line_starts) {
+                    by_line.entry(line).or_default().push(path);
+                }
             }
-            let fields = context.fields.get_or_init(|| {
-                let mut fields = BTreeMap::new();
-                collect_field_facts(ast, &mut fields);
-                Arc::new(fields)
-            });
             Some(Self {
                 source: Arc::clone(&context.source),
-                function: functions.remove(0).clone(),
-                fields: Arc::clone(fields),
+                function: Arc::clone(function),
+                fields: Arc::clone(&ast.fields),
+                by_line,
             })
         })
     }
@@ -274,14 +313,11 @@ impl StatementIndex {
         line: usize,
         never_bound: impl Fn(&str) -> bool,
     ) -> Option<StatementPlan> {
-        let mut candidates = Vec::new();
-        let body = children(&self.function)
-            .iter()
-            .find(|node| kind(node) == "CompoundStmt")?;
-        statements(body, &mut candidates);
-        let mut matched = candidates.into_iter().filter(|node| {
-            self.node_line(node) == Some(line)
-                && self.node_tokens(node).is_some_and(|found| found == texts)
+        let mut matched = self.by_line.get(&line)?.iter().filter_map(|path| {
+            let node = node_at_path(&self.function, path)?;
+            self.node_tokens(node)
+                .is_some_and(|found| found == texts)
+                .then_some(node)
         });
         let node = matched.next()?;
         if matched.next().is_some() {
@@ -299,19 +335,6 @@ impl StatementIndex {
         };
         reader.statement(node)?;
         Some(reader.plan)
-    }
-
-    fn node_line(&self, node: &Value) -> Option<usize> {
-        let offset = offset(&node["range"]["begin"])?;
-        Some(
-            self.source
-                .as_bytes()
-                .get(..offset)?
-                .iter()
-                .filter(|&&b| b == b'\n')
-                .count()
-                + 1,
-        )
     }
 
     fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
@@ -335,6 +358,28 @@ fn offset(location: &Value) -> Option<usize> {
         .as_u64()
         .or_else(|| location["expansionLoc"]["offset"].as_u64())
         .map(|offset| offset as usize)
+}
+
+fn line_starts(source: &str) -> Vec<usize> {
+    let mut starts = vec![0];
+    starts.extend(
+        source
+            .as_bytes()
+            .iter()
+            .enumerate()
+            .filter_map(|(index, &byte)| (byte == b'\n').then_some(index + 1)),
+    );
+    starts
+}
+
+fn node_line(node: &Value, source_len: usize, line_starts: &[usize]) -> Option<usize> {
+    let offset = offset(&node["range"]["begin"])?;
+    (offset <= source_len).then(|| line_starts.partition_point(|&start| start <= offset))
+}
+
+fn node_at_path<'a>(root: &'a Value, path: &[usize]) -> Option<&'a Value> {
+    path.iter()
+        .try_fold(root, |node, &index| children(node).get(index))
 }
 
 fn collect_field_facts(node: &Value, fields: &mut BTreeMap<String, Option<FieldFacts>>) {
@@ -370,30 +415,41 @@ fn collect_field_facts(node: &Value, fields: &mut BTreeMap<String, Option<FieldF
     }
 }
 
-fn statements<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
+fn statements(node: &Value, path: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
     match kind(node) {
         "CompoundStmt" => {
-            for child in children(node) {
-                statement_body(child, out);
+            for (index, child) in children(node).iter().enumerate() {
+                path.push(index);
+                statement_body(child, path, out);
+                path.pop();
             }
         }
         "IfStmt" => {
             let inner = children(node);
             if node["hasElse"].as_bool() == Some(true) && inner.len() >= 3 {
-                statement_body(&inner[inner.len() - 2], out);
+                let index = inner.len() - 2;
+                path.push(index);
+                statement_body(&inner[index], path, out);
+                path.pop();
             }
             if let Some(body) = inner.last() {
-                statement_body(body, out);
+                path.push(inner.len() - 1);
+                statement_body(body, path, out);
+                path.pop();
             }
         }
         "WhileStmt" | "SwitchStmt" => {
             if let Some(body) = children(node).last() {
-                statement_body(body, out);
+                path.push(children(node).len() - 1);
+                statement_body(body, path, out);
+                path.pop();
             }
         }
         "DoStmt" => {
             if let Some(body) = children(node).first() {
-                statement_body(body, out);
+                path.push(0);
+                statement_body(body, path, out);
+                path.pop();
             }
         }
         "ForStmt" => {
@@ -403,28 +459,36 @@ fn statements<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
                 && inner.len() == 5
             {
                 if !kind(&inner[0]).is_empty() {
-                    out.push(&inner[0]);
+                    path.push(0);
+                    out.push(path.clone());
+                    path.pop();
                 }
                 if !kind(&inner[3]).is_empty() {
-                    out.push(&inner[3]);
+                    path.push(3);
+                    out.push(path.clone());
+                    path.pop();
                 }
-                statement_body(&inner[4], out);
+                path.push(4);
+                statement_body(&inner[4], path, out);
+                path.pop();
             }
         }
         "CaseStmt" | "DefaultStmt" | "LabelStmt" => {
             if let Some(body) = children(node).last() {
-                statement_body(body, out);
+                path.push(children(node).len() - 1);
+                statement_body(body, path, out);
+                path.pop();
             }
         }
         _ => {}
     }
 }
 
-fn statement_body<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
+fn statement_body(node: &Value, path: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
     if is_control(node) {
-        statements(node, out);
+        statements(node, path, out);
     } else if kind(node) != "ReturnStmt" && !kind(node).is_empty() {
-        out.push(node);
+        out.push(path.clone());
     }
 }
 
@@ -889,5 +953,68 @@ mod tests {
         assert!(plan(nested, "int x = s->u->x").is_none());
         let accepted = "typedef struct S { int x; } S; int f(S *s) { int x = s->x; return 0; }";
         assert!(plan(accepted, "int x = s->x").is_some());
+    }
+
+    #[test]
+    fn duplicate_same_line_refuses_but_distinct_lines_keep_their_candidates() {
+        let repeated = "struct S { int x; }; int f(struct S *p) { p->x = 1; p->x = 1; return 0; }";
+        let _scope = enter_source(repeated, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("f").expect("typed function");
+        let tokens = tokenize("p->x = 1");
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        assert!(index.statement(&texts, 1, |_| true).is_none());
+
+        let separated =
+            "struct S { int x; }; int f(struct S *p) {\n p->x = 1;\n p->x = 1;\n return 0; }";
+        let _scope = enter_source(separated, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("f").expect("typed function");
+        assert!(index.statement(&texts, 2, |_| true).is_some());
+        assert!(index.statement(&texts, 3, |_| true).is_some());
+        assert!(index.statement(&texts, 1, |_| true).is_none());
+    }
+
+    #[test]
+    fn nested_control_candidates_and_function_ast_are_reused() {
+        let source = "struct S { int x; }; int f(struct S *p) {\n if (1) {\n p->x = 1;\n } else {\n p->x = 2;\n }\n return 0; }";
+        let _scope = enter_source(source, CCompilerDialect::C11, None);
+        let first = StatementIndex::read("f").expect("typed function");
+        let second = StatementIndex::read("f").expect("typed function");
+        assert!(Arc::ptr_eq(&first.function, &second.function));
+        for (statement, line) in [("p->x = 1", 3), ("p->x = 2", 5)] {
+            let tokens = tokenize(statement);
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            assert!(first.statement(&texts, line, |_| true).is_some());
+            assert!(second.statement(&texts, line, |_| true).is_some());
+        }
+    }
+
+    #[test]
+    fn compact_ast_keeps_duplicate_definitions_and_conflicting_field_facts() {
+        let ast = serde_json::json!({
+            "inner": [
+                {"kind": "RecordDecl", "tagUsed": "struct", "completeDefinition": true,
+                 "inner": [{"kind": "FieldDecl", "id": "field", "type": {"qualType": "int"}}]},
+                {"kind": "RecordDecl", "tagUsed": "union", "completeDefinition": true,
+                 "inner": [{"kind": "FieldDecl", "id": "field", "type": {"qualType": "int"}}]},
+                {"kind": "FunctionDecl", "name": "f", "inner": [{"kind": "CompoundStmt"}]},
+                {"kind": "FunctionDecl", "name": "f", "inner": [{"kind": "CompoundStmt"}]},
+                {"kind": "FunctionDecl", "name": "g", "inner": []},
+                {"kind": "TypedefDecl", "name": "unused"}
+            ]
+        });
+        let compact = AstIndex::from_ast(ast, "a\nb");
+        assert_eq!(compact.functions["f"].len(), 2);
+        assert!(!compact.functions.contains_key("g"));
+        assert_eq!(compact.fields["field"], None);
+        assert_eq!(compact.line_starts, [0, 2]);
+        let node = serde_json::json!({"range": {"begin": {"offset": 3}}});
+        assert_eq!(node_line(&node, 3, &compact.line_starts), Some(2));
+        assert_eq!(node_line(&node, 2, &compact.line_starts), None);
     }
 }
