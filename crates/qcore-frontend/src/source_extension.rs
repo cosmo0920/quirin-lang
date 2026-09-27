@@ -101,7 +101,7 @@ pub fn validate_manifest_extension(path: &str) -> Result<(), String> {
 /// Reject selecting two suffix spellings of one logical input. Raw parent
 /// paths stay raw: this is not filesystem identity or a pin rewrite.
 pub fn reject_alias_collisions<'a>(paths: impl IntoIterator<Item = &'a str>) -> Result<(), String> {
-    let mut seen = std::collections::BTreeMap::new();
+    let mut seen = std::collections::BTreeMap::<_, Vec<&str>>::new();
     for path in paths {
         let Some((stem, family)) = [".qcore", ".qv", ".qr", ".qcorelib", ".qrlib"]
             .iter()
@@ -120,13 +120,17 @@ pub fn reject_alias_collisions<'a>(paths: impl IntoIterator<Item = &'a str>) -> 
         else {
             continue;
         };
-        if let Some(previous) = seen.insert((stem, family), path)
-            && previous != path
-        {
-            return Err(format!(
-                "ambiguous extension aliases: `{previous}` and `{path}`"
-            ));
+        let entries = seen.entry((stem, family)).or_default();
+        for previous in entries.iter() {
+            if *previous != path
+                && (family == "abi" || previous.ends_with(".qcore") || path.ends_with(".qcore"))
+            {
+                return Err(format!(
+                    "ambiguous extension aliases: `{previous}` and `{path}`"
+                ));
+            }
         }
+        entries.push(path);
     }
     Ok(())
 }
