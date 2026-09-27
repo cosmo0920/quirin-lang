@@ -23,6 +23,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-checkpoint-files](audit-checkpoint-files/README.md) | Per-configuration audit checkpoints |
 
+| [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
+
 | [audit-prepare-progress](audit-prepare-progress/README.md) | Audit preparation progress |
 
 ## B

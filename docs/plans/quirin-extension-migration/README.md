@@ -33,6 +33,7 @@ The initial search is a starting inventory, not evidence that every consumer is 
 ### EXT-01 — Classification and compatibility readers
 
 Generate the tracked-file mapping with parser-derived module modes and a separate frozen-archive list. Add `.qv`, `.qr` and `.qrlib` acceptance to the appropriate readers while retaining legacy spellings. Define wrong-extension/wrong-mode errors without accepting new syntax; a formal/runtime mismatch must not select a less restrictive checker. Define one module identity when a legacy/new spelling refers to the same declaration: reject ambiguous duplicate candidates rather than choose by search order. Classify `module library;`, mixed multi-file invocations and malformed fixtures explicitly.
+The compatibility readers introduced here emit the EXT-04 legacy-extension warning from their first release, including for retained frozen `.qcore` inputs; warning behavior is not deferred until retirement.
 
 Acceptance: old commands retain their verdicts and emitted C bytes; renamed temporary copies have matching results except recorded path spellings. Tests cover both aliases, mismatched modes, duplicate modules, includes, provider load paths, lock evaluation and native-library contract references. Follow the standing gate and add matching Lean only where semantics actually change. No bulk rename before this card passes.
 
