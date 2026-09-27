@@ -120,3 +120,54 @@ per-file manifests, tar archives and removal results live in
 old worktree-relative private log paths; frozen reports are unchanged.
 Observed free space on the main filesystem rose from 97 GiB to 157 GiB during
 the sweep (other builds were running, so this is not exact per-file accounting).
+
+## Typed-statement integration boundary
+
+The statement card adds a Clang-typed fallback after all existing shape routes.
+It binds the exact analyzed source, dialect, frontend context, statement tokens
+and line; missing or ambiguous facts retain Unknown. Field declarations must
+have a known complete record owner. Union fields, pointer-valued stores,
+bitfields, volatile/atomic paths, and unsupported casts or calls remain refused.
+Tracked arrow chains use the existing per-hop obligations; mixed embedded or
+indexed paths require a root that the static custody closure proves never
+bound. A pointer-valued read introduces a borrowed alias without a tracked
+target, so later uses can still be unresolved. No array-bounds or whole-C
+correctness claim follows from this resource projection.
+
+Review found that testing type spellings for `union` missed a typedef-hidden
+union. The corrected reader indexes actual field-declaration owners; negative
+controls cover typedef and nested unions. A separate Lean review required the
+borrowed-read lowering to refuse a write frame, matching the reader's reachable
+plans. The earlier corpus child completed with exit 0 just before an attempted
+interruption reached its wrapper, which exited 130. Its artifacts are retained
+as superseded evidence from the defective reader, not final validation. Both
+fixed audits complete at implementation tip `753cde34`, exit 0, four workers
+each. The corrected corpus has 451 Safe / 9 provisional Unsafe / 4,374 Unknown
+functions: 40 gains. `rdcrc32.c` moves Unknown to Safe, giving 6 Safe / 8
+provisional Unsafe / 167 Unknown / 4 data-only units. Unsupported leaves are
+38,729, unknown_alias 5,584, and leaks remain 34. The system gains one unique
+function (`flb_engine_get_chunk_backpressure_percent`) in two configurations.
+These are isolated statement-card measurements, not the final merged figures.
+
+The union-owner correction withdraws five apparent gains from the defective
+attempt: `LZ4_favorDecompressionSpeed`, `LZ4_setCompressionLevel`, and the
+telemetry helpers `calculate_consumer_commit_latency_max`,
+`calculate_consumer_rebalance_latency_max` and
+`calculate_share_time_between_poll_max`. All five remain Unknown in the fixed
+measurement. There is no Safe correction relative to the actual BEFORE.
+
+The later full Rust gate found another extraction defect: an anonymous
+aggregate typedef can have only a typedef spelling in Clang's member type,
+so a negative spelling filter mistook it for a scalar. The repair requires
+positive scalar-type recognition and retains the aggregate-store refusal.
+Consequently the `753cde34` isolated counts above are a superseded checkpoint,
+not validation of the final implementation. The final statement comparison
+uses the measured contract-only tree as BEFORE and the corrected combined tree
+as AFTER, with complete parity recording and 16 audit workers. This keeps a
+single attributable implementation change between those two measurements.
+
+Old routes are retained. Complete side-by-side plans and frontend-context
+preimages are archived by the statement card; differing plan vocabularies are
+unresolved parity items, not evidence for deleting a route. Conditions, returns
+and call arguments remain the separate P3 work. The frozen P1 forecast is
+compared per function, including misses and gains outside its candidate set.

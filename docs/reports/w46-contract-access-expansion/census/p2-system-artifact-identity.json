@@ -1,0 +1,30 @@
+{
+  "normalization": {
+    "from": "/tmp/qcore-w46-access-statements",
+    "to": "/home/cosmo/Documents/GitHub/qcore-c",
+    "scope": "exact UTF-8 checkout prefix in JSON bytes; no other substitutions"
+  },
+  "files": [
+    {
+      "file": "resource-diagnostics.contracts.json",
+      "before_sha256": "b3cb7a4f23b0f153834dc8efb3e9f155c65cb1d68de3c5682466e1e4d2b7efd7",
+      "after_sha256": "644ea102d662629f751ffdc94a84e4be8803aca7db4db890420b79cb0f0f58d0",
+      "byte_identical": false,
+      "equal_after_exact_checkout_prefix_substitution": true
+    },
+    {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_identical": true,
+      "equal_after_exact_checkout_prefix_substitution": true
+    },
+    {
+      "file": "resource-diagnostics.source-effects.json",
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_identical": true,
+      "equal_after_exact_checkout_prefix_substitution": true
+    }
+  ]
+}

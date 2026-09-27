@@ -23,7 +23,8 @@ def main():
             raise SystemExit(f"cannot archive failed {scope} as completed evidence")
         destination = args.output / scope
         destination.mkdir()
-        files = sorted(source.glob("*.json")) + [source / name for name in logs]
+        files = sorted(source.glob("*.json")) + sorted(source.glob("*.jsonl"))
+        files += [source / name for name in logs]
         for path in files:
             raw = path.read_bytes()
             encoded = gzip.compress(raw, mtime=0)

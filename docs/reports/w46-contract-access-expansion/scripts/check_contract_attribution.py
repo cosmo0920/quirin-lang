@@ -14,10 +14,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("scope", choices=["corpus", "system"])
     parser.add_argument("source", type=pathlib.Path)
+    parser.add_argument("--automatic", type=pathlib.Path,
+                        help="another integration stage's automatic attribution")
+    parser.add_argument("--reviews", type=pathlib.Path,
+                        help="source-reviewed records for that stage")
     args = parser.parse_args()
     report = pathlib.Path(__file__).resolve().parents[1]
-    automatic = json.loads((report / f"census/contracts-{args.scope}-attribution.json").read_text())
-    reviews = json.loads((report / "census/reviewed-contract-attribution.json").read_text())
+    automatic_path = args.automatic or report / f"census/contracts-{args.scope}-attribution.json"
+    reviews_path = args.reviews or report / "census/reviewed-contract-attribution.json"
+    automatic = json.loads(automatic_path.read_text())
+    reviews = json.loads(reviews_path.read_text())
     selected = [item for item in reviews if item["scope"] == args.scope]
     def key(item):
         return json.dumps(item, sort_keys=True)

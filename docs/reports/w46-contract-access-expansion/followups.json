@@ -5,5 +5,26 @@
     "why": "Readable buffer extents in input_chunk_has_magic_bytes and flb_routes_mask_is_empty, nested pointer validity in the overlimit predicates, and routing concurrency remain outside the resource-v1 declarations. The five scalar declarations establish only their reviewed resource effects. Preserve PROD-CONTRACTS-MASK-EXTENT in the remaining-prod-contracts report; this addition does not discharge that non-claim. DISCHARGE: source-bound extent, nested-validity or concurrency obligations and their model correspondence, with held-out negative controls and measured audit effects; no promotion from the borrowed premise alone.",
     "source": "docs/reports/w46-fluent-routing-query-contracts/README.md",
     "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
+  },
+  {
+    "id": "W46-ACCESS-PATH-PARITY",
+    "title": "Compare distinct legacy/typed plan vocabularies and the scalar/chain disagreements before retiring any route",
+    "why": "The typed statement fallback preserves all existing shape routes. The isolated corpus records 28,386 side-by-side rows and the system records 6,298; structurally different plan vocabularies and explicit scalar/chain disagreements remain unresolved. These are observations, not replacement parity. DISCHARGE: state a semantic comparison across the plan vocabularies, resolve each disagreement, reproduce pinned verdicts and coverage with archived diffs and matching audited Lean, then retire only the routes for which parity is established.",
+    "source": "docs/reports/w46-access-path-statements/README.md",
+    "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
+  },
+  {
+    "id": "W46-ACCESS-PATH-TRACKED-MIXED-PLACES",
+    "title": "Model tracked embedded/indexed places instead of admitting them under a never-bound root",
+    "why": "The new reader admits a mixed embedded/indexed/dereference path only when the static custody closure proves its root never bound; it refuses the corresponding tracked mixed path. Existing direct arrow-chain obligations remain authoritative. DISCHARGE: a tracked place representation and per-hop lifetime/identity obligations for embedded and indexed paths, with Rust refusal controls, matching audited Lean and measured corpus/system effects. This does not establish array bounds or publish ownership for pointer-valued stores.",
+    "source": "docs/reports/w46-access-path-statements/README.md",
+    "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
+  },
+  {
+    "id": "W46-ACCESS-PATH-POSITIONS",
+    "title": "Apply the typed access-path layer in P3 conditions, returns and call arguments",
+    "why": "The bounded statement fallback does not implement P3 positions. Frozen P1 candidates still include accesses in conditions, return expressions and call arguments. DISCHARGE: preserve controlling-expression evaluation order and short-circuit scopes, retain each callee custody premise, prove matching Lean rules, exercise negative controls, and measure both the pinned corpus and Fluent Bit system slice. Keep the separate P5 pointer-store and union-live-member refusals.",
+    "source": "docs/reports/w46-access-path-statements/README.md",
+    "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
   }
 ]
