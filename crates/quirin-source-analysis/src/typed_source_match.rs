@@ -12,7 +12,7 @@ pub(crate) use qcore_c_gateway::typed_source_match::SourceFieldProfile;
 /// implementation admits a caller's arbitrary reference as library evidence.
 ///
 /// ```compile_fail
-/// use qcore_compiler::typed_source_match::SourceMatch;
+/// use quirin_source_analysis::typed_source_match::SourceMatch;
 /// use qcore_c_gateway::typed_source_match::TypedBodyComparison;
 /// fn forge(comparison: TypedBodyComparison) -> SourceMatch {
 ///     SourceMatch { comparison }
@@ -20,7 +20,7 @@ pub(crate) use qcore_c_gateway::typed_source_match::SourceFieldProfile;
 /// ```
 ///
 /// ```compile_fail
-/// use qcore_compiler::typed_source_match::SourceMatch;
+/// use quirin_source_analysis::typed_source_match::SourceMatch;
 /// let forged: SourceMatch = serde_json::from_str("{}").unwrap();
 /// ```
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

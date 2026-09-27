@@ -17,7 +17,7 @@ use std::collections::BTreeMap;
 /// cannot be promoted into this source-checked wrapper.
 ///
 /// ```compile_fail
-/// use qcore_compiler::chunk_source::ChunkSourceSummary;
+/// use quirin_source_analysis::chunkio::chunk_source::ChunkSourceSummary;
 /// use qcore_schemas::chunk_summary::ChunkSourceSummaryRecord;
 /// fn forge(record: ChunkSourceSummaryRecord) -> ChunkSourceSummary { record.into() }
 /// ```
