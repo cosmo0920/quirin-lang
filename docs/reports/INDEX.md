@@ -922,6 +922,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w46-external-callee-contracts](w46-external-callee-contracts/README.md) | W46-EXTERNAL-CALLEE-CONTRACTS: contracts for the external callees that block the most functions |
 
+| [w46-libc-event-contract-gaps](w46-libc-event-contract-gaps/README.md) | W46-LIBC-EVENT-CONTRACT-GAPS |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
