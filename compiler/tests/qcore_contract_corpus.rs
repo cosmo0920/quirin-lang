@@ -406,6 +406,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "input_chunk_write_header",
         6,
     ),
+    (
+        "fluent_bit/input_chunk_is_up.qcore",
+        "flb_input_chunk_is_up",
+        4,
+    ),
     // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
     // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
     // resource-v1 declaration count 20 -> 25. Deliberate; see
@@ -462,6 +467,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/memory.qcore", "flb_realloc", 9),
     ("fluent_bit/memory.qcore", "flb_realloc_z", 12),
     ("fluent_bit/memory.qcore", "flb_free", 5),
+    (
+        "fluent_bit/output_flush_id.qcore",
+        "flb_output_flush_id_get",
+        4,
+    ),
     // Card W45-FB-RETRY-LIFETIME: OR-1 and OR-7 as checked declarations —
     // the marker, one mode per parameter, two exit clauses, the result.
     (
@@ -545,6 +555,26 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the result mode. It takes no parameter, so it has no parameter clause.
     // Card W45-FB-RETRY-LIFETIME: the counter operations (the drop carries a
     // literal premise) and two neutral callees.
+    (
+        "fluent_bit/task_route_queries.qcore",
+        "flb_task_get_route_status",
+        5,
+    ),
+    (
+        "fluent_bit/task_route_queries.qcore",
+        "flb_task_set_route_status",
+        6,
+    ),
+    (
+        "fluent_bit/task_route_queries.qcore",
+        "flb_task_retry_count",
+        5,
+    ),
+    (
+        "fluent_bit/task_route_queries.qcore",
+        "flb_task_running_count",
+        4,
+    ),
     ("fluent_bit/task_users.qcore", "flb_task_users_inc", 4),
     ("fluent_bit/task_users.qcore", "flb_task_users_dec", 6),
     ("fluent_bit/task_users.qcore", "flb_task_retry_destroy", 4),
@@ -1326,7 +1356,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.3).
-    assert_eq!(sources.len(), 114, "unexpected contract corpus size");
+    // 114 -> 117 by W46-FLUENT-EVENT-CONTRACT-GAPS: three Fluent Bit modules
+    // with six bounded, source-pinned custody and counted-user declarations.
+    assert_eq!(sources.len(), 117, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

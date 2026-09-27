@@ -1,0 +1,23 @@
+module contract;
+
+// W46-FLUENT-EVENT-CONTRACT-GAPS. At Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 flb_input_chunk.c:3128
+// and 046accf6aded7906f66a1baf0202da349e521736 :3168, the entire
+// body is `return cio_chunk_is_up(ic->chunk);`. ChunkIO's body at
+// lib/chunkio/src/cio_chunk.c:509-524 selects a memory constant or calls
+// cio_file_is_up, which only reads whether an existing file descriptor and
+// mapping are open (chunk_residency.qcore's separately pinned reading).
+// No mapping, callback, retention or task-user change is reached. The result
+// is a scalar state flag; the caller keeps its chunk custody.
+//
+// This covers only the query. flb_input_chunk_set_up/down can change mapped
+// storage and remains undeclared, as do the metadata readers whose nested
+// diagnostic callback lacks a constrained custody/user effect.
+
+extern fn flb_input_chunk_is_up(ic: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};

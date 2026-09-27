@@ -272,4 +272,27 @@ theorem a_balanced_body_holds :
       clauseVerdict 0 1 [balancedFailure, balancedSuccess] = .held := by
   decide
 
+/-! W46-FLUENT-EVENT-CONTRACT-GAPS: a body-grounded scalar or status helper is
+classified as `neutral` only after reviewing its complete callees. The model
+does not prove that classification for Fluent Bit C; it proves the effect of a
+faithful classification and keeps an opaque lifecycle call undecided. -/
+
+/-- Calling a neutral helper before a path cannot alter its known net count. -/
+theorem a_neutral_helper_preserves_delta (ops : List UOp) :
+    delta (.neutral :: ops) = delta ops := by
+  cases h : delta ops with
+  | none => simp [delta, stepOf, h]
+  | some n => simp [delta, stepOf, h]
+
+/-- A neutral helper cannot discharge a release check already owed. -/
+theorem a_neutral_helper_preserves_pending (count : Int) (owed : Bool)
+    (ops : List UOp) :
+    pendingFrom count owed (.neutral :: ops) = pendingFrom count owed ops := by
+  rfl
+
+/-- An unmodeled flush lifecycle call after neutral helpers remains unknown. -/
+theorem an_opaque_flush_after_neutral_is_unknown :
+    delta [.neutral, .neutral, .opaque] = none := by
+  decide
+
 end QCore.CountedUsers

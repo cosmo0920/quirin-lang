@@ -1,0 +1,26 @@
+module contract;
+
+// W46-FLUENT-EVENT-CONTRACT-GAPS, Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+// and 046accf6aded7906f66a1baf0202da349e521736.
+// flb_output.c:239/242 reads either ins->flush_id or the thread instance's
+// flush_id, increments and wraps that scalar, and returns the old ID. The
+// threaded arm calls flb_output_thread_instance_get (flb_output_thread.c:38),
+// a TLS lookup returning the already-existing thread instance to a LOCAL
+// variable. The wrapper neither allocates a flush object, retains ins,
+// changes task users nor releases a resource.
+//
+// This does not declare flb_output_flush_create/destroy/finished or dispatch.
+// Those lifecycle functions retain or release task/flush resources and can
+// invoke callbacks; a scalar ID contract does not settle their obligations.
+
+// The raw TLS getter is deliberately undeclared. Its returned pointer aliases
+// retained storage, which v1 cannot describe faithfully (the same boundary
+// as pthread_getspecific in W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED).
+
+extern fn flb_output_flush_id_get(ins: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};

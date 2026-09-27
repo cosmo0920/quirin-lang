@@ -49,3 +49,9 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.CountedUsers.the_n2_shape_is_refuted
 #print axioms QCore.CountedUsers.the_n2_rollback_owes_no_check
 #print axioms QCore.CountedUsers.a_balanced_body_holds
+
+-- W46 bounded Fluent Bit helper classification: neutral calls preserve count
+-- and pending release checks; the unmodeled flush lifecycle stays unknown.
+#print axioms QCore.CountedUsers.a_neutral_helper_preserves_delta
+#print axioms QCore.CountedUsers.a_neutral_helper_preserves_pending
+#print axioms QCore.CountedUsers.an_opaque_flush_after_neutral_is_unknown

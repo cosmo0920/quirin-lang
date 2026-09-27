@@ -38,6 +38,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/input_chunk_helpers.qcore"),
     ),
     (
+        "fluent_bit/input_chunk_is_up.qcore",
+        include_str!("../contracts/fluent_bit/input_chunk_is_up.qcore"),
+    ),
+    (
         "fluent_bit/input_chunk_name.qcore",
         include_str!("../contracts/fluent_bit/input_chunk_name.qcore"),
     ),
@@ -58,6 +62,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/memory.qcore"),
     ),
     (
+        "fluent_bit/output_flush_id.qcore",
+        include_str!("../contracts/fluent_bit/output_flush_id.qcore"),
+    ),
+    (
         "fluent_bit/output_singleplex.qcore",
         include_str!("../contracts/fluent_bit/output_singleplex.qcore"),
     ),
@@ -76,6 +84,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
     (
         "fluent_bit/storage_backlog.qcore",
         include_str!("../contracts/fluent_bit/storage_backlog.qcore"),
+    ),
+    (
+        "fluent_bit/task_route_queries.qcore",
+        include_str!("../contracts/fluent_bit/task_route_queries.qcore"),
     ),
     (
         "fluent_bit/task_users.qcore",

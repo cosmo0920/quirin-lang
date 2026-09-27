@@ -1,0 +1,22 @@
+[
+  {
+    "id": "W46-FLUENT-METADATA-CALLBACK-EFFECT",
+    "title": "Input-chunk metadata scalar queries reach unconstrained logging callbacks",
+    "why": "flb_input_chunk_has_direct_routes and flb_input_chunk_get_event_type call cio_meta_read; the file path can enter mmap_file, whose diagnostic path invokes cio->options.log_cb. The callback has no bounded custody or counted-user effect in the selected contract vocabulary. A metadata-view helper also publishes borrowed interior pointers via an out parameter. These two queries stay undeclared. Discharge by a checked callback effect and view-lifetime reading, then remeasure the corpus and system slice."
+  },
+  {
+    "id": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT",
+    "title": "Input-chunk output-size accounting wrappers reach configurable log callbacks",
+    "why": "flb_input_chunk_output_size_subtract and flb_input_chunk_update_output_instances conditionally log; the logging path can update counters and invoke a configured metrics log callback. Without a checked bound on its custody and counted-user effects, neither wrapper gets an unconditional neutral contract. Discharge by constraining the callback path or a guarded contract with audited semantics, then remeasure."
+  },
+  {
+    "id": "W46-FLUENT-TLS-RETAINED-RESULT",
+    "title": "Raw output-thread TLS getter returns retained storage",
+    "why": "flb_output_thread_instance_get returns a thread-local pointer that aliases retained storage, like pthread_getspecific. Resource-v1 return_none cannot express that relation. It stays undeclared even though the scalar flb_output_flush_id_get wrapper can be stated as a borrowed/neutral caller effect. Discharge with a retained-result relation and matching Lean parity or a recorded refusal."
+  },
+  {
+    "id": "W46-FLUENT-FLUSH-LIFECYCLE-BOUNDARY",
+    "title": "Flush create, destroy, finished and dispatch effects remain unmodeled",
+    "why": "Flush create/destroy/finished/dispatch can retain or release flush/task resources and run callbacks; this card's ID helper contract does not state their effects or imply lifecycle safety. Preserve the existing OR-1/OR-7 defining-body refutations (provisional Unsafe) and their Unknown callers. Discharge this residual only by stating and checking the still-unstated lifecycle effects with Rust controls and matching Lean parity; adding those contracts does not require overturning valid refutations."
+  }
+]

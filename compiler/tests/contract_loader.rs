@@ -82,7 +82,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    assert_eq!(contracts.source_assumptions().len(), 50);
+    // 50 -> 53 by W46-FLUENT-EVENT-CONTRACT-GAPS: the input state query,
+    // task route/count helpers, and the scalar output flush ID helper.
+    assert_eq!(contracts.source_assumptions().len(), 53);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -656,6 +658,21 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         flush.counted_users.exits = exits(0);
         old.insert_contract("flb_output_task_flush", flush);
     }
+    // W46-FLUENT-EVENT-CONTRACT-GAPS: scalar/state helpers borrow every
+    // argument and preserve task-user counts. This explicit previous-mode
+    // table must grow with the selected manifest.
+    for (name, arity) in [
+        ("flb_input_chunk_is_up", 1),
+        ("flb_output_flush_id_get", 1),
+        ("flb_task_get_route_status", 2),
+        ("flb_task_set_route_status", 3),
+        ("flb_task_retry_count", 2),
+        ("flb_task_running_count", 1),
+    ] {
+        let mut contract = ResourceFunctionContract::new(vec![P::Borrowed; arity], R::None);
+        contract.counted_users.neutral = true;
+        old.insert_contract(name, contract);
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -948,7 +965,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    assert_eq!(certificate.contracts.source_assumptions().len(), 50);
+    // 50 -> 53 by W46-FLUENT-EVENT-CONTRACT-GAPS, six declarations.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 53);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1169,7 +1187,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
     // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
     // and manifest-selected.
-    assert_eq!(modules.len(), 114, "corpus module count");
+    // 114 -> 117 by W46-FLUENT-EVENT-CONTRACT-GAPS.
+    assert_eq!(modules.len(), 117, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1320,11 +1339,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
     // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
     // unchanged.
-    // 183 -> 202 by W46-METRIC-TRACE-CONTRACT-GAPS: nineteen neutral
-    // declarations appended to two already-selected owner modules.
+    // W46-METRIC-TRACE-CONTRACT-GAPS adds nineteen declarations to
+    // selected modules; W46-FLUENT-EVENT-CONTRACT-GAPS adds three modules
+    // with six declarations. Combined: 50 -> 53 and 183 -> 208.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (50, 202, 216)
+        (53, 208, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
