@@ -1,0 +1,127 @@
+[
+  {
+    "name": "submodule",
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "exit": 0,
+    "seconds": 0.051495133026037365,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/submodule.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/submodule.exit"
+  },
+  {
+    "name": "rust",
+    "argv": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 444.5142186890007,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/rust.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/rust.exit"
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 3.6559036059770733,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/fmt.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/fmt.exit"
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 40.73324755602516,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/clippy.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/clippy.exit"
+  },
+  {
+    "name": "reevaluation-probe",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "exit": 0,
+    "seconds": 0.5372472659801133,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/reevaluation-probe.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/reevaluation-probe.exit"
+  },
+  {
+    "name": "reevaluation-followup",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "exit": 0,
+    "seconds": 1.1136581239989027,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/reevaluation-followup.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/reevaluation-followup.exit"
+  },
+  {
+    "name": "lean",
+    "argv": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 36.86633523902856,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/lean.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/lean.exit"
+  },
+  {
+    "name": "python",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 38.20374745200388,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/python.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/python.exit"
+  },
+  {
+    "name": "clang-version",
+    "argv": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.017275093006901443,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/clang-version.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-performance-gate-20260927T104220Z/clang-version.exit"
+  }
+]

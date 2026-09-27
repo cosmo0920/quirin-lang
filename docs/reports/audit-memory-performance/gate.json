@@ -1,0 +1,18 @@
+{
+  "note": "Fresh integrated standing gate at c695cea4. No failed gate steps. Commands, exits, times and private log paths are in gate/steps.json. CARGO_BUILD_JOBS=4; Rust runner and Lean audits use jobs=4. No provider-owned changes. Exact bounded before/after verdict parity is recorded separately; no full corpus replay or coverage promotion. Clang recording comes from this gate in this worktree, not borrowed. Subsequent edits record evidence only.",
+  "source_tip": "c695cea40b53dfbbe6c7645d77490ea8ffcdd5dd",
+  "workspace_tests": 6065,
+  "rust_units": 331,
+  "rust_summaries": 344,
+  "rust_failed": 0,
+  "rust_ignored": 11,
+  "rust_summary": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/test-binaries/20260927T104221Z-2114114/summary.json",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 213,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

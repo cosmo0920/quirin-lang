@@ -1,0 +1,32 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/docs-index.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/diff-check.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/final-python.log"
+  }
+]
