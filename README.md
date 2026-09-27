@@ -18,6 +18,11 @@ cargo build --bin quirin
 ./target/debug/quirin emit -o generated.c examples/cycle12.qr
 ```
 
+Runtime sources use `#import std.fmt;` for bundled modules and
+`#import "./helper";` (or `"./helper.qr"`) for relative modules. The CLI resolves
+relative files from the importing source. See [module modes and imports](docs/QCORE_MODULE_MODES.md)
+for capability boundaries and the explicit contract-load-path check.
+
 Checking/emitting Quirin does not require Clang. Compiling emitted C needs a
 C11 compiler; existing-C analysis and the full test suite need Clang. See
 [build and platform setup](docs/development/build-and-test.md) and the
