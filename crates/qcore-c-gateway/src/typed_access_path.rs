@@ -37,17 +37,6 @@ pub(crate) fn record_parity(
     if !parity_enabled() {
         return;
     }
-    let Some((source_sha256, dialect, frontend)) = ANALYSED_SOURCE.with(|cell| {
-        let context = cell.borrow();
-        let context = context.as_ref()?;
-        Some((
-            context.source_sha256.clone(),
-            format!("{:?}", context.dialect),
-            format!("{:?}", context.request),
-        ))
-    }) else {
-        return;
-    };
     let disagreement = match (old, new) {
         (Some((old_scalar, old_chains)), Some(new)) => {
             old_scalar != &new.scalar || old_chains != new.chains || new.borrowed_destination
@@ -55,11 +44,8 @@ pub(crate) fn record_parity(
         (None, None) => false,
         _ => true,
     };
-    let value = serde_json::json!({
+    write_parity(serde_json::json!({
         "function": function,
-        "source_sha256": source_sha256,
-        "dialect": dialect,
-        "frontend": frontend,
         "line": line,
         "texts": texts,
         "old_route": old_route,
@@ -71,7 +57,55 @@ pub(crate) fn record_parity(
         "new_chains": new.map(|plan| format!("{:?}", plan.chains)),
         "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
         "disagreement": disagreement,
-    });
+    }));
+}
+
+/// Older routes with different plan vocabularies stay authoritative. Record
+/// their complete instruction beside the typed candidate; parity remains
+/// unproved even if both admit, so every such row is a review item.
+pub(crate) fn record_legacy_route(
+    function: &str,
+    line: usize,
+    texts: &[&str],
+    old_route: &str,
+    old_instruction: &str,
+    new: Option<&StatementPlan>,
+) {
+    if !parity_enabled() {
+        return;
+    }
+    write_parity(serde_json::json!({
+        "function": function,
+        "line": line,
+        "texts": texts,
+        "old_route": old_route,
+        "old_admitted": true,
+        "new_admitted": new.is_some(),
+        "old_instruction": old_instruction,
+        "new_scalar": new.map(|plan| format!("{:?}", plan.scalar)),
+        "new_chains": new.map(|plan| format!("{:?}", plan.chains)),
+        "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
+        "disagreement": true,
+        "comparison": "distinct plan vocabularies; no parity claim",
+    }));
+}
+
+fn write_parity(mut value: Value) {
+    let Some((source_sha256, dialect, frontend)) = ANALYSED_SOURCE.with(|cell| {
+        let context = cell.borrow();
+        let context = context.as_ref()?;
+        Some((
+            context.source_sha256.clone(),
+            format!("{:?}", context.dialect),
+            format!("{:?}", context.request),
+        ))
+    }) else {
+        return;
+    };
+    let object = value.as_object_mut().expect("typed parity object");
+    object.insert("source_sha256".into(), source_sha256.into());
+    object.insert("dialect".into(), dialect.into());
+    object.insert("frontend".into(), frontend.into());
     let mut guard = PARITY_SINK.lock().expect("typed access parity sink lock");
     let writer = guard.get_or_insert_with(|| {
         let path = std::env::var_os(PARITY_PATH).expect("typed access parity path");

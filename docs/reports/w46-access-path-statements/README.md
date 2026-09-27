@@ -33,11 +33,14 @@ places. A focused indexed path test checks both arms.
 Clang represents evaluated VLA bounds as children, and the held-out
 `sizeof(int[(close(fd), n)])` control stays `Unknown`.
 
-The established scalar, chain, sub-object-store and pointer-step shape
-readers stay first. With
+The established scalar-member-store, scalar-field-noop, typed scalar,
+chain, sub-object-store and pointer-step shape readers stay first. With
 `QCORE_TYPED_PATH_PARITY` set to an output JSONL path, each consulted
 statement records both readers' complete plans, any disagreement, and the
 analyzed source identity. The corpus artifact below archives that stream.
+Routes with a different instruction vocabulary record every overlap as an
+unresolved structural comparison, including cases both admit; they make no
+parity claim. Verdict/coverage comparison remains the retirement arbiter.
 No shape route is retired before verdict and coverage parity.
 
 The matching Lean module is `proof/QCore/TypedAccessPathStatements.lean`,

@@ -4504,6 +4504,30 @@ impl Parser<'_> {
         })
     }
 
+    fn record_legacy_typed_parity(
+        &self,
+        tokens: &[Token],
+        route: &str,
+        instruction: &LegacyInstruction,
+    ) {
+        if !crate::typed_access_path::parity_enabled() {
+            return;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let new = self.typed_path_plan(tokens);
+        crate::typed_access_path::record_legacy_route(
+            &self.typed_path_function,
+            tokens.first().map_or(0, |token| token.line),
+            &texts,
+            route,
+            &format!("{instruction:?}"),
+            new.as_ref(),
+        );
+    }
+
     /// Card **AOM-BINDING-POISON**: the bindings one refused statement spares.
     ///
     /// Called only where `texts` is the **complete** token text of the refused
@@ -6390,11 +6414,13 @@ impl Parser<'_> {
                 && !self.formal_parameters.contains(&step.destination)
                 && !self.formal_parameters.contains(&step.source)
             {
-                return LegacyInstruction::PointerStep {
+                let instruction = LegacyInstruction::PointerStep {
                     destination: step.destination,
                     source: step.source,
                     offset: step.offset,
                 };
+                self.record_legacy_typed_parity(tokens, "index_traversal", &instruction);
+                return instruction;
             }
             return instruction;
         }
@@ -6411,6 +6437,7 @@ impl Parser<'_> {
         if contains_call(tokens)
             && let Some(store) = self.sub_object_store_statement(tokens, &instruction)
         {
+            self.record_legacy_typed_parity(tokens, "sub_object_store_call", &store);
             return store;
         }
         if !consulted || contains_call(tokens) || contains_braces(tokens) {
@@ -6450,6 +6477,7 @@ impl Parser<'_> {
             // Card W45-SUB-OBJECT-STORES: a sub-object store through a
             // resolved, typed base, after both typed access routes declined.
             if let Some(store) = self.sub_object_store_statement(tokens, &instruction) {
+                self.record_legacy_typed_parity(tokens, "sub_object_store", &store);
                 return store;
             }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
@@ -6464,11 +6492,13 @@ impl Parser<'_> {
                     &self.typed_types,
                 )
             {
-                return LegacyInstruction::PointerStep {
+                let instruction = LegacyInstruction::PointerStep {
                     destination: step.destination,
                     source: step.source,
                     offset: step.offset,
                 };
+                self.record_legacy_typed_parity(tokens, "index_traversal", &instruction);
+                return instruction;
             }
             // W46-ACCESS-PATH-STATEMENTS: only a residual access refusal
             // reaches Clang. Every established admitting shape route above
@@ -7144,10 +7174,12 @@ impl Parser<'_> {
                 &self.typed_types,
             )
         {
-            return LegacyInstruction::ScalarMemberStore {
+            let instruction = LegacyInstruction::ScalarMemberStore {
                 base: base.to_owned(),
                 alias_read: self.read_alias(Some(base)),
             };
+            self.record_legacy_typed_parity(tokens, "scalar_member_store", &instruction);
+            return instruction;
         }
         // One typed exception to the lexical indirect-access gate below: a
         // direct scalar-field access whose declared types make it
@@ -7164,7 +7196,9 @@ impl Parser<'_> {
                 &self.typed_types,
             )
         {
-            return self.scalar_effect(&texts);
+            let instruction = self.scalar_effect(&texts);
+            self.record_legacy_typed_parity(tokens, "scalar_field_noop", &instruction);
+            return instruction;
         }
         // O04/C02-P: the borrowed pointer-field actuals of a contracted call,
         // and an assignment whose whole right-hand side is one admitted direct
