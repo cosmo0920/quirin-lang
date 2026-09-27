@@ -262,3 +262,5 @@ import QCore.MetricTraceContractGaps
 import QCore.ScalarObservationContracts
 
 /-! The executable formal core of QCore-C revision 0.1. -/
+
+import QCore.SourceExtensions
