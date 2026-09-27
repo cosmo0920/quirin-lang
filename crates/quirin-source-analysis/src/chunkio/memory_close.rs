@@ -83,5 +83,5 @@ pub fn check_memory_close_source(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/memory_close.rs"]
+#[path = "../../tests/unit/memory_close.rs"]
 pub(crate) mod tests;

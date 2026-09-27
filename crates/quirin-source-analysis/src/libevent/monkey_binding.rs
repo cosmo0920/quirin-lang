@@ -986,5 +986,5 @@ pub fn check_monkey_bindings_with_rules(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/monkey_binding.rs"]
+#[path = "../../tests/unit/monkey_binding.rs"]
 mod tests;

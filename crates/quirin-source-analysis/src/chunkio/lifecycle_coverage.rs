@@ -307,5 +307,5 @@ fn projection_reason(contract: &FieldContract) -> String {
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/lifecycle_coverage.rs"]
+#[path = "../../tests/unit/lifecycle_coverage.rs"]
 mod tests;

@@ -76,5 +76,5 @@ pub fn profile(function: &str) -> Result<CleanupProfile, String> {
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/file_outcomes.rs"]
+#[path = "../../tests/unit/file_outcomes.rs"]
 mod tests;

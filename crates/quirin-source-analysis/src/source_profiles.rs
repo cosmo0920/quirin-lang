@@ -29,7 +29,14 @@ pub const LIBEVENT_SOURCE_SET: &str = "libevent";
 pub fn profiles_root() -> PathBuf {
     match env::var_os("QCORE_PROFILES") {
         Some(value) => PathBuf::from(value),
-        None => PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../contract/profiles"),
+        // Preserve the historical non-canonical spelling in assumption keys
+        // and contract sidecars while the source adapter changes owning crate.
+        // Both parent calls reach the repository root from this crate.
+        None => PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(std::path::Path::parent)
+            .expect("source-analysis crate must be inside repository crates")
+            .join("compiler/../contract/profiles"),
     }
 }
 

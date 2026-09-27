@@ -33,5 +33,5 @@ pub fn check_unsupported_close_source(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/unsupported_close.rs"]
+#[path = "../../tests/unit/unsupported_close.rs"]
 mod tests;

@@ -126,5 +126,5 @@ void qcore_source_reference(struct cio_ctx *ctx) {
 "#;
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/parent_teardown.rs"]
+#[path = "../../tests/unit/parent_teardown.rs"]
 pub(crate) mod tests;

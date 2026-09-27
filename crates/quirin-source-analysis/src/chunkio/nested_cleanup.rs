@@ -275,5 +275,5 @@ impl NestedCleanupSource {
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/nested_cleanup.rs"]
+#[path = "../../tests/unit/nested_cleanup.rs"]
 mod tests;

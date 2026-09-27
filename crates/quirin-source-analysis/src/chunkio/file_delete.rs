@@ -63,5 +63,5 @@ pub fn profile() -> CleanupProfile {
     }
 }
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/file_delete.rs"]
+#[path = "../../tests/unit/file_delete.rs"]
 mod tests;

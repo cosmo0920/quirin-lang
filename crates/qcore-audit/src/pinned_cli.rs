@@ -10,14 +10,29 @@ pub const USAGE: &str = "usage: quirin-audit pinned [--jobs N] [fluent-bit-root]
 pub fn main(arguments: Vec<OsString>) -> ExitCode {
     let mut arguments = arguments.into_iter().peekable();
     let mut jobs = None;
+    let mut jobs_seen = false;
     while let Some(argument) = arguments.peek() {
-        if argument == "--jobs" {
+        if argument == "--help" || argument == "-h" {
+            println!("{USAGE}");
+            return ExitCode::SUCCESS;
+        } else if argument == "--jobs" {
+            if jobs_seen {
+                eprintln!("--jobs is given twice");
+                return ExitCode::FAILURE;
+            }
+            jobs_seen = true;
             arguments.next();
             let Some(count) = arguments.next() else {
                 eprintln!("--jobs requires a positive integer");
                 return ExitCode::FAILURE;
             };
             jobs = Some(count.to_string_lossy().into_owned());
+        } else if argument.to_string_lossy().starts_with('-') {
+            eprintln!(
+                "unknown pinned option: {}\n{USAGE}",
+                argument.to_string_lossy()
+            );
+            return ExitCode::FAILURE;
         } else {
             break;
         }

@@ -145,5 +145,5 @@ fn check(source: &SourceSummary, contract: &str) -> Result<FileAttemptEvidence, 
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/file_attempts.rs"]
+#[path = "../../tests/unit/file_attempts.rs"]
 mod tests;

@@ -81,14 +81,35 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
     ] {
         fs::write(path, r#"{"status":"Checked","source_revision":"old"}"#).unwrap();
     }
-    let command = |report: &std::path::Path, monkey: Option<&std::path::Path>, bindings: Option<&std::path::Path>, database: Option<&std::path::Path>, jobs: &str| {
+    let command = |report: &std::path::Path,
+                   monkey: Option<&std::path::Path>,
+                   bindings: Option<&std::path::Path>,
+                   database: Option<&std::path::Path>,
+                   jobs: &str| {
         let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
-        command.args(["current", "--checkout"]).arg(&root).arg("--profile-directory").arg(quirin_source_analysis::source_profiles::profiles_root().join("fluent-bit")).arg("--report").arg(report).args(["--jobs", jobs]);
-        if let Some(path) = monkey { command.arg("--monkey-source-report").arg(path); }
-        if let Some(path) = bindings { command.arg("--binding-directory").arg(path); }
-        if let Some(path) = database { command.arg("--compile-database").arg(path); }
+        command
+            .args(["current", "--checkout"])
+            .arg(&root)
+            .arg("--profile-directory")
+            .arg(quirin_source_analysis::source_profiles::profiles_root().join("fluent-bit"))
+            .arg("--report")
+            .arg(report)
+            .args(["--jobs", jobs]);
+        if let Some(path) = monkey {
+            command.arg("--monkey-source-report").arg(path);
+        }
+        if let Some(path) = bindings {
+            command.arg("--binding-directory").arg(path);
+        }
+        if let Some(path) = database {
+            command.arg("--compile-database").arg(path);
+        }
         let output = command.output().unwrap();
-        assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
     };
     command(&report, Some(&monkey), Some(&bindings), None, "1");
     // Card W44-AUDIT-PARALLEL-UNITS: the same audit on four threads writes the
@@ -121,7 +142,13 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
     let alternate = root.join("clang-compile-commands.json");
     fs::rename(root.join("build/compile_commands.json"), &alternate).unwrap();
     fs::create_dir_all(root.join("reports-alternate")).unwrap();
-    command(&root.join("reports-alternate/resources.json"), None, None, Some(&alternate), "2");
+    command(
+        &root.join("reports-alternate/resources.json"),
+        None,
+        None,
+        Some(&alternate),
+        "2",
+    );
     fs::rename(&alternate, root.join("build/compile_commands.json")).unwrap();
     for path in [
         report.with_extension("chunk-contracts.json"),

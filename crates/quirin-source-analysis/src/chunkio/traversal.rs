@@ -123,5 +123,5 @@ void qcore_source_reference(struct cio_ctx *ctx) {
 "#;
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/teardown_traversal.rs"]
+#[path = "../../tests/unit/teardown_traversal.rs"]
 pub(crate) mod tests;

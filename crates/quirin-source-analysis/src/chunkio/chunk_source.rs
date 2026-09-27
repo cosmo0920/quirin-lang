@@ -199,5 +199,5 @@ pub fn import_chunk_frame_helper(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/chunk_source.rs"]
+#[path = "../../tests/unit/chunk_source.rs"]
 mod tests;

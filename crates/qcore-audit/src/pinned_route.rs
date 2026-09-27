@@ -15,11 +15,11 @@ use crate::report::AuditReport;
 use qcore_verification::cleanup_outcome::{CleanupCertificate, GuardedDeleteCertificate};
 use qcore_verification::counter_contract::CounterCertificate;
 use qcore_verification::field_destructor::FieldDestructorCertificate;
-use quirin_source_analysis::chunkio::parent_teardown::ParentSource;
-use quirin_source_analysis::chunkio::traversal::TraversalSource;
 use qcore_verification::file_close_composition::FileCloseDeletionEvidence;
 use qcore_verification::filesystem_chunk_close_composition::FilesystemChunkCloseEvidence;
 use qcore_verification::memory_close_composition::MemoryCloseCertificate;
+use quirin_source_analysis::chunkio::parent_teardown::ParentSource;
+use quirin_source_analysis::chunkio::traversal::TraversalSource;
 use serde_json::Value;
 
 use crate::source_contract::{
@@ -27,10 +27,13 @@ use crate::source_contract::{
     import_configured_frame_helpers_compatibility,
 };
 
-use quirin_source_analysis::chunk_contract::check_chunk_source_contract;
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, LegacyFunctionScope, ResourceContracts, enumerate_source_definitions,
+};
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, load_audited_bundle, verify_pin};
-use quirin_source_analysis::source_profiles::{FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile};
+use qcore_verification::external_source::derive_library_summary_profile;
+use quirin_source_analysis::chunk_contract::check_chunk_source_contract;
 use quirin_source_analysis::chunkio::{
     ChunkFrameSummary, ChunkSourceResult, import_chunk_source_with_helpers,
 };
@@ -38,9 +41,10 @@ use quirin_source_analysis::libevent::LIBEVENT_SUBMODULE_PATH;
 use quirin_source_analysis::libevent::monkey_source::{
     MonkeySourceResult, import_monkey_callbacks,
 };
-use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope, ResourceContracts, enumerate_source_definitions};
-use qcore_verification::external_source::derive_library_summary_profile;
 use quirin_source_analysis::libevent::{classify_libevent_symbol, verify_pinned_libevent_source};
+use quirin_source_analysis::source_profiles::{
+    FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile,
+};
 
 /// W2: the pinned revision, the clean-path list and the audited-file
 /// inventories below come from `contract/profiles/<source-set>/profile.json`.
@@ -421,17 +425,11 @@ pub fn run(
     // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
     // flexible assumptions, tallied and added the same additive way.
     let revision_section = crate::contract_revision::section(&contracts, &pins, &report);
-    println!(
-        "{}",
-        crate::contract_revision::tally(&revision_section)
-    );
+    println!("{}", crate::contract_revision::tally(&revision_section));
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its digest
     // and the calls it held, tallied and added the same additive way.
     let refuted_section = crate::refuted_contracts::section(&applied, &report);
-    println!(
-        "{}",
-        crate::refuted_contracts::tally(&refuted_section)
-    );
+    println!("{}", crate::refuted_contracts::tally(&refuted_section));
     if let Some((sidecar, mut inputs)) = contract_sidecar {
         inputs["pending_human_review"] = pending;
         inputs["contract_revision"] = revision_section;
@@ -753,7 +751,12 @@ fn prepare_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
             input: options.input,
         };
-        memory_backend = Some(quirin_source_analysis::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?);
+        memory_backend = Some(
+            quirin_source_analysis::chunkio::teardown_source::check_memory_backend_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?,
+        );
     }
     if library == "chunkio" {
         let load = |file: &str| -> Result<(String, CompilerOptions), String> {
@@ -776,22 +779,20 @@ fn prepare_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
             input: native_options.input,
         };
-        let native =
-            quirin_source_analysis::chunkio::file_outcomes::check_file_outcome_sources(
-                &native_unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?
-            .into_iter()
-            .find(|c| c.source().function() == "cio_file_native_unmap")
-            .ok_or("missing native unmap certificate")?;
-        let close =
-            quirin_source_analysis::chunkio::file_outcomes::check_file_outcome_sources(
-                &native_unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?
-            .into_iter()
-            .find(|c| c.source().function() == "cio_file_native_close")
-            .ok_or("missing native close certificate")?;
+        let native = quirin_source_analysis::chunkio::file_outcomes::check_file_outcome_sources(
+            &native_unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?
+        .into_iter()
+        .find(|c| c.source().function() == "cio_file_native_unmap")
+        .ok_or("missing native unmap certificate")?;
+        let close = quirin_source_analysis::chunkio::file_outcomes::check_file_outcome_sources(
+            &native_unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?
+        .into_iter()
+        .find(|c| c.source().function() == "cio_file_native_close")
+        .ok_or("missing native close certificate")?;
         let (counter_source, counter_options) = load("cio_chunk.c")?;
         let counter_unit = C11TranslationUnit {
             source: &counter_source,
@@ -802,19 +803,17 @@ fn prepare_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
             input: counter_options.input,
         };
-        let counter =
-            quirin_source_analysis::chunkio::teardown_source::check_counter_sources(
-                &counter_unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?
-            .into_iter()
-            .find(|c| c.field() == "total_chunks_up" && c.delta() == -1)
-            .ok_or("missing up counter certificate")?;
-        let delete =
-            quirin_source_analysis::chunkio::file_delete::check_native_delete_source(
-                &native_unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?;
+        let counter = quirin_source_analysis::chunkio::teardown_source::check_counter_sources(
+            &counter_unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?
+        .into_iter()
+        .find(|c| c.field() == "total_chunks_up" && c.delta() == -1)
+        .ok_or("missing up counter certificate")?;
+        let delete = quirin_source_analysis::chunkio::file_delete::check_native_delete_source(
+            &native_unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
         let (file_source, file_options) = load("cio_file.c")?;
         let file_unit = C11TranslationUnit {
             source: &file_source,
@@ -825,15 +824,21 @@ fn prepare_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
             input: file_options.input,
         };
-        let unmap =
-            quirin_source_analysis::chunkio::unmap_wrapper::check_unmap_wrapper_source(
+        let unmap = quirin_source_analysis::chunkio::unmap_wrapper::check_unmap_wrapper_source(
+            &file_unit,
+            PINNED_FLUENT_BIT_COMMIT,
+            &native,
+            &counter,
+        )?;
+        filesystem_close = Some(
+            quirin_source_analysis::chunkio::file_close::check_file_close_deletion_source(
                 &file_unit,
                 PINNED_FLUENT_BIT_COMMIT,
-                &native,
-                &counter,
-            )?;
-        filesystem_close = Some(quirin_source_analysis::chunkio::file_close::check_file_close_deletion_source(
-            &file_unit, PINNED_FLUENT_BIT_COMMIT, &unmap, &close, &delete)?);
+                &unmap,
+                &close,
+                &delete,
+            )?,
+        );
         filesystem_deps = Some((native, counter, close, delete));
     }
     Ok(LibraryContext {
@@ -897,12 +902,11 @@ fn audit_unit(
     // definitions are counted here too.
     let inventory = enumerate_source_definitions(&unit);
     if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
-        let evidence =
-            quirin_source_analysis::chunkio::file_attempts::check_file_attempt_sources(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-                file == "cio_file_unix.c",
-            )?;
+        let evidence = quirin_source_analysis::chunkio::file_attempts::check_file_attempt_sources(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+            file == "cio_file_unix.c",
+        )?;
         for function in &evidence {
             say!(
                 out,
@@ -931,13 +935,12 @@ fn audit_unit(
             "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
             certificate.cases().len()
         );
-        let close_evidence =
-            quirin_source_analysis::chunkio::file_close::check_file_close_source(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-                &certificate,
-                close,
-            )?;
+        let close_evidence = quirin_source_analysis::chunkio::file_close::check_file_close_source(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+            &certificate,
+            close,
+        )?;
         say!(
             out,
             "qcore-custody cio_file_close: {} conditional no-delete cases, {} unresolved nested cleanup cases; deletion paths uncovered",
@@ -949,7 +952,14 @@ fn audit_unit(
                 .filter(|(i, _)| close_evidence.require_nested_discharge(*i).is_err())
                 .count()
         );
-        let deleting = quirin_source_analysis::chunkio::file_close::check_file_close_deletion_source(&unit,PINNED_FLUENT_BIT_COMMIT,&certificate,close,delete)?;
+        let deleting =
+            quirin_source_analysis::chunkio::file_close::check_file_close_deletion_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+                &certificate,
+                close,
+                delete,
+            )?;
         say!(
             out,
             "qcore-custody cio_file_close delete: {} conditional cases, {} uncovered source paths across both modes",
@@ -966,11 +976,10 @@ fn audit_unit(
         );
     }
     if library == "chunkio" && file == "cio_file_unix.c" {
-        let deletion =
-            quirin_source_analysis::chunkio::file_delete::check_native_delete_source(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?;
+        let deletion = quirin_source_analysis::chunkio::file_delete::check_native_delete_source(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
         say!(
             out,
             "qcore-outcomes cio_file_native_delete: Checked ({} eligibility/outcome cases; unlink framing assumed)",
@@ -978,11 +987,10 @@ fn audit_unit(
         );
         teardown_results
             .push(serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}));
-        let delete =
-            quirin_source_analysis::chunkio::file_attempts::check_file_delete_source(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?;
+        let delete = quirin_source_analysis::chunkio::file_attempts::check_file_delete_source(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
         say!(
             out,
             "qcore-result-use cio_file_native_delete: Checked ({} short-circuit source paths; deletion custody Unknown)",
@@ -1008,50 +1016,46 @@ fn audit_unit(
         );
     }
     if library == "chunkio" && file == "cio_chunk.c" {
-        let unlink =
-            quirin_source_analysis::chunkio::teardown_source::check_list_unlink_source(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?;
+        let unlink = quirin_source_analysis::chunkio::teardown_source::check_list_unlink_source(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
         say!(
             out,
             "qcore-contract mk_list_del + __mk_list_del: Checked ({} neighbor alias cases; live reciprocal/exclusive links assumed)",
             unlink.cases().len()
         );
         teardown_results.push(serde_json::json!({"kind":"list_unlink", "status":"checked_source_links", "certificate":unlink}));
-        let certificates =
-            quirin_source_analysis::chunkio::teardown_source::check_counter_sources(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-            )?;
+        let certificates = quirin_source_analysis::chunkio::teardown_source::check_counter_sources(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
         say!(
             out,
             "qcore-contract ChunkIO counters: Checked ({} complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)",
             certificates.len()
         );
         teardown_results.push(serde_json::json!({"kind": "unsigned_counters", "status": "checked_source_updates", "certificates": certificates}));
-        let dependencies =
-            quirin_source_analysis::chunkio::memory_close::MemoryCloseDependencies {
-                reset: chunk_helpers[0].clone(),
-                backend: memory_backend
-                    .as_ref()
-                    .ok_or("missing memory backend dependency")?
-                    .clone(),
-                unlink: unlink.clone(),
-                counter: certificates
-                    .iter()
-                    .find(|certificate| {
-                        certificate.field() == "total_chunks" && certificate.delta() == -1
-                    })
-                    .ok_or("missing total decrement dependency")?
-                    .clone(),
-            };
-        let close =
-            quirin_source_analysis::chunkio::memory_close::check_memory_close_source(
-                &unit,
-                PINNED_FLUENT_BIT_COMMIT,
-                &dependencies,
-            )?;
+        let dependencies = quirin_source_analysis::chunkio::memory_close::MemoryCloseDependencies {
+            reset: chunk_helpers[0].clone(),
+            backend: memory_backend
+                .as_ref()
+                .ok_or("missing memory backend dependency")?
+                .clone(),
+            unlink: unlink.clone(),
+            counter: certificates
+                .iter()
+                .find(|certificate| {
+                    certificate.field() == "total_chunks" && certificate.delta() == -1
+                })
+                .ok_or("missing total decrement dependency")?
+                .clone(),
+        };
+        let close = quirin_source_analysis::chunkio::memory_close::check_memory_close_source(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+            &dependencies,
+        )?;
         say!(
             out,
             "qcore-contract cio_chunk_close memory scope: Checked ({} null/memory paths; {} source paths uncovered; enclosing stream/context teardown open)",
@@ -1073,7 +1077,10 @@ fn audit_unit(
             file.combined_uncovered_paths().len()
         );
         filesystem_chunk = Some(file.clone());
-        let unsupported = quirin_source_analysis::chunkio::unsupported_close::check_unsupported_close_source(&file)?;
+        let unsupported =
+            quirin_source_analysis::chunkio::unsupported_close::check_unsupported_close_source(
+                &file,
+            )?;
         if file.combined_uncovered_paths() != [unsupported.source_path()] {
             return Err("chunk close path partition has additional unclassified paths".into());
         }
@@ -1088,9 +1095,7 @@ fn audit_unit(
             .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
     }
     if library == "chunkio" && matches!(file.as_ref(), "cio_chunk.c" | "cio_stream.c") {
-        use quirin_source_analysis::chunkio::traversal::{
-            TraversalKind, check_traversal_source,
-        };
+        use quirin_source_analysis::chunkio::traversal::{TraversalKind, check_traversal_source};
         let kind = if file == "cio_chunk.c" {
             TraversalKind::Chunks
         } else {
@@ -1111,9 +1116,7 @@ fn audit_unit(
         );
     }
     if library == "chunkio" && matches!(file.as_ref(), "cio_stream.c" | "chunkio.c") {
-        use quirin_source_analysis::chunkio::parent_teardown::{
-            ParentKind, check_parent_source,
-        };
+        use quirin_source_analysis::chunkio::parent_teardown::{ParentKind, check_parent_source};
         let kind = if file == "cio_stream.c" {
             ParentKind::Stream
         } else {
@@ -1251,7 +1254,10 @@ fn finish_library(
                 .count()
         );
         teardown_results.push(serde_json::json!({"kind":"nested_cleanup_source", "source":cleanup, "conditional_examples":conditional_examples}));
-        let unsupported = quirin_source_analysis::chunkio::unsupported_close::check_unsupported_close_source(filesystem)?;
+        let unsupported =
+            quirin_source_analysis::chunkio::unsupported_close::check_unsupported_close_source(
+                filesystem,
+            )?;
         let extended = cleanup.with_unsupported(&unsupported)?;
         let mut examples = Vec::new();
         for kind in [i32::MIN, -1, 2, i32::MAX] {
@@ -1499,11 +1505,10 @@ fn audit_monkey_callback_source(
             }
         }
     }
-    let wrappers =
-        quirin_source_analysis::libevent::monkey_source::import_monkey_wrappers(
-            &unit,
-            PINNED_FLUENT_BIT_COMMIT,
-        )?;
+    let wrappers = quirin_source_analysis::libevent::monkey_source::import_monkey_wrappers(
+        &unit,
+        PINNED_FLUENT_BIT_COMMIT,
+    )?;
     for result in &wrappers {
         match result {
             MonkeySourceResult::Summary(summary) if summary.has_scan_loop() => println!(
@@ -1524,15 +1529,14 @@ fn audit_monkey_callback_source(
     let binding = if let Some(directory) = binding_directory {
         let read =
             |name| fs::read_to_string(directory.join(name)).map_err(|error| error.to_string());
-        let bound =
-            quirin_source_analysis::libevent::monkey_binding::check_monkey_bindings(
-                &results,
-                &read("monkey_observation.jsonl")?,
-                &read("monkey_bindings.jsonl")?,
-                include_str!(
-                    "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
-                ),
-            )?;
+        let bound = quirin_source_analysis::libevent::monkey_binding::check_monkey_bindings(
+            &results,
+            &read("monkey_observation.jsonl")?,
+            &read("monkey_bindings.jsonl")?,
+            include_str!(
+                "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
+            ),
+        )?;
         for callback in &bound.callbacks {
             println!(
                 "  monkey-libevent/{}: {} bound native execution(s), checked paths {:?}, Unknown paths {:?}; {:?}",

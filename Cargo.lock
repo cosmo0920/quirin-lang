@@ -108,8 +108,6 @@ dependencies = [
  "postcard",
  "qcore-c-gateway",
  "qcore-contract",
- "qcore-core",
- "qcore-frontend",
  "qcore-schemas",
  "qcore-verification",
  "qcore-verifier-host",

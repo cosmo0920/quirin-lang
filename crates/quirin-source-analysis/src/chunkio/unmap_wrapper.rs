@@ -84,5 +84,5 @@ fn check(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/unmap_wrapper.rs"]
+#[path = "../../tests/unit/unmap_wrapper.rs"]
 mod tests;

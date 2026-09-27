@@ -141,5 +141,5 @@ pub(super) fn check_deletion(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/file_close.rs"]
+#[path = "../../tests/unit/file_close.rs"]
 pub(crate) mod tests;

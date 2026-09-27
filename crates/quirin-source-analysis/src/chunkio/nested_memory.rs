@@ -194,5 +194,5 @@ fn check_policy(contract: &str) -> Result<(), String> {
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/nested_memory_teardown.rs"]
+#[path = "../../tests/unit/nested_memory_teardown.rs"]
 pub(crate) mod tests;

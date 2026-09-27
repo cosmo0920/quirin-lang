@@ -12,10 +12,12 @@ pub mod typed_source_match;
 pub use qcore_c_gateway::legacy_c;
 pub use qcore_c_gateway::source_call_use;
 pub use qcore_c_gateway::typed_source;
-pub use qcore_core::chunk_lifecycle;
 pub use qcore_contract::contract_observation;
+pub use qcore_core::chunk_lifecycle;
 pub use qcore_frontend::frontend;
-pub use qcore_verification::{cleanup_outcome, counter_contract, field_destructor, list_unlink_contract};
+pub use qcore_verification::{
+    cleanup_outcome, counter_contract, field_destructor, list_unlink_contract,
+};
 pub mod source_contract {
     pub(crate) use qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES as RULES;
 }

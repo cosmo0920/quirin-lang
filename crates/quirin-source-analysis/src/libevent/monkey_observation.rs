@@ -442,5 +442,5 @@ pub fn check_monkey_observations_with_contracts(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/monkey_observation.rs"]
+#[path = "../../tests/unit/monkey_observation.rs"]
 mod tests;

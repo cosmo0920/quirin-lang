@@ -103,5 +103,5 @@ pub fn check_filesystem_chunk_close_source(
 }
 
 #[cfg(test)]
-#[path = "../../../../compiler/tests/unit/filesystem_chunk_close.rs"]
+#[path = "../../tests/unit/filesystem_chunk_close.rs"]
 pub(crate) mod tests;

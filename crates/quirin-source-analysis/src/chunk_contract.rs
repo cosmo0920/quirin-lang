@@ -50,5 +50,5 @@ pub fn check_chunk_source_contract(
 }
 
 #[cfg(test)]
-#[path = "../../../compiler/tests/unit/chunk_contract.rs"]
+#[path = "../tests/unit/chunk_contract.rs"]
 mod tests;
