@@ -3412,5 +3412,5 @@
   "base": "0d2917cdbb58e7a366b1ccce67fbaa99eb456a20",
   "failures": [],
   "note": "ABI byte changes are attributed here but require reviewed reference diff and manifest parser/consumer parity.",
-  "tip": "5c5e5abd84edfb228f2024ec0617dc9c0572c38a"
+  "tip": "f042d6416d508c5bbba8956be8c10a4cfd842bb7"
 }

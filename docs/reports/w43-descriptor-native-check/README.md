@@ -119,7 +119,7 @@ corpus arbiter is byte-identical ([§9](#9-corpus-arbiter)).
 | Pinned records | [`records/observations.tar.gz`](records/observations.tar.gz) (SHA-256 `d83d1377…`), [`records/manifest.json`](records/manifest.json) |
 | Replay and binding re-check | [`scripts/verify_records.py`](scripts/verify_records.py) |
 | Contract binding (Rust, Phase B) | [`qcore_contract::descriptor_contract_binding`](../../../crates/qcore-contract/src/descriptor_contract_binding.rs), example `bind_descriptor_contracts`, [`scripts/bind_contracts.py`](scripts/bind_contracts.py), [`binding.json`](binding.json) |
-| Policy (QCore) | [`library/descriptor_native_observation.qcore`](../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv) |
+| Policy (QCore) | [`library/descriptor_native_observation.qv`](../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv) |
 | Replay (Rust) | [`qcore_contract::descriptor_observation`](../../../crates/qcore-contract/src/descriptor_observation.rs), example `check_descriptor_observations` |
 | Model (Lean) | [`QCore.DescriptorNativeObservation`](../../../proof/QCore/DescriptorNativeObservation.lean) |
 

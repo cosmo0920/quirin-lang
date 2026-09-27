@@ -260,7 +260,7 @@ and are **not** proved: declaration completeness, and C effective types. C02-P's
 recorded may-alias boundary (**C02-P-ALIAS**) is inherited and not widened.
 
 This card adds **five** declared callee premises, in the new fixture module
-[`o04_b09b10_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr),
+[`o04_b09b10_callees.qr`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr),
 which lives with the gateway test fixtures so the pinned `contract/qcore` corpus
 count of 60 is untouched. Each is a **trusted assumption**, and each was checked
 against the pinned upstream sources rather than assumed:

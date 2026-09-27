@@ -149,7 +149,7 @@ plain-string route.
 
 Archived, parseable, and pinned clause-for-clause by
 `designed_ctraces_contract_parses_with_its_specified_vocabulary`:
-[`docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore`](../reports/remaining-p06/ctraces_span_dropped_counts.qv).
+[`docs/reports/remaining-p06/ctraces_span_dropped_counts.qv`](../reports/remaining-p06/ctraces_span_dropped_counts.qv).
 
 It is deliberately **not** in the canonical contract corpus. Landing it there is step 3 of
 P06-I1 and moves the pinned corpus count in

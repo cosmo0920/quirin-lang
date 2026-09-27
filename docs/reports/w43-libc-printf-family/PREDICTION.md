@@ -9,7 +9,7 @@ edited after the first staged run. It rests only on these inputs:
 * the BEFORE run (`measure/before/`, base `f8b41209`), which reproduces the
   W43-LIBC-RESULT-ALIAS diagnostics byte for byte;
 * the declared-ABI census of the nine brief-named members over the 185
-  captured units ([measurement/family9.qcore](measurement/family9.qv));
+  captured units ([measurement/family9.qv](measurement/family9.qv));
 * two lexical forecast scripts over the analysed `-E -P` texts,
   [scripts/call_shapes.py](scripts/call_shapes.py) and
   [scripts/line_bound.py](scripts/line_bound.py);

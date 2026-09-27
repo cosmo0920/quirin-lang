@@ -22,7 +22,7 @@ in the report. Nothing below is edited after the first staged run. It rests on:
   [callee_lines.py](scripts/callee_lines.py);
 * the base declared-ABI census over the 185 captured units of the manifest
   (13,101 rows) and of the measurement module
-  [measurement/residuals8.qcore](measurement/residuals8.qv)
+  [measurement/residuals8.qv](measurement/residuals8.qv)
   ([measurement/residuals8-base.txt](measurement/residuals8-base.txt)).
 
 ## Baseline figures the prediction starts from

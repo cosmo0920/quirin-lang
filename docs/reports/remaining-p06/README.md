@@ -12,7 +12,7 @@ corpus (59 modules) and `qcore-schemas` (4.0.0) are unchanged. The four pinned
 185-unit artifacts were not touched and not re-measured.
 
 - Design: [`docs/design/CTRACES_PROVIDER_CAPABILITY_V1.md`](../../design/CTRACES_PROVIDER_CAPABILITY_V1.md)
-- Contract text: [`ctraces_span_dropped_counts.qcore`](ctraces_span_dropped_counts.qv)
+- Contract text: [`ctraces_span_dropped_counts.qv`](ctraces_span_dropped_counts.qv)
 - Census tool: [`ctraces_census.py`](ctraces_census.py) → [`census.json`](census.json)
 - Boundary test: `crates/qcore-verification/tests/ctraces_capability_boundary.rs`
 - Excerpt fixture: [`ctraces_span_excerpt.c`](ctraces_span_excerpt.c)
