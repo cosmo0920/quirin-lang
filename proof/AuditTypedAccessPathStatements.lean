@@ -13,3 +13,5 @@ import QCore.TypedAccessPathStatements
 #print axioms QCore.TypedAccessPathStatements.nonpointer_store_preserves_custody
 #print axioms QCore.TypedAccessPathStatements.pointer_read_binds_no_custody
 #print axioms QCore.TypedAccessPathStatements.refused_pointer_read_stays_unknown
+#print axioms QCore.TypedAccessPathStatements.untracked_alias_declarations_preserve_custody
+#print axioms QCore.TypedAccessPathStatements.tracked_alias_declaration_refuses

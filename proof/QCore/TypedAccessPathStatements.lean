@@ -132,4 +132,24 @@ theorem refused_pointer_read_stays_unknown (s : IndirectChainAccess.State)
     lowerBorrowed s p destination = none := by
   simp [lowerBorrowed, lower, h]
 
+/-- A declaration of several aliases is admitted as a no-access statement
+only when the gateway's static custody closure proves every source and
+destination untracked. It neither reads memory nor transfers custody. -/
+def lowerUntrackedAliases (s : IndirectChainAccess.State)
+    (everySourceUntracked everyDestinationUntracked : Bool) :
+    Option (IndirectChainAccess.State × List Diagnostic) :=
+  if everySourceUntracked && everyDestinationUntracked then some (s, []) else none
+
+theorem untracked_alias_declarations_preserve_custody (s : IndirectChainAccess.State) :
+    lowerUntrackedAliases s true true = some (s, []) := by
+  rfl
+
+theorem tracked_alias_declaration_refuses (s : IndirectChainAccess.State)
+    (sourceUntracked destinationUntracked : Bool)
+    (h : sourceUntracked = false ∨ destinationUntracked = false) :
+    lowerUntrackedAliases s sourceUntracked destinationUntracked = none := by
+  rcases h with hs | hd
+  · simp [lowerUntrackedAliases, hs]
+  · simp [lowerUntrackedAliases, hd]
+
 end QCore.TypedAccessPathStatements
