@@ -177,6 +177,11 @@
       "contract_sha256": "34fd29a1b0213b2cb5e472926dad4d0a51e717aa83ccfde23bccda720eadb000"
     },
     {
+      "function": "memcmp",
+      "module": "libc/string.qcore",
+      "contract_sha256": "28d333709b7c70d5bcd6e6d8c81c06aec7d92747c6dbd7855b253c2733118c08"
+    },
+    {
       "function": "memcpy",
       "module": "libc/string.qcore",
       "contract_sha256": "883bfc1a1628516ad622404650dee0f7a490033179c4b0be01ed125987428074"
@@ -397,6 +402,11 @@
       "contract_sha256": "60cdcd7942f74210feb3a40180fd25808bfaa66448e6b4013ca747e2a503df1c"
     },
     {
+      "function": "strcasecmp",
+      "module": "libc/string.qcore",
+      "contract_sha256": "a59e46ac4e1077a9fae5e5d7dd677ba38bfc13f44439dffa8d0c695f7c646e4d"
+    },
+    {
       "function": "strcasestr",
       "module": "libc/string.qcore",
       "contract_sha256": "07359f5076a948371c612eb159ce282cbb235e6af6d7ca317283793c6115e219"
@@ -442,6 +452,11 @@
       "contract_sha256": "20462f0cfea207b0091240c32529c73c8554328ada0e30ff6256b2cfd1bde3fd"
     },
     {
+      "function": "strncmp",
+      "module": "libc/string.qcore",
+      "contract_sha256": "502ba704d738d3b0debce91b5a754edcf37b4e0348fbbfe8df8cb09040196ebc"
+    },
+    {
       "function": "strncpy",
       "module": "libc/string.qcore",
       "contract_sha256": "b988760bdad09d08b11caefa080cfd4e9ce575ae4cd1602a9444cee5b8005302"
@@ -450,6 +465,11 @@
       "function": "strndup",
       "module": "libc/string.qcore",
       "contract_sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46"
+    },
+    {
+      "function": "strnlen",
+      "module": "libc/string.qcore",
+      "contract_sha256": "019e2bcb27088183f30ec41efde8c7129538ce236c339ecc85e92023aff5650d"
     },
     {
       "function": "strrchr",

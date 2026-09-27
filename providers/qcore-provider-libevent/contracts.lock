@@ -6,6 +6,219 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "MK_EVENT_NEW",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "02b7a311ef042c3ca2bb07a3fe5f3e79306868934dd7a5af2a339408a3f586e8",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "definition",
+              "declaration_sha256": "977af6c4f8376929fa8a04b29bc50360be7a07b1145910f9e51d4254ee3df0e5",
+              "body_sha256": "f53aae227f0a2ca5b36386ed54daa13f6e0ab9e619539534b124e0e67cc37a41"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "_mk_string_search",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "cd5674f1153f26704a4091a26dba7bedeffc43399ea31309a5993932aed22844",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/mk_core/mk_string.c",
+              "kind": "definition",
+              "declaration_sha256": "c39a12b203c57da9ce3cc591f3e4491e98dc5ca3be5639cfc4a1ebc14d84fe0f",
+              "body_sha256": "ad68d84f729a301554a7b8e81f2fe790a3bf00182e31dd72c6189ba7f513e2e5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "event_base_get_features",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "310fa234b79e708ce7ac225ef5c0cf1e46a614fbfab342d43c22185c18cf9ca8",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/event.c",
+              "kind": "definition",
+              "declaration_sha256": "8428234cb467e3ebfd975950234661c675e78fa5294958160e73024e8068add8",
+              "body_sha256": "bea8e74b72d7d843332aecaec71087bbed2a267c5b5a0e902bbb7d8d7f780563"
+            },
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "9be3cf9a9533adf21d8ca20ef734340441d602eb8c87d6a01120c230b7869828"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+            }
+          ],
+          "sites": [
+            {
+              "path": "event.c",
+              "kind": "definition",
+              "declaration_sha256": "8428234cb467e3ebfd975950234661c675e78fa5294958160e73024e8068add8",
+              "body_sha256": "bea8e74b72d7d843332aecaec71087bbed2a267c5b5a0e902bbb7d8d7f780563"
+            },
+            {
+              "path": "include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "9be3cf9a9533adf21d8ca20ef734340441d602eb8c87d6a01120c230b7869828"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "event_get_struct_event_size",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "0d50d2726f380d35bc0e89761fb2120abf1538316507ae6bbd0142f0ade69cd9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/event.c",
+              "kind": "definition",
+              "declaration_sha256": "fa7a1a5963055cc3d350aff6c504dfff9335be5055007f85a876f7ecedda174c",
+              "body_sha256": "45a5b6808b5dfc6c357805a62906a0ca6cb141adc0ad632de155d33fb1d65e0c"
+            },
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "5404ed6637c137e6a1d1a402ced86371ac8cf41a6c0dc6a9b8a1e17e525d2c2f"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+            }
+          ],
+          "sites": [
+            {
+              "path": "event.c",
+              "kind": "definition",
+              "declaration_sha256": "fa7a1a5963055cc3d350aff6c504dfff9335be5055007f85a876f7ecedda174c",
+              "body_sha256": "45a5b6808b5dfc6c357805a62906a0ca6cb141adc0ad632de155d33fb1d65e0c"
+            },
+            {
+              "path": "include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "5404ed6637c137e6a1d1a402ced86371ac8cf41a6c0dc6a9b8a1e17e525d2c2f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "event_get_version_number",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "8971b73e495e3a98b807077ee758e660c3b18b1acf4b15b29b668981a0c060d5",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/event.c",
+              "kind": "definition",
+              "declaration_sha256": "56a0acbc13182c4fe11647f4b219b17f75f27f4f9bd3402ea53a46c6ab3723f8",
+              "body_sha256": "6d31317833438c174f62df3a618a6f8131b6db0586f88077c8ca6ce335405967"
+            },
+            {
+              "path": "lib/monkey/mk_core/deps/libevent/include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "dfbde3b00af9e21f01fa71c849d66956da110ffef13c323c2a3efac846ce4318"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+            }
+          ],
+          "sites": [
+            {
+              "path": "event.c",
+              "kind": "definition",
+              "declaration_sha256": "56a0acbc13182c4fe11647f4b219b17f75f27f4f9bd3402ea53a46c6ab3723f8",
+              "body_sha256": "6d31317833438c174f62df3a618a6f8131b6db0586f88077c8ca6ce335405967"
+            },
+            {
+              "path": "include/event2/event.h",
+              "kind": "declaration",
+              "declaration_sha256": "dfbde3b00af9e21f01fa71c849d66956da110ffef13c323c2a3efac846ce4318"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_list_add",
       "module": "monkey/intrusive_list.qcore",
       "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
@@ -184,6 +397,70 @@
               "kind": "definition",
               "declaration_sha256": "f3695af5a6e8075c301a6cd2682ec0270d19f5e39929f840c70e6bcf2ac1548c",
               "body_sha256": "29a24127ab8dfbcf23cbeb06be971e3c9dda6176fe2072218297b9abb0cba379"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_string_char_search",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "814f7c3ed560a6bb72a7b24e51a8b84b9087776af608545aa0b18817d29adf5f",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_string.h",
+              "kind": "declaration",
+              "declaration_sha256": "aa5c1597d0197adf49131a1a507896a2a9cc8889194202204e037d1f512f0f02"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_string.c",
+              "kind": "definition",
+              "declaration_sha256": "aa5c1597d0197adf49131a1a507896a2a9cc8889194202204e037d1f512f0f02",
+              "body_sha256": "b25e2cd0cd01f9ff7ef6cf7f0e00fb33fd19dda0d0164e249ae53fcd2cfec253"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_string_char_search_r",
+      "module": "monkey/scalar_observation.qcore",
+      "contract_sha256": "1e5bc5ed672fb519b45e396edf59f697ac450c739afe41660b36b391e0d9361b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_string.h",
+              "kind": "declaration",
+              "declaration_sha256": "724089058e0072f7bd2484755d2ea8951e83b7a239c2110640ad0bee1e71c783"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_string.c",
+              "kind": "definition",
+              "declaration_sha256": "724089058e0072f7bd2484755d2ea8951e83b7a239c2110640ad0bee1e71c783",
+              "body_sha256": "ba0f9c08d1816ca93f465da3c7d18b7b7db9653f166de91942bc5371adfc25b1"
             }
           ]
         }

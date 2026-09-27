@@ -29,6 +29,7 @@
     "providers/quirin-provider-mpack/contracts/mpack/writer.qcore",
     "qcore-provider-libevent:monkey/memory.qcore",
     "providers/qcore-provider-libevent/contracts/monkey/logging.qcore",
+    "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qcore",
     "qcore-provider-librdkafka:librdkafka/memory.qcore",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qcore",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qcore",

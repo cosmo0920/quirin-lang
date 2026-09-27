@@ -22,7 +22,7 @@
       "crate": "quirin-provider-libc",
       "version": "0.1.0",
       "module": "libc/string.qcore",
-      "sha256": "679d979e08d4c5627cad4675de0a7328fd00c8addd119dfab099a582d243b386"
+      "sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
     }
   }
 }
