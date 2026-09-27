@@ -109,6 +109,12 @@ class Tree:
 
 
 class LoadPathManifest(unittest.TestCase):
+    def test_exact_owner_selector_admits_new_spelling_without_broadening_owner(self):
+        selector = ("fluent_bit/busy_state.qcore",)
+        self.assertTrue(contracts.owned("fluent_bit/busy_state.qcore", selector))
+        self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
+        self.assertFalse(contracts.owned("fluent_bit/busy_state_extra.qv", selector))
+
     def test_generated_from_metadata_and_constants(self):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
@@ -124,6 +130,33 @@ class LoadPathManifest(unittest.TestCase):
             self.assertEqual(libc["published"],
                              {"libc/memory.qcore": hashlib.sha256(PARENT.encode()).hexdigest()})
             self.assertEqual(libc["contracts"], "quirin-provider-libc/contracts")
+
+    def test_qv_published_module_and_include_pin_keep_exact_paths(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            (tree.root / "quirin-provider-libc/contracts/libc/memory.qcore").unlink()
+            (tree.root / "quirin-provider-app/contracts/app/wrap.qcore").unlink()
+            tree.crate("quirin-provider-libc", "libc", ["libc/memory.qv"],
+                       {"libc/memory.qv": PARENT})
+            child = CHILD.replace("memory.qcore", "memory.qv")
+            tree.crate("quirin-provider-app", "app", [], {"app/wrap.qv": child})
+            manifest = contracts.load_path_manifest(tree.root, tree.metadata())
+            libc = manifest["crates"][2]
+            self.assertEqual(libc["modules"], ["libc/memory.qv"])
+            self.assertEqual(libc["published"],
+                             {"libc/memory.qv": hashlib.sha256(PARENT.encode()).hexdigest()})
+            pins = contracts.include_pins(
+                contracts.files(tree.root / "quirin-provider-app/contracts"), manifest, tree.root)
+            self.assertEqual(pins["quirin-provider-libc:libc/memory.qv"]["module"],
+                             "libc/memory.qv")
+
+    def test_dual_extension_same_stem_is_refused_before_manifest_selection(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            sibling = tree.root / "quirin-provider-libc/contracts/libc/memory.qv"
+            sibling.write_text(PARENT)
+            with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
+                contracts.load_path_manifest(tree.root, tree.metadata())
 
     def test_dev_and_build_dependencies_are_not_contract_edges(self):
         with tempfile.TemporaryDirectory() as temporary:
