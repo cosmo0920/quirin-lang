@@ -91,3 +91,47 @@ contract {
     ensures normal resource_released(ctx, nonnull);
     ensures normal resource_return_none();
 };
+
+// W46-METRIC-TRACE-CONTRACT-GAPS: ID reads and scalar span-field stores.
+// Selected bodies match byte-for-byte at the two audited revisions.
+extern fn ctr_id_cmp(cid1: ptr<mut, u8>, cid2: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cid1);
+    ensures normal resource_borrowed(cid2);
+    ensures normal resource_return_none();
+};
+extern fn ctr_id_get_len(cid: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cid);
+    ensures normal resource_return_none();
+};
+extern fn ctr_span_set_flags(span: ptr<mut, u8>, flags: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(span);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+extern fn ctr_span_set_dropped_events_count(span: ptr<mut, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(span);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+extern fn ctr_span_set_dropped_links_count(span: ptr<mut, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(span);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+extern fn ctr_span_set_dropped_attributes_count(span: ptr<mut, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(span);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};

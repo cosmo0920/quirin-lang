@@ -365,6 +365,27 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("mpack_write_true", 1),
         ("mpack_write_false", 1),
         ("mpack_write_bin", 3),
+        // W46-METRIC-TRACE-CONTRACT-GAPS: all selected metric and trace
+        // helpers have neutral custody, including scalar field writes.
+        ("cmt_metric_get_value", 1),
+        ("cmt_metric_get_value_type", 1),
+        ("cmt_metric_get_int64_value", 1),
+        ("cmt_metric_get_uint64_value", 1),
+        ("cmt_metric_set_int64", 3),
+        ("cmt_metric_set_uint64", 3),
+        ("cmt_metric_set_timestamp", 2),
+        ("cmt_metric_set_start_timestamp", 2),
+        ("cmt_metric_unset_start_timestamp", 1),
+        ("cmt_metric_has_start_timestamp", 1),
+        ("cmt_metric_get_start_timestamp", 1),
+        ("cmt_math_d64_to_uint64", 1),
+        ("cmt_math_uint64_to_d64", 1),
+        ("ctr_id_cmp", 2),
+        ("ctr_id_get_len", 1),
+        ("ctr_span_set_flags", 2),
+        ("ctr_span_set_dropped_events_count", 2),
+        ("ctr_span_set_dropped_links_count", 2),
+        ("ctr_span_set_dropped_attributes_count", 2),
     ] {
         old.insert_contract(
             name,
@@ -1299,9 +1320,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
     // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
     // unchanged.
+    // 183 -> 202 by W46-METRIC-TRACE-CONTRACT-GAPS: nineteen neutral
+    // declarations appended to two already-selected owner modules.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (50, 183, 216)
+        (50, 202, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

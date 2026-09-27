@@ -259,6 +259,53 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     ("cmetrics/metric_values.qcore", "cmt_metric_set_double", 5),
+    // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
+    // bit-pattern conversions; every argument remains borrowed.
+    ("cmetrics/metric_values.qcore", "cmt_metric_get_value", 3),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_value_type",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_int64_value",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_uint64_value",
+        3,
+    ),
+    ("cmetrics/metric_values.qcore", "cmt_metric_set_int64", 5),
+    ("cmetrics/metric_values.qcore", "cmt_metric_set_uint64", 5),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_set_timestamp",
+        4,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_set_start_timestamp",
+        4,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_unset_start_timestamp",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_has_start_timestamp",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_start_timestamp",
+        3,
+    ),
+    ("cmetrics/metric_values.qcore", "cmt_math_d64_to_uint64", 3),
+    ("cmetrics/metric_values.qcore", "cmt_math_uint64_to_d64", 3),
     // Card W37-CORPUS-CONTRACTS-4: the unsigned msgpack tag reader, sole
     // blocker of `unpack_meta_ver`. `output_buffer` is an OUT parameter, but
     // what is written through it is a SCALAR, not a resource identity, so it
@@ -276,6 +323,24 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
     ("ctraces/context_lifetime.qcore", "ctr_destroy", 3),
+    ("ctraces/context_lifetime.qcore", "ctr_id_cmp", 4),
+    ("ctraces/context_lifetime.qcore", "ctr_id_get_len", 3),
+    ("ctraces/context_lifetime.qcore", "ctr_span_set_flags", 4),
+    (
+        "ctraces/context_lifetime.qcore",
+        "ctr_span_set_dropped_events_count",
+        4,
+    ),
+    (
+        "ctraces/context_lifetime.qcore",
+        "ctr_span_set_dropped_links_count",
+        4,
+    ),
+    (
+        "ctraces/context_lifetime.qcore",
+        "ctr_span_set_dropped_attributes_count",
+        4,
+    ),
     (
         "fluent_bit/busy_state.qcore",
         "flb_input_chunk_release_lock",
