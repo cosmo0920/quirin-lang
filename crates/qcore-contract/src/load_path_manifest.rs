@@ -244,9 +244,9 @@ fn relative_directory(value: &str) -> bool {
             .all(|component| matches!(component, Component::Normal(_)))
 }
 
-/// Every `.qcore` file under `root`, as logical paths. Refuses a symbolic
+/// Every `.qcore` or `.qv` file under `root`, as logical paths. Refuses a symbolic
 /// link and any other non-regular entry, so nothing outside the tree is read.
-fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
+fn contract_files(root: &Path) -> Result<BTreeSet<String>, String> {
     let mut found = BTreeSet::new();
     let mut pending = vec![root.to_path_buf()];
     while let Some(directory) = pending.pop() {
@@ -259,7 +259,10 @@ fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
             if kind.is_dir() {
                 pending.push(path);
             } else if kind.is_file() {
-                if path.extension().is_some_and(|ext| ext == "qcore") {
+                if path
+                    .extension()
+                    .is_some_and(|ext| ext == "qcore" || ext == "qv")
+                {
                     let logical = path
                         .strip_prefix(root)
                         .map_err(|e| e.to_string())?
@@ -275,6 +278,7 @@ fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
             }
         }
     }
+    crate::extension_compatibility::reject_alias_collisions(found.iter().map(String::as_str))?;
     Ok(found)
 }
 
@@ -386,7 +390,7 @@ fn read_manifest(
         {
             return Err(refuse(&name, format!("malformed module path `{module}`")));
         }
-        let on_disk = qcore_files(&root).map_err(|e| refuse(&name, e))?;
+        let on_disk = contract_files(&root).map_err(|e| refuse(&name, e))?;
         let listed: BTreeSet<String> = record.modules.iter().cloned().collect();
         if on_disk != listed {
             let unlisted: Vec<_> = on_disk.difference(&listed).collect();

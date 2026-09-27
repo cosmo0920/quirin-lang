@@ -191,12 +191,19 @@ fn module_targets(directory: &Path) -> Result<Vec<Target>, String> {
     entries.sort_by_key(std::fs::DirEntry::file_name);
     for entry in entries {
         let path = entry.path();
-        if path.extension().is_some_and(|ext| ext == "qcore") && path.is_file() {
+        if path
+            .extension()
+            .is_some_and(|ext| ext == "qcore" || ext == "qv")
+            && path.is_file()
+        {
             paths.push(path);
         }
     }
     if paths.is_empty() {
-        return Err(format!("{} holds no .qcore module", directory.display()));
+        return Err(format!(
+            "{} holds no .qcore or .qv module",
+            directory.display()
+        ));
     }
     let contracts = qcore_contract::contract_loader::load_resource_contract_files(&paths)?;
     let owner = directory

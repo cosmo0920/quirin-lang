@@ -97,7 +97,7 @@ fn matches_checkout_digest(bytes: &[u8], expected: &str) -> bool {
 
 fn asset_path(value: &str) -> bool {
     value.starts_with("contracts/")
-        && value.ends_with(".qcore")
+        && (value.ends_with(".qcore") || value.ends_with(".qv"))
         && !value.contains(['\\', ':'])
         && value
             .split('/')
@@ -217,6 +217,7 @@ fn load_includes(
     if pins.is_empty() || pins.len() > 4096 {
         return Err("contract include pins must be a nonempty, bounded object".into());
     }
+    crate::extension_compatibility::reject_alias_collisions(pins.keys().map(String::as_str))?;
     let mut expected = Vec::new();
     for (key, pin) in &pins {
         if !valid_contract_crate_name(&pin.crate_name)
@@ -307,6 +308,9 @@ impl ContractBundle {
         {
             return Err("invalid contract path or digest".into());
         }
+        crate::extension_compatibility::reject_alias_collisions(
+            inventory.contracts.keys().map(String::as_str),
+        )?;
         let root = manifest
             .parent()
             .filter(|parent| !parent.as_os_str().is_empty())
@@ -336,6 +340,17 @@ impl ContractBundle {
             let source = String::from_utf8(bytes).map_err(|e| e.to_string())?;
             if source.trim().is_empty() {
                 return Err(format!("empty contract: {path}"));
+            }
+            if !contains_contract_inclusion_syntax(&source) {
+                if let Ok(parsed) = qcore_frontend::frontend::parse_source_program(&source) {
+                    qcore_frontend::source_extension::validate_source_extension(&path, parsed.mode)
+                        .map_err(|error| format!("{path}: {error}"))?;
+                    if let Some(warning) =
+                        qcore_frontend::source_extension::legacy_source_warning(&path, parsed.mode)
+                    {
+                        eprintln!("{warning}");
+                    }
+                }
             }
             contracts.insert(path, source);
         }

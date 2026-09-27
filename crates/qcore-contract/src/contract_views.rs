@@ -315,7 +315,7 @@ pub fn census_pairs(entries: &[CensusEntry]) -> BTreeSet<(String, String, String
     pairs
 }
 
-/// Read the corpus the index at `index` selects: every `.qcore` under its
+/// Read the corpus the index at `index` selects: every `.qcore` or `.qv` under its
 /// roots, keyed by logical path, with a module that uses contract inclusion
 /// read as its elaboration on the index's load path (the text every loader
 /// parses). Mirrors the corpus test's own discovery.
@@ -353,7 +353,7 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                 }
                 if path
                     .extension()
-                    .is_none_or(|extension| extension != "qcore")
+                    .is_none_or(|extension| extension != "qcore" && extension != "qv")
                 {
                     continue;
                 }
@@ -364,6 +364,16 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                     .replace('\\', "/");
                 let written = std::fs::read_to_string(&path)
                     .map_err(|error| format!("{}: {error}", path.display()))?;
+                let alias = qcore_frontend::source_extension::contract_module_stem(&logical);
+                if let Some(stem) = alias {
+                    if let Some(other) = modules.keys().find(|key| {
+                        qcore_frontend::source_extension::contract_module_stem(key) == Some(stem)
+                    }) {
+                        return Err(format!(
+                            "ambiguous contract module aliases `{other}` and `{logical}`"
+                        ));
+                    }
+                }
                 let text = if qcore_frontend::contract_inclusion::contains_contract_inclusion_syntax(
                     &written,
                 ) {
@@ -383,6 +393,22 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                 } else {
                     written
                 };
+                if logical.ends_with(".qv") {
+                    let parsed = parse_source_program(&text)
+                        .map_err(|error| format!("{logical}: {error}"))?;
+                    qcore_frontend::source_extension::validate_source_extension(
+                        &logical,
+                        parsed.mode,
+                    )
+                    .map_err(|error| format!("{logical}: {error}"))?;
+                } else if let Ok(parsed) = parse_source_program(&text) {
+                    if let Some(warning) = qcore_frontend::source_extension::legacy_source_warning(
+                        &logical,
+                        parsed.mode,
+                    ) {
+                        eprintln!("{warning}");
+                    }
+                }
                 if modules.insert(logical.clone(), text).is_some() {
                     return Err(format!("duplicate logical contract: {logical}"));
                 }
