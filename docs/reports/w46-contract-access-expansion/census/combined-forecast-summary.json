@@ -1,0 +1,33 @@
+{
+  "forecast_rows": 45,
+  "verdict_matches": 32,
+  "changed_and_verdict_matches": 30,
+  "misses": [
+    "otel_span_set_kind",
+    "flb_input_chunk_get_name",
+    "flb_input_chunk_is_storage_overlimit",
+    "LZ4F_resetDecompressionContext",
+    "rd_kafka_cgrp_clear_last_err",
+    "rd_kafka_sw_str_sanitize_inplace",
+    "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+    "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+    "ut_testConflictingPreviousAssignments",
+    "clear_unit_test_data",
+    "ut_set_types",
+    "XXH32_reset",
+    "XXH64_reset"
+  ],
+  "unforecast_gains": [
+    "initialize_numerical_data_point_list",
+    "initialize_resource_metrics_list",
+    "initialize_scope_metrics_list",
+    "initialize_summary_data_point_list",
+    "otlp_kvpair_list_initialize",
+    "rd_crc32_reflect",
+    "rd_kafka_Uuid_str",
+    "rd_kafka_yield",
+    "hash_bytes",
+    "mk_string_copy_substr",
+    "content_length_parse"
+  ]
+}

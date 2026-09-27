@@ -1,0 +1,143 @@
+{
+  "input": "private/w46-next/combined/system/resource-diagnostics.json",
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+  "unit_rows": 15,
+  "unit_statuses": {
+    "Unknown": 13,
+    "Unsafe": 2
+  },
+  "function_configuration_statuses": {
+    "Unknown": 388,
+    "Safe": 56,
+    "Unsafe": 4
+  },
+  "unique_function_statuses_joined": {
+    "Unknown": 203,
+    "Safe": 29,
+    "Unsafe": 2
+  },
+  "unique_functions": 234,
+  "unique_not_projected_records": 3,
+  "configuration_disagreements": [],
+  "diagnostic_counts": {
+    "counted_user": 4,
+    "unknown_alias": 892,
+    "unsupported": 3069
+  },
+  "uncontracted_leaves_all_statuses": 719,
+  "uncontracted_leaves_on_unknown_functions": 713,
+  "unknown_functions_with_uncontracted_leaves": 206,
+  "unknown_functions_with_only_uncontracted_leaves": 26,
+  "held_refutation_diagnostics": [
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "flb_engine_dispatch_retry",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17508,
+        "origin": "src/flb_engine_dispatch.c:179"
+      }
+    },
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "flb_engine_dispatch_retry",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17515,
+        "origin": "src/flb_engine_dispatch.c:186"
+      }
+    },
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "tasks_start",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17602,
+        "origin": "src/flb_engine_dispatch.c:319"
+      }
+    },
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "tasks_start",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17606,
+        "origin": "src/flb_engine_dispatch.c:327"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "flb_engine_dispatch_retry",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17508,
+        "origin": "src/flb_engine_dispatch.c:179"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "flb_engine_dispatch_retry",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17515,
+        "origin": "src/flb_engine_dispatch.c:186"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "tasks_start",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_singleplex_enqueue` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17602,
+        "origin": "src/flb_engine_dispatch.c:319"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "function": "tasks_start",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17606,
+        "origin": "src/flb_engine_dispatch.c:327"
+      }
+    },
+    {
+      "unit_index": 13,
+      "file": "src/flb_output.c",
+      "function": "flb_output_task_queue_flush_one",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17822,
+        "origin": "src/flb_output.c:333"
+      }
+    },
+    {
+      "unit_index": 14,
+      "file": "src/flb_output.c",
+      "function": "flb_output_task_queue_flush_one",
+      "diagnostic": {
+        "category": "unsupported",
+        "description": "call to `flb_output_task_flush` whose declared contract its own analysed body refutes (contract-refuted-by-body)",
+        "line": 17822,
+        "origin": "src/flb_output.c:333"
+      }
+    }
+  ]
+}

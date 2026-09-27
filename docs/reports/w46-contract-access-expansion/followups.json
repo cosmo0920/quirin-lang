@@ -9,7 +9,7 @@
   {
     "id": "W46-ACCESS-PATH-PARITY",
     "title": "Compare distinct legacy/typed plan vocabularies and the scalar/chain disagreements before retiring any route",
-    "why": "The typed statement fallback preserves all existing shape routes. The isolated corpus records 28,386 side-by-side rows and the system records 6,298; structurally different plan vocabularies and explicit scalar/chain disagreements remain unresolved. These are observations, not replacement parity. DISCHARGE: state a semantic comparison across the plan vocabularies, resolve each disagreement, reproduce pinned verdicts and coverage with archived diffs and matching audited Lean, then retire only the routes for which parity is established.",
+    "why": "The typed statement fallback preserves all existing shape routes. The superseded isolated corpus checkpoint records 28,386 side-by-side rows and the system checkpoint 6,298; final corrected-run evidence is owned by W46-CONTRACT-ACCESS-EXPANSION. In both checkpoints, structurally different plan vocabularies and explicit scalar/chain disagreements remain unresolved. These are observations, not replacement parity. DISCHARGE: state a semantic comparison across the plan vocabularies, resolve each disagreement, reproduce pinned verdicts and coverage with archived diffs and matching audited Lean, then retire only the routes for which parity is established.",
     "source": "docs/reports/w46-access-path-statements/README.md",
     "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
   },

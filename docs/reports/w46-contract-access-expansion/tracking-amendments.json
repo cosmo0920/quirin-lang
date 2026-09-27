@@ -1,0 +1,38 @@
+{
+  "before_count": 518,
+  "added": [
+    "W46-ROUTING-QUERY-EXTENTS",
+    "W46-ACCESS-PATH-PARITY",
+    "W46-ACCESS-PATH-TRACKED-MIXED-PLACES",
+    "W46-ACCESS-PATH-POSITIONS"
+  ],
+  "amended": {
+    "W46-LEXICAL-GATE-NON-ACCESS": "The bounded statement fallback now admits positively typed scalar no-access expressions and multi-pointer declarations only when every source and destination is statically untracked. It does not close all 462 historical IND cases, and conditions/returns remain P3. The frozen prediction misses and still-refused pointer casts, aggregate declarations and custody-bearing alias declarations are recorded in W46-ACCESS-PATH-STATEMENTS. Retain this entry; a changed verdict in the new measured corpus is not a census of the whole historical class.",
+    "W43-INDIRECT-UNTYPED-SINGLE-ACCESS": "The new Clang statement reader proves field owners positively and accepts only positively recognized builtin scalar value types. An opaque scalar spelling or anonymous aggregate typedef cannot be guessed scalar. Multi-pointer alias declarators whose custody cannot be proved untracked also remain refused (rd_kafka_sw_str_sanitize_inplace is a frozen prediction miss). Keep these residual reader/identity obligations here rather than treating all typed source forms as admitted; discharge with a positive type/alias rule, matching audited Lean, negative controls, and a measured re-pin.",
+    "W46-UNION-MEMBER-PATH": "The new statement fallback preserves this refusal using field-declaration ownership rather than a substring in the base type. Positive scalar-value recognition also refuses whole anonymous-union aggregate stores whose typedef spelling does not reveal the union. Both failures were exposed and repaired during this card; its superseded checkpoints are not final validation. No live-member rule or union promotion is introduced."
+  },
+  "previous_entries": {
+    "W46-LEXICAL-GATE-NON-ACCESS": {
+      "id": "W46-LEXICAL-GATE-NON-ACCESS",
+      "title": "The lexical access gate refuses 1,845 access-family leaves that carry no typed access at all; the 462 IND ones alone free 18 P2-Safe functions",
+      "why": "MEASURED by card W46-ACCESS-PATH-CENSUS on the w46-external-callee-contracts baseline: Clang's typed AST of the analysed text (the typed_c_ast::translation_unit_ast transport) finds no `.f`, `->f`, `*` or `[i]` access in 462 `indirect memory access` leaves, 1,340 condition leaves and 43 return leaves. The IND ones are the gate reading a declarator `*` (`const T *a = _a, *b = _b;`), a `sizeof(*p)` operand, a multiplication, a cast `(char **)&end` or an array declarator `uint8_t buf[78];` as an access. The condition and return ones are refused for a call, an assignment or a type operator, not an access. The IND leaves are the only access blockers of 18 functions the frozen prediction calls Safe under P2 (docs/reports/w46-access-path-census/PREDICTION.md, the `(no typed access)` step). DISCHARGE: P2 takes the typed answer (no path, no access) in place of the lexical gate's detection and hands the statement back to the ordinary classifier, measured against the frozen prediction; or a recorded decision that the lexical reading stays.",
+      "source": "docs/reports/w46-access-path-census/README.md",
+      "recorded_by": "W46-ACCESS-PATH-CENSUS"
+    },
+    "W43-INDIRECT-UNTYPED-SINGLE-ACCESS": {
+      "id": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS",
+      "title": "Single accesses whose base or member the declaration reader does not classify stay refused: 3,136 leaves on 1,212 Unknown functions, 94 sole-blocked",
+      "why": "A single `*B`, `B[I]`, `B->F` or `S.F` is admitted only when the reader commits to `SCALAR *B`/`SCALAR B[N]`, `struct T *B` with a scalar member `F` of a completely read `struct T`, or `struct T S`. Measured at the AFTER census (residuals.txt, class untyped-single-access): 3,136 leaves (2,668 indirect-access, 247 unrecognized-destination, 187 store-through, 19 unsupported-assignment, 15 increment) in 1,212 Unknown functions, 94 sole-blocked. The causes are the readers already registered (RECORD-BODY-TOTAL-OR-REJECT, TYPEDEF-ANONYMOUS-AGGREGATE-UNREACHED, BASE-CAUSE-SECOND-DISCOUNT-PARTIAL) plus pointees the rule deliberately excludes (`void *`, `T **`, records). A reader repair now has a consumer: every base it commits to reaches this route. DISCHARGE: re-measure this class after any of those reader repairs lands, and attribute the moves to the reader, not the route; or a recorded decision that the class is closed. AMENDED (W46-ACCESS-PATH-CENSUS): re-measured on the w46-external-callee-contracts baseline by its registering script, run unchanged over this card's census run (classes.json): 2,771 leaves / 1,071 Unknown functions / 69 sole-blocked; Clang's typed AST of the analysed text types every step, and splits its IND/COND/RET leaves 1,711 P2-expressible / 0 P3 / 622 refused (pointer-valued store 434, aggregate value 107, union 100); 435 leaves are in families outside the typed census. Every base or member the lexical reader left untyped has a Clang type.",
+      "source": "docs/reports/w43-indirect-access-general/README.md",
+      "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+    },
+    "W46-UNION-MEMBER-PATH": {
+      "id": "W46-UNION-MEMBER-PATH",
+      "title": "Access paths through a union member stay refused under the typed model: 1,641 leaves, 53 Unknown functions blocked by that alone",
+      "why": "MEASURED by card W46-ACCESS-PATH-CENSUS: 1,641 IND, COND and RET leaves have an access path with a step selecting a union member (librdkafka's `rko->rko_u.*`, the OpenTelemetry protobuf `oneof` members, `rd_kafka_vu_t.u.*`), and for 53 Unknown functions it is the only refusal the P3 scope leaves (every other leaf expressible, every call served). The typed layer of plan P2/P3 keeps them refused: which member is live is not the object's declared type. DISCHARGE: a card that states the live member (a tag test dominating the access, or a contract) and admits exactly that, with Lean parity and a measured re-pin; or a recorded decision that union paths stay refused.",
+      "source": "docs/reports/w46-access-path-census/README.md",
+      "recorded_by": "W46-ACCESS-PATH-CENSUS"
+    }
+  },
+  "retired": []
+}

@@ -1,0 +1,77 @@
+{
+  "revision": "e6e31f492954e765768ed3f8373fb8f9cffa32ba",
+  "stage": "combined",
+  "jobs": 16,
+  "parity": true,
+  "steps": [
+    {
+      "name": "build-corpus",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "cycle19_fluent_bit_libraries_audit"
+      ],
+      "start": "2026-09-27T05:52:19.904825+00:00",
+      "environment": {},
+      "state": "complete",
+      "exit": 0,
+      "end": "2026-09-27T05:52:51.626545+00:00"
+    },
+    {
+      "name": "build-system",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "start": "2026-09-27T05:52:51.626671+00:00",
+      "environment": {},
+      "state": "complete",
+      "exit": 0,
+      "end": "2026-09-27T05:52:51.940652+00:00"
+    },
+    {
+      "name": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/w43-return-expression/scripts/run_audit.py",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/combined/corpus",
+        "e6e31f492954e765768ed3f8373fb8f9cffa32ba",
+        "--jobs",
+        "16"
+      ],
+      "start": "2026-09-27T05:52:51.940815+00:00",
+      "environment": {
+        "QCORE_TYPED_PATH_PARITY": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/combined/corpus/parity.jsonl"
+      },
+      "state": "complete",
+      "exit": 0,
+      "end": "2026-09-27T06:15:14.680950+00:00"
+    },
+    {
+      "name": "system",
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-gap-expansion/scripts/run_system.py",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/combined/system",
+        "--jobs",
+        "16"
+      ],
+      "start": "2026-09-27T06:15:14.681213+00:00",
+      "environment": {
+        "QCORE_TYPED_PATH_PARITY": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/combined/system/parity.jsonl"
+      },
+      "state": "complete",
+      "exit": 0,
+      "end": "2026-09-27T06:16:17.361709+00:00"
+    }
+  ]
+}

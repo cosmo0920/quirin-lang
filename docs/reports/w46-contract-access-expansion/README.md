@@ -1,6 +1,6 @@
 # W46 contract and typed-statement expansion
 
-Integration in progress from `207cebe4`. The [prediction](PREDICTION.md)
+Integrated from `207cebe4` through implementation merge `e6e31f49`. The [prediction](PREDICTION.md)
 precedes merging the three independent Sol 6 medium implementation cards.
 Astra owns gap selection, source-boundary decisions and combined measurements.
 
@@ -171,3 +171,96 @@ preimages are archived by the statement card; differing plan vocabularies are
 unresolved parity items, not evidence for deleting a route. Conditions, returns
 and call arguments remain the separate P3 work. The frozen P1 forecast is
 compared per function, including misses and gains outside its candidate set.
+
+The final statement branch `41112fbc` is merged by `e6e31f49`; the only merge
+conflict was the generated report index, regenerated from all report directories.
+Its initial full gate at `597ef096` failed before running Rust tests because
+`alias_aggregate_probe` did not handle the added borrowed-destination field;
+clippy failed on the same example and the docs index was stale. The repaired
+example preserves previous output and identifies borrowed reads. The next
+full runner executed every unit: 6,031 passed, 12 failed, 11 ignored, exit 101.
+It exposed the anonymous-aggregate scalar classification defect above and
+intentional verdict/diagnostic pin changes. The defect was fixed with positive
+builtin scalar recognition; affected controls retain descriptor, volatile,
+pointer-store, union and custody refusals. Stronger released-index detection
+has a negative control. No test timeout or refusal strength was weakened.
+
+The repaired core run at `e8708416` passes **6,046 tests, 0 failed, 11 ignored**
+over 325 units / 337 summaries, exit 0. Clippy, formatting, both reevaluation
+examples, 364 Python tests and docs-index also exit 0. The final Lean-only
+clarification at `41112fbc` requires positive value types and borrowed-pointer
+mode in the model, and all **213 Lean audits** pass. Card-private paths are
+`/tmp/qcore-w46-access-statements/private/w46-next-full-gate/`,
+`private/w46-next-full-gate-repair/`, `private/w46-next-full-gate-repair-2/`
+and `private/w46-access-path-statements/lean-post-mode.log`, each relative to
+that card's worktree after the first absolute path. Core runner summaries are
+`private/test-binaries/20260927T051003Z-583817/summary.json` (12 failures)
+and `private/test-binaries/20260927T052618Z-727892/summary.json` (repaired),
+also in that worktree. These attempts are preserved separately from the fresh
+combined standing and provider gate.
+
+## Corrected combined measurement
+
+Both release builds and both audits at **`e6e31f49` exit 0**, each audit using
+**`--jobs 16`** with complete typed-path parity recording. The [archive manifest](artifacts/combined/manifest.json)
+binds primary artifacts, commands, binary identities, contexts and logs. Private
+outputs are `private/w46-next/combined/`. No standing tests ran concurrently.
+Only integration documentation and matrix bookkeeping changed while the audits
+ran; implementation and contract bytes remained those of `e6e31f49`.
+
+The final statement comparison is **contract-only `bfa510b7` → corrected
+combined `e6e31f49`**, with the same 230 declarations in both. This supersedes
+the statement card's isolated checkpoints and does not add independently
+measured gains. The preceding contract-only comparison owns the eleven new
+contract declarations' separate effects.
+
+| Measure | Contracts only | Corrected combined |
+|---|---:|---:|
+| Corpus projected functions: Safe / provisional Unsafe / Unknown | 411 / 9 / 4,414 | 447 / 9 / 4,378 |
+| Corpus units: Safe / provisional Unsafe / Unknown / data-only | 5 / 8 / 168 / 4 | 6 / 8 / 167 / 4 |
+| Corpus unsupported / unknown_alias / leak | 41,045 / 3,575 / 34 | 39,085 / 4,760 / 34 |
+| Corpus uncontracted leaves on Unknown functions | 8,998 | 8,935 |
+| System configuration rows: Safe / provisional Unsafe / Unknown | 54 / 4 / 390 | 56 / 4 / 388 |
+| System unique projected functions: Safe / provisional Unsafe / Unknown | 28 / 2 / 204 | 29 / 2 / 203 |
+| System unsupported / unknown_alias / counted_user | 3,291 / 712 / 4 | 3,069 / 892 / 4 |
+| System uncontracted leaves on Unknown functions | 715 | 713 |
+
+All 36 corpus verdict movements and 2 system configuration movements
+are Unknown → Safe. There is no Safe correction or added provisional violation.
+The corpus retains all 185 units and 4,834 functions; the system retains 15
+units, 448 configuration/function rows and 234 unique projected functions,
+plus 3 excluded functions. The [input comparison](census/combined-input-identity.json)
+checks unit identities, configurations and exclusions. The [refutation record](census/combined-refutation-preservation.json)
+remains exactly equal: OR-1/OR-7 refute two declarations, and three functions
+with ten held call sites stay Unknown. No lifecycle result is promoted.
+
+The [corpus comparison](census/combined-corpus/comparison.json) records
+959 changed function rows; the [system comparison](census/combined-system/comparison.json)
+records 90 changed configuration/function rows. Every diagnostic multiset
+change is retained in their `changed-functions.jsonl.gz` and per-leaf attribution
+files. Newly admitted statements expose further unresolved alias obligations;
+removing syntax refusals does not discharge those aliases. Final source-bound
+attribution and its residual mechanism review are published beside each comparison.
+
+The frozen P1 statement forecast has 45 same-unit candidates:
+**32 verdict matches**, of which **30 also change diagnostics**.
+There are **13 forecast misses** and **11 unforecast gains**;
+all names and predicted/observed verdicts are archived in
+[forecast summary](census/combined-forecast-summary.json) and the full corpus
+comparison. Pointer casts, later expression positions, tracked aliases and
+pointer-valued stores remain named restrictions, not credited as completed P2
+work. Complete old/new plans and frontend-context preimages remain archived.
+Structurally different vocabularies are unresolved replacement parity; **no
+legacy route is removed**.
+
+## Tracking and reconciliation
+
+Four follow-ups are registered and three existing entries amended, **518 → 522**,
+with none retired ([proposals](followups.json), [amendments](tracking-amendments.json)).
+Routing extents, typed-path parity, tracked mixed places and P3 positions remain
+open; pointer-store and union-live-member refusals retain their existing trackers.
+The [reconciliation](reconciliation.json) resolves each integrator item, including
+inclusive historical cards, without rewriting frozen reports. Residual scans
+retain historical/unregistered mentions as candidates, not newly discovered
+defects. Documentation compaction ten is due around waves 47–48 and stability
+review six after wave 47; neither firing is due in this wave-46 continuation.

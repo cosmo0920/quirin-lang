@@ -94,7 +94,7 @@ bound: a modeled access can still fail its obligations.
 |---|---|---|---|---|---|
 | P0 | W45-SR5-SOUNDNESS | Soundness repair | High (done, `85a35431`) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
 | P1 | ACCESS-PATH-CENSUS | Measurement | Medium (done: [W46-ACCESS-PATH-CENSUS](../../reports/w46-access-path-census/README.md), prediction frozen: P2 38 Safe / 7 Unknown, P3 83 Safe / 137 Unknown) | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
-| P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High | P1 | One typed access-path layer for statements, run beside the shape routes until parity, then retire them |
+| P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High (bounded fallback landed; replacement parity open) | P1 | [Typed statement fallback](../../reports/w46-access-path-statements/README.md) runs beside retained shape routes; archived disagreements must be resolved before any route is retired |
 | P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High | P2 | The same layer in conditions, returns and call arguments |
 | P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
 | P5 | FIELD-CUSTODY | Candidate only | High | P0; the owned-field Lean model | Pointer-valued stores into fields; not scheduled |
@@ -141,6 +141,14 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
 - **Records:** no analyzer change, and the corpus stays byte-identical.
 
 ### P2: ACCESS-PATH-STATEMENTS
+- **Status:** the bounded fallback is integrated by
+  [W46-CONTRACT-ACCESS-EXPANSION](../../reports/w46-contract-access-expansion/README.md).
+  Exact source/frontend identity, positive field ownership and value types,
+  and existing tracked-root obligations are required. Mixed paths with a
+  tracked root remain refused. All legacy routes remain; replacement parity
+  is open under `W46-ACCESS-PATH-PARITY`, with tracked mixed paths and later
+  expression positions separately registered. The superseded isolated
+  checkpoints are not validation of the final scalar-type repair.
 - **Lowering.** Build a typed access path from Clang's AST, with typedefs
   resolved and record and field types known. Anything the AST cannot give
   exactly is refused (Unknown), never guessed.
