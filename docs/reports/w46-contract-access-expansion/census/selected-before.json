@@ -1,0 +1,549 @@
+{
+  "corpus": {
+    "rows": [
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_histogram_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_value`",
+          "line": 7135,
+          "origin": "cmt_encode_cloudwatch_emf.c:167"
+        }
+      },
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_histogram_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 7160,
+          "origin": "cmt_encode_cloudwatch_emf.c:195"
+        }
+      },
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_histogram_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_count_value`",
+          "line": 7168,
+          "origin": "cmt_encode_cloudwatch_emf.c:203"
+        }
+      },
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_summary_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_quantile_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_quantile_get_value`",
+          "line": 7189,
+          "origin": "cmt_encode_cloudwatch_emf.c:228"
+        }
+      },
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_summary_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_sum_value`",
+          "line": 7195,
+          "origin": "cmt_encode_cloudwatch_emf.c:234"
+        }
+      },
+      {
+        "unit_index": 8,
+        "file": "cmt_encode_cloudwatch_emf.c",
+        "function": "pack_summary_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_count_value`",
+          "line": 7198,
+          "origin": "cmt_encode_cloudwatch_emf.c:237"
+        }
+      },
+      {
+        "unit_index": 9,
+        "file": "cmt_encode_influx.c",
+        "function": "append_histogram_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_metric_hist_get_sum_value` inside a modeled call is outside the resource projection",
+          "line": 5666,
+          "origin": "cmt_encode_influx.c:90"
+        }
+      },
+      {
+        "unit_index": 9,
+        "file": "cmt_encode_influx.c",
+        "function": "append_histogram_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_metric_hist_get_count_value` inside a modeled call is outside the resource projection",
+          "line": 5671,
+          "origin": "cmt_encode_influx.c:97"
+        }
+      },
+      {
+        "unit_index": 9,
+        "file": "cmt_encode_influx.c",
+        "function": "append_summary_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_summary_get_sum_value` inside a modeled call is outside the resource projection",
+          "line": 5700,
+          "origin": "cmt_encode_influx.c:134"
+        }
+      },
+      {
+        "unit_index": 9,
+        "file": "cmt_encode_influx.c",
+        "function": "append_summary_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_summary_get_count_value` inside a modeled call is outside the resource projection",
+          "line": 5705,
+          "origin": "cmt_encode_influx.c:141"
+        }
+      },
+      {
+        "unit_index": 10,
+        "file": "cmt_encode_msgpack.c",
+        "function": "pack_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_metric_hist_get_sum_value` inside a modeled call is outside the resource projection",
+          "line": 7194,
+          "origin": "cmt_encode_msgpack.c:273"
+        }
+      },
+      {
+        "unit_index": 13,
+        "file": "cmt_encode_prometheus.c",
+        "function": "append_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 5969,
+          "origin": "cmt_encode_prometheus.c:175"
+        }
+      },
+      {
+        "unit_index": 13,
+        "file": "cmt_encode_prometheus.c",
+        "function": "append_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_count_value`",
+          "line": 5972,
+          "origin": "cmt_encode_prometheus.c:178"
+        }
+      },
+      {
+        "unit_index": 13,
+        "file": "cmt_encode_prometheus.c",
+        "function": "append_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_sum_value`",
+          "line": 5986,
+          "origin": "cmt_encode_prometheus.c:192"
+        }
+      },
+      {
+        "unit_index": 13,
+        "file": "cmt_encode_prometheus.c",
+        "function": "append_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_count_value`",
+          "line": 5989,
+          "origin": "cmt_encode_prometheus.c:195"
+        }
+      },
+      {
+        "unit_index": 14,
+        "file": "cmt_encode_prometheus_remote_write.c",
+        "function": "pack_complex_metric_sample",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_count_value`",
+          "line": 7216,
+          "origin": "cmt_encode_prometheus_remote_write.c:1010"
+        }
+      },
+      {
+        "unit_index": 14,
+        "file": "cmt_encode_prometheus_remote_write.c",
+        "function": "pack_complex_metric_sample",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 7244,
+          "origin": "cmt_encode_prometheus_remote_write.c:1045"
+        }
+      },
+      {
+        "unit_index": 14,
+        "file": "cmt_encode_prometheus_remote_write.c",
+        "function": "pack_complex_metric_sample",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_value`",
+          "line": 7310,
+          "origin": "cmt_encode_prometheus_remote_write.c:1123"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "append_bucket_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_value`",
+          "line": 5842,
+          "origin": "cmt_encode_splunk_hec.c:354"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "append_quantiles_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_quantile_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_quantile_get_value`",
+          "line": 5918,
+          "origin": "cmt_encode_splunk_hec.c:491"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "format_histogram_bucket",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 5885,
+          "origin": "cmt_encode_splunk_hec.c:426"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "format_histogram_bucket",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_count_value`",
+          "line": 5899,
+          "origin": "cmt_encode_splunk_hec.c:458"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "format_summary_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_sum_value`",
+          "line": 5955,
+          "origin": "cmt_encode_splunk_hec.c:556"
+        }
+      },
+      {
+        "unit_index": 15,
+        "file": "cmt_encode_splunk_hec.c",
+        "function": "format_summary_metric",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_count_value`",
+          "line": 5969,
+          "origin": "cmt_encode_splunk_hec.c:588"
+        }
+      },
+      {
+        "unit_index": 16,
+        "file": "cmt_encode_text.c",
+        "function": "append_histogram_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_metric_hist_get_sum_value` inside a modeled call is outside the resource projection",
+          "line": 5809,
+          "origin": "cmt_encode_text.c:321"
+        }
+      },
+      {
+        "unit_index": 16,
+        "file": "cmt_encode_text.c",
+        "function": "append_histogram_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_metric_hist_get_count_value` inside a modeled call is outside the resource projection",
+          "line": 5814,
+          "origin": "cmt_encode_text.c:328"
+        }
+      },
+      {
+        "unit_index": 16,
+        "file": "cmt_encode_text.c",
+        "function": "append_summary_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_summary_get_sum_value` inside a modeled call is outside the resource projection",
+          "line": 5848,
+          "origin": "cmt_encode_text.c:372"
+        }
+      },
+      {
+        "unit_index": 16,
+        "file": "cmt_encode_text.c",
+        "function": "append_summary_metric_value",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_count_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "nested call `cmt_summary_get_count_value` inside a modeled call is outside the resource projection",
+          "line": 5853,
+          "origin": "cmt_encode_text.c:379"
+        }
+      },
+      {
+        "unit_index": 25,
+        "file": "cmt_metric_histogram.c",
+        "function": "cmt_metric_hist_sum_add",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 5467,
+          "origin": "cmt_metric_histogram.c:132"
+        }
+      },
+      {
+        "unit_index": 25,
+        "file": "cmt_metric_histogram.c",
+        "function": "cmt_metric_hist_sum_set",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_metric_hist_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_hist_get_sum_value`",
+          "line": 5480,
+          "origin": "cmt_metric_histogram.c:147"
+        }
+      },
+      {
+        "unit_index": 28,
+        "file": "cmt_summary.c",
+        "function": "cmt_summary_quantile_set",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_quantile_get_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_quantile_get_value`",
+          "line": 5608,
+          "origin": "cmt_summary.c:230"
+        }
+      },
+      {
+        "unit_index": 28,
+        "file": "cmt_summary.c",
+        "function": "cmt_summary_sum_set",
+        "status": "Unknown",
+        "symbols": [
+          "cmt_summary_get_sum_value"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_get_sum_value`",
+          "line": 5620,
+          "origin": "cmt_summary.c:244"
+        }
+      },
+      {
+        "unit_index": 155,
+        "file": "flb_input_chunk.c",
+        "function": "input_chunk_metadata_view",
+        "status": "Unknown",
+        "symbols": [
+          "input_chunk_has_magic_bytes"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `input_chunk_has_magic_bytes`",
+          "line": 17888,
+          "origin": "flb_input_chunk.c:336"
+        }
+      }
+    ],
+    "leaves": 33,
+    "symbols": {
+      "cmt_metric_hist_get_value": 3,
+      "cmt_metric_hist_get_sum_value": 9,
+      "cmt_metric_hist_get_count_value": 6,
+      "cmt_summary_quantile_get_value": 3,
+      "cmt_summary_get_sum_value": 6,
+      "cmt_summary_get_count_value": 5,
+      "input_chunk_has_magic_bytes": 1
+    }
+  },
+  "system": {
+    "rows": [
+      {
+        "unit_index": 1,
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_metadata_view",
+        "status": "Unknown",
+        "symbols": [
+          "input_chunk_has_magic_bytes"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `input_chunk_has_magic_bytes`",
+          "line": 17920,
+          "origin": "src/flb_input_chunk.c:336"
+        }
+      },
+      {
+        "unit_index": 2,
+        "file": "src/flb_input_chunk.c",
+        "function": "input_chunk_metadata_view",
+        "status": "Unknown",
+        "symbols": [
+          "input_chunk_has_magic_bytes"
+        ],
+        "diagnostic": {
+          "category": "unsupported",
+          "description": "call to uncontracted function `input_chunk_has_magic_bytes`",
+          "line": 17920,
+          "origin": "src/flb_input_chunk.c:336"
+        }
+      }
+    ],
+    "leaves": 2,
+    "symbols": {
+      "input_chunk_has_magic_bytes": 2
+    }
+  }
+}

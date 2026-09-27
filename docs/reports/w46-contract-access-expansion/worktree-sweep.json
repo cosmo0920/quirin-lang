@@ -1,0 +1,114 @@
+{
+  "private_evidence_index": "private/w46-next/worktree-sweep",
+  "removed": [
+    {
+      "worktree": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/fb-system-audit-cards-private-evidence.tar",
+      "time": "2026-09-27T03:45:38.857088+00:00"
+    },
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a31872259c7e9850d",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a31872259c7e9850d"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/agent-a31872259c7e9850d-private-evidence.tar",
+      "time": "2026-09-27T03:45:39.070405+00:00"
+    },
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/hungry-thompson-1740da-private-evidence.tar",
+      "time": "2026-09-27T03:45:39.521275+00:00"
+    },
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/w46-access-path-census-launch-8ba0f2",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/w46-access-path-census-launch-8ba0f2"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/w46-access-path-census-launch-8ba0f2-private-evidence.tar",
+      "time": "2026-09-27T03:45:39.761001+00:00"
+    },
+    {
+      "worktree": "/tmp/qcore-w46-fluent-events",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/tmp/qcore-w46-fluent-events"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/qcore-w46-fluent-events-private-evidence.tar",
+      "time": "2026-09-27T03:45:40.017338+00:00"
+    },
+    {
+      "worktree": "/tmp/qcore-w46-libc-events",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/tmp/qcore-w46-libc-events"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/qcore-w46-libc-events-private-evidence.tar",
+      "time": "2026-09-27T03:45:40.272333+00:00"
+    },
+    {
+      "worktree": "/tmp/qcore-w46-metric-trace",
+      "command": [
+        "git",
+        "worktree",
+        "remove",
+        "--force",
+        "/tmp/qcore-w46-metric-trace"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/worktree-sweep/qcore-w46-metric-trace-private-evidence.tar",
+      "time": "2026-09-27T03:45:40.529055+00:00"
+    }
+  ],
+  "branches_deleted": false,
+  "preserved_locked": 8,
+  "preserved_dirty": 1,
+  "protected_active_cards": 3
+}
