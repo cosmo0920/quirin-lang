@@ -12,8 +12,8 @@ iterations. Its sanitized native run is `compiler/tests/loops_on_composed_routes
 
 | Program | What it shows |
 |---|---|
-| [`buffer_copy.qcore`](buffer_copy.qcore) | A bulk copy between two owned buffers — `STD-BUFFER-COPY`, the blocker this construct was landed for — and a second loop that renders its own index |
-| [`lend_fill.qcore`](lend_fill.qcore) | A loop filling a lend's range **through the loan**, index by index, while the owner writes a byte it kept — the shape `SLICE-PERMISSIONS-LOOP-WINDOW` refused until the window was computed over iterations |
+| [`buffer_copy.qcore`](buffer_copy.qr) | A bulk copy between two owned buffers — `STD-BUFFER-COPY`, the blocker this construct was landed for — and a second loop that renders its own index |
+| [`lend_fill.qcore`](lend_fill.qr) | A loop filling a lend's range **through the loan**, index by index, while the owner writes a byte it kept — the shape `SLICE-PERMISSIONS-LOOP-WINDOW` refused until the window was computed over iterations |
 
 ## The form
 

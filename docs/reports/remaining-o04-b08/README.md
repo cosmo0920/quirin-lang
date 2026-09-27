@@ -145,7 +145,7 @@ discharge its declared contract. This card adds two:
 | Premise | Status |
 |---|---|
 | **P-B08-SHALLOW** — a declared `resource_released` release names exactly one identity; a plain C field store carries no declared destructor obligation | **assumed** (§1.3) |
-| `flb_time_now` takes no argument and returns no custody | **assumed**, declared in [`o04_b08_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore) |
+| `flb_time_now` takes no argument and returns no custody | **assumed**, declared in [`o04_b08_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr) |
 
 Two premises are inherited unchanged from C02 and are **not** proved:
 declaration completeness, and C effective types. C02-P's recorded may-alias

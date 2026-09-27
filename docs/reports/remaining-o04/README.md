@@ -174,7 +174,7 @@ promote an imprecise function (Lean:
 
 Acceptance item 1 is "derive or name every entry premise". Nine premises are
 **named, not derived**; they live in
-[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore),
+[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv),
 one clause per declaration, deliberately **outside** `contract/qcore` so the
 pinned corpus stays at 59 modules and nothing here is offered as a production
 declaration.

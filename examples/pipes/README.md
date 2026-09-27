@@ -4,9 +4,9 @@
 
 | Example | What it demonstrates |
 |---|---|
-| [rendered_lines.qcore](rendered_lines.qcore) | One stage: a value into a sink |
-| [scalar_stages.qcore](scalar_stages.qcore) | A multi-stage chain, and hygienic temporaries |
-| [scalar_stages_hand_written.qcore](scalar_stages_hand_written.qcore) | The same program with the temporaries named by hand |
+| [rendered_lines.qcore](rendered_lines.qr) | One stage: a value into a sink |
+| [scalar_stages.qcore](scalar_stages.qr) | A multi-stage chain, and hygienic temporaries |
+| [scalar_stages_hand_written.qcore](scalar_stages_hand_written.qr) | The same program with the temporaries named by hand |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs):
 the transcripts below are read out of this file and compared with real sanitized
@@ -63,7 +63,7 @@ values, no names.
 Those intermediates are **hygienic temporaries**. The desugarer invents them,
 they cannot collide with anything you wrote, they cannot be mentioned, and they
 never reach the emitted C — which names values `vN` by identity, exactly as it
-names resources `rN`. [scalar_stages_hand_written.qcore](scalar_stages_hand_written.qcore)
+names resources `rN`. [scalar_stages_hand_written.qcore](scalar_stages_hand_written.qr)
 is the same program with those two values named `stage0` and `stage1`, and a
 test asserts the two files emit **byte-identical** C11 and observe identically.
 That comparison is the argument for the piped spelling: `stage0` says nothing,
@@ -91,7 +91,7 @@ default null sink and therefore removes these lines from program output.
 Note what is *not* on those `value` lines: no `-> N`. None of these calls
 declares a `succeeds` outcome, so there is no declared number for the emitted
 program to compare against and none to print. Compare
-[../stdio/pipeline.qcore](../stdio/pipeline.qcore), whose calls do declare one.
+[../stdio/pipeline.qcore](../stdio/pipeline.qr), whose calls do declare one.
 
 ## Why chains carry scalars
 
@@ -169,7 +169,7 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/rendered_lines.c -o /tmp/render
 `scalar_stages.qcore` and its twin call declared extern functions, and the CLI
 selects no extern contract environment (`Q023`; named follow-on
 `UNSAFE-LINKAGE-CLI`). They are compiled through the library API against
-[../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qcore) and
+[../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qv) and
 linked against [../extern/buffer_api.c](../extern/buffer_api.c), which is what
 the test suite does.
 

@@ -4,9 +4,9 @@ Calling C that nothing describes, and saying so out loud.
 
 | File | What it is |
 |---|---|
-| [unchecked_calls.qcore](unchecked_calls.qcore) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
+| [unchecked_calls.qcore](unchecked_calls.qr) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
 | [unchecked_api.c](unchecked_api.c) | The C behind them — no contract, and there never will be one |
-| [unchecked_demo.qcorelib](unchecked_demo.qcorelib) | A `source.native-library.v1` manifest: *which build* was waived |
+| [unchecked_demo.qcorelib](unchecked_demo.qrlib) | A `source.native-library.v1` manifest: *which build* was waived |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs)
 (compilation, emission, sanitized native run) and by

@@ -8,7 +8,7 @@ transcript printed in a README is read out of that file by a test, so no page
 here can drift from what its programs do.
 
 One published program deliberately emits no C:
-[`events/write_interest.qcore`](events/write_interest.qcore) is the event
+[`events/write_interest.qcore`](events/write_interest.qr) is the event
 route's check-only arm, accepted and checked in full but not executed, and its
 page says so. It is the only one.
 
@@ -53,7 +53,7 @@ ones no other file does and references the rest rather than building them twice:
 | sockets/ | `cargo test -p qcore-compiler --test std_socket` |
 | http/ | `cargo test -p qcore-compiler --test std_http` |
 
-One file here belongs to no family: [`cycle12.qcore`](cycle12.qcore) predates
+One file here belongs to no family: [`cycle12.qcore`](cycle12.qr) predates
 the directories and is the smallest sequential-cleanup program in the tree —
 one acquisition, one check, one release. It has no page of its own and claims
 none of the guarantees the table above does; the suite holds it to one thing
@@ -76,8 +76,8 @@ examples make it the same way every time:
   would stay behind, which reads as a claim about the pieces that is not true.
 * **A value that fans out stays a statement.** Where one binding is read by two
   or more later statements — `first` printed twice in
-  [sockets/tcp_echo.qcore](sockets/tcp_echo.qcore), `length` both declared in a
-  header and printed in [http/computed_length.qcore](http/computed_length.qcore)
+  [sockets/tcp_echo.qcore](sockets/tcp_echo.qr), `length` both declared in a
+  header and printed in [http/computed_length.qcore](http/computed_length.qr)
   — the flow is not linear, and piping the first reader would suggest the value
   ends there. Keep `print dec first;`.
 * **Never contort one into the other.** A pipeline is linear and first-argument
@@ -88,7 +88,7 @@ examples make it the same way every time:
 
 One published program is **not** yet spelled to the rule, and saying so here is
 cheaper than a rule with a silent exception:
-[strings/status_line.qcore](strings/status_line.qcore) writes `body |> print;`
+[strings/status_line.qcore](strings/status_line.qr) writes `body |> print;`
 and then `body[7:12] |> print;`, so `body` is read by two statements and belongs
 on the fan-out side. Whether a *slice of* a value counts as a second reader, or
 as the assembly half of this rule, is an open question about the rule rather

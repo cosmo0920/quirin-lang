@@ -95,7 +95,7 @@ pointer, stream errors, `errno`, locale and threads.
 (`declared_abi_census`, the production decision) ran over the 185 units
 captured from this card's own run
 ([census/family9.txt](census/family9.txt), from the measurement-only module
-[measurement/family9.qcore](measurement/family9.qcore)). It was then rerun on
+[measurement/family9.qcore](measurement/family9.qv)). It was then rerun on
 the whole shipped manifest:
 
 | Member | Units agreeing | Withdrawn | Leaves / functions at the baseline |

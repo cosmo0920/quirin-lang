@@ -4,9 +4,9 @@
 
 | Example | What it demonstrates | Successful main result |
 |---|---|---|
-| [conditional_release.qcore](conditional_release.qcore) | The custody join: a resource released on both arms | `0` |
-| [condition_tier.qcore](condition_tier.qcore) | Constant bindings, `\|`, `^`, `&`, `&&`, `\|\|`, `!` | `0` |
-| [early_return.qcore](early_return.qcore) | An arm that returns, and what the join is then taken over | `1` |
+| [conditional_release.qcore](conditional_release.qr) | The custody join: a resource released on both arms | `0` |
+| [condition_tier.qcore](condition_tier.qr) | Constant bindings, `\|`, `^`, `&`, `&&`, `\|\|`, `!` | `0` |
+| [early_return.qcore](early_return.qr) | An arm that returns, and what the join is then taken over | `1` |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs):
 every transcript and every refused program below is read out of this file and
@@ -19,7 +19,7 @@ cargo test -p qcore-compiler --test examples_suite
 ## The custody join
 
 At the end of an `if`/`else` the checker takes a **custody join** over the arms.
-Both arms of [conditional_release.qcore](conditional_release.qcore) release `a`,
+Both arms of [conditional_release.qcore](conditional_release.qr) release `a`,
 so they agree and the join succeeds.
 
 Delete one of the two `drop a;` and the module refuses:
@@ -77,7 +77,7 @@ OK 0
 
 ## The condition tier
 
-[condition_tier.qcore](condition_tier.qcore) uses all of it in one entry: a
+[condition_tier.qcore](condition_tier.qr) uses all of it in one entry: a
 constant binding read from inside a condition (`mask`), the three bitwise
 operators, both connectives and unary `!`.
 
@@ -149,7 +149,7 @@ rather than refused: `&` binds tighter than `^` binds tighter than `|`, so
 
 ## An arm that returns
 
-[early_return.qcore](early_return.qcore) has no `else`:
+[early_return.qcore](early_return.qr) has no `else`:
 
 ```qcore
 if (3 < 5) {

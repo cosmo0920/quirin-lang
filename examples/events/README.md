@@ -16,10 +16,10 @@ Design record: [`docs/design/STD_EVENT_V1.md`](../../docs/design/STD_EVENT_V1.md
 
 | Program | What it shows |
 |---|---|
-| [`self_pipe.qcore`](self_pipe.qcore) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
-| [`wake_payload.qcore`](wake_payload.qcore) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
-| [`write_interest.qcore`](write_interest.qcore) | The check-only arm: a write registration is checked in full and emits no C. |
-| [`socket_server.qcore`](socket_server.qcore) | A **checked socket** registered with the reactor: the server shape, waiting on two descriptors and taking its accept and its receive in its own body. Route `source.socket.v1`, card `SOCKET-EVENT-COMPOSE`. |
+| [`self_pipe.qcore`](self_pipe.qr) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
+| [`wake_payload.qcore`](wake_payload.qr) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
+| [`write_interest.qcore`](write_interest.qr) | The check-only arm: a write registration is checked in full and emits no C. |
+| [`socket_server.qcore`](socket_server.qr) | A **checked socket** registered with the reactor: the server shape, waiting on two descriptors and taking its accept and its receive in its own body. Route `source.socket.v1`, card `SOCKET-EVENT-COMPOSE`. |
 
 **Every line in these programs is spelled as a pipeline.** `value |> log info dec;`
 is the form, and the statement form it desugars to emits the same C byte for

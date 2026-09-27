@@ -12,9 +12,9 @@ and this family is its named follow-on `EXAMPLES-AGGREGATES`. Card
 
 | Program | What it shows |
 |---|---|
-| [`point.qcore`](point.qcore) | CT09's "distinct ordinary struct fields" scenario — three fields, three different values, three reads — with no buffer anywhere: a record of scalars is a plain value, so this program's effect row is `io` alone |
-| [`pixel_writes.qcore`](pixel_writes.qcore) | A record beside a real resource: fields drive a buffer's stored values and one store's *index*, the buffer owes its `drop`, and the records owe nothing |
-| [`owned_field.qcore`](owned_field.qcore) | A record that **owns** two buffers: construction moves them in, the fields stand at every custody position a buffer name does, a field read moves one out, and `drop f;` releases the field still held — the four rules of the ownership IR, exercised in one program |
+| [`point.qcore`](point.qr) | CT09's "distinct ordinary struct fields" scenario — three fields, three different values, three reads — with no buffer anywhere: a record of scalars is a plain value, so this program's effect row is `io` alone |
+| [`pixel_writes.qcore`](pixel_writes.qr) | A record beside a real resource: fields drive a buffer's stored values and one store's *index*, the buffer owes its `drop`, and the records owe nothing |
+| [`owned_field.qcore`](owned_field.qr) | A record that **owns** two buffers: construction moves them in, the fields stand at every custody position a buffer name does, a field read moves one out, and `drop f;` releases the field still held — the four rules of the ownership IR, exercised in one program |
 
 ## The form
 

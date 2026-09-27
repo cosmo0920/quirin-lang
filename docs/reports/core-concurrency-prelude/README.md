@@ -54,7 +54,7 @@ The [example mapping](../../../examples/threads/README.md#mapping-source-example
 connects source scopes, spawn, worker completion, join and read shares to the
 existing core and Lean models. The paired examples are:
 
-- [`core_context.qcore`](../../../examples/threads/core_context.qcore): one
+- [`core_context.qcore`](../../../examples/threads/core_context.qr): one
   buffer passed to a worker, returned at join and released; creation failure
   restores the original binding, which the parent releases.
 - [`concurrency_prelude.rs`](../../../crates/qcore-core/examples/concurrency_prelude.rs):

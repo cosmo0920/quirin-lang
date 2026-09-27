@@ -8,9 +8,9 @@ its `std.buffer` bridge (cards `STRING-SLICE`, `STRING-SLICE-IO` and
 
 | Program | What it shows |
 |---|---|
-| [status_line.qcore](status_line.qcore) | An HTTP/1.1 response head rendered to standard output: literal views, the empty line, a bound view and a slice of one |
-| [computed_length.qcore](computed_length.qcore) | The same head with a **computed** `Content-Length`: content the program writes into storage it owns, borrowed as UTF-8, its length taken, and the header line composed from that number |
-| [looped_fill.qcore](looped_fill.qcore) | A `for` filling a buffer before it is borrowed, and a second `for` inside a live loan's window writing only the bytes the loan does not hold — the shape `STRING-CONCAT-LOOP-WINDOW` refused until the borrow window was decided over iterations |
+| [status_line.qcore](status_line.qr) | An HTTP/1.1 response head rendered to standard output: literal views, the empty line, a bound view and a slice of one |
+| [computed_length.qcore](computed_length.qr) | The same head with a **computed** `Content-Length`: content the program writes into storage it owns, borrowed as UTF-8, its length taken, and the header line composed from that number |
+| [looped_fill.qcore](looped_fill.qr) | A `for` filling a buffer before it is borrowed, and a second `for` inside a live loan's window writing only the bytes the loan does not hold — the shape `STRING-CONCAT-LOOP-WINDOW` refused until the borrow window was decided over iterations |
 
 ## What a rendered string is
 

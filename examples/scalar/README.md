@@ -1,7 +1,7 @@
 # Scalar calls and explicit output
 
-[calls.qcore](calls.qcore) computes 42 through parameterized helper functions
-without printing it. [printing.qcore](printing.qcore) uses the same scalar-call
+[calls.qcore](calls.qr) computes 42 through parameterized helper functions
+without printing it. [printing.qcore](printing.qr) uses the same scalar-call
 profile and writes the computed value explicitly. Check and emit either file:
 
 ```sh

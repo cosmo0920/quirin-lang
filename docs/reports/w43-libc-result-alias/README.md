@@ -469,7 +469,7 @@ not edited.
 
 The fourteen prototypes W43-LIBC-CONTRACTS withdrew for `__restrict` were
 re-measured with both census tools
-([measurement/restrict14.qcore](measurement/restrict14.qcore), a
+([measurement/restrict14.qcore](measurement/restrict14.qv), a
 measurement-only module; [abi-evidence.json](abi-evidence.json), `restrict14`).
 The base tool withdrew every row. This card's tool reads them as follows:
 

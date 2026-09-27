@@ -6,10 +6,10 @@ lets a printing module also call declared C.
 
 | Example | What it demonstrates |
 |---|---|
-| [renderings.qcore](renderings.qcore) | `print` with both renderings, `dec` and `hex` |
-| [severities.qcore](severities.qcore) | `log` at all three severities, and `flush` |
-| [barrier.qcore](barrier.qcore) | `flush` alone: the smallest complete module on this route |
-| [pipeline.qcore](pipeline.qcore) | The composed route: `value \|> render \|> log` over a declared extern callee |
+| [renderings.qcore](renderings.qr) | `print` with both renderings, `dec` and `hex` |
+| [severities.qcore](severities.qr) | `log` at all three severities, and `flush` |
+| [barrier.qcore](barrier.qr) | `flush` alone: the smallest complete module on this route |
+| [pipeline.qcore](pipeline.qr) | The composed route: `value \|> render \|> log` over a declared extern callee |
 
 Everything below is checked. The transcripts are read out of this file by
 [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs) and
@@ -102,7 +102,7 @@ model claims otherwise — so nothing in the emitted C claims it either: `flush`
 emits exactly one `fflush`. If you need durability, this is not the construct,
 and QCore does not currently have one.
 
-`flush` names no rendering, so [barrier.qcore](barrier.qcore) needs no
+`flush` names no rendering, so [barrier.qcore](barrier.qr) needs no
 `std.fmt` import — it is `std.logger` that grants the barrier. It is the
 smallest complete module on this route, and its transcript is the empty one:
 
@@ -115,7 +115,7 @@ smallest complete module on this route, and its transcript is the empty one:
 
 ## The composed route
 
-[pipeline.qcore](pipeline.qcore) both calls declared C and prints. It needs no
+[pipeline.qcore](pipeline.qr) both calls declared C and prints. It needs no
 marker to say so: a module using `std.extern`'s calls *and* `std.io`'s lines is
 checked by `source.std-io-extern.v1`, which runs both routes' own checkers and
 publishes both certificates side by side. Composing weakens nothing — every
@@ -167,7 +167,7 @@ Line 3 is the call trace saying `demo_sum` returned 56; line 4 is `print dec
 total` rendering it. Line 5's `-> 112` and the `[INFO] 112` on stderr are the
 same pair. A call with no `succeeds` clause has no `-> N` field, because there
 is no declared number to compare against — see
-[../pipes/scalar_stages.qcore](../pipes/scalar_stages.qcore) for that shape.
+[../pipes/scalar_stages.qcore](../pipes/scalar_stages.qr) for that shape.
 
 The `vN` and `rN` names are model identities, not source names: the hygienic
 temporary between the two pipe stages has no name to print. `v3` is the literal
@@ -196,7 +196,7 @@ That is fail-closed and correct, and a selection flag is the named follow-on
 `UNSAFE-LINKAGE-CLI` rather than a default. Until it lands, the composed route
 is reachable through the library API — `compile_files` with
 `CompileOptions::extern_contracts` — which is how the test suite compiles this
-example, against [../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qcore).
+example, against [../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qv).
 The callees' C is [../extern/buffer_api.c](../extern/buffer_api.c); link it
 beside the emitted translation unit.
 

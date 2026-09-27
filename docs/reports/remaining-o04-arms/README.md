@@ -103,7 +103,7 @@ The task named three prerequisites from O00 §8. Two of the three were measured
   buy nothing and it is deliberately left undeclared.
 
 Both declarations live in
-[`o04_arms_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore),
+[`o04_arms_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr),
 concatenated onto O04's premise set, which stays **byte-unchanged** so O04's own
 measurement keeps its exact premises. The file sits with the gateway test
 fixtures, deliberately outside `contract/qcore`, so the pinned corpus count is

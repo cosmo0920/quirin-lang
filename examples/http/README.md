@@ -16,9 +16,9 @@ Cards `HTTP-QUIRIN-V1` and `HTTP-V1-COMPUTED-LENGTH`; the evidence packages are
 
 | File | Route | What it shows |
 |---|---|---|
-| [`exchange.qcore`](exchange.qcore) | `source.http.v1` | a **declared** request and response: the compiler builds and checks the wire bytes |
-| [`computed_length.qcore`](computed_length.qcore) | `source.http.v1` | a `Content-Length` the program **computes** over a composed body — and the same compile-time equality holding over it |
-| [`raw_request.qcore`](raw_request.qcore) | `source.socket.v1` | the same kind of bytes **written by hand** as a string payload — and what the compiler then does *not* know |
+| [`exchange.qcore`](exchange.qr) | `source.http.v1` | a **declared** request and response: the compiler builds and checks the wire bytes |
+| [`computed_length.qcore`](computed_length.qr) | `source.http.v1` | a `Content-Length` the program **computes** over a composed body — and the same compile-time equality holding over it |
+| [`raw_request.qcore`](raw_request.qr) | `source.socket.v1` | the same kind of bytes **written by hand** as a string payload — and what the compiler then does *not* know |
 
 ## What is being claimed, and what is not
 

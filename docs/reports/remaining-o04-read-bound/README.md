@@ -113,7 +113,7 @@ O04's nine premises, O04-ARMS's two and O04-B08's two (**P-B08-SHALLOW** and the
 derived** — including that the constructor's own body does not discharge its
 declared contract. **This card adds no new declared premise and no new contract
 text:** `flb_routes_mask_set_by_tag` was already declared in the byte-unchanged
-[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore),
+[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv),
 with its first parameter `Borrowed`, by card O04.
 
 Two premises are inherited from C02 and are **not** proved: declaration

@@ -5,10 +5,10 @@ Linux and macOS. The Windows instructions below use MSVC's `cl.exe`.
 
 | Example | What it demonstrates | Successful main result |
 |---|---|---|
-| [two_workers.qcore](two_workers.qcore) | Two copied inputs, both workers started before either join, recovery if the second creation fails; both results logged and one printed by the source | `7` |
-| [owned_buffer.qcore](owned_buffer.qcore) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile, and logs the number it reads back out of the returned buffer. It also shows both pipeline spellings: `second \|> qcore_buffer_read \|> log info dec;` chains a model intrinsic into a sink, while the post-join read keeps its own binding because the number is used twice and a pipeline is linear | `42` |
-| [shared_readers.qcore](shared_readers.qcore) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
-| [core_context.qcore](core_context.qcore) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
+| [two_workers.qcore](two_workers.qr) | Two copied inputs, both workers started before either join, recovery if the second creation fails; both results logged and one printed by the source | `7` |
+| [owned_buffer.qcore](owned_buffer.qr) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile, and logs the number it reads back out of the returned buffer. It also shows both pipeline spellings: `second \|> qcore_buffer_read \|> log info dec;` chains a model intrinsic into a sink, while the post-join read keeps its own binding because the number is used twice and a pipeline is linear | `42` |
+| [shared_readers.qcore](shared_readers.qr) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
+| [core_context.qcore](core_context.qr) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
 
 All four also `import std.logger;` and `import std.fmt;` (and `two_workers`
 additionally `import std.io;`), which is what lets them say something of their

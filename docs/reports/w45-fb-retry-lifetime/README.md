@@ -25,9 +25,9 @@ ran: the obligations are **checked Fluent Bit provider contracts** decided by
     A per-path pass checks every clause against the body it is declared for and
     applies a declaration of a defined body only where its body validates.
 * **The obligations as provider contracts**
-  ([`task_users.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore),
-  [`output_singleplex.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore),
-  [`monkey/intrusive_list.qcore`](../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore)).
+  ([`task_users.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv),
+  [`output_singleplex.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv),
+  [`monkey/intrusive_list.qcore`](../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv)).
   `quirin-audit` publishes a verdict per clause (`user_count_clauses`):
   * **OR-1 refuted** at `src/flb_output.c:376` (the C2 shape), a provisional
     `Unsafe` candidate under the synchronous-proxy premise;

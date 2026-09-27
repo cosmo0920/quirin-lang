@@ -225,7 +225,7 @@ extended.
 
 ### 2.4 The contract module
 
-[`storage_backlog.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore)
+[`storage_backlog.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv)
 declares the twelve `sb.c` functions:
 
 * `sb_allocate_chunk`: owned-nullable result, borrowed arguments;

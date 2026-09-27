@@ -15,10 +15,10 @@ the `examples/threads` standard are in `compiler/tests/std_socket.rs` and
 
 | File | What it shows |
 |---|---|
-| [`tcp_echo.qcore`](tcp_echo.qcore) | create / bind / listen / connect / accept, a stream `send` and both `recv` forms, three closes |
-| [`udp_echo.qcore`](udp_echo.qcore) | create / bind, `sendto` / `recvfrom`, and the whole-datagram rule |
-| [`inet_v4_echo.qcore`](inet_v4_echo.qcore) | a **declared** IPv4 address and port — inbound `bind S 127.0.0.1:port;` and outbound `connect C 127.0.0.1:port;` |
-| [`inet_v6_echo.qcore`](inet_v6_echo.qcore) | the same over declared IPv6 `[::1]`, with `IPV6_V6ONLY` set explicitly and a host without IPv6 answered by name |
+| [`tcp_echo.qcore`](tcp_echo.qr) | create / bind / listen / connect / accept, a stream `send` and both `recv` forms, three closes |
+| [`udp_echo.qcore`](udp_echo.qr) | create / bind, `sendto` / `recvfrom`, and the whole-datagram rule |
+| [`inet_v4_echo.qcore`](inet_v4_echo.qr) | a **declared** IPv4 address and port — inbound `bind S 127.0.0.1:port;` and outbound `connect C 127.0.0.1:port;` |
+| [`inet_v6_echo.qcore`](inet_v6_echo.qr) | the same over declared IPv6 `[::1]`, with `IPV6_V6ONLY` set explicitly and a host without IPv6 answered by name |
 
 ## The one thing to understand first
 
@@ -178,7 +178,7 @@ every row a file that exists — without building either program a second time.
   composition is no longer a gap: card `SOCKET-EVENT-COMPOSE` landed it, a
   module that both dispatches and sockets now reaches *this* route, which models
   both, and the published example is
-  [`../events/socket_server.qcore`](../events/socket_server.qcore) — indexed on
+  [`../events/socket_server.qcore`](../events/socket_server.qr) — indexed on
   the events page because that is where a reader comes for "how do I wait on
   readiness".
 * No non-blocking mode and no shutdown.
