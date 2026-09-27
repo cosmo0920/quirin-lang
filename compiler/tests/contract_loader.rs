@@ -82,7 +82,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    assert_eq!(contracts.source_assumptions().len(), 50);
+    // W46-LIBC-EVENT-CONTRACT-GAPS selects scalar_observation.qcore: 50 -> 51.
+    assert_eq!(contracts.source_assumptions().len(), 51);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -365,6 +366,19 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("mpack_write_true", 1),
         ("mpack_write_false", 1),
         ("mpack_write_bin", 3),
+        // W46-LIBC-EVENT-CONTRACT-GAPS: eleven neutral catalog and pinned
+        // observation contracts, including the zero-argument Libevent queries.
+        ("memcmp", 3),
+        ("strncmp", 3),
+        ("strnlen", 2),
+        ("strcasecmp", 2),
+        ("_mk_string_search", 4),
+        ("mk_string_char_search", 3),
+        ("mk_string_char_search_r", 3),
+        ("MK_EVENT_NEW", 1),
+        ("event_base_get_features", 1),
+        ("event_get_struct_event_size", 0),
+        ("event_get_version_number", 0),
     ] {
         old.insert_contract(
             name,
@@ -927,7 +941,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    assert_eq!(certificate.contracts.source_assumptions().len(), 50);
+    // The same selected module is retained in the sealed certificate.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 51);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1148,7 +1163,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
     // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
     // and manifest-selected.
-    assert_eq!(modules.len(), 114, "corpus module count");
+    // W46-LIBC-EVENT-CONTRACT-GAPS adds one pinned scalar observation module.
+    assert_eq!(modules.len(), 115, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1299,9 +1315,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
     // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
     // unchanged.
+    // W46-LIBC-EVENT-CONTRACT-GAPS: four neutral libc declarations in the
+    // already-selected string module and seven pinned observations in one new
+    // Monkey/Libevent module: 50 -> 51, 183 -> 194; rejected remains 216.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (50, 183, 216)
+        (51, 194, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

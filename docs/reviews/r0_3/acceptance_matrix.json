@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 114,
+  "contract_modules": 115,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6740,7 +6740,7 @@
   "workspace_tests": 6021,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 210,
+  "lean_audits": 211,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6908,6 +6908,7 @@
    "AuditReturnRefusedCallLowering.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
+   "AuditScalarObservationContracts.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",
@@ -6959,7 +6960,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w46-external-callee-contracts/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

@@ -32,7 +32,7 @@ class CanonicalCorpus(unittest.TestCase):
         # (checked specifications) in quirin-provider-fluent-bit.
         # W46-LIBC-EVENT-CONTRACT-GAPS adds monkey/scalar_observation.qcore.
         self.assertEqual(len(modules), 115)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 73)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 42)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
