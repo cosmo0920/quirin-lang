@@ -11,6 +11,10 @@ Status: EXT-01 compatibility implementation is in validation; physical renames (
 
 `.qv` identifies contract mode, not a proof certificate and not evidence that a contract body has been proved. `.qr` identifies runtime source, not a native executable. The extensions do not change grammar, semantics, checking obligations, provider trust or verdicts. Keep `.qcore` as a migration alias until the retirement gate below passes; do not silently interpret a contract as an executable from its suffix.
 
+## User-directed scope update (2026-09-27)
+
+The user subsequently required outdated historical sources to be changed or removed to avoid confusion. This supersedes the frozen-source exclusions below for EXT-02/03: rename all 621 classified inputs (195 `.qv`, 421 `.qr`, five `.qrlib`), update runnable examples and links, and distinguish original measurement provenance from current source names. Historical verdicts and digests remain factual records of their measured revision, not silently rewritten results. The earlier preservation statements describe the original plan and EXT-01 compatibility measurement only. After these renames, the separate [runtime import card](../runtime-imports/README.md) adds relative `.qr` imports and rewrites current and archived source examples from `import` to `#import`.
+
 ## Inventory at the planning base
 
 `git ls-files` records **616 `.qcore` files**: compiler 223, contract 1, crates 46, docs 182, examples 41, providers 123. Of these, **182 are under frozen `docs/reports/`**, and 434 are elsewhere. There are **5 `.qcorelib` files** (four compiler fixtures, one example), and no tracked `.qo`, `.qv`, `.qr`, `.qrlib` or `.qc` files. Virtual `.qc` source names occur in tests and are separate from tracked files. These are filename counts, not contract coverage.
