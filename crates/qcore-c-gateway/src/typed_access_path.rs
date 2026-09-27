@@ -222,6 +222,9 @@ pub(crate) struct StatementPlan {
 /// lazily, only after a statement has reached an access-related refusal.
 pub(crate) struct StatementIndex {
     pub(crate) source: Arc<String>,
+    /// Byte offsets of every `\n` of `source`, ascending: a node's line is
+    /// found by binary search instead of rescanning the source per node.
+    newlines: Arc<Vec<usize>>,
     pub(crate) function: Value,
     pub(crate) fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     pub(crate) enums: Arc<EnumFacts>,
@@ -314,6 +317,7 @@ struct SourceContext {
     ast: OnceCell<Option<Value>>,
     fields: OnceCell<Arc<BTreeMap<String, Option<FieldFacts>>>>,
     enums: OnceCell<Arc<EnumFacts>>,
+    newlines: OnceCell<Arc<Vec<usize>>>,
 }
 
 /// Keep the exact analysed source in the worker that builds this unit's CFGs.
@@ -345,6 +349,7 @@ pub(crate) fn enter_source(
             ast: OnceCell::new(),
             fields: OnceCell::new(),
             enums: OnceCell::new(),
+            newlines: OnceCell::new(),
         }))
     }))
 }
@@ -399,8 +404,19 @@ impl StatementIndex {
                 EnumFacts::collect(ast, &mut enums);
                 Arc::new(enums)
             });
+            let newlines = context.newlines.get_or_init(|| {
+                Arc::new(
+                    context
+                        .source
+                        .bytes()
+                        .enumerate()
+                        .filter_map(|(at, byte)| (byte == b'\n').then_some(at))
+                        .collect(),
+                )
+            });
             Some(Self {
                 source: Arc::clone(&context.source),
+                newlines: Arc::clone(newlines),
                 function: functions.remove(0).clone(),
                 fields: Arc::clone(fields),
                 enums: Arc::clone(enums),
@@ -451,15 +467,11 @@ impl StatementIndex {
 
     pub(crate) fn node_line(&self, node: &Value) -> Option<usize> {
         let offset = offset(&node["range"]["begin"])?;
-        Some(
-            self.source
-                .as_bytes()
-                .get(..offset)?
-                .iter()
-                .filter(|&&b| b == b'\n')
-                .count()
-                + 1,
-        )
+        if offset > self.source.len() {
+            return None;
+        }
+        // The number of newlines strictly before `offset`, plus one.
+        Some(self.newlines.partition_point(|&at| at < offset) + 1)
     }
 
     pub(crate) fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
