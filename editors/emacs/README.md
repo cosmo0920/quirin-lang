@@ -1,10 +1,11 @@
 # Quirin syntax highlighting for Emacs
 
 `qcore-mode.el` is a standalone major mode for Emacs 27.1 or later. It selects
-QCore mode for `.qcore` files, uses standard theme faces, and supports
+QCore mode for `.qv` contract and `.qr` runtime source files, and retains
+`.qcore` as a legacy source alias. It uses standard theme faces and supports
 Emacs comment commands (`M-;`, `comment-region`, `uncomment-region`).
-`.qcore` is the only source extension; the `.qc` alternative is retired and
-no longer selects this mode. The mode, its file and its function prefix keep
+The `.qc` alternative is retired and no longer selects this mode. Native ABI
+manifest `.qrlib` files are a distinct grammar. The mode, its file and its function prefix keep
 the `qcore` spelling — that is the language's core component name, which the
 Quirin branding does not move.
 
