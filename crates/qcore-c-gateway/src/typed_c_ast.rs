@@ -67,6 +67,17 @@ pub fn ast_declarations(
 /// selected object has no unexamined readers or writers.  The result is still
 /// raw Clang transport and conveys no semantic authority by itself.
 pub fn translation_unit_ast(source: &str, unit: &C11TranslationUnit<'_>) -> Result<Value, String> {
+    translation_unit_ast_with(source, unit, |bytes| serde_json::from_slice(bytes))
+}
+
+/// Run the same Clang transport while letting an internal reader deserialize
+/// the buffered JSON without retaining the entire translation-unit `Value`.
+/// The output buffer and Clang's own peak memory still exist during parsing.
+pub(crate) fn translation_unit_ast_with<T>(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+    parse: impl FnOnce(&[u8]) -> Result<T, serde_json::Error>,
+) -> Result<T, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
     let mut child = command
@@ -100,8 +111,7 @@ pub fn translation_unit_ast(source: &str, unit: &C11TranslationUnit<'_>) -> Resu
             String::from_utf8_lossy(&output.stderr).trim()
         ));
     }
-    serde_json::from_slice(&output.stdout)
-        .map_err(|error| format!("unsupported Clang AST JSON: {error}"))
+    parse(&output.stdout).map_err(|error| format!("unsupported Clang AST JSON: {error}"))
 }
 
 /// Require exactly one body-bearing definition with the exact requested name.
