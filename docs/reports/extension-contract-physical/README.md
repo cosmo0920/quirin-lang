@@ -59,7 +59,8 @@ renamed source need targeted edits and a provenance note.
    old load path and archive its log. Then rename exactly the mapped files;
    preserve bytes except the nine mapped include target suffixes.
 2. Rewrite includes and active exact references in the appropriate scope.
-   Change each lock's `module` field by its owner crate's mapping only; keep
+   Use [the guarded lock module migrator](migrate_lock_modules.py) to change
+   each lock's `module` field by its owner crate's mapping only; keep
    all other fields, including declaration digests and reviewed identities,
    byte-equivalent as data. Do not regenerate or re-pin the lock.
 3. Run `python3 providers/contracts.py sync`, then `check`, to regenerate
