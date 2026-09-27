@@ -35,14 +35,14 @@
     "ubsan_options": "halt_on_error=1:print_stacktrace=1",
     "rejection_controls": [
       {
-        "source": "undelivered_payload.qcore",
+        "source": "undelivered_payload.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "return/error discards an undelivered error payload"
         }
       },
       {
-        "source": "unreleased_payload.qcore",
+        "source": "unreleased_payload.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "return/error discards a handle, unconsumed Result or owned buffer"

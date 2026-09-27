@@ -25,7 +25,7 @@
     "mutex_invariant_check"
   ],
   "evidence_target": "linux",
-  "notes": "source.mutex.guard.v1: a guard-derived borrow still live at the end of its critical section is refused at Q615 GuardBorrowEscape, and the full cascade is pinned so the refusal is shown not to have released the guard (Q619 on the generation, Q600 NonquiescentDestruction on the parked resource, then Q600 OutstandingGuard and Q600 OutstandingMutex in the end-of-trace sweep). Two escape mechanisms are exercised: this one, and the escaped_borrow control, where the borrow binder is named after its block and fails at Q013 unknown name because the binder is body-local. Q013 is recorded as name resolution, not as a concurrency verdict, and is deliberately NOT relabelled. The released.qcore control takes the same borrow, reads through the guard and drops it inside the section, and is accepted; it compiles through the Linux emission path, hence evidence_target=linux. Not established: that a guard is unmovable in some future profile admitting tasks. This profile refuses task creation outright, so a borrow cannot travel to a child at all here; the model-level Q612 WrongGuardAffinity evidence for that direction is T02/T03 model evidence, not source evidence, and is why CT28 stays unmapped.",
+  "notes": "source.mutex.guard.v1: a guard-derived borrow still live at the end of its critical section is refused at Q615 GuardBorrowEscape, and the full cascade is pinned so the refusal is shown not to have released the guard (Q619 on the generation, Q600 NonquiescentDestruction on the parked resource, then Q600 OutstandingGuard and Q600 OutstandingMutex in the end-of-trace sweep). Two escape mechanisms are exercised: this one, and the escaped_borrow control, where the borrow binder is named after its block and fails at Q013 unknown name because the binder is body-local. Q013 is recorded as name resolution, not as a concurrency verdict, and is deliberately NOT relabelled. The released.qr control takes the same borrow, reads through the guard and drops it inside the section, and is accepted; it compiles through the Linux emission path, hence evidence_target=linux. Not established: that a guard is unmovable in some future profile admitting tasks. This profile refuses task creation outright, so a borrow cannot travel to a child at all here; the model-level Q612 WrongGuardAffinity evidence for that direction is T02/T03 model evidence, not source evidence, and is why CT28 stays unmapped.",
   "checked_mutex_reject": {
     "diagnostic_sequence": [
       "Q615",
@@ -36,13 +36,13 @@
     ],
     "controls": [
       {
-        "source": "released.qcore",
+        "source": "released.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "note": "the same borrow released inside its own section checks, so Q615 is keyed to the escape and not to borrowing under a guard."
       },
       {
-        "source": "escaped_borrow.qcore",
+        "source": "escaped_borrow.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q013"

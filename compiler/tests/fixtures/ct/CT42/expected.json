@@ -23,28 +23,28 @@
     ],
     "controls": [
       {
-        "source": "listener_question.qcore",
+        "source": "listener_question.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardSocketV1",
         "note": "The same program asking about `client` and `listener`. Admitted, and it emits the case's C byte for byte (the question erases), so Q664 is keyed to the connection cell and not to asking about an accepted socket at all."
       },
       {
-        "source": "two_connections.qcore",
+        "source": "two_connections.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardSocketV1",
         "note": "Two completed connections; the cross-pair questions are admitted. Two connections are two cells, so the refusal is about ONE connection's identity."
       },
       {
-        "source": "datagram_pair.qcore",
+        "source": "datagram_pair.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardSocketV1",
         "note": "A datagram pair asked about. Admitted: the recorded decision CT42-CELL-UDP-QUEUE, re-affirmed with its ground -- a sendto appends to a queue but the two sockets share no connection phase, so they are independent custodians."
       },
       {
-        "source": "closed_custodian.qcore",
+        "source": "closed_custodian.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q083",
@@ -53,7 +53,7 @@
         "note": "The question after `close server;`. Refused by the inherited ownership checker's use-after-close and the transport half's closed-socket stop, before any cell is derived: both custodians must be live."
       },
       {
-        "source": "not_a_socket.qcore",
+        "source": "not_a_socket.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q081"

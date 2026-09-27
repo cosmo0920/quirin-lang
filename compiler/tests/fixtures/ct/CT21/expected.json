@@ -22,14 +22,14 @@
     ],
     "controls": [
       {
-        "source": "discharged.qcore",
+        "source": "discharged.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "SequentialCleanupV1",
         "note": "Attribution: the same region, the same opening, one `discharge pack;`. Admitted and emits, so the case's refusal is about discarding the opened pack's live permission."
       },
       {
-        "source": "unopened.qcore",
+        "source": "unopened.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q306"

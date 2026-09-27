@@ -20,14 +20,14 @@
     "header": "task_scenarios.h",
     "rejection_controls": [
       {
-        "source": "unjoined.qcore",
+        "source": "unjoined.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "ScopeBusy"
         }
       },
       {
-        "source": "undropped.qcore",
+        "source": "undropped.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "return/error discards a handle, unconsumed Result or owned buffer"

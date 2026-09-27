@@ -136,7 +136,7 @@ fn a_manifest_bound_to_its_real_header_is_accepted() {
         })
         .collect::<Vec<_>>();
     bound.sort();
-    let digest = "sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d";
+    let digest = "sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657";
     assert_eq!(
         bound,
         [
@@ -216,7 +216,7 @@ fn the_header_binding_changes_the_premises_and_nothing_else() {
 fn a_header_that_contradicts_the_manifest_refuses() {
     let digest = digest_of(MISMATCHED);
     let manifest = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
+        "header_hash sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657;",
         &format!("header_hash {digest};"),
     );
     let refused = codes((MANIFEST_PATH, &manifest), bound_header(MISMATCHED));
@@ -243,7 +243,7 @@ fn a_disagreement_refuses_rather_than_withdrawing_to_the_headerless_reading() {
     // empty set — which is what makes the refusal a decision and not a default.
     let digest = digest_of(MISMATCHED);
     let manifest = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
+        "header_hash sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657;",
         &format!("header_hash {digest};"),
     );
     assert_eq!(
@@ -294,7 +294,7 @@ fn a_manifest_entry_edited_away_from_its_header_refuses() {
 fn a_macro_decorated_declaration_refuses_naming_the_token() {
     let digest = digest_of(DECORATED);
     let manifest = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
+        "header_hash sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657;",
         &format!("header_hash {digest};"),
     );
     let refused = codes((MANIFEST_PATH, &manifest), bound_header(DECORATED));
@@ -361,7 +361,7 @@ fn a_bound_symbol_the_header_does_not_declare_refuses() {
     );
     let digest = digest_of(&stripped);
     let manifest = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
+        "header_hash sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657;",
         &format!("header_hash {digest};"),
     );
     let refused = codes(
@@ -414,7 +414,7 @@ fn a_manifest_naming_no_header_is_unaffected_by_supplied_texts() {
 #[test]
 fn the_two_header_fields_are_mandatory_together() {
     let without_hash = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
+        "header_hash sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657;",
         "",
     );
     let refused = codes((MANIFEST_PATH, &without_hash), bound_header(HEADER));

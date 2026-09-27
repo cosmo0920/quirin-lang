@@ -1,0 +1,67 @@
+{
+  "ct_expected_files_with_local_mapped_name_updates": [
+    "compiler/tests/fixtures/ct/CT27/expected.json",
+    "compiler/tests/fixtures/ct/CT29/expected.json",
+    "compiler/tests/fixtures/ct/CT24/expected.json",
+    "compiler/tests/fixtures/ct/CT11/expected.json",
+    "compiler/tests/fixtures/ct/CT35/expected.json",
+    "compiler/tests/fixtures/ct/CT36/expected.json",
+    "compiler/tests/fixtures/ct/CT47/expected.json",
+    "compiler/tests/fixtures/ct/CT19/expected.json",
+    "compiler/tests/fixtures/ct/CT34/expected.json",
+    "compiler/tests/fixtures/ct/CT10/expected.json",
+    "compiler/tests/fixtures/ct/CT04/expected.json",
+    "compiler/tests/fixtures/ct/CT39/expected.json",
+    "compiler/tests/fixtures/ct/CT13/expected.json",
+    "compiler/tests/fixtures/ct/CT06/expected.json",
+    "compiler/tests/fixtures/ct/CT28/expected.json",
+    "compiler/tests/fixtures/ct/CT21/expected.json",
+    "compiler/tests/fixtures/ct/CT23/expected.json",
+    "compiler/tests/fixtures/ct/CT33/expected.json",
+    "compiler/tests/fixtures/ct/CT46/expected.json",
+    "compiler/tests/fixtures/ct/CT30/expected.json",
+    "compiler/tests/fixtures/ct/CT18/expected.json",
+    "compiler/tests/fixtures/ct/CT42/expected.json",
+    "compiler/tests/fixtures/ct/CT09/expected.json",
+    "compiler/tests/fixtures/ct/CT44/expected.json",
+    "compiler/tests/fixtures/ct/CT17/expected.json",
+    "compiler/tests/fixtures/ct/CT25/expected.json",
+    "compiler/tests/fixtures/ct/CT07/expected.json",
+    "compiler/tests/fixtures/ct/CT16/expected.json",
+    "compiler/tests/fixtures/ct/CT38/expected.json",
+    "compiler/tests/fixtures/ct/CT48/expected.json",
+    "compiler/tests/fixtures/ct/CT37/expected.json",
+    "compiler/tests/fixtures/ct/CT05/expected.json",
+    "compiler/tests/fixtures/ct/CT31/expected.json",
+    "compiler/tests/fixtures/ct/CT22/expected.json",
+    "compiler/tests/fixtures/ct/CT20/expected.json",
+    "compiler/tests/fixtures/ct/CT50/expected.json",
+    "compiler/tests/fixtures/ct/CT32/expected.json",
+    "compiler/tests/fixtures/ct/CT08/expected.json",
+    "compiler/tests/fixtures/ct/CT49/expected.json",
+    "compiler/tests/fixtures/ct/CT14/expected.json"
+  ],
+  "header_identity_changes": [
+    {
+      "header": "compiler/tests/fixtures/native_library/include/qcore_buffer_demo.h",
+      "before_sha256": "a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d",
+      "after_sha256": "aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657",
+      "only_change": "comment: .qcorelib -> .qrlib"
+    },
+    {
+      "header": "compiler/tests/fixtures/native_library/include/qcore_buffer_demo_decorated.h",
+      "before_sha256": "88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e",
+      "after_sha256": "ddbdc03f8e7ffda837b01f97575ad1b35dedc1134f70b9410fa4e635dc48e2bc",
+      "only_change": "comment: .qcorelib -> .qrlib"
+    }
+  ],
+  "first_gate": "private/extension-physical-migration-gate-20260927T132038Z",
+  "first_gate_rust": {
+    "units": 335,
+    "summaries": 348,
+    "passed": 6085,
+    "failed": 11,
+    "ignored": 11
+  },
+  "cause": "Stale local CT control names, legacy-only socket census, and header SHA pins after mapped comment changes; no assertion weakened."
+}

@@ -29,7 +29,7 @@
     },
     "controls": [
       {
-        "source": "after_join.qcore",
+        "source": "after_join.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -44,7 +44,7 @@
         "note": "The same counted read loan and same adopting cleanup, with only the join moved before the region. The task ledger closes the loan, then admits the erased release; the region publishes exactly the owner and remainder the case intended to clean."
       },
       {
-        "source": "independent_owner.qcore",
+        "source": "independent_owner.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -59,7 +59,7 @@
         "note": "The cleanup remains before a later join but destroys an independent owner while the child carries only a scalar copy. Acceptance proves the new placement itself is not the refusal."
       },
       {
-        "source": "missing_join.qcore",
+        "source": "missing_join.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -67,7 +67,7 @@
         "note": "Removing the later join cannot make the cleanup acceptable: the first refusal remains the cleanup release against the live counted share."
       },
       {
-        "source": "nested_if.qcore",
+        "source": "nested_if.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q302"
@@ -75,7 +75,7 @@
         "note": "A region nested one level further under an arbitrary if stays outside the bounded placement."
       },
       {
-        "source": "nested_loop.qcore",
+        "source": "nested_loop.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q302"
@@ -83,7 +83,7 @@
         "note": "A region nested one level further under a loop stays outside the bounded placement."
       },
       {
-        "source": "in_error_arm.qcore",
+        "source": "in_error_arm.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q302"
@@ -91,7 +91,7 @@
         "note": "Only the exact Result::Ok arm receives cleanup composition; the spawn-error arm keeps its written recovery and cannot acquire this conditional evidence."
       },
       {
-        "source": "double_discharge.qcore",
+        "source": "double_discharge.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q304"
@@ -99,7 +99,7 @@
         "note": "The existing linear cleanup capability refuses a second discharge; the new placement does not weaken pack consumption."
       },
       {
-        "source": "unsupported_body.qcore",
+        "source": "unsupported_body.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q302"

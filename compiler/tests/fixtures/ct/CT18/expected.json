@@ -23,7 +23,7 @@
     ],
     "controls": [
       {
-        "source": "owned_payload.qcore",
+        "source": "owned_payload.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedErrorPayloadV1",

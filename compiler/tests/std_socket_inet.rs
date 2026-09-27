@@ -757,7 +757,7 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
         .filter(|path| {
             matches!(
                 path.extension().and_then(|extension| extension.to_str()),
-                Some("qcore" | "qc")
+                Some("qcore" | "qc" | "qr" | "qv")
             )
         })
         .collect();
@@ -769,7 +769,7 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
 
     // The exclusion is the address reader itself, so the census asks it the one
     // question that matters: over every statement-shaped token window of every
-    // `.qcore`/`.qc` file in the repository, does it ever claim a host span?
+    // current `.qr`/`.qv` or legacy `.qcore`/`.qc` file in the repository, does it ever claim a host span?
     // It must claim one only inside this card's own two examples.
     let mut hits = Vec::new();
     for path in &files {

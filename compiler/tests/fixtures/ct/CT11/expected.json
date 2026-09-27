@@ -22,14 +22,14 @@
     ],
     "controls": [
       {
-        "source": "write_before_alias.qcore",
+        "source": "write_before_alias.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",
         "note": "The identical write placed before the alias exists. Admitted, so Q078 is keyed to the surviving alias and not to writing a buffer at all."
       },
       {
-        "source": "write_after_alias.qcore",
+        "source": "write_after_alias.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",

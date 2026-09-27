@@ -24,7 +24,7 @@
     ],
     "controls": [
       {
-        "source": "remainder_fits.qcore",
+        "source": "remainder_fits.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedReadSharesV1",

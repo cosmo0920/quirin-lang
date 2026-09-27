@@ -29,7 +29,7 @@
     ],
     "controls": [
       {
-        "source": "disjoint_payloads.qcore",
+        "source": "disjoint_payloads.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "note": "two generations over two disjoint declared footprints check, so Q617 is keyed to the shared footprint rather than to declaring a second mutex."

@@ -17,7 +17,7 @@
     "task_ledger_check"
   ],
   "positive_control": {
-    "source": "joined_sibling.qcore",
+    "source": "joined_sibling.qr",
     "evidence_target": "linux",
     "expected_i32": 42,
     "joined_children": 2

@@ -24,28 +24,28 @@
     ],
     "controls": [
       {
-        "source": "move_transfer.qcore",
+        "source": "move_transfer.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedOwnedTasksV1",
         "note": "The first contract the refusal names, supplied: `move` (custody transferred to the worker), delivered to a worker declaring the received kind. Checks."
       },
       {
-        "source": "read_share.qcore",
+        "source": "read_share.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedReadSharesV1",
         "note": "The second contract the refusal names, supplied: `read PLACE share N`, a counted read share. Byte-identical to the case but for the capture's mode. Checks."
       },
       {
-        "source": "write_lease.qcore",
+        "source": "write_lease.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedWriteLeasesV1",
         "note": "The third and last contract the refusal names, supplied: `lend PLACE LOW..HIGH`, a disjoint range write lease (card CT07-SLICE-PERMISSIONS). Checks. The refusal enumerates the contracts and every one of them admits, which is what makes the attribution complete rather than illustrative."
       },
       {
-        "source": "modeless.qcore",
+        "source": "modeless.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q000"

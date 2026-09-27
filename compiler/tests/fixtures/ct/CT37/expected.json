@@ -21,14 +21,14 @@
     "header": "completion_before_join.h",
     "rejection_controls": [
       {
-        "source": "unconsumed_result.qcore",
+        "source": "unconsumed_result.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "unconsumed Result"
         }
       },
       {
-        "source": "undropped_result.qcore",
+        "source": "undropped_result.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "owned buffer"

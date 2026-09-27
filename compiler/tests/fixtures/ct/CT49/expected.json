@@ -66,12 +66,12 @@
     "stderr_relation_strict": false,
     "controls": [
       {
-        "source": "parent_only.qcore",
+        "source": "parent_only.qr",
         "expectation": "strict_relation",
         "note": "Pinned for KEEPING byte equality. The same spawn/join structure with every line moved into the parent's body derives a strict relation on both streams, so this case's looser comparison is what one declaration buys rather than a corpus-wide weakening."
       },
       {
-        "source": "ambiguous_alphabet.qcore",
+        "source": "ambiguous_alphabet.qr",
         "expectation": "refuse_relation",
         "refusal_code": 2,
         "refusal_contains": "[INFO] 11",

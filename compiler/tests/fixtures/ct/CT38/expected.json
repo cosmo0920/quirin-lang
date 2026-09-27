@@ -16,7 +16,7 @@
     "diagnostic_sequence": ["Q637"],
     "controls": [
       {
-        "source": "split_within_total.qcore",
+        "source": "split_within_total.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "task_count": 2,

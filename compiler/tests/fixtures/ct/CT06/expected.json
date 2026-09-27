@@ -22,14 +22,14 @@
     ],
     "controls": [
       {
-        "source": "no_copy.qcore",
+        "source": "no_copy.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",
         "note": "Attribution: exactly the copy and the read through it are removed, the release stays where the case refuses it, and the program is admitted. The refusal is attributable to the copy."
       },
       {
-        "source": "copy_read_first.qcore",
+        "source": "copy_read_first.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",

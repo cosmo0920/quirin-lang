@@ -284,7 +284,7 @@ fn a_decoration_that_changes_the_type_is_not_erased() {
     // that false disagreement.
     let wave22 = include_str!("fixtures/native_library/buffer_lib_header.qrlib");
     let rehashed = wave22.replace(
-        "sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d",
+        "sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657",
         &format!(
             "sha256:{}",
             qcore_compiler::digest::sha256_hex(text(&decorated).as_bytes())
@@ -608,7 +608,7 @@ fn an_include_statement_without_a_header_is_refused_at_load() {
     let edited = text(MANIFEST)
         .replace("header include/qcore_buffer_demo_decorated.h;\n", "")
         .replace(
-            "header_hash sha256:88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e;\n",
+            "header_hash sha256:ddbdc03f8e7ffda837b01f97575ad1b35dedc1134f70b9410fa4e635dc48e2bc;\n",
             "",
         );
     assert!(

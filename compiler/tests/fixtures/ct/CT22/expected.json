@@ -33,7 +33,7 @@
     "abandoned": 3,
     "controls": [
       {
-        "source": "no_region.qcore",
+        "source": "no_region.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -44,7 +44,7 @@
         "note": "Attribution: case.qr with exactly the region removed. Admitted with no region evidence and the identical credit-recovery split, so the case's abandoned figure is the region's own publication and the region moves nothing either epoch checker already published."
       },
       {
-        "source": "spent_out.qcore",
+        "source": "spent_out.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -56,7 +56,7 @@
         "note": "Boundary: the parent spends its whole credit before the edge, so the sealed pack's remainder is zero and the discharge abandons nothing -- the published quantity is a real fold of the written statements, not a flag."
       },
       {
-        "source": "both_models.qcore",
+        "source": "both_models.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {
@@ -68,7 +68,7 @@
         "note": "Both compositions in one entry: error(move); restores the whole grant on the creator's derived error edges (CT23's law) while the parent's own region epilogue abandons 3 on the success path -- two unedited models, two published quantities, one entry."
       },
       {
-        "source": "before_join.qcore",
+        "source": "before_join.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -76,7 +76,7 @@
         "note": "The `after joins` half of the scenario, refused when false in the join direction: the region is written between the spawn and the join, so the child is live and holds its grant at the region's entry. Derived from the checked task IR, and the message names the card rule."
       },
       {
-        "source": "spawn_after.qcore",
+        "source": "spawn_after.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -84,7 +84,7 @@
         "note": "The same rule's spawn direction: the region written before the creation itself. Both directions of the after-joins premise are gates, not conventions."
       },
       {
-        "source": "acquiring.qcore",
+        "source": "acquiring.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q302"
@@ -92,7 +92,7 @@
         "note": "The duty-free-pack premise, refused when false: a region acquisition would seal a live duty into the pack, and the composed route refuses it by name (REGION-JOINS-DUTIES) -- which is what makes `parent-local` mean `only the remainder`."
       },
       {
-        "source": "no_discharge.qcore",
+        "source": "no_discharge.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q305"
@@ -100,7 +100,7 @@
         "note": "CT21's shape reached from this route: the opening binds the pack and the handler walks away with the capability live. The unedited model's own refusal at its own code -- discarding the credit is admitted only through the discharge, never through silence."
       },
       {
-        "source": "no_open.qcore",
+        "source": "no_open.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q306"
@@ -108,7 +108,7 @@
         "note": "The other way to walk away: the nonempty pack caught without being opened. Q305 and Q306 together are why the case's explicit AbandonCredit is the ONLY writable way to discard the remainder."
       },
       {
-        "source": "wrong_region.qcore",
+        "source": "wrong_region.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q303"
