@@ -275,11 +275,21 @@ repair runner then compiled and executed 325 units and 337 summaries:
 0. The 12 failures exposed the aggregate typedef defect above and historical
 negative pins that changed under supported statement paths. The defect was
 repaired; tracked descriptor, union, bitfield, volatile and released-index
-refusals retain direct controls. The post-repair full gate will be recorded
-after it completes. Its full root runner passed at source/proof/test tip
+refusals retain direct controls. The post-repair full root runner passed at source/proof/test tip
 `e8708416`: 325 units, 337 summaries, 6,046 passed, zero failed and 11
 ignored, exit 0, with unit logs and
-`private/test-binaries/20260927T052618Z-727892/summary.json`. The first gate and repair logs are under
+`private/test-binaries/20260927T052618Z-727892/summary.json`.
+The round-two full gate's `python3 scripts/run_test_binaries.py`,
+`cargo clippy --all-targets -- -D warnings`, `cargo fmt --all -- --check`,
+both `cargo run -p qcore-compiler --example reevaluation_{probe,followup}`
+commands, `python3 -m unittest discover -s scripts/tests` (364 tests), and
+`python3 scripts/build_docs_index.py --check` all exited 0. Exact commands,
+exits and log paths are in `private/w46-next-full-gate-repair-2/steps.json`.
+The Lean value-kind correspondence refinement landed afterward with no Rust
+source change; `lake build QCore.TypedAccessPathStatements` and the full
+`python3 scripts/check_lean_audits.py` (213/213 audits) both exited 0, with
+the latter log at `private/w46-access-path-statements/lean-post-mode.log`.
+The first gate and repair logs are under
 `private/w46-next-full-gate` and `private/w46-next-full-gate-repair`.
 
 The first repair runner's 12 failed controls were reviewed individually.
@@ -336,12 +346,14 @@ followup, rather than credited to P2.
 
 Proposed increment paragraph: “W46-ACCESS-PATH-STATEMENTS introduced a
 Clang-typed, fail-closed statement path reader and matching Lean model while
-retaining every shape route. Exact-unit corpus BEFORE/AFTER moved 40 of
-4,834 functions from Unknown to Safe and `rdcrc32.c` to a Safe unit; the
-system slice moved one unique function to Safe. Positive field-owner facts
-withdrew five typedef-hidden union admissions seen in a preliminary run.
-The P1 frozen prediction matched 36/45 verdicts, with nine Safe misses and
-11 unforecast gains; all diagnostic and parity differences, frontend
-requests, and remaining P3/P5/tracked-place refusals are archived under
+retaining every shape route. The historical isolated corpus measurement
+moved 40 of 4,834 functions from Unknown to Safe and `rdcrc32.c` to a Safe
+unit; a subsequent scalar-type soundness repair requires the combined
+contract-only→corrected-gateway arbiter to supply final counts. Positive
+field-owner facts withdrew five typedef-hidden union admissions seen in a
+preliminary run; positive scalar classification also refuses anonymous
+aggregate typedef stores. The P1 frozen prediction and final changed
+verdicts must be compared on that corrected run. Historical diagnostic and
+parity differences, frontend requests, and remaining P3/P5/tracked-place refusals are archived under
 `docs/reports/w46-access-path-statements/`. The full standing gate [insert
-final result and log path].”
+combined final result and log path].”
