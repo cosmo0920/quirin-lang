@@ -1,0 +1,98 @@
+{
+  "schema": "qcore.w46-access-path-statements-comparison.v1",
+  "before_status": {
+    "Unknown": 390,
+    "Safe": 54,
+    "Unsafe": 4
+  },
+  "after_status": {
+    "Unknown": 388,
+    "Safe": 56,
+    "Unsafe": 4
+  },
+  "before_diagnostic_counts": {
+    "counted_user": 4,
+    "unknown_alias": 713,
+    "unsupported": 3303
+  },
+  "after_diagnostic_counts": {
+    "counted_user": 4,
+    "unknown_alias": 893,
+    "unsupported": 3081
+  },
+  "changed_functions": 90,
+  "verdict_moves": 2,
+  "moves": [
+    {
+      "unit_index": 7,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine.c",
+      "function": "flb_engine_get_chunk_backpressure_percent",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 19135,
+          "origin": "src/flb_engine.c:297",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 19129,
+          "origin": "src/flb_engine.c:288",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 8,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine.c",
+      "function": "flb_engine_get_chunk_backpressure_percent",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 19135,
+          "origin": "src/flb_engine.c:297",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 19129,
+          "origin": "src/flb_engine.c:288",
+          "count": 1
+        }
+      ],
+      "added": []
+    }
+  ],
+  "p2_forecast": [],
+  "p2_hits": 0,
+  "parity_rows": {
+    "index_traversal": 32,
+    "scalar_member_store": 1640,
+    "sub_object_store": 736,
+    "scalar_field_noop": 160,
+    "scalar": 1882,
+    "old_refusal": 1648,
+    "chain": 200
+  },
+  "parity_disagreements": {
+    "index_traversal": 32,
+    "scalar_member_store": 1640,
+    "sub_object_store": 736,
+    "scalar_field_noop": 160,
+    "scalar": 1882,
+    "old_refusal": 1648,
+    "chain": 80
+  },
+  "frontend_contexts": 15
+}

@@ -382,7 +382,9 @@ fn a_descriptor_stored_through_a_parenthesised_base_keeps_the_gate() {
         "void w(struct x_holder *h, const char *p) { int fd = k_open(p); \
          if (fd < 0) { return; } (h)->fd = fd; }",
         "Unknown",
-        &[GATE],
+        &[
+            "unsupported:tracked descriptor `fd` read by a custody-neutral scalar route is outside the resource projection",
+        ],
     );
 }
 

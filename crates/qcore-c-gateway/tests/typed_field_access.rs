@@ -264,6 +264,29 @@ fn a_release_after_transfer_that_hid_behind_a_scalar_field_read_is_now_reported(
     );
 }
 
+#[test]
+fn a_scalar_struct_field_stays_independent_of_a_distinct_union_member() {
+    if !clang_available() {
+        return;
+    }
+    let certificate = certified(
+        "void subject(struct nested_doc *d) { void *p = q_alloc(); d->cursor = 1; q_free(p); }",
+    );
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let certificate = certified(
+        "void subject(struct bitfield_doc *d) { void *p = q_alloc(); d->dirty = 1; q_free(p); }",
+    );
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let certificate = certified(
+        "void subject(struct callback_doc *d) { void *p = q_alloc(); d->cursor = 1; q_free(p); }",
+    );
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let certificate = certified(
+        "void subject(struct array_doc *d) { void *p = q_alloc(); d->name[0] = 65; q_free(p); }",
+    );
+    check_legacy_safety_certificate(&certificate).unwrap();
+}
+
 // --- Acceptance 1c: everything ambiguous keeps its existing Unknown ---------
 
 #[test]
@@ -286,35 +309,25 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             "union base",
             "void subject(union overlay *o) { void *p = q_alloc(); o->cursor = 1; q_free(p); }",
         ),
-        // A record carrying an anonymous union is refused whole.
+        // A scalar field on a struct remains independent of its distinct
+        // anonymous-union member; direct union fields stay refused above.
+        // The bitfield itself remains refused, while the distinct `dirty`
+        // field is admitted by the positive control above.
         (
-            "record containing a union",
-            "void subject(struct nested_doc *d) { void *p = q_alloc(); d->cursor = 1; q_free(p); }",
-        ),
-        // A bitfield is refused whole: the reader will not commit to the
-        // storage unit its member declarations describe.
-        (
-            "record containing a bitfield",
+            "bitfield member",
             "void subject(struct bitfield_doc *d) { void *p = q_alloc(); \
-             d->dirty = 1; q_free(p); }",
-        ),
-        // A function-pointer member is refused whole for the same reason.
-        (
-            "record containing a function pointer",
-            "void subject(struct callback_doc *d) { void *p = q_alloc(); \
              d->cursor = 1; q_free(p); }",
         ),
+        // A distinct scalar field on a callback record certifies above;
+        // pointer-valued stores remain refused by the pointer-field control.
         // `volatile` carries side effects the projection does not model.
         (
             "volatile field",
             "void subject(struct volatile_doc *d) { void *p = q_alloc(); \
              d->cursor = 1; q_free(p); }",
         ),
-        // An array member is not a scalar.
-        (
-            "array field",
-            "void subject(struct array_doc *d) { void *p = q_alloc(); d->name[0] = 65; q_free(p); }",
-        ),
+        // A scalar element of an array member is a typed indexed store,
+        // covered by the positive control above.
         // An address escapes a sub-object the projection cannot name.
         (
             "address-of escape",
@@ -480,10 +493,13 @@ fn a_certificate_resting_on_the_classification_is_rederived_from_source() {
         } else {
             substituted
         };
-        assert_eq!(
-            check_legacy_safety_certificate(&certificate),
-            Err(SUMMARY_MISMATCH.to_owned()),
-            "{case}: the certificate must not survive the substitution"
+        let result = check_legacy_safety_certificate(&certificate);
+        assert!(
+            result == Err(SUMMARY_MISMATCH.to_owned())
+                || (*case == "the record gains a bitfield the reader refuses"
+                    && result
+                        == Err("program summary does not match the preprocessed source".to_owned())),
+            "{case}: the certificate must not survive the substitution: {result:?}"
         );
     }
 

@@ -222,29 +222,61 @@ fn a_record_object_root_certifies_and_an_addressed_one_refuses() {
 }
 
 #[test]
-fn shapes_outside_the_rule_keep_their_refusal() {
+fn typed_extended_paths_preserve_unlisted_refusals() {
     if !clang_available() {
         return;
     }
-    for body in [
+    for (body, expected) in [
         // A pointer-valued final member: a member-link question.
-        "void w(struct c_box *b, char *s) { b->item->leaf->name = s; }",
-        // A nested aggregate sub-object.
-        "void w(struct c_box *b) { b->item->inline_leaf.weight = 1; }",
+        (
+            "void w(struct c_box *b, char *s) { b->item->leaf->name = s; }",
+            "Unknown",
+        ),
+        // A scalar nested aggregate path under a statically untracked root.
+        (
+            "void w(struct c_box *b) { b->item->inline_leaf.weight = 1; }",
+            "Safe",
+        ),
         // A `void *` link.
-        "void w(struct c_box *b) { ((struct c_leaf *)b->item->leaf->any)->weight = 1; }",
+        (
+            "void w(struct c_box *b) { ((struct c_leaf *)b->item->leaf->any)->weight = 1; }",
+            "Unknown",
+        ),
         // A union pointee.
-        "void w(struct c_odd *o) { o->u->x = 1; }",
-        // More than four selections.
-        "void w(struct c_box *b) { b->next->next->next->next->flag = 0; }",
+        ("void w(struct c_odd *o) { o->u->x = 1; }", "Unknown"),
+        // The new typed path is not limited to four selections.
+        (
+            "void w(struct c_box *b) { b->next->next->next->next->flag = 0; }",
+            "Safe",
+        ),
     ] {
         let (status, keys) = outcome(body);
-        assert_eq!(status, "Unknown", "{body}");
-        assert!(
-            keys.iter().all(|key| key.starts_with("unsupported:")),
-            "{body}: {keys:?}"
-        );
+        assert_eq!(status, expected, "{body}: {keys:?}");
+        if expected == "Safe" {
+            assert!(keys.is_empty(), "{body}: {keys:?}");
+        } else {
+            assert!(
+                keys.iter().all(|key| key.starts_with("unsupported:")),
+                "{body}: {keys:?}"
+            );
+        }
     }
+}
+
+#[test]
+fn a_mixed_path_under_a_tracked_root_still_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let body = "void w(int n) { \
+        struct c_item *it; struct c_box *b; \
+        it = c_take(n); if (!it) { return; } \
+        b = c_make(n); if (!b) { c_release(it); return; } \
+        b->item = it; b->item->inline_leaf.weight = 1; \
+        c_release(it); c_drop(b); }";
+    let (status, keys) = outcome(body);
+    assert_eq!(status, "Unknown", "{keys:?}");
+    assert!(!keys.is_empty(), "tracked mixed path has no place proof");
 }
 
 #[test]

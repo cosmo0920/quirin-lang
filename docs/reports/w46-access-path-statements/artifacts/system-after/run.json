@@ -1,0 +1,33 @@
+{
+  "scope": "system",
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/targets/access-statements/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/tmp/qcore-w46-access-statements/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/tmp/qcore-w46-access-statements/contract/profiles/fluent-bit/system-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/system/resource-diagnostics.json"
+  ],
+  "qcore_revision": "753cde3422b0d2e9d049b6c56c8eaf11c9fa04e7",
+  "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "binary_sha256": "72a7a0c9d451d6e2ef66878b7a23de94f56d32424b84badb2af82307116865d4",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_AUDIT_JOBS": "4",
+    "QCORE_TYPED_PATH_PARITY": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/system/parity.jsonl"
+  },
+  "start": "2026-09-27T04:41:20.259567+00:00",
+  "state": "completed",
+  "exit": 0,
+  "end": "2026-09-27T04:43:07.157355+00:00"
+}

@@ -50,6 +50,7 @@ pub mod teardown_source;
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;
+mod typed_access_path;
 pub mod typed_c_ast;
 mod typed_field_access;
 pub mod typed_source;
@@ -85,6 +86,8 @@ pub fn active_census_sinks() -> Vec<&'static str> {
 /// the sinks declared in this crate's sources.
 pub fn census_sink_variables() -> Vec<&'static str> {
     #[allow(unused_mut)]
+    // The W46 parity stream carries stable source/function/line/route keys
+    // and is sorted before archival; it does not number records by arrival.
     let mut variables: Vec<&'static str> = Vec::new();
     #[cfg(feature = "indirect-census")]
     variables.extend([

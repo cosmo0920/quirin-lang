@@ -1,0 +1,2133 @@
+{
+  "schema": "qcore.w46-access-path-statements-attribution.v1",
+  "changed_leaf_rows": 4426,
+  "weighted_counts": [
+    {
+      "side": "added",
+      "category": "unknown_alias",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1930
+    },
+    {
+      "side": "added",
+      "category": "unknown_alias",
+      "relationship": "no_new_statement_in_function",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "category": "unknown_alias",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 92
+    },
+    {
+      "side": "added",
+      "category": "unsupported",
+      "relationship": "no_new_statement_in_function",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "category": "unsupported",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 10
+    },
+    {
+      "side": "removed",
+      "category": "unknown_alias",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 15
+    },
+    {
+      "side": "removed",
+      "category": "unsupported",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2288
+    },
+    {
+      "side": "removed",
+      "category": "unsupported",
+      "relationship": "no_new_statement_in_function",
+      "count": 45
+    },
+    {
+      "side": "removed",
+      "category": "unsupported",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 38
+    }
+  ],
+  "families": [
+    {
+      "side": "added",
+      "description": "indirect memory access is outside the resource projection",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "nested call `get_u32_at_offset` inside a modeled call is outside the resource projection",
+      "relationship": "no_new_statement_in_function",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "nested call `get_unaligned32` inside a modeled call is outside the resource projection",
+      "relationship": "no_new_statement_in_function",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "nested call `rd_kafka_broker_ApiVersion_supported` inside a modeled call is outside the resource projection",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "nullable resource `result` used by a non-null contract",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unmodeled call, aggregate or indirect access in return expression",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `BaseOffset`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `MessageSetSizep`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `NodeEndpoint`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `__tmpstr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 65
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `_dst`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `a_element`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `a`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ack_batch`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `acl_binding`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `alteration`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `arr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `attribute`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `attribute`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `b_element`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `b`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `batch`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `broker`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `bucket`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `buckets`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `buf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `buf`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `buffer`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `bytes`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `callback`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cb_rko`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cce`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cctxPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 9
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cdict`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cert`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ch`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `chainTable`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `channel`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `child`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `clusterdesc`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cmt`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cntp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `coff`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `compressed_payload_size`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `conf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 16
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `conf`",
+      "relationship": "no_new_statement_in_function",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `conf`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `config_key_values`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `config`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `config`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `copied_alteration`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cpair`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `creq`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cs`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 12
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ctxPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ctx`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `cur`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `currentPartitions`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `current_child`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `current_element`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `current_element`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `current_item`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `current_item`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `d_priv`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `d`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 9
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `data_point`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `data`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `dctx`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 58
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `decompressed_lenp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `decompressed`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `dict`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `double_assignment`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `dst`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `dst`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `dstpriv`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `e`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `elect_leaders`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `elem`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `eligible_topics`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `entries`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `entry`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `error`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `error`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `errp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `errstack`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `errstr`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `event`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 10
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `events`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `evl`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `exemplar`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `existing`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ext`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ext`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `extension`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `featuresp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `field`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `first_rktas`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `frameInfoPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `from_rkb`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `gi`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `group`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `grpdesc`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `grplist`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `h_handler`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `handle`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `hc4`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `hdr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `head`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 17
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `high`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `histogram`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `i_ins`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ic`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `idx_out`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `in`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `inout`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `iov`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `is_metric_included`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `item`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `iter`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `kv`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `labels_val`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `labels`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `leader_response`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `leader_rkb`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `leader`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `left`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `libco_params`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `links`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `low`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `lrkt`",
+      "relationship": "no_new_statement_in_function",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `lz4sd`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mabort`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `map`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 16
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `map`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `match`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `matching_acls_cntp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mcgrp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 9
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mcluster`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mconn`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 28
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mcoord`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `md`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mdb`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mdbi`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mdi`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mdpi`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mdt`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `member_cnt_out`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `member_epoch`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `member`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 16
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `meta`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `metadata`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `metric_description`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `metric_dst`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `metric`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 11
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `metric`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mi`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mock_topic`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mpart_leader`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mpart`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 34
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mpidstate`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mrkb`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mset`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `msetr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 21
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `msetw`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 29
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mshgrp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 10
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mth`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mtopic`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mtxn`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `mtxnp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `name`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `name`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `negative`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `new_result`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `new_slice`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `newitem`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `newseg`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `next_wakeup`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `next`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `next`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `node`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `old_negative_buckets`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `old_positive_buckets`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `op`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `operations`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `options`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `orig`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `out`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `p_tmp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `p`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parameters`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parent`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parpriv_copy`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parpriv`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parsed_token`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partbrokers`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partition_racks`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partition`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partitions_to_assign`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partitions`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `partmsgid`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `parts`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `password`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `payload`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `perr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `plugin`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `pmeta`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 11
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `positive`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `preferencesPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `prefsPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `prev`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `printed`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `prop`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `providers`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ptr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ptr`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `q`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `qio`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rack_id`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ran`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rbuf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `reply_rkb`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `reply`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 140
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `req`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `request_toppars_ptr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `request_toppars`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `request`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `resource`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `resp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `respart`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `result_element`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `result_rktpar`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `result`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ret`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `right_head`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rightq`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rk`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 24
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkas`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkb`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 84
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkb`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkbuf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 467
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkbuf`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkcg`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 39
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkgm`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkm`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 24
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkmce`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkmessage`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rko_partial`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rko_reply`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rko_req`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rko_result`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rko`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 53
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkq`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkq`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkqu`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkshare`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkt`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 16
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktas`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 49
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktp`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktpar2`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktpar`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 38
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rktrans`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 12
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rkts`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rl`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rs`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `rtmr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 7
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `s_priv`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `s`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `saltplus`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `sample`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `sched`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `scope_spans`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `scram_credential`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `seg`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 17
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `seg`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `selected_rkb`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `server`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `session`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 5
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `sizep`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `slice`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `sortedPartitions`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `span`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `srcPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `src`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `srcq`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `state`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 23
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `str`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `streamPtr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `stream`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `subscribed_topic_regex_to_send`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `subscribed_topics`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `substream`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `tconf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `terr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `thinfo`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `thrd`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `timedout`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `tmp`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `token`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 3
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `topic_partitions`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `topic`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `toppars_to_remove_from_ptr`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `tstype`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `tver`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `user`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `uuid`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `val`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `value`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 16
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `wire_type`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `LZ4F_resetDecompressionContext`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 3
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `hash_bytes`",
+      "relationship": "no_new_statement_in_function",
+      "count": 4
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `mk_string_copy_substr`",
+      "relationship": "no_new_statement_in_function",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `otlp_kvpair_list_initialize`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_hdr_countsIndex`",
+      "relationship": "no_new_statement_in_function",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_anyconf_is_modified`",
+      "relationship": "no_new_statement_in_function",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_buf_ApiVersion_set`",
+      "relationship": "no_new_statement_in_function",
+      "count": 21
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_buf_ApiVersion_set`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 24
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_cgrp_clear_last_err`",
+      "relationship": "no_new_statement_in_function",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_q_mark_served`",
+      "relationship": "no_new_statement_in_function",
+      "count": 5
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `rd_kafka_q_mark_served`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 3
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `ut_set_types`",
+      "relationship": "no_new_statement_in_function",
+      "count": 6
+    },
+    {
+      "side": "removed",
+      "description": "indirect memory access is outside the resource projection",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 1855
+    },
+    {
+      "side": "removed",
+      "description": "indirect memory access is outside the resource projection",
+      "relationship": "no_new_statement_in_function",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "nullable resource `data_point_list` used by a non-null contract",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "nullable resource `metric_list` used by a non-null contract",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "nullable resource `result` used by a non-null contract",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "nullable resource `ret` used by a non-null contract",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "relationship": "no_new_statement_in_function",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unrecognized assignment destination",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 43
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `confhdr`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `data_point_list`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `do_disconnect`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `err`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `is_paused`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `label_length`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `metric_list`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `nextSrcSizeHint`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `next_subscription_size`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `plugin_length`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `result`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `ret`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `ts_delay`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 1
+    },
+    {
+      "side": "removed",
+      "description": "unsupported assignment expression",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 390
+    }
+  ],
+  "attribution_sha256": "3352dadafcfb5cc5dc8dcc2f309f118f6d502c1228311eed413e3e10bc22069a"
+}

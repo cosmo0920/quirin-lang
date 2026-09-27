@@ -944,6 +944,7 @@ pub(super) fn oblige_member_null_tests(cfg: &mut LegacyCfg) {
                 destination: None,
                 frame: None,
                 chains: Vec::new(),
+                borrowed_destination: false,
             },
             line,
         );

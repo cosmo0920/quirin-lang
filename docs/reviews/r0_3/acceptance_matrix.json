@@ -6740,7 +6740,7 @@
   "workspace_tests": 6029,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 212,
+  "lean_audits": 213,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6944,6 +6944,7 @@
    "AuditTimeoutTeardown.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
+   "AuditTypedAccessPathStatements.lean",
    "AuditTypedContractFacts.lean",
    "AuditTypedefProjection.lean",
    "AuditUncheckedLinkage.lean",
@@ -6961,7 +6962,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete after recorded format repair",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w46-contract-gap-expansion/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

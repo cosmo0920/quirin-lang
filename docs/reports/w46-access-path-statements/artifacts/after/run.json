@@ -1,0 +1,25 @@
+{
+  "scope": "corpus",
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/targets/access-statements/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/corpus/monkey-source.json",
+    "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/corpus/resource-diagnostics.json"
+  ],
+  "qcore_revision": "753cde3422b0d2e9d049b6c56c8eaf11c9fa04e7",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "binary_sha256": "172e0dfd7ee1a8a079ff95a18a91a3eda8c93c78a169f4f70d009d07e66e9e34",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_AUDIT_JOBS": "4",
+    "QCORE_TYPED_PATH_PARITY": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/corpus/parity.jsonl"
+  },
+  "start": "2026-09-27T04:41:20.182856+00:00",
+  "state": "completed",
+  "exit": 0,
+  "end": "2026-09-27T05:03:40.907440+00:00"
+}

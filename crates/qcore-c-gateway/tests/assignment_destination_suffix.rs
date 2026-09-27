@@ -369,7 +369,10 @@ fn a_descriptor_read_as_an_index_of_a_member_store_is_seen() {
     let (status, keys) = descriptor_outcome(body);
     assert_eq!(
         (status, keys.clone()),
-        ("Unknown", vec![GATE.to_owned()]),
+        (
+            "Unknown",
+            vec!["unsupported:tracked descriptor `fd` read by a custody-neutral scalar route is outside the resource projection".to_owned()],
+        ),
         "{keys:?}\n{body}"
     );
 }

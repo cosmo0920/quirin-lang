@@ -159,6 +159,7 @@ fn a_static_header_helper_is_summarised_and_its_caller_certifies() {
         "subject",
         &contracts(),
         Some(&["subject".to_owned()]),
+        (crate::legacy_c::CCompilerDialect::C11, None),
     )
     .unwrap();
     assert!(
