@@ -1,0 +1,13 @@
+{
+  "note": "EXT-02/03 corrected combined gate at ce75a227 (source correction f3fe41c9): 335 Rust units / 348 summaries, zero failures, 11 ignored. All nine commands exit 0; private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration-gate-20260927T133450Z. Contract-stage provider final full suite: 129 passed, zero failed, one ignored; all five packages built and verified. Clang recorded in this worktree for this gate. Prior failed attempts and source/lock/header identity attribution are retained in the reports. No corpus verdict movement or safety-coverage claim.",
+  "workspace_tests": 6096,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 215,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

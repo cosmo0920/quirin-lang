@@ -1,0 +1,38 @@
+[
+  {
+    "name": "python",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 23.854041408048943,
+    "private_log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/final-checks/python.log"
+  },
+  {
+    "name": "docs-index",
+    "argv": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.04314186901319772,
+    "private_log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/final-checks/docs-index.log"
+  },
+  {
+    "name": "diff",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.013040182995609939,
+    "private_log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/final-checks/diff.log"
+  }
+]

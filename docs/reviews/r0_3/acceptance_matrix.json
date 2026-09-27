@@ -1481,11 +1481,11 @@
       "host_gate": [
        "linux"
       ],
-      "note": "qcorec check + emit + clang + run on CT01/case.qr (Linux-gated)"
+      "note": "qcorec check + emit + clang + run on CT01/case.qcore (Linux-gated)"
      },
      "frontend_mutation_matrix": {
       "status": "executed",
-      "executor": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qr)",
+      "executor": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qcore)",
       "note": "~25 mutation/adversarial variants checked at the task ledger"
      }
     },
@@ -3030,7 +3030,7 @@
      "sequential_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::ct16_retains_sequential_implicit_cleanup_control",
-      "note": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qr; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qr"
+      "note": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qcore; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qcore"
      }
     },
     "deepest_executed_stage": "native_execution",
@@ -4160,7 +4160,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4260,7 +4260,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT28/own_acquisition.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4271,7 +4271,7 @@
      "refused_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT28/child_unlocks.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
       "observations": 1,
       "note": "The second half of the scenario name: the child unlocks the creator's guard (close g) instead of reading through it, and refuses with the identical [Q612, Q600] cascade, so guard affinity is keyed to the acting task and not to the operation kind."
      }
@@ -4368,7 +4368,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT29/restored.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT29/restored.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4468,7 +4468,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT30/released.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT30/released.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4478,7 +4478,7 @@
      "refused_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore",
       "observations": 1,
       "note": "The second escape mechanism: naming the borrow binder after its block fails at Q013 unknown name because the binder is body-local. Q013 is name resolution, deliberately not relabelled as a concurrency verdict, and is recorded as the weaker of the two mechanisms."
      }
@@ -4575,7 +4575,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT31/performed.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT31/performed.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4676,7 +4676,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT32/joined_outside.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
       "host_gate": [
        "linux"
       ],
@@ -4777,7 +4777,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore",
       "host_gate": [
        "linux",
        "macos",
@@ -4790,7 +4790,7 @@
      "unranked_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT33/unranked.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT33/unranked.qcore",
       "observations": 1,
       "measured_cascade": [
        "Q622",
@@ -4920,7 +4920,7 @@
      "one_token_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
       "expectation": "accept_growth",
       "observations": 1,
       "measured_core_result": "accepted; admitted_protection_growths = 1; protected_shape = {1: [x[0,4), z[0,4)], 2: [y[0,4)]}",
@@ -4930,7 +4930,7 @@
      "own_footprint_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
       "expectation": "reject",
       "observations": 1,
       "measured_cascade": [
@@ -5037,14 +5037,14 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT35/two_cells.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT35/two_cells.qcore",
       "observations": 1,
       "note": "Two distinct 4096-byte cells, each read by both tasks: admitted with shared_entry_union.memory = 8192 and epoch_peak.memory = 11008. The union counts cell identities, not readers. The control's whole certificate is pinned, so exactly four figures move."
      },
      "refused_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT35/repeated_entry.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore",
       "observations": 1,
       "note": "One task naming the same cell twice refuses with the ordered cascade [Q630] DuplicateSharedEntry. Without it, `counted once` could be an artifact of a lowering that collapses repeats rather than a checked rule."
      }
@@ -5141,14 +5141,14 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT36/summed_allocation.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore",
       "observations": 1,
       "note": "The same two peaks under zero overhead and an allocation of exactly 8192: admitted, epoch_peak.memory = allocation.memory = 8192. The upper half of the straddle."
      },
      "refused_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore",
       "observations": 1,
       "note": "One byte below the summed peak refuses with the ordered cascade [Q637, Q638]. A maximized reading would have called 5120 the peak and admitted both controls, so this refusal is what makes the summing falsifiable; both codes are pinned because the head alone would not distinguish the per-task credit check from the whole-epoch one."
      }
@@ -5273,7 +5273,7 @@
      "sequential_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::ct37_retains_sequential_transferred_payload_control",
-      "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qr; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qr"
+      "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
      }
     },
     "deepest_executed_stage": "proof",
@@ -5368,7 +5368,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT38/split_within_total.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore",
       "observations": 1,
       "note": "The same epoch with credits that really do split the total (4096 + 4096 = 8192): admitted, with granted_credits.memory = allocation.memory = 8192 measured on the published certificate. The refusal is keyed to the sum, not to the split."
      }
@@ -5465,7 +5465,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT39/work_bound_only.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore",
       "observations": 1,
       "note": "The identical epoch with the claim removed: admitted with work_total.effort = 800 and the NoScheduleModel premise on the certificate (the runner pins the whole premise set for every accepted module). A consumer cannot drop that premise and read 800 as a finish time."
      }
@@ -6323,7 +6323,7 @@
      "accepted_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT48/reasserted.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
       "host_gate": [
        "linux"
       ],
@@ -6334,7 +6334,7 @@
      "refused_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-      "artifact": "compiler/tests/fixtures/ct/CT48/never_asserted.qr",
+      "artifact": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
       "observations": 1,
       "note": "A declared but never asserted fact refuses at Q600 UnknownFact, a different code from the case's Q616, so the case's diagnostic is keyed to a fact that existed and was dropped rather than to one that never existed."
      }
@@ -6738,7 +6738,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "EXT-01 post-correction gate started at 89722675 (implementation 8ee9583c). 335 Rust units / 348 summaries; zero failures, 11 ignored. Commands, times, exits and private logs in gate/steps.json; provider 129-test integrated workspace gate and repaired-tip five-package build/verify in the provider track report. Clang recorded in this worktree for this run. First gate failures and incomplete attempts are retained in README. Source alias parity is not C corpus safety coverage.",
+  "note": "EXT-02/03 corrected combined gate at ce75a227 (source correction f3fe41c9): 335 Rust units / 348 summaries, zero failures, 11 ignored. All nine commands exit 0; private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration-gate-20260927T133450Z. Contract-stage provider final full suite: 129 passed, zero failed, one ignored; all five packages built and verified. Clang recorded in this worktree for this gate. Prior failed attempts and source/lock/header identity attribution are retained in the reports. No corpus verdict movement or safety-coverage claim.",
   "workspace_tests": 6096,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
@@ -6966,7 +6966,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/extension-compatibility/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/extension-physical-migration/gate.json)"
  },
  "named_followups": [
   {

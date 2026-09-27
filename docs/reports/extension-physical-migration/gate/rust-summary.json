@@ -1,0 +1,21 @@
+{
+  "schema": "qcore-test-binaries/1",
+  "jobs": 4,
+  "phases_seconds": {
+    "build": 0.865,
+    "capture": 4.478,
+    "run": 227.605
+  },
+  "problems": [],
+  "totals": {
+    "passed": 6096,
+    "failed": 0,
+    "ignored": 11,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 348
+  },
+  "units_run": 335,
+  "units_failed": [],
+  "ok": true
+}
