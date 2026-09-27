@@ -4,7 +4,7 @@ import QCore.TypedAccessPathStatements
 
 #print axioms QCore.TypedAccessPathStatements.missing_type_refuses
 #print axioms QCore.TypedAccessPathStatements.missing_field_owner_refuses
-#print axioms QCore.TypedAccessPathStatements.unproven_scalar_value_refuses
+#print axioms QCore.TypedAccessPathStatements.unproven_value_type_refuses
 #print axioms QCore.TypedAccessPathStatements.pointer_store_refuses
 #print axioms QCore.TypedAccessPathStatements.union_refuses
 #print axioms QCore.TypedAccessPathStatements.cast_refuses

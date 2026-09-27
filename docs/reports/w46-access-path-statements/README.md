@@ -70,7 +70,9 @@ reachable whole-pointer-read form; a borrowed read with a write frame refuses.
 an exact, complete measurement of that binary, but an ensuing full-suite
 control exposed an anonymous aggregate typedef that its negative scalar-type
 filter misclassified as an integer. The repaired reader requires positive
-scalar builtin type evidence, matching Lean's `scalarValue` premise. The
+scalar builtin type evidence, matching Lean's normalized `knownValueType`
+premise (which also covers positively typed pointers only for whole borrowed
+reads). The
 historical 219-contract isolated artifacts and counts below are retained for
 attribution only; they are not final P2 claims. The integrator will measure
 the corrected gateway in a combined corpus/system run against its archived
@@ -274,8 +276,27 @@ repair runner then compiled and executed 325 units and 337 summaries:
 negative pins that changed under supported statement paths. The defect was
 repaired; tracked descriptor, union, bitfield, volatile and released-index
 refusals retain direct controls. The post-repair full gate will be recorded
-after it completes. The first gate and repair logs are under
+after it completes. Its full root runner passed at source/proof/test tip
+`e8708416`: 325 units, 337 summaries, 6,046 passed, zero failed and 11
+ignored, exit 0, with unit logs and
+`private/test-binaries/20260927T052618Z-727892/summary.json`. The first gate and repair logs are under
 `private/w46-next-full-gate` and `private/w46-next-full-gate-repair`.
+
+The first repair runner's 12 failed controls were reviewed individually.
+`address_of_member` exposed the actual anonymous aggregate typedef defect.
+`typed_field_access` exposed valid scalar fields distinct from a union,
+bitfield or callback field, plus valid scalar array elements; its certificate
+mutation still rejects. `indirect_chain_access` and `indirect_scalar_access`
+exposed intended untracked mixed/long paths and two-root indexed reads;
+new tracked-root and released-index negatives accompany their pins.
+`legacy_c` now identifies a released indexed read as provisional Unsafe.
+`assignment_destination_suffix` and `sub_object_stores` remain Unknown with
+an explicit tracked-descriptor refusal. `borrowed_field_actuals` remains
+Unknown with alias obligations and the opaque-call refusal. `neighbours`
+retains an additional `chunk` alias obligation in its withdrawn-contract
+probe. `publication_custody` retains Unknown on volatile forms and preserves
+the publication/alias facts. `parenthesised_callee` admits a pure scalar cast
+assignment without a call effect. None required retiring an older shape route.
 
 The preliminary corpus audit at `a95be942` is a recorded failed soundness
 attempt, not AFTER evidence. Its child exited 0 and the surrounding PTY

@@ -15,9 +15,12 @@ open QCore.IndirectScalarAccess
 structure Shape where
   exactType : Bool
   knownFieldOwner : Bool
-  -- True only for an established scalar builtin value type. A typedef whose
-  -- desugared spelling still names an anonymous aggregate supplies no proof.
-  scalarValue : Bool
+  -- Normalized extraction fact: a proven builtin scalar for scalar/no-access
+  -- mode, or a positively typed pointer in whole borrowed-read mode. A
+  -- typedef still naming an anonymous aggregate proves neither alternative.
+  knownValueType : Bool
+  -- True only for a whole pointer-valued read with a proven pointer type.
+  borrowedPointerValue : Bool
   unionField : Bool
   bitfield : Bool
   incompleteRecord : Bool
@@ -32,7 +35,7 @@ structure Shape where
 
 /-- Each admitted fact is positive, and each unlisted form is a refusal. -/
 def admits (p : Shape) : Bool :=
-  p.exactType && p.knownFieldOwner && p.scalarValue && !p.unionField && !p.bitfield &&
+  p.exactType && p.knownFieldOwner && p.knownValueType && !p.unionField && !p.bitfield &&
   !p.incompleteRecord && !p.castInPath && !p.pointerArithmetic &&
   !p.volatileAtomic && !p.pointerStore && !p.call && !p.otherForm &&
   (!p.mixedPath || p.untrackedRoot)
@@ -55,7 +58,7 @@ theorem missing_field_owner_refuses (p : Shape) (h : p.knownFieldOwner = false) 
     admits p = false := by
   simp [admits, h]
 
-theorem unproven_scalar_value_refuses (p : Shape) (h : p.scalarValue = false) :
+theorem unproven_value_type_refuses (p : Shape) (h : p.knownValueType = false) :
     admits p = false := by
   simp [admits, h]
 
@@ -131,19 +134,20 @@ def bindBorrowed (s : IndirectChainAccess.State) (destination : Nat) :
 
 def lowerBorrowed (s : IndirectChainAccess.State) (p : Statement) (destination : Nat) :
     Option (IndirectChainAccess.State × List Diagnostic) :=
-  if p.scalar.frame.isNone then
+  if p.shape.borrowedPointerValue && p.scalar.frame.isNone then
     (lower s p).map fun (after, diagnostics) => (bindBorrowed after destination, diagnostics)
   else none
 
 theorem pointer_read_binds_no_custody (s : IndirectChainAccess.State)
     (p : Statement) (destination : Nat) (ha : admits p.shape = true)
+    (hp : p.shape.borrowedPointerValue = true)
     (hf : p.scalar.frame = none) :
     ∃ after diagnostics, lowerBorrowed s p destination = some (after, diagnostics) ∧
       (after.base.binding destination).map Binding.targets = some [] ∧
       after.base.rest = s.base.rest ∧ after.fieldLink = s.fieldLink := by
   refine ⟨bindBorrowed (IndirectChainAccess.transfer s p.scalar p.hops).1 destination,
     (IndirectChainAccess.transfer s p.scalar p.hops).2, ?_, ?_, ?_, ?_⟩
-  · simp [lowerBorrowed, lower, ha, hf]
+  · simp [lowerBorrowed, lower, ha, hp, hf]
   · simp [bindBorrowed, borrowedAlias]
   · rfl
   · rfl
