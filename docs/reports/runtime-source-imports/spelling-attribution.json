@@ -1,6 +1,6 @@
 {
   "base": "b7c33df5ed1e7ab3426bc1586bc9d2f850cb9e70",
-  "scope": "Maintained current and archived runtime source usage; historical measurements remain owned by their original revision. Canonical spelling adds one # byte per directive; no capability changes. Core implementation and specifications have separate attribution.",
+  "scope": "Maintained current and archived runtime source usage; historical measurements remain owned by their original revision. Canonical spelling adds one # byte per directive; no capability changes. Core implementation and specifications have separate attribution. The hashes record the mechanical rewrite at that commit; subsequent documentation edits are separate.",
   "files": 351,
   "occurrences": 1072,
   "rows": [
@@ -2110,5 +2110,6 @@
       "before_sha256": "373dc655de9abfb555b59b80360bdc641880dd881be40d29d0345239d84cb177",
       "after_sha256": "8643e50f82393c7422a96ab165e55cb73048cb40b18744efe292b8f3bcceb6ac"
     }
-  ]
+  ],
+  "applied_commit": "19698477"
 }

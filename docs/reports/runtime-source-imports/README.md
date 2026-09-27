@@ -182,3 +182,28 @@ large target cache was created. The original prediction expects no pinned
 C-corpus verdict movement; any direct-multifile extern refusal change must be
 attributed to the explicit Q022 tightening rather than silently counted as
 syntax-only parity.
+
+## Integrated source migration
+
+The integrator changed 351 maintained input/document files with 1,072 canonical
+spelling substitutions at `19698477`; [attribution](spelling-attribution.json)
+records each original and rewritten SHA-256. This includes 240 `.qr` sources.
+Archived inputs and runnable snippets are maintained under the user’s explicit
+instruction; notices distinguish their original measurements from current source
+bytes. Core parser/driver/CLI and normative-spec changes belong to the implementation
+commit rather than that mechanical census. One bare standard import is retained
+as an explicit parser-compatibility control.
+
+The tracked `runtime_import_spelling_inventory` example compared all 421 runtime
+inputs at `b7c33df5` and `9271b204`: 168 accepted / 253 refused at both revisions,
+no added or removed inputs, and identical emitted C and selected compile metadata
+for every accepted source. Exactly 58 refused outputs change only the spelling
+`import std.` to `#import std.` in their diagnostic message; codes, passes and
+remaining messages are unchanged. The [exact comparison](source-comparison.json)
+retains those deltas. This is default snapshot compilation evidence, not native
+execution or a C-corpus safety claim. Private originals: `private/runtime-source-imports/`
+`spelling-before.json`, `spelling-after.json`, their logs and comparison.
+
+A pre-comparison formatting check exited 1 because the longer canonical spelling
+wrapped one test string replacement; `9271b204` applies rustfmt to that statement.
+The subsequent inventory exits 0. The integrated standing gate remains pending.

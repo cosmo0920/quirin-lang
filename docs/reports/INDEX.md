@@ -700,6 +700,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [review-prepared-tu](review-prepared-tu/README.md) | Prepared translation unit sharing (review priority O1) |
 
+| [runtime-source-imports](runtime-source-imports/README.md) | Runtime source imports |
+
 ## S
 
 | Card directory | Original report title |
