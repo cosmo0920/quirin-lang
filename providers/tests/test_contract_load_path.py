@@ -324,13 +324,14 @@ class LoadPathManifest(unittest.TestCase):
             self.assertIn("quirin-provider-libc", edges[name])
         namespaces = [c["namespace"] for c in manifest["crates"]]
         self.assertEqual(len(namespaces), len(set(namespaces)))
-        # Card W44-PROVIDER-RESOURCE-VIEW: the loader's views, 50 modules in
+        # Card W44-PROVIDER-RESOURCE-VIEW: the loader's views, 53 modules in
         # all (the Cycle 19 manifest's; 47 before W45-FB-RETRY-LIFETIME added
         # fluent_bit/task_users and fluent_bit/output_singleplex, 49 before
-        # W45-FB-BACKLOG-CUSTODY added fluent_bit/storage_backlog); the shared
-        # bundle has none.
+        # W45-FB-BACKLOG-CUSTODY added fluent_bit/storage_backlog, 50 before
+        # W46-FLUENT-EVENT-CONTRACT-GAPS added three bounded modules); the
+        # shared bundle has none.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 50)
+        self.assertEqual(sum(len(view) for view in views.values()), 53)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 16)
         # The real inventories: exactly the two crates that inherit carry pins.

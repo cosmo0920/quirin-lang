@@ -92,7 +92,7 @@ builds set `CARGO_PROFILE_DEV_DEBUG=0`, `CARGO_PROFILE_TEST_DEBUG=0`, and
 exits, counts and private log paths are recorded below after the scheduled gate
 slot. The integration arbiter is performed by the integrator after merge.
 
-## Integrator list
+## For the integrator
 
 - Update `docs/STATUS.md` module/declaration and corpus figures only from the
   combined arbiter, and add one newest-first wave increment paragraph.
@@ -110,4 +110,41 @@ slot. The integration arbiter is performed by the integrator after merge.
 
 ## Standing gate
 
-Pending scheduled gate slot; fill from private step logs before completion.
+The first complete run at `2ab573fd` was launched by the integrator outside
+the filesystem sandbox because the native/process confinement gate is not
+measurable inside it. Exact argv, exits and timestamps are in
+`private/w46-full-gate/steps.json`; every step has its own `.log` in that
+directory. The target and profile environment is stated above. No failed
+step is hidden: the root Rust runner exit **101** reported **322 units, 334
+summaries; 6,021 passed, 2 failed, 11 ignored**. Both failures were exact
+selection-count pins: `qcore-c-gateway::test::neighbours` and
+`qcore-c-gateway::test::prod_contracts` expected 50 selected modules after
+this card moved the manifest to 53. The docs index check exited **1** for
+the new report directory; provider Python exited **1** because its resource
+view total still expected 50. These are this card's pins, not test flakes.
+
+| Step | Initial exit and result |
+|---|---|
+| `git submodule update --init --recursive` | 0, libevent at `d82464a2` |
+| `python3 scripts/run_test_binaries.py` | 101, 6,021/2/11 across 322 units and 334 summaries |
+| `cargo fmt --all -- --check`; `cargo clippy --all-targets -- -D warnings` | 0; 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe`; `reevaluation_followup` | 0; 0 |
+| `python3 scripts/check_lean_audits.py`; `python3 -m unittest discover -s scripts/tests` | 0, 210 Lean audits; 0, 364 Python tests |
+| `python3 scripts/build_docs_index.py --check` | 1, new report absent from index |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0, 129 passed / 0 failed / 1 ignored over 43 summaries |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check`; provider workspace clippy with `--locked --offline -- -D warnings` | 0; 0 |
+| `python3 providers/contracts.py check`; `python3 providers/package.py build --output private/w46-full-packages` | 0; 0, all five packages built |
+| `python3 providers/package.py verify` for each of chunkio, cmetrics, ctraces, libevent and librdkafka | five exits 0 |
+| `python3 -m unittest discover -s providers/tests` | 1, 14 passed / 1 failed (resource-view count pin) |
+| `clang --version` | 0, Ubuntu Clang 21.1.8 |
+
+The count pins were corrected to **53**, and `scripts/build_docs_index.py`
+regenerated `docs/reports/INDEX.md`. The only affected Rust binaries were
+rerun with `CARGO_BUILD_JOBS=1` and `--test-threads=1`: `neighbours` exit **0**
+(12 passed) and `prod_contracts` exit **0** (14 passed). The provider Python
+suite exited **0** (15 passed). Core `cargo fmt --all -- --check` and
+`scripts/build_docs_index.py --check` both exited **0**. Repair logs are in
+`private/w46-fluent-events-repair/`, one log per command. The first full-suite
+result remains the recorded **6,021/2/11**, followed by those targeted
+repairs; no second full-suite success is claimed. The integrator's combined
+tree gate will measure the final merged tree.
