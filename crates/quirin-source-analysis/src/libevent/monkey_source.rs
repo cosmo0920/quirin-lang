@@ -11,9 +11,8 @@ use qcore_schemas::profile::ImportRole;
 
 // Q5: source-contract text remains an interpreter input. Its declaration order
 // preserves the historical wrapper report ordering; selection comes from data.
-const WRAPPER_SOURCE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv"
-);
+const WRAPPER_SOURCE_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv");
 
 /// Import default profile callbacks. Revision is a caller assertion; the pinned
 /// external audit separately checks Git/source/build identity. Each successful

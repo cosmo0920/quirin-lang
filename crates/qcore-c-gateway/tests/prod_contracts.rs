@@ -60,9 +60,8 @@ mod text;
 use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
-const LOGGING: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
-);
+const LOGGING: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv");
 const CHUNK_NAME: &str = include_str!(
     "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv"
 );

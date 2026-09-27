@@ -86,10 +86,7 @@ fn rdkafka_section() -> String {
 fn production() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
         ("libc/unistd.qv".to_owned(), normalize_newlines(UNISTD)),
-        (
-            "libc/memory.qv".to_owned(),
-            normalize_newlines(LIBC_MEMORY),
-        ),
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
         (
             "mpack/writer.qv".to_owned(),
             normalize_newlines(MPACK_WRITER),
@@ -120,10 +117,7 @@ fn without_card() -> ResourceContracts {
             "libc/unistd.qv".to_owned(),
             cut(UNISTD, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
-        (
-            "libc/memory.qv".to_owned(),
-            normalize_newlines(LIBC_MEMORY),
-        ),
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
         (
             "mpack/writer.qv".to_owned(),
             cut(MPACK_WRITER, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),

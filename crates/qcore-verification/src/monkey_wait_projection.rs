@@ -720,9 +720,8 @@ mod tests {
     const WRAPPER_CONTRACT: &str = include_str!(
         "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv"
     );
-    const COMPOSITION_CONTRACT: &str = include_str!(
-        "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qv"
-    );
+    const COMPOSITION_CONTRACT: &str =
+        include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qv");
 
     fn wrapper_source() -> String {
         format!(

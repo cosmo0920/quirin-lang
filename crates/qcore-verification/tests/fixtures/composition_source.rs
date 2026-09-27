@@ -52,9 +52,8 @@ use qcore_verifier_host::WitnessChecker;
 use std::path::PathBuf;
 
 /// The four pinned contracts this composition is taken under.
-pub const COMPOSITION_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv"
-);
+pub const COMPOSITION_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv");
 pub const OUTCOMES_CONTRACT: &str = include_str!(
     "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );

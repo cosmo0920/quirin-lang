@@ -44,14 +44,12 @@ const HELPERS: &str = include_str!(
 );
 const TIME: &str =
     include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv");
-const RESIDENCY: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv"
-);
+const RESIDENCY: &str =
+    include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv");
 
 /// The production modules card PROD-CONTRACTS landed, byte-unchanged.
-const LOGGING: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv"
-);
+const LOGGING: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv");
 const CHUNK_NAME: &str = include_str!(
     "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv"
 );

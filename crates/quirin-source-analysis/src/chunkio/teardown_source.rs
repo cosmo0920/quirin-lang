@@ -78,9 +78,8 @@ pub fn check_counter_sources(
         .collect()
 }
 
-pub const LIST_UNLINK_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv"
-);
+pub const LIST_UNLINK_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv");
 
 pub fn check_list_unlink_source(
     unit: &C11TranslationUnit<'_>,

@@ -6,11 +6,7 @@ use qcore_compiler::{
 };
 
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
-    (
-        "cfl/arena_lifetime.qv",
-        "cfl_arena_create_with_options",
-        5,
-    ),
+    ("cfl/arena_lifetime.qv", "cfl_arena_create_with_options", 5),
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
     ("cfl/intrusive_list.qv", "cfl_list_del", 5),
@@ -62,30 +58,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/context_destructor.qv", "cio_destroy", 7),
     ("chunkio/counters.qv", "cio_chunk_counter_total_add", 10),
     ("chunkio/counters.qv", "cio_chunk_counter_total_sub", 10),
-    (
-        "chunkio/counters.qv",
-        "cio_chunk_counter_total_up_add",
-        10,
-    ),
-    (
-        "chunkio/counters.qv",
-        "cio_chunk_counter_total_up_sub",
-        10,
-    ),
+    ("chunkio/counters.qv", "cio_chunk_counter_total_up_add", 10),
+    ("chunkio/counters.qv", "cio_chunk_counter_total_up_sub", 10),
     ("chunkio/error_frame.qv", "cio_error_reset", 5),
     ("chunkio/error_state.qv", "cio_error_reset", 5),
     ("chunkio/file_close.qv", "file_close_no_delete", 17),
     ("chunkio/file_close_delete.qv", "file_close_delete", 13),
-    (
-        "chunkio/filesystem_attempts.qv",
-        "file_close_result_use",
-        6,
-    ),
-    (
-        "chunkio/filesystem_attempts.qv",
-        "file_unmap_result_use",
-        3,
-    ),
+    ("chunkio/filesystem_attempts.qv", "file_close_result_use", 6),
+    ("chunkio/filesystem_attempts.qv", "file_unmap_result_use", 3),
     (
         "chunkio/filesystem_attempts.qv",
         "native_close_result_use",
@@ -114,11 +94,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // callee and its signature, the eligibility and mapping fields, three
     // indexed field entries carrying C type and reset value, one indexed path
     // argument, and the two diagnostic helpers. No `ensures` clause moved.
-    (
-        "chunkio/filesystem_delete.qv",
-        "native_delete_outcomes",
-        25,
-    ),
+    ("chunkio/filesystem_delete.qv", "native_delete_outcomes", 25),
     (
         "chunkio/filesystem_delete_attempt.qv",
         "native_delete_result_use",
@@ -253,25 +229,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the declarations are the neutral element, which a faithful summary of a
     // body that releases nothing cannot contradict. Read from
     // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_metric_get_timestamp",
-        3,
-    ),
+    ("cmetrics/metric_values.qv", "cmt_metric_get_timestamp", 3),
     ("cmetrics/metric_values.qv", "cmt_metric_set_double", 5),
     // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
     // bit-pattern conversions; every argument remains borrowed.
     ("cmetrics/metric_values.qv", "cmt_metric_get_value", 3),
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_metric_get_value_type",
-        3,
-    ),
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_metric_get_int64_value",
-        3,
-    ),
+    ("cmetrics/metric_values.qv", "cmt_metric_get_value_type", 3),
+    ("cmetrics/metric_values.qv", "cmt_metric_get_int64_value", 3),
     (
         "cmetrics/metric_values.qv",
         "cmt_metric_get_uint64_value",
@@ -279,11 +243,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("cmetrics/metric_values.qv", "cmt_metric_set_int64", 5),
     ("cmetrics/metric_values.qv", "cmt_metric_set_uint64", 5),
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_metric_set_timestamp",
-        4,
-    ),
+    ("cmetrics/metric_values.qv", "cmt_metric_set_timestamp", 4),
     (
         "cmetrics/metric_values.qv",
         "cmt_metric_set_start_timestamp",
@@ -307,11 +267,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cmetrics/metric_values.qv", "cmt_math_d64_to_uint64", 3),
     ("cmetrics/metric_values.qv", "cmt_math_uint64_to_d64", 3),
     // W46-METRIC-AGGREGATE-CONTRACTS: six scalar aggregate reads.
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_metric_hist_get_value",
-        4,
-    ),
+    ("cmetrics/metric_values.qv", "cmt_metric_hist_get_value", 4),
     (
         "cmetrics/metric_values.qv",
         "cmt_metric_hist_get_count_value",
@@ -327,11 +283,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "cmt_summary_quantile_get_value",
         4,
     ),
-    (
-        "cmetrics/metric_values.qv",
-        "cmt_summary_get_sum_value",
-        3,
-    ),
+    ("cmetrics/metric_values.qv", "cmt_summary_get_sum_value", 3),
     (
         "cmetrics/metric_values.qv",
         "cmt_summary_get_count_value",
@@ -345,11 +297,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // are NULL-guarded before any dereference, so the body has real failure
     // paths a borrowed declaration cannot delete (constraint 4). Read from
     // `lib/cmetrics/src/cmt_mpack_utils.c:88-113`.
-    (
-        "cmetrics/mpack_utils.qv",
-        "cmt_mpack_consume_uint_tag",
-        4,
-    ),
+    ("cmetrics/mpack_utils.qv", "cmt_mpack_consume_uint_tag", 4),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
@@ -542,26 +490,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/resource_string.qv", "flb_strdup", 3),
     ("fluent_bit/resource_string.qv", "flb_strndup", 4),
     // Card PROD-CONTRACTS, continued.
-    (
-        "fluent_bit/routes_mask.qv",
-        "flb_routes_mask_set_by_tag",
-        6,
-    ),
-    (
-        "fluent_bit/routes_mask.qv",
-        "flb_routes_mask_get_size",
-        3,
-    ),
-    (
-        "fluent_bit/routes_mask.qv",
-        "flb_routes_mask_get_slots",
-        4,
-    ),
-    (
-        "fluent_bit/routes_mask.qv",
-        "flb_routes_mask_is_empty",
-        5,
-    ),
+    ("fluent_bit/routes_mask.qv", "flb_routes_mask_set_by_tag", 6),
+    ("fluent_bit/routes_mask.qv", "flb_routes_mask_get_size", 3),
+    ("fluent_bit/routes_mask.qv", "flb_routes_mask_get_slots", 4),
+    ("fluent_bit/routes_mask.qv", "flb_routes_mask_is_empty", 5),
     // Card W45-FB-BACKLOG-CUSTODY: the twelve storage-backlog functions of
     // `plugins/in_storage_backlog/sb.c` as CHECKED SPECIFICATIONS (contract
     // spec §C06.3): each carries `requires resource_body_checked;` beside the
@@ -573,11 +505,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/storage_backlog.qv", "sb_allocate_chunk", 6),
     ("fluent_bit/storage_backlog.qv", "sb_destroy_chunk", 4),
     ("fluent_bit/storage_backlog.qv", "sb_destroy_backlog", 5),
-    (
-        "fluent_bit/storage_backlog.qv",
-        "sb_allocate_backlogs",
-        4,
-    ),
+    ("fluent_bit/storage_backlog.qv", "sb_allocate_backlogs", 4),
     ("fluent_bit/storage_backlog.qv", "sb_destroy_backlogs", 4),
     (
         "fluent_bit/storage_backlog.qv",
@@ -820,31 +748,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // flexible, the premise `cmd == 2`, two borrowed parameters, the data
     // tail and `none` (7).
     ("libc/unistd.qv", "fcntl", 7),
-    (
-        "library/custody_evidence.qv",
-        "publish_library_resource",
-        6,
-    ),
-    (
-        "library/custody_evidence.qv",
-        "handoff_library_resource",
-        6,
-    ),
-    (
-        "library/custody_evidence.qv",
-        "reclaim_library_resource",
-        6,
-    ),
+    ("library/custody_evidence.qv", "publish_library_resource", 6),
+    ("library/custody_evidence.qv", "handoff_library_resource", 6),
+    ("library/custody_evidence.qv", "reclaim_library_resource", 6),
     (
         "library/custody_evidence.qv",
         "check_imported_library_custody",
         7,
     ),
-    (
-        "library/custody_evidence.qv",
-        "release_library_resource",
-        3,
-    ),
+    ("library/custody_evidence.qv", "release_library_resource", 3),
     // Card W43-DESCRIPTOR-NATIVE-CHECK: the executable lifecycle policy the
     // native descriptor replay (`qcore_contract::descriptor_observation`)
     // evaluates on recorded executions, one parameterless rule per property.
@@ -980,11 +892,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/callback_binding.qv", "binding_call_arguments", 2),
     ("monkey/callback_binding.qv", "binding_call_interval", 3),
     ("monkey/callback_binding.qv", "binding_runtime_effect", 2),
-    (
-        "monkey/callback_task_handoff.qv",
-        "selected_callbacks",
-        4,
-    ),
+    ("monkey/callback_task_handoff.qv", "selected_callbacks", 4),
     (
         "monkey/callback_task_handoff.qv",
         "selected_callback_identity",
@@ -1002,11 +910,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "effect_evutil_closesocket",
         3,
     ),
-    (
-        "monkey/callback_task_handoff.qv",
-        "effect_mk_mem_free",
-        3,
-    ),
+    ("monkey/callback_task_handoff.qv", "effect_mk_mem_free", 3),
     ("monkey/callback_task_handoff.qv", "effect_perror", 3),
     ("monkey/callback_task_handoff.qv", "effect_send", 3),
     (
@@ -1039,11 +943,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/composition.qv", "check_monkey_composition", 13),
     // Deliberate Cycle 18 executable policy pins.
     ("monkey/cycle18_composition.qv", "callback_inventory", 18),
-    (
-        "monkey/cycle18_composition.qv",
-        "context_identity_join",
-        6,
-    ),
+    ("monkey/cycle18_composition.qv", "context_identity_join", 6),
     (
         "monkey/cycle18_composition.qv",
         "wait_failure_source_join",
@@ -1051,27 +951,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("monkey/cycle18_composition.qv", "evidence_join", 41),
     ("monkey/cycle18_composition.qv", "caller_size_bound", 8),
-    (
-        "monkey/cycle18_composition.qv",
-        "aggregate_acceptance",
-        11,
-    ),
+    ("monkey/cycle18_composition.qv", "aggregate_acceptance", 11),
     (
         "monkey/descriptor_observation.qv",
         "observation_socketpair",
         4,
     ),
-    (
-        "monkey/descriptor_observation.qv",
-        "observation_acquire",
-        4,
-    ),
+    ("monkey/descriptor_observation.qv", "observation_acquire", 4),
     ("monkey/descriptor_observation.qv", "observation_use", 1),
-    (
-        "monkey/descriptor_observation.qv",
-        "observation_close",
-        2,
-    ),
+    ("monkey/descriptor_observation.qv", "observation_close", 2),
     (
         "monkey/descriptor_observation.qv",
         "observation_complete",
@@ -1079,23 +967,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
-    (
-        "monkey/event_payload.qv",
-        "cb_event_source_projection",
-        12,
-    ),
-    (
-        "monkey/event_payload.qv",
-        "contextual_payload_boundary",
-        1,
-    ),
+    ("monkey/event_payload.qv", "cb_event_source_projection", 12),
+    ("monkey/event_payload.qv", "contextual_payload_boundary", 1),
     ("monkey/event_payload.qv", "contextual_authority", 13),
     ("monkey/event_payload.qv", "native_allocation", 8),
-    (
-        "monkey/event_payload.qv",
-        "contextual_payload_access",
-        13,
-    ),
+    ("monkey/event_payload.qv", "contextual_payload_access", 13),
     // Card W45-FB-RETRY-LIFETIME: `resource_published` / `resource_unpublished`.
     ("monkey/intrusive_list.qv", "mk_list_add", 5),
     ("monkey/intrusive_list.qv", "mk_list_del", 4),
@@ -1156,22 +1032,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/native_platform_matrix.qv", "unknown_row", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: pinned, scalar-only observations.
     ("monkey/scalar_observation.qv", "_mk_string_search", 6),
-    (
-        "monkey/scalar_observation.qv",
-        "mk_string_char_search",
-        5,
-    ),
-    (
-        "monkey/scalar_observation.qv",
-        "mk_string_char_search_r",
-        5,
-    ),
+    ("monkey/scalar_observation.qv", "mk_string_char_search", 5),
+    ("monkey/scalar_observation.qv", "mk_string_char_search_r", 5),
     ("monkey/scalar_observation.qv", "MK_EVENT_NEW", 3),
-    (
-        "monkey/scalar_observation.qv",
-        "event_base_get_features",
-        3,
-    ),
+    ("monkey/scalar_observation.qv", "event_base_get_features", 3),
     (
         "monkey/scalar_observation.qv",
         "event_get_struct_event_size",
@@ -1186,11 +1050,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `source_identity` (4 clauses), a textual duplicate of
     // `monkey/wait_source_policy.qv`'s, which is now its single owner.
     ("monkey/timeout_teardown.qv", "cb_timeout_source", 7),
-    (
-        "monkey/timeout_teardown.qv",
-        "cb_timeout_teardown_path",
-        1,
-    ),
+    ("monkey/timeout_teardown.qv", "cb_timeout_teardown_path", 1),
     ("monkey/timeout_teardown.qv", "libevent_self_teardown", 5),
     ("monkey/timeout_teardown.qv", "teardown_obligations", 21),
     ("monkey/wait_failure_policy.qv", "loop_init_failure", 6),
@@ -1199,47 +1059,27 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "context_allocation_failure",
         7,
     ),
-    (
-        "monkey/wait_failure_policy.qv",
-        "base_creation_failure",
-        8,
-    ),
+    ("monkey/wait_failure_policy.qv", "base_creation_failure", 8),
     (
         "monkey/wait_failure_policy.qv",
         "fired_allocation_failure",
         10,
     ),
-    (
-        "monkey/wait_failure_policy.qv",
-        "timer_creation_failure",
-        9,
-    ),
+    ("monkey/wait_failure_policy.qv", "timer_creation_failure", 9),
     (
         "monkey/wait_failure_policy.qv",
         "timer_registration_failure",
         10,
     ),
-    (
-        "monkey/wait_failure_policy.qv",
-        "success_observation",
-        10,
-    ),
+    ("monkey/wait_failure_policy.qv", "success_observation", 10),
     ("monkey/wait_failure_policy.qv", "loop_size_bounds", 6),
     (
         "monkey/wait_identity_policy.qv",
         "wait_identity_context",
         23,
     ),
-    (
-        "monkey/wait_identity_policy.qv",
-        "wait_identity_entry",
-        1,
-    ),
-    (
-        "monkey/wait_identity_policy.qv",
-        "wait_observed_profile",
-        5,
-    ),
+    ("monkey/wait_identity_policy.qv", "wait_identity_entry", 1),
+    ("monkey/wait_identity_policy.qv", "wait_observed_profile", 5),
     ("monkey/wait_source_policy.qv", "source_identity", 4),
     (
         "monkey/wait_source_policy.qv",
@@ -1252,11 +1092,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "contract_cb_wait_2_timeout",
         9,
     ),
-    (
-        "monkey/wait_source_policy.qv",
-        "_mk_event_loop_create",
-        9,
-    ),
+    ("monkey/wait_source_policy.qv", "_mk_event_loop_create", 9),
     (
         "monkey/wait_source_policy.qv",
         "contract__mk_event_loop_create",
@@ -1278,22 +1114,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "contract__mk_event_wait_2",
         9,
     ),
-    (
-        "monkey/wait_source_policy.qv",
-        "_mk_event_loop_destroy",
-        9,
-    ),
+    ("monkey/wait_source_policy.qv", "_mk_event_loop_destroy", 9),
     (
         "monkey/wait_source_policy.qv",
         "contract__mk_event_loop_destroy",
         9,
     ),
     ("monkey/wait_source_policy.qv", "artifact_set", 4),
-    (
-        "monkey/wrapper_paths.qv",
-        "mk_event_libevent_socketpair",
-        3,
-    ),
+    ("monkey/wrapper_paths.qv", "mk_event_libevent_socketpair", 3),
     ("monkey/wrapper_paths.qv", "_mk_event_init", 3),
     ("monkey/wrapper_paths.qv", "_mk_event_loop_create", 5),
     ("monkey/wrapper_paths.qv", "_mk_event_loop_destroy", 4),

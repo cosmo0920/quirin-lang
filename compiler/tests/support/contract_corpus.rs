@@ -60,7 +60,10 @@ pub fn sources() -> BTreeMap<String, PathBuf> {
                 "symbolic link in corpus: {}",
                 path.display()
             );
-            if path.extension().is_some_and(|ext| ext == "qcore" || ext == "qv") {
+            if path
+                .extension()
+                .is_some_and(|ext| ext == "qcore" || ext == "qv")
+            {
                 let logical = path
                     .strip_prefix(&root)
                     .unwrap()

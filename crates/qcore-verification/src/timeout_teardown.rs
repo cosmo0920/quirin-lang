@@ -13,9 +13,8 @@ use qcore_core::event_reactor::{
 use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 
-const POLICY: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv"
-);
+const POLICY: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv");
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimeoutTeardownError {

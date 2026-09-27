@@ -27,38 +27,23 @@ mod contract_corpus;
 const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
     (
         "_mk_event_loop_create",
-        &[
-            "monkey/wait_source_policy.qv",
-            "monkey/wrapper_paths.qv",
-        ],
+        &["monkey/wait_source_policy.qv", "monkey/wrapper_paths.qv"],
     ),
     (
         "_mk_event_loop_destroy",
-        &[
-            "monkey/wait_source_policy.qv",
-            "monkey/wrapper_paths.qv",
-        ],
+        &["monkey/wait_source_policy.qv", "monkey/wrapper_paths.qv"],
     ),
     (
         "_mk_event_wait_2",
-        &[
-            "monkey/wait_source_policy.qv",
-            "monkey/wrapper_paths.qv",
-        ],
+        &["monkey/wait_source_policy.qv", "monkey/wrapper_paths.qv"],
     ),
     (
         "_mk_event_wait_with_flags",
-        &[
-            "monkey/wait_source_policy.qv",
-            "monkey/wrapper_paths.qv",
-        ],
+        &["monkey/wait_source_policy.qv", "monkey/wrapper_paths.qv"],
     ),
     (
         "cb_wait_2_timeout",
-        &[
-            "monkey/composition.qv",
-            "monkey/wait_source_policy.qv",
-        ],
+        &["monkey/composition.qv", "monkey/wait_source_policy.qv"],
     ),
     (
         "cio_chunk_close",
@@ -74,24 +59,15 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
     ),
     (
         "flb_calloc",
-        &[
-            "fluent_bit/memory.qv",
-            "fluent_bit/resource_memory.qv",
-        ],
+        &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
     (
         "flb_free",
-        &[
-            "fluent_bit/memory.qv",
-            "fluent_bit/resource_memory.qv",
-        ],
+        &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
     (
         "flb_malloc",
-        &[
-            "fluent_bit/memory.qv",
-            "fluent_bit/resource_memory.qv",
-        ],
+        &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
     // Card W45-FB-RETRY-LIFETIME: the resource-v1 view of the unlink.
     (

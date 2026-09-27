@@ -53,18 +53,15 @@ pub const SOURCE: &str =
     include_str!("../../../../compiler/tests/fixtures/chunkio/memory_close_source.c");
 
 /// The five pinned contracts this composition is taken under.
-pub const COMPOSITION_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv"
-);
-pub const FRAME_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv"
-);
+pub const COMPOSITION_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv");
+pub const FRAME_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv");
 pub const BACKEND_CONTRACT: &str = include_str!(
     "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv"
 );
-pub const UNLINK_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv"
-);
+pub const UNLINK_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv");
 pub const COUNTER_CONTRACT: &str =
     include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv");
 /// The declared source-projection acceptance rules the frame import runs under.

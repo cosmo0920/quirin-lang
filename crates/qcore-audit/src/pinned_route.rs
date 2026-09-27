@@ -718,7 +718,9 @@ fn prepare_library(
             PINNED_FLUENT_BIT_COMMIT,
             &profile,
             library,
-            include_str!("../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"),
+            include_str!(
+                "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
+            ),
         )
         .map_err(|error| error.to_string())?
         {

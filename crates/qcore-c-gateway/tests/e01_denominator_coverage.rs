@@ -34,10 +34,7 @@ use qcore_c_gateway::legacy_c::{
     UnrestrictedLegacyResult, analyze_unrestricted_c11, enumerate_source_definitions,
 };
 
-const Q_BASE: (&str, &str) = (
-    "q_base.qcore",
-    include_str!("fixtures/contracts/q_base.qv"),
-);
+const Q_BASE: (&str, &str) = ("q_base.qcore", include_str!("fixtures/contracts/q_base.qv"));
 
 fn clang_available() -> bool {
     match std::env::var("QCORE_CLANG") {

@@ -62,9 +62,8 @@ pub const CLOSE_CONTRACT: &str =
 pub const CLOSE_DELETE_CONTRACT: &str = include_str!(
     "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv"
 );
-pub const UNMAP_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv"
-);
+pub const UNMAP_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv");
 pub const OUTCOMES_CONTRACT: &str = include_str!(
     "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );

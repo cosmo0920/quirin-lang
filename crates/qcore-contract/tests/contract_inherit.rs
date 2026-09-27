@@ -251,10 +251,7 @@ fn a_chain_crosses_three_crates_through_direct_dependencies_only() {
 fn selecting_the_parent_module_beside_the_child_is_still_one_function_each() {
     let both = load(
         &fixture_load_path(),
-        &[
-            (FLB, "fluent_bit/wrappers.qcore"),
-            (LIBC, "libc/string.qv"),
-        ],
+        &[(FLB, "fluent_bit/wrappers.qcore"), (LIBC, "libc/string.qv")],
     )
     .unwrap();
     assert!(both.contract("memcpy").is_some());

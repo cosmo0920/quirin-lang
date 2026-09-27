@@ -30,10 +30,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const Q_BASE: (&str, &str) = (
-    "q_base.qcore",
-    include_str!("fixtures/contracts/q_base.qv"),
-);
+const Q_BASE: (&str, &str) = ("q_base.qcore", include_str!("fixtures/contracts/q_base.qv"));
 
 /// The reason a certificate whose custody summaries cannot be re-derived from
 /// the preprocessed source is refused.
