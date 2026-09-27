@@ -16,8 +16,8 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_string::StringStorage;
 
-const COMPOSED: &str = include_str!("fixtures/std_string/composed.qcore");
-const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qcore");
+const COMPOSED: &str = include_str!("fixtures/std_string/composed.qr");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qr");
 const STRINGS_README: &str = include_str!("../../examples/strings/README.md");
 
 fn options() -> CompileOptions {

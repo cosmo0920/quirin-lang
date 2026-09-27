@@ -358,19 +358,19 @@ fn a_parent_only_program_declares_a_strict_relation_on_both_streams() {
     for (name, source) in [
         (
             "two_workers",
-            include_str!("../../examples/threads/two_workers.qcore"),
+            include_str!("../../examples/threads/two_workers.qr"),
         ),
         (
             "owned_buffer",
-            include_str!("../../examples/threads/owned_buffer.qcore"),
+            include_str!("../../examples/threads/owned_buffer.qr"),
         ),
         (
             "shared_readers",
-            include_str!("../../examples/threads/shared_readers.qcore"),
+            include_str!("../../examples/threads/shared_readers.qr"),
         ),
         (
             "core_context",
-            include_str!("../../examples/threads/core_context.qcore"),
+            include_str!("../../examples/threads/core_context.qr"),
         ),
     ] {
         let module = compile_files(
@@ -650,9 +650,9 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// machinery so that a regression in the derivation shows up in this file too.
 #[test]
 fn the_published_examples_still_match_byte_for_byte() {
-    let source = include_str!("../../examples/threads/two_workers.qcore");
+    let source = include_str!("../../examples/threads/two_workers.qr");
     let module = compile_files(
-        &[SourceFile::new("two_workers.qcore", source)],
+        &[SourceFile::new("two_workers.qr", source)],
         &CompileOptions::default(),
     )
     .unwrap();

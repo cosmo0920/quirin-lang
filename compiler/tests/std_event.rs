@@ -21,8 +21,8 @@ use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qcore");
-const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qcore");
+const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qr");
+const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qr");
 const README: &str = include_str!("../../examples/events/README.md");
 const WINDOWS_RUNNER: &str = include_str!("../../examples/events/build-windows.ps1");
 

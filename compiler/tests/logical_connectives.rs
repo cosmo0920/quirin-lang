@@ -35,9 +35,9 @@ mod sequential_observation;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const OR_FIXTURE: &str = include_str!("fixtures/connectives/short_circuit_or.qcore");
-const OR_TWIN: &str = include_str!("fixtures/connectives/short_circuit_or_twin.qcore");
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
+const OR_FIXTURE: &str = include_str!("fixtures/connectives/short_circuit_or.qr");
+const OR_TWIN: &str = include_str!("fixtures/connectives/short_circuit_or_twin.qr");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
 
 /// Both members of a byte-equality pair are compiled under **one** file name,
 /// because the emitted C carries a `#line` naming it. The two fixtures are

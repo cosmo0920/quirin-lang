@@ -32,13 +32,13 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
 const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qv");
-const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib_header.qcorelib";
-const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib_header.qcorelib");
-const HEADERLESS_PATH: &str = "fixtures/native_library/buffer_lib.qcorelib";
-const HEADERLESS: &str = include_str!("fixtures/native_library/buffer_lib.qcorelib");
+const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib_header.qrlib";
+const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib_header.qrlib");
+const HEADERLESS_PATH: &str = "fixtures/native_library/buffer_lib.qrlib";
+const HEADERLESS: &str = include_str!("fixtures/native_library/buffer_lib.qrlib");
 const HEADER_REFERENCE: &str = "include/qcore_buffer_demo.h";
 const HEADER: &str = include_str!("fixtures/native_library/include/qcore_buffer_demo.h");
 const MISMATCHED: &str =
@@ -626,7 +626,7 @@ fn both_readers(c_text: &str, declared: &str, manifest_entry: &str) -> (String, 
         digest_of(c_text)
     );
     let libraries = qcore_compiler::native_library::NativeLibraries::load(&BTreeMap::from([(
-        "demo.qcorelib".to_owned(),
+        "demo.qrlib".to_owned(),
         manifest,
     )]))
     .expect("the manifest loads");

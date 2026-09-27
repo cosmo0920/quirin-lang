@@ -26,8 +26,8 @@ use std::path::Path;
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 
-const ROUND_TRIP_SOURCE: &str = include_str!("fixtures/ct/CT01/case.qcore");
-const CONCURRENT_SOURCE: &str = include_str!("fixtures/f02/concurrent_round_trip.qcore");
+const ROUND_TRIP_SOURCE: &str = include_str!("fixtures/ct/CT01/case.qr");
+const CONCURRENT_SOURCE: &str = include_str!("fixtures/f02/concurrent_round_trip.qr");
 const ROUND_TRIP_TRACE: &str =
     include_str!("../../crates/qcore-core/tests/fixtures/f02/round_trip.trace");
 const CONCURRENT_TRACE: &str =

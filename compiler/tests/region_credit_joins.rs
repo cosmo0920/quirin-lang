@@ -142,7 +142,7 @@ fn both(memory: u64, work: u64) -> Quantity {
 /// before publication.
 #[test]
 fn ct22_the_opening_discards_the_parents_unused_credit_after_all_joins() {
-    let module = accept("case.qcore");
+    let module = accept("case.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -203,7 +203,7 @@ fn ct22_the_opening_discards_the_parents_unused_credit_after_all_joins() {
 /// fold of the written statements, not a flag.
 #[test]
 fn the_boundary_spends_everything_and_abandons_nothing() {
-    let module = accept("spent_out.qcore");
+    let module = accept("spent_out.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -216,8 +216,8 @@ fn the_boundary_spends_everything_and_abandons_nothing() {
 /// the region, and a module without a region publishes no region evidence.
 #[test]
 fn the_epoch_certificates_are_unmoved_by_the_region() {
-    let with = accept("case.qcore");
-    let without = accept("no_region.qcore");
+    let with = accept("case.qr");
+    let without = accept("no_region.qr");
     assert_eq!(composed(&with).certificate, composed(&without).certificate);
     assert_eq!(
         composed(&with).credit_recovery,
@@ -245,9 +245,9 @@ fn the_emitted_c_is_unchanged_by_the_region_byte_for_byte() {
 /// plan. `Q600` is the composed route's own reconciliation band.
 #[test]
 fn a_spawn_or_join_after_the_region_is_refused() {
-    assert_eq!(refuse("before_join.qcore"), vec!["Q600"]);
+    assert_eq!(refuse("before_join.qr"), vec!["Q600"]);
     assert!(
-        message(fixture("before_join.qcore")).contains("REGION-CREDIT-JOINS"),
+        message(fixture("before_join.qr")).contains("REGION-CREDIT-JOINS"),
         "the refusal names the rule"
     );
 
@@ -277,7 +277,7 @@ fn a_spawn_or_join_after_the_region_is_refused() {
     );
     let refused = compile_files(
         &[SourceFile {
-            path: "region_credit_joins/spawn_after.qcore".to_owned(),
+            path: "region_credit_joins/spawn_after.qr".to_owned(),
             source,
         }],
         &CompileOptions::default(),
@@ -298,11 +298,11 @@ fn a_spawn_or_join_after_the_region_is_refused() {
 #[test]
 fn the_models_own_refusals_arrive_at_their_own_codes() {
     // CT21's shape from this route: the handler walks away with the pack live.
-    assert_eq!(refuse("no_discharge.qcore"), vec!["Q305"]);
+    assert_eq!(refuse("no_discharge.qr"), vec!["Q305"]);
     // A nonempty pack caught without being opened.
-    assert_eq!(refuse("no_open.qcore"), vec!["Q306"]);
+    assert_eq!(refuse("no_open.qr"), vec!["Q306"]);
     // The opening names the wrong region.
-    assert_eq!(refuse("wrong_region.qcore"), vec!["Q303"]);
+    assert_eq!(refuse("wrong_region.qr"), vec!["Q303"]);
 
     // A second discharge consumes one capability twice.
     let doubled = with_region(
@@ -413,7 +413,7 @@ fn the_composed_reader_refuses_its_own_shapes() {
 /// unedited models, two published quantities, one entry.
 #[test]
 fn both_models_fire_in_one_module() {
-    let module = accept("both_models.qcore");
+    let module = accept("both_models.qr");
     let evidence = composed(&module);
     // The CT23 half: `error(move);` restores the whole grant on the creator's
     // derived error edges.

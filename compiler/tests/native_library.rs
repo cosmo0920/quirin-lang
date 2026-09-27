@@ -24,11 +24,11 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call, native_library,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
-const MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
-const MANIFEST_PATH: &str = "fixtures/native_library/unchecked_demo.qcorelib";
+const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qr");
+const MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qrlib");
+const MANIFEST_PATH: &str = "fixtures/native_library/unchecked_demo.qrlib";
 const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
-const CONTRACTED_ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const CONTRACTED_ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 
 fn selection(manifests: &[(&str, String)]) -> Option<BTreeMap<String, String>> {
     Some(
@@ -223,7 +223,7 @@ fn a_manifest_that_names_other_symbols_changes_nothing() {
         })
         .collect::<Vec<_>>()
         .join("\n");
-    let module = compile_with(ROUND_TRIP, selection(&[("other.qcorelib", unrelated)])).unwrap();
+    let module = compile_with(ROUND_TRIP, selection(&[("other.qrlib", unrelated)])).unwrap();
     let bare = compile_with(ROUND_TRIP, None).unwrap();
     assert_eq!(premises(&module), premises(&bare));
     assert!(manifest_premises(&module).is_empty());
@@ -239,7 +239,7 @@ fn a_manifest_naming_some_symbols_sharpens_exactly_those() {
         .filter(|line| !line.contains("k_unchecked_measure"))
         .collect::<Vec<_>>()
         .join("\n");
-    let module = compile_with(ROUND_TRIP, selection(&[("partial.qcorelib", partial)])).unwrap();
+    let module = compile_with(ROUND_TRIP, selection(&[("partial.qrlib", partial)])).unwrap();
     assert_eq!(
         bare_premises(&module),
         vec!["k_unchecked_measure".to_owned()]
@@ -408,10 +408,7 @@ fn two_manifests_may_not_bind_the_same_symbol() {
     assert_eq!(
         codes(
             ROUND_TRIP,
-            selection(&[
-                (MANIFEST_PATH, MANIFEST.to_owned()),
-                ("twin.qcorelib", twin)
-            ])
+            selection(&[(MANIFEST_PATH, MANIFEST.to_owned()), ("twin.qrlib", twin)])
         ),
         ["Q040"]
     );

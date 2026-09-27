@@ -6,7 +6,7 @@ import QCore.Ct01OwnedTransfer
 CT50's scenario is `New lifetime reuses old numeric address/descriptor` (spec
 §55, semantic profile `ScopedOwnedTasksV1`, expected *Old capability cannot
 authorize new identity*). Its artifact is
-`compiler/tests/fixtures/ct/CT50/case.qcore` — one root task that allocates a
+`compiler/tests/fixtures/ct/CT50/case.qr` — one root task that allocates a
 Buffer carrying `7`, releases it, allocates a second Buffer carrying `42`,
 reads that one back and releases it — and the named workspace test
 `compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape`

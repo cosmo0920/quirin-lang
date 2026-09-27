@@ -64,7 +64,7 @@ Scoped task and checked mutex emission embeds the required C11 thread subset
 on Windows, adapted from Monkey winpthreads. In the developer shell:
 
 ```powershell
-cargo run -p qcorec -- emit examples/threads/two_workers.qcore -o generated.c
+cargo run -p qcorec -- emit examples/threads/two_workers.qr -o generated.c
 cl /nologo /std:c11 /W4 /WX generated.c /Fe:generated.exe
 .\generated.exe
 ```

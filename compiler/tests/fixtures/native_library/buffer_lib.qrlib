@@ -3,7 +3,7 @@
 # spectrum, where a library's pointer symbols belong.
 #
 # Each entry names a symbol, the exported header declaration in the profile's
-# canonical stdint spellings, and the declared `.qcore` contract module the
+# canonical stdint spellings, and the declared `.qv` contract module the
 # symbol is to be read through. The contract machinery is unchanged: the
 # manifest selects and attributes, it states no modes and no effects of its own.
 #

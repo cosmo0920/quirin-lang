@@ -5,7 +5,7 @@ recoverable errors, checked cleanup and concurrency, lowering to C11. It also
 provides a conservative checker for existing C, exercised on a pinned Fluent Bit
 corpus. Unsupported or unproven behavior stays `Unknown`.
 
-The commands are `quirin` and `quirin-audit`; sources use `.qcore`. Rust crates,
+The commands are `quirin` and `quirin-audit`; contract sources use `.qv`, runtime sources use `.qr`, and native ABI manifests use `.qrlib` (legacy `.qcore`/`.qcorelib` remain accepted with warnings). Rust crates,
 namespaces and the emitted-C API retain the `qcore` spelling. The `.qc` extension
 is retired.
 
@@ -14,8 +14,8 @@ is retired.
 ```sh
 git submodule update --init --recursive
 cargo build --bin quirin
-./target/debug/quirin check examples/cycle12.qcore
-./target/debug/quirin emit -o generated.c examples/cycle12.qcore
+./target/debug/quirin check examples/cycle12.qr
+./target/debug/quirin emit -o generated.c examples/cycle12.qr
 ```
 
 Checking/emitting Quirin does not require Clang. Compiling emitted C needs a

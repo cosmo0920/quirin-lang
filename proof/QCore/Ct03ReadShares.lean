@@ -10,7 +10,7 @@ observation alphabet of `QCore.TaskTraceWrites` — the third proof leg, and the
 one that required growing the alphabet: CT03's reference run carries the T05
 Buffer write (`qcore_buffer_write` at two sites), which the pinned alphabet
 refused to encode. `referenceRun` below transcribes the reference execution of
-`compiler/tests/fixtures/ct/CT03/case.qcore` through the real pipeline: the
+`compiler/tests/fixtures/ct/CT03/case.qr` through the real pipeline: the
 parent allocates one Buffer (initial payload `1`), writes `42` into it while
 it holds exclusive authority, lends read shares to two children, all three
 read `42` while the shares are out, joins both children and takes both shares

@@ -70,9 +70,9 @@ fn run(name: &str, source: &str, with_contracts: bool) -> (String, String) {
 
 #[test]
 fn two_workers_prints_the_documented_system_trace() {
-    let source = include_str!("../../examples/threads/two_workers.qcore");
+    let source = include_str!("../../examples/threads/two_workers.qr");
     let readme = include_str!("../../examples/threads/README.md");
-    let (out, err) = run("two_workers.qcore", source, false);
+    let (out, err) = run("two_workers.qr", source, false);
     assert_eq!(out, transcript(readme, "transcript:stdout"));
     assert_eq!(err, transcript(readme, "transcript:stderr"));
 }
@@ -82,18 +82,18 @@ fn branching_examples_print_the_documented_system_traces() {
     let readme = include_str!("../../examples/branching/README.md");
     for (name, source, marker) in [
         (
-            "conditional_release.qcore",
-            include_str!("../../examples/branching/conditional_release.qcore"),
+            "conditional_release.qr",
+            include_str!("../../examples/branching/conditional_release.qr"),
             "transcript: conditional_release stdout",
         ),
         (
-            "condition_tier.qcore",
-            include_str!("../../examples/branching/condition_tier.qcore"),
+            "condition_tier.qr",
+            include_str!("../../examples/branching/condition_tier.qr"),
             "transcript: condition_tier stdout",
         ),
         (
-            "early_return.qcore",
-            include_str!("../../examples/branching/early_return.qcore"),
+            "early_return.qr",
+            include_str!("../../examples/branching/early_return.qr"),
             "transcript: early_return stdout",
         ),
     ] {
@@ -107,15 +107,15 @@ fn branching_examples_print_the_documented_system_traces() {
 fn pipeline_and_scalar_stages_print_the_documented_system_traces() {
     for (name, source, readme, out_marker, err_marker) in [
         (
-            "pipeline.qcore",
-            include_str!("../../examples/stdio/pipeline.qcore"),
+            "pipeline.qr",
+            include_str!("../../examples/stdio/pipeline.qr"),
             include_str!("../../examples/stdio/README.md"),
             "transcript: pipeline stdout",
             Some("transcript: pipeline stderr"),
         ),
         (
-            "scalar_stages.qcore",
-            include_str!("../../examples/pipes/scalar_stages.qcore"),
+            "scalar_stages.qr",
+            include_str!("../../examples/pipes/scalar_stages.qr"),
             include_str!("../../examples/pipes/README.md"),
             "transcript: scalar_stages stdout",
             None,
@@ -136,20 +136,20 @@ fn declared_extern_examples_print_the_documented_system_traces() {
     let readme = include_str!("../../examples/extern/README.md");
     for (name, source, out_marker, err_marker) in [
         (
-            "buffer_round_trip.qcore",
-            include_str!("../../examples/extern/buffer_round_trip.qcore"),
+            "buffer_round_trip.qr",
+            include_str!("../../examples/extern/buffer_round_trip.qr"),
             "transcript: buffer_round_trip stdout",
             None,
         ),
         (
-            "scalar_results.qcore",
-            include_str!("../../examples/extern/scalar_results.qcore"),
+            "scalar_results.qr",
+            include_str!("../../examples/extern/scalar_results.qr"),
             "transcript: scalar_results stdout",
             None,
         ),
         (
-            "borrowed_render.qcore",
-            include_str!("../../examples/extern/borrowed_render.qcore"),
+            "borrowed_render.qr",
+            include_str!("../../examples/extern/borrowed_render.qr"),
             "transcript: borrowed_render stdout",
             Some("transcript: borrowed_render stderr"),
         ),
@@ -166,10 +166,10 @@ fn declared_extern_examples_print_the_documented_system_traces() {
 
 #[test]
 fn unsafe_linkage_prints_only_its_source_authored_trace_logs() {
-    let source = include_str!("../../examples/unsafe-linkage/unchecked_calls.qcore");
+    let source = include_str!("../../examples/unsafe-linkage/unchecked_calls.qr");
     let api = include_str!("../../examples/unsafe-linkage/unchecked_api.c");
     let readme = include_str!("../../examples/unsafe-linkage/README.md");
-    let module = compile("unchecked_calls.qcore", source, false);
+    let module = compile("unchecked_calls.qr", source, false);
     let output = windows_c::run_with_sources(
         module.c_source.as_deref().expect("executable example"),
         None,

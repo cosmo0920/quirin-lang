@@ -32,7 +32,7 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_http::{CONTENT_LENGTH, CRLF, HttpCertificate};
 
-const COMPUTED_LENGTH: &str = include_str!("../../examples/http/computed_length.qcore");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/http/computed_length.qr");
 const HTTP_README: &str = include_str!("../../examples/http/README.md");
 
 fn compile(
@@ -728,7 +728,7 @@ fn the_content_length_field_name_is_still_a_written_token() {
 
 #[test]
 fn the_computed_length_example_takes_the_http_route() {
-    let compiled = compile(COMPUTED_LENGTH).expect("computed_length.qcore must be admitted");
+    let compiled = compile(COMPUTED_LENGTH).expect("computed_length.qr must be admitted");
     assert_eq!(
         compiled.execution_profile,
         SourceExecutionProfile::StandardHttpV1

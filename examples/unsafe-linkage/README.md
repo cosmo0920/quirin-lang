@@ -4,9 +4,9 @@ Calling C that nothing describes, and saying so out loud.
 
 | File | What it is |
 |---|---|
-| [unchecked_calls.qcore](unchecked_calls.qr) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
+| [unchecked_calls.qr](unchecked_calls.qr) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
 | [unchecked_api.c](unchecked_api.c) | The C behind them — no contract, and there never will be one |
-| [unchecked_demo.qcorelib](unchecked_demo.qrlib) | A `source.native-library.v1` manifest: *which build* was waived |
+| [unchecked_demo.qrlib](unchecked_demo.qrlib) | A `source.native-library.v1` manifest: *which build* was waived |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs)
 (compilation, emission, sanitized native run) and by
@@ -48,7 +48,7 @@ A `Safe` obtained through unchecked linkage is never printed bare. Every waived
 symbol becomes a named premise, and `quirin check` prints them:
 
 ```sh
-quirin check examples/unsafe-linkage/unchecked_calls.qcore
+quirin check examples/unsafe-linkage/unchecked_calls.qr
 ```
 
 <!-- cli: bare -->
@@ -70,13 +70,13 @@ the checker's**.
 ## What a manifest adds: which build
 
 A bare waiver cannot say which artifact it was waived from. That is what
-`unchecked_demo.qcorelib` supplies — an artifact identity and the four ABI
+`unchecked_demo.qrlib` supplies — an artifact identity and the four ABI
 premises the build was produced under — and selecting it sharpens the same
 premises rather than adding new ones:
 
 ```sh
-quirin check --native-library examples/unsafe-linkage/unchecked_demo.qcorelib \
-             examples/unsafe-linkage/unchecked_calls.qcore
+quirin check --native-library examples/unsafe-linkage/unchecked_demo.qrlib \
+             examples/unsafe-linkage/unchecked_calls.qr
 ```
 
 <!-- cli: manifest -->
@@ -99,7 +99,7 @@ Nothing is hashed at check time. No file is opened, no digest is computed, and
 whether the linker used this artifact remains the builder's act. The printed
 line says exactly that: *"the artifact identity is declared, not verified here"*.
 
-Which is why the digest in `unchecked_demo.qcorelib` is **all zeros**: this
+Which is why the digest in `unchecked_demo.qrlib` is **all zeros**: this
 repository ships no prebuilt archive, so the field is an honest placeholder that
 a real deployment replaces with the digest of the archive it really links. A
 builder-side hash check is the named follow-on
@@ -123,7 +123,7 @@ else on this page. None is checked.
 ## Building and running
 
 ```sh
-quirin emit examples/unsafe-linkage/unchecked_calls.qcore -o /tmp/unchecked.c
+quirin emit examples/unsafe-linkage/unchecked_calls.qr -o /tmp/unchecked.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic \
    /tmp/unchecked.c examples/unsafe-linkage/unchecked_api.c -o /tmp/unchecked
 /tmp/unchecked

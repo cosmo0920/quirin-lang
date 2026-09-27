@@ -40,8 +40,8 @@ use qcore_core::std_http::{CRLF, HTTP_VERSION};
 use qcore_core::std_io::Stream;
 use qcore_core::typed_errors::Effect;
 
-const EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
-const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qcore");
+const EXCHANGE: &str = include_str!("../../examples/http/exchange.qr");
+const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qr");
 const HTTP_README: &str = include_str!("../../examples/http/README.md");
 
 fn compile(
@@ -1072,7 +1072,7 @@ fn a_byte_list_payload_still_needs_no_string_module() {
 
 #[test]
 fn the_published_examples_take_their_routes() {
-    let exchange = compile(EXCHANGE).expect("exchange.qcore must be admitted");
+    let exchange = compile(EXCHANGE).expect("exchange.qr must be admitted");
     assert_eq!(
         exchange.execution_profile,
         SourceExecutionProfile::StandardHttpV1
@@ -1081,7 +1081,7 @@ fn the_published_examples_take_their_routes() {
         exchange.extern_observation.as_deref(),
         Some(["out: 200".to_owned(), "out: 6".to_owned()].as_slice())
     );
-    let raw = compile(RAW_REQUEST).expect("raw_request.qcore must be admitted");
+    let raw = compile(RAW_REQUEST).expect("raw_request.qr must be admitted");
     assert_eq!(
         raw.execution_profile,
         SourceExecutionProfile::StandardSocketV1

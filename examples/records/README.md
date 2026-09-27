@@ -12,9 +12,9 @@ and this family is its named follow-on `EXAMPLES-AGGREGATES`. Card
 
 | Program | What it shows |
 |---|---|
-| [`point.qcore`](point.qr) | CT09's "distinct ordinary struct fields" scenario — three fields, three different values, three reads — with no buffer anywhere: a record of scalars is a plain value, so this program's effect row is `io` alone |
-| [`pixel_writes.qcore`](pixel_writes.qr) | A record beside a real resource: fields drive a buffer's stored values and one store's *index*, the buffer owes its `drop`, and the records owe nothing |
-| [`owned_field.qcore`](owned_field.qr) | A record that **owns** two buffers: construction moves them in, the fields stand at every custody position a buffer name does, a field read moves one out, and `drop f;` releases the field still held — the four rules of the ownership IR, exercised in one program |
+| [`point.qr`](point.qr) | CT09's "distinct ordinary struct fields" scenario — three fields, three different values, three reads — with no buffer anywhere: a record of scalars is a plain value, so this program's effect row is `io` alone |
+| [`pixel_writes.qr`](pixel_writes.qr) | A record beside a real resource: fields drive a buffer's stored values and one store's *index*, the buffer owes its `drop`, and the records owe nothing |
+| [`owned_field.qr`](owned_field.qr) | A record that **owns** two buffers: construction moves them in, the fields stand at every custody position a buffer name does, a field read moves one out, and `drop f;` releases the field still held — the four rules of the ownership IR, exercised in one program |
 
 ## The form
 
@@ -67,7 +67,7 @@ Everything else is inherited. A field value is `source.buffer.v1`'s own
 operand — an integer literal or a name bound to a check-time constant — and a
 field read binds an ordinary scalar of that route's environment, so it stands
 anywhere such a scalar does: a rendering operand, a stored byte, an index.
-`pixel_writes.qcore`'s fourth store takes both its index and its value out of
+`pixel_writes.qr`'s fourth store takes both its index and its value out of
 one record, with nothing added to make that so.
 
 ## A record that owns
@@ -108,7 +108,7 @@ struct qcore_record_Frame {
 };
 ```
 
-`owned_field.qcore` writes one stream — the scalar field, the extent read
+`owned_field.qr` writes one stream — the scalar field, the extent read
 through a field, one byte of each owned field, one byte written through a
 field and read back, and one byte written through the moved-out binding:
 
@@ -140,12 +140,12 @@ The `qcore_record_` and `f_` prefixes are load-bearing — a QCore type or field
 name is a QCore word and nothing stops it being a C keyword — and `r_` is a
 third binding prefix beside `b_` and `s_`, so a record, a buffer and a scalar
 of one source name are three distinct C objects. Constructions are emitted in
-*declared* order however the source wrote them: `point.qcore`'s second value is
+*declared* order however the source wrote them: `point.qr`'s second value is
 written `{ weight: 9, y: 2, x: 1 }` and initializes `.f_x, .f_y, .f_weight`.
 
 ## Transcripts
 
-`point.qcore` writes both streams, and no order is claimed between them: C
+`point.qr` writes both streams, and no order is claimed between them: C
 models none between two separately buffered streams, so each is compared on
 its own. Standard output carries the first value's three fields —
 
@@ -169,7 +169,7 @@ Three *different* numbers out of three declared fields is the point: a model
 that aliased two fields, or a lowering that gave two fields one C member,
 would print one value twice.
 
-`pixel_writes.qcore` writes one stream — the four bytes read back out of the
+`pixel_writes.qr` writes one stream — the four bytes read back out of the
 buffer, `QCor` in ASCII, the same payload the loops family copies:
 
 <!-- transcript: pixel_writes stdout -->
@@ -203,7 +203,7 @@ and refused like this:
 
 <!-- diagnostic: Q051 -->
 ```text
-refusal.qcore:7:5: Q051: this `Point` construction supplies no `y`; `source.record.v1` constructs a record only from a complete field list, so every field of a constructed value has a value a reader can predict
+refusal.qr:7:5: Q051: this `Point` construction supplies no `y`; `source.record.v1` constructs a record only from a complete field list, so every field of a constructed value has a value a reader can predict
     let p = Point { x: 1 };
     ^
 ```
@@ -220,7 +220,7 @@ Four more refusals the rules above name, each checked by the same test:
 | `drop c;` on a record | `Q052` — "is not a buffer this entry acquired" |
 | `let z = p.z;` — a field `Point` does not declare | `Q052` |
 | `let p = Square { … };` — a type nothing declares | `Q013`, name resolution, before this route's reader runs |
-| `pixel_writes.qcore` without its `drop pixels;` | `Q054`, the unedited ownership checker — the record beside it launders nothing |
+| `pixel_writes.qr` without its `drop pixels;` | `Q054`, the unedited ownership checker — the record beside it launders nothing |
 
 ## Running it
 
@@ -234,12 +234,12 @@ take the `source.buffer.v1` route, builds the emitted C under
 on Linux), and compares **both** streams with the reference execution and with
 the transcripts above, which it reads out of this file.
 
-The programs are each other's leak control. `point.qcore` allocates
+The programs are each other's leak control. `point.qr` allocates
 nothing at all, so its sanitized run is a *negative* control: LSan reporting a
 leak would mean the aggregate had acquired something the model says it cannot.
-`pixel_writes.qcore` allocates one real buffer and releases it, so its run is
+`pixel_writes.qr` allocates one real buffer and releases it, so its run is
 a *positive* control: a lost release would be a finding, and the records
-beside the buffer change nothing about that. `owned_field.qcore` is the
+beside the buffer change nothing about that. `owned_field.qr` is the
 positive control for the record that owns: one buffer is released through the
 whole-record `drop`, the other through the binding it was moved out to, and
 LSan would report either release going missing.

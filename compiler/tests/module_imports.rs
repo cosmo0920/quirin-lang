@@ -1,7 +1,7 @@
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_core::prelude::concurrency::task_execution::{TaskExecutionScript, execute_task_module};
 
-const CONTEXT: &str = include_str!("../../examples/threads/core_context.qcore");
+const CONTEXT: &str = include_str!("../../examples/threads/core_context.qr");
 
 #[test]
 fn source_import_enables_existing_checked_task_lowering() {
@@ -10,7 +10,7 @@ fn source_import_enables_existing_checked_task_lowering() {
         &CompileOptions::default(),
     )
     .unwrap();
-    // `core_context.qcore` is on `source.std-io-tasks.v1` since card
+    // `core_context.qr` is on `source.std-io-tasks.v1` since card
     // `COMPOSE-CONCURRENCY`; its task half is the module the task route checked.
     let checked = module.checked.as_composed_tasks().unwrap().tasks();
     for created in [true, false] {

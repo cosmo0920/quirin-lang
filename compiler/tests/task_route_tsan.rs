@@ -57,7 +57,7 @@
 //! The realised schedule is written to stderr and asserted, so each forced row
 //! means "this schedule, forced", and no more. The subjects are now the
 //! flagship read from the one fixture file `write_lend_tasks_exercise.rs`
-//! also reads, `fixtures/ct/CT07/case.qcore` through the real pipeline, the
+//! also reads, `fixtures/ct/CT07/case.qr` through the real pipeline, the
 //! four published examples, and — unforced, by its own path — CT46's fixture.
 //!
 //! # The failure arms, and a trigger the join does not own (wave 41)
@@ -132,33 +132,33 @@ mod mutex_observation;
 /// **read from the one fixture file** `write_lend_tasks_exercise.rs` reads,
 /// so there is no second literal to drift.
 const DISJOINT_EXERCISE: &str =
-    include_str!("fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore");
+    include_str!("fixtures/write_lend_tasks_exercise/disjoint_exercise.qr");
 
 /// CT07's own case, read through the real pipeline (`compile_files`, entry
 /// `null` as its `expected.json` records) — not a twin of it.
-const CT07_CASE: &str = include_str!("fixtures/ct/CT07/case.qcore");
+const CT07_CASE: &str = include_str!("fixtures/ct/CT07/case.qr");
 
 /// CT46's own case, the mutex-invariant backend's crossing, by its own path.
-const CT46_CASE: &str = include_str!("fixtures/ct/CT46/case.qcore");
+const CT46_CASE: &str = include_str!("fixtures/ct/CT46/case.qr");
 
 /// The four published `examples/threads` programs, reached by `include_str!`
 /// so the row is about the shipped files and not about a copy of them.
 const PUBLISHED: [(&str, &str); 4] = [
     (
         "core_context",
-        include_str!("../../examples/threads/core_context.qcore"),
+        include_str!("../../examples/threads/core_context.qr"),
     ),
     (
         "owned_buffer",
-        include_str!("../../examples/threads/owned_buffer.qcore"),
+        include_str!("../../examples/threads/owned_buffer.qr"),
     ),
     (
         "shared_readers",
-        include_str!("../../examples/threads/shared_readers.qcore"),
+        include_str!("../../examples/threads/shared_readers.qr"),
     ),
     (
         "two_workers",
-        include_str!("../../examples/threads/two_workers.qcore"),
+        include_str!("../../examples/threads/two_workers.qr"),
     ),
 ];
 

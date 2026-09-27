@@ -24,11 +24,11 @@ use std::collections::BTreeMap;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
 const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
-const CHAIN: &str = include_str!("fixtures/compose/chain.qcore");
-const HAND_WRITTEN: &str = include_str!("fixtures/compose/chain_hand_written.qcore");
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const BORROWED: &str = include_str!("fixtures/compose/borrowed_render.qcore");
+const CHAIN: &str = include_str!("fixtures/compose/chain.qr");
+const HAND_WRITTEN: &str = include_str!("fixtures/compose/chain_hand_written.qr");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const BORROWED: &str = include_str!("fixtures/compose/borrowed_render.qr");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {

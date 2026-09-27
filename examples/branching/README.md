@@ -4,9 +4,9 @@
 
 | Example | What it demonstrates | Successful main result |
 |---|---|---|
-| [conditional_release.qcore](conditional_release.qr) | The custody join: a resource released on both arms | `0` |
-| [condition_tier.qcore](condition_tier.qr) | Constant bindings, `\|`, `^`, `&`, `&&`, `\|\|`, `!` | `0` |
-| [early_return.qcore](early_return.qr) | An arm that returns, and what the join is then taken over | `1` |
+| [conditional_release.qr](conditional_release.qr) | The custody join: a resource released on both arms | `0` |
+| [condition_tier.qr](condition_tier.qr) | Constant bindings, `\|`, `^`, `&`, `&&`, `\|\|`, `!` | `0` |
+| [early_return.qr](early_return.qr) | An arm that returns, and what the join is then taken over | `1` |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs):
 every transcript and every refused program below is read out of this file and
@@ -19,7 +19,7 @@ cargo test -p qcore-compiler --test examples_suite
 ## The custody join
 
 At the end of an `if`/`else` the checker takes a **custody join** over the arms.
-Both arms of [conditional_release.qcore](conditional_release.qr) release `a`,
+Both arms of [conditional_release.qr](conditional_release.qr) release `a`,
 so they agree and the join succeeds.
 
 Delete one of the two `drop a;` and the module refuses:
@@ -40,7 +40,7 @@ fn main() -> i32 {
 
 <!-- diagnostic: Q046 -->
 ```text
-refusal.qcore:5:5: Q046: the arms of this branch do not join in the resource-flow model: conditional branches have different net resource changes
+refusal.qr:5:5: Q046: the arms of this branch do not join in the resource-flow model: conditional branches have different net resource changes
     if (3 < 5) {
     ^
 ```
@@ -65,7 +65,7 @@ The emitted programs retain result, acquisition, and release events in the
 typed diagnostic route. Each example explicitly selects its hosted stdout
 adapter with `log_level trace;`; without that declaration the same route uses
 the null sink and the program streams stay quiet.
-`conditional_release.qcore` writes:
+`conditional_release.qr` writes:
 
 <!-- transcript: conditional_release stdout -->
 ```text
@@ -77,7 +77,7 @@ OK 0
 
 ## The condition tier
 
-[condition_tier.qcore](condition_tier.qr) uses all of it in one entry: a
+[condition_tier.qr](condition_tier.qr) uses all of it in one entry: a
 constant binding read from inside a condition (`mask`), the three bitwise
 operators, both connectives and unary `!`.
 
@@ -97,7 +97,7 @@ by a test that compiles both spellings and compares the emitted C **byte for
 byte** — nothing downstream can tell a connective or a `!` was written.
 
 The custody join is unmoved by any of it. Every level runs the same join, which
-is why all three arms of `condition_tier.qcore` release.
+is why all three arms of `condition_tier.qr` release.
 
 Its transcript is the same one-acquisition, one-release shape:
 
@@ -132,7 +132,7 @@ fn main() -> i32 {
 
 <!-- diagnostic: Q045 -->
 ```text
-refusal.qcore:6:9: Q045: a bitwise comparison operand must be parenthesized: C ranks `|`, `^` and `&` looser than the comparisons while this tier must rank them tighter, so `flags | MASK == 0` would mean one thing to a C reader and another here. Write `(flags | MASK) == 0` and let the parentheses say which you mean
+refusal.qr:6:9: Q045: a bitwise comparison operand must be parenthesized: C ranks `|`, `^` and `&` looser than the comparisons while this tier must rank them tighter, so `flags | MASK == 0` would mean one thing to a C reader and another here. Write `(flags | MASK) == 0` and let the parentheses say which you mean
     if (mask | 3 == 15) {
         ^
 ```
@@ -149,7 +149,7 @@ rather than refused: `&` binds tighter than `^` binds tighter than `|`, so
 
 ## An arm that returns
 
-[early_return.qcore](early_return.qr) has no `else`:
+[early_return.qr](early_return.qr) has no `else`:
 
 ```qcore
 if (3 < 5) {
@@ -186,8 +186,8 @@ OK 1
 ## Building and running
 
 ```sh
-quirin check examples/branching/conditional_release.qcore
-quirin emit examples/branching/conditional_release.qcore -o /tmp/branch.c
+quirin check examples/branching/conditional_release.qr
+quirin emit examples/branching/conditional_release.qr -o /tmp/branch.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/branch.c -o /tmp/branch
 /tmp/branch
 ```

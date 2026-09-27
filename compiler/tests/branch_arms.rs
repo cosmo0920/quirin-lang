@@ -30,11 +30,11 @@ mod sequential_observation;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const EARLY_RETURN: &str = include_str!("fixtures/branch_arms/early_return.qcore");
-const CALL_THEN_ARM: &str = include_str!("fixtures/branch_arms/call_then_arm.qcore");
-const CALL_ELSE_ARM: &str = include_str!("fixtures/branch_arms/call_else_arm.qcore");
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const EARLY_RETURN: &str = include_str!("fixtures/branch_arms/early_return.qr");
+const CALL_THEN_ARM: &str = include_str!("fixtures/branch_arms/call_then_arm.qr");
+const CALL_ELSE_ARM: &str = include_str!("fixtures/branch_arms/call_else_arm.qr");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn compile_with(

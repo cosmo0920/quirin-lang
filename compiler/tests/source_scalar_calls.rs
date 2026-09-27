@@ -79,7 +79,7 @@ fn refuse(s: &str, needle: &str) {
 }
 #[test]
 fn arguments_and_return_values_are_not_erased() {
-    assert_eq!(value(include_str!("../../examples/scalar/calls.qcore")), 42);
+    assert_eq!(value(include_str!("../../examples/scalar/calls.qr")), 42);
     for n in [-50, 0, 10, 41] {
         assert_eq!(
             value(&format!(
@@ -325,7 +325,7 @@ fn missing_names_and_boolean_operands_refuse() {
 }
 #[test]
 fn native_calls_match_reference() {
-    let m = compile(include_str!("../../examples/scalar/calls.qcore")).unwrap();
+    let m = compile(include_str!("../../examples/scalar/calls.qr")).unwrap();
     let source = m
         .c_source
         .unwrap()

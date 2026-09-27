@@ -15,10 +15,10 @@ the `examples/threads` standard are in `compiler/tests/std_socket.rs` and
 
 | File | What it shows |
 |---|---|
-| [`tcp_echo.qcore`](tcp_echo.qr) | create / bind / listen / connect / accept, a stream `send` and both `recv` forms, three closes |
-| [`udp_echo.qcore`](udp_echo.qr) | create / bind, `sendto` / `recvfrom`, and the whole-datagram rule |
-| [`inet_v4_echo.qcore`](inet_v4_echo.qr) | a **declared** IPv4 address and port — inbound `bind S 127.0.0.1:port;` and outbound `connect C 127.0.0.1:port;` |
-| [`inet_v6_echo.qcore`](inet_v6_echo.qr) | the same over declared IPv6 `[::1]`, with `IPV6_V6ONLY` set explicitly and a host without IPv6 answered by name |
+| [`tcp_echo.qr`](tcp_echo.qr) | create / bind / listen / connect / accept, a stream `send` and both `recv` forms, three closes |
+| [`udp_echo.qr`](udp_echo.qr) | create / bind, `sendto` / `recvfrom`, and the whole-datagram rule |
+| [`inet_v4_echo.qr`](inet_v4_echo.qr) | a **declared** IPv4 address and port — inbound `bind S 127.0.0.1:port;` and outbound `connect C 127.0.0.1:port;` |
+| [`inet_v6_echo.qr`](inet_v6_echo.qr) | the same over declared IPv6 `[::1]`, with `IPV6_V6ONLY` set explicitly and a host without IPv6 answered by name |
 
 ## The one thing to understand first
 
@@ -62,8 +62,8 @@ collision-free spelling and remain the default.
 ## Building and running
 
 ```sh
-quirin check examples/sockets/tcp_echo.qcore
-quirin emit examples/sockets/tcp_echo.qcore -o /tmp/tcp_echo.c
+quirin check examples/sockets/tcp_echo.qr
+quirin emit examples/sockets/tcp_echo.qr -o /tmp/tcp_echo.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic -g -O0 \
    -fsanitize=address,undefined -fno-omit-frame-pointer /tmp/tcp_echo.c -o /tmp/tcp_echo
 ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 /tmp/tcp_echo
@@ -110,7 +110,7 @@ every row a file that exists — without building either program a second time.
 
 ## What each example is careful about
 
-### `tcp_echo.qcore`
+### `tcp_echo.qr`
 
 * `connect client listener;` names the **listening socket**, not an address. The
   model knows a connection is queued, so the `accept` that follows cannot block —
@@ -123,7 +123,7 @@ every row a file that exists — without building either program a second time.
   refused at `Q083` by the *unedited* ownership checker — the same cycle-3
   checker the sequential route runs.
 
-### `udp_echo.qcore`
+### `udp_echo.qr`
 
 * A datagram is taken whole. `recvfrom server 5;` succeeds because the queued
   datagram is five bytes; `recvfrom server 1;` on the same queue is refused at
@@ -136,7 +136,7 @@ every row a file that exists — without building either program a second time.
 * `listen` and `connect` on a datagram socket are refused at `Q082`, and `send`
   and `sendto` never stand in for each other.
 
-### `inet_v4_echo.qcore` and `inet_v6_echo.qcore`
+### `inet_v4_echo.qr` and `inet_v6_echo.qr`
 
 * A **declared address** is a check-time constant: a literal IPv4 dotted quad or
   a bracketed IPv6 literal, and a port that is an integer literal or a name this
@@ -178,7 +178,7 @@ every row a file that exists — without building either program a second time.
   composition is no longer a gap: card `SOCKET-EVENT-COMPOSE` landed it, a
   module that both dispatches and sockets now reaches *this* route, which models
   both, and the published example is
-  [`../events/socket_server.qcore`](../events/socket_server.qr) — indexed on
+  [`../events/socket_server.qr`](../events/socket_server.qr) — indexed on
   the events page because that is where a reader comes for "how do I wait on
   readiness".
 * No non-blocking mode and no shutdown.

@@ -27,12 +27,12 @@ fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins(
     for (name, source, pin) in [
         (
             "round-trip",
-            include_str!("fixtures/ct/CT01/case.qcore"),
+            include_str!("fixtures/ct/CT01/case.qr"),
             "bfa572914cb96413",
         ),
         (
             "concurrent",
-            include_str!("fixtures/f02/concurrent_round_trip.qcore"),
+            include_str!("fixtures/f02/concurrent_round_trip.qr"),
             "9cbe67a70a420d52",
         ),
     ] {
@@ -70,7 +70,7 @@ fn windows_worker_failure_returns_and_releases_the_owned_error_payload() {
     let module = compile_files(
         &[SourceFile::new(
             "payload.qcore",
-            include_str!("fixtures/ct/CT17/case.qcore"),
+            include_str!("fixtures/ct/CT17/case.qr"),
         )],
         &CompileOptions::default(),
     )
@@ -121,8 +121,8 @@ fn windows_worker_failure_returns_and_releases_the_owned_error_payload() {
 fn windows_read_loan_shares_and_owned_error_match_reference() {
     // Other Windows task profiles and failure paths run in source_tasks/ct_corpus.
     for source in [
-        include_str!("fixtures/ct/CT03/case.qcore"),
-        include_str!("fixtures/ct/CT17/case.qcore"),
+        include_str!("fixtures/ct/CT03/case.qr"),
+        include_str!("fixtures/ct/CT17/case.qr"),
         "import std.concurrency; concurrency checked;
          fn reader(p: borrow<Buffer>) -> i32 { let x = qcore_buffer_read(p); return x; }
          fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {

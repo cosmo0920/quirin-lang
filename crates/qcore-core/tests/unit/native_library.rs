@@ -307,12 +307,12 @@ fn an_empty_selection_resolves_nothing() {
 #[test]
 fn a_selection_resolves_a_symbol_to_its_own_manifests_identity() {
     let libraries = selection(&[
-        ("first.qcorelib", "unchecked fn k_add(int32_t) -> int32_t;"),
-        ("second.qcorelib", "unchecked fn k_other(uint32_t) -> void;"),
+        ("first.qrlib", "unchecked fn k_add(int32_t) -> int32_t;"),
+        ("second.qrlib", "unchecked fn k_other(uint32_t) -> void;"),
     ])
     .unwrap();
     let binding = libraries.unchecked_binding("k_other").unwrap();
-    assert_eq!(binding.module, "second.qcorelib");
+    assert_eq!(binding.module, "second.qrlib");
     assert_eq!(binding.entry.result, AbiType::Unit);
     assert!(libraries.unchecked_binding("k_absent").is_none());
     assert_eq!(
@@ -327,10 +327,10 @@ fn one_unloadable_manifest_rejects_the_whole_selection() {
     // premise to a bare one — a weaker published statement, obtained by mistake.
     assert!(matches!(
         selection(&[
-            ("good.qcorelib", "unchecked fn k_add(int32_t) -> int32_t;"),
-            ("bad.qcorelib", "contract fn k_other(uint32_t) -> void;"),
+            ("good.qrlib", "unchecked fn k_add(int32_t) -> int32_t;"),
+            ("bad.qrlib", "contract fn k_other(uint32_t) -> void;"),
         ]),
-        Err(SelectionRefusal::Manifest { module, .. }) if module == "bad.qcorelib"
+        Err(SelectionRefusal::Manifest { module, .. }) if module == "bad.qrlib"
     ));
 }
 
@@ -338,8 +338,8 @@ fn one_unloadable_manifest_rejects_the_whole_selection() {
 fn two_manifests_may_not_bind_the_same_symbol() {
     assert!(matches!(
         selection(&[
-            ("first.qcorelib", "unchecked fn k_add(int32_t) -> int32_t;"),
-            ("second.qcorelib", "unchecked fn k_add(int32_t) -> int32_t;"),
+            ("first.qrlib", "unchecked fn k_add(int32_t) -> int32_t;"),
+            ("second.qrlib", "unchecked fn k_add(int32_t) -> int32_t;"),
         ]),
         Err(SelectionRefusal::SymbolBoundTwice { symbol, .. }) if symbol == "k_add"
     ));
@@ -584,7 +584,7 @@ fn a_manifest_binding_only_contracts_is_not_a_manifest_binding_nothing() {
 #[test]
 fn a_contracted_binding_names_its_module_and_a_waiver_never_does() {
     let libraries = selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "unchecked fn k_tick(uint32_t) -> void;\n\
          contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
     )])
@@ -603,9 +603,9 @@ fn a_contracted_binding_names_its_module_and_a_waiver_never_does() {
 fn two_manifests_may_not_bind_one_symbol_whatever_the_entry_kinds() {
     assert!(matches!(
         selection(&[
-            ("first.qcorelib", "unchecked fn k(int32_t) -> int32_t;"),
+            ("first.qrlib", "unchecked fn k(int32_t) -> int32_t;"),
             (
-                "second.qcorelib",
+                "second.qrlib",
                 "contract fn k(int32_t) -> int32_t from fixtures/lib.qcore;"
             ),
         ]),
@@ -618,7 +618,7 @@ fn two_manifests_may_not_bind_one_symbol_whatever_the_entry_kinds() {
 #[test]
 fn a_slice_with_no_contract_environment_at_all_refuses() {
     let libraries = selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
     )])
     .unwrap();
@@ -631,7 +631,7 @@ fn a_slice_with_no_contract_environment_at_all_refuses() {
 #[test]
 fn an_entry_whose_contract_the_environment_does_not_declare_refuses() {
     let libraries = selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
     )])
     .unwrap();
@@ -647,7 +647,7 @@ fn an_entry_naming_the_wrong_module_refuses_rather_than_resolving_by_name() {
     // another contract, and resolving by bare symbol name would let a manifest
     // attribute a build to a declaration it never named.
     let libraries = selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
     )])
     .unwrap();
@@ -665,7 +665,7 @@ fn a_contract_in_the_slice_that_no_entry_binds_refuses() {
     // The other direction of §4.1. The slice is the library's exported surface,
     // so a declaration inside it that names no entry makes the binding partial.
     let libraries = selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
     )])
     .unwrap();
@@ -692,7 +692,7 @@ fn a_contract_in_the_slice_that_no_entry_binds_refuses() {
 
 #[test]
 fn a_selection_binding_no_contract_is_total_vacuously() {
-    let libraries = selection(&[("lib.qcorelib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
+    let libraries = selection(&[("lib.qrlib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
     assert!(!libraries.binds_contracts());
     assert!(check_slice_totality(&libraries, None).is_ok());
     assert!(check_slice_totality(&libraries, Some(&declared(&[("k_other", SLICE)]))).is_ok());
@@ -806,7 +806,7 @@ fn shapes(entries: &[(&str, bool, bool)]) -> BTreeMap<String, CustodyShape> {
 
 fn acquiring_slice() -> NativeLibraries {
     selection(&[(
-        "lib.qcorelib",
+        "lib.qrlib",
         "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;\n\
          contract fn k_free(uint8_t *) -> void from fixtures/lib.qcore;",
     )])
@@ -849,7 +849,7 @@ fn a_slice_that_cannot_acquire_is_closed_vacuously() {
     );
     // And a contract-less selection has nothing to check at all, which is the
     // sense in which card `UNSAFE-LINKAGE-ARTIFACT` satisfied this vacuously.
-    let waived = selection(&[("lib.qcorelib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
+    let waived = selection(&[("lib.qrlib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
     assert!(check_closed_allocator_custody(&waived, &BTreeMap::new()).is_ok());
 }
 
@@ -883,16 +883,8 @@ fn named_selection(entries: &[(&str, &str, &str)]) -> NativeLibraries {
 
 fn two_libraries() -> NativeLibraries {
     named_selection(&[
-        (
-            "a.qcorelib",
-            "libA",
-            "unchecked fn k_a(int32_t) -> int32_t;",
-        ),
-        (
-            "b.qcorelib",
-            "libB",
-            "unchecked fn k_b(int32_t) -> int32_t;",
-        ),
+        ("a.qrlib", "libA", "unchecked fn k_a(int32_t) -> int32_t;"),
+        ("b.qrlib", "libB", "unchecked fn k_b(int32_t) -> int32_t;"),
     ])
 }
 
@@ -916,7 +908,7 @@ fn a_binding_resolves_its_own_manifest_and_narrows_away_the_other() {
     assert!(view.is_bound());
     assert_eq!(view.bindings().len(), 1);
     assert_eq!(view.bindings()[0].named, "libA");
-    assert_eq!(view.bindings()[0].manifest, "a.qcorelib");
+    assert_eq!(view.bindings()[0].manifest, "a.qrlib");
     assert_eq!(view.bindings()[0].identity.library, "libA");
     assert!(view.unchecked_binding("k_a").is_some());
     assert!(view.unchecked_binding("k_b").is_none());
@@ -971,24 +963,13 @@ fn two_manifests_declaring_one_library_name_refuse_as_ambiguous() {
     // The ground `SelectionRefusal::SymbolBoundTwice` refuses its own ambiguity
     // on: a binding that is not a function has no defined premise.
     let libraries = named_selection(&[
-        (
-            "a.qcorelib",
-            "libA",
-            "unchecked fn k_a(int32_t) -> int32_t;",
-        ),
-        (
-            "b.qcorelib",
-            "libA",
-            "unchecked fn k_b(int32_t) -> int32_t;",
-        ),
+        ("a.qrlib", "libA", "unchecked fn k_a(int32_t) -> int32_t;"),
+        ("b.qrlib", "libA", "unchecked fn k_b(int32_t) -> int32_t;"),
     ]);
     match libraries.bind_source(&["libA".to_owned()]) {
         Err(BindingRefusal::AmbiguousLibrary { named, manifests }) => {
             assert_eq!(named, "libA");
-            assert_eq!(
-                manifests,
-                vec!["a.qcorelib".to_owned(), "b.qcorelib".to_owned()]
-            );
+            assert_eq!(manifests, vec!["a.qrlib".to_owned(), "b.qrlib".to_owned()]);
         }
         other => panic!("an ambiguous library must refuse: {other:?}"),
     }
@@ -1055,11 +1036,11 @@ fn the_custody_check_is_per_manifest_and_not_across_a_selection() {
     // `allocator_custody closed` is stated by one manifest about one artifact.
     let libraries = selection(&[
         (
-            "first.qcorelib",
+            "first.qrlib",
             "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
         ),
         (
-            "second.qcorelib",
+            "second.qrlib",
             "contract fn k_free(uint8_t *) -> void from fixtures/other.qcore;",
         ),
     ])

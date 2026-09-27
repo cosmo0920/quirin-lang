@@ -33,8 +33,8 @@ mod sequential_observation;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const DISCHARGED_PACK: &str = include_str!("fixtures/region/discharged_pack.qcore");
-const HAND_WRITTEN_TWIN: &str = include_str!("fixtures/region/hand_written_twin.qcore");
+const DISCHARGED_PACK: &str = include_str!("fixtures/region/discharged_pack.qr");
+const HAND_WRITTEN_TWIN: &str = include_str!("fixtures/region/hand_written_twin.qr");
 
 fn compile_named(
     path: &str,

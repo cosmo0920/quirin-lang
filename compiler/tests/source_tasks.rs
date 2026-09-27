@@ -319,7 +319,7 @@ fn unsupported_native_target_rejects_explicitly() {
 #[test]
 #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
 fn explicit_creation_recovery_joins_prior_sibling_on_each_dynamic_outcome() {
-    let source = include_str!("fixtures/ct/CT13/case.qcore");
+    let source = include_str!("fixtures/ct/CT13/case.qr");
     let (module, output) = native(source, None);
     assert_eq!(
         matches_reference(&module, &output, vec![true, true]),
@@ -353,7 +353,7 @@ fn failed_creation_handler_cannot_drop_an_existing_sibling() {
     let errors = compile_files(
         &[SourceFile::new(
             "unjoined-recovery.qcore",
-            include_str!("fixtures/ct/CT13/unjoined_failure.qcore"),
+            include_str!("fixtures/ct/CT13/unjoined_failure.qr"),
         )],
         &CompileOptions::default(),
     )
@@ -427,7 +427,7 @@ static void *fail_second_allocation(size_t n, size_t size) {
 }
 #define QCORE_TASK_CALLOC fail_second_allocation
 "#;
-    let (module, output) = native(include_str!("fixtures/ct/CT13/case.qcore"), Some(header));
+    let (module, output) = native(include_str!("fixtures/ct/CT13/case.qr"), Some(header));
     assert_eq!(
         matches_reference(&module, &output, vec![true, false]),
         TaskOutcome::I32(42)

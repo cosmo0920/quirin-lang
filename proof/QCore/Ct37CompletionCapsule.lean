@@ -9,7 +9,7 @@ semantic profile `ScopedOwnedTasksV1`). This module gives that scenario a
 proved statement over the F02 observation alphabet of
 `QCore.TaskTraceRelation`, on the CT01 precedent
 (`QCore.Ct01OwnedTransfer`): `referenceRun` below transcribes the reference
-execution of `compiler/tests/fixtures/ct/CT37/case.qcore` through the real
+execution of `compiler/tests/fixtures/ct/CT37/case.qr` through the real
 pipeline — the worker allocates the Buffer in its own body (the worker-local
 generation `4294967297`), returns it inside its completion record, and
 finishes before the parent joins; the parent joins, reads the allocation's own

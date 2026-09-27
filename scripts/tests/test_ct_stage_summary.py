@@ -189,7 +189,7 @@ class SummaryTest(unittest.TestCase):
                 case["stages"]["native_sanitized"] = {
                     "status": "executed",
                     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-                    "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+                    "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
                     "observations": 1,
                     "host_gate": ["linux"],
                 }

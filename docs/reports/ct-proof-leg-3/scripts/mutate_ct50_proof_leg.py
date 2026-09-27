@@ -35,7 +35,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[4]
 
 LEG = ROOT / "compiler/tests/ct50_proof_leg.rs"
 DIGESTS = ROOT / "compiler/tests/proof_leg_digests.rs"
-FIXTURE = ROOT / "compiler/tests/fixtures/ct/CT50/case.qcore"
+FIXTURE = ROOT / "compiler/tests/fixtures/ct/CT50/case.qr"
 LEAN = ROOT / "proof/QCore/Ct50LifetimeIdentity.lean"
 CT12 = ROOT / "compiler/tests/ct12_ct14_proof_reach.rs"
 

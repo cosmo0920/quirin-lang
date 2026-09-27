@@ -13,7 +13,7 @@
  * file now serves both directions. Read with no `include` declared — the
  * wave-22 transport — it still refuses at `Q063` naming
  * `QCORE_BUFFER_DEMO_EXPORT`. Read through
- * `buffer_lib_decorated.qcorelib`, which declares
+ * `buffer_lib_decorated.qrlib`, which declares
  * `"qcore_buffer_demo_visibility.h"` and its digest and says nothing at all
  * about what that text contains, the reader derives the erasure from that
  * text's own `#define`s and the four declarations below read exactly as

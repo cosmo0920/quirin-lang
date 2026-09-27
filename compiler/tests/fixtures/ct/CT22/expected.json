@@ -41,7 +41,7 @@
           "effort": 100,
           "memory": 4096
         },
-        "note": "Attribution: case.qcore with exactly the region removed. Admitted with no region evidence and the identical credit-recovery split, so the case's abandoned figure is the region's own publication and the region moves nothing either epoch checker already published."
+        "note": "Attribution: case.qr with exactly the region removed. Admitted with no region evidence and the identical credit-recovery split, so the case's abandoned figure is the region's own publication and the region moves nothing either epoch checker already published."
       },
       {
         "source": "spent_out.qcore",

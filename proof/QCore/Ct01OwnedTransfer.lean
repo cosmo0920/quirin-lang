@@ -9,7 +9,7 @@ joins and drops` (spec §55, semantic profile `ScopedOwnedTasksV1`, expected
 observation alphabet of `QCore.TaskTraceRelation`, whose `roundTrip` term is
 CT01's own reference run: the workspace test
 `compiler/tests/f02_trace_relation.rs::the_declared_trace_fixtures_are_the_reference_runs`
-checks, event for event, that compiling `compiler/tests/fixtures/ct/CT01/case.qcore`
+checks, event for event, that compiling `compiler/tests/fixtures/ct/CT01/case.qr`
 through the real pipeline and executing the checked task module reproduces
 exactly the recorded trace that `roundTrip` transcribes, and
 `ct01_trace_digest` below pins the transcription itself with the F02 digest

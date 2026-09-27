@@ -30,7 +30,7 @@
 //! separator, the `:` and the `.` are symbols the lexer has always produced.
 //!
 //! `record` was the obvious spelling and the constraint-14 census **rejected**
-//! it. `docs/reports/remaining-v07/probes/d02_boundary_record.qcore` is the
+//! it. `docs/reports/remaining-v07/probes/d02_boundary_record.qr` is the
 //! single line `record R { }`, and two archived reports
 //! (`remaining-v07`, `remaining-d01`) pin that file to
 //! `d02_boundary_record.qcore:1:1 Q000`. Claiming `record` at declaration

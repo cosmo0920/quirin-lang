@@ -15,7 +15,7 @@
 //! `an_admitted_rendering_is_the_reference_run`.
 //!
 //! This test binds those theorems to **CT50's own artifact**: it compiles
-//! `compiler/tests/fixtures/ct/CT50/case.qcore` through the real pipeline,
+//! `compiler/tests/fixtures/ct/CT50/case.qr` through the real pipeline,
 //! executes the checked task module's reference execution, derives the
 //! admitted causal order with the production observer, and
 //!
@@ -56,7 +56,7 @@ use qcore_core::task_trace_relation::{
     AdmittedCausalOrder, ObservedEvent, ObservedOutcome, admitted_linearizations, relate,
 };
 
-const CT50_SOURCE: &str = include_str!("fixtures/ct/CT50/case.qcore");
+const CT50_SOURCE: &str = include_str!("fixtures/ct/CT50/case.qr");
 
 /// `QCore.Ct50LifetimeIdentity.ct50_trace_digest`, proved by the Lean kernel
 /// on the `referenceRun` term this artifact must reproduce. Cross-checked
@@ -298,7 +298,7 @@ fn discharges_lifetime_identity(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct50_admitted_order() -> AdmittedCausalOrder {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT50_SOURCE)],
+        &[SourceFile::new("case.qr", CT50_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT50 is the manifest's accepted lifetime-identity case");

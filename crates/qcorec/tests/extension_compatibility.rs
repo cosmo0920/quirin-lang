@@ -1,13 +1,20 @@
 use std::{fs, process::Command};
 
 #[test]
-fn legacy_archive_is_warned_without_modifying_its_bytes() {
+fn renamed_archive_bytes_still_warn_under_a_legacy_alias() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let archive = root.join("docs/reports/remaining-v07/probes/d02_boundary_record.qcore");
+    let archive = root.join("docs/reports/remaining-v07/probes/d02_boundary_record.qr");
     let bytes = fs::read(&archive).unwrap();
+    let directory = std::env::temp_dir().join(format!(
+        "quirin-archived-extension-alias-{}",
+        std::process::id()
+    ));
+    fs::create_dir_all(&directory).unwrap();
+    let legacy = directory.join("d02_boundary_record.qcore");
+    fs::write(&legacy, &bytes).unwrap();
     let result = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
-        .arg(&archive)
+        .arg(&legacy)
         .output()
         .unwrap();
     assert!(!result.status.success());
@@ -18,6 +25,8 @@ fn legacy_archive_is_warned_without_modifying_its_bytes() {
     );
     assert!(stderr.contains("Q000"), "{stderr}");
     assert_eq!(fs::read(&archive).unwrap(), bytes);
+    assert_eq!(fs::read(&legacy).unwrap(), bytes);
+    fs::remove_dir_all(directory).unwrap();
 }
 
 #[test]

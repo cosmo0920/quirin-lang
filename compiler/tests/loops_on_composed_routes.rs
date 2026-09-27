@@ -25,8 +25,8 @@ use qcore_core::std_string::{StringError, StringEvent, StringProgram, check_stri
 use qcore_core::typed_errors::EffectRow;
 use std::collections::BTreeSet;
 
-const LEND_LOOP_EXAMPLE: &str = include_str!("../../examples/loops/lend_fill.qcore");
-const BORROW_LOOP_EXAMPLE: &str = include_str!("../../examples/strings/looped_fill.qcore");
+const LEND_LOOP_EXAMPLE: &str = include_str!("../../examples/loops/lend_fill.qr");
+const BORROW_LOOP_EXAMPLE: &str = include_str!("../../examples/strings/looped_fill.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {

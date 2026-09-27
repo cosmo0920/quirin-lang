@@ -14,7 +14,7 @@ use qcore_compiler::{
 };
 
 const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {
@@ -364,7 +364,7 @@ fn a_selection_without_the_callee_refuses() {
     assert_eq!(
         codes(
             ROUND_TRIP,
-            Some(BTreeMap::from([("partial.qcore".to_owned(), partial)]))
+            Some(BTreeMap::from([("partial.qr".to_owned(), partial)]))
         ),
         ["Q023"]
     );
@@ -639,9 +639,9 @@ fn an_unreleased_owned_return_refuses_under_the_established_custody_pass() {
 // Card EXTERN-F1: the `resource_out` and `resource_stored` call modes. //
 // ==================================================================== //
 
-const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qcore");
-const STORED: &str = include_str!("fixtures/extern_calls/stored.qcore");
-const STORED_FAILURE: &str = include_str!("fixtures/extern_calls/stored_failure.qcore");
+const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qr");
+const STORED: &str = include_str!("fixtures/extern_calls/stored.qr");
+const STORED_FAILURE: &str = include_str!("fixtures/extern_calls/stored_failure.qr");
 
 /// The out fixture with its acquiring callee swapped for the always-refusing
 /// implementation and the declared control flipped, so the null arm is a real
@@ -1136,9 +1136,9 @@ fn a_store_beneath_a_non_owned_parameter_refuses_at_the_loader() {
 // Card EXTERN-MODES: `resource_released` and `resource_return_reallocated`. //
 // ========================================================================= //
 
-const RELEASED: &str = include_str!("fixtures/extern_calls/released.qcore");
-const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
-const REALLOC_FAILURE: &str = include_str!("fixtures/extern_calls/realloc_failure.qcore");
+const RELEASED: &str = include_str!("fixtures/extern_calls/released.qr");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qr");
+const REALLOC_FAILURE: &str = include_str!("fixtures/extern_calls/realloc_failure.qr");
 
 /// A release is published as a release, not as a consumption. The two have the
 /// same caller-side ledger delta, so nothing about leak accounting moves; what
@@ -1348,7 +1348,7 @@ fn a_removed_parameter_is_still_not_callable() {
 
 // --- Card `PIPE-SCALAR-RESULT`: binding a non-acquiring call's scalar result. ---
 
-const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qr");
 
 /// The admitted form, end to end: a scalar result bound to a local, and that
 /// local read at a declared scalar parameter of a later call. The two halves are
@@ -1364,7 +1364,7 @@ fn a_scalar_result_is_bound_and_read_at_a_declared_scalar_parameter() {
     let checked = module.checked.as_extern_calls().unwrap();
     // The scalar bindings are published by name, and they are the only
     // certificate field they touch: the custody accounting beside them is
-    // `round_trip.qcore`'s exactly.
+    // `round_trip.qr`'s exactly.
     assert_eq!(
         checked.certificate.scalar_bindings,
         vec![
@@ -1659,7 +1659,7 @@ fn an_unchecked_scalar_result_binds_and_keeps_its_waiver() {
 // --- Card `EXTERN-SCALAR-OUTCOME` (trace half): the observation names the
 // returned number where a declared outcome makes it well-defined. ---
 
-/// `scalar_result.qcore` with both of its bindings given the site's declared
+/// `scalar_result.qr` with both of its bindings given the site's declared
 /// outcome. `qcore_extern_fill(b, 7)` writes eight bytes of 7, so the real
 /// `qcore_extern_sum(b, 8)` is 56 and the real `qcore_extern_scale(56, 2)` is
 /// 112 — both numbers are the source's, and the emitted program refuses to go
@@ -1684,7 +1684,7 @@ fn declared_outcomes() -> String {
 /// **The whole change, at the route that owns the format.** The two declared
 /// bindings name their numbers; every other line of the trace — the
 /// acquisition, the lend, the consumption, the return — is
-/// `scalar_result.qcore`'s exactly, so the diff against the undeclared pin
+/// `scalar_result.qr`'s exactly, so the diff against the undeclared pin
 /// above is the two `-> N` fields and nothing else.
 #[test]
 fn a_declared_outcome_is_named_in_the_observation() {

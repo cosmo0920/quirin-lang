@@ -12,9 +12,9 @@ use qcore_compiler::{
 };
 use qcore_core::disjoint_footprint::FootprintAssumption;
 
-const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
-const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
-const HTTP_EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
+const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qr");
+const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qr");
+const HTTP_EXCHANGE: &str = include_str!("../../examples/http/exchange.qr");
 
 fn compile(
     source: &str,

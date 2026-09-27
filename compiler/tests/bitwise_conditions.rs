@@ -31,10 +31,10 @@ mod sequential_observation;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const NEGATED: &str = include_str!("fixtures/bitwise/negated_condition.qcore");
-const NEGATED_TWIN: &str = include_str!("fixtures/bitwise/negated_condition_twin.qcore");
-const MASKED: &str = include_str!("fixtures/bitwise/masked_condition.qcore");
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
+const NEGATED: &str = include_str!("fixtures/bitwise/negated_condition.qr");
+const NEGATED_TWIN: &str = include_str!("fixtures/bitwise/negated_condition_twin.qr");
+const MASKED: &str = include_str!("fixtures/bitwise/masked_condition.qr");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
 
 fn compile_named(
     path: &str,

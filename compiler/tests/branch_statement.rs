@@ -24,10 +24,10 @@ mod sequential_observation;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const CONDITIONAL_RELEASE: &str = include_str!("fixtures/branch/conditional_release.qcore");
-const UNBRANCHED_TWIN: &str = include_str!("fixtures/branch/unbranched_twin.qcore");
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const CONDITIONAL_RELEASE: &str = include_str!("fixtures/branch/conditional_release.qr");
+const UNBRANCHED_TWIN: &str = include_str!("fixtures/branch/unbranched_twin.qr");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn compile_with(

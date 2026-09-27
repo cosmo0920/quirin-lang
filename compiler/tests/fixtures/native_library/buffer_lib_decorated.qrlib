@@ -1,4 +1,4 @@
-# Card `NATIVE-LIBRARY-HEADER-DECORATION`: `buffer_lib_header.qcorelib` with a
+# Card `NATIVE-LIBRARY-HEADER-DECORATION`: `buffer_lib_header.qrlib` with a
 # **decorated** exported header, and the text that decoration is derived from.
 #
 # The header this binds, `include/qcore_buffer_demo_decorated.h`, declares the

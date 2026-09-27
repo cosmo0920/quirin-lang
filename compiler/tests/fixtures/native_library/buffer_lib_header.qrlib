@@ -1,4 +1,4 @@
-# Card `NATIVE-LIBRARY-HEADER`: `fixtures/native_library/buffer_lib.qcorelib`
+# Card `NATIVE-LIBRARY-HEADER`: `fixtures/native_library/buffer_lib.qrlib`
 # with its **exported header** bound.
 #
 # Two fields are added and nothing else moves. `header` names the `.h` this

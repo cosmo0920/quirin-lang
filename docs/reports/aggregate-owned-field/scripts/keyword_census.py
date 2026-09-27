@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Constraint-14 census for card AGGREGATE-OWNED-FIELD.
 
-Scans every `.qcore`/`.qc` file in the tree (comments stripped) for the
+Scans every `.qcore`/`.qv`/`.qr`/`.qc` file in the tree (comments stripped) for the
 spellings the card claims or rejected: `bytes` and `Buffer` in field-type
 position, a record declaration with a `bytes` field, the dotted store/load
 shape `NAME.NAME[`, and `drop NAME.NAME`. Run from the repository root; the
@@ -14,7 +14,7 @@ SKIP = {"target", ".lake", "measure", "private"}
 files = [
     p
     for p in pathlib.Path(".").rglob("*")
-    if p.suffix in (".qcore", ".qc") and not (SKIP & set(p.parts))
+    if p.suffix in (".qcore", ".qv", ".qr", ".qc") and not (SKIP & set(p.parts))
 ]
 print("files scanned:", len(files))
 

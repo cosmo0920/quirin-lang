@@ -12,12 +12,12 @@ use qcore_core::disjoint_footprint::{
     DerivedFootprint, DisjointnessJudgement, FootprintAssumption, FootprintExport,
 };
 
-const ADJACENT: &str = include_str!("fixtures/bitfield_concurrency/adjacent.qcore");
-const ADDRESSABLE: &str = include_str!("fixtures/bitfield_concurrency/addressable.qcore");
+const ADJACENT: &str = include_str!("fixtures/bitfield_concurrency/adjacent.qr");
+const ADDRESSABLE: &str = include_str!("fixtures/bitfield_concurrency/addressable.qr");
 fn addressable_fixture() -> String {
     ADDRESSABLE.replace("\r\n", "\n")
 }
-const DISTINCT_UNITS: &str = include_str!("fixtures/bitfield_concurrency/distinct_units.qcore");
+const DISTINCT_UNITS: &str = include_str!("fixtures/bitfield_concurrency/distinct_units.qr");
 
 fn compile(
     source: &str,
