@@ -166,6 +166,38 @@ are still Unknown. [Every changed leaf](artifacts/after/changed-leaf-attribution
 retains its origin, before/after function verdict and any matched analyzed
 source SHA; no changed family was discarded.
 
+For the six removed nullable-contract leaves paired with alias leaves, the
+source review found a narrower cause than a scalar store. Five CMetrics
+initializers (`otlp_kvpair_list_initialize` and
+`initialize_{resource_metrics,scope_metrics,numerical_data_point,summary_data_point}_list`)
+declare a local pointer, assign a `calloc` result and return that pointer.
+Their old indirect refusal is on the pointer *declarator* (analyzed source
+digest `83ed6245e9016828aa564bc4cc42d2a447ee48dcc22eb6c962abc22bd2c7792b`),
+while the typed no-access declarator admits it; the prior nullable/alias
+diagnostics at the return then disappear. In `rd_kafka_Uuid_str`, two scalar
+stores to `bytes[i]` and `bytes[8+i]` read fields of the `uuid` formal before
+the function returns its `rd_calloc` result `ret` (`rdkafka.c:7230–7240`,
+analyzed digest `2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5`).
+The side-by-side rows show both old refusals replaced by typed scalar paths;
+the nullable/alias pair on `ret` is removed downstream. The old refused-write
+transfer could poison a separate owned binding, so these are observed
+downstream effects of avoiding a refusal, not evidence that `calloc` or a
+return rule changed. The corrected combined run must recheck this family.
+
+The other removed scalar alias leaves have identifiable source coordinates:
+`LZ4F_decompress` assigns `nextSrcSizeHint` from `dctx` scalar fields
+(`lz4frame.c:2015` onward, analyzed digest
+`124e3f7aef2c5aa93625d48743ea4e3ce278dcee61688efeeaf8deaf3342247f`);
+`rd_kafka_broker_op_serve` sets `do_disconnect` from two broker epochs at
+`rdkafka_broker.c:3765`, `rd_kafka_toppar_op_pause_resume` sets `is_paused`
+from flags at `rdkafka_partition.c:2514`, and
+`rd_kafka_mock_connection_write_out` sets `ts_delay` from buffer timestamps
+at `rdkafka_mock.c:1579,1583`. The parity stream admits those scalar reads
+or stores where the old route refused them. The remaining `confhdr`, `err`
+and `next_subscription_size` removals likewise have exact source and
+diagnostic coordinates in the per-leaf archive; all remain historical
+observations until the corrected combined measurement.
+
 The corpus side-by-side stream has 28,386 rows: 13,550 old-refusal/new
 admission, 14,683 established-route rows and 153 chain rows. Only three
 scalar rows and 144 chain rows have identical typed plans; other rows are
