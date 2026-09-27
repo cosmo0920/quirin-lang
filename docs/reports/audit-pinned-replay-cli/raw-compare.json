@@ -1,0 +1,45 @@
+{
+  "reference": "/home/cosmo/.codex/worktrees/audit-pinned-replay-cli/qcore-c/private/audit-pinned-replay-cli/predecessor-raw",
+  "other": "/home/cosmo/.codex/worktrees/audit-pinned-replay-cli/qcore-c/private/audit-pinned-replay-cli/new/replay-jobs4",
+  "artifacts": {
+    "resource-diagnostics.json": {
+      "reference_sha256": "c4fa03e9a9e1a0c8f2bb2f2310a9a8800daf82a9f825124fe66f28637b4d4c80",
+      "other_sha256": "c4fa03e9a9e1a0c8f2bb2f2310a9a8800daf82a9f825124fe66f28637b4d4c80",
+      "byte_identical": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "reference_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "other_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "byte_identical": true
+    },
+    "resource-diagnostics.contracts.json": {
+      "reference_sha256": "8c5572e8ff4f3b47fa7d199cfa0b16641dd0b2840ac4e2e168f7d1180fd6b6b5",
+      "other_sha256": "3d09f53ca61951e040f93771419f4b178860b5536a82771da2f19d443fc8b6b8",
+      "byte_identical": false
+    },
+    "resource-diagnostics.source-effects.json": {
+      "reference_sha256": "39ff15812af2eab7b28beea8188ed091c01fef9bf165fe707f35231283a132ba",
+      "other_sha256": "0d343f5cae6e905f99a286627025ad44153be444e3fb448d4aef0dceeef87079",
+      "byte_identical": false
+    },
+    "monkey-source.json": {
+      "reference_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "other_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "byte_identical": true
+    },
+    "audit.log": {
+      "reference_sha256": "262764f8746670a78dbd46d45a681fa337c2e1681578b52724c70b6bd752529b",
+      "other_sha256": "f5d2d31c906801d54456a2b2856c95b35135e45f71e6427d342af2dda7d18418",
+      "raw_identical": false,
+      "raw_differing_lines": [
+        1218
+      ],
+      "raw_line_counts": [
+        1218,
+        1218
+      ],
+      "identical_after_run_path_mask": true
+    }
+  },
+  "identical": false
+}

@@ -58,6 +58,13 @@ class RetiredScriptsTest(unittest.TestCase):
         for name in RETIRED:
             self.assertFalse((ROOT / 'scripts' / name).exists(), name)
 
+    def test_cycle19_pinned_example_stays_retired(self):
+        for relative in (
+            'compiler/examples/cycle19_fluent_bit_libraries_audit.rs',
+            'compiler/examples/support/cycle19_compatibility.rs',
+        ):
+            self.assertFalse((ROOT / relative).exists(), relative)
+
     def test_no_live_file_references_a_retired_script(self):
         offenders = []
         this_file = Path(__file__).resolve().relative_to(ROOT).as_posix()

@@ -128,6 +128,17 @@ refer to the generated compilation database's literal arguments; equivalence to
 additional Make expansion steps or general filename-builtin semantics is not
 established.
 
+## `quirin-audit pinned`: historical Fluent Bit replay
+
+`quirin-audit pinned [--jobs N] [fluent-bit-root] [monkey-database]
+[monkey-source-report] [resource-diagnostics] [native-observation-directory]
+[resource-contract-manifest]` checks the declared source, contract and Libevent
+pins before replaying the Cycle 19 evidence. An unmatched pin refuses the run.
+For the persistent 185-unit corpus inputs, build the release binary and use
+[`scripts/run_pinned_audit.py`](../../scripts/run_pinned_audit.py) with a fresh
+output directory and `--inputs-root` when the inputs are held by another
+checkout. The runner records the command, binary digest, environment and exit.
+
 ## `quirin-audit current`: the configured current-revision route
 
 `quirin-audit current` audits the committed `HEAD` of a checkout: every
