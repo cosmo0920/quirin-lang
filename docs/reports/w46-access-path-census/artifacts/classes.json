@@ -1,0 +1,234 @@
+{"schema": "qcore.w46-access-path-census.v1", "kind": "registered-classes"}
+{
+ "W43-INDIRECT-UNTYPED-SINGLE-ACCESS": {
+  "leaves": 2771,
+  "unknown_functions": 1071,
+  "sole_blocked": 69,
+  "source": "w43 residuals.py",
+  "census_split": {
+   "P2": 1711,
+   "refused": 622
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 434,
+   "aggregate-value": 107,
+   "union": 100,
+   "static-local": 8,
+   "cast": 2,
+   "call": 1
+  },
+  "outside_census_families": 435,
+  "path_roots": {
+   "local": 1607,
+   "formal": 1379,
+   "global": 48
+  }
+ },
+ "W44-CHAIN-NESTED-AGGREGATE": {
+  "leaves": 1442,
+  "unknown_functions": 548,
+  "sole_blocked": 33,
+  "source": "chain_census.py",
+  "census_split": {
+   "P2": 455,
+   "P3": 450,
+   "refused": 489
+  },
+  "refusal_causes": {
+   "union": 424,
+   "pointer-valued-store": 111,
+   "aggregate-value": 20,
+   "cast": 1
+  },
+  "outside_census_families": 48,
+  "path_roots": {
+   "formal": 1022,
+   "local": 730
+  }
+ },
+ "W44-CHAIN-TYPEDEF-ROOT": {
+  "leaves": 588,
+  "unknown_functions": 302,
+  "sole_blocked": 17,
+  "source": "chain_census.py",
+  "census_split": {
+   "refused": 159,
+   "P3": 87,
+   "P2": 287
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 97,
+   "union": 77,
+   "aggregate-value": 18,
+   "cast": 1
+  },
+  "outside_census_families": 55,
+  "path_roots": {
+   "formal": 357,
+   "local": 343
+  }
+ },
+ "W44-CHAIN-UNDECLARED-ROOT": {
+  "leaves": 222,
+  "unknown_functions": 63,
+  "sole_blocked": 4,
+  "source": "chain_census.py",
+  "census_split": {
+   "refused": 51,
+   "P2": 85,
+   "P3": 79
+  },
+  "refusal_causes": {
+   "union": 36,
+   "pointer-valued-store": 18,
+   "aggregate-value": 3,
+   "cast": 1
+  },
+  "outside_census_families": 7,
+  "path_roots": {
+   "formal": 152,
+   "local": 148,
+   "global": 3
+  }
+ },
+ "W44-CHAIN-INCOMPLETE-RECORD": {
+  "leaves": 224,
+  "unknown_functions": 159,
+  "sole_blocked": 10,
+  "source": "chain_census.py",
+  "census_split": {
+   "P3": 91,
+   "refused": 39,
+   "P2": 89
+  },
+  "refusal_causes": {
+   "union": 23,
+   "pointer-valued-store": 9,
+   "aggregate-value": 6,
+   "root:IntegerLiteral": 1
+  },
+  "outside_census_families": 5,
+  "path_roots": {
+   "formal": 165,
+   "local": 99,
+   "other": 1
+  }
+ },
+ "W44-CHAIN-CALL": {
+  "leaves": 389,
+  "unknown_functions": 258,
+  "sole_blocked": 15,
+  "source": "chain_census.py",
+  "census_split": {
+   "P3": 252,
+   "refused": 131,
+   "P2": 3
+  },
+  "refusal_causes": {
+   "union": 108,
+   "indirect-call": 36,
+   "static-local": 3,
+   "aggregate-value": 3
+  },
+  "outside_census_families": 3,
+  "path_roots": {
+   "formal": 414,
+   "local": 255,
+   "global": 7
+  }
+ },
+ "W43-INDIRECT-POINTER-VALUE-STORE": {
+  "leaves": 350,
+  "unknown_functions": 239,
+  "sole_blocked": 25,
+  "source": "w43 residuals.py",
+  "census_split": {
+   "refused": 263,
+   "P2": 10
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 263,
+   "union": 10
+  },
+  "outside_census_families": 77,
+  "path_roots": {
+   "local": 167,
+   "formal": 110
+  }
+ },
+ "W43-INDIRECT-OTHER-STATEMENTS": {
+  "leaves": 1414,
+  "unknown_functions": 706,
+  "sole_blocked": 37,
+  "source": "w43 residuals.py",
+  "census_split": {
+   "P2": 649,
+   "refused": 148,
+   "P3": 2
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 101,
+   "union": 23,
+   "pointer-step": 18,
+   "cast": 9,
+   "aggregate-value": 2
+  },
+  "outside_census_families": 610,
+  "path_roots": {
+   "formal": 548,
+   "local": 518,
+   "global": 2
+  }
+ },
+ "W44-CONDITION-CALL-INDIRECT-ARGUMENT": {
+  "leaves": 1729,
+  "unknown_functions": 648,
+  "sole_blocked": 19,
+  "source": "w44-branch-condition-calls residuals.py",
+  "census_split": {
+   "P3": 1454,
+   "refused": 275
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 208,
+   "union": 44,
+   "aggregate-value": 15,
+   "static-local": 5,
+   "address-of-base": 2,
+   "cast": 2,
+   "call": 1
+  },
+  "outside_census_families": 0,
+  "path_roots": {
+   "formal": 4372,
+   "local": 1936,
+   "global": 25
+  }
+ },
+ "W44-CALL-RESULT-INDIRECT-DESTINATION": {
+  "leaves": 943,
+  "unknown_functions": 513,
+  "sole_blocked": 28,
+  "source": "family_residuals.py (destination)",
+  "census_split": {
+   "refused": 1010,
+   "P3": 481,
+   "P2": 101
+  },
+  "refusal_causes": {
+   "pointer-valued-store": 965,
+   "union": 127,
+   "aggregate-value": 23,
+   "indirect-call": 2,
+   "call": 1,
+   "static-local": 1
+  },
+  "outside_census_families": 0,
+  "path_roots": {
+   "formal": 16693,
+   "local": 5251,
+   "global": 10,
+   "call-result": 1
+  }
+ }
+}

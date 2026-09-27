@@ -8,6 +8,10 @@
 //! [`typed_c_ast`] provides raw Clang JSON transport for source-profile
 //! interpreters. Its output alone is never a safety certificate.
 
+// Card W46-ACCESS-PATH-CENSUS: the analysed text of every unit, for the
+// typed access-path census.
+#[cfg(feature = "indirect-census")]
+pub mod access_path_census;
 mod aggregate_store;
 pub mod atomic_publication_source;
 pub mod boolean_source;
@@ -109,6 +113,9 @@ pub fn census_sink_variables() -> Vec<&'static str> {
         sub_object_store_census::SUB_OBJECT_STORE_CENSUS_PATH,
         // Card W45-PARENTHESISED-CALLEE.
         legacy_c::parenthesised_callee::census::PARENTHESISED_CALLEE_CENSUS_PATH,
+        // Card W46-ACCESS-PATH-CENSUS: files are named by the global unit
+        // ordinal, so the stream forces one job like the others.
+        access_path_census::ACCESS_PATH_CENSUS_PATH,
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);

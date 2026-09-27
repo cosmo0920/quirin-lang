@@ -920,6 +920,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-user-contract-plugins](w45-user-contract-plugins/README.md) | W45-USER-CONTRACT-PLUGINS: user-defined contracts and checker plugins, with a four-value verdict |
 
+| [w46-access-path-census](w46-access-path-census/README.md) | W46-ACCESS-PATH-CENSUS: every access leaf by its Clang-typed access path, and a per-function prediction |
+
+| [w46-contract-gap-expansion](w46-contract-gap-expansion/README.md) | W46 contract gap expansion |
+
 | [w46-external-callee-contracts](w46-external-callee-contracts/README.md) | W46-EXTERNAL-CALLEE-CONTRACTS: contracts for the external callees that block the most functions |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |

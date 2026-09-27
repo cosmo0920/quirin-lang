@@ -1,0 +1,11 @@
+class                                    leaves  funcs  sole   in census: P2 / P3 / refused (top causes); outside
+W43-INDIRECT-UNTYPED-SINGLE-ACCESS         2771   1071    69   1711 / 0 / 622 {'pointer-valued-store': 434, 'aggregate-value': 107, 'union': 100}; 435
+W44-CHAIN-NESTED-AGGREGATE                 1442    548    33   455 / 450 / 489 {'union': 424, 'pointer-valued-store': 111, 'aggregate-value': 20}; 48
+W44-CHAIN-TYPEDEF-ROOT                      588    302    17   287 / 87 / 159 {'pointer-valued-store': 97, 'union': 77, 'aggregate-value': 18}; 55
+W44-CHAIN-UNDECLARED-ROOT                   222     63     4   85 / 79 / 51 {'union': 36, 'pointer-valued-store': 18, 'aggregate-value': 3}; 7
+W44-CHAIN-INCOMPLETE-RECORD                 224    159    10   89 / 91 / 39 {'union': 23, 'pointer-valued-store': 9, 'aggregate-value': 6}; 5
+W44-CHAIN-CALL                              389    258    15   3 / 252 / 131 {'union': 108, 'indirect-call': 36, 'static-local': 3}; 3
+W43-INDIRECT-POINTER-VALUE-STORE            350    239    25   10 / 0 / 263 {'pointer-valued-store': 263, 'union': 10}; 77
+W43-INDIRECT-OTHER-STATEMENTS              1414    706    37   649 / 2 / 148 {'pointer-valued-store': 101, 'union': 23, 'pointer-step': 18}; 610
+W44-CONDITION-CALL-INDIRECT-ARGUMENT       1729    648    19   0 / 1454 / 275 {'pointer-valued-store': 208, 'union': 44, 'aggregate-value': 15}; 0
+W44-CALL-RESULT-INDIRECT-DESTINATION        943    513    28   101 / 481 / 1010 {'pointer-valued-store': 965, 'union': 127, 'aggregate-value': 23}; 0
