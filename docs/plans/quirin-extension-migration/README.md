@@ -1,6 +1,6 @@
 # Planned Quirin extension migration
 
-Status: user-directed plan, not implemented. Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. This plan does not supersede current loader behavior or rewrite historical evidence.
+Status: EXT-01 compatibility implementation is in validation; physical renames (EXT-02/03) and retirement (EXT-04) remain planned. See the [EXT-01 report](../../reports/extension-compatibility/README.md). Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. This plan does not supersede current loader behavior or rewrite historical evidence.
 
 | Meaning | Target | Existing | Classification rule |
 |---|---|---|---|
