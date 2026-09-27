@@ -123,8 +123,9 @@ after completion and reported 130), showing 45 apparent Safe gains. Source
 review found five unsound admissions: `LZ4_favorDecompressionSpeed` and
 `LZ4_setCompressionLevel` access the typedef-hidden
 `union LZ4_streamHC_u`'s `internal_donotuse` field; the three
-`calculate_consumer_{commit_latency,rebalance_latency,share_time_between_poll}_max`
-functions write `.int_value` in the typedef-hidden
+`calculate_consumer_commit_latency_max`,
+`calculate_consumer_rebalance_latency_max` and
+`calculate_share_time_between_poll_max` functions write `.int_value` in the typedef-hidden
 `rd_kafka_telemetry_metric_value_t` union. All five are Unknown in the fixed
 run. The preliminary run and system artifacts remain in
 `private/w46-access-path-statements/after/{corpus,system}` only; no claim
