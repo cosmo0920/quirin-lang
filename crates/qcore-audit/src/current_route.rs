@@ -304,12 +304,11 @@ pub fn run_current_route_with_checkpoints(
             (outcomes, stopped)
         },
         |outcomes| {
-            crate::refuted_contracts::table(
-                &outcomes
+            crate::refuted_contracts::table_from_rows(
+                outcomes
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                    .flat_map(|products| products.unit_rows().iter().cloned())
-                    .collect::<Vec<_>>(),
+                    .flat_map(|products| products.unit_rows()),
             )
         },
     );

@@ -549,12 +549,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             (outcomes, stopped)
         },
         |outcomes| {
-            refuted_contracts::table(
-                &outcomes
+            refuted_contracts::table_from_rows(
+                outcomes
                     .iter()
                     .filter_map(|(_, result)| result.as_ref().ok())
-                    .flat_map(|(_, _, products)| products.report.unit_rows().iter().cloned())
-                    .collect::<Vec<_>>(),
+                    .flat_map(|(_, _, products)| products.report.unit_rows()),
             )
         },
     );

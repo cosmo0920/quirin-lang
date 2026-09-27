@@ -52,6 +52,11 @@ pub const MEANING: &str = "declared contracts of functions whose bodies this run
 /// row's `contract_refutations`, keyed by the function and named by its unit.
 #[must_use]
 pub fn table(units: &[Value]) -> RefutationTable {
+    table_from_rows(units)
+}
+
+/// Union borrowed report rows without cloning their diagnostic payloads.
+pub fn table_from_rows<'a>(units: impl IntoIterator<Item = &'a Value>) -> RefutationTable {
     let mut table = RefutationTable::new();
     for unit in units {
         absorb_refutations(&mut table, unit);
@@ -126,6 +131,9 @@ pub fn run_two_phases<R, E>(
             applied: empty,
         };
     }
+    // The first pass will never be published now. Release its potentially large
+    // reports before allocating the second pass, rather than retaining both.
+    drop(results);
     let (results, error) = phase(&found);
     TwoPhases {
         results,
@@ -329,6 +337,32 @@ mod tests {
         );
         assert_eq!(seen, vec![0]);
         assert!(outcome.applied.is_empty());
+    }
+
+    #[test]
+    fn discarded_results_are_released_before_phase_two_starts() {
+        use std::cell::Cell;
+        struct Retained<'a>(&'a Cell<usize>);
+        impl Drop for Retained<'_> {
+            fn drop(&mut self) {
+                self.0.set(self.0.get() - 1);
+            }
+        }
+        let live = Cell::new(0);
+        let mut runs = 0;
+        let outcome = run_two_phases(
+            |_| {
+                assert_eq!(live.get(), 0, "previous pass still retains its payload");
+                runs += 1;
+                live.set(1);
+                (vec![Retained(&live)], None::<String>)
+            },
+            |_| table(&[unit("a.c", "f", "c")]),
+        );
+        assert_eq!(runs, 2);
+        assert_eq!(live.get(), 1, "published results must remain available");
+        drop(outcome);
+        assert_eq!(live.get(), 0);
     }
 
     #[test]
