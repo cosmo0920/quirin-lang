@@ -25,7 +25,7 @@ pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
 /// With it, a value whose type is `enum TAG` for a declared `EnumDecl`, or a
 /// typedef whose own declaration is directly an `EnumType`, is a scalar.
 /// Every other typedef spelling keeps the positive-builtin refusal.
-pub(crate) const ENUM_ARM: bool = false;
+pub(crate) const ENUM_ARM: bool = true;
 static PARITY_SINK: Mutex<Option<ParitySink>> = Mutex::new(None);
 
 struct ParitySink {
@@ -1046,5 +1046,26 @@ mod tests {
         assert!(plan(nested, "int x = s->u->x").is_none());
         let accepted = "typedef struct S { int x; } S; int f(S *s) { int x = s->x; return 0; }";
         assert!(plan(accepted, "int x = s->x").is_some());
+    }
+
+    /// Card W47-ACCESS-PATH-POSITIONS, step B: an enumeration is a scalar
+    /// only on positive `EnumType` evidence, anonymous or tagged; an anonymous
+    /// aggregate or union typedef keeps its refusal, and so does a typedef of
+    /// a pointer to an enumeration.
+    #[test]
+    fn the_enum_arm_needs_positive_enum_evidence() {
+        assert!(ENUM_ARM);
+        let anonymous = "typedef enum { A, B } mode_t2; struct S { mode_t2 m; }; int f(struct S *s) { s->m = B; return 0; }";
+        assert!(plan(anonymous, "s->m = B").is_some());
+        let tagged = "enum color { RED }; typedef enum color color_t; struct S { color_t c; enum color d; }; int f(struct S *s) { int x = s->c == RED && s->d == RED; return x; }";
+        assert!(plan(tagged, "int x = s->c == RED && s->d == RED").is_none());
+        let compare = "enum color { RED }; typedef enum color color_t; struct S { color_t c; enum color d; }; int f(struct S *s) { int x = s->c + s->d; return x; }";
+        assert!(plan(compare, "int x = s->c + s->d").is_some());
+        let aggregate = "typedef struct { int a; } agg_t; struct S { agg_t v; }; int f(struct S *s, struct S *t) { s->v = t->v; return 0; }";
+        assert!(plan(aggregate, "s->v = t->v").is_none());
+        let union = "typedef union { int a; float b; } un_t; struct S { un_t v; }; int f(struct S *s, struct S *t) { s->v = t->v; return 0; }";
+        assert!(plan(union, "s->v = t->v").is_none());
+        let pointer = "typedef enum { A } e_t; typedef e_t *ep_t; struct S { ep_t p; }; int f(struct S *s, ep_t q) { s->p = q; return 0; }";
+        assert!(plan(pointer, "s->p = q").is_none());
     }
 }

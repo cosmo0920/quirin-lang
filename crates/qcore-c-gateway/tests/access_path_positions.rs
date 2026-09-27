@@ -326,3 +326,32 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
     assert_eq!(status, "Unknown");
     assert!(keys.contains(&GATE.to_owned()), "{keys:?}");
 }
+
+/// Step B, the owner-aware enum arm: an anonymous enum typedef member is a
+/// scalar in a condition, a store and a short-circuit operand under a tracked
+/// guard; a typedef-hidden union beside it keeps its refusal.
+#[test]
+fn an_enumeration_member_is_a_scalar_on_positive_evidence() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "int w(struct c_box *b) { if (b->mode == C_ON) return 1; return 0; }",
+        "void w(struct c_box *b) { b->mode = C_OFF; b->item->leaf->mode = C_ON; }",
+        "int w(struct c_box *b) { switch (b->mode) { case C_ON: return 1; default: return 0; } }",
+    ] {
+        assert_eq!(outcome(body), safe(), "{body}");
+    }
+    let guarded = "int w(int n) { struct c_box *b = c_make(n); int r = 0; \
+        if (b && b->mode == C_ON) r = 1; if (b) c_drop(b); return r; }";
+    assert_eq!(outcome(guarded), safe());
+    let unguarded = "int w(int n) { struct c_box *b = c_make(n); int r = 0; \
+        if (b || b->mode == C_ON) r = 1; if (b) c_drop(b); return r; }";
+    assert_eq!(outcome(unguarded), unknown(&["unknown_alias:b"]));
+    assert_eq!(
+        outcome(
+            "int w(struct c_box *b) { if (b->mode == C_ON && b->hidden->x) return 1; return 0; }"
+        ),
+        unknown(&[BRANCH])
+    );
+}
