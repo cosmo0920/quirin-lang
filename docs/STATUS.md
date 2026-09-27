@@ -80,6 +80,8 @@ and [gateway rules](agents/gateway.md#constraint-7).
 
 ## Milestones and trust
 
+Audit tooling now uses `quirin-audit pinned` and the shared `quirin-source-analysis` crate; the legacy compiler example was retired after [pinned parity](reports/audit-pinned-replay-cli/README.md), with no coverage movement. Checkpointed current audits seal one binary schema-3 `.qo` per compile configuration; `quirin-dump-checkpoint` inspects validated content, and preparation prints live log paths. The [combined gate](reports/audit-checkpoint-files/integration/README.md) passed 6,059 Rust tests, 365 Python tests and 213 Lean audits. The [extension migration](plans/quirin-extension-migration/README.md), including outdated-name warnings for retained frozen `.qcore` reports, remains planned.
+
 Cycles 1–17 are complete only at their bounded milestones. Cycle 18 has bounded
 implementation with aggregate acceptance pending. Cycle 19 is in progress;
 per-path identity imports and observation evidence gate promotion. Cycle 20 is
@@ -92,6 +94,17 @@ correspondence remain premises maintained by review. See
 [trust boundary 28](agents/evidence.md#constraint-28). Report model proof,
 artifact binding, source coverage, native observations and host conditions
 separately.
+
+The historical Cycle 19 pinned replay is now the built-in
+`quirin-audit pinned`; the compiler example is retired after the
+[185-unit archive parity](reports/audit-pinned-replay-cli/README.md). Its
+source-analysis adapters live in `quirin-source-analysis`, shared by the
+compiler and audit crates. All pinned verdicts, coverage and contract text
+match the completed W46 predecessor; three source-effect identity hashes
+change solely because the new worktree is a different current directory,
+with the exact hash cascade accounted in the parity record. The integrated
+standing gate for this relocation is pending; the gate below remains the
+latest completed one.
 
 ## Latest validated gate
 

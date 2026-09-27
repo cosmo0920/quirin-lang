@@ -157,7 +157,7 @@ fn rejects_duplicate_close_completion_and_unsupported_schema() {
 #[test]
 fn recorded_native_callbacks_retain_descriptor_generations() {
     let report = check_monkey_observations(include_str!(
-        "../../../docs/reports/cycle19-descriptor-observations/monkey_observation.jsonl"
+        "../../../../docs/reports/cycle19-descriptor-observations/monkey_observation.jsonl"
     ))
     .unwrap();
     assert_eq!(report.observations, 48);

@@ -9890,7 +9890,7 @@
   {
    "id": "W45-REVISION-PIN-ROUTES",
    "title": "Pins are evaluated by quirin-audit's routes and the corpus arbiter only",
-   "why": "`qcore_audit::contract_revision::apply_pins` runs in `quirin-audit current`, `quirin-audit contracts`, the configured `quirin-audit CONFIG.json` route and `cycle19_fluent_bit_libraries_audit`. A caller of the gateway API, the checked extern-call route (`source.extern-call.v1`) and the other compiler examples apply the environment they are given, in which no pin was evaluated, so a pinned contract there is applied as loaded. Contract spec C06.2 states the boundary. DISCHARGE: an inventory of every verdict-publishing route, each either evaluating pins against its audited source or refusing a pinned contract it cannot evaluate, with a test per route.",
+   "why": "`qcore_audit::contract_revision::apply_pins` runs in `quirin-audit current`, `quirin-audit contracts`, the configured `quirin-audit CONFIG.json` route and `quirin-audit pinned`. A caller of the gateway API, the checked extern-call route (`source.extern-call.v1`) and the other compiler examples apply the environment they are given, in which no pin was evaluated, so a pinned contract there is applied as loaded. Contract spec C06.2 states the boundary. DISCHARGE: an inventory of every verdict-publishing route, each either evaluating pins against its audited source or refusing a pinned contract it cannot evaluate, with a test per route.",
    "source": "docs/reports/w45-contract-revision-mode/README.md",
    "recorded_by": "W45-CONTRACT-REVISION-MODE"
   },
@@ -9988,7 +9988,7 @@
   {
    "id": "W45-PLUGIN-ROUTE-COVERAGE",
    "title": "Checker plugins and user load paths reach `quirin-audit current` and `contracts` only",
-   "why": "`user_plugins::run` is hooked into `CurrentAudit::with_contracts` and `NoBuildAudit::with_plugin_checkers`. The configured `quirin-audit CONFIG.json` route and the corpus arbiter (`cycle19_fluent_bit_libraries_audit`) select contracts by manifest and never read a user load path, so a checker binding cannot reach them; a caller of the gateway API applies the environment it is given. DISCHARGE: an inventory of the verdict-publishing routes, each running the bindings of the load path it resolves or refusing one it cannot, with a test per route.",
+   "why": "`user_plugins::run` is hooked into `CurrentAudit::with_contracts` and `NoBuildAudit::with_plugin_checkers`. The configured `quirin-audit CONFIG.json` route and the corpus arbiter (`quirin-audit pinned`) select contracts by manifest and never read a user load path, so a checker binding cannot reach them; a caller of the gateway API applies the environment it is given. DISCHARGE: an inventory of the verdict-publishing routes, each running the bindings of the load path it resolves or refusing one it cannot, with a test per route.",
    "source": "docs/reports/w45-user-contract-plugins/README.md",
    "recorded_by": "W45-USER-CONTRACT-PLUGINS"
   },
@@ -10015,8 +10015,8 @@
   },
   {
    "id": "W45-CHECKPOINT-PINNED-REPLAY-ROUTE",
-   "title": "The pinned `--pinned-evidence` replay (the corpus arbiter) has no per-group checkpoints",
-   "why": "W45-AUDIT-CHECKPOINTS checkpoints `quirin-audit current`, measured on the 185-unit corpus inputs. The arbiter itself, `cycle19_fluent_bit_libraries_audit --pinned-evidence` (`compiler/examples/support/cycle19_compatibility.rs`), keeps its whole-run fold: its ChunkIO library prelude and postlude share typed, non-serializable certificates across a library's units, its native and teardown results feed the chunk-contracts sidecar across groups, and its Monkey gate runs between the Fluent Bit groups and Monkey. The report's independence audit finds each of these composable (group-local, an ordered concatenation, or a step that belongs to the Monkey group) but none is implemented. DISCHARGE: per-group checkpoints for the pinned route whose composition is byte-identical to the arbiter's five artifacts under `baseline_identity.py`, or the route retired at G4 parity.",
+   "title": "The `quirin-audit pinned` replay (the corpus arbiter) has no per-group checkpoints",
+   "why": "W45-AUDIT-CHECKPOINTS checkpoints `quirin-audit current`, measured on the 185-unit corpus inputs. The arbiter itself, `quirin-audit pinned` (`crates/qcore-audit/src/pinned_route.rs`), keeps its whole-run fold: its ChunkIO library prelude and postlude share typed, non-serializable certificates across a library's units, its native and teardown results feed the chunk-contracts sidecar across groups, and its Monkey gate runs between the Fluent Bit groups and Monkey. The report's independence audit finds each of these composable (group-local, an ordered concatenation, or a step that belongs to the Monkey group) but none is implemented. DISCHARGE: per-group checkpoints for the pinned route whose composition is byte-identical to the arbiter's five artifacts under `baseline_identity.py`, or the route retired at G4 parity.",
    "source": "docs/reports/w45-audit-checkpoints/README.md",
    "recorded_by": "W45-AUDIT-CHECKPOINTS"
   },

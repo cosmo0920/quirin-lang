@@ -87,8 +87,8 @@ struct CurrentConfig {
     /// replaces the profile's `audit.json` groups.
     #[serde(default)]
     selection: Option<PathBuf>,
-    /// Card W45-AUDIT-CHECKPOINTS: analyse group by group, sealing each group
-    /// into `<checkpoint_dir>/<label>.qo`; `resume` reuses matching ones.
+    /// Card W45-AUDIT-CHECKPOINTS: seal complete compile-configuration
+    /// checkpoints, then compose them; `resume` reuses matching ones.
     #[serde(default)]
     checkpoint_dir: Option<PathBuf>,
     #[serde(default)]
@@ -508,7 +508,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             diagnostic_report: report.as_deref(),
             binding_directory: binding_directory.as_deref(),
             label: &source_set,
-            historical_note: "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence",
+            historical_note: "Historical source/native/provider evidence: Unknown; use quirin-audit pinned for historical replay",
             historical_reference_revision: &historical,
             jobs: effective_jobs,
             selection: selection.as_ref(),

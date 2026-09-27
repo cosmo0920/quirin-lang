@@ -26,6 +26,8 @@ pub mod no_build;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod parallel;
+pub mod pinned_cli;
+pub mod pinned_route;
 // Card W45-CONTRACT-DEFERRED-REVIEW: the pending-review report section.
 pub mod pending_review;
 // Card W45-CONTRACT-REVISION-MODE: source identities, contract locks, the pin

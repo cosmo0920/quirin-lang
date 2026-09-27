@@ -283,6 +283,7 @@ pub(crate) mod test_support {
     /// Execute syntax-only POSIX LP64 fixtures with their declared target, even
     /// when the installed Clang defaults to Windows LLP64. Child-only settings
     /// keep concurrent native-target tests and the user's override untouched.
+    #[allow(dead_code)] // Remaining compiler fixtures do not call this after adapter extraction.
     pub(crate) fn posix_clang_test() -> bool {
         if !clang_available() {
             assert!(

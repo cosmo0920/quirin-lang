@@ -116,11 +116,9 @@ The configured current-revision route is `quirin-audit current` (see
 below). It requires every selected compilation database to use the configured
 Clang C driver: a GCC database (`/usr/bin/cc`) is rejected once, with
 preparation instructions, before any per-unit work, and is never silently
-rewritten to name Clang. The compiler example
-`cycle19_fluent_bit_libraries_audit` keeps its configured route as a thin
-wrapper over the same code, with the Fluent Bit profile and its declared
-manifest; its `--pinned-evidence` route (historical replay, the corpus arbiter)
-is unchanged.
+rewritten to name Clang. The historical corpus arbiter is `quirin-audit pinned`.
+Its source adapters live in `quirin-source-analysis`, shared with the compiler
+facade.
 
 `-Wextra` is transported to Clang preprocessing, syntax checking, and AST import.
 Dollar signs in a quoted C string macro are preserved literally; the adapter does
@@ -129,6 +127,17 @@ shell expansions and unquoted unresolved macro expressions still reject. Results
 refer to the generated compilation database's literal arguments; equivalence to
 additional Make expansion steps or general filename-builtin semantics is not
 established.
+
+## `quirin-audit pinned`: historical Fluent Bit replay
+
+`quirin-audit pinned [--jobs N] [fluent-bit-root] [monkey-database]
+[monkey-source-report] [resource-diagnostics] [native-observation-directory]
+[resource-contract-manifest]` checks the declared source, contract and Libevent
+pins before replaying the Cycle 19 evidence. An unmatched pin refuses the run.
+For the persistent 185-unit corpus inputs, build the release binary and use
+[`scripts/run_pinned_audit.py`](../../scripts/run_pinned_audit.py) with a fresh
+output directory and `--inputs-root` when the inputs are held by another
+checkout. The runner records the command, binary digest, environment and exit.
 
 ## `quirin-audit current`: the configured current-revision route
 

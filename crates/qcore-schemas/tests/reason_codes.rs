@@ -34,7 +34,7 @@ use qcore_schemas::reason::{ReasonCategory, ReasonSubject, UnclassifiedReason};
 ///   refusals.
 /// * `crates/qcore-audit/src/{compile_db,current,lib,source_audit}.rs` — every
 ///   reason the audit crate mints itself.
-/// * `compiler/examples/support/cycle19_compatibility.rs` — the two overrides.
+/// * `crates/qcore-audit/src/current_route.rs` — the two overrides.
 fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
         AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
@@ -417,7 +417,7 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              definition boundaries cannot be established",
             Syntax,
         ),
-        // -- compiler/examples/support/cycle19_compatibility.rs ---------------
+        // -- crates/qcore-audit/src/current_route.rs ---------------
         (
             "selected library requires evidence unavailable in current-revision \
              resource projection",

@@ -25,6 +25,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
 
+| [audit-pinned-replay-cli](audit-pinned-replay-cli/README.md) | Pinned replay CLI relocation |
+
 | [audit-prepare-progress](audit-prepare-progress/README.md) | Audit preparation progress |
 
 ## B

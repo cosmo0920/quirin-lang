@@ -141,9 +141,11 @@ def main():
         source_report = output / "monkey_callback_source.json"
         diagnostics = output / "resource_diagnostics.json"
         with (output / "source-audit.log").open("w") as audit:
-            run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
-                 "cycle19_fluent_bit_libraries_audit", "--", str(root), str(db),
-                 str(source_report), str(diagnostics), str(output)],
+            run(["cargo", "run", "--quiet", "-p", "qcore-audit", "--",
+                 "current", "--checkout", str(root), "--profile-directory",
+                 str(REPO / "contract/profiles/fluent-bit"), "--monkey-database", str(db),
+                 "--monkey-source-report", str(source_report), "--report", str(diagnostics),
+                 "--binding-directory", str(output)],
                 cwd=REPO, stdout=audit, stderr=subprocess.STDOUT)
         binding_result = json.loads((output / "monkey_binding_result.json").read_text())
         if (any(row["checked_executions"] < 1 or row["unknown_paths"] or row["unknown_reasons"]

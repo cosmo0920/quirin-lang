@@ -138,18 +138,17 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 
 ## Corpus arbiter and its job count
 
-The pinned corpus arbiter is the release example
-`cycle19_fluent_bit_libraries_audit --pinned-evidence`, run through
-`docs/reports/w43-return-expression/scripts/run_audit.py OUT_DIR COMMIT
+The pinned corpus arbiter is the release binary `quirin-audit pinned`
+(`cargo build --release -p qcore-audit --bin quirin-audit`), run through `scripts/run_pinned_audit.py OUT_DIR COMMIT [--inputs-root DIR]
 [--census] [--jobs N]`. It analyses translation units on `N` threads
-(`--jobs N` on the example, or `QCORE_AUDIT_JOBS=N`; the default is the
+(`--jobs N` on the command, or `QCORE_AUDIT_JOBS=N`; the default is the
 host's available parallelism, capped at 16), and folds every unit's report
 rows, sidecar results, counts and console lines in unit order. Every archived
 artifact and `audit.log` are byte-identical at every job count, and
 `--jobs 1` is the sequential loop; the first error in unit order is the one
-reported (`W44-AUDIT-PARALLEL-UNITS`). The configured route (no
-`--pinned-evidence`) takes the same flag, and so do `quirin-audit current` and
-`quirin-audit CONFIG.json`: `--jobs`, then a configuration `jobs`, then the
+reported (`W44-AUDIT-PARALLEL-UNITS`). The configured routes
+`quirin-audit current` and `quirin-audit CONFIG.json` take the same flag:
+`--jobs`, then a configuration `jobs`, then the
 variable ([W44-QUIRIN-AUDIT-PROVIDERS](../reports/w44-quirin-audit-providers/README.md)). Two limits:
 
 - A census run always analyses one unit at a time, whatever `N` says: any

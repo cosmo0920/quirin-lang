@@ -9,8 +9,9 @@ its headers and commands in the ignored, persistent `build/cycle19` directory:
 
 ```sh
 cargo run -p qcore-audit -- prepare monkey --fluent-bit ../fluent-bit
-cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
-  ../fluent-bit build/cycle19/monkey-build/compile_commands.json
+cargo run --quiet -p qcore-audit -- current \
+  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
+  --monkey-database build/cycle19/monkey-build/compile_commands.json
 ```
 
 `quirin-audit prepare monkey` (formerly a Python script; same commands and
@@ -22,8 +23,8 @@ tracked-source hashes, separate generated-header hashes, CMake arguments,
 database identity and paths; `configure.log` records
 configuration output. Source code in the upstream checkout is not edited.
 
-Both audit routes analyse translation units concurrently: `--jobs N` before
-the positional arguments (or `QCORE_AUDIT_JOBS=N`) selects the thread count,
+Both audit routes analyse translation units concurrently: `--jobs N`
+(or `QCORE_AUDIT_JOBS=N`) selects the thread count,
 defaulting to the host's available parallelism capped at 16. Outputs are
 byte-identical at every job count and `--jobs 1` is the sequential loop; see
 [the validation gate](agents/validation.md#corpus-arbiter-and-its-job-count).
@@ -57,10 +58,11 @@ own directory:
 mkdir -p build/cycle19/reports
 python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
 QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
-  cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
-  ../fluent-bit build/cycle19/monkey-build/compile_commands.json \
-  build/cycle19/reports/source-effect-source.json \
-  build/cycle19/reports/source-effect-diagnostics.json
+  cargo run --quiet -p qcore-audit -- current \
+  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
+  --monkey-database build/cycle19/monkey-build/compile_commands.json \
+  --monkey-source-report build/cycle19/reports/source-effect-source.json \
+  --report build/cycle19/reports/source-effect-diagnostics.json
 ```
 
 `QCORE_CHUNKIO_PACKAGE` still selects a package path using the default bindings.

@@ -1,0 +1,239 @@
+{
+  "note": "Combined integration gate measured at 55ac39f5, following merge cdbf6f63. Fresh logs from this worktree; every command exit captured separately. First integrated attempt at cdbf6f63 failed Rust layering inventory (6058 passed, 1 failed, 11 ignored) and clippy collapsible_if; both repaired at 55ac39f5. All other first-attempt steps passed. Full corrected gate below passed. Earlier checkpoint pre-format and interrupted pinned replay attempts remain disclosed in their owning reports. No provider implementation or contract changed, so no provider gate was required.",
+  "measured_tip": "55ac39f5b92c89b362e7e920910d84bf90648b08",
+  "merge": "cdbf6f63",
+  "workspace_tests": 6059,
+  "workspace_failed": 0,
+  "workspace_ignored": 11,
+  "workspace_units": 331,
+  "workspace_summaries": 344,
+  "python_evidence_validator_tests": 365,
+  "lean_audits": 213,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "private_logs": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-integration-gate-20260927T092421Z",
+  "prior_attempt_logs": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-integration-gate-20260927T091641Z",
+  "test_binary_logs": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/test-binaries/20260927T092421Z-1589507",
+  "commands": [
+    {
+      "name": "submodule",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.026431724021676928
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 304.3975310999667
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.5382089259801432
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 10.367779939027969
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.09954076498979703
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.40514825301943347
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 15.813426812994294
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 32.51903352903901
+    },
+    {
+      "name": "clang-version",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.015066810010466725
+    }
+  ],
+  "first_attempt_commands": [
+    {
+      "name": "submodule",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.026091595005709678
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 101,
+      "seconds": 347.2133721660357
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.492595039017033
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 101,
+      "seconds": 11.670112619001884
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.1017353679635562
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.41777681303210557
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 16.319414571044035
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 32.43496568797855
+    },
+    {
+      "name": "clang-version",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.016887801990378648
+    }
+  ]
+}
