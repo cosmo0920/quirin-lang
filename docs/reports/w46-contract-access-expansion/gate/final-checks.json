@@ -1,0 +1,61 @@
+{
+  "revision": "a7152ae358bcff1e97bc9a03fe81823415e51e3a",
+  "note": "Documentation and gate-driven matrix finalization only after the merged standing/provider gate; full Python discovery rerun after matrix regeneration.",
+  "steps": [
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:29:58.692415+00:00",
+      "end": "2026-09-27T06:30:19.765405+00:00",
+      "private_log": "private/w46-next/final-checks/python.log"
+    },
+    {
+      "name": "docs-index",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:30:19.765590+00:00",
+      "end": "2026-09-27T06:30:19.803682+00:00",
+      "private_log": "private/w46-next/final-checks/docs-index.log"
+    },
+    {
+      "name": "reconciliation",
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--since",
+        "207cebe4",
+        "--check",
+        "docs/reports/w46-contract-access-expansion/reconciliation.json"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:30:19.803870+00:00",
+      "end": "2026-09-27T06:30:20.022911+00:00",
+      "private_log": "private/w46-next/final-checks/reconciliation.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:30:20.023313+00:00",
+      "end": "2026-09-27T06:30:20.034844+00:00",
+      "private_log": "private/w46-next/final-checks/diff-check.log"
+    }
+  ]
+}
