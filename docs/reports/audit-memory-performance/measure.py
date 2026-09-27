@@ -12,7 +12,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--binary', type=Path, required=True)
 p.add_argument('--label', required=True)
 p.add_argument('--jobs', type=int, default=1)
-p.add_argument('--source', default='src/flb_task.c')
+p.add_argument('--source', action='append')
 p.add_argument('--case', default='flb-task')
 p.add_argument('--prepared', type=Path, required=True)
 a = p.parse_args()
@@ -21,7 +21,7 @@ base = root / 'private/audit-memory-performance'
 run = base / a.label
 run.mkdir(parents=True, exist_ok=False)
 selection = base / ('selection.json' if a.case == 'flb-task' else 'selection-'+a.case+'.json')
-selection.write_text(json.dumps({'schema_version': 1, 'name': 'audit-performance-'+a.case, 'groups': [{'library': 'fluent_bit', 'label': 'fluent-bit-task', 'files': [a.source]}]}))
+selection.write_text(json.dumps({'schema_version': 1, 'name': 'audit-performance-'+a.case, 'groups': [{'library': 'fluent_bit', 'label': 'fluent-bit-task', 'files': a.source or ['src/flb_task.c']}]}))
 cmd = [str(a.binary.resolve()), 'current', '--checkout', str(a.prepared / 'fluent-bit-clang-source'), '--profile-directory', str(root / 'contract/profiles/fluent-bit'), '--compile-database', str(a.prepared / 'fluent-bit-clang-production/compile_commands.json'), '--selection', str(selection), '--contract-manifest', str(root / 'cycle19-resource-contracts.json'), '--report', str(run / 'resource-diagnostics.json'), '--jobs', str(a.jobs)]
 env = dict(os.environ, QCORE_CLANG='/usr/lib/llvm-21/bin/clang')
 for key in ('QCORE_TYPED_PATH_PARITY', 'QCORE_INDIRECT_CENSUS', 'QCORE_C11_CENSUS', 'QCORE_ACCESS_PATH_CENSUS'):
