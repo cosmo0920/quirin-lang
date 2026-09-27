@@ -8,8 +8,9 @@ the complete translation-unit AST remained in the source context.
 The source context now collects the same field facts and retains only
 body-bearing top-level `FunctionDecl` nodes, including duplicate names. Each
 selected function is shared through `Arc<Value>` across CFG rebuilds. A
-`StatementIndex` walks exactly the old statement shapes once and stores paths
-by byte-derived source line. Per-statement lookup still tokenizes candidates on
+`StatementIndex` walks exactly the old statement shapes once per selected
+function and shares its cached candidate paths across repeated CFG builds. The
+paths are grouped by byte-derived source line. Per-statement lookup still tokenizes candidates on
 that line, requires an exact token match, refuses multiple matches, and calls
 the reader with the current `never_bound` predicate. Missing or out-of-range
 offsets, conflicting field facts, and ambiguous function definitions still

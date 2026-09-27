@@ -158,7 +158,7 @@ pub(crate) struct StatementIndex {
     source: Arc<String>,
     function: Arc<Value>,
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
-    by_line: BTreeMap<usize, Vec<Vec<usize>>>,
+    by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -185,16 +185,21 @@ struct SourceContext {
 /// is still needed while parsing and collecting fields, but need not live for
 /// every CFG built from this translation unit.
 struct AstIndex {
-    functions: BTreeMap<String, Vec<Arc<Value>>>,
+    functions: BTreeMap<String, Vec<FunctionEntry>>,
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     line_starts: Vec<usize>,
+}
+
+struct FunctionEntry {
+    ast: Arc<Value>,
+    by_line: OnceCell<Arc<BTreeMap<usize, Vec<Vec<usize>>>>>,
 }
 
 impl AstIndex {
     fn from_ast(mut ast: Value, source: &str) -> Self {
         let mut fields = BTreeMap::new();
         collect_field_facts(&ast, &mut fields);
-        let mut functions: BTreeMap<String, Vec<Arc<Value>>> = BTreeMap::new();
+        let mut functions: BTreeMap<String, Vec<FunctionEntry>> = BTreeMap::new();
         if let Some(Value::Array(top_level)) =
             ast.as_object_mut().and_then(|obj| obj.remove("inner"))
         {
@@ -208,7 +213,10 @@ impl AstIndex {
                     functions
                         .entry(name.to_owned())
                         .or_default()
-                        .push(Arc::new(node));
+                        .push(FunctionEntry {
+                            ast: Arc::new(node),
+                            by_line: OnceCell::new(),
+                        });
                 }
             }
         }
@@ -283,24 +291,22 @@ impl StatementIndex {
             let [function] = ast.functions.get(function)?.as_slice() else {
                 return None;
             };
-            let mut candidates = Vec::new();
-            let body_index = children(function)
+            let body_index = children(&function.ast)
                 .iter()
                 .position(|node| kind(node) == "CompoundStmt")?;
-            let mut path = vec![body_index];
-            statements(&children(function)[body_index], &mut path, &mut candidates);
-            let mut by_line: BTreeMap<usize, Vec<Vec<usize>>> = BTreeMap::new();
-            for path in candidates {
-                let node = node_at_path(function, &path)?;
-                if let Some(line) = node_line(node, context.source.len(), &ast.line_starts) {
-                    by_line.entry(line).or_default().push(path);
-                }
-            }
+            let by_line = function.by_line.get_or_init(|| {
+                Arc::new(candidate_index(
+                    &function.ast,
+                    body_index,
+                    context.source.len(),
+                    &ast.line_starts,
+                ))
+            });
             Some(Self {
                 source: Arc::clone(&context.source),
-                function: Arc::clone(function),
+                function: Arc::clone(&function.ast),
                 fields: Arc::clone(&ast.fields),
-                by_line,
+                by_line: Arc::clone(by_line),
             })
         })
     }
@@ -380,6 +386,28 @@ fn node_line(node: &Value, source_len: usize, line_starts: &[usize]) -> Option<u
 fn node_at_path<'a>(root: &'a Value, path: &[usize]) -> Option<&'a Value> {
     path.iter()
         .try_fold(root, |node, &index| children(node).get(index))
+}
+
+fn candidate_index(
+    function: &Value,
+    body_index: usize,
+    source_len: usize,
+    line_starts: &[usize],
+) -> BTreeMap<usize, Vec<Vec<usize>>> {
+    let mut candidates = Vec::new();
+    let mut path = vec![body_index];
+    statements(&children(function)[body_index], &mut path, &mut candidates);
+    let mut by_line: BTreeMap<usize, Vec<Vec<usize>>> = BTreeMap::new();
+    for path in candidates {
+        // The paths above are made by this exact traversal. If a malformed AST
+        // somehow invalidates one, dropping it only narrows admission.
+        if let Some(node) = node_at_path(function, &path)
+            && let Some(line) = node_line(node, source_len, line_starts)
+        {
+            by_line.entry(line).or_default().push(path);
+        }
+    }
+    by_line
 }
 
 fn collect_field_facts(node: &Value, fields: &mut BTreeMap<String, Option<FieldFacts>>) {
@@ -983,6 +1011,7 @@ mod tests {
         let first = StatementIndex::read("f").expect("typed function");
         let second = StatementIndex::read("f").expect("typed function");
         assert!(Arc::ptr_eq(&first.function, &second.function));
+        assert!(Arc::ptr_eq(&first.by_line, &second.by_line));
         for (statement, line) in [("p->x = 1", 3), ("p->x = 2", 5)] {
             let tokens = tokenize(statement);
             let texts = tokens
