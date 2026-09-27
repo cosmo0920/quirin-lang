@@ -564,6 +564,11 @@ fn published_module_reference(entry: &str) -> Result<PublishedModuleRef, String>
 /// Read selected files into the snapshot [`load_resource_contract_files`]
 /// loads, keyed by the path as spelled.
 fn read_resource_contract_files(paths: &[PathBuf]) -> Result<BTreeMap<String, String>, String> {
+    let names = paths
+        .iter()
+        .map(|path| path.to_string_lossy().into_owned())
+        .collect::<Vec<_>>();
+    crate::extension_compatibility::reject_alias_collisions(names.iter().map(String::as_str))?;
     let mut sources = BTreeMap::new();
     for path in paths {
         let name = path.to_string_lossy().into_owned();
@@ -583,6 +588,7 @@ pub fn load_resource_contract_sources(
     if sources.is_empty() {
         return Err("no resource contract inputs selected".into());
     }
+    crate::extension_compatibility::reject_alias_collisions(sources.keys().map(String::as_str))?;
     let mut contracts = ResourceContracts::default();
     let mut pending = BTreeMap::new();
     // Card W45-CONTRACT-REVISION-MODE: the markers of every declaration that
@@ -592,8 +598,15 @@ pub fn load_resource_contract_sources(
         reject_retired_premise_directive(path, source)?;
         reject_unresolved_inclusion(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        qcore_frontend::source_extension::validate_source_extension(path, parsed.mode)
+            .map_err(|error| format!("{path}: {error}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        if let Some(warning) =
+            qcore_frontend::source_extension::legacy_source_warning(path, parsed.mode)
+        {
+            eprintln!("{warning}");
         }
         for declaration in parsed.declarations {
             let decl = &declaration.value;

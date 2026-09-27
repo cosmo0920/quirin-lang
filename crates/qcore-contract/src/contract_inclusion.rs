@@ -78,6 +78,7 @@ use qcore_frontend::frontend::{
     SourceModuleMode, parse_source_program,
 };
 use qcore_frontend::lexer::{TokenKind, lex};
+use qcore_frontend::source_extension::{legacy_source_warning, validate_source_extension};
 use qcore_schemas::contract::{
     ContractInclusionEvidence, ContractInheritanceLink, ContractModuleIdentity,
     IncludedContractModule,
@@ -364,6 +365,10 @@ impl ContractLoadPath {
                     format!("malformed module path `{module}`"),
                 ));
             }
+            crate::extension_compatibility::reject_alias_collisions(
+                krate.modules.keys().map(String::as_str),
+            )
+            .map_err(|message| invalid(&krate.name, message))?;
             if let Some(module) = krate
                 .published
                 .iter()
@@ -905,11 +910,16 @@ impl<'r> Elaborator<'r> {
                     format!("module does not parse as a contract module: {e}"),
                 )
             })?;
+            validate_source_extension(key, parsed.mode)
+                .map_err(|message| error(InclusionCode::Qi015, message))?;
             if parsed.mode != SourceModuleMode::Contract {
                 return Err(error(
                     InclusionCode::Qi015,
                     "module is not a `module contract;` module".into(),
                 ));
+            }
+            if let Some(warning) = legacy_source_warning(key, parsed.mode) {
+                eprintln!("{warning}");
             }
             return Ok(Elaborated {
                 identity,
@@ -970,6 +980,17 @@ impl<'r> Elaborator<'r> {
                 format!("module does not parse once its inclusion forms are set aside: {e}"),
             )
         })?;
+        validate_source_extension(key, parsed.mode)
+            .map_err(|message| error(InclusionCode::Qi001, message))?;
+        if parsed.mode != SourceModuleMode::Contract {
+            return Err(error(
+                InclusionCode::Qi001,
+                "module is not a `module contract;` module".into(),
+            ));
+        }
+        if let Some(warning) = legacy_source_warning(key, parsed.mode) {
+            eprintln!("{warning}");
+        }
         let own: Vec<SourceDeclaration> =
             parsed.declarations.into_iter().map(|d| d.value).collect();
         let own_spans: Vec<_> = own

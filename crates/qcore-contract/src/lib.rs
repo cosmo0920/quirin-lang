@@ -14,6 +14,7 @@ pub mod contract_revision;
 pub mod contract_views;
 pub mod descriptor_contract_binding;
 pub mod descriptor_observation;
+mod extension_compatibility;
 pub mod extern_bridge;
 pub mod load_path_manifest;
 pub mod profile_loader;
