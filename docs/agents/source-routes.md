@@ -9,7 +9,9 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 13. Concurrency is opt-in: a file declares `#import std.concurrency;`, the
     context is unavailable by default, and imports do not leak across
     compilation inputs (`Q014`/`Q015` refuse before checking each file). The
-    task profile keeps its separate `concurrency checked;` marker.
+    task profile keeps its separate `concurrency checked;` marker. Runtime
+    `#import` edges preserve this file-local boundary for every capability;
+    imported extern declarations do not grant callers `std.extern`.
     `core-concurrency-prelude`.
 <!-- preserved:constraint-13:end -->
 

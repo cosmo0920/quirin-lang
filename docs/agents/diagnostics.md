@@ -101,11 +101,11 @@ engage.
 
 | Codes | Owning pass | Meaning |
 |---|---|---|
-| `Q000` | `NameResolution` (per file) | input file does not parse as a QCore declaration |
+| `Q000` | `NameResolution` (per file) | input file does not parse as a QCore declaration, or a standalone frontend entry point receives an unresolved runtime `#import` |
 | `Q001`, `Q016` | `Index` | index/quant presentation; dimension/axis validity and quant-index type resolution |
-| `Q010`–`Q015` | `NameResolution` | duplicates, unknown name, `Q014` unknown imported module, `Q015` concurrency without its file-local import |
+| `Q010`–`Q015` | `NameResolution` | duplicates, unknown name, `Q014` unknown imported module and runtime lookup/path/alias/cycle/dependency-mode/bound refusals, `Q015` concurrency without its file-local import |
 | `Q020`, `Q021` | `OrdinaryTypes` | unsupported ordinary construct / task-route source-contract gate; sequential whole-program contract gate. **Route-specific, not to be unified** (constraint 2). Card `WRITE-LEND-TASKS` (wave 31) widens `Q020`'s task-parameter condition and **allocates no code**: the admitted worker parameter types grow by the ungraded `lend<Buffer>` range write lease, receivable only from a `lend PLACE LOW..HIGH` capture, with the place/parameter agreement check covering the new pair exactly as it covers `borrow<Buffer>`; `lend` stays contextual (constraints 14 and 15h). Card `WRITE-LEND-TASKS-EXERCISE` (wave 36) widens the same condition again and **allocates no code**: a worker takes **at most one** `lend<Buffer>` parameter, and the byte spellings `qcore_buffer_write(LEASE, INDEX, VALUE)` / `qcore_buffer_read(NAME, INDEX)` refuse here when the named binding is the wrong kind for the position. The **arity** selects the form (the `borrow_utf8` precedent), so +0 words and +0 tokens |
-| `Q022`–`Q027` | `ExternCall` | admission and bridging of `source.extern-call.v1` declared extern calls |
+| `Q022`–`Q027` | `ExternCall` | admission and bridging of `source.extern-call.v1` declared extern calls; `Q022` checks each caller’s own `std.extern` import against the linked extern declaration inventory, including imported and direct multi-file inputs |
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
 | `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` an operator token used where this revision gives it no meaning (`\|`, `&`, `^` reserved for bitwise) |
