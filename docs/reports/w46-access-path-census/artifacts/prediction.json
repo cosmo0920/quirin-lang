@@ -1,0 +1,3583 @@
+{"schema": "qcore.w46-access-path-prediction.v1"}
+{
+ "summary": {
+  "P2/same-unit": {
+   "freed": 45,
+   "verdicts": {
+    "Safe": 38,
+    "Unknown": 7
+   },
+   "round0": {
+    "Safe": 38,
+    "Unknown": 7
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 45,
+     "safe": 38
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 1,
+     "Safe": 1
+    },
+    "cmetrics": {
+     "Safe": 3
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 30,
+     "Unknown": 4
+    },
+    "monkey-libevent": {
+     "Unknown": 2,
+     "Safe": 1
+    }
+   }
+  },
+  "P2/cross-unit": {
+   "freed": 48,
+   "verdicts": {
+    "Safe": 41,
+    "Unknown": 7
+   },
+   "round0": {
+    "Safe": 41,
+    "Unknown": 7
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 48,
+     "safe": 41
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 1,
+     "Safe": 2
+    },
+    "cmetrics": {
+     "Safe": 4
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 31,
+     "Unknown": 4
+    },
+    "monkey-libevent": {
+     "Unknown": 2,
+     "Safe": 1
+    }
+   }
+  },
+  "P2/cross-unit-ceiling": {
+   "freed": 48,
+   "verdicts": {
+    "Safe": 48
+   },
+   "round0": {
+    "Safe": 48
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 48,
+     "safe": 48
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Safe": 3
+    },
+    "cmetrics": {
+     "Safe": 4
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 35
+    },
+    "monkey-libevent": {
+     "Safe": 3
+    }
+   }
+  },
+  "P3/same-unit": {
+   "freed": 220,
+   "verdicts": {
+    "Unknown": 137,
+    "Safe": 83
+   },
+   "round0": {
+    "Unknown": 136,
+    "Safe": 83
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 219,
+     "safe": 83
+    },
+    {
+     "round": 1,
+     "freed": 1,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 4,
+     "Safe": 1
+    },
+    "cmetrics": {
+     "Unknown": 5,
+     "Safe": 5
+    },
+    "ctraces": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 70,
+     "Unknown": 114
+    },
+    "monkey-libevent": {
+     "Unknown": 13,
+     "Safe": 3
+    }
+   }
+  },
+  "P3/cross-unit": {
+   "freed": 228,
+   "verdicts": {
+    "Safe": 86,
+    "Unknown": 142
+   },
+   "round0": {
+    "Safe": 86,
+    "Unknown": 141
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 227,
+     "safe": 86
+    },
+    {
+     "round": 1,
+     "freed": 1,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 5,
+     "Safe": 2
+    },
+    "cmetrics": {
+     "Safe": 6,
+     "Unknown": 5
+    },
+    "ctraces": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "librdkafka": {
+     "Safe": 71,
+     "Unknown": 117
+    },
+    "monkey-libevent": {
+     "Unknown": 13,
+     "Safe": 3
+    }
+   }
+  },
+  "P3/cross-unit-ceiling": {
+   "freed": 242,
+   "verdicts": {
+    "Safe": 242
+   },
+   "round0": {
+    "Safe": 227
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 227,
+     "safe": 227
+    },
+    {
+     "round": 1,
+     "freed": 15,
+     "safe": 15
+    },
+    {
+     "round": 2,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Safe": 7
+    },
+    "cmetrics": {
+     "Safe": 18
+    },
+    "ctraces": {
+     "Safe": 3
+    },
+    "fluent-bit-chunk": {
+     "Safe": 3
+    },
+    "librdkafka": {
+     "Safe": 195
+    },
+    "monkey-libevent": {
+     "Safe": 16
+    }
+   }
+  }
+ },
+ "freed": {
+  "P2": [
+   {
+    "library": "chunkio",
+    "file": "chunkio.c",
+    "function": "cio_options_init",
+    "verdict": "Unknown",
+    "reason": "tracked root `options` not null-tested before line 2261; tracked root `options` not null-tested before line 2262; tracked root `options` not null-tested before line 2263; tracked root `options` not null-tested before line 2264",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 9
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "chunkio.c",
+    "function": "cio_set_log_level",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "cio_file_real_size",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmetrics.c",
+    "function": "cmt_initialize",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_exponential_histogram_data_point_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_histogram_data_point_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_metric_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_encode_opentelemetry.c",
+    "function": "otel_span_set_kind",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 6
+    }
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_get_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_is_storage_overlimit",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "LZ4F_resetDecompressionContext",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "ctxTypeID_to_size",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdbuf.c",
+    "function": "rd_slice_widen",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdhdrhistogram.c",
+    "function": "rd_hdr_countsIndex",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_set_log_level",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigResource_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 21852; tracked root `b` not null-tested before line 21852",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConsumerGroupListing_cmp_group_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteGroup_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteTopic_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_NewPartitions_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_NewTopic_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_cmp_by_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_clear_last_err",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_sw_str_sanitize_inplace",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata_cache.c",
+    "function": "rd_kafka_metadata_partition_id_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_handlers.c",
+    "function": "rd_kafka_mock_msgset_est_record_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `mset` not null-tested before line 24339; tracked root `mset` not null-tested before line 24343",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_aborted_txn_cmp_by_pid",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_offset_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_metadata_init",
+    "verdict": "Unknown",
+    "reason": "tracked root `mdi` not null-tested before line 22461; tracked root `mdi` not null-tested before line 22462; tracked root `mdi` not null-tested before line 22463",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_set_CurrentLeader",
+    "verdict": "Unknown",
+    "reason": "tracked root `md` not null-tested before line 22540; tracked root `mdi` not null-tested before line 22539; tracked root `mdi` not null-tested before line 22542; tracked root `mdp` not null-tested before line 22546",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 5,
+     "loaded-pointer:scope": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ConsumerGenerationPair_cmp_generation",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ut_testConflictingPreviousAssignments",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "clear_unit_test_data",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 14
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_decoded_int64",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_connects",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_connects2",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_coordinator_assigned_partitions",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_timer.c",
+    "function": "rd_kafka_timer_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdmap.c",
+    "function": "mykey_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdmap.c",
+    "function": "person_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdunittest_fetcher.c",
+    "function": "ut_set_types",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdxxhash.c",
+    "function": "XXH32_reset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdxxhash.c",
+    "function": "XXH64_reset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 3
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_fifo.c",
+    "function": "fifo_drop_msg",
+    "verdict": "Unknown",
+    "reason": "tracked root `fw` not null-tested before line 5345; tracked root `msg` not null-tested before line 5346",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_lib.c",
+    "function": "mk_http_status",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_scheduler.c",
+    "function": "mk_sched_broadcast_signal",
+    "verdict": "Unknown",
+    "reason": "tracked root `ctx` not null-tested before line 7001",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   }
+  ],
+  "P3": [
+   {
+    "library": "chunkio",
+    "file": "chunkio.c",
+    "function": "cio_options_init",
+    "verdict": "Unknown",
+    "reason": "tracked root `options` not null-tested before line 2261; tracked root `options` not null-tested before line 2262; tracked root `options` not null-tested before line 2263; tracked root `options` not null-tested before line 2264",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 9
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "chunkio.c",
+    "function": "cio_set_log_level",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_chunk.c",
+    "function": "cio_chunk_hash",
+    "verdict": "Unknown",
+    "reason": "tracked root `ch` not null-tested before line 2264",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "cio_file_is_up",
+    "verdict": "Unknown",
+    "reason": "tracked root `cf` not null-tested before line 3679 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "cio_file_real_size",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "finalize_checksum",
+    "verdict": "Unknown",
+    "reason": "tracked root `cf` not null-tested before line 2924",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "chunkio",
+    "file": "cio_file.c",
+    "function": "write_init_header",
+    "verdict": "Unknown",
+    "reason": "tracked root `cf` not null-tested before line 2941; tracked root `cf` not null-tested before line 2942; tracked root `cf` not null-tested before line 2943; tracked root `cf` not null-tested before line 2944",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 5,
+     "root-untracked:scope": 1,
+     "root-tracked-unguarded": 5
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmetrics.c",
+    "function": "cmt_initialize",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_cat.c",
+    "function": "cmt_opts_compare",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 6019; tracked root `a` not null-tested before line 6023; tracked root `a` not null-tested before line 6027; tracked root `a` not null-tested before line 6031",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 8
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_decode_statsd.c",
+    "function": "is_incremental",
+    "verdict": "Unknown",
+    "reason": "tracked root `str` not null-tested before line 5598",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "compute_flat_scope_index",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3,
+     "loaded-pointer:scope": 6
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_exponential_histogram_data_point_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_histogram_data_point_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "initialize_metric_list",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_encode_opentelemetry.c",
+    "function": "is_metric_empty",
+    "verdict": "Unknown",
+    "reason": "tracked root `map` not null-tested before line 7922",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_filter.c",
+    "function": "filter_get_label_index",
+    "verdict": "Unknown",
+    "reason": "tracked root `label` not null-tested before line 5714",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_histogram.c",
+    "function": "check_buckets",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 2,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "cmetrics",
+    "file": "cmt_map.c",
+    "function": "metric_labels_match",
+    "verdict": "Unknown",
+    "reason": "tracked root `label` not null-tested before line 5615 (may_bind unobserved: fail-closed); tracked root `label` not null-tested before line 5618 (may_bind unobserved: fail-closed); tracked root `labels_val` not null-tested before line 5615 (may_bind unobserved: fail-closed); tracked root `labels_val` not null-tested before line 5618 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 5
+    }
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_encode_opentelemetry.c",
+    "function": "otel_span_set_kind",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 6
+    }
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_id.c",
+    "function": "ctr_id_get_buf",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "ctraces",
+    "file": "ctr_id.c",
+    "function": "ctr_id_get_len",
+    "verdict": "Unknown",
+    "reason": "tracked root `cid` not null-tested before line 6836",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_get_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_is_storage_overlimit",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "fluent-bit-chunk",
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_total_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `storage` not null-tested before line 19880",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {
+     "root-untracked:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "cJSON.c",
+    "function": "cJSON_GetErrorPtr",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "cJSON.c",
+    "function": "cJSON_GetStringValue",
+    "verdict": "Unknown",
+    "reason": "tracked root `item` not null-tested before line 1384",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "cJSON.c",
+    "function": "cJSON_SetNumberHelper",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "cJSON.c",
+    "function": "parse_hex4",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 9
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "cJSON.c",
+    "function": "update_offset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "LZ4F_resetDecompressionContext",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4frame.c",
+    "function": "ctxTypeID_to_size",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "lz4hc.c",
+    "function": "LZ4HC_clearTables",
+    "verdict": "Unknown",
+    "reason": "tracked root `hc4` not null-tested before line 566; tracked root `hc4` not null-tested before line 567",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdbuf.c",
+    "function": "extra_alloc",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdbuf.c",
+    "function": "rd_slice_widen",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdhdrhistogram.c",
+    "function": "rd_hdr_countsIndex",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdhdrhistogram.c",
+    "function": "rd_hdr_getBucketIndex",
+    "verdict": "Unknown",
+    "reason": "tracked root `hdr` not null-tested before line 4115",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_Uuid_hash",
+    "verdict": "Unknown",
+    "reason": "tracked root `uuid` not null-tested before line 25183; tracked root `uuid` not null-tested before line 25184",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_consumer_group_state_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_consumer_group_type_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_log_print",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 21277",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_messages_get",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_opaque",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_set_log_level",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka.c",
+    "function": "rd_kafka_toppar_dump",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktp` not null-tested before line 24440; tracked root `rktp` not null-tested before line 24448",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 8,
+     "root-tracked-unguarded": 13
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigEntry_name",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigEntry_synonyms",
+    "verdict": "Unknown",
+    "reason": "tracked root `cntp` not null-tested before line 21757; tracked root `entry` not null-tested before line 21757; tracked root `entry` not null-tested before line 21760",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigEntry_value",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigResource_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 21852; tracked root `b` not null-tested before line 21852",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigResource_configs",
+    "verdict": "Unknown",
+    "reason": "tracked root `config` not null-tested before line 21909",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConsumerGroupListing_cmp_group_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteAcls_result_response_matching_acls",
+    "verdict": "Unknown",
+    "reason": "tracked root `matching_acls_cntp` not null-tested before line 24298",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteGroup_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteGroup_destroy_array",
+    "verdict": "Unknown",
+    "reason": "tracked root `del_groups` not null-tested before line 22976",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteTopic_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteTopic_destroy_array",
+    "verdict": "Unknown",
+    "reason": "tracked root `del_topics` not null-tested before line 21420",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ElectLeadersResult_partitions",
+    "verdict": "Unknown",
+    "reason": "tracked root `cntp` not null-tested before line 26462; tracked root `result` not null-tested before line 26462; tracked root `result` not null-tested before line 26463",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_MemberDescription_assignment",
+    "verdict": "Unknown",
+    "reason": "tracked root `member` not null-tested before line 25255",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_NewPartitions_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_NewTopic_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_TopicDescription_topic_id",
+    "verdict": "Unknown",
+    "reason": "tracked root `topicdesc` not null-tested before line 26112",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_UserScramCredentialsDescription_scramcredentialinfo",
+    "verdict": "Unknown",
+    "reason": "tracked root `description` not null-tested before line 23713",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_assignor.c",
+    "function": "ut_print_toppar_list",
+    "verdict": "Unknown",
+    "reason": "tracked root `partitions` not null-tested before line 20737; tracked root `partitions` not null-tested before line 20738",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3,
+     "loaded-pointer:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_aux.c",
+    "function": "rd_kafka_Node_host",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_aux.c",
+    "function": "rd_kafka_Node_rack",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_cmp_by_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_destroy_error",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22530 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_filter_never_connected",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 24007",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_needs_persistent_connection",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 20961",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_broker_outbufs_space",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 22965",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_brokers_get_state_version",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 21578; tracked root `rk` not null-tested before line 21579; tracked root `rk` not null-tested before line 21580",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_mk_brokername",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cert.c",
+    "function": "rd_kafka_cert_dup",
+    "verdict": "Unknown",
+    "reason": "tracked root `src` not null-tested before line 20192",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_assignment_is_lost",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkcg` not null-tested before line 20364",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_clear_last_err",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_get_coord",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkcg` not null-tested before line 20758; tracked root `rkcg` not null-tested before line 20760; tracked root `rkcg` not null-tested before line 20761",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_maybe_clear_heartbeat_failed_err",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkcg` not null-tested before line 20472",
+    "round": 1,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_rebalance_protocol",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_conf",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 26231",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_conf_get_default_topic_conf",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_sw_str_sanitize_inplace",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_AlterConfigs_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19883 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_AlterConsumerGroupOffsets_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19979 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_AlterUserScramCredentials_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19997 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_CreateAcls_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19958 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_CreatePartitions_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19876 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_CreateTopics_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19862 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DeleteAcls_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19972 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DeleteConsumerGroupOffsets_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19949 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DeleteGroups_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19942 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DeleteRecords_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19905 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DeleteTopics_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19869 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeAcls_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19965 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeCluster_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19935 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeConfigs_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19898 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeConsumerGroups_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19920 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeTopics_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19928 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_DescribeUserScramCredentials_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19988 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_ElectLeaders_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 20021 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_IncrementalAlterConfigs_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19890 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_ListConsumerGroupOffsets_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 20013 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_ListConsumerGroups_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19912 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_ListOffsets_result",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 20006 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_config_string",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_message_count",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_event.c",
+    "function": "rd_kafka_event_name",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkev` not null-tested before line 19644 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_fetcher.c",
+    "function": "rd_kafka_toppar_fetch_decide_start_from_next_fetch_start",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktp` not null-tested before line 22226",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 5
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_idempotence.c",
+    "function": "rd_kafka_idemp_inflight_toppar_add",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 20574",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata_cache.c",
+    "function": "rd_kafka_metadata_cache_entry_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 20572; tracked root `b` not null-tested before line 20572",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_metadata_cache.c",
+    "function": "rd_kafka_metadata_partition_id_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_handle_mock_cluster",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_cluster_bootstraps",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_cluster_handle",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_coord_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22600; tracked root `mcoord` not null-tested before line 22600",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_group_initial_rebalance_delay_ms",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 23302; tracked root `mcluster` not null-tested before line 23303; tracked root `mcluster` not null-tested before line 23304",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_partition_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `mtopic` not null-tested before line 21874",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1,
+     "loaded-pointer:scope": 1,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_partition_next_leader_response",
+    "verdict": "Unknown",
+    "reason": "tracked root `mpart` not null-tested before line 21780",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_partition_update_lso",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 21510; tracked root `mpart` not null-tested before line 21509; tracked root `mpart` not null-tested before line 21515; tracked root `mpart` not null-tested before line 21522",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 7,
+     "root-tracked-guarded": 7,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_txn_partition_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `mtxn` not null-tested before line 21469; tracked root `mtxnp` not null-tested before line 21469",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_cgrp_classic_check_state",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_cgrp_classic_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcgrp` not null-tested before line 21116; tracked root `mcluster` not null-tested before line 21116",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_set_group_consumer_heartbeat_interval_ms",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 21783; tracked root `mcluster` not null-tested before line 21784; tracked root `mcluster` not null-tested before line 21786",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_set_group_consumer_session_timeout_ms",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 21775; tracked root `mcluster` not null-tested before line 21776; tracked root `mcluster` not null-tested before line 21778",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_handlers.c",
+    "function": "rd_kafka_mock_msgset_est_record_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `mset` not null-tested before line 24339; tracked root `mset` not null-tested before line 24343",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_handlers.c",
+    "function": "rd_kafka_mock_sgrp_record_state_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `pmeta` not null-tested before line 24317",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 21857; tracked root `mshgrp` not null-tested before line 21857",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_member_find",
+    "verdict": "Unknown",
+    "reason": "tracked root `member` not null-tested before line 21934; tracked root `mshgrp` not null-tested before line 21934",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_auto_offset_reset",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22365; tracked root `mcluster` not null-tested before line 22366; tracked root `mcluster` not null-tested before line 22368; tracked root `mcluster` not null-tested before line 22369",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_heartbeat_interval",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22296; tracked root `mcluster` not null-tested before line 22297; tracked root `mcluster` not null-tested before line 22299",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_isolation_level",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22326; tracked root `mcluster` not null-tested before line 22327; tracked root `mcluster` not null-tested before line 22329; tracked root `mcluster` not null-tested before line 22330",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_max_delivery_attempts",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22305; tracked root `mcluster` not null-tested before line 22306; tracked root `mcluster` not null-tested before line 22308; tracked root `mcluster` not null-tested before line 22309",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_max_fetch_sessions",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22345; tracked root `mcluster` not null-tested before line 22346; tracked root `mcluster` not null-tested before line 22348; tracked root `mcluster` not null-tested before line 22349",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_max_record_locks",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22355; tracked root `mcluster` not null-tested before line 22356; tracked root `mcluster` not null-tested before line 22358; tracked root `mcluster` not null-tested before line 22359",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_max_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22335; tracked root `mcluster` not null-tested before line 22336; tracked root `mcluster` not null-tested before line 22338; tracked root `mcluster` not null-tested before line 22339",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_record_lock_duration",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22315; tracked root `mcluster` not null-tested before line 22316; tracked root `mcluster` not null-tested before line 22318; tracked root `mcluster` not null-tested before line 22320",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_set_session_timeout",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22289; tracked root `mcluster` not null-tested before line 22290; tracked root `mcluster` not null-tested before line 22291",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegrps_connection_closed",
+    "verdict": "Unknown",
+    "reason": "tracked root `mcluster` not null-tested before line 22510; tracked root `mshgrp` not null-tested before line 22510",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 1,
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_aborted_txn_cmp_by_pid",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_aborted_txns_offsets_for_pid",
+    "verdict": "Unknown",
+    "reason": "tracked root `aborted_txns` not null-tested before line 20527",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_offset_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_op.c",
+    "function": "rd_kafka_op_get_offset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_get_current_leader_epoch",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_get_leader_epoch",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_count_abs_offsets",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_get_err",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_regex_cnt",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktpar` not null-tested before line 22707; tracked root `rktparlist` not null-tested before line 22704; tracked root `rktparlist` not null-tested before line 22705",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3,
+     "loaded-pointer:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_reset_offsets",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_set_err",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_toppar_is_on_cgrp",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktp` not null-tested before line 21564; tracked root `rktp` not null-tested before line 21566; tracked root `rktp` not null-tested before line 21569",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_pattern.c",
+    "function": "rd_kafka_pattern_match",
+    "verdict": "Unknown",
+    "reason": "tracked root `plist` not null-tested before line 19588; tracked root `rkpat` not null-tested before line 19588",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {
+     "root-tracked-unguarded": 2,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_plugin.c",
+    "function": "rd_kafka_plugin_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 19587; tracked root `b` not null-tested before line 19587",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_queue.c",
+    "function": "rd_kafka_queue_length",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkqu` not null-tested before line 20362",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_queue.c",
+    "function": "rd_kafka_queue_yield",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkqu` not null-tested before line 20396",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafka_AclBinding_request_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `acl` not null-tested before line 23649",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 6
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_metadata_init",
+    "verdict": "Unknown",
+    "reason": "tracked root `mdi` not null-tested before line 22461; tracked root `mdi` not null-tested before line 22462; tracked root `mdi` not null-tested before line 22463",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_set_CurrentLeader",
+    "verdict": "Unknown",
+    "reason": "tracked root `md` not null-tested before line 22540; tracked root `mdi` not null-tested before line 22539; tracked root `mdi` not null-tested before line 22542; tracked root `mdp` not null-tested before line 22546",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 5,
+     "loaded-pointer:scope": 4,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+    "verdict": "Unknown",
+    "reason": "tracked root `NodeEndpoints` not null-tested before line 22431; tracked root `NodeEndpoints` not null-tested before line 22433; tracked root `NodeEndpoints` not null-tested before line 22437; tracked root `NodeEndpoints` not null-tested before line 22438",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 5,
+     "root-untracked:scope": 3,
+     "loaded-pointer:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_request.c",
+    "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_ready",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2,
+     "root-tracked-guarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_plain.c",
+    "function": "rd_kafka_sasl_plain_conf_validate",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 20206; tracked root `rk` not null-tested before line 20207; tracked root `rk` not null-tested before line 20208",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_acknowledgement_mode_is_explicit",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkshare` not null-tested before line 19601",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 2,
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_acknowledgement_mode_is_implicit",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkshare` not null-tested before line 19594",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 2,
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_partition_offsets_list_get",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_partition_offsets_offsets",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ConsumerGenerationPair_cmp_generation",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ConsumerPair_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 21282; tracked root `a` not null-tested before line 21285; tracked root `b` not null-tested before line 21282; tracked root `b` not null-tested before line 21285",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 8
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "sort_by_map_elem_val_toppar_list_cnt",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 21489; tracked root `a` not null-tested before line 21493; tracked root `al` not null-tested before line 21490; tracked root `b` not null-tested before line 21489",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 6
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ut_get_consumer_rack",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_sticky_assignor.c",
+    "function": "ut_testConflictingPreviousAssignments",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_subscription.c",
+    "function": "_share_invalid_topic_cb",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktpar` not null-tested before line 19603",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "clear_unit_test_data",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 14
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_decoded_int64",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_acknowledgements_send_total",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22084; tracked root `rk` not null-tested before line 22085; tracked root `rk` not null-tested before line 22086",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_commit_latency",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22096; tracked root `rk` not null-tested before line 22098",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_connects",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_connects2",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_coordinator_assigned_partitions",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_fetch_latency",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 22016; tracked root `rkb` not null-tested before line 22018",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_heartbeat_total",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22090; tracked root `rk` not null-tested before line 22091; tracked root `rk` not null-tested before line 22092",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_poll_idle_ratio",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22044; tracked root `rk` not null-tested before line 22046; tracked root `rk` not null-tested before line 22048",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_produce_latency",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 21999; tracked root `rkb` not null-tested before line 22001",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_queue_time",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 21988; tracked root `rkb` not null-tested before line 21990; tracked root `rkb` not null-tested before line 21992; tracked root `rkb` not null-tested before line 21994",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_rebalance_latency",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22011",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_rtt",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 21977; tracked root `rkb` not null-tested before line 21978",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_share_fetch_latency",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 22023; tracked root `rkb` not null-tested before line 22026; tracked root `rkb` not null-tested before line 22029",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_share_fetch_size",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 22035; tracked root `rkb` not null-tested before line 22037; tracked root `rkb` not null-tested before line 22039",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_share_fetch_total",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22077; tracked root `rk` not null-tested before line 22078; tracked root `rk` not null-tested before line 22079",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_share_poll_idle_ratio",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22053; tracked root `rk` not null-tested before line 22056; tracked root `rk` not null-tested before line 22059",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_throttle_time",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkb` not null-tested before line 21982; tracked root `rkb` not null-tested before line 21983; tracked root `rkb` not null-tested before line 21984",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_set_time_between_poll",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 22065; tracked root `rk` not null-tested before line 22068; tracked root `rk` not null-tested before line 22071",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "get_client_rack",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 4,
+     "loaded-pointer:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "get_group_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "get_group_instance_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "get_transactional_id",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_telemetry_encode.c",
+    "function": "reset_historical_metrics",
+    "verdict": "Unknown",
+    "reason": "tracked root `rk` not null-tested before line 20602; tracked root `rk` not null-tested before line 20603; tracked root `rk` not null-tested before line 20605; tracked root `rk` not null-tested before line 20609",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 15,
+     "root-tracked-guarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_timer.c",
+    "function": "rd_kafka_timer_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_timer.c",
+    "function": "rd_kafka_timers_lock",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkts` not null-tested before line 19565",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_timer.c",
+    "function": "rd_kafka_timers_unlock",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkts` not null-tested before line 19568",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_topic_cmp_rkt",
+    "verdict": "Unknown",
+    "reason": "tracked root `rkt_a` not null-tested before line 19960; tracked root `rkt_b` not null-tested before line 19960",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_topic_info_cmp",
+    "verdict": "Unknown",
+    "reason": "tracked root `a` not null-tested before line 20886; tracked root `a` not null-tested before line 20888; tracked root `a` not null-tested before line 20890; tracked root `a` not null-tested before line 20892",
+    "round": 0,
+    "needs_cross_unit_summary": true,
+    "obligations": {
+     "root-tracked-unguarded": 18,
+     "loaded-pointer:scope": 9
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_toppar_needs_query",
+    "verdict": "Unknown",
+    "reason": "tracked root `rktp` not null-tested before line 20766; tracked root `rktp` not null-tested before line 20768; tracked root `rktp` not null-tested before line 20770",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 3,
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdlist.c",
+    "function": "rd_list_dump",
+    "verdict": "Unknown",
+    "reason": "tracked root `rl` not null-tested before line 2948; tracked root `rl` not null-tested before line 2950; tracked root `rl` not null-tested before line 2951",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 6
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdlist.c",
+    "function": "rd_list_first",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdlist.c",
+    "function": "rd_list_last",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdmap.c",
+    "function": "mykey_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdmap.c",
+    "function": "person_cmp",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {}
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdunittest_fetcher.c",
+    "function": "ut_set_types",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-untracked:scope": 2
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdxxhash.c",
+    "function": "XXH32_reset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "rdxxhash.c",
+    "function": "XXH64_reset",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 3
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "snappy.c",
+    "function": "peek",
+    "verdict": "Unknown",
+    "reason": "tracked root `iv` not null-tested before line 19775; tracked root `s` not null-tested before line 19772; tracked root `s` not null-tested before line 19775",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "librdkafka",
+    "file": "snappy.c",
+    "function": "sink_peek",
+    "verdict": "Unknown",
+    "reason": "tracked root `iov` not null-tested before line 19822; tracked root `s` not null-tested before line 19820; tracked root `s` not null-tested before line 19822",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 4,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_core/mk_iov.c",
+    "function": "mk_iov_print",
+    "verdict": "Unknown",
+    "reason": "tracked root `mk_io` not null-tested before line 2180; tracked root `mk_io` not null-tested before line 2182; tracked root `mk_io` not null-tested before line 2183",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 3,
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_core/mk_memory.c",
+    "function": "mk_ptr_print",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "no-pointer-hop": 2,
+     "loaded-pointer:scope": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_clock.c",
+    "function": "_next_buffer",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 4
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_fifo.c",
+    "function": "fifo_drop_msg",
+    "verdict": "Unknown",
+    "reason": "tracked root `fw` not null-tested before line 5345; tracked root `msg` not null-tested before line 5346",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_fifo.c",
+    "function": "mk_fifo_queue_get",
+    "verdict": "Unknown",
+    "reason": "tracked root `q` not null-tested before line 5229 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_http.c",
+    "function": "mk_http_cb_file_on_consume",
+    "verdict": "Unknown",
+    "reason": "tracked root `in` not null-tested before line 6513; tracked root `in` not null-tested before line 6518",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 2,
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_http.c",
+    "function": "mk_http_keepalive_check",
+    "verdict": "Unknown",
+    "reason": "tracked root `server` not null-tested before line 6830 (may_bind unobserved: fail-closed); tracked root `sr` not null-tested before line 6821; tracked root `sr` not null-tested before line 6822",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 8,
+     "root-tracked-unguarded": 3
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_http_parser.c",
+    "function": "cb_copy_chunk",
+    "verdict": "Unknown",
+    "reason": "tracked root `out_len_processed` not null-tested before line 5901",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_lib.c",
+    "function": "mk_http_status",
+    "verdict": "Safe",
+    "reason": "every pointer hop is untracked, loaded or a null-tested tracked root",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-untracked:scope": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_plugin.c",
+    "function": "mk_plugin_cap",
+    "verdict": "Unknown",
+    "reason": "tracked root `plugin` not null-tested before line 6545 (may_bind unobserved: fail-closed)",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_plugin.c",
+    "function": "mk_plugin_load_static",
+    "verdict": "Unknown",
+    "reason": "tracked root `server` not null-tested before line 6289",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_plugin.c",
+    "function": "mk_plugin_lookup",
+    "verdict": "Unknown",
+    "reason": "tracked root `p` not null-tested before line 6045",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_plugin.c",
+    "function": "mk_plugin_time_now_human",
+    "verdict": "Unknown",
+    "reason": "tracked root `server` not null-tested before line 6501",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_scheduler.c",
+    "function": "mk_sched_broadcast_signal",
+    "verdict": "Unknown",
+    "reason": "tracked root `ctx` not null-tested before line 7001",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "loaded-pointer:scope": 1,
+     "root-tracked-unguarded": 1
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_scheduler.c",
+    "function": "mk_sched_conn_pending_output",
+    "verdict": "Unknown",
+    "reason": "tracked root `input` not null-tested before line 6888 (may_bind unobserved: fail-closed); tracked root `stream` not null-tested before line 6884",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   },
+   {
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_server.c",
+    "function": "mk_server_lib_notify_started",
+    "verdict": "Unknown",
+    "reason": "tracked root `server` not null-tested before line 6567; tracked root `server` not null-tested before line 6571",
+    "round": 0,
+    "needs_cross_unit_summary": false,
+    "obligations": {
+     "root-tracked-unguarded": 2
+    }
+   }
+  ]
+ }
+}

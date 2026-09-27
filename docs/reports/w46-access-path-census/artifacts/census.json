@@ -1,0 +1,3847 @@
+{"schema": "qcore.w46-access-path-census.v1"}
+{
+ "schema": "qcore.w46-access-path-census.v1",
+ "form_order": {
+  "P2": [
+   {
+    "form": "(no typed access)",
+    "functions_freed": 18
+   },
+   {
+    "form": "formal:->:store",
+    "functions_freed": 5
+   },
+   {
+    "form": "formal:->:read",
+    "functions_freed": 4
+   },
+   {
+    "form": "formal:->.:store",
+    "functions_freed": 3
+   },
+   {
+    "form": "formal:->..:store",
+    "functions_freed": 2
+   },
+   {
+    "form": "local:.:store",
+    "functions_freed": 2
+   },
+   {
+    "form": "formal:->->.:store",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:.:store",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:.[a]:store",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->[]:store",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:[]:read",
+    "functions_freed": 1
+   }
+  ],
+  "P3": [
+   {
+    "form": "(no typed access)",
+    "functions_freed": 18
+   },
+   {
+    "form": "formal:->:read@return",
+    "functions_freed": 6
+   },
+   {
+    "form": "formal:->:read@condition",
+    "functions_freed": 5
+   },
+   {
+    "form": "formal:->:read@statement",
+    "functions_freed": 5
+   },
+   {
+    "form": "formal:->:store@statement",
+    "functions_freed": 6
+   },
+   {
+    "form": "formal:->.:read@return",
+    "functions_freed": 4
+   },
+   {
+    "form": "formal:->[a]:read@return",
+    "functions_freed": 4
+   },
+   {
+    "form": "formal:->.:store@statement",
+    "functions_freed": 3
+   },
+   {
+    "form": "global:[a]:read@return",
+    "functions_freed": 3
+   },
+   {
+    "form": "formal:->..:store@statement",
+    "functions_freed": 2
+   },
+   {
+    "form": "formal:->:address@return",
+    "functions_freed": 2
+   },
+   {
+    "form": "formal:->[].:read@condition",
+    "functions_freed": 2
+   },
+   {
+    "form": "formal:->[].:store@statement",
+    "functions_freed": 2
+   },
+   {
+    "form": "local:.:store@statement",
+    "functions_freed": 2
+   },
+   {
+    "form": "formal:->->..:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->->.:store@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->->:address@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->->:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->.->:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->..:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->.:read@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->:store@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->[]:read@condition",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:.:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:.:store@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:.[a]:store@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "global:[a]:read@call-argument",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->->[]->:read@condition",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:->->[]->:read@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->..:read@condition",
+    "functions_freed": 0
+   },
+   {
+    "form": "local:->:address@call-argument",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:->[]:store@statement",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:[]:read@statement",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:.:read@condition",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:.[]:read@call-argument",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:[]:read@condition",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:[]:read@return",
+    "functions_freed": 1
+   },
+   {
+    "form": "formal:[a]:read@condition",
+    "functions_freed": 0
+   },
+   {
+    "form": "formal:[a]:read@statement",
+    "functions_freed": 1
+   }
+  ]
+ },
+ "closure": {
+  "call_blocked": {
+   "in-corpus only": 870,
+   "external only": 78,
+   "mixed or indirect: external+same-unit": 47,
+   "mixed or indirect: external+same-unit+same-unit-unreported-refused": 7,
+   "mixed or indirect: cross-unit+external+same-unit": 6,
+   "mixed or indirect: external+indirect+same-unit-unreported-refused": 1,
+   "mixed or indirect: external+same-unit-unreported-refused": 14,
+   "mixed or indirect: cross-unit+external": 9,
+   "mixed or indirect: external+indirect": 1,
+   "mixed or indirect: external+indirect+same-unit": 1,
+   "mixed or indirect: indirect+same-unit": 3,
+   "mixed or indirect: cross-unit+indirect+same-unit": 57,
+   "mixed or indirect: cross-unit+indirect+same-unit+same-unit-unreported-refused": 15,
+   "mixed or indirect: indirect": 6,
+   "mixed or indirect: cross-unit+indirect+same-unit-unreported-refused": 17,
+   "mixed or indirect: indirect+same-unit+same-unit-unreported-refused": 5,
+   "mixed or indirect: cross-unit+indirect": 25,
+   "mixed or indirect: cross-unit+external+indirect+same-unit+same-unit-unreported-refused": 1,
+   "mixed or indirect: indirect+same-unit-unreported-refused": 1,
+   "mixed or indirect: cross-unit+external+indirect": 9,
+   "mixed or indirect: cross-unit+external+indirect+same-unit": 4,
+   "mixed or indirect: cross-unit+external+same-unit-unreported-refused": 1
+  },
+  "external": [
+   {
+    "callee": "strcasecmp",
+    "alone": 5,
+    "named_by": 5
+   },
+   {
+    "callee": "cfl_sds_cat_safe",
+    "alone": 4,
+    "named_by": 4
+   },
+   {
+    "callee": "flb_routes_mask_get_bit",
+    "alone": 3,
+    "named_by": 3
+   },
+   {
+    "callee": "strncmp",
+    "alone": 3,
+    "named_by": 3
+   },
+   {
+    "callee": "call_once",
+    "alone": 2,
+    "named_by": 2
+   },
+   {
+    "callee": "cfl_arena_calloc",
+    "alone": 2,
+    "named_by": 2
+   },
+   {
+    "callee": "cfl_kvlist_count",
+    "alone": 2,
+    "named_by": 2
+   },
+   {
+    "callee": "pthread_getspecific",
+    "alone": 2,
+    "named_by": 2
+   },
+   {
+    "callee": "pthread_key_create",
+    "alone": 2,
+    "named_by": 2
+   },
+   {
+    "callee": "ERR_clear_error",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__atomic_compare_exchange",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__atomic_load_n",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__atomic_store_n",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__builtin_ctz",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__builtin_ctzll",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "__builtin_nanf",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "abort",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "bind",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "bsearch",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_fetch",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_array",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_bool",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_double",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_int64",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_kvlist",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_kvlist_insert_string",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "curl_global_init",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "dlclose",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "dlopen",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "flb_input_name",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "memcmp",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "mtx_destroy",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__init",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_join",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_once",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_rwlock_destroy",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_rwlock_init",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_setname_np",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_setspecific",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "rd_qsort_r_cmp",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "readdir",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "shutdown",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "strptime",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "thrd_current",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "tolower",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "writev",
+    "alone": 1,
+    "named_by": 1
+   },
+   {
+    "callee": "BIO_free",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "BIO_new_mem_buf",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "ENGINE_free",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "ERR_lib_error_string",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "ERR_peek_last_error_all",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "ERR_reason_error_string",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "OPENSSL_sk_num",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "OPENSSL_sk_value",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "PEM_read_bio_PrivateKey",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "SSL_CTX_free",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "SSL_free",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "SSL_shutdown",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "X509_NAME_cmp",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "X509_get_issuer_name",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "__builtin_va_end",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "__builtin_va_start",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_arena_create_with_options",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_arena_options_init",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_sds_create_size",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "cfl_sds_set_len",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "connect",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "curl_url",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "curl_url_cleanup",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "curl_url_get",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "curl_url_set",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "flb_time_get",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "freeaddrinfo",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "getaddrinfo",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "getpid",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "getrlimit",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "labs",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "lseek",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "opentelemetry__proto__metrics__v1__metrics_data__get_packed_size",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "opentelemetry__proto__metrics__v1__metrics_data__pack",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_attr_init",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "pthread_create",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "regcomp",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "regfree",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "setegid",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "seteuid",
+    "alone": 0,
+    "named_by": 1
+   },
+   {
+    "callee": "setrlimit",
+    "alone": 0,
+    "named_by": 1
+   }
+  ],
+  "in_corpus_alone": [
+   {
+    "callee": "cJSON_New_Item",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 10,
+    "callee_blockers": "refused:indirect-call 1"
+   },
+   {
+    "callee": "LZ4_decompress_generic",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 9,
+    "callee_blockers": "unknown_alias 10, other 2"
+   },
+   {
+    "callee": "cmt_atomic_load",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 8,
+    "callee_blockers": "calls 1"
+   },
+   {
+    "callee": "cmt_opts_compare",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 6,
+    "callee_blockers": "freed:Unknown 1"
+   },
+   {
+    "callee": "cmt_atomic_store",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 6,
+    "callee_blockers": "calls 1"
+   },
+   {
+    "callee": "cmt_mpack_unpack_array",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 5,
+    "callee_blockers": "unknown_alias 1"
+   },
+   {
+    "callee": "ctr_mpack_unpack_array",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 5,
+    "callee_blockers": "unknown_alias 1"
+   },
+   {
+    "callee": "rd_kafka_timer_start0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 5,
+    "callee_blockers": "refused:pointer-valued-store 2"
+   },
+   {
+    "callee": "create_map_label",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "unknown_alias 2, other 2, refused:pointer-valued-store 2, refused:call 2"
+   },
+   {
+    "callee": "sds_cat_safe",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "calls 1"
+   },
+   {
+    "callee": "LZ4_compress_HC",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "unknown_alias 1"
+   },
+   {
+    "callee": "LZ4_compress_HC_extStateHC",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "calls 2"
+   },
+   {
+    "callee": "rd_kafka_confval_set_type",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "refused:union 13, refused:pointer-valued-store 3, other 1, refused:cast 1"
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_groups",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "refused:union 3, other 1"
+   },
+   {
+    "callee": "rd_kafka_interceptor_method_add",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 4,
+    "callee_blockers": "other 1"
+   },
+   {
+    "callee": "format_metric",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": "other 9, unknown_alias 5, refused:pointer-valued-store 4"
+   },
+   {
+    "callee": "add",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": "calls 3"
+   },
+   {
+    "callee": "add_item_to_object",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": "unknown_alias 1, refused:indirect-call 1, refused:pointer-valued-store 1"
+   },
+   {
+    "callee": "LZ4_decompress_unsafe_generic",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": "unknown_alias 4, other 2"
+   },
+   {
+    "callee": "rd_clock",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 3,
+    "callee_blockers": "not an Unknown function of the corpus"
+   },
+   {
+    "callee": "rd_atomic32_add",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_resources",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_err2str",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_topics",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_clear",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_destroy0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_find0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_find_by_id0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_assignor_add",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 3,
+    "callee_blockers": null
+   },
+   {
+    "callee": "create_label",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "fetch_metadata_kvlist_key",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cmt_atomic_compare_exchange",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_mpack_consume_int_tag",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_mpack_consume_uint_tag",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_array",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_bool",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_double",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_int64",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_kvlist",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_attributes_set_string",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "add_item_to_array",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "get_object_item",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cJSON_ParseWithLengthOpts",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "print",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "replace_item_in_object",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_default",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_fast_continue",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_fast_extState",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_HC_continue",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_write",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_slice_reader0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_hdr_getBucketIndex",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_destroy_app",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_serve_maybe_consume",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_AclBinding_new0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_AclBinding_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConfigResource_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_add_config0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConsumerGroupDescription_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DescribeCluster_result_description",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListConsumerGroupOffsets_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_NewPartitions_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_NewTopic_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_UserScramCredentialAlteration_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_destroy",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_result_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cnd_timedwait_ms",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_anyconf_desensitize",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_anyconf_dump",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_op_destroy",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_session_update_toppars_list",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_metadata_copy_internal",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_aborted_txns_next_offset",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_difference0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_intersection0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_union0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_get_private",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_toppar_keep0",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_pop_serve0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_serve0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_fwd_set0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_queue_new0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "setupRackAwareAssignment0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_err_action",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_oauthbearer_set_token_failure",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batch_entry_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_toppars_pause_resume",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_txn_clear_partitions_flag",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_cio_file_up",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "append_to_ring_buffer",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_event_wait_2",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_string_search",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_header_prepare",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "sched_thread_cleanup",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_http_thread_destroy",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 2,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cmt_map_metrics_expire",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cmt_atomic_initialize",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cmt_labels_add_kv",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "append_context",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "clone_array_entry",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "clone_kvlist_entry",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "destroy_context_list",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_exponential_histogram_data_point",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_histogram_data_point",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_numerical_data_point",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_resource_metrics_entry",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_summary_data_point",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "get_or_create_external_metadata_kvlist",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_histogram_points",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "decode_numerical_samples",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pack_context_metrics",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pack_metric",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "is_metric_empty",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "batch_add_resource",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "metric_data_point_count",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "calculate_label_set_hash",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pack_kvlist",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "otlp_kvpair_list_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_kvlist_to_otlp_kvpair_list",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_span_event_add_ts",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_span_set_parent_span_id",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_span_set_span_id",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ctr_span_set_trace_id",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cJSON_DetachItemViaPointer",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cJSON_Duplicate_rec",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "get_array_item",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cJSON_ParseWithOpts",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cJSON_ReplaceItemViaPointer",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "print_string_ptr",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "crc32c_zeros",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "gf2_matrix_square",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "gf2_matrix_times",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_fast",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_generic_validated",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_createStream",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_decompress_fast",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_decompress_safe",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4F_compressBegin_usingCDict",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_HC_continue",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compress_fast_continue",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4F_compressBound_internal",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4F_compressUpdateImpl",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4F_createCDict_advanced",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH32",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4HC_compress_generic_internal",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "LZ4_compressHC_continue_generic",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_field_iter_begin",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_field_iter_begin_extension",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_decode_bool",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_decode_inner",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_decode_varint",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_decode_varint32_eof",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_read",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "pb_encode_string",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_base64_encode",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_buf_get_writable0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_buf_alloc_segment",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_slice_narrow_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_slice_narrow",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_Uuid_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_bytes_hash",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_Uuid_hash",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_serve_rkmessages",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consume_batch0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consume_callback0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consume0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_dump0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_oauthbearer_set_token0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_oauthbearer_set_token_failure0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_curr_msgs_cnt",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_fwd_set0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_pop_serve_maybe_consume",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_timer_stop",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consumer_closed",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_fetch_reply_op",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_atomic32_sub",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_stats_emit_all",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_set_fatal_error0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_unittest",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_AlterConsumerGroupOffsets_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_AlterUserScramCredentials_result_response_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ClusterDescription_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConfigEntry_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConfigEntry_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConfigEntry_new0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_add",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConsumerGroupDescription_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConsumerGroupDescription_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_elem",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConsumerGroupListing_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ConsumerGroupListing_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_acl_results",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteAcls_result_response_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteConsumerGroupOffsets_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteGroup_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteRecords_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_DeleteTopic_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_admin_result_ret_acl_bindings",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ElectLeadersResult_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ElectLeaders_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ElectLeaders_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ElectLeadersResult_partitions",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListConsumerGroupOffsets_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListConsumerGroupsResult_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListConsumerGroupsResult_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListConsumerGroupsResult_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListOffsetsResultInfo_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListOffsetsResultInfo_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ListOffsetsResultInfo_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_MemberDescription_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_MemberDescription_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_MemberDescription_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_TopicDescription_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_TopicDescription_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_UserScramCredentialsDescription_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_MetadataRequest_resp_cb",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ut_ListConsumerGroups_response_merge",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_destroy",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_find",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_assignor_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consumer_protocol_member_metadata_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_assignor_topic_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_match",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "ut_assignors",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_Node_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_Node_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_acl_result_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_group_result_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_group_result_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_result_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_result_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_ApiVersion_supported0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_consumer_toppar_serve",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_needs_persistent_connection",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_monitor_del",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_op_new0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_jitter",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_buf_push0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_max_poll_exceeded",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_cmp",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_consumer_group_metadata_new_with_genid",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_cgrp_rejoin",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_conf_is_modified",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_get_legacy_ApiVersions",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_anyconf_get",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_coord_cache_entry_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_coord_cache_find",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_coord_req_fail",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_error_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_err2name",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_get_legacy_ApiVersions",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_ut_features_check",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_buf_read_NodeEndpoints",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_idemp_drain_done",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_init",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_interceptors_on_acknowledgement",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_ApiVersion_at_least",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_metadata_request",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_parse_Metadata0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_metadata_cache_delete",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_mock_connection_close",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_mock_error_stack_find",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_mock_partition_assign_replicas",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_mock_cluster_io_set_event",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_message_headers",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_message_setup",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_idemp_inflight_toppar_add",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_msgq_enq_sorted0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_msg_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_gzip_compress",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_lz4_compress",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_snappy_compress_slice",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_zstd_compress",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_msgset_writer_finalize_MessageSet_v2_header",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_offset_file_sync",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_op_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_toppar_fetch_decide",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_by_id_cmp",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_cmp",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_add0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_add",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_sort_by_topic",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_grow",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_list_match",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_ensure_toppar",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_set_leader_epoch",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_msgq_insert_msgq",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_purge0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_retry_msgq",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_pattern_list_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_regex_exec",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_pop_serve",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_cb_event_enable",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_io_event_enable",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_assignment_state_rack_search",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_buf_new_request0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_MetadataRequest0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_flags2str",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_buf_read_topic_partitions_nullable",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_buf_read_NodeEndpoints",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_queue_new0",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_connect_up",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_sasl_cyrus_global_init",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_sasl_cyrus_global_term",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_queue_get_sasl",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_sasl_background_callbacks_enable",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_sasl_set_credentials",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_oauthbearer_has_token",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ssl_hmac",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batch_entry_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batch_entry_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batches_copy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batches_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_ack_batches_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_share_acknowledge_type",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_ssl_error0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "thrd_current_id",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_map_destroy",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_map_init",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_broker_ApiVersion_at_least_no_lock",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_telemetry_fsm",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "unit_test_telemetry_match_requested_metrics_no_duplicates",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_strcmp",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_keep",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_interceptors_on_request_sent",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_transport_socket_recvmsg",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_transport_socket_sendmsg",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_timeout_init",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_destroy_elems",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_copy_preallocated0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_list_remove_elem",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_hexdump",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_map_elem_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_map_elem_cmp",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_rand",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_seed",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_strtup_new",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_strtup_new0",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_topic_partition_new_with_id_and_name",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "rd_kafka_q_destroy_owner",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH32_finalize",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH_readBE32",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH_readBE64",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH_readLE32_align",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "XXH_readLE64_align",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "emit_copy_less_than64",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "skip",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "hash_bytes",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "varint_parse32_with_limit",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_scan_streams",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_file_hash",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_file_native_lookup_group",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_file_native_lookup_user",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mmap_file",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_file_native_get_size",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_os_mkpath",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_stream_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "input_chunk_append_raw",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "flb_input_chunk_has_other_routes",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_chunk_up",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "cio_stream_size_chunks_up",
+    "kind": "cross-unit",
+    "status": "Safe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_event_add",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_event_inject",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_event_timeout_create",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_mk_event_timeout_destroy",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_event_del",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_fifo_queue_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_iov_free",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_iov_free_marked",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_http_parser_read_chunked_content",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "http_parser_transfer_encoding_chunked",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_http_thread_resume",
+    "kind": "same-unit-unreported-refused",
+    "status": null,
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_channel_stream_write",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_fifo_queue_create",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_fifo_send",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_sched_worker_cb_add",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_mimetype_lookup",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_iov_send",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_http_error",
+    "kind": "cross-unit",
+    "status": "Unsafe",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "_next_target",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_sched_launch_thread",
+    "kind": "cross-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_vhost_fdt_close",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   },
+   {
+    "callee": "mk_vhost_destroy",
+    "kind": "same-unit",
+    "status": "Unknown",
+    "alone": 1,
+    "callee_blockers": null
+   }
+  ]
+ },
+ "prediction": {
+  "P2/same-unit": {
+   "freed": 45,
+   "verdicts": {
+    "Safe": 38,
+    "Unknown": 7
+   },
+   "round0": {
+    "Safe": 38,
+    "Unknown": 7
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 45,
+     "safe": 38
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 1,
+     "Safe": 1
+    },
+    "cmetrics": {
+     "Safe": 3
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 30,
+     "Unknown": 4
+    },
+    "monkey-libevent": {
+     "Unknown": 2,
+     "Safe": 1
+    }
+   }
+  },
+  "P2/cross-unit": {
+   "freed": 48,
+   "verdicts": {
+    "Safe": 41,
+    "Unknown": 7
+   },
+   "round0": {
+    "Safe": 41,
+    "Unknown": 7
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 48,
+     "safe": 41
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 1,
+     "Safe": 2
+    },
+    "cmetrics": {
+     "Safe": 4
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 31,
+     "Unknown": 4
+    },
+    "monkey-libevent": {
+     "Unknown": 2,
+     "Safe": 1
+    }
+   }
+  },
+  "P2/cross-unit-ceiling": {
+   "freed": 48,
+   "verdicts": {
+    "Safe": 48
+   },
+   "round0": {
+    "Safe": 48
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 48,
+     "safe": 48
+    },
+    {
+     "round": 1,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Safe": 3
+    },
+    "cmetrics": {
+     "Safe": 4
+    },
+    "ctraces": {
+     "Safe": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 35
+    },
+    "monkey-libevent": {
+     "Safe": 3
+    }
+   }
+  },
+  "P3/same-unit": {
+   "freed": 220,
+   "verdicts": {
+    "Unknown": 137,
+    "Safe": 83
+   },
+   "round0": {
+    "Unknown": 136,
+    "Safe": 83
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 219,
+     "safe": 83
+    },
+    {
+     "round": 1,
+     "freed": 1,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 4,
+     "Safe": 1
+    },
+    "cmetrics": {
+     "Unknown": 5,
+     "Safe": 5
+    },
+    "ctraces": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2
+    },
+    "librdkafka": {
+     "Safe": 70,
+     "Unknown": 114
+    },
+    "monkey-libevent": {
+     "Unknown": 13,
+     "Safe": 3
+    }
+   }
+  },
+  "P3/cross-unit": {
+   "freed": 228,
+   "verdicts": {
+    "Safe": 86,
+    "Unknown": 142
+   },
+   "round0": {
+    "Safe": 86,
+    "Unknown": 141
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 227,
+     "safe": 86
+    },
+    {
+     "round": 1,
+     "freed": 1,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Unknown": 5,
+     "Safe": 2
+    },
+    "cmetrics": {
+     "Safe": 6,
+     "Unknown": 5
+    },
+    "ctraces": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "fluent-bit-chunk": {
+     "Safe": 2,
+     "Unknown": 1
+    },
+    "librdkafka": {
+     "Safe": 71,
+     "Unknown": 117
+    },
+    "monkey-libevent": {
+     "Unknown": 13,
+     "Safe": 3
+    }
+   }
+  },
+  "P3/cross-unit-ceiling": {
+   "freed": 242,
+   "verdicts": {
+    "Safe": 242
+   },
+   "round0": {
+    "Safe": 227
+   },
+   "rounds": [
+    {
+     "round": 0,
+     "freed": 227,
+     "safe": 227
+    },
+    {
+     "round": 1,
+     "freed": 15,
+     "safe": 15
+    },
+    {
+     "round": 2,
+     "freed": 0,
+     "safe": 0
+    }
+   ],
+   "by_library": {
+    "chunkio": {
+     "Safe": 7
+    },
+    "cmetrics": {
+     "Safe": 18
+    },
+    "ctraces": {
+     "Safe": 3
+    },
+    "fluent-bit-chunk": {
+     "Safe": 3
+    },
+    "librdkafka": {
+     "Safe": 195
+    },
+    "monkey-libevent": {
+     "Safe": 16
+    }
+   }
+  }
+ },
+ "upper_bound_population": {
+  "functions": 893,
+  "why": {
+   "residual call: cross-unit": 111,
+   "refused path (pointer-valued-store)": 107,
+   "freed:Unknown": 136,
+   "residual call: same-unit": 110,
+   "residual call: external": 34,
+   "refused path (pointer-arithmetic)": 1,
+   "refused path (call)": 20,
+   "freed:Safe": 83,
+   "custody-position": 18,
+   "refused path (union)": 64,
+   "refused path (several causes)": 41,
+   "residual call: external+indirect": 1,
+   "residual call: cross-unit+same-unit-unreported-refused": 3,
+   "refused path (aggregate-value)": 26,
+   "return:no-access": 23,
+   "refused path (indirect-call)": 20,
+   "condition:call-other": 2,
+   "refused path (cast)": 6,
+   "condition:recursive-local-callee": 1,
+   "residual call: cross-unit+external": 4,
+   "residual call: indirect": 6,
+   "condition:assignment-destination": 11,
+   "residual call: same-unit-unreported-refused": 9,
+   "residual call: cross-unit+same-unit": 6,
+   "residual call: cross-unit+indirect": 17,
+   "condition:increment-or-decrement": 1,
+   "residual call: cross-unit+indirect+same-unit": 5,
+   "residual call: indirect+same-unit-unreported-refused": 1,
+   "residual call: cross-unit+indirect+same-unit-unreported-refused": 8,
+   "condition:type-operator": 6,
+   "residual call: cross-unit+external+same-unit": 1,
+   "residual call: cross-unit+same-unit+same-unit-unreported-refused": 1,
+   "residual call: cross-unit+external+indirect": 4,
+   "refused path (static-local)": 1,
+   "residual call: cross-unit+external+indirect+same-unit": 1,
+   "residual call: indirect+same-unit+same-unit-unreported-refused": 2,
+   "residual call: external+same-unit": 2
+  }
+ },
+ "refusal_causes": {
+  "call": {
+   "leaves": 240,
+   "sole_blocked": 17
+  },
+  "pointer-valued-store": {
+   "leaves": 2553,
+   "sole_blocked": 44
+  },
+  "union": {
+   "leaves": 1641,
+   "sole_blocked": 53
+  },
+  "cast": {
+   "leaves": 110,
+   "sole_blocked": 3
+  },
+  "pointer-arithmetic": {
+   "leaves": 33,
+   "sole_blocked": 1
+  },
+  "aggregate-value": {
+   "leaves": 335,
+   "sole_blocked": 18
+  },
+  "indirect-call": {
+   "leaves": 185,
+   "sole_blocked": 17
+  },
+  "root:IntegerLiteral": {
+   "leaves": 5,
+   "sole_blocked": 0
+  },
+  "pointer-field-step": {
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  "static-local": {
+   "leaves": 87,
+   "sole_blocked": 1
+  },
+  "pointer-step": {
+   "leaves": 22,
+   "sole_blocked": 0
+  },
+  "statement-expression": {
+   "leaves": 128,
+   "sole_blocked": 0
+  },
+  "root:StringLiteral": {
+   "leaves": 17,
+   "sole_blocked": 0
+  },
+  "volatile-atomic": {
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  "root:BinaryOperator": {
+   "leaves": 6,
+   "sole_blocked": 0
+  },
+  "root:MaterializeTemporaryExpr": {
+   "leaves": 2,
+   "sole_blocked": 0
+  },
+  "address-of-base": {
+   "leaves": 2,
+   "sole_blocked": 0
+  }
+ },
+ "leaves": {
+  "joined": {
+   "IND": 17042,
+   "COND": 8682,
+   "RET": 304
+  },
+  "no_typed_access": {
+   "COND": 1340,
+   "IND": 462,
+   "RET": 43
+  },
+  "by_scope": {
+   "IND/refused": 4140,
+   "COND/P3": 7983,
+   "IND/P3": 8479,
+   "IND/P2": 4423,
+   "RET/P3": 170,
+   "COND/refused": 699,
+   "RET/refused": 134
+  }
+ },
+ "paths": {
+  "total": 69611,
+  "expressible": 63698,
+  "root_kinds": {
+   "call-result": 243,
+   "local": 21655,
+   "formal": 47291,
+   "global": 385,
+   "other": 37
+  },
+  "step_ops": {
+   "*": 1958,
+   "->": 76089,
+   "[]": 4534,
+   ".": 24929
+  }
+ }
+}
