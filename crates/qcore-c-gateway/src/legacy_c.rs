@@ -2036,6 +2036,12 @@ pub fn analyze_unrestricted_c11_with_inventory(
     #[cfg(feature = "indirect-census")]
     crate::indirect_census::next_unit();
     let preprocessed_source = validate_unrestricted_c11(unit)?;
+    #[cfg(feature = "indirect-census")]
+    crate::access_path_census::record_unit(
+        &preprocessed_source,
+        unit.dialect.clang_argument(),
+        &census_frontend_flags(&unit.preprocessor_options),
+    );
     let line_marked_source = match unit.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => {
@@ -2074,6 +2080,12 @@ pub fn analyze_prepared_translation_unit(
     };
     #[cfg(feature = "indirect-census")]
     crate::indirect_census::next_unit();
+    #[cfg(feature = "indirect-census")]
+    crate::access_path_census::record_unit(
+        &preprocessed_source,
+        prepared.dialect().clang_argument(),
+        &census_frontend_flags(prepared.preprocessor_options()),
+    );
     analyze_preprocessed_unrestricted_c11(
         preprocessed_source,
         prepared.dialect(),
@@ -2090,6 +2102,23 @@ pub fn analyze_prepared_translation_unit(
         contracts,
         source_functions,
     )
+}
+
+/// Card W46-ACCESS-PATH-CENSUS: the frontend flags
+/// the typed-AST transport appends ([`C11TranslationUnit::append_frontend_flags`]),
+/// as argument strings.
+#[cfg(feature = "indirect-census")]
+fn census_frontend_flags(options: &[CPreprocessorOption]) -> Vec<String> {
+    let mut command = std::process::Command::new("clang");
+    for option in options {
+        if let CPreprocessorOption::FrontendFlag(flag) = option {
+            flag.append_to(&mut command);
+        }
+    }
+    command
+        .get_args()
+        .map(|argument| argument.to_string_lossy().into_owned())
+        .collect()
 }
 
 // This private boundary spells out the exact retained PreparedTranslationUnit
