@@ -306,6 +306,37 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("cmetrics/metric_values.qcore", "cmt_math_d64_to_uint64", 3),
     ("cmetrics/metric_values.qcore", "cmt_math_uint64_to_d64", 3),
+    // W46-METRIC-AGGREGATE-CONTRACTS: six scalar aggregate reads.
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_hist_get_value",
+        4,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_hist_get_count_value",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_hist_get_sum_value",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_summary_quantile_get_value",
+        4,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_summary_get_sum_value",
+        3,
+    ),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_summary_get_count_value",
+        3,
+    ),
     // Card W37-CORPUS-CONTRACTS-4: the unsigned msgpack tag reader, sole
     // blocker of `unpack_meta_ver`. `output_buffer` is an OUT parameter, but
     // what is written through it is a SCALAR, not a resource identity, so it
@@ -1392,6 +1423,7 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.3).
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // W46-METRIC-AGGREGATE-CONTRACTS adds six declarations in one existing module.
     assert_eq!(sources.len(), 118, "unexpected contract corpus size");
 
     for (logical, path) in &sources {

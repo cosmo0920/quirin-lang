@@ -227,3 +227,48 @@ contract {
     ensures normal resource_borrowed(val);
     ensures normal resource_return_none();
 };
+
+// W46-METRIC-AGGREGATE-CONTRACTS: scalar histogram and summary reads.
+// The histogram bucket index is not checked by its C body. The summary
+// quantile getter checks null and bounds, returning zero on a failed guard.
+// Neither property is asserted by resource_contract_v1. All six bodies only
+// read scalar storage, optionally convert its bit pattern, and leave metric
+// and nested array custody with the caller.
+extern fn cmt_metric_hist_get_value(metric: ptr<mut, u8>, bucket_id: i32) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(bucket_id);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_hist_get_count_value(metric: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_hist_get_sum_value(metric: ptr<mut, u8>) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_summary_quantile_get_value(metric: ptr<mut, u8>, quantile_id: i32) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(quantile_id);
+    ensures normal resource_return_none();
+};
+extern fn cmt_summary_get_sum_value(metric: ptr<mut, u8>) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_summary_get_count_value(metric: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
