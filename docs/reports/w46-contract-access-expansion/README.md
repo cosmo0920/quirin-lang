@@ -4,6 +4,28 @@ Integration in progress from `207cebe4`. The [prediction](PREDICTION.md)
 precedes merging the three independent Sol 6 medium implementation cards.
 Astra owns gap selection, source-boundary decisions and combined measurements.
 
+## Baseline and selected gaps
+
+The fresh corpus baseline at `29b799f9` (documentation changes only since
+`207cebe4`) ran with eight jobs and exited 0. All five artifacts reproduce
+the preceding expansion's AFTER byte for byte: diagnostics, source,
+contracts, chunk contracts and source effects. The fresh system slice at
+`046accf6`, four jobs, also exited 0 with diagnostics, contracts and both
+effect artifacts byte-identical. It retains two refutations and ten held
+caller sites. Identity records are in `census/baseline-*-identity.json`;
+the [archive](artifacts/baseline/manifest.json) records file digests and
+commands. Private logs are `private/w46-next/baseline/`. The system run
+records `e8052e39`, another documentation-only commit made after the corpus
+started; no analyzer, provider or profile bytes changed during either run.
+
+The [selected-call census](census/selected-before.json) finds 33 named
+diagnostic leaves in the corpus (32 for the six CMetrics getters, one for
+the chunk magic-byte helper) and two in the system slice (the magic-byte
+helper in two configurations). These are call-site observations, not an API
+completeness claim or predicted safety coverage. The remaining four Fluent
+Bit query declarations have focused caller controls even though this
+particular baseline does not name them in diagnostics.
+
 ## Worktree sweep
 
 The user requested outdated worktrees be swept while the cards run. Seven

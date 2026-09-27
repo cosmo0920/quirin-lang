@@ -1,0 +1,24 @@
+{
+  "resource-diagnostics.json": {
+    "prior_sha256": "67f6cb2cde065d5d03807d79250aae9384f79e5ed53b2ad948dfe34bba3019d9",
+    "fresh_sha256": "67f6cb2cde065d5d03807d79250aae9384f79e5ed53b2ad948dfe34bba3019d9",
+    "byte_identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+    "prior_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "fresh_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "byte_identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+    "prior_sha256": "b3cb7a4f23b0f153834dc8efb3e9f155c65cb1d68de3c5682466e1e4d2b7efd7",
+    "fresh_sha256": "b3cb7a4f23b0f153834dc8efb3e9f155c65cb1d68de3c5682466e1e4d2b7efd7",
+    "byte_identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+    "prior_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "fresh_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "byte_identical": true
+  },
+  "units_equal": true,
+  "diagnostic_counts_equal": true
+}
