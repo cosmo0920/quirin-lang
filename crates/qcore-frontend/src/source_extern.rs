@@ -150,6 +150,16 @@ pub fn called_extern_names(program: &SourceProgram) -> BTreeMap<String, Span> {
         .filter(|declaration| declaration.value.kind == DeclarationKind::ExternFunction)
         .map(|declaration| declaration.value.name.clone())
         .collect::<BTreeSet<_>>();
+    called_extern_names_in_scope(program, &externs)
+}
+
+/// Detect calls in this file against the linked declaration inventory, without
+/// granting any capability from the files that supplied those declarations.
+#[must_use]
+pub fn called_extern_names_in_scope(
+    program: &SourceProgram,
+    externs: &BTreeSet<String>,
+) -> BTreeMap<String, Span> {
     let mut called = BTreeMap::new();
     if externs.is_empty() {
         return called;
@@ -213,7 +223,7 @@ pub fn called_extern_names(program: &SourceProgram) -> BTreeMap<String, Span> {
             continue;
         }
         if let Some(body) = &declaration.value.body {
-            scan(body, &externs, tokens, &mut called);
+            scan(body, externs, tokens, &mut called);
         }
     }
     called

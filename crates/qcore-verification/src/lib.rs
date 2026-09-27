@@ -49,3 +49,5 @@ pub mod driver;
 pub mod external_source;
 pub mod library_import;
 pub mod research_extensions;
+
+pub mod source_imports;

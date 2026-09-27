@@ -7,8 +7,8 @@ use std::process::ExitCode;
 
 use qcore_compiler::verifier_plugin::ExecutionPolicy;
 use qcore_compiler::{
-    CompileOptions, PluginId, SourceFile, compile_files, compile_files_with_registry,
-    format_diagnostic, load_first_party_registry,
+    CompileOptions, PluginId, SourceFile, compile_files_with_filesystem,
+    compile_files_with_filesystem_with_registry, format_diagnostic, load_first_party_registry,
 };
 use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
 use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
@@ -213,9 +213,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
-        compile_files_with_registry(&files, &options, &registry)
+        compile_files_with_filesystem_with_registry(&files, &options, &registry)
     } else {
-        compile_files(&files, &options)
+        compile_files_with_filesystem(&files, &options)
     };
     let module = compiled.map_err(|diagnostics| {
         diagnostics

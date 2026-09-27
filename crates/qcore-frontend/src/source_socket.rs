@@ -618,7 +618,7 @@ fn reactor_span(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
     None
 }
 
-/// The span of the first statement needing `import std.socket;`.
+/// The span of the first statement needing `#import std.socket;`.
 ///
 /// A text payload is deliberately **excluded**: it is not a socket capability
 /// and it is gated separately (see [`text_payload_span`]). A statement that
@@ -633,7 +633,7 @@ pub fn socket_span(program: &SourceProgram) -> Option<Span> {
 }
 
 /// The span of the first transfer whose payload is a string view, which is what
-/// needs `import std.string;` **in addition to** `import std.socket;`.
+/// needs `#import std.string;` **in addition to** `#import std.socket;`.
 #[must_use]
 pub fn text_payload_span(program: &SourceProgram) -> Option<Span> {
     socket_uses(program).get(&SocketUse::TextPayload).copied()

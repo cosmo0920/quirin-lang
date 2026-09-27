@@ -41,7 +41,7 @@ fn codes(source: &str) -> Result<LoweredMutexModule, Vec<String>> {
 }
 
 fn entry(body: &str) -> String {
-    format!("import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
+    format!("#import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
 }
 
 const OPEN_WRITE_CLOSE: &str = "let buf = protected 4; let m = mutex guards buf; \
@@ -186,7 +186,7 @@ fn a_guard_name_does_not_exist_after_its_block() {
 
 #[test]
 fn task_creation_composed_with_a_checked_mutex_is_refused() {
-    let source = "import std.concurrency; fn worker(x: i32) -> i32 { return x; } \
+    let source = "#import std.concurrency; fn worker(x: i32) -> i32 { return x; } \
          fn main() -> unit { thread scope s { let buf = protected 4; \
          let m = mutex guards buf; let h = spawn s worker(copy buf); } }";
     assert_eq!(
@@ -443,8 +443,8 @@ fn constructs_outside_the_admitted_grammar_refuse_with_a_located_diagnostic() {
 #[test]
 fn a_source_contract_and_a_nonunit_entry_stay_refused() {
     for source in [
-        "import std.concurrency; fn main() -> unit contract { requires x; } { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
-        "import std.concurrency; fn main() -> i32 { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
+        "#import std.concurrency; fn main() -> unit contract { requires x; } { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
+        "#import std.concurrency; fn main() -> i32 { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
     ] {
         assert!(matches!(
             lower(source).unwrap_err().as_slice(),
@@ -782,7 +782,7 @@ fn a_child_task_declares_no_resource_generation_or_fact() {
 /// captures, owned values and completion capsules have no representation here.
 #[test]
 fn the_scoped_task_expression_forms_are_still_refused() {
-    let source = "import std.concurrency; \
+    let source = "#import std.concurrency; \
          fn worker(value: i32 use one) -> unit { } \
          fn main() -> unit { thread scope s { \
          let buf = protected 4; let m = mutex guards buf; \
@@ -819,7 +819,7 @@ fn an_announced_acquisition_blocks_the_generations_destruction() {
 /// check, or the documented grammar is not the implemented one.
 #[test]
 fn the_documented_grammar_example_checks() {
-    let source = r#"import std.concurrency;
+    let source = r#"#import std.concurrency;
 error Fault { Broken; }
 fn main() -> unit {
     thread scope s {
@@ -1264,7 +1264,7 @@ fn the_ranked_spelling_selects_the_route_and_requires_the_import() {
             .map(|d| d.code.to_owned())
             .collect::<Vec<_>>(),
         vec!["Q015"],
-        "the missing `import std.concurrency;` is refused before checking"
+        "the missing `#import std.concurrency;` is refused before checking"
     );
 }
 

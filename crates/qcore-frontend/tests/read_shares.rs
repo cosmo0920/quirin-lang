@@ -22,7 +22,7 @@ use qcore_frontend::source_tasks::lower_source_tasks;
 /// parent writes before lending and after both joins, and reads in between —
 /// so the write's exclusive-authority requirement is exercised on an admitted
 /// path rather than only on a refused one.
-const TWO_READERS: &str = "import std.concurrency; concurrency checked;
+const TWO_READERS: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -219,7 +219,7 @@ fn reconstruction_to_full_authority_is_refused_while_a_share_is_retained() {
 /// rather than approximating a second budget.
 #[test]
 fn only_one_allocation_may_be_lent_at_a_time() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;

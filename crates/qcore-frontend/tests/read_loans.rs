@@ -17,7 +17,7 @@ use qcore_frontend::source_tasks::lower_source_tasks;
 /// One parent-owned Buffer, one scoped child read loan, an explicit
 /// join-dependent return of authority, and a parent read taken *while* the loan
 /// is outstanding. Both creation outcomes are handled explicitly.
-const READ_LOAN: &str = "import std.concurrency; concurrency checked;
+const READ_LOAN: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -46,7 +46,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// reached on a path whose other exits are all well formed. The second
 /// allocation is discriminated explicitly, so no path leaks the first Buffer
 /// and the measured refusal is the lending one.
-const TWO_LENDERS: &str = "import std.concurrency; concurrency checked;
+const TWO_LENDERS: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -349,7 +349,7 @@ fn capture_mode_and_parameter_type_must_agree() {
 /// first refusal is the one this program reaches.
 #[test]
 fn a_borrower_cannot_lend_its_loan_onward() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
 fn inner(deeper: borrow<Buffer>) -> i32 {
   let v = qcore_buffer_read(deeper);
   return v;
@@ -382,7 +382,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
     rejects(source, "capture type does not match worker parameter");
     // And even a nested creation that lends nothing is refused, because a
     // spawned worker is a first-order leaf in this profile.
-    let nested_copy = "import std.concurrency; concurrency checked;
+    let nested_copy = "#import std.concurrency; concurrency checked;
 fn inner(nothing: i32) -> i32 {
   return nothing;
 }
@@ -423,7 +423,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// released by the borrower; the lent one comes back to the lender at join.
 #[test]
 fn one_creation_can_move_one_buffer_and_lend_another() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
 fn reader(taken: own<Buffer> use one, lent: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(lent);
   drop taken;

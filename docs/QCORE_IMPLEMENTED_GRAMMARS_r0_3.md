@@ -47,15 +47,15 @@ types, permissions or live handles. These records do not extend G02's sequential
 G02a path now checks and executes its supported task subset; the earlier
 [task foundations record](reports/w6-source-task-foundations/README.md) remains historical.
 
-Bundled semantic modules require an explicit top-level `import` in each source
+Bundled semantic modules require an explicit top-level `#import` in each source
 file. The current registry contains `std.concurrency`:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 ```
 
-Import paths are dot-separated identifiers terminated by a semicolon. Imports
+Bundled import paths are dot-separated identifiers terminated by a semicolon. Imports
 may occur between top-level declarations, after the optional module header, and
 apply to the whole file. Repeated imports are idempotent. Unknown module names
 reject with `Q014`; concurrency forms without their import reject with `Q015`,
@@ -63,12 +63,41 @@ including in uncalled bodies and non-executable modules. Each input file is
 checked before combining declarations: another file's import cannot grant it
 concurrency. Importing vocabulary does not discharge operation checks or make an
 unsupported profile executable. The task profile still requires its
-`concurrency checked;` marker. User-file/package resolution, import aliases,
-wildcards, reexports and implicit/transitive imports are not implemented.
-`import` names bundled semantic modules only; a contract module takes another
+`concurrency checked;` marker. Runtime file imports are implemented by the source-bundle resolver below.
+Package resolution, import aliases, wildcards and reexports remain unsupported,
+and capabilities never transfer transitively. Bare `import` remains a bundled
+module compatibility spelling; a contract module takes another
 contract module's declarations through the separate `#include` directive of
 G05a, resolved by the contract loader against a published load path and never
 by this front end.
+
+### G01a. Runtime import bundle
+
+```ebnf
+standard_import = [ "#" ], "import", identifier, { ".", identifier }, ";" ;
+runtime_import = "#", "import", quoted_relative_runtime_path, ";" ;
+```
+
+Canonical usage is `#import std.io;`, `#import "./helper";` and
+`#import "../shared/helper.qr";`. Quoted paths contain no escapes or control
+characters and name relative `.qr` files, with exactly `.qr` appended when
+omitted. Top-level directives resolve recursively relative to their own source
+file, without package, directory or legacy-suffix fallback.
+`inspect_source_imports` returns mode/header/import metadata only;
+`parse_source_program` rejects unresolved runtime directives. The verification
+driver resolves the graph before parsing its derived checking projection.
+
+`compile_files` and `compile_files_with_registry` use supplied snapshots only,
+all as roots. `compile_source_bundle_with_registry` separates roots from the
+available pool and explicitly selects snapshot-only or filesystem loading;
+the CLI selects filesystem loading. Snapshot precedence, modes, identity,
+bounded ordering and retained evidence follow [Runtime source imports](QCORE_SPEC_r0_3.md#runtime-source-imports).
+Unmarked/library dependencies contribute declarations but never executable
+root intent. Missing/ambiguous/cyclic/wrong-mode/bounded-out resolution refuses
+at Q014 (existing filename incompatibility Q403). No code is allocated.
+Capability checks are per file, including extern calls whose declaration comes
+from another file. Imports do not broaden execution profiles or supported call
+compositions. Contract inclusion remains the separate G05a loader.
 
 ## G02. Source execution profile
 
@@ -151,7 +180,7 @@ associate left. Literal magnitudes must fit signed i32, including -2147483648.
 
 `print(EXPRESSION);` evaluates one i32 expression and writes its decimal value
 followed by one newline to standard output. The source file must declare
-`import std.io;`; `std.fmt` is neither required nor consulted because this form
+`#import std.io;`; `std.fmt` is neither required nor consulted because this form
 has no rendering selector. An absent effect row infers `io` from a direct print
 or transitively from a called function. `effects {io}` explicitly permits it,
 while `effects {}` explicitly excludes it and therefore refuses any direct or
@@ -269,7 +298,7 @@ scalar slot; unit uses bare return or a live unit result slot. Explicit supporte
 permitted. Payload-free error variants preserve their exact `E::Variant` tags.
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
@@ -332,7 +361,7 @@ and one immutable i32 payload. Its resource identity is separate from source
 slot and scalar identities. This is not arbitrary `own<T>` elaboration.
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
     return move buffer;
@@ -419,7 +448,7 @@ join. It is selected whenever any checked function has a `borrow<Buffer>`
 parameter; a module that lends nothing keeps its G02a/G02b profile unchanged.
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
@@ -499,7 +528,7 @@ or when the module writes a Buffer; a module that does neither keeps its
 G02a/G02b/G02bb profile unchanged.
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
@@ -573,7 +602,7 @@ whenever any checked function declares an error payload; a module whose error
 variants are all payload-free keeps its G02a/G02b/G02bb profile unchanged.
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
@@ -668,7 +697,7 @@ refused. Its own bounded child-task form is a nested `thread scope` block
 (card T03-F).
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 error Fault { Broken; }
 fn main() -> unit {
     thread scope s {
@@ -1551,9 +1580,9 @@ EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
 ```qcore
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io } {
     let total = 42;
@@ -1658,9 +1687,9 @@ every other one still refuses at `Q051`. Its own refusals carry `Q097`–`Q099`;
 its body's statements are the rows above, read by this profile's own reader.
 
 ```qcore
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let b = bytes(8);           // acquire eight zeroed bytes; the obligation opens
@@ -2391,7 +2420,7 @@ Diagnostics: `Q058` shape, `Q059` an unbound custody name, `Q060` the reactor
 model's own refusal, `Q061` the determinism boundary, `Q062` the effect row,
 `Q074` the composed line and value vocabulary's own refusals (second band of the
 same pass, card `COMPOSE-EVENT-LINES`, relocated at integration from `Q065`), and `Q015` for a missing
-`import std.event;` or a line-producing statement's own module.
+`#import std.event;` or a line-producing statement's own module.
 
 **The composition moves none of the five codes above.** A line erases to no
 reactor operation and no ledger transition —
@@ -2681,7 +2710,7 @@ That target grammar is neither a parser generator input already used by the comp
 ## G07.9. Immutable UTF-8 string views v1 (`source.string.v1`)
 
 The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
-explicit, file-local `import std.string;` for string capabilities. Card
+explicit, file-local `#import std.string;` for string capabilities. Card
 `STRING-SLICE` registers that module and implements this consumer grammar
 (diagnostics `Q068`–`Q073`, spec §L21), card `STRING-SLICE-IO` adds the two
 rendered-text statements marked below (`Q075`–`Q076`, the same pass's second
@@ -3200,7 +3229,7 @@ it does not extend QCore source grammar or promote the C resource verdict.
 ## G09. Concurrent field-footprint questions
 
 `source.bitfield-concurrency.v1` is a property-only checker. It requires
-`import std.concurrency; concurrency checked;`, explicit-layout records, and
+`#import std.concurrency; concurrency checked;`, explicit-layout records, and
 one `unit` entry with effects `{spawn, join, mut}`. The entry declares one
 object with `let OBJECT = TYPE;`, then one task scope, then `return;`.
 

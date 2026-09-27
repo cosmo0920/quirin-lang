@@ -16,7 +16,7 @@ use qcore_frontend::source_epoch_tasks::{
 };
 use qcore_frontend::source_tasks::lower_source_tasks;
 
-const HEAD: &str = r#"import std.concurrency;
+const HEAD: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
@@ -122,7 +122,7 @@ fn units(amount: u64) -> Quantity {
 #[test]
 fn route_detection_needs_both_halves_and_claims_neither_alone() {
     // An epoch declaration with no task profile keeps `source.epoch.bound.v1`.
-    let plain_epoch = "import std.concurrency;\nfn main() -> unit {\n\
+    let plain_epoch = "#import std.concurrency;\nfn main() -> unit {\n\
         thread scope e epoch {\n\
         bound 65536 effort 1000;\n\
         overhead scope 512 thread 128;\n\
@@ -380,7 +380,7 @@ fn the_result_kind_must_correspond_to_the_checked_worker_result() {
 
 /// A copy-only composed module: the worker retains nothing, so its row declares
 /// no result and no disposal.
-pub const SCALAR: &str = r#"import std.concurrency;
+pub const SCALAR: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(n: i32) -> i32 { return n; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
@@ -657,7 +657,7 @@ fn the_error_clause_refuses_the_forms_it_cannot_represent() {
 /// shapes below exercise exactly the reader's own rules.
 fn region_module(region: &str) -> String {
     format!(
-        r#"import std.concurrency;
+        r#"#import std.concurrency;
 concurrency checked;
 error Failure {{ Failed; }}
 fn main() -> i32 {{
@@ -780,7 +780,7 @@ fn the_region_reader_refuses_placement_and_shape() {
         |source: &str| -> String { read(source).expect_err("the shape is refused").remove(0) };
 
     // At the entry's top level rather than inside the task scope.
-    let top_level = r#"import std.concurrency;
+    let top_level = r#"#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 fn main() -> i32 {
@@ -811,7 +811,7 @@ fn main() -> i32 {
 
     // In a worker: a spawned worker is a first-order leaf function.
     let in_worker = format!(
-        r#"import std.concurrency;
+        r#"#import std.concurrency;
 concurrency checked;
 error Failure {{ Failed; }}
 fn worker() -> i32 {{
@@ -857,7 +857,7 @@ fn main() -> i32 {{
     );
 
     // A raise the one clause does not catch.
-    let mismatched = r#"import std.concurrency;
+    let mismatched = r#"#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 error Other { Case; }
@@ -1073,7 +1073,7 @@ fn the_split_blanks_the_region_and_preserves_every_byte_offset() {
 /// is elementwise exactly as `move;`/`copy;` are.
 #[test]
 fn a_read_loan_capture_is_derived_and_declared_as_read() {
-    let source = r#"import std.concurrency;
+    let source = r#"#import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);

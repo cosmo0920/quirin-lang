@@ -44,7 +44,7 @@ fn units(amount: u64) -> Quantity {
     Quantity::single(EFFORT_AXIS, amount)
 }
 
-const EPOCH: &str = "import std.concurrency;\nfn main() -> unit {\n\
+const EPOCH: &str = "#import std.concurrency;\nfn main() -> unit {\n\
      thread scope e epoch {\n\
      let page = share 4096;\n\
      bound 65536 effort 1000;\n\
@@ -186,7 +186,7 @@ fn a_refusal_is_attributed_to_the_statement_that_caused_it() {
         "the refusal names the worker it is about, not the module"
     );
     // A refusal that names no task falls back to the epoch scope itself.
-    let empty = "import std.concurrency;\nfn main() -> unit {\n\
+    let empty = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch { bound 1 effort 1; overhead scope 0 thread 0; }\n\
          }\n";
     let module = lower(empty).expect("an empty epoch still lowers");
@@ -242,7 +242,7 @@ fn forms_the_grammar_cannot_represent_are_refused_here() {
         ),
         (
             "an epoch scope that is not the whole entry body",
-            "import std.concurrency;\nfn main() -> unit {\n\
+            "#import std.concurrency;\nfn main() -> unit {\n\
              thread scope e epoch {\n\
              bound 1 effort 1;\n\
              overhead scope 0 thread 0;\n\
@@ -262,8 +262,8 @@ fn forms_the_grammar_cannot_represent_are_refused_here() {
         (
             "a second declaration",
             EPOCH.replace(
-                "import std.concurrency;",
-                "import std.concurrency;\nfn other() -> unit { }",
+                "#import std.concurrency;",
+                "#import std.concurrency;\nfn other() -> unit { }",
             ),
         ),
     ] {
@@ -347,7 +347,7 @@ fn the_declarative_route_lowers_an_arm_per_worker_and_gives_it_no_error_edge() {
 
 #[test]
 fn route_detection_is_syntactic_and_does_not_claim_other_modules() {
-    let task_module = "import std.concurrency;\nfn main() -> unit {\n\
+    let task_module = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope s { let buf = protected 4; let m = mutex guards buf; }\n\
          }\n";
     let parsed = parse_source_program(task_module).expect("parses");

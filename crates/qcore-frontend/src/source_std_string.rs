@@ -81,7 +81,7 @@
 //! verifier-scope declaration is not merely filtered out of it — it is
 //! structurally outside what this detector looks at. That is why
 //! `plugin qcore.libevent version "0.1" profile linux_epoll …` keeps parsing and
-//! checking with no `import std.string;`, and the regression test that pins it
+//! checking with no `#import std.string;`, and the regression test that pins it
 //! measures the shipped fixture rather than a reconstruction of it.
 //!
 //! # One collision with the sibling buffer route, measured and disambiguated
@@ -421,7 +421,7 @@ pub fn has_source_string(program: &SourceProgram) -> bool {
     !string_uses(program).is_empty()
 }
 
-/// The span of the first statement needing `import std.string;`.
+/// The span of the first statement needing `#import std.string;`.
 #[must_use]
 pub fn string_span(program: &SourceProgram) -> Option<Span> {
     string_uses(program).values().next().copied()

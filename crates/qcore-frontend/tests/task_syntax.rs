@@ -13,7 +13,7 @@ fn all_statements(statements: &[TypedStatement]) -> Vec<&TypedStatement> {
 
 #[test]
 fn ordered_captures_and_share_place_trees_retain_exact_spans() {
-    let source = "import std.concurrency; fn work(a: i32, b: i32, c: i32, d: i32) -> unit { return; } fn main(x: i32, p: i32, a: i32, n: i32, k: i32) -> unit { thread scope s { let h = spawn s work(copy x, move *p, read a[n].field share (k + 1), write a[0])?; join move h; } }";
+    let source = "#import std.concurrency; fn work(a: i32, b: i32, c: i32, d: i32) -> unit { return; } fn main(x: i32, p: i32, a: i32, n: i32, k: i32) -> unit { thread scope s { let h = spawn s work(copy x, move *p, read a[n].field share (k + 1), write a[0])?; join move h; } }";
     let parsed = parse_source_program(source).unwrap();
     assert_eq!(parsed.task_expressions().len(), 2);
     let task = &parsed.task_expressions()[0];
@@ -165,7 +165,7 @@ fn scope_and_worker_roles_cannot_be_satisfied_by_other_visible_names() {
         ),
     ] {
         let parsed = parse_source_program(&format!(
-            "import std.concurrency; {declarations} fn main(x: i32) -> unit {{ {body} }}"
+            "#import std.concurrency; {declarations} fn main(x: i32) -> unit {{ {body} }}"
         ))
         .unwrap();
         let errors = elaborate_source(&parsed).unwrap_err();
@@ -185,7 +185,7 @@ fn unknown_capture_index_share_and_handle_names_are_not_erased() {
         "join move absent;",
     ] {
         let source = format!(
-            "import std.concurrency; fn work(x: i32) -> unit {{ return; }} fn main(x: i32) -> unit {{ thread scope s {{ {body} }} }}"
+            "#import std.concurrency; fn work(x: i32) -> unit {{ return; }} fn main(x: i32) -> unit {{ thread scope s {{ {body} }} }}"
         );
         let errors = elaborate_source(&parse_source_program(&source).unwrap()).unwrap_err();
         assert!(errors.iter().any(|error| error.message.contains("absent")));
@@ -194,7 +194,7 @@ fn unknown_capture_index_share_and_handle_names_are_not_erased() {
 
 #[test]
 fn nested_scopes_resolve_by_identity_and_inner_binding_does_not_escape() {
-    let source = "import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let a = spawn s work(copy x)?; thread scope t { let b = spawn t work(copy x)?; join move b; } join move a; } }";
+    let source = "#import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let a = spawn s work(copy x)?; thread scope t { let b = spawn t work(copy x)?; join move b; } join move a; } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let main = typed
         .declarations
@@ -218,7 +218,7 @@ fn nested_scopes_resolve_by_identity_and_inner_binding_does_not_escape() {
 
 #[test]
 fn repeated_capture_syntax_is_retained_without_fabricating_custody_validation() {
-    let source = "import std.concurrency; fn work(a: i32, b: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(move x, move x); join move h; } }";
+    let source = "#import std.concurrency; fn work(a: i32, b: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(move x, move x); join move h; } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let main = typed
         .declarations
@@ -241,7 +241,7 @@ fn repeated_capture_syntax_is_retained_without_fabricating_custody_validation() 
 
 #[test]
 fn shadowed_handle_binders_are_distinct_and_join_resolves_the_live_declaration() {
-    let source = "import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(copy x)?; thread scope t { let h = spawn t work(copy x)?; join move h; } join move h; } }";
+    let source = "#import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(copy x)?; thread scope t { let h = spawn t work(copy x)?; join move h; } join move h; } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let main = typed
         .declarations
@@ -268,7 +268,7 @@ fn shadowed_handle_binders_are_distinct_and_join_resolves_the_live_declaration()
 
 #[test]
 fn initializer_references_precede_its_new_binder_and_assignment_does_not_rebind() {
-    let source = "import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(copy x)?; thread scope t { let h = join move h; h = x; } join move h; } }";
+    let source = "#import std.concurrency; fn work(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s work(copy x)?; thread scope t { let h = join move h; h = x; } join move h; } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let main = typed
         .declarations

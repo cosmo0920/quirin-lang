@@ -6,6 +6,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::source_imports::{
+    ImportLimits, ResolvedSourceBundle, SourceBundleEvidence, SourceLoading, resolve_source_bundle,
+};
 use qcore_core::cleanup_lowering::{
     BitwiseOp, BranchCondition, CompareOp, IntExpr, SourceOp, SourceProgram as LoweringProgram,
     interpret_source,
@@ -1007,6 +1010,8 @@ pub enum SourceExecutionProfile {
 
 #[derive(Clone, Debug)]
 pub struct CompiledModule {
+    /// Original root/dependency snapshots and resolved edges; never staged text.
+    pub source_bundle: Option<SourceBundleEvidence>,
     /// Structured naming notices; never safety diagnostics or verdict inputs.
     pub extension_warnings: Vec<qcore_frontend::source_extension::ExtensionWarning>,
     pub checked: CheckedSourceModule,
@@ -1111,17 +1116,29 @@ pub fn compile_files_with_registry(
     options: &CompileOptions,
     registry: &VerifierRegistry,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
-    let warnings = input_extension_warnings(files, options);
-    for warning in &warnings {
-        eprintln!("{warning}");
+    if files.is_empty() {
+        return Err(vec![plain_diagnostic(
+            "Q400",
+            "no input files were provided",
+        )]);
     }
-    compile_files_with_registry_inner(files, options, registry).map(|mut module| {
-        module.extension_warnings = warnings;
-        module
-    })
+    let roots = files
+        .iter()
+        .map(|file| file.path.clone())
+        .collect::<Vec<_>>();
+    compile_source_bundle_with_registry(
+        &roots,
+        files,
+        SourceLoading::SnapshotsOnly,
+        &ImportLimits::default(),
+        options,
+        registry,
+    )
 }
 
-fn compile_files_with_registry_inner(
+/// Explicit filesystem variant. Supplied snapshots take precedence; imports
+/// absent from them are loaded once. The ordinary API never reads disk.
+pub fn compile_files_with_filesystem_with_registry(
     files: &[SourceFile],
     options: &CompileOptions,
     registry: &VerifierRegistry,
@@ -1132,14 +1149,71 @@ fn compile_files_with_registry_inner(
             "no input files were provided",
         )]);
     }
+    let roots = files
+        .iter()
+        .map(|file| file.path.clone())
+        .collect::<Vec<_>>();
+    compile_source_bundle_with_registry(
+        &roots,
+        files,
+        SourceLoading::FileSystem,
+        &ImportLimits::default(),
+        options,
+        registry,
+    )
+}
+
+/// Compile explicit roots from a supplied snapshot pool, optionally loading
+/// missing runtime dependencies. Unreachable pool entries are not compilation
+/// roots. Existing compile_files APIs continue treating every input as a root.
+pub fn compile_source_bundle_with_registry(
+    roots: &[String],
+    snapshots: &[SourceFile],
+    loading: SourceLoading,
+    limits: &ImportLimits,
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    // Naming warnings accompany even a parser/resolver refusal. Preserve the
+    // extension compatibility route's pre-validation warning behavior.
+    let root_files = snapshots
+        .iter()
+        .filter(|file| roots.contains(&file.path))
+        .cloned()
+        .collect::<Vec<_>>();
+    let root_warnings = input_extension_warnings(&root_files, options);
+    for warning in &root_warnings {
+        eprintln!("{warning}");
+    }
+    let bundle = resolve_source_bundle(roots, snapshots, loading, *limits)?;
+    let warnings = input_extension_warnings(&bundle.evidence().sources, options);
+    for warning in &warnings {
+        if !root_warnings.contains(warning) {
+            eprintln!("{warning}");
+        }
+    }
+    compile_files_with_registry_inner(&bundle, options, registry).map(|mut module| {
+        module.extension_warnings = warnings;
+        module.source_bundle = Some(bundle.evidence().clone());
+        module
+    })
+}
+
+fn compile_files_with_registry_inner(
+    bundle: &ResolvedSourceBundle,
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    let files = &bundle.evidence().sources;
     qcore_frontend::source_extension::reject_alias_collisions(
         files.iter().map(|file| file.path.as_str()),
     )
     .map_err(|message| vec![plain_diagnostic("Q403", message)])?;
+    // Original ranges, including original source lines, survive all staging.
     let (_, ranges) = combine_files(files);
-    let mut stripped = Vec::new();
-    let mut modes = Vec::new();
-    for (file, range) in files.iter().zip(&ranges) {
+    let stripped = bundle.staged();
+    let mut individual = Vec::new();
+    for (file, range) in stripped.iter().zip(&ranges) {
         let parsed = parse_source_program(&file.source).map_err(|error| {
             vec![map_raw_diagnostic(
                 "Q000",
@@ -1152,56 +1226,38 @@ fn compile_files_with_registry_inner(
                 &ranges,
             )]
         })?;
-        qcore_frontend::source_extension::validate_source_extension(&file.path, parsed.mode)
-            .map_err(|message| {
-                vec![map_raw_diagnostic(
-                    "Q403",
-                    SemanticPass::NameResolution,
-                    Span {
-                        start: range.start,
-                        end: range.start,
-                    },
-                    message,
-                    &ranges,
-                )]
-            })?;
-        qcore_frontend::module_imports::check_source_imports(&parsed).map_err(|errors| {
-            errors
-                .into_iter()
-                .map(|error| {
-                    map_raw_diagnostic(
-                        error.code,
-                        error.pass,
-                        Span {
-                            start: error.span.start + range.start,
-                            end: error.span.end + range.start,
-                        },
-                        error.message,
-                        &ranges,
-                    )
-                })
-                .collect::<Vec<_>>()
-        })?;
-        modes.push(parsed.mode);
-        let mut source = file.source.clone();
-        if let Some(span) = parsed.mode_span {
-            let blank: String = source.as_bytes()[span.start..span.end]
-                .iter()
-                .map(|byte| if *byte == b'\n' { '\n' } else { ' ' })
-                .collect();
-            source.replace_range(span.start..span.end, &blank);
-        }
-        stripped.push(SourceFile::new(&file.path, source));
+        individual.push(parsed);
     }
-    // Contract declarations can accompany either a library or an executable.
-    // An unmarked file keeps the existing executable compilation behavior.
-    let mode = if modes.contains(&SourceModuleMode::Executable) {
-        SourceModuleMode::Executable
-    } else if modes.contains(&SourceModuleMode::Library) {
-        SourceModuleMode::Library
-    } else {
-        SourceModuleMode::Contract
-    };
+    let externs = individual
+        .iter()
+        .flat_map(|program| program.declarations.iter())
+        .filter(|d| d.value.kind == DeclarationKind::ExternFunction)
+        .map(|d| d.value.name.clone())
+        .collect();
+    for (parsed, range) in individual.iter().zip(&ranges) {
+        qcore_frontend::module_imports::check_source_imports_in_scope(parsed, &externs).map_err(
+            |errors| {
+                errors
+                    .into_iter()
+                    .map(|error| {
+                        map_raw_diagnostic(
+                            error.code,
+                            error.pass,
+                            Span {
+                                start: error.span.start + range.start,
+                                end: error.span.end + range.start,
+                            },
+                            error.message,
+                            &ranges,
+                        )
+                    })
+                    .collect::<Vec<_>>()
+            },
+        )?;
+    }
+    // Only roots decide executable intent; an unmarked dependency cannot
+    // turn a library into an executable or nominate a process entry point.
+    let mode = bundle.mode();
     if mode != SourceModuleMode::Executable && options.entry.is_some() {
         return Err(vec![plain_diagnostic(
             "Q403",
@@ -1589,6 +1645,7 @@ fn compile_files_with_registry_inner(
     };
     if mode != SourceModuleMode::Executable {
         return Ok(CompiledModule {
+            source_bundle: None,
             extension_warnings: Vec::new(),
             checked: CheckedSourceModule::Sequential(Box::new(checked)),
             execution_profile: SourceExecutionProfile::SequentialCleanupV1,
@@ -1638,6 +1695,7 @@ fn compile_files_with_registry_inner(
     let source_location = locate(function.source.span.start, &ranges);
     let (c_source, source_map) = add_source_mapping(raw_c, &entry, source_location);
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Sequential(Box::new(checked)),
         execution_profile: SourceExecutionProfile::SequentialCleanupV1,
@@ -4030,6 +4088,7 @@ fn compile_bitfield_task_source(
         )]
     })?;
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::BitfieldTasks(Box::new(CheckedBitfieldTaskModule {
             lowered,
@@ -4291,6 +4350,7 @@ fn task_route(
         })
         .collect();
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: match composed {
             Some(composed) => CheckedSourceModule::ComposedTasks(Box::new(composed)),
@@ -5271,6 +5331,7 @@ fn compile_extern_source(
             )]
         })?;
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ExternCalls(Box::new(CheckedExternModule {
             lowered,
@@ -5493,6 +5554,7 @@ fn compile_composed_source(
         custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Composed(Box::new(CheckedComposedModule {
             lowered,
@@ -5595,6 +5657,7 @@ fn compile_std_io_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardIo(Box::new(CheckedStdIoModule {
             lowered,
@@ -5716,6 +5779,7 @@ fn compile_resource_call_source(
         }
     }
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
             lowered: buffer_lowered,
@@ -5823,6 +5887,7 @@ fn compile_buffer_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
             lowered,
@@ -5982,6 +6047,7 @@ fn compile_socket_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardSocket(Box::new(CheckedSocketModule {
             lowered,
@@ -6167,6 +6233,7 @@ fn compile_http_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardHttp(Box::new(CheckedHttpModule {
             lowered,
@@ -6271,6 +6338,7 @@ fn compile_string_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardString(Box::new(CheckedStringModule {
             lowered,
@@ -6393,6 +6461,7 @@ fn compile_event_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Event(Box::new(CheckedEventModule {
             lowered,
@@ -6496,6 +6565,7 @@ fn compile_mutex_source(
         mutex_c_emit::TraceShape::Outside { .. } => None,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked,
         execution_profile: SourceExecutionProfile::CheckedMutexGuardsV1,
@@ -6600,6 +6670,7 @@ fn compile_epoch_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::CheckedEpochBound(Box::new(CheckedEpochModule {
             lowered,
@@ -6774,6 +6845,7 @@ fn compile_composed_epoch_source(
         Some(region) => Some(check_composed_region(&tasks, region, ranges)?),
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ComposedEpochTasks(Box::new(ComposedEpochModule {
             tasks: *tasks,
@@ -7147,6 +7219,7 @@ fn compile_scalar_calls(
         (None, None, None)
     };
     Ok(CompiledModule {
+        source_bundle: None,
         extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ScalarCalls(Box::new(checked)),
         execution_profile: SourceExecutionProfile::ScalarCallsV1,

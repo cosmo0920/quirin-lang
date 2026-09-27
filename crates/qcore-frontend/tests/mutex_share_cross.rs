@@ -20,7 +20,7 @@ use qcore_frontend::source_mutex::{LoweredMutexModule, has_source_mutex, lower_s
 const DECLARATIONS: &str = "let buf = protected 4; let m = mutex guards buf;";
 
 fn entry(body: &str) -> String {
-    format!("import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
+    format!("#import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
 }
 
 /// Lower only. Returns `(code, message)` pairs in the order reported.
@@ -461,7 +461,7 @@ fn the_crossing_is_requestable_for_the_protected_payload_and_for_nothing_else() 
 /// `spawn`/`join` expressions no mutex. The pinned refusal is unmoved.
 #[test]
 fn the_task_routes_spawn_still_refuses_a_mutex_generation() {
-    let source = "import std.concurrency; fn worker(x: i32) -> i32 { return x; } \
+    let source = "#import std.concurrency; fn worker(x: i32) -> i32 { return x; } \
          fn main() -> unit { thread scope s { let buf = protected 4; \
          let m = mutex guards buf; let h = spawn s worker(copy buf); } }";
     let codes: Vec<_> = lower(source)

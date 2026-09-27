@@ -22,7 +22,7 @@ use qcore_frontend::source_tasks::lower_source_tasks;
 /// The CT24 frame: a parent-owned Buffer, a child holding a counted read
 /// share, and a fallible allocation inside the thread scope whose `?` is the
 /// early exit that would run the frame's cleanup over the owner.
-const CLEANUP_BEFORE_JOIN: &str = "import std.concurrency; concurrency checked;
+const CLEANUP_BEFORE_JOIN: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -103,7 +103,7 @@ fn the_explicit_drop_shape_keeps_its_loan_refusal_unchanged() {
 /// cleanup the exit preempts, so nothing is attributed.
 #[test]
 fn a_busy_scope_without_a_lent_owner_keeps_the_bare_rendering() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
   let value = 42;
