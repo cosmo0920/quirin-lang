@@ -1066,7 +1066,7 @@ mod tests {
     /// a pointer to an enumeration.
     #[test]
     fn the_enum_arm_needs_positive_enum_evidence() {
-        assert!(ENUM_ARM);
+        const { assert!(ENUM_ARM) };
         let anonymous = "typedef enum { A, B } mode_t2; struct S { mode_t2 m; }; int f(struct S *s) { s->m = B; return 0; }";
         assert!(plan(anonymous, "s->m = B").is_some());
         let tagged = "enum color { RED }; typedef enum color color_t; struct S { color_t c; enum color d; }; int f(struct S *s) { int x = s->c == RED && s->d == RED; return x; }";

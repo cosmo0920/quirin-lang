@@ -163,11 +163,14 @@ Against the frozen per-function forecast ([comparison](artifacts/after/corpus-co
   `rd_kafka_share_partition_offsets_offsets`) and both
   `rd_kafka_topic_partition_get_(current_)leader_epoch` miss for one cause:
   the never-bound, `may_bind` and declared-local premises read the lexical
-  declaration reader, which answers nothing for typedef-spelled parameters and
-  locals. The control `a_typedef_spelled_formal_keeps_the_pointer_return_refusal`
-  shows the same getter certifying with a `struct` spelling and refusing with a
-  typedef. Registered as `W47-TYPED-ROOT-DECLARATION-READER`; the premise is
-  not relaxed.
+  declaration reader, and the typed reader's return and assignment rows for
+  these functions are refused there (`position_rows.py` lists them); the
+  per-function cause inside the lexical reader is not individually
+  established. The control `a_redeclared_typedef_formal_keeps_the_pointer_return_refusal`
+  reproduces one cause, a typedef redeclared as C11 permits (librdkafka
+  declares `rd_kafka_Node_t` twice): the same getter certifies with one
+  declaration and refuses with two. Registered as
+  `W47-TYPED-ROOT-DECLARATION-READER`; the premise is not relaxed.
 - **Step B, 11 predicted Safe: 10 match, 1 miss** —
   `rd_kafka_mock_cgrp_classic_check_state` switches on an anonymous inline
   enum member (`enum { ... } state;`), whose type has no tag or typedef
@@ -221,18 +224,35 @@ union, call-in-path, cast and tracked mixed paths refused in a condition; the
 assignment operand keeping 10b's identity refusal; typed returns; a return
 through a released or tracked root never Safe; an interior-address return
 refused; borrowed actuals Safe; releasing, uncontracted and tracked-root
-pointer actuals refused; the typedef-spelled getter control; and the enum arm
+pointer actuals refused; the redeclared-typedef getter control; and the enum arm
 (tracked `b && b->mode == C_ON` Safe, `||` UnknownAlias, union beside it
 refused). Unit tests in `typed_access_positions.rs` and `typed_access_path.rs`
 cover node matching and positive enum evidence (anonymous aggregate, union and
-pointer-to-enum typedefs refused). Three historical pins were re-pinned
-deliberately, each with its reason in the test:
+pointer-to-enum typedefs refused).
+
+Historical pins of older routes' grammar limits were re-pinned deliberately,
+each with its reason in the test; every older route still refuses the shape,
+and the typed fallback asked after it now reads it under its per-hop
+obligations, so none is a relaxed refusal:
 `call_argument_access::a_chain_keeps_the_refusal` (the gate refusal becomes the
-chain's `r->next` link obligation) and two members of
-`return_position_pointer_leaf::the_adversarial_family_keeps_its_return_refusal`
-(subscript, `void *` member and long chain now read by the typed fallback;
-address-of and `*view->ring` still refuse). The bound-base pins of rule 5b pass
-unchanged.
+chain's `r->next` link obligation); `return_position_pointer_leaf::the_adversarial_family_keeps_its_return_refusal`
+(subscript, `void *` member and long chain read; address-of and `*view->ring`
+still refuse); `chained_tail::{every_non_conforming_tail_shape_keeps_its_refusal,the_depth_bound_is_inherited_unchanged}`
+(an indexed byte, a bitfield's sibling, a typedef-spelled link, an embedded
+record and a five-selection chain read in a declared tail; the laundered base
+now refuses by its `UnknownAlias` obligation); `neighbours::the_constructor_keeps_exactly_one_refusal_under_production_declarations`
+(its load-bearing substitution moves from `name[0]`, now read, to `name + 0`,
+which every route refuses); `o04_arms::every_untyped_link_keeps_its_unknown_and_its_diagnostic`
+(three actuals read, exposing the fixture's own unguarded `h`; still Unknown);
+`o04_read_bound::every_refused_member_shape_keeps_its_unknown_and_its_diagnostic`
+(the partial argument `b->item->weight + n` read through the live stored
+child); `reach_gate_positions::the_adversarial_family_keeps_its_unknown_and_its_diagnostic`
+(subscript, long chain and `void *` member read in a condition); and the unit
+`member_release::a_member_null_test_reads_only_single_pointer_members`
+(`n->next->buf` and `n->buf == n->next` read; `n->buf && n->n` keeps the
+refusal because both operands are older routes' reads). The bound-base pins
+of rule 5b, the member-release double-release pins and every union, cast,
+address and custody-position refusal pass unchanged.
 
 ## Gate
 

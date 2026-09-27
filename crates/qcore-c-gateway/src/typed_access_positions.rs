@@ -295,7 +295,6 @@ impl StatementIndex {
         texts: &[&str],
         line: usize,
         never_bound: impl Fn(&str) -> bool,
-        pointer_root: impl Fn(&str) -> bool,
     ) -> Option<ArgumentPlan> {
         let body = children(&self.function)
             .iter()
@@ -318,7 +317,9 @@ impl StatementIndex {
         }
         let mut reader = self.reader(&never_bound);
         let pointer_valued = reader.value(actual)?;
-        if pointer_valued && !reader.roots_admit(&pointer_root) {
+        // A borrowed actual hands nothing out of the body: the never-bound
+        // premise suffices, and W44's `ArgumentReads` decides what it names.
+        if pointer_valued && !reader.roots_admit(&never_bound) {
             return None;
         }
         Some(ArgumentPlan {
@@ -436,7 +437,7 @@ mod tests {
             let scalar = texts("p->value");
             let scalar = scalar.iter().map(String::as_str).collect::<Vec<_>>();
             let read = index
-                .argument("g", 0, 2, &scalar, 1, |_| true, |_| true)
+                .argument("g", 0, 2, &scalar, 1, |_| true)
                 .expect("scalar actual");
             assert!(!read.pointer_valued);
             let pointer = texts("p->next");
@@ -444,17 +445,17 @@ mod tests {
             let open = |_: &str| true;
             assert!(
                 index
-                    .argument("g", 1, 2, &pointer, 1, open, open)
+                    .argument("g", 1, 2, &pointer, 1, open)
                     .unwrap()
                     .pointer_valued
             );
             assert!(
                 index
-                    .argument("g", 1, 2, &pointer, 1, open, |name| name != "p")
+                    .argument("g", 1, 2, &pointer, 1, |name| name != "p")
                     .is_none()
             );
-            assert!(index.argument("g", 0, 2, &pointer, 1, open, open).is_none());
-            assert!(index.argument("h", 0, 2, &scalar, 1, open, open).is_none());
+            assert!(index.argument("g", 0, 2, &pointer, 1, open).is_none());
+            assert!(index.argument("h", 0, 2, &scalar, 1, open).is_none());
         });
     }
 }

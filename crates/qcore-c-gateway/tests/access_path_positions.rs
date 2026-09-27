@@ -328,19 +328,22 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
 }
 
 /// `W47-TYPED-ROOT-DECLARATION-READER`: the pointer-return premise reads the
-/// lexical declaration reader, which does not read a typedef-spelled formal,
-/// so the same getter certifies with a `struct` spelling and keeps its
-/// refusal with a typedef spelling. Recorded as a residual, never relaxed.
+/// lexical declaration reader. A typedef redeclared as C11 permits (librdkafka
+/// declares `rd_kafka_Node_t` in `rdkafka.h` and again with its body in
+/// `rdkafka_aux.h`) leaves the reader without an answer, so the same getter
+/// certifies with one declaration and keeps its refusal with two. Recorded as
+/// a residual, never relaxed.
 #[test]
-fn a_typedef_spelled_formal_keeps_the_pointer_return_refusal() {
+fn a_redeclared_typedef_formal_keeps_the_pointer_return_refusal() {
     if !clang_available() {
         return;
     }
-    let spelled = "struct g_s { char *host; }; const char *w(const struct g_s *node) { return node->host; }";
-    assert_eq!(outcome(spelled), safe());
-    let typedef = "typedef struct g_s g_t; struct g_s { char *host; }; \
+    let once = "typedef struct g_s g_t; struct g_s { char *host; }; \
         const char *w(const g_t *node) { return node->host; }";
-    assert_eq!(outcome(typedef), unknown(&[RETURN]));
+    assert_eq!(outcome(once), safe());
+    let twice = "typedef struct g_s g_t; typedef struct g_s { char *host; } g_t; \
+        const char *w(const g_t *node) { return node->host; }";
+    assert_eq!(outcome(twice), unknown(&[RETURN]));
 }
 
 /// Step B, the owner-aware enum arm: an anonymous enum typedef member is a

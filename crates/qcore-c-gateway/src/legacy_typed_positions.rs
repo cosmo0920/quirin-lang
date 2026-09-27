@@ -271,17 +271,11 @@ impl Parser<'_> {
         argument: &[&str],
         line: usize,
     ) -> Option<crate::typed_access_positions::ArgumentPlan> {
-        let plan = self.typed_positions_index()?.argument(
-            callee,
-            index,
-            arity,
-            argument,
-            line,
-            |name| self.typed_bases.never_bound(name),
-            // A borrowed actual hands nothing out of the body; W44's second
-            // obligation (`ArgumentReads`) decides what the pointer may name.
-            |name| self.typed_bases.never_bound(name),
-        );
+        let plan =
+            self.typed_positions_index()?
+                .argument(callee, index, arity, argument, line, |name| {
+                    self.typed_bases.never_bound(name)
+                });
         record_position(
             &self.typed_path_function,
             line,
@@ -307,15 +301,9 @@ impl Parser<'_> {
             return;
         }
         let candidate = self.typed_positions_index().and_then(|typed| {
-            typed.argument(
-                callee,
-                index,
-                arity,
-                argument,
-                line,
-                |name| self.typed_bases.never_bound(name),
-                |name| self.typed_bases.never_bound(name),
-            )
+            typed.argument(callee, index, arity, argument, line, |name| {
+                self.typed_bases.never_bound(name)
+            })
         });
         crate::typed_access_path::record_position_legacy(
             &self.typed_path_function,

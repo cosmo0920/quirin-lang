@@ -574,10 +574,13 @@ fn analyze_real(source: &str, contracts: &str) -> UnrestrictedLegacyResult {
 ///   * **The C6 statement itself is decided**, as before.
 ///   * **The admission is what decides the residual, and it is narrow.** The
 ///     added half re-measures the same statement with the same actual made
-///     non-conforming — `storage->stream->name[0]`, a subscript the chain rule
-///     refuses — and requires the *old* measurement back, verbatim: exactly one
-///     `indirect memory access`. So the zero is the admission's, not a widened
-///     gate's.
+///     non-conforming — `storage->stream->name + 0`, pointer arithmetic the
+///     chain rule refuses — and requires the *old* measurement back, verbatim:
+///     exactly one `indirect memory access`. So the zero is the admission's,
+///     not a widened gate's. (Card W47-ACCESS-PATH-POSITIONS re-pinned the
+///     substitution: the former `storage->stream->name[0]` is a scalar byte the
+///     W47 typed call-actual fallback now reads in the declared tail, while
+///     pointer arithmetic stays refused by every route.)
 ///   * **No leak, in every state.**
 ///
 /// Nothing here is promoted, and the reading of a zero has not changed. It is a
@@ -616,26 +619,26 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
         summary.diagnostics
     );
 
-    // **The added load-bearing half.** The same actual, made non-conforming by a
-    // subscript the chain rule refuses, restores the exact measurement this test
+    // **The added load-bearing half.** The same actual, made non-conforming by
+    // pointer arithmetic every route refuses, restores the exact measurement this test
     // used to pin. The admission is narrow and it is what decides the residual.
-    let subscripted = source.replace(
+    let arithmetic = source.replace(
         "storage->stream->name, name);",
-        "storage->stream->name[0], name);",
+        "storage->stream->name + 0, name);",
     );
     assert_ne!(
-        subscripted, source,
-        "the subscript substitution did not apply"
+        arithmetic, source,
+        "the arithmetic substitution did not apply"
     );
     let refused = function(
-        program(&analyze_real(&subscripted, &real_contracts())),
+        program(&analyze_real(&arithmetic, &real_contracts())),
         "flb_input_chunk_create",
     )
     .clone();
     assert_eq!(
         unsupported(&refused),
         vec!["indirect memory access is outside the resource projection"],
-        "a subscripted tail actual must keep the original refusal"
+        "a pointer-arithmetic tail actual must keep the original refusal"
     );
     assert!(leaks(&refused).is_empty());
 

@@ -386,8 +386,29 @@ fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
              if ((struct z_node *) view->head) { q_free(p); return; } q_free(p); }",
         ),
     ];
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins three rows
+    // deliberately. This rule still refuses them; the Clang-typed condition
+    // fallback asked after it reads each (a subscripted pointer element, a
+    // chain past this rule's bound, a `void *` member) as the truthiness of a
+    // pointer read, with a per-hop obligation over the untracked formal and
+    // no refinement. The address, the dereference, the assignment and the cast
+    // keep their refusal.
+    const TYPED: [&str; 3] = [
+        "a subscript has no model here",
+        "a chain one selection past the bound refuses",
+        "a link this reader will not type refuses",
+    ];
     for (reason, body) in cases {
         let measured = run(body);
+        if TYPED.contains(&reason) {
+            assert_eq!(
+                measured.status,
+                AnalysisStatus::Safe,
+                "{reason}: read by the typed fallback, got {:?}",
+                measured.diagnostics
+            );
+            continue;
+        }
         assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
         assert!(
             !measured.unsupported().is_empty(),
