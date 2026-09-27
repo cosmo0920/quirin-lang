@@ -6,6 +6,21 @@ This card's physical edits are held until the integrator reports the EXT-01
 standing gate passed. Its preparation does not alter a source, reference or
 lock.
 
+## User-authorized archive policy change (before mutation)
+
+The user subsequently directed outdated frozen historical files to be changed
+or removed to prevent confusion. This instruction overrides the repository's
+general frozen-file preservation rule for the extension migration. The contract
+rename set now includes all **195** mapped `.qv` targets: the original 177 live
+sources and 18 files under `docs/reports/`. Sixteen archived files parse as
+contract mode; two are deliberately malformed attribution fragments with a
+contract header and remain malformed after their path changes. The original
+source bytes and original measurement labels/digests will be recorded beside
+the migrated names. Historical reports must not claim a past run used a new
+path or digest. Executable historical commands and links that target one of
+these sources should point to the new path with explicit provenance for their
+original spelling. No report directory is removed wholesale.
+
 ## Before-change evidence
 
 The [parser-derived mapping](../extension-compatibility/mapping.tsv) names
