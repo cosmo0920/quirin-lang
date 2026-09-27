@@ -1,0 +1,30 @@
+[
+  {
+    "id": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS",
+    "title": "Libevent debug and count queries can invoke configured lock callbacks",
+    "why": "event_get_events, event_get_priority, event_get_fd, event_get_base, event_get_callback, event_get_callback_arg and base count/priority queries cannot receive unconditional neutral custody declarations because their debug/setup or locking path can invoke configured lock callbacks. Discharge with a source-profile premise that excludes those callbacks and a checked configuration binding, or a richer callback effect with gateway and Lean parity, then pin every body variant and measure.",
+    "source": "docs/reports/w46-libc-event-contract-gaps/README.md",
+    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+    "id": "W46-MONKEY-BACKEND-QUERY-ARMS",
+    "title": "Review every selected backend and static-result relation for mk_event_backend",
+    "why": "mk_event_backend dispatches to _mk_event_backend selected from five backend implementation files; review every selected body and static-result mode before a pinned declaration. This is distinct from the backend wait and registration residual in W46-EXTERNAL-RESIDUAL-RANKING.",
+    "source": "docs/reports/w46-libc-event-contract-gaps/README.md",
+    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+    "id": "W46-METRIC-TRACE-REACHABLE-OWNERSHIP",
+    "title": "Trace ID member aliases and ownership-replacing setters remain undeclared",
+    "why": "ctr_id_get_buf returns cid->buf, a separate allocation whose lifetime is tied to the ID, not an interior pointer of cid. ctr_id_set releases and replaces that member. Other trace status/schema/ID/attribute setters can retain, replace or allocate reachable ownership. The scalar declarations do not model these effects. The baseline census records five ctr_id_get_buf and one ctr_id_set uncontracted-call leaves, none a sole blocker. Discharge with a member-owner lifetime and replacement relation, gateway refusal controls and audited Lean parity, then pin and remeasure the affected callers.",
+    "source": "docs/reports/w46-metric-trace-contract-gaps/README.md",
+    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+    "id": "W46-METRIC-TRACE-CALLBACK-PREMISES",
+    "title": "Metric logging and trace mpack helpers need explicit callback-effect premises",
+    "why": "cmt_log_print can call cmt->log_cb; ctr_mpack_consume_* can reach mpack fill/error callbacks. Scalar returns do not establish custody neutrality on these paths. cmt_log_print has 43 uncontracted-call leaves in the archived baseline, none alone deciding a function. Discharge by expressing and enforcing the callback effects or a configuration premise that excludes those paths, with Rust controls and Lean parity, then record source pins and corpus measurements.",
+    "source": "docs/reports/w46-metric-trace-contract-gaps/README.md",
+    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "input": "private/w46-contract-gaps/baseline/corpus/resource-diagnostics.json",
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+  "unit_rows": 185,
+  "unit_statuses": {
+    "Unknown": 168,
+    "Safe": 5,
+    "Unsafe": 8,
+    "data_only": 4
+  },
+  "function_configuration_statuses": {
+    "Unknown": 4420,
+    "Safe": 405,
+    "Unsafe": 9
+  },
+  "unique_function_statuses_joined": {
+    "Unknown": 4420,
+    "Safe": 405,
+    "Unsafe": 9
+  },
+  "unique_functions": 4834,
+  "unique_not_projected_records": 87,
+  "configuration_disagreements": [],
+  "diagnostic_counts": {
+    "leak": 34,
+    "summary_conflict": 1,
+    "unknown_alias": 3572,
+    "unsupported": 41239
+  },
+  "uncontracted_leaves_all_statuses": 9106,
+  "uncontracted_leaves_on_unknown_functions": 9084,
+  "unknown_functions_with_uncontracted_leaves": 2609,
+  "unknown_functions_with_only_uncontracted_leaves": 429,
+  "held_refutation_diagnostics": []
+}
