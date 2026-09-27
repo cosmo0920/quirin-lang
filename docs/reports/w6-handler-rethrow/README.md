@@ -58,7 +58,7 @@ Reproduce the source/native/reference comparison:
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct20.c \
-  compiler/tests/fixtures/ct/CT20/case.qcore
+  compiler/tests/fixtures/ct/CT20/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -DQCORE_CT_FAIL_ALLOC=0 -DQCORE_CT_FAIL_CREATE=2 \

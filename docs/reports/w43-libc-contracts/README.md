@@ -470,7 +470,7 @@ python3 docs/reports/w43-return-expression/scripts/run_audit.py <before> 9edad50
 python3 docs/reports/w43-return-expression/scripts/baseline_identity.py <before> docs/reports/w43-return-expression/artifacts --worktree-alias
 python3 docs/reports/w43-return-expression/scripts/run_audit.py <after> d5b90c6d         # manifest at 44 modules
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py <before>/resource-diagnostics.json <captured -E -P dir> <unit-texts>
-python3 docs/reports/w43-libc-contracts/scripts/attribute.py <before> <after> <unit-texts> <out.json> providers/quirin-provider-libc/contracts/libc/{dlfcn,math,process,socket,stdio,stdlib,string,sys_stat,threads,time,unistd}.qcore
+python3 docs/reports/w43-libc-contracts/scripts/attribute.py <before> <after> <unit-texts> <out.json> providers/quirin-provider-libc/contracts/libc/{dlfcn,math,process,socket,stdio,stdlib,string,sys_stat,threads,time,unistd}.qv
 python3 docs/reports/w43-libc-contracts/scripts/libc_inventory.py docs/reports/w43-return-expression/artifacts/diagnostics.json.gz <captured -E dir> <fluent-bit-clang-source> <inventory.json>
 python3 docs/reports/w43-libc-contracts/scripts/decisions.py <inventory.json> libc-inventory.json libc-inventory.md <the eleven modules>
 python3 docs/reports/w43-libc-contracts/scripts/libc_names.py <captured -E dir> providers/quirin-provider-libc/libc-names.txt

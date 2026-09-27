@@ -242,8 +242,8 @@ ConditionTree::Not(inner) => build_connective_branch(span, inner, else_output, t
 pin is the measurement:
 
 ```
-qcorec emit -o negated.c fixtures/bitwise/negated_condition.qcore
-qcorec emit -o twin.c    fixtures/bitwise/negated_condition_twin.qcore
+qcorec emit -o negated.c fixtures/bitwise/negated_condition.qr
+qcorec emit -o twin.c    fixtures/bitwise/negated_condition_twin.qr
 diff negated.c twin.c     # empty
 ```
 

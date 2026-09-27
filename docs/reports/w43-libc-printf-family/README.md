@@ -495,7 +495,7 @@ python3 docs/reports/w43-libc-printf-family/scripts/identity.py measure/before d
 python3 docs/reports/w43-libc-printf-family/scripts/capture_run.py measure/capture-run
 python3 docs/reports/w43-libc-result-alias/scripts/strip.py
 cargo build --release -p qcore-c-gateway --example declared_abi_census
-target/release/examples/declared_abi_census docs/reports/w43-libc-printf-family/measurement/family9.qcore -- measure/capture/plain/*.i
+target/release/examples/declared_abi_census docs/reports/w43-libc-printf-family/measurement/family9.qv -- measure/capture/plain/*.i
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py measure/before/resource-diagnostics.json measure/capture/ppP measure/unit-texts
 python3 docs/reports/w43-libc-printf-family/scripts/call_shapes.py measure/before/resource-diagnostics.json measure/unit-texts <out> printf fprintf snprintf sprintf
 python3 docs/reports/w43-libc-printf-family/scripts/line_bound.py measure/before/resource-diagnostics.json measure/unit-texts <out> printf fprintf snprintf sprintf

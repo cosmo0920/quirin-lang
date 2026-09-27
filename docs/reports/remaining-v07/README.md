@@ -147,7 +147,7 @@ c08 is an accepted control, not a gap. `has_source_tasks`
 in-profile, and the emitted C runs clean:
 
 ```
-qcorec emit -o c08.c c08_nested_scope_control.qcore
+qcorec emit -o c08.c c08_nested_scope_control.qr
 cc -std=c11 -fsanitize=address,undefined -o c08 c08.c -lpthread && ./c08
 QCORE_TASK_SPAWN 1 0 / QCORE_TASK_RESULT 1 I32 42 / QCORE_TASK_JOIN 1 /
 QCORE_TASK_RESULT 0 I32 42   (exit 0)
@@ -188,11 +188,11 @@ Probe a15 rejects correctly but names the **wrong input file**. The reduced
 reproducer needs no task syntax, no Linux and no providers:
 
 ```sh
-$ cat d01_boundary_first.qcore
+$ cat d01_boundary_first.qr
 fn main() -> i32 { return 0; }
-$ cat d01_boundary_second.qcore
+$ cat d01_boundary_second.qr
 fn main() -> i32 { return 1; }
-$ qcorec check d01_boundary_first.qcore d01_boundary_second.qcore
+$ qcorec check d01_boundary_first.qr d01_boundary_second.qr
 d01_boundary_first.qcore:2:1: Q010: duplicate declaration `main`
 ```
 

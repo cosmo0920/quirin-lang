@@ -82,7 +82,7 @@ cargo test -p qcore-compiler --test owned_source_tasks --test ct_corpus
 cargo test -p qcore-frontend --test owned_tasks
 cargo test --workspace
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct16.c \
-  compiler/tests/fixtures/ct/CT16/case.qcore
+  compiler/tests/fixtures/ct/CT16/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -DQCORE_CT_ALLOC_TASK=1 -DQCORE_CT_FAIL_ALLOC=2 -DQCORE_CT_FAIL_CREATE=0 \

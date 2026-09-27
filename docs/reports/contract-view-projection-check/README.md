@@ -279,7 +279,7 @@ text (review, as for every model here), and the enumeration lemma behind
 The module is unchanged (SHA-256 `b1c44c63…2645aad`, equal to the Cycle 19
 record's `contract_sha256`). Its native consumer was rerun on the 145 retained
 executions:
-`cargo run -p qcore-compiler --example check_contract_observations -- providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore docs/reports/cycle19-native-contracts/flb_mem_observation.jsonl`,
+`cargo run -p qcore-compiler --example check_contract_observations -- providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv docs/reports/cycle19-native-contracts/flb_mem_observation.jsonl`,
 exit 0, 145 checked (10/50/40/40/5), output **byte-identical** to
 `cycle19-native-contracts/flb_mem_contract_result.json`. No fresh native
 execution was compiled: the harness drives git in the shared pinned checkout

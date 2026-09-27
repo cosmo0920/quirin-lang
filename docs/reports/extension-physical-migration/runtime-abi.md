@@ -21,3 +21,7 @@ A later user correction authorized maintenance of runnable archived scripts whos
 ## Current specification naming
 
 The current language, contract and implemented-grammar specifications now show `.qr` for runtime examples, `.qv` for contract examples and `.qrlib` for ABI manifests, with concrete paths checked against the EXT-01 parser inventory. Their original-checkpoint `.qcore`/`.qc` census counts and observed outcomes remain labelled as historical evidence, and the legacy spellings remain documented compatibility aliases. This edit changes names and provenance wording only; it does not change grammar, semantics, measured counts or verdicts. Contract include grammar and provider-path edits are supplied by the separate contract stage during integration.
+
+## Archived runnable command operands
+
+A final bounded sweep updated 30 runnable command lines across 21 archived report READMEs. The edits change only exact, parser-inventory-mapped source operands in current-checkout compiler, provider, census and replay commands: runtime inputs now use `.qr`, and contract or measurement inputs use `.qv`. The sweep leaves measured output, diagnostic path quotations, old result tables, generic legacy-alias examples and commands that explicitly replay an older Git base unchanged. No historical measurement was rerun or reattributed.

@@ -328,7 +328,7 @@ docs/reports/w45-fb-retry-lifetime/scripts/run-current.sh attempt-2 slice-after 
 docs/reports/w45-fb-retry-lifetime/scripts/run-current.sh attempt-2 slice-after-providers target/release/quirin-audit \
   --selection contract/profiles/fluent-bit/system-selection.json --load-path providers/contract-load-path.json \
   --provider quirin-provider-fluent-bit --provider quirin-provider-libc \
-  --provider qcore-provider-libevent:monkey/intrusive_list.qcore --jobs 4
+  --provider qcore-provider-libevent:monkey/intrusive_list.qv --jobs 4
 python3 docs/reports/w45-fb-retry-lifetime/scripts/slice_summary.py $OUT/attempt-2/slice-after/resource-diagnostics.json \
   --before $OUT/attempt-2/slice-before/resource-diagnostics.json
 ```
