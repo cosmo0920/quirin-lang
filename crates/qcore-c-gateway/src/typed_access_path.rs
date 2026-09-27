@@ -25,7 +25,7 @@ pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
 /// With it, a value whose type is `enum TAG` for a declared `EnumDecl`, or a
 /// typedef whose own declaration is directly an `EnumType`, is a scalar.
 /// Every other typedef spelling keeps the positive-builtin refusal.
-pub(crate) const ENUM_ARM: bool = false;
+pub(crate) const ENUM_ARM: bool = true;
 static PARITY_SINK: Mutex<Option<ParitySink>> = Mutex::new(None);
 
 struct ParitySink {
