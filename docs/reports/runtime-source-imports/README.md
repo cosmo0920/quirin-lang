@@ -207,3 +207,10 @@ execution or a C-corpus safety claim. Private originals: `private/runtime-source
 A pre-comparison formatting check exited 1 because the longer canonical spelling
 wrapped one test string replacement; `9271b204` applies rustfmt to that statement.
 The subsequent inventory exits 0. The integrated standing gate remains pending.
+
+The pinned post-change audit also exits 0. All five JSON result artifacts are
+byte-identical to the pre-change run, including resource diagnostics and the
+retained contract/source-effect sidecars. [Audit comparison](audit-comparison.json)
+records exact artifact digests and both run commands/source identities. The
+inputs reuse the prepared Clang tree; no C revision, assumption pin or coverage
+claim changes. Both runs use four workers; this card makes no throughput claim.
