@@ -72,5 +72,22 @@ refutations and held callers. This card changes no shared ledger file.
 
 ## Gate
 
-Gate commands, exact exits, counts and private log paths are recorded below
-when the card gate finishes.
+Focused checks before the full gate: `cargo test -p qcore-c-gateway --test
+metric_aggregate_contracts --offline` exited 0 (2/2); `cargo test -p
+qcore-compiler --test qcore_contract_corpus --offline` exited 0 (4/4);
+`quirin-audit pin --check` exited 0 at each reviewed revision (23 recorded,
+0 not in force, 0 stale); `providers/contracts.py check` exited 0;
+`scripts/check_lean_audits.py` exited 0 (212/212); and the script unit suite
+exited 0 (364/364). `cargo fmt --all -- --check` first exited 1 on layout
+in the new Rust controls and pinned corpus table; `cargo fmt --all` corrected
+it before the final gate. `scripts/build_docs_index.py --check` first exited 1
+after this report appeared; regeneration and the repeated check exited 0.
+
+The required fresh-worktree `git submodule update --init --recursive` first
+exited 1 because the sandbox could not create its Git worktree module
+directory. The integrator initialized it from a local cache at exit 0; the
+worktree now reports pinned `d82464a2`. A second scoped escalation request
+was interrupted while awaiting approval and launched no full gate. The
+integrator owns the remaining full standing/provider gate run and will supply
+its exact exits, counts and private log paths before integration. No card
+claim of a completed full gate is made here.
