@@ -256,7 +256,19 @@ address and custody-position refusal pass unchanged.
 
 ## Gate
 
-See [gate.json](gate.json).
+[gate.json](gate.json), exits in [gate/](gate/), at `b9da6879`: submodule 0;
+`run_test_binaries.py` 0 — **328 units, 340 summaries; 6,070 passed, 0
+failed, 11 ignored** (`private/test-binaries/20260927T104046Z-2073737/summary.json`);
+`cargo clean --profile dev` 0; fmt 0; clippy 0; both reevaluation examples 0;
+`check_lean_audits.py` 0 (**214** audits); `unittest discover -s scripts/tests`
+0 (**364**); `build_docs_index.py --check` 0; Clang 21.1.8 recorded here. The
+census-feature clippy and library tests (612) exit 0. No `providers/` path is
+touched; the provider workspace test was run only to measure it: 129 passed,
+0 failed, 1 ignored. The first gate at `555763d1` failed (8 tests, fmt,
+clippy); its logs are `private/w47/gate-attempt1/`, and the repairs are the
+re-pins above plus two clippy fixes. The AFTER binary was built at `9b2ac682`;
+`b9da6879` changes the analyzer only by dropping an argument that was always
+the never-bound closure.
 
 ## Follow-ups
 
