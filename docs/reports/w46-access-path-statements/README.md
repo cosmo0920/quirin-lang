@@ -51,6 +51,8 @@ The matching Lean module is `proof/QCore/TypedAccessPathStatements.lean`,
 registered in `proof/AuditTypedAccessPathStatements.lean`. It proves refusal
 on missing/unlisted forms, per-hop discharge, non-pointer frame preservation,
 the target-free borrowed binding, and the untracked declarator boundary.
+The borrowed proof requires `frame = none`, matching the Rust reader's only
+reachable whole-pointer-read form; a borrowed read with a write frame refuses.
 
 ## Measured corpus and system slice
 

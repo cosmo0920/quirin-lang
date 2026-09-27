@@ -120,16 +120,19 @@ def bindBorrowed (s : IndirectChainAccess.State) (destination : Nat) :
 
 def lowerBorrowed (s : IndirectChainAccess.State) (p : Statement) (destination : Nat) :
     Option (IndirectChainAccess.State × List Diagnostic) :=
-  (lower s p).map fun (after, diagnostics) => (bindBorrowed after destination, diagnostics)
+  if p.scalar.frame.isNone then
+    (lower s p).map fun (after, diagnostics) => (bindBorrowed after destination, diagnostics)
+  else none
 
 theorem pointer_read_binds_no_custody (s : IndirectChainAccess.State)
-    (p : Statement) (destination : Nat) (ha : admits p.shape = true) :
+    (p : Statement) (destination : Nat) (ha : admits p.shape = true)
+    (hf : p.scalar.frame = none) :
     ∃ after diagnostics, lowerBorrowed s p destination = some (after, diagnostics) ∧
       (after.base.binding destination).map Binding.targets = some [] ∧
       after.base.rest = s.base.rest ∧ after.fieldLink = s.fieldLink := by
   refine ⟨bindBorrowed (IndirectChainAccess.transfer s p.scalar p.hops).1 destination,
     (IndirectChainAccess.transfer s p.scalar p.hops).2, ?_, ?_, ?_, ?_⟩
-  · simp [lowerBorrowed, lower, ha]
+  · simp [lowerBorrowed, lower, ha, hf]
   · simp [bindBorrowed, borrowedAlias]
   · rfl
   · rfl
@@ -138,6 +141,15 @@ theorem refused_pointer_read_stays_unknown (s : IndirectChainAccess.State)
     (p : Statement) (destination : Nat) (h : admits p.shape = false) :
     lowerBorrowed s p destination = none := by
   simp [lowerBorrowed, lower, h]
+
+/-- The Rust reader sets `borrowed_destination` only for a whole pointer
+read. A pointer store is refused, so no reachable borrowed lowering carries
+a write frame. Refuse this impossible combination in the model too. -/
+theorem borrowed_read_with_frame_refuses (s : IndirectChainAccess.State)
+    (p : Statement) (destination : Nat) (frame : Nat → Bool)
+    (hf : p.scalar.frame = some frame) :
+    lowerBorrowed s p destination = none := by
+  simp [lowerBorrowed, hf]
 
 /-- A declaration of several aliases is admitted as a no-access statement
 only when the gateway's static custody closure proves every source and
