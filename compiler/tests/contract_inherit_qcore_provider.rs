@@ -86,7 +86,7 @@ const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
     (
         LIBRDKAFKA,
         "librdkafka/memory.qv",
-        "librdkafka_memory_hand_written.qcore",
+        "librdkafka_memory_hand_written.qv",
         &[
             ("rd_calloc", "calloc", "libc/memory.qv"),
             ("rd_free", "free", "libc/memory.qv"),
@@ -98,7 +98,7 @@ const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
     (
         LIBEVENT,
         "monkey/memory.qv",
-        "monkey_memory_hand_written.qcore",
+        "monkey_memory_hand_written.qv",
         &[
             ("mk_mem_alloc", "malloc", "libc/memory.qv"),
             ("mk_mem_alloc_z", "malloc", "libc/memory.qv"),

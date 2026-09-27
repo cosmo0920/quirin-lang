@@ -58,13 +58,13 @@ impl Tree {
         )
         .unwrap();
         fs::write(
-            root.join("contracts/queue.qcore"),
-            fixture("queue.qcore").replace("    requires resource_revision(flexible);\n", ""),
+            root.join("contracts/queue.qv"),
+            fixture("queue.qv").replace("    requires resource_revision(flexible);\n", ""),
         )
         .unwrap();
         fs::write(
             root.join("manifest.json"),
-            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qcore\"]}\n",
+            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qv\"]}\n",
         )
         .unwrap();
         Self(root)
