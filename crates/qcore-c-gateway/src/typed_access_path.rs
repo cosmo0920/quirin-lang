@@ -367,6 +367,25 @@ impl Reader<'_> {
             }
             "DeclStmt" => {
                 let declarations = children(node);
+                if declarations.len() > 1 {
+                    // A multi-declarator pointer alias statement has no
+                    // access only when every source and destination is
+                    // statically outside tracked-root custody.
+                    for decl in declarations {
+                        if kind(decl) != "VarDecl" || !is_pointer(decl) {
+                            return None;
+                        }
+                        let name = decl["name"].as_str()?;
+                        let source = untracked_pointer_source(children(decl).first()?)?;
+                        if children(decl).len() != 1
+                            || !(self.never_bound)(name)
+                            || !(self.never_bound)(source)
+                        {
+                            return None;
+                        }
+                    }
+                    return Some(());
+                }
                 if declarations.len() != 1 || kind(&declarations[0]) != "VarDecl" {
                     return None;
                 }
@@ -376,6 +395,12 @@ impl Reader<'_> {
                     return None;
                 }
                 let name = decl["name"].as_str()?.to_owned();
+                if children(decl).is_empty() {
+                    // An uninitialized local introduces no pointer value;
+                    // forget any same-named fact in the name-based model.
+                    self.plan.scalar.destination = Some(name);
+                    return Some(());
+                }
                 if children(decl).len() != 1 {
                     return None;
                 }
@@ -622,6 +647,22 @@ fn pointer_name(node: &Value) -> Option<&str> {
         .flatten()
 }
 
+fn untracked_pointer_source(mut node: &Value) -> Option<&str> {
+    loop {
+        if kind(node) != "ImplicitCastExpr" {
+            break;
+        }
+        if !matches!(
+            node["castKind"].as_str()?,
+            "LValueToRValue" | "BitCast" | "NoOp" | "ArrayToPointerDecay"
+        ) {
+            return None;
+        }
+        node = children(node).first()?;
+    }
+    pointer_name(node)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -677,5 +718,19 @@ mod tests {
         let source = "struct S { int value; }; int f(struct S *p) { for (int x = p->value; x < 1; x = x + 1) { } return 0; }";
         assert!(plan(source, "int x = p->value").is_some());
         assert!(plan(source, "x < 1").is_none());
+    }
+
+    #[test]
+    fn untracked_multi_pointer_declaration_has_no_access() {
+        let source = "struct S { int x; }; int f(void *a, void *b) { const struct S *x = a, *y = b; return 0; }";
+        let _scope = enter_source(source, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("f").expect("typed function");
+        let tokens = tokenize("const struct S *x = a, *y = b");
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(index.statement(&texts, 1, |_| true).unwrap().accesses, 0);
+        assert!(index.statement(&texts, 1, |name| name != "a").is_none());
     }
 }

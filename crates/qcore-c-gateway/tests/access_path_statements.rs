@@ -27,6 +27,16 @@ fn multiplication_is_not_a_pointer_access() {
 }
 
 #[test]
+fn untracked_multi_pointer_declaration_is_not_an_access() {
+    let source = "struct S { int x; }; int subject(void *a, void *b) { const struct S *x = a, *y = b; return 0; }";
+    let result = run(source);
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("untracked pointer aliases should decide: {result:?}");
+    };
+    check_legacy_safety_certificate(&certificate).expect("independent rederivation");
+}
+
+#[test]
 fn pointer_store_and_union_still_refuse() {
     for source in [
         "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
