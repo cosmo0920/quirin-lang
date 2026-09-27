@@ -17,8 +17,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("logs", type=pathlib.Path)
     parser.add_argument("packages", type=pathlib.Path)
+    parser.add_argument("--root", type=pathlib.Path,
+                        help="isolated worktree to validate (default: this checkout)")
     args = parser.parse_args()
-    root = pathlib.Path(__file__).resolve().parents[4]
+    root = args.root.resolve() if args.root else pathlib.Path(__file__).resolve().parents[4]
     logs = args.logs.resolve()
     logs.mkdir(parents=True, exist_ok=False)
     packages = args.packages.resolve()
