@@ -1,9 +1,9 @@
-//! Card **W45-AUDIT-CHECKPOINTS**: the `.qo` ("Quirin-audit Object") per-group
+//! Card **W45-AUDIT-CHECKPOINTS**: the `.qo` ("Quirin-audit Object") per-configuration
 //! audit checkpoint — its binary format, its sections and their text
 //! decomposition.
 //!
-//! A checkpointed `quirin-audit current` run analyses one library group at a
-//! time and seals each group's intermediate results into `<label>.qo`. A file
+//! A checkpointed `quirin-audit current` run seals each source/compile configuration
+//! independently into `<group-label>-<unit-key-digest>.qo`. A file
 //! holds ten sections in a fixed order, each encoded separately with
 //! [postcard] (a specified, stable serde wire format) and separately digested
 //! with SHA-256:

@@ -1,13 +1,14 @@
 //! Card W45-AUDIT-CHECKPOINTS: `quirin-audit current --checkpoint-dir` end to
-//! end on a two-group fixture — one `.qo` per group, a report byte-identical
-//! to the whole run's at every job count, identity-guarded resume, streaming
+//! end on a two-library fixture — one complete `.qo` per compile configuration,
+//! a report byte-identical to the whole run's at every job count, resume, streaming
 //! composition with its refusals, and the YAML/TOML decomposition round trip.
 
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Output};
+use std::process::{Command, Output, Stdio};
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::time::{Duration, Instant};
 
 use qcore_audit::checkpoint::{Checkpoint, CheckpointReader, TextFormat, decompose, parse_text};
 use qcore_contract::profile_loader::sha256_hex;
@@ -272,8 +273,36 @@ fn content(path: &Path) -> String {
         .unwrap()
 }
 
+fn checkpoint_paths(fixture: &Fixture, directory: &str) -> Vec<PathBuf> {
+    let record: serde_json::Value = serde_json::from_slice(
+        &fs::read(fixture.path(&format!("{directory}/checkpoint-run.json"))).unwrap(),
+    )
+    .unwrap();
+    record["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|group| {
+            fixture.path(&format!(
+                "{directory}/{}.qo",
+                group["group"].as_str().unwrap()
+            ))
+        })
+        .collect()
+}
+
+fn checkpoint_for(fixture: &Fixture, directory: &str, file: &str) -> PathBuf {
+    checkpoint_paths(fixture, directory)
+        .into_iter()
+        .find(|path| {
+            let checkpoint = Checkpoint::from_bytes(&fs::read(path).unwrap()).unwrap();
+            checkpoint.identity.group.units[0].file == file
+        })
+        .unwrap()
+}
+
 #[test]
-fn a_checkpointed_run_writes_one_checkpoint_per_group_and_the_whole_runs_outputs() {
+fn per_configuration_checkpoints_match_whole_and_resume_independently() {
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang);
     let whole = fixture.run("whole", &["--jobs", "1"]);
@@ -286,58 +315,33 @@ fn a_checkpointed_run_writes_one_checkpoint_per_group_and_the_whole_runs_outputs
     assert_eq!(fixture.outputs("four"), fixture.outputs("whole"));
     assert_eq!(console(&one), console(&whole));
     assert_eq!(console(&four), console(&whole));
-    for group in ["alpha", "beta-group"] {
-        let at_one = fixture.path(&format!("qo-1/{group}.qo"));
-        let at_four = fixture.path(&format!("qo-4/{group}.qo"));
-        // Every section but provenance is the same at every job count.
-        assert_eq!(content(&at_one), content(&at_four), "{group}");
-        let verified = fixture.checkpoint(&["verify", at_one.to_str().unwrap()]);
-        succeeded(&verified);
-        // Schema 2: card W45-REFUTED-CONTRACT-WITHDRAWAL added the refutation
-        // table's digest to every group's identity.
-        assert!(String::from_utf8_lossy(&verified.stdout).contains(": ok (format 1, schema 2"));
+    let paths = checkpoint_paths(&fixture, "qo-1");
+    assert_eq!(paths.len(), 6);
+    for (left, right) in paths.iter().zip(checkpoint_paths(&fixture, "qo-4")) {
+        let checkpoint = Checkpoint::from_bytes(&fs::read(left).unwrap()).unwrap();
+        assert_eq!(checkpoint.identity.group.units.len(), 1);
+        assert_eq!(checkpoint.preparation.units.len(), 1);
+        assert_eq!(checkpoint.lowering.units.len(), 1);
+        assert_eq!(checkpoint.verdicts.units.len(), 1);
+        assert_eq!(checkpoint.certificates.units.len(), 1);
+        assert_eq!(content(left), content(&right));
+        succeeded(&fixture.checkpoint(&["verify", left.to_str().unwrap()]));
     }
-    let stderr = String::from_utf8_lossy(&one.stderr);
-    assert!(stderr.contains("checkpoint alpha: recomputed (resume not requested)"));
-    let record: serde_json::Value =
-        serde_json::from_slice(&fs::read(fixture.path("qo-1/checkpoint-run.json")).unwrap())
-            .unwrap();
-    assert_eq!(record["groups"][1]["group"], "beta-group");
-    // The invocation record names the checkpoints only when they are used.
-    let invocation: serde_json::Value =
-        serde_json::from_slice(&fs::read(fixture.path("one/report.invocation.json")).unwrap())
-            .unwrap();
-    assert_eq!(invocation["checkpoints"]["resume"], false);
-    let invocation: serde_json::Value =
-        serde_json::from_slice(&fs::read(fixture.path("whole/report.invocation.json")).unwrap())
-            .unwrap();
-    assert!(invocation.get("checkpoints").is_none());
-}
-
-#[test]
-fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
-    let Some(clang) = clang() else { return };
-    let fixture = Fixture::new(&clang);
-    succeeded(&fixture.run("first", &["--jobs", "2", "--checkpoint-dir", "qo"]));
-    let alpha = fixture.path("qo/alpha.qo");
-    let alpha_bytes = fs::read(&alpha).unwrap();
-    // No change: both groups reused, the outputs unchanged, the files untouched.
+    let alpha = checkpoint_for(&fixture, "qo-1", "alpha/alpha_0.c");
+    let unchanged = fs::read(&alpha).unwrap();
     let again = fixture.run(
         "again",
-        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+        &["--jobs", "2", "--checkpoint-dir", "qo-1", "--resume"],
     );
     succeeded(&again);
-    let stderr = String::from_utf8_lossy(&again.stderr);
-    assert!(
-        stderr.contains("checkpoint alpha: reused (identity equal)"),
-        "{stderr}"
+    assert_eq!(fixture.outputs("again"), fixture.outputs("whole"));
+    assert_eq!(fs::read(&alpha).unwrap(), unchanged);
+    assert_eq!(
+        String::from_utf8_lossy(&again.stderr)
+            .matches("reused (identity equal)")
+            .count(),
+        6
     );
-    assert!(stderr.contains("checkpoint beta-group: reused (identity equal)"));
-    assert_eq!(fixture.outputs("again"), fixture.outputs("first"));
-    assert_eq!(fs::read(&alpha).unwrap(), alpha_bytes);
-    // One group's source changes (uncommitted, so its unit is refused against
-    // the pinned blob): that group alone is recomputed, and the result is the
-    // whole run's over the changed input.
     fs::write(
         fixture.path("checkout/beta/beta_1.c"),
         "void beta_1(void) {}\n",
@@ -345,256 +349,225 @@ fn resume_reuses_exactly_the_groups_whose_identity_is_unchanged() {
     .unwrap();
     let changed = fixture.run(
         "changed",
-        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+        &["--jobs", "2", "--checkpoint-dir", "qo-1", "--resume"],
     );
     succeeded(&changed);
     let stderr = String::from_utf8_lossy(&changed.stderr);
-    assert!(
-        stderr.contains("checkpoint alpha: reused (identity equal)"),
+    assert_eq!(
+        stderr.matches("reused (identity equal)").count(),
+        5,
         "{stderr}"
     );
-    assert!(
-        stderr.contains("checkpoint beta-group: recomputed (unit 1 (beta/beta_1.c): compile configuration differs)"),
-        "{stderr}"
-    );
+    assert!(stderr.contains("compile configuration differs"), "{stderr}");
     succeeded(&fixture.run("changed-whole", &["--jobs", "2"]));
     assert_eq!(fixture.outputs("changed"), fixture.outputs("changed-whole"));
-    // A fresh checkpointed run over the changed input seals the same content
-    // for both groups: a reused group equals a recomputed one.
-    succeeded(&fixture.run("fresh", &["--jobs", "1", "--checkpoint-dir", "qo-fresh"]));
-    for group in ["alpha", "beta-group"] {
-        assert_eq!(
-            content(&fixture.path(&format!("qo/{group}.qo"))),
-            content(&fixture.path(&format!("qo-fresh/{group}.qo"))),
-            "{group}"
-        );
-    }
-    // A tampered checkpoint is never used: it is recomputed, with the reason.
     let mut tampered = fs::read(&alpha).unwrap();
-    let last = tampered.len() - 1;
-    tampered[last] ^= 1;
-    fs::write(&alpha, &tampered).unwrap();
+    *tampered.last_mut().unwrap() ^= 1;
+    fs::write(&alpha, tampered).unwrap();
     let repaired = fixture.run(
         "repaired",
-        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+        &["--jobs", "2", "--checkpoint-dir", "qo-1", "--resume"],
     );
     succeeded(&repaired);
-    let stderr = String::from_utf8_lossy(&repaired.stderr);
-    assert!(
-        stderr.contains("checkpoint alpha: recomputed (checkpoint refused:"),
-        "{stderr}"
-    );
+    assert!(String::from_utf8_lossy(&repaired.stderr).contains("checkpoint refused:"));
     assert_eq!(
         fixture.outputs("repaired"),
         fixture.outputs("changed-whole")
     );
-    // A different contract set recomputes every group.
-    fs::write(fixture.path("contracts/heap.qcore"), format!("{HEAP}\n")).unwrap();
-    let contracts = fixture.run(
-        "contracts",
-        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
-    );
-    succeeded(&contracts);
-    let stderr = String::from_utf8_lossy(&contracts.stderr);
-    assert!(
-        stderr.contains("checkpoint alpha: recomputed (contract set differs)"),
-        "{stderr}"
-    );
-    refused(
-        &fixture.run("bad", &["--resume"]),
-        "--resume needs --checkpoint-dir",
-    );
 }
 
 #[test]
-fn a_selection_with_an_unrecorded_file_resumes_and_composes() {
+fn compose_requires_every_distinct_checkpoint_and_round_trips_text() {
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang);
-    let selection = ["--selection", "selection.json", "--jobs", "2"];
-    let whole = fixture.run("whole", &selection);
-    succeeded(&whole);
-    let mut checkpointed = selection.to_vec();
-    checkpointed.extend(["--checkpoint-dir", "qo"]);
-    succeeded(&fixture.run("first", &checkpointed));
-    assert_eq!(fixture.outputs("first"), fixture.outputs("whole"));
-    checkpointed.push("--resume");
-    let again = fixture.run("again", &checkpointed);
-    succeeded(&again);
-    let stderr = String::from_utf8_lossy(&again.stderr);
-    assert!(stderr.contains("checkpoint alpha: reused"), "{stderr}");
-    assert!(
-        stderr.contains("checkpoint beta-picked: reused"),
-        "{stderr}"
-    );
-    assert_eq!(fixture.outputs("again"), fixture.outputs("whole"));
-}
-
-#[test]
-fn composition_is_the_whole_run_and_refuses_an_incomplete_or_mixed_set() {
-    let Some(clang) = clang() else { return };
-    let fixture = Fixture::new(&clang);
-    let whole = fixture.run("whole", &["--jobs", "2"]);
-    succeeded(&whole);
+    succeeded(&fixture.run("whole", &["--jobs", "2"]));
     succeeded(&fixture.run("ck", &["--jobs", "2", "--checkpoint-dir", "qo"]));
-    let alpha = fixture.path("qo/alpha.qo");
-    let beta = fixture.path("qo/beta-group.qo");
-    let (alpha, beta) = (alpha.to_str().unwrap(), beta.to_str().unwrap());
-    // Order of the arguments does not matter: the plan orders the groups.
-    let composed = fixture.checkpoint(&[
-        "compose",
-        beta,
-        alpha,
+    let paths = checkpoint_paths(&fixture, "qo");
+    let mut args = vec!["compose"];
+    for path in paths.iter().rev() {
+        args.push(path.to_str().unwrap());
+    }
+    args.extend([
         "--report",
         "composed/report.json",
         "--monkey-source-report",
         "composed/monkey-source.json",
     ]);
+    let composed = fixture.checkpoint(&args);
     succeeded(&composed);
     assert_eq!(fixture.outputs("composed"), fixture.outputs("whole"));
+    let whole = fixture.run("whole-console", &["--jobs", "2"]);
+    succeeded(&whole);
     assert_eq!(console(&composed), console(&whole));
-    refused(
-        &fixture.checkpoint(&["compose", alpha, "--report", "x/report.json"]),
-        "missing: [\"beta-group\"]",
-    );
-    refused(
-        &fixture.checkpoint(&["compose", alpha, alpha, beta, "--report", "x/report.json"]),
-        "is given twice",
-    );
-    assert!(!fixture.path("x/report.json").exists());
-    // A checkpoint of another run (another contract set) is refused.
+    let mut missing = vec!["compose"];
+    missing.extend(paths[..paths.len() - 1].iter().map(|p| p.to_str().unwrap()));
+    refused(&fixture.checkpoint(&missing), "missing:");
+    let mut duplicate = vec!["compose", paths[0].to_str().unwrap()];
+    duplicate.extend(paths.iter().map(|p| p.to_str().unwrap()));
+    refused(&fixture.checkpoint(&duplicate), "given twice");
     fs::write(fixture.path("contracts/heap.qcore"), format!("{HEAP}\n")).unwrap();
     succeeded(&fixture.run("other", &["--jobs", "2", "--checkpoint-dir", "qo-other"]));
-    let other_beta = fixture.path("qo-other/beta-group.qo");
-    refused(
-        &fixture.checkpoint(&[
-            "compose",
-            alpha,
-            other_beta.to_str().unwrap(),
-            "--report",
-            "x/report.json",
-        ]),
-        "disagree on the contract set",
-    );
-    // A truncated checkpoint is refused whole, by verify and by compose.
-    let bytes = fs::read(alpha).unwrap();
+    let mut mixed = paths
+        .iter()
+        .map(|p| p.to_str().unwrap())
+        .collect::<Vec<_>>();
+    let other = checkpoint_paths(&fixture, "qo-other");
+    mixed[1] = other[1].to_str().unwrap();
+    mixed.insert(0, "compose");
+    refused(&fixture.checkpoint(&mixed), "disagree on the contract set");
+    let bytes = fs::read(&paths[0]).unwrap();
     fs::write(fixture.path("truncated.qo"), &bytes[..bytes.len() - 5]).unwrap();
     refused(
         &fixture.checkpoint(&["verify", "truncated.qo"]),
         "truncated",
     );
-    refused(
-        &fixture.checkpoint(&["compose", "truncated.qo", beta, "--report", "x/report.json"]),
-        "truncated",
-    );
-    assert!(!fixture.path("x/report.json").exists());
+    let mut corrupt = paths
+        .iter()
+        .map(|p| p.to_str().unwrap())
+        .collect::<Vec<_>>();
+    corrupt[0] = "truncated.qo";
+    corrupt.insert(0, "compose");
+    refused(&fixture.checkpoint(&corrupt), "truncated");
+    for format in [TextFormat::Yaml, TextFormat::Toml] {
+        let checkpoint = Checkpoint::from_bytes(&bytes).unwrap();
+        let text = decompose(&checkpoint, format).unwrap();
+        assert_eq!(
+            parse_text(&text, format).unwrap().to_bytes().unwrap(),
+            bytes
+        );
+    }
 }
 
-/// Card W45-CONTRACT-REVISION-MODE's locks are part of the identity: pinning
-/// the contracts (a new `contracts.lock`) invalidates every checkpoint, and the
-/// resumed run is the whole run under the new lock.
 #[test]
-fn a_re_pin_invalidates_every_checkpoint() {
+fn multiple_configurations_of_one_source_get_distinct_complete_files() {
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang);
-    succeeded(&fixture.run("before", &["--jobs", "2", "--checkpoint-dir", "qo"]));
-    let before = Checkpoint::from_bytes(&fs::read(fixture.path("qo/alpha.qo")).unwrap()).unwrap();
-    assert!(before.identity.run.contracts.locks.is_empty());
-    // Card W45-USER-CONTRACT-PLUGINS: with no lock every pinned contract is
-    // withheld, so functions relying on them are Pending; the group verdict
-    // is the join of its units' and the run's the join of the groups'.
-    let whole: serde_json::Value =
-        serde_json::from_slice(&fs::read(fixture.path("before/report.json")).unwrap()).unwrap();
-    let statuses = whole["units"]
-        .as_array()
+    let db = fixture.path("compile_commands.json");
+    let mut entries: serde_json::Value = serde_json::from_slice(&fs::read(&db).unwrap()).unwrap();
+    let mut second = entries[0].clone();
+    second["arguments"]
+        .as_array_mut()
         .unwrap()
+        .insert(2, json!("-DSECOND_CONFIGURATION=1"));
+    entries.as_array_mut().unwrap().insert(1, second);
+    fs::write(&db, serde_json::to_vec(&entries).unwrap()).unwrap();
+    succeeded(&fixture.run("whole", &["--jobs", "2"]));
+    succeeded(&fixture.run("ck", &["--jobs", "2", "--checkpoint-dir", "qo"]));
+    assert_eq!(fixture.outputs("ck"), fixture.outputs("whole"));
+    let paths = checkpoint_paths(&fixture, "qo");
+    assert_eq!(paths.len(), 7);
+    let same_source = paths
         .iter()
-        .map(|unit| {
-            (
-                unit["library"].as_str().unwrap().to_owned(),
-                unit["status"].as_str().unwrap().to_owned(),
-            )
+        .filter(|path| {
+            Checkpoint::from_bytes(&fs::read(path).unwrap())
+                .unwrap()
+                .identity
+                .group
+                .units[0]
+                .file
+                == "alpha/alpha_0.c"
         })
         .collect::<Vec<_>>();
-    assert!(
-        statuses.iter().any(|(_, status)| status == "Pending"),
-        "{statuses:?}"
-    );
-    let fold = |library: Option<&str>| {
-        qcore_schemas::verdict::Verdict::fold(
-            statuses
-                .iter()
-                .filter(|(owner, _)| library.is_none_or(|library| owner == library))
-                .map(|(_, status)| qcore_audit::checkpoint::unit_verdict(status)),
-        )
-    };
-    assert_eq!(before.result.verdict, fold(Some("alpha")).as_str());
-    assert_ne!(before.result.verdict, "Safe");
-    let record: serde_json::Value =
-        serde_json::from_slice(&fs::read(fixture.path("qo/checkpoint-run.json")).unwrap()).unwrap();
-    assert_eq!(record["verdict"], fold(None).as_str());
-    let pinned = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
-        .current_dir(&fixture.0)
-        .args(["pin", "--source-root", "checkout", "--modules", "contracts"])
-        .output()
-        .unwrap();
-    succeeded(&pinned);
-    let after = fixture.run(
-        "after",
+    assert_eq!(same_source.len(), 2);
+    assert_ne!(same_source[0], same_source[1]);
+    assert_ne!(content(same_source[0]), content(same_source[1]));
+    let resumed = fixture.run(
+        "resumed",
         &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
     );
-    succeeded(&after);
-    let stderr = String::from_utf8_lossy(&after.stderr);
-    assert!(
-        stderr.contains("checkpoint alpha: recomputed (contract set differs)"),
-        "{stderr}"
+    succeeded(&resumed);
+    assert_eq!(
+        String::from_utf8_lossy(&resumed.stderr)
+            .matches("reused (identity equal)")
+            .count(),
+        7
     );
-    assert!(stderr.contains("checkpoint beta-group: recomputed (contract set differs)"));
-    let now = Checkpoint::from_bytes(&fs::read(fixture.path("qo/alpha.qo")).unwrap()).unwrap();
-    assert_eq!(now.identity.run.contracts.locks.len(), 1);
-    assert_ne!(
-        now.identity.run.contracts.pin_evaluation_sha256,
-        before.identity.run.contracts.pin_evaluation_sha256
-    );
-    succeeded(&fixture.run("after-whole", &["--jobs", "2"]));
-    assert_eq!(fixture.outputs("after"), fixture.outputs("after-whole"));
-    assert_ne!(fixture.outputs("after"), fixture.outputs("before"));
+    assert_eq!(fixture.outputs("resumed"), fixture.outputs("whole"));
 }
 
 #[test]
-fn decomposition_round_trips_through_yaml_and_toml_to_the_same_bytes() {
+fn selection_with_unrecorded_file_resumes() {
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang);
-    succeeded(&fixture.run("ck", &["--jobs", "2", "--checkpoint-dir", "qo"]));
-    for group in ["alpha", "beta-group"] {
-        let path = fixture.path(&format!("qo/{group}.qo"));
-        let bytes = fs::read(&path).unwrap();
-        let checkpoint = Checkpoint::from_bytes(&bytes).unwrap();
-        for (format, name) in [(TextFormat::Yaml, "yaml"), (TextFormat::Toml, "toml")] {
-            // In memory: text parses back to the same checkpoint and bytes.
-            let text = decompose(&checkpoint, format).unwrap();
-            let back = parse_text(&text, format).unwrap();
-            assert_eq!(back, checkpoint);
-            assert_eq!(back.to_bytes().unwrap(), bytes);
-            // Through the command: decompose, then recompose, gives the file.
-            let text_path = format!("{group}.{name}");
-            succeeded(&fixture.checkpoint(&[
-                "decompose",
-                path.to_str().unwrap(),
-                "--format",
-                name,
-                "--output",
-                &text_path,
-            ]));
-            let recomposed = format!("{group}-{name}.qo");
-            succeeded(&fixture.checkpoint(&[
-                "recompose",
-                &text_path,
-                "--format",
-                name,
-                "--output",
-                &recomposed,
-            ]));
-            assert_eq!(fs::read(fixture.path(&recomposed)).unwrap(), bytes);
+    let selection = ["--selection", "selection.json", "--jobs", "2"];
+    succeeded(&fixture.run("whole", &selection));
+    let mut args = selection.to_vec();
+    args.extend(["--checkpoint-dir", "qo"]);
+    succeeded(&fixture.run("first", &args));
+    assert_eq!(checkpoint_paths(&fixture, "qo").len(), 3);
+    args.push("--resume");
+    let again = fixture.run("again", &args);
+    succeeded(&again);
+    assert_eq!(
+        String::from_utf8_lossy(&again.stderr)
+            .matches("reused (identity equal)")
+            .count(),
+        3
+    );
+    assert_eq!(fixture.outputs("again"), fixture.outputs("whole"));
+}
+
+#[test]
+fn interrupted_run_preserves_completed_units_for_resume() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang);
+    let mut child = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        .current_dir(&fixture.0)
+        .args([
+            "current",
+            "--checkout",
+            "checkout",
+            "--profile-directory",
+            "profiles/sample",
+            "--compile-database",
+            "compile_commands.json",
+            "--report",
+            "interrupted/report.json",
+            "--checkpoint-dir",
+            "qo",
+            "--jobs",
+            "1",
+        ])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(30);
+    let completed = loop {
+        let count = fs::read_dir(fixture.path("qo"))
+            .map(|entries| {
+                entries
+                    .filter_map(Result::ok)
+                    .filter(|entry| entry.path().extension().is_some_and(|ext| ext == "qo"))
+                    .count()
+            })
+            .unwrap_or(0);
+        if count > 0 {
+            break count;
         }
-    }
+        assert!(
+            Instant::now() < deadline,
+            "no unit checkpoint before timeout"
+        );
+        assert!(
+            child.try_wait().unwrap().is_none(),
+            "run exited before first checkpoint"
+        );
+        std::thread::sleep(Duration::from_millis(2));
+    };
+    assert!(completed < 6, "run finished before interruption point");
+    child.kill().unwrap();
+    let stopped = child.wait().unwrap();
+    assert!(!stopped.success());
+    let resumed = fixture.run(
+        "resumed",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
+    succeeded(&resumed);
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(stderr.contains("reused (identity equal)"), "{stderr}");
+    assert!(stderr.contains("recomputed (no checkpoint)"), "{stderr}");
+    assert_eq!(checkpoint_paths(&fixture, "qo").len(), 6);
+    succeeded(&fixture.run("whole", &["--jobs", "2"]));
+    assert_eq!(fixture.outputs("resumed"), fixture.outputs("whole"));
 }

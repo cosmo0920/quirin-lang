@@ -1,4 +1,4 @@
-//! Card **W45-AUDIT-CHECKPOINTS**: streaming composition of per-group `.qo`
+//! Card **W45-AUDIT-CHECKPOINTS**: streaming composition of per-configuration `.qo`
 //! checkpoints into one report.
 //!
 //! [`compose`] first opens and fully verifies every checkpoint, one section at
@@ -44,7 +44,7 @@ pub struct ComposeOutputs<'a> {
 /// Which console lines a composition prints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Console {
-    /// Everything the whole run prints: the preamble, each group's header and
+    /// Everything the whole run prints: the preamble, each library's header and
     /// unit lines, and the totals.
     Full,
     /// Only the totals: a checkpointed run has printed the rest as it went.
@@ -125,7 +125,9 @@ pub fn compose(
             ));
         }
         if console == Console::Full {
-            println!("{}", result.header);
+            if !result.header.is_empty() {
+                println!("{}", result.header);
+            }
             for output in &result.outputs {
                 print!("{output}");
             }

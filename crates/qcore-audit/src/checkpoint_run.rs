@@ -1,27 +1,15 @@
-//! Card **W45-AUDIT-CHECKPOINTS**: the checkpointed `quirin-audit current`
-//! run — divide and conquer by library group.
+//! Per-configuration `quirin-audit current` checkpoints.
 //!
-//! `--checkpoint-dir D` analyses the route's groups **one at a time**, in plan
-//! order. Each group's units run on up to `--jobs` threads and are folded in
-//! unit order exactly as the whole run folds them; the group is then sealed
-//! into `D/<label>.qo` ([`crate::checkpoint`]) and every piece of its state is
-//! dropped before the next group starts, so the run never holds more than one
-//! group's intermediate results. The report is then composed from the
-//! checkpoints by the streaming composer ([`crate::compose`]), which reads one
-//! group's rows at a time.
-//!
-//! `--resume` reuses a group's checkpoint only when its whole `identity`
-//! section equals the identity recomputed now: the analyzer build, the contract
-//! set, the configuration, the environment, the revision and, per unit, the
-//! compile configuration (compile-task identity, raw and preprocessed digests)
-//! and the preparation facts, which needs each unit's Clang preparation but
-//! none of its analysis. Anything else — a missing, refused or differing
-//! checkpoint — recomputes the group, and the reason is reported. A reused
-//! group's sections are the recomputed group's sections, byte for byte,
-//! whenever the identity is equal (`docs/reports/w45-audit-checkpoints/`).
+//! Every planned compile configuration becomes one complete `.qo`. A worker
+//! seals its file before the ordered consumer publishes console output, so a
+//! slow earlier unit does not prevent later completed units surviving an
+//! interruption. Composition checks the complete plan before publication and
+//! folds the one-unit files in route order. A resumed unit is reused only after
+//! its run identity and freshly prepared unit fingerprint match.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -74,7 +62,7 @@ pub(crate) struct RoutePlan<'a> {
     pub tasks: Vec<ConfiguredTask<'a>>,
 }
 
-/// One group of the plan.
+/// One group of the route plan, or one expanded checkpoint unit.
 struct Group<'a> {
     label: String,
     header: String,
@@ -82,7 +70,7 @@ struct Group<'a> {
     tasks: Vec<ConfiguredTask<'a>>,
 }
 
-/// Run the route group by group; `Ok(true)` when any unit hit a gateway
+/// Run units independently, then compose; `Ok(true)` when any hit a gateway
 /// failure, as [`crate::current_route::run_current_route`].
 pub(crate) fn run(
     route: &CurrentRoute<'_>,
@@ -97,7 +85,10 @@ pub(crate) fn run(
              record in analysis order, so a group's checkpoint could not stand for its share of them"
         ));
     }
-    let groups = split_groups(plan.headers, plan.unresolved, plan.tasks)?;
+    let groups = split_units(
+        audit,
+        split_groups(plan.headers, plan.unresolved, plan.tasks)?,
+    )?;
     fs::create_dir_all(&options.directory)
         .map_err(|error| format!("{}: {error}", options.directory.display()))?;
     let revision_template = exact_json(
@@ -111,61 +102,97 @@ pub(crate) fn run(
     let global = global_section(route, audit, plan.preamble, revision_template)?;
     let planned = planned_groups(audit, &groups)?;
     warn_stale(&options.directory, &groups);
-    let mut paths = Vec::new();
-    let mut records = Vec::new();
-    for (index, group) in groups.into_iter().enumerate() {
-        let path = options.directory.join(format!("{}.qo", group.label));
-        let plan_section = PlanSection {
-            group: index as u64,
-            groups: planned.clone(),
-        };
-        let started = Instant::now();
-        let sampler = RssSampler::start();
-        let decision = if options.resume {
-            reuse_decision(&path, &run_identity, &group, audit, route.jobs)
-        } else {
-            Err("resume not requested".to_owned())
-        };
-        let record = match decision {
-            Ok(()) => {
-                let content = reuse(&path, &plan_section, &global)?;
-                let peak = sampler.finish();
-                eprintln!("checkpoint {}: reused (identity equal)", group.label);
+    let mut paths = Vec::with_capacity(groups.len());
+    let mut records = Vec::with_capacity(groups.len());
+    let dispatch = task_dispatch(
+        &groups
+            .iter()
+            .flat_map(|group| group.tasks.iter().cloned())
+            .collect::<Vec<_>>(),
+    );
+    run_ordered(
+        groups.into_iter().enumerate().collect(),
+        route.jobs,
+        Some(dispatch),
+        |(index, group)| {
+            let path = options.directory.join(format!("{}.qo", group.label));
+            let plan_section = PlanSection {
+                group: index as u64,
+                groups: planned.clone(),
+            };
+            let started = Instant::now();
+            let sampler = RssSampler::start();
+            let decision = if options.resume {
+                reuse_decision(&path, &run_identity, &group, audit, 1)
+            } else {
+                Err("resume not requested".to_owned())
+            };
+            let (decision, reason, content) = match decision {
+                Ok(()) => (
+                    "reused",
+                    "identity equal".to_owned(),
+                    reuse(&path, &plan_section, &global)?,
+                ),
+                Err(reason) => {
+                    let mut checkpoint = compute_group(
+                        route,
+                        audit,
+                        group,
+                        &run_identity,
+                        plan_section,
+                        &global,
+                        started,
+                    )?;
+                    let content = checkpoint.content_sha256()?;
+                    let peak = sampler.finish();
+                    checkpoint.provenance.sampled_peak_rss_kib = peak;
+                    checkpoint.provenance.process_peak_rss_kib = status_kib("VmHWM:");
+                    checkpoint.provenance.wall_time_ms = started.elapsed().as_millis() as u64;
+                    write_atomically(&path, &checkpoint.to_bytes()?)?;
+                    let result = checkpoint.result;
+                    return Ok::<_, String>((
+                        path,
+                        result,
+                        json!({
+                            "group": checkpoint.identity.group.label, "decision": "recomputed",
+                            "reason": reason, "wall_time_ms": checkpoint.provenance.wall_time_ms,
+                            "sampled_peak_rss_kib": peak, "content_sha256": content,
+                        }),
+                    ));
+                }
+            };
+            let mut reader = CheckpointReader::open(&path)?;
+            let result = reader.section::<ResultSection>("result")?;
+            let peak = sampler.finish();
+            Ok((
+                path,
+                result,
                 json!({
-                    "group": group.label, "decision": "reused", "reason": "identity equal",
+                    "group": group.label, "decision": decision, "reason": reason,
                     "wall_time_ms": started.elapsed().as_millis() as u64,
                     "sampled_peak_rss_kib": peak, "content_sha256": content,
-                })
+                }),
+            ))
+        },
+        |outcome: Result<(PathBuf, ResultSection, Value), String>| {
+            let (path, result, record) = outcome?;
+            if !result.header.is_empty() {
+                println!("{}", result.header);
             }
-            Err(reason) => {
-                let label = group.label.clone();
-                let checkpoint = compute_group(
-                    route,
-                    audit,
-                    group,
-                    &run_identity,
-                    plan_section,
-                    &global,
-                    started,
-                )?;
-                let content = checkpoint.content_sha256()?;
-                let peak = sampler.finish();
-                let mut checkpoint = checkpoint;
-                checkpoint.provenance.sampled_peak_rss_kib = peak;
-                checkpoint.provenance.process_peak_rss_kib = status_kib("VmHWM:");
-                checkpoint.provenance.wall_time_ms = started.elapsed().as_millis() as u64;
-                write_atomically(&path, &checkpoint.to_bytes()?)?;
-                eprintln!("checkpoint {label}: recomputed ({reason})");
-                json!({
-                    "group": label, "decision": "recomputed", "reason": reason,
-                    "wall_time_ms": checkpoint.provenance.wall_time_ms,
-                    "sampled_peak_rss_kib": peak, "content_sha256": content,
-                })
+            for output in &result.outputs {
+                print!("{output}");
             }
-        };
-        records.push(record);
-        paths.push(path);
-    }
+            eprintln!(
+                "checkpoint {}: {} ({})",
+                record["group"].as_str().unwrap_or_default(),
+                record["decision"].as_str().unwrap_or_default(),
+                record["reason"].as_str().unwrap_or_default()
+            );
+            paths.push(path);
+            records.push(record);
+            Ok::<(), String>(())
+        },
+    )?;
     if crate::checkout_head(audit.checkout())? != audit.revision() {
         return Err("checkout HEAD changed during audit; rerun with stable inputs".into());
     }
@@ -195,7 +222,7 @@ pub(crate) fn run(
     Ok((summary.gateway_failures != 0, summary.refutations))
 }
 
-/// Split the route's tasks into their groups; every label must be a plain,
+/// Split route tasks into library groups; every label must be a plain,
 /// distinct file name.
 fn split_groups<'a>(
     headers: Vec<String>,
@@ -245,8 +272,32 @@ fn split_groups<'a>(
     Ok(groups)
 }
 
-/// Each group's units, keyed; a unit in two groups is refused, because the
-/// composed report could not be a partition of the run.
+/// Turn each planned compile configuration into one independently durable file.
+/// The full unit key distinguishes multiple compile records of one C source.
+fn split_units<'a>(audit: &CurrentAudit, groups: Vec<Group<'a>>) -> Result<Vec<Group<'a>>, String> {
+    let mut units = Vec::new();
+    for group in groups {
+        for (index, task) in group.tasks.into_iter().enumerate() {
+            let key = unit_key(audit, &task)?;
+            let digest =
+                json_sha256(&serde_json::to_value(&key).map_err(|error| error.to_string())?)?;
+            units.push(Group {
+                label: format!("{}-{digest}", group.label),
+                header: if index == 0 {
+                    group.header.clone()
+                } else {
+                    String::new()
+                },
+                unresolved: group.unresolved.clone(),
+                tasks: vec![task],
+            });
+        }
+    }
+    Ok(units)
+}
+
+/// Each checkpoint unit, keyed; duplicates are refused because the composed
+/// report could not be a partition of the run.
 fn planned_groups(audit: &CurrentAudit, groups: &[Group<'_>]) -> Result<Vec<PlannedGroup>, String> {
     let mut owner = BTreeMap::<UnitKey, &str>::new();
     let mut planned = Vec::new();
@@ -318,8 +369,8 @@ fn warn_stale(directory: &Path, groups: &[Group<'_>]) {
     }
 }
 
-/// The analyzer build, the configuration, the contract set and the
-/// environment shared by every group.
+/// The analyzer build, configuration, contract set and environment shared
+/// by every unit.
 fn run_identity(
     route: &CurrentRoute<'_>,
     audit: &CurrentAudit,
@@ -653,18 +704,11 @@ fn fingerprint_task(
     }
 }
 
-/// Reuse the checkpoint at `path`: print its console lines and, when this
-/// run's plan or run-wide inputs differ from those it records, re-seal it with
+/// Reuse the checkpoint at `path`: when this run's plan or run-wide inputs differ from those it records, re-seal it with
 /// this run's (its step sections and provenance unchanged). Returns its
 /// content digest.
 fn reuse(path: &Path, plan: &PlanSection, global: &GlobalSection) -> Result<String, String> {
     let mut reader = CheckpointReader::open(path)?;
-    let result = reader.section::<crate::checkpoint::ResultSection>("result")?;
-    println!("{}", result.header);
-    for output in &result.outputs {
-        print!("{output}");
-    }
-    drop(result);
     let stored_plan = reader.section::<PlanSection>("plan")?;
     let stored_global = reader.section::<GlobalSection>("global")?;
     if stored_plan == *plan && stored_global == *global {
@@ -685,8 +729,7 @@ fn reuse(path: &Path, plan: &PlanSection, global: &GlobalSection) -> Result<Stri
     CheckpointReader::open(path)?.content_sha256()
 }
 
-/// Analyse one group, printing its console lines as the whole run does, and
-/// build its checkpoint.
+/// Analyse one unit and build its complete checkpoint; publication is ordered later.
 fn compute_group(
     route: &CurrentRoute<'_>,
     audit: &CurrentAudit,
@@ -702,7 +745,6 @@ fn compute_group(
         unresolved,
         tasks,
     } = group;
-    println!("{header}");
     let mut builder = GroupBuilder::default();
     let dispatch = task_dispatch(&tasks);
     run_ordered(
@@ -711,7 +753,6 @@ fn compute_group(
         Some(dispatch),
         |task| evaluate_task(audit, &task),
         |outcome| {
-            print!("{}", outcome.output);
             let products = outcome.result?;
             builder.absorb(outcome.output, products)
         },
@@ -961,12 +1002,25 @@ impl GroupBuilder {
     }
 }
 
-/// Write `bytes` to `path` through a sibling temporary file and a rename, so
-/// no reader ever sees a partial checkpoint at `path`.
+/// Flush a complete sibling temporary file before atomic publication.
+/// The parent directory is synced after rename so completed units survive a
+/// process interruption and, where supported, a host crash.
 pub(crate) fn write_atomically(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let temporary = path.with_extension("qo.partial");
-    fs::write(&temporary, bytes).map_err(|error| format!("{}: {error}", temporary.display()))?;
-    fs::rename(&temporary, path).map_err(|error| format!("{}: {error}", path.display()))
+    let mut file = fs::File::create(&temporary)
+        .map_err(|error| format!("{}: {error}", temporary.display()))?;
+    file.write_all(bytes)
+        .map_err(|error| format!("{}: {error}", temporary.display()))?;
+    file.sync_all()
+        .map_err(|error| format!("{}: {error}", temporary.display()))?;
+    drop(file);
+    fs::rename(&temporary, path).map_err(|error| format!("{}: {error}", path.display()))?;
+    if let Some(parent) = path.parent() {
+        fs::File::open(parent)
+            .and_then(|directory| directory.sync_all())
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    Ok(())
 }
 
 /// One `/proc/self/status` field in KiB (`VmRSS:`, `VmHWM:`); `None` where the

@@ -2,31 +2,33 @@
 
 [Development documentation](README.md) · [`quirin-audit` guide](../../crates/qcore-audit/README.md) · [Card report](../reports/w45-audit-checkpoints/README.md)
 
-A checkpointed `quirin-audit current` run divides the audit by **library
-group**. It analyses one group at a time, seals that group's intermediate
-results into a binary checkpoint `<label>.qo` ("Quirin-audit Object"), drops
-the group's state, and composes the report from the checkpoints by streaming
-them. Peak memory is bounded by one group rather than by the corpus. A later run
-can **resume**, reusing each group whose identity is unchanged, and any set of
-one run's checkpoints can be **composed** into the report the whole run writes,
-byte for byte. A checkpoint also **decomposes** into YAML or TOML for reading.
+With `--checkpoint-dir`, `quirin-audit current` seals **one complete `.qo` per
+source translation unit and compile configuration** as that unit finishes. Each
+file contains all ten sections below, including the full run plan and global
+publication inputs. Several compile records for the same C source produce
+separate checkpoints. Workers seal files independently on up to `--jobs`
+threads, even while ordered console publication waits for an earlier unit.
+After all units finish, composition streams the files in plan order to produce
+the whole-run report byte for byte (apart from measured timing output). A
+later `--resume` reuses only unchanged units. The format is also decomposable
+to YAML or TOML.
 
 This page is the format's specification. The normative Rust definitions are in
 `crates/qcore-audit/src/checkpoint.rs`; the run is in `checkpoint_run.rs` and
 the composition in `compose.rs`.
 
-## Groups and steps
+## Units and steps
 
-The **groups** are the route's own groups, in order: the source profile's
-`audit.json` libraries (each under its `label`, or its library name), or the
-groups of an explicit `--selection` file (card W45-FB-SYSTEM-SELECTION), then
-`monkey-libevent` when a Monkey database is given. Configure the grouping by
-editing `audit.json` or by passing a selection. A label names its checkpoint
-file, so it must be a plain file name (`[A-Za-z0-9._-]`, not starting with `.`),
-and labels must be distinct. No unit may belong to two groups: the checkpointed
-run and the composer both refuse an overlapping plan.
+The route's library groups still determine source selection, headers and
+ordered report rows. Checkpoint planning expands each library group into one
+slot per compile configuration. Its filename is `<group-label>-<key-sha256>.qo`,
+where the full SHA-256 is over that unit's source path and compile-record key.
+Thus two configurations of one source have distinct names, and an identical
+unit selected twice is refused. The first unit of a library retains its console
+header; later units have an empty header, so composition prints it once.
+The original library labels remain in the report rows.
 
-Each group's checkpoint records the pipeline's **steps** in order, one section
+Each unit checkpoint records the pipeline's **steps** in order, one section
 each, each separately digested:
 
 | # | Section | Contents |
@@ -39,10 +41,10 @@ each, each separately digested:
 | 5 | `verdicts` | per unit: `status`, `functions` (each function's summary: verdict, diagnostics, counted-user clauses), `diagnostic_counts`, and any row member no other step names |
 | 6 | `certificates` | per unit: whether a published `Safe` rests on a certificate bound to the unit's compile-task identity, or the binding was refused (derived from the rows) |
 | 7 | `contracts` | the contract set in force (manifest and source digests, per-module digests, provider selection, mode, lock digests, pending-review counts) and what the run-final sections read of this group: held calls per callee (`awaiting-human-review` and `contract-pin-mismatch`) and the analysed function names |
-| 8 | `result` | the group's header line, each unit's console lines, its tallies (without timings, with the `Pending` count), its per-category diagnostic counts, the checkout sources its units stand for, and the group's **verdict**: the join (`qcore_schemas::verdict::Verdict::fold`) of its units' verdicts |
+| 8 | `result` | the library header line (empty after its first unit), each unit's console lines, its tallies (without timings, with the `Pending` count), its per-category diagnostic counts, the checkout sources its units stand for, and the unit's **verdict** |
 | 9 | `provenance` | wall time, sampled peak and process high-water RSS, the job count, the three preparation timings: measurements, outside identity and outside every composed verdict |
 
-Sections 3–5 hold one entry per unit, in unit order; each entry is the row's
+Sections 3–6 hold exactly one entry; each entry is the row's
 members that step owns, each as its value's **pretty JSON text at depth zero**
 (serde_json's two-space printer). A row is rendered back by merging the three
 entries' members in key order and nesting each value at its depth, which is
@@ -80,7 +82,7 @@ or schema version, a header or any section that does not match its SHA-256,
 an unexpected section list, or a section that does not decode exactly. The
 composer verifies every file completely before it writes anything, writes the
 report to a temporary sibling and renames it into place only when complete.
-A resumed run treats a refused checkpoint as absent and recomputes the group.
+A resumed run treats a refused checkpoint as absent and recomputes that unit.
 
 ## Identity and resume
 
@@ -105,7 +107,7 @@ group of one run:
 - the Clang identity (program, version, target);
 - every `QCORE_*` environment variable except `QCORE_AUDIT_JOBS`.
 
-Its **group** part is the label, the group-wide refusal, and per unit a
+Its **group** part is the unique unit label, inherited library refusal, and a
 **fingerprint**: the row's `file`, the SHA-256 of the unit's compile
 configuration (which carries the compile-task identity: command, flags,
 compiler, raw and preprocessed-source digests, dependencies), and the
@@ -113,8 +115,8 @@ preparation facts the configuration does not carry (the syntax-validation
 error, the line-marked preprocessing digest or error).
 
 `--resume` recomputes the identity now, which needs each unit's Clang
-preparation but none of its analysis, and reuses a group only when the whole
-section is equal. Otherwise it recomputes, and it reports why on standard error
+preparation but none of its analysis, and reuses a unit only when the whole
+section is equal. Otherwise it recomputes that unit, and it reports why on standard error
 (`checkpoint <label>: reused (identity equal)`, or `recomputed (<reason>)`:
 `no checkpoint`, `checkpoint refused: …`, `analyzer build differs`,
 `contract set differs`, `source revision differs`, `unit N (<file>): compile
@@ -129,13 +131,13 @@ checkpoints: census streams are process-global and ordered by analysis.
 **Two phases (card W45-REFUTED-CONTRACT-WITHDRAWAL).** A declared contract
 its own analysed body refutes is withdrawn from callers in every unit, so group
 results are independent only under one refutation table. A checkpointed run
-first analyses every group under the empty table and composes; when the
-composed rows record a refutation, it analyses every group again under that
-table, whose digest is in every group's identity (so no first-phase checkpoint
+first analyses every unit under the empty table and composes; when the
+composed rows record a refutation, it analyses every unit again under that
+table, whose digest is in every unit's identity (so no first-phase checkpoint
 serves the second), and composes again. Both phases seal to the same
 `<dir>/<label>.qo` paths, so the second overwrites the first's checkpoints: a
 resumed run whose table is not empty finds, in each phase, the other phase's
-digest and recomputes every group, reusing none
+digest and recomputes every unit, reusing none
 (`CHECKPOINT-TWO-PHASE-RESUME-NEVER-REUSES`). Only a run whose table is empty,
 which has no second phase, reuses on `--resume`. Checkpoints sealed under different
 tables disagree on the contract set and never compose. The run records the
@@ -191,13 +193,15 @@ Mapping rules, chosen so both forms are lossless:
 - TOML emits a table's plain keys before its sub-tables and arrays of tables;
   field order is not significant on reading.
 
-## Memory
+## Memory and interrupted runs
 
-The whole run holds every unit's rows until it writes the report. A
-checkpointed run holds one group: its units' analyses (up to `--jobs` at once),
-then the group's rows as JSON text until the group is sealed. The composer holds
-one group's step sections. The route's setup reads nothing whole: the pin
-evaluation streams the checkout's sources one file at a time. Within a group,
-`--jobs` multiplies the working set,
-because each job holds one unit's analysis and Clang output; lower `--jobs` to
-lower the peak. Measurements are in the [report](../reports/w45-audit-checkpoints/README.md).
+A checkpoint worker retains one unit's analysis and the ten sections for that
+unit until it atomically renames the file. Up to `--jobs` units may run at once;
+the ordered consumer retains only small completion records. A later unit's
+completed `.qo` is sealed before the consumer waits for an earlier, slower
+unit, so process interruption leaves every already sealed unit available to
+`--resume`. An interrupted unit's `.qo.partial` is ignored and its missing or
+refused `.qo` is recomputed. The composer reads one unit's step sections at a
+time. Each self-contained `.qo` repeats the full plan and global inputs; this
+uses more disk than one file per library, but permits independent durability
+and standalone verification of each compile configuration.
