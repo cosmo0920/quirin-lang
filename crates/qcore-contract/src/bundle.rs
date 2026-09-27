@@ -257,16 +257,8 @@ fn load_includes(
             return Err(format!("included parent changed: {key}"));
         }
         let source = String::from_utf8(bytes).map_err(|e| e.to_string())?;
-        let mode = qcore_frontend::frontend::parse_source_module_mode(&source)
+        crate::extension_compatibility::validate_source_name(key, &source)
             .map_err(|error| format!("{key}: {error}"))?;
-        qcore_frontend::source_extension::validate_source_extension(key, mode)
-            .map_err(|error| format!("{key}: {error}"))?;
-        if mode != qcore_frontend::frontend::SourceModuleMode::Contract {
-            return Err(format!("{key}: expected a module contract"));
-        }
-        if let Some(warning) = qcore_frontend::source_extension::legacy_source_warning(key, mode) {
-            eprintln!("{warning}");
-        }
         texts.insert(key.clone(), source);
     }
     let mut reached = std::collections::BTreeSet::new();
@@ -349,18 +341,8 @@ impl ContractBundle {
             if source.trim().is_empty() {
                 return Err(format!("empty contract: {path}"));
             }
-            let mode = qcore_frontend::frontend::parse_source_module_mode(&source)
+            crate::extension_compatibility::validate_source_name(&path, &source)
                 .map_err(|error| format!("{path}: {error}"))?;
-            qcore_frontend::source_extension::validate_source_extension(&path, mode)
-                .map_err(|error| format!("{path}: {error}"))?;
-            if mode != qcore_frontend::frontend::SourceModuleMode::Contract {
-                return Err(format!("{path}: expected a module contract"));
-            }
-            if let Some(warning) =
-                qcore_frontend::source_extension::legacy_source_warning(&path, mode)
-            {
-                eprintln!("{warning}");
-            }
             contracts.insert(path, source);
         }
         let included = load_includes(&root, inventory.includes, &contracts, &mut retained)?;

@@ -78,7 +78,7 @@ use qcore_frontend::frontend::{
     SourceModuleMode, parse_source_program,
 };
 use qcore_frontend::lexer::{TokenKind, lex};
-use qcore_frontend::source_extension::{legacy_source_warning, validate_source_extension};
+use qcore_frontend::source_extension::validate_source_extension;
 use qcore_schemas::contract::{
     ContractInclusionEvidence, ContractInheritanceLink, ContractModuleIdentity,
     IncludedContractModule,
@@ -370,16 +370,8 @@ impl ContractLoadPath {
             )
             .map_err(|message| invalid(&krate.name, message))?;
             for (module, source) in &krate.modules {
-                let mode = qcore_frontend::frontend::parse_source_module_mode(source)
-                    .map_err(|error| invalid(module, error.to_string()))?;
-                validate_source_extension(module, mode)
+                crate::extension_compatibility::validate_source_name(module, source)
                     .map_err(|message| invalid(module, message))?;
-                if mode != SourceModuleMode::Contract {
-                    return Err(invalid(module, "expected a module contract".into()));
-                }
-                if let Some(warning) = legacy_source_warning(module, mode) {
-                    eprintln!("{warning}");
-                }
             }
             if let Some(module) = krate
                 .published

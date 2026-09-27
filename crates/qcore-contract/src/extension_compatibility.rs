@@ -22,3 +22,28 @@ pub(crate) fn reject_alias_collisions<'a>(
     }
     Ok(())
 }
+
+/// Check new suffixes without moving legacy failures ahead of their existing
+/// consumer. Header probing is only advisory for a legacy source.
+pub(crate) fn validate_source_name(path: &str, source: &str) -> Result<(), String> {
+    use qcore_frontend::frontend::parse_source_module_mode;
+    use qcore_frontend::source_extension::{legacy_source_warning, validate_source_extension};
+    match parse_source_module_mode(source) {
+        Ok(mode) => {
+            validate_source_extension(path, mode)?;
+            if let Some(warning) = legacy_source_warning(path, mode) {
+                eprintln!("{warning}");
+            }
+            Ok(())
+        }
+        Err(error) if path.ends_with(".qv") => Err(error.to_string()),
+        Err(_) => {
+            if path.ends_with(".qcore") {
+                eprintln!(
+                    "warning[legacy-source-extension]: {path}: outdated extension (unresolved mode); contract sources use .qv"
+                );
+            }
+            Ok(())
+        }
+    }
+}

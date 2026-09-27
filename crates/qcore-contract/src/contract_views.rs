@@ -393,18 +393,8 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                 } else {
                     written
                 };
-                let mode = qcore_frontend::frontend::parse_source_module_mode(&text)
+                crate::extension_compatibility::validate_source_name(&logical, &text)
                     .map_err(|error| format!("{logical}: {error}"))?;
-                qcore_frontend::source_extension::validate_source_extension(&logical, mode)
-                    .map_err(|error| format!("{logical}: {error}"))?;
-                if mode != qcore_frontend::frontend::SourceModuleMode::Contract {
-                    return Err(format!("{logical}: expected a module contract"));
-                }
-                if let Some(warning) =
-                    qcore_frontend::source_extension::legacy_source_warning(&logical, mode)
-                {
-                    eprintln!("{warning}");
-                }
                 if modules.insert(logical.clone(), text).is_some() {
                     return Err(format!("duplicate logical contract: {logical}"));
                 }
