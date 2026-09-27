@@ -24,10 +24,11 @@ original spelling. No report directory is removed wholesale.
 ## Before-change evidence
 
 The [parser-derived mapping](../extension-compatibility/mapping.tsv) names
-177 live `.qcore` contract files proposed for `.qv`: 123 under `providers/`,
-41 under `crates/`, 11 under `compiler/`, one under `contract/`, and one under
-`examples/`. Of these, 171 parse directly as contract mode and six use the
-recognized include syntax; no frozen report input is in the rename set.
+195 `.qcore` contract files proposed for `.qv`: 177 live sources (123 under
+`providers/`, 41 under `crates/`, 11 under `compiler/`, one under `contract/`,
+and one under `examples/`) and 18 archived sources. Of these, 187 parse
+directly as contract mode, six use recognized include syntax, and two archived
+contract-header fragments are intentionally malformed.
 The [baseline](baseline.json) records every old/new path, Git index blob and
 source SHA-256. Six sources include nine `#include` targets that must change
 from `.qcore` to `.qv`; the baseline also records the expected SHA-256 after
@@ -46,12 +47,17 @@ virtual names, and two logical module names appear in more than one source
 scope. The migration must update active includes, provider exports, corpus
 selection, package/load-path inventories, revision-lock module fields, and
 tests/current code references according to each consumer's actual target.
+The [historical candidates](historical-reference-candidates.tsv) record 147
+possible references to the 18 archived sources across 35 report files. Some
+are historical measurements or the original EXT-01 inventory and must retain
+their original identity claims; executable commands and live links to the
+renamed source need targeted edits and a provenance note.
 
 ## Required sequence after the compatibility gate
 
 1. Record a pre-change `quirin-audit pin --verify-contracts` result on the
    old load path and archive its log. Then rename exactly the mapped files;
-   preserve their bytes and every frozen report file.
+   preserve bytes except the nine mapped include target suffixes.
 2. Rewrite includes and active exact references in the appropriate scope.
    Change each lock's `module` field by its owner crate's mapping only; keep
    all other fields, including declaration digests and reviewed identities,
@@ -68,6 +74,6 @@ tests/current code references according to each consumer's actual target.
 Preparation commands: `git submodule update --init --recursive` exited 0
 at libevent `d82464a277d0f42703702c4dfd9af6af38595a83`;
 `python3 docs/reports/extension-contract-physical/verify_paths.py baseline`
-exited 0 and recorded 177 sources and ten locks. No cargo gate has run on this
+exited 0 and recorded 195 sources and ten locks. No cargo gate has run on this
 preparation worktree; the integrator coordinates the warm target and physical
 change start.

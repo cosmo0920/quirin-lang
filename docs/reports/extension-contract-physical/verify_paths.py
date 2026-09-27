@@ -26,10 +26,10 @@ def mappings():
     selected = {
         row["old_path"]: row["proposed_new_path"]
         for row in rows
-        if row["archive"] == "false" and row["proposed_new_path"].endswith(".qv")
+        if row["proposed_new_path"].endswith(".qv")
     }
-    if len(selected) != 177 or len(set(selected.values())) != 177:
-        raise ValueError("expected 177 unique live contract rename pairs")
+    if len(selected) != 195 or len(set(selected.values())) != 195:
+        raise ValueError("expected 195 unique contract rename pairs")
     if any(not old.endswith(".qcore") or new != old[:-6] + ".qv" for old, new in selected.items()):
         raise ValueError("unexpected contract rename spelling")
     return selected, {row["old_path"]: row["index_blob"] for row in rows if row["old_path"] in selected}
@@ -111,7 +111,7 @@ def baseline(mapping, expected_blobs):
 
 def verify(mapping):
     data = json.loads(BASELINE.read_text())
-    if data["source_count"] != 177:
+    if data["source_count"] != 195:
         raise ValueError("baseline source count changed")
     for row in data["sources"]:
         old, new = row["old_path"], row["new_path"]
