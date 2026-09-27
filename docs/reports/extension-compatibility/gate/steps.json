@@ -1,0 +1,127 @@
+[
+  {
+    "name": "submodule",
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "exit": 0,
+    "seconds": 0.0230514410068281,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/submodule.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/submodule.exit"
+  },
+  {
+    "name": "rust",
+    "argv": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 267.83833679702366,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/rust.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/rust.exit"
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 2.30998170300154,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/fmt.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/fmt.exit"
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 7.193113184999675,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/clippy.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/clippy.exit"
+  },
+  {
+    "name": "reevaluation-probe",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "exit": 0,
+    "seconds": 0.32993588503450155,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/reevaluation-probe.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/reevaluation-probe.exit"
+  },
+  {
+    "name": "reevaluation-followup",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "exit": 0,
+    "seconds": 0.6895917339716107,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/reevaluation-followup.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/reevaluation-followup.exit"
+  },
+  {
+    "name": "lean",
+    "argv": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 13.878029930987395,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/lean.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/lean.exit"
+  },
+  {
+    "name": "python",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 23.882069649989717,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/python.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/python.exit"
+  },
+  {
+    "name": "clang-version",
+    "argv": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.014933405036572367,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/clang-version.log",
+    "exit_file": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility-gate-20260927T121546Z/clang-version.exit"
+  }
+]

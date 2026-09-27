@@ -309,6 +309,12 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [examples-suite-wire](examples-suite-wire/README.md) | EXAMPLES-SUITE-WIRE — every published example family under one standard (wave 26) |
 
+| [extension-compatibility](extension-compatibility/README.md) | EXT-01 — Source extension compatibility |
+
+| [extension-contract-readers](extension-contract-readers/README.md) | Extension contract readers (EXT-01 delegated track) |
+
+| [extension-provider-readers](extension-provider-readers/README.md) | EXT-01 provider package readers |
+
 | [extern-call-f1](extern-call-f1/README.md) | EXTERN-F1 — the `resource_out` and `resource_stored` call modes |
 
 | [extern-call-v1](extern-call-v1/README.md) | `source.extern-call.v1` — bounded extern-call semantics |

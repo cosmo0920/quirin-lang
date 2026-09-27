@@ -1,0 +1,13 @@
+# EXT-02/03 physical extension migration prediction
+
+Authorized 2026-09-27 after the user explicitly requested contracts `.qv`, C-emitting examples `.qr`, and C ABI definitions `.qrlib`. Preparation base: `0bd52b3a`; the physical changes begin only after the EXT-01 compatibility gate passes. This record is committed before those changes.
+
+The parser inventory selects 439 live inputs: 177 contract sources, 257 runtime sources and five ABI manifests. Six contract inputs require include elaboration; their headers and actual contract consumers establish `.qv`. The one malformed live runtime input is CT47's intentional modeless-capture rejection; it stays an identical refusal fixture under `.qr`. The 182 frozen report inputs and historical evidence remain byte-exact.
+
+Prediction: only names, explicit references and their derived package digests change. Contract clauses, declaration digests, reviewed source identities, revision modes and emitted C remain unchanged; no Unknown becomes Safe. Migrate module paths in revision locks only after matching each old/new declaration digest and preserving every reviewed identity. Do not re-pin source revisions or relax lookup. Preserve legacy reader tests and historical consumers deliberately.
+
+Acceptance: archive the tracked rename map and file/digest attribution; compare loaded declaration identities and compile outcomes across the migration; update current consumers, tracked test inventories and current documentation; run the standing and provider gates after each integrated stage. Runtime/ABI changes integrate after the contract stage. Reuse the audited EXT-01 parsed-mode guard model because physical names add no semantics. Keep active residuals for exact pin identity, contract-view discovery, native linkage attribution, retained historical paths and tracked-file consumers visible in the final report. No legacy retirement is included. Parent integrates and pushes only after gates pass.
+
+## User scope correction before implementation
+
+The user subsequently directed: “frozen historical files should be changed or remove if they are outdated to prevent confusion.” This explicit instruction supersedes the repository's frozen-file preservation policy for this migration. Rename all classified tracked source/ABI inputs, including archived sources; update runnable commands and links. Preserve historical measurement facts with explicit original-revision provenance rather than silently relabelling old digests or verdicts as new measurements. No wholesale evidence deletion is intended. The full inventory has 621 files; the final map attributes each change. The original prediction above records the earlier scope, not a remaining exclusion.

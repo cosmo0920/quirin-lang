@@ -78,6 +78,7 @@ use qcore_frontend::frontend::{
     SourceModuleMode, parse_source_program,
 };
 use qcore_frontend::lexer::{TokenKind, lex};
+use qcore_frontend::source_extension::validate_source_extension;
 use qcore_schemas::contract::{
     ContractInclusionEvidence, ContractInheritanceLink, ContractModuleIdentity,
     IncludedContractModule,
@@ -363,6 +364,14 @@ impl ContractLoadPath {
                     &krate.name,
                     format!("malformed module path `{module}`"),
                 ));
+            }
+            crate::extension_compatibility::reject_alias_collisions(
+                krate.modules.keys().map(String::as_str),
+            )
+            .map_err(|message| invalid(&krate.name, message))?;
+            for (module, source) in &krate.modules {
+                crate::extension_compatibility::validate_source_name(module, source)
+                    .map_err(|message| invalid(module, message))?;
             }
             if let Some(module) = krate
                 .published
@@ -905,6 +914,8 @@ impl<'r> Elaborator<'r> {
                     format!("module does not parse as a contract module: {e}"),
                 )
             })?;
+            validate_source_extension(key, parsed.mode)
+                .map_err(|message| error(InclusionCode::Qi015, message))?;
             if parsed.mode != SourceModuleMode::Contract {
                 return Err(error(
                     InclusionCode::Qi015,
@@ -970,6 +981,14 @@ impl<'r> Elaborator<'r> {
                 format!("module does not parse once its inclusion forms are set aside: {e}"),
             )
         })?;
+        validate_source_extension(key, parsed.mode)
+            .map_err(|message| error(InclusionCode::Qi001, message))?;
+        if parsed.mode != SourceModuleMode::Contract {
+            return Err(error(
+                InclusionCode::Qi001,
+                "module is not a `module contract;` module".into(),
+            ));
+        }
         let own: Vec<SourceDeclaration> =
             parsed.declarations.into_iter().map(|d| d.value).collect();
         let own_spans: Vec<_> = own

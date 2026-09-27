@@ -1,0 +1,36 @@
+[
+  {
+    "name": "python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility/final-checks/python.log"
+  },
+  {
+    "name": "docs-index",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility/final-checks/docs-index.log"
+  },
+  {
+    "name": "diff",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "64ddac3f"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-compatibility/final-checks/diff.log"
+  }
+]

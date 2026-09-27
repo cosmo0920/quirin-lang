@@ -496,6 +496,14 @@ pub fn parse_source_program(source: &str) -> Result<SourceProgram, SourceParseEr
     SourceParser::new(source)?.parse()
 }
 
+/// Read the module intent with the same header grammar as the full parser.
+/// This does not validate declarations or elaborate contract inclusions.
+pub fn parse_source_module_mode(source: &str) -> Result<SourceModuleMode, SourceParseError> {
+    SourceParser::new(source)?
+        .module_header()
+        .map(|(mode, _, _)| mode)
+}
+
 struct SourceParser<'a> {
     source: &'a str,
     tokens: Vec<Token>,
@@ -556,10 +564,7 @@ impl<'a> SourceParser<'a> {
         })
     }
 
-    fn parse(self) -> Result<SourceProgram, SourceParseError> {
-        let mut declarations = Vec::new();
-        let mut imports = Vec::new();
-        let mut library_bindings = Vec::new();
+    fn module_header(&self) -> Result<(SourceModuleMode, Option<Span>, usize), SourceParseError> {
         let mut cursor = 0;
         let mut mode = SourceModuleMode::Executable;
         let mut mode_span = None;
@@ -581,6 +586,14 @@ impl<'a> SourceParser<'a> {
             mode_span = Some(self.range_span(0, 3));
             cursor = 3;
         }
+        Ok((mode, mode_span, cursor))
+    }
+
+    fn parse(self) -> Result<SourceProgram, SourceParseError> {
+        let mut declarations = Vec::new();
+        let mut imports = Vec::new();
+        let mut library_bindings = Vec::new();
+        let (mode, mode_span, mut cursor) = self.module_header()?;
         while cursor < self.tokens.len() {
             if self.word(cursor, "import") {
                 let start = cursor;

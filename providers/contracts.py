@@ -43,20 +43,27 @@ def sha256(path):
 
 
 def owned(name, selectors):
-    return any(name == selector or name.startswith(selector + "/") for selector in selectors)
+    return any(name == selector or name.startswith(selector + "/")
+               or (selector.endswith(".qcore") and name == selector[:-6] + ".qv")
+               for selector in selectors)
 
 
 def files(directory):
     if not directory.is_dir() or directory.is_symlink():
         raise ValueError(f"missing or symbolic-link contract directory: {directory}")
     result = {}
+    stems = {}
     for path in sorted(directory.rglob("*")):
         if path.is_symlink():
             raise ValueError(f"symbolic link in contract inventory: {path}")
         if path.is_file():
             name = path.relative_to(directory).as_posix()
-            if path.suffix != ".qcore" or not re.fullmatch(r"[a-z0-9_/-]+\.qcore", name):
+            if path.suffix not in (".qcore", ".qv") or not re.fullmatch(r"[a-z0-9_/-]+\.(?:qcore|qv)", name):
                 raise ValueError(f"unexpected contract asset: {path}")
+            stem = name.removesuffix(path.suffix)
+            if stem in stems:
+                raise ValueError(f"ambiguous contract asset stem: {directory}/{stems[stem]} and {path}")
+            stems[stem] = name
             result[name] = path
     if not result:
         raise ValueError(f"empty provider contract inventory: {directory}")
@@ -81,7 +88,7 @@ CONTRACT_CRATE_PREFIXES = ("quirin-provider-", "qcore-provider-")
 NON_CONTRACT_PACKAGES = ("qcore-provider-conformance", "quirin-provider-plugin")
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)
-STRING_LITERAL = re.compile(r'\s*"([a-z0-9_/-]+\.qcore)"\s*')
+STRING_LITERAL = re.compile(r'\s*"([a-z0-9_/-]+\.(?:qcore|qv))"\s*')
 
 
 def cargo_metadata(root):
@@ -161,6 +168,7 @@ def load_path_manifest(root=ROOT, metadata=None):
         raise ValueError("no contract crate on the load path")
     crates = []
     owners = {}
+    source_paths = {}
     for name in names:
         package = packages[name]
         directory = Path(package["manifest_path"]).resolve().parent
@@ -179,6 +187,7 @@ def load_path_manifest(root=ROOT, metadata=None):
         if namespace != derived:
             raise ValueError(f"{name}: recorded namespace {namespace!r} is not the derived {derived!r}")
         modules = files(directory / "contracts")
+        source_paths.update({f"{name}/{module}": path for module, path in modules.items()})
         missing = [module for module in published if module not in modules]
         if missing:
             raise ValueError(f"{name}: publishes modules it does not own: {missing}")
@@ -193,6 +202,7 @@ def load_path_manifest(root=ROOT, metadata=None):
             "modules": sorted(modules),
             "published": {module: sha256(modules[module]) for module in published},
         })
+    package_module().validate_source_modes(source_paths)
     return {"schema_version": 1, "crates": crates}
 
 
@@ -364,11 +374,19 @@ def maintain(root=ROOT, sync=False, load_path=None):
     load_path = {"schema_version": 1, "crates": []} if load_path is None else load_path
     rows = []
     claimed = set()
-    for crate, selectors in OWNERS.items():
+    source_paths = {}
+    canonical_by_crate = {}
+    for crate in OWNERS:
         provider = root / crate
         if provider.is_symlink():
             raise ValueError(f"symbolic-link provider directory: {provider}")
-        canonical = files(provider / "contracts")
+        canonical_by_crate[crate] = files(provider / "contracts")
+        source_paths.update({f"{crate}/{name}": path
+                             for name, path in canonical_by_crate[crate].items()})
+    package_module().validate_source_modes(source_paths)
+    for crate, selectors in OWNERS.items():
+        provider = root / crate
+        canonical = canonical_by_crate[crate]
         template_path = provider / "provider-template.json"
         if template_path.is_symlink() or not template_path.is_file():
             raise ValueError(f"missing or symbolic-link provider template: {template_path}")
@@ -409,6 +427,15 @@ def main():
         load_path = maintain_load_path(sync=args.action == "sync")
         rows = maintain(sync=args.action == "sync", load_path=load_path)
         locks = verify_locks(ROOT, ROOT / LOAD_PATH)
+        legacy_sources = {}
+        for record in load_path["crates"]:
+            directory = ROOT / record["contracts"]
+            legacy_sources.update({f"{record['name']}/{name}": path
+                                   for name, path in files(directory).items()})
+        for crate in OWNERS:
+            legacy_sources.update({f"{crate}/{name}": path
+                                   for name, path in files(ROOT / crate / "contracts").items()})
+        package_module().validate_source_modes(legacy_sources, warn_legacy=True)
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"provider contracts: {error}\n")
     print(json.dumps({

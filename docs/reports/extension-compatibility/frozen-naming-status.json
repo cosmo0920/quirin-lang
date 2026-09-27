@@ -1,0 +1,1462 @@
+{
+  "policy": "docs/plans/quirin-extension-migration/README.md",
+  "count": 182,
+  "files": [
+    {
+      "path": "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qcore",
+      "git_blob": "6c414d29c06dbb07789e52a3009c7183f0a1809f",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P21_span_line4.qcore",
+      "git_blob": "e7950a10b0552a4f5a7851a3faaf2af6498c045b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-d01/probes/P21_span_line4.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore",
+      "git_blob": "a265edccdeda3e0c6ddc542bb9d8d604d9d16a01",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qcore",
+      "git_blob": "4d2effdf735c7d933af60c18977a5f82a5783945",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore",
+      "git_blob": "0349528a5c1b7df7457710166e942a1b3b618762",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qcore",
+      "git_blob": "ecdebece119090e77e5b367512b9368d171b171d",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/P28_byte_offsets.qcore",
+      "git_blob": "732849300c5ca111a8f1a0f8d794ba140c5296ef",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-d01/probes/P28_byte_offsets.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/d01_boundary_first.qcore",
+      "git_blob": "821d2c32b90ac0f5297d174d1665603cd58dabb1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-d01/probes/d01_boundary_first.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-d01/probes/d01_boundary_second.qcore",
+      "git_blob": "272841d965641278501fae1bda7d932986a9a528",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-d01/probes/d01_boundary_second.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-g03/libevent-core/libevent_memory.qcore",
+      "git_blob": "cb50fa8ab716cc1f13c08903b25b160fe179cc9a",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/remaining-g03/libevent-core/libevent_memory.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore",
+      "git_blob": "7ad69bbdb0cd90033f811d8068ce04358cf8bc01",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT26/case.qcore",
+      "git_blob": "1858b46a2a53e72138476a2c41dfab50a22eb77d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT26/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT27/case.qcore",
+      "git_blob": "cb95d4bdc0f191c0430e21d87e635e922f8fe918",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT27/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT29/case.qcore",
+      "git_blob": "d11a0a3a8c94552f3960a2aaa6d90dbbe3a0a152",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT29/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT29/restored.qcore",
+      "git_blob": "607f42bfcf403f708573f4e5935237cd05ddfbd6",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT29/restored.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT30/case.qcore",
+      "git_blob": "5698d89a4bbba78dad2b24d5291511a910f22416",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT30/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT30/released.qcore",
+      "git_blob": "44cecd9f704ebfcde5df2a6bd52e591cd593039e",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t03/fixtures/CT30/released.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t04/fixtures/CT24/case.qcore",
+      "git_blob": "8fbe98f32482f51adf6e80448e19475c86a5ea19",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t04/fixtures/CT24/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t04/fixtures/CT25/case.qcore",
+      "git_blob": "de0887645dcb901e2165401016e49ed7fe441173",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t04/fixtures/CT25/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT03/case.qcore",
+      "git_blob": "ba4b5f2aec0cfe05c7a995a2b54c88ac19440e88",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t05/fixtures/CT03/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT04/case.qcore",
+      "git_blob": "f394d6c2e55a8497e5a91ce6850a7d8d014c4dcc",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t05/fixtures/CT04/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT05/case.qcore",
+      "git_blob": "5e6a44c2c172e29b0e625aa4cfe84564ac5229d3",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t05/fixtures/CT05/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT11/case.qcore",
+      "git_blob": "7de601b8da1f875f5e5724b89f8fba26ee425056",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-t05/fixtures/CT11/case.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S01_bool_result.qcore",
+      "git_blob": "f34a9e08d502781b6b8f92228e60daf507b8ba70",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S01_bool_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S02_u32_result.qcore",
+      "git_blob": "ad189a64bbfef50a4a4c4d0987d2e3909feb13ad",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S02_u32_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qcore",
+      "git_blob": "ddbfbba77360f24f63e98e6228abe494a07920fc",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qcore",
+      "git_blob": "496c3ea2605a03919471ba9e5156c3a53de7c3fa",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S05_own_item_result.qcore",
+      "git_blob": "e850f72425462d8a0e03fe8c8ca0f42033137897",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S05_own_item_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S06_nested_own_result.qcore",
+      "git_blob": "a561650bbd7c726911e841240467b3849e1d27c7",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S06_nested_own_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S07_i32_positive.qcore",
+      "git_blob": "fc951ce70dda1707211a194d9712d6d3596bfbf8",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S07_i32_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S08_unit_positive.qcore",
+      "git_blob": "179fb7c9641e85b7ec982e5a88b8082932a2f826",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S08_unit_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S09_missing_return.qcore",
+      "git_blob": "d7f14912ab7036a417ff1de1f8702a530daf0ee2",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S09_missing_return.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qcore",
+      "git_blob": "9a058e73f1eaba8de71de794884e368f6851ae41",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S11_call_with_argument.qcore",
+      "git_blob": "db0137f8fd920fc1474fb62265b26e057d27990c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S11_call_with_argument.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qcore",
+      "git_blob": "9cfcd877619e922053f01aafa1a344dea6e4e187",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qcore",
+      "git_blob": "79129f7d8443597cd515da95feeb25f650891183",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qcore",
+      "git_blob": "07623fd6716620099149edd934994f9af6978356",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qcore",
+      "git_blob": "07d7cf4541774fd0470da37b2e724beeb8911b39",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qcore",
+      "git_blob": "f81bffe247510320e87a08bf454955cfd15bc16f",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qcore",
+      "git_blob": "d03a85659638c537fe85ff0073b5ea50b12db388",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qcore",
+      "git_blob": "96d4eb40bf4c5ecb931762c19bae0d5d4abcafb8",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qcore",
+      "git_blob": "ae7d0445e5cbf19b1e3c52c4c5f27f7dee5e94e0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qcore",
+      "git_blob": "037e88c33b8ab4eb99b10858ead7ab2f48e92a1c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qcore",
+      "git_blob": "0f6cbef4caa9f9d952d9c80fe27d8a5906d644b9",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore",
+      "git_blob": "571f25cdc537f49218a484ba79d8aeb7be262a1c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S23_acquire_positive.qcore",
+      "git_blob": "b5941ec00eca422a9bb6e8df0d17bf045d4231b7",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S23_acquire_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore",
+      "git_blob": "67ad600503bf0c190b553d018af7db4eb4130d9b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore",
+      "git_blob": "b3f022b44f7495fcc75e611fc88b40f54058a8e3",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qcore",
+      "git_blob": "66832ae9d27da9792ee61a42b453a43d3b1d8483",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qcore",
+      "git_blob": "51559312d261c0e38351f1a61217f7777d8e6d3c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qcore",
+      "git_blob": "f77e1d198dd4b15871acf15858d035453143df8a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qcore",
+      "git_blob": "a7d21ac81a6c72af9d39a9456a0edd4bdbe6f06b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qcore",
+      "git_blob": "6e7b59f192f115d9b4d5ce6fd29f32681779df80",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S31_return_after_return.qcore",
+      "git_blob": "c9ae60ca8e76cc2b8e9dfe4453bcadd9006dd27d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S31_return_after_return.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qcore",
+      "git_blob": "160185d92832a6b4082fc89b963f23a0b80188b0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qcore",
+      "git_blob": "bbf5de89067c0c2e2bf81e036ddc064a841e9e35",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S34_result_generic_type.qcore",
+      "git_blob": "57839f73ea68d9cead166ee0b3a57ad4d6dd465f",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S34_result_generic_type.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qcore",
+      "git_blob": "da769cb5c84a76578bcb212d5a798893423b9b5e",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qcore",
+      "git_blob": "b9e9edbaff58b3d61eb9fac7f5e3027372ab8510",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qcore",
+      "git_blob": "8fdfb4bdd21a0725b0d5cadbb0bec227df8f83c2",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qcore",
+      "git_blob": "ef34dcca5605dfef7f06fa0100d4122be78c20e0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qcore",
+      "git_blob": "b7299c577bbc60cc76f019039b631d60458e1d95",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qcore",
+      "git_blob": "7bee06ed3af9513dc0c6ad09c985c5b2523b8960",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qcore",
+      "git_blob": "27c40e101a95dfee5f5c84279c0d5ee80cb3f7d2",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qcore",
+      "git_blob": "9d2e12ab078ce2bbc48f5696c9cc6eb26dc130f3",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qcore",
+      "git_blob": "b716328166965826f9c5025b26c62d766bc33491",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qcore",
+      "git_blob": "270ca35512bc24f78ae93ed42944b327a5fd2002",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T10_nested_own_result.qcore",
+      "git_blob": "09b6448f1d932609ddea69eee330ba22fd99bb7c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T10_nested_own_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qcore",
+      "git_blob": "4e8c6e67f267618007121f15988c3afe5ceffd8d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qcore",
+      "git_blob": "3c4e679285f658e99ca24a89fdc281bcf65281af",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qcore",
+      "git_blob": "bdb1e49b5fc1d06ec367f38d18bd972077ffccdc",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qcore",
+      "git_blob": "5e1280c7b1ed0026b364ba6938632c86869a7085",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qcore",
+      "git_blob": "2ac8b7ea73893997e11b622ce835f1aa61ea6725",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qcore",
+      "git_blob": "dc3f569e3f6f4120e4311c6f30b7b5f3443d053f",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qcore",
+      "git_blob": "bf5be8f90d1efc65f82b3b21f960069ca6777dc0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qcore",
+      "git_blob": "f0d84c4842650eb5ac64af9f870563cf1bb61643",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qcore",
+      "git_blob": "3257ef201c668996dc027757cd75cbc77e13c1af",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qcore",
+      "git_blob": "d2eb82190e4b1d8cb2606b1042f5c74a4766481c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T21_unknown_worker.qcore",
+      "git_blob": "24b72d721ebcb14f929c309ab26bec1db0227d86",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/T21_unknown_worker.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X01_tuple_result.qcore",
+      "git_blob": "855d74bbd47829effdba55ce20df710e4da5bc37",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X01_tuple_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X02_array_result.qcore",
+      "git_blob": "992d092805b2afa5aaa173061288ea1c063109ac",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/remaining-v03/probes/X02_array_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X03_slice_result.qcore",
+      "git_blob": "0b44cd4352db41e8f68a9ceec45b6e53aeb9dec8",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X03_slice_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X04_pointer_result.qcore",
+      "git_blob": "24b71c906f0b7d5315101512c39ff14d3055e6d2",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X04_pointer_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X05_never_result.qcore",
+      "git_blob": "7467a00c379ab1019eb3b61730fc65dc4c39d27b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X05_never_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X06_borrow_result.qcore",
+      "git_blob": "240ce1ee8b0ae94fb57cb4f0b2421fb50656ea72",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X06_borrow_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X07_quant_result.qcore",
+      "git_blob": "4c42e5dca774e5c33093bbfbd351753ec8f315ca",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X07_quant_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X08_function_result.qcore",
+      "git_blob": "9f924c8ca28e5721e709f121a5018679729fcf00",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X08_function_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X09_task_result.qcore",
+      "git_blob": "1dcb0d20457965647c80a0255ad2908262dfe05c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X09_task_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X10_mutex_result.qcore",
+      "git_blob": "b94fc869fa832e5744cb3b7c688dfc3fa927c365",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X10_mutex_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X11_own_empty.qcore",
+      "git_blob": "7a5abb159fb9453b751f8642f6821100b07827b4",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X11_own_empty.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X12_own_no_args.qcore",
+      "git_blob": "e5c7be0d49ab40e14eb3b2ec49dfe5629fede220",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X12_own_no_args.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qcore",
+      "git_blob": "fabc6b6ddfec367a68fcee64e4c40fb4fe0c88a1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qcore",
+      "git_blob": "19a8b3ef83c53b10bf09c07858994ca21be5f860",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X15_empty_result.qcore",
+      "git_blob": "2e261a5a631e663f1da9421769de8fab44d8f3a2",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/remaining-v03/probes/X15_empty_result.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qcore",
+      "git_blob": "f7d5f7a9004e1605c687de2ae20311ecf739a85d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore",
+      "git_blob": "978132478b219ba322d8c4281b1468b9de3ec390",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore",
+      "git_blob": "5e5712cde05119c21b87a850d576cbc2a4c5dd5a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore",
+      "git_blob": "87d6a2d033ae9e3ea871db0a7c614884340e3abd",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qcore",
+      "git_blob": "e3b29d4d8abf15a09bad86dc63942c9b1427f719",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qcore",
+      "git_blob": "b2d2316b1bf9bdcc216aff800b055c551de4d932",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qcore",
+      "git_blob": "c7fba8ca0b86a792d4bc37419935c584ee465eae",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P08-valid-named-use.qcore",
+      "git_blob": "178ee63af6aa118f546e90616ccb67d2038ff2b3",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P08-valid-named-use.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qcore",
+      "git_blob": "a2054f3036457c3a14f1dcd6af24ca121a9cebdb",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qcore",
+      "git_blob": "a52f7ba9d17c081333a53d29f5546c1ba89c7d74",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore",
+      "git_blob": "bdb4b3083599a984f3f482f8b7525d95c47c4bb6",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore",
+      "git_blob": "be7a00e80309ccd5e9b181f521b198354ebd7cfd",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qcore",
+      "git_blob": "3e2b40e95eb4042234192bd5beab32b3b87a210c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qcore",
+      "git_blob": "36f122d26b77fda57bb0e4353a9fa4fa61e6ac2c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qcore",
+      "git_blob": "abf6c01accf992eb4f532d9f5a1c4de98833614e",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qcore",
+      "git_blob": "64250196cea4a5c4c6b6d34d4aa353c9c12d069f",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qcore",
+      "git_blob": "8ced34596ba6c862f5404a38c739263e96e43a0a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qcore",
+      "git_blob": "18caeec71830aa8d32aa0574bf02b5dfa6851a19",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qcore",
+      "git_blob": "ea378c58aa1d67508d5d7929a07e0627b8ecb847",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qcore",
+      "git_blob": "830122bd17e7aa197680a4cff8c75da73f9bff02",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P21-span-line4.qcore",
+      "git_blob": "e7950a10b0552a4f5a7851a3faaf2af6498c045b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P21-span-line4.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore",
+      "git_blob": "a0af5ba9e4e0b1768e39b9d58c22ca7607a819e1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qcore",
+      "git_blob": "bee85d755f63ab2f1fdd9059aa413f84e3df85f7",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qcore",
+      "git_blob": "821d2c32b90ac0f5297d174d1665603cd58dabb1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P25-multifile-a.qcore",
+      "git_blob": "4d2effdf735c7d933af60c18977a5f82a5783945",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v04/probes/P25-multifile-a.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qcore",
+      "git_blob": "0349528a5c1b7df7457710166e942a1b3b618762",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qcore",
+      "git_blob": "21cdd01f92da74c6961e195a1ebe65a11ad23f54",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qcore",
+      "git_blob": "cb3b79c83a7fd11af1ade83dd0070e1993f4ef09",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a01_requires.qcore",
+      "git_blob": "ad081bb6fbb7dbfe6346247bb67666d48d0ad492",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a01_requires.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a02_ensures.qcore",
+      "git_blob": "4fdd0074c4398213a32a0b283118fcde0a853565",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a02_ensures.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a03_quant.qcore",
+      "git_blob": "b0521f6a357b79cb149338b7b0bb349c252a30dd",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a03_quant.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a04_first_main.qcore",
+      "git_blob": "821d2c32b90ac0f5297d174d1665603cd58dabb1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a04_first_main.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a04_second_bound.qcore",
+      "git_blob": "a67225c40b6860046457da43479fbd458c2f3503",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a04_second_bound.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore",
+      "git_blob": "0d840ae4678f0a73a21a683da1f62bb82189f8ce",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a06_never_referenced.qcore",
+      "git_blob": "59cb20d2909915ed18b39bb441c547b91e442501",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a06_never_referenced.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qcore",
+      "git_blob": "b703461ddf3703a31a1b52dcec6782104c5a21c9",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a11_library_mode.qcore",
+      "git_blob": "156ecc10523502cd2393886ed0d86f68db7dc44c",
+      "parser_result": "library",
+      "recommended_name": "docs/reports/remaining-v07/probes/a11_library_mode.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a12_contract_mode.qcore",
+      "git_blob": "ebe211ca2ac252817369bfafc366aa13f042c7bc",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/remaining-v07/probes/a12_contract_mode.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qcore",
+      "git_blob": "f49097eeb3fb1fe8fb3fec80ea08f5ca5b283f37",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a14_verify_scope.qcore",
+      "git_blob": "91f5186c6def49f865f23624ba2a481691a91d9a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a14_verify_scope.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qcore",
+      "git_blob": "c9dbc0725ac2171bb509cc3d2c40d6cf469f0a05",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore",
+      "git_blob": "f9368f05bf92bafb60c4df6961a0ef291747fbe7",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b01_outer_resolution.qcore",
+      "git_blob": "4d6f1c4a5e2d47d08c1cf982c33e310a500ad6db",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b01_outer_resolution.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore",
+      "git_blob": "645bdc59f7c3fe777b12a2bba76b33d5e3ff7371",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b03_header_unresolved.qcore",
+      "git_blob": "0db4a6beb798bbbd8e2db8253d69edf3d20c3b07",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b03_header_unresolved.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b04_binder_escape.qcore",
+      "git_blob": "62968d1d22ac0a689e72321f60c7f5d0501f2dfc",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b04_binder_escape.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b05_sibling_leak.qcore",
+      "git_blob": "2388d9128392b5e172d0f252194f9a7cd7d75d4b",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b05_sibling_leak.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore",
+      "git_blob": "3c39ec9ade77cbf8500e00a6bdcbe61ddd7df0ba",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore",
+      "git_blob": "d3f62b9697234b92c0ada362cb77b3fcc480ff90",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore",
+      "git_blob": "f109580fad569058839bfff20bb28cd5a245c4ec",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore",
+      "git_blob": "7d3a676688e25f0ff0ae8097ca9efff6daeee454",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b10_cross_file_first.qcore",
+      "git_blob": "c82d0b35154366eed766e2afd7a7acda372ae987",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b10_cross_file_first.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b10_cross_file_second.qcore",
+      "git_blob": "23f752a9090292eb7252379e7a62733a8d365270",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/b10_cross_file_second.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore",
+      "git_blob": "a748c627563e3aab712da0e8c384327e1656a6c9",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c02_nested_worker.qcore",
+      "git_blob": "593ffe47135c94c1873b885e7f9df9f0ec3213fe",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c02_nested_worker.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore",
+      "git_blob": "830abff42eda7fdcec72e38a658fdabaac5548c2",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore",
+      "git_blob": "9a64ccef3700a421c709684683c495f983edb11d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore",
+      "git_blob": "82c50f45a7988066f7425f79db6b9ec6410ed28c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore",
+      "git_blob": "756500bb81fa0c31662d93184103b2e38e4e915a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore",
+      "git_blob": "df3940d6889108f616afc0b83a8fe533032fe5fd",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qcore",
+      "git_blob": "9425427bced38bb5165373fc5906b7f6c5ca5ee5",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore",
+      "git_blob": "73db21cc5c5096144932894058ae979452e80723",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/d01_boundary_first.qcore",
+      "git_blob": "821d2c32b90ac0f5297d174d1665603cd58dabb1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/d01_boundary_first.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/d01_boundary_second.qcore",
+      "git_blob": "272841d965641278501fae1bda7d932986a9a528",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/remaining-v07/probes/d01_boundary_second.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/d02_boundary_record.qcore",
+      "git_blob": "9584a8da28174809c1fb6d13d8ed85c0a6d5d6ed",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/remaining-v07/probes/d02_boundary_record.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qcore",
+      "git_blob": "1412bd81716d296e0764ada83450f2232a87edb0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qcore",
+      "git_blob": "c76cba17f0506e331f00ee8f692ec10a4175c7a0",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qcore",
+      "git_blob": "b24ebec063748e4c10e23f2cc57ff745a26f3388",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qcore",
+      "git_blob": "35a2dd3f14782a80eb0941c31aad31c285790582",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qcore",
+      "git_blob": "34e71d4f39b454bdfe8524ebca8d6eba5539ec5a",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qcore",
+      "git_blob": "4014b66d0004646f166607d2d120f91fe6cb0d21",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qcore",
+      "git_blob": "2c789c9e3358872021ba79ceeaf96b8526b19ad9",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qcore",
+      "git_blob": "762cda33dd5eac0b637de8cffefe705444633ee2",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w43-libc-printf-family/measurement/family9.qcore",
+      "git_blob": "78b5d428e76c626cfb1c7e9a253cc0bc0c0037ca",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w43-libc-printf-family/measurement/family9.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w43-libc-result-alias/measurement/new13.qcore",
+      "git_blob": "08ea97a1abe08c4ec98588a2afbc6dcdfef6e8fc",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w43-libc-result-alias/measurement/new13.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w43-libc-result-alias/measurement/restrict14.qcore",
+      "git_blob": "d364f41e87277166dc08df1b7c23b9dba7bf8143",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w43-libc-result-alias/measurement/restrict14.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w44-libc-residuals/measurement/residuals8.qcore",
+      "git_blob": "82fc055d2e9be480ed853ac69eef0fdc2f03d7ab",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w44-libc-residuals/measurement/residuals8.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w44-libc-residuals/measurement/stage3-names.qcore",
+      "git_blob": "9b4e1790fe4a189cfbb5a3066302d40274347258",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/w44-libc-residuals/measurement/stage3-names.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w44-libc-residuals/measurement/stage4-names.qcore",
+      "git_blob": "16800612a1404ed9718cdecb2e14c8fe18f16547",
+      "parser_result": "source_parse_error",
+      "recommended_name": "docs/reports/w44-libc-residuals/measurement/stage4-names.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w44-libc-residuals/measurement/valist4.qcore",
+      "git_blob": "d038bbf07d3ffad6050f440ce88fd1af0cba2010",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w44-libc-residuals/measurement/valist4.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w5-configured-audit/demo/memory.qcore",
+      "git_blob": "d7636f069246ca8023f394e5295bb0c6371c40e7",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w5-configured-audit/demo/memory.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w5-configured-process-audit/second-codebase/alloc.qcore",
+      "git_blob": "2cab24f1042da71cc4935c0027619ab14e1c0dec",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w5-configured-process-audit/second-codebase/alloc.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w5-configured-process-audit/second-codebase/frame.qcore",
+      "git_blob": "7d575d2d9e5e5268c03a9ef26c6fafbbda29a6b8",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w5-configured-process-audit/second-codebase/frame.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w5-configured-process-audit/second-codebase/policy.qcore",
+      "git_blob": "f93d231201da453e51459954a0fe7eea32811e70",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w5-configured-process-audit/second-codebase/policy.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w5-configured-process-audit/second-codebase/rules.qcore",
+      "git_blob": "b3964640898f70778236785d86f00aa18abcf13e",
+      "parser_result": "contract",
+      "recommended_name": "docs/reports/w5-configured-process-audit/second-codebase/rules.qv",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w6-native-source-tasks/native-copy.qcore",
+      "git_blob": "77e47eca4c61f16a6c13c8558ff3a617c9647e4c",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/w6-native-source-tasks/native-copy.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qcore",
+      "git_blob": "06d4f9fcc3afb075fa1d26a7b50845b89a657f8d",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    },
+    {
+      "path": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qcore",
+      "git_blob": "b833246bb5f453ae0258f7848964d48d05859eb1",
+      "parser_result": "executable",
+      "recommended_name": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qr",
+      "naming_status": "outdated-legacy-extension",
+      "evidence_status": "unchanged historical evidence"
+    }
+  ]
+}

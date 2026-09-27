@@ -1,6 +1,6 @@
 # Planned Quirin extension migration
 
-Status: user-directed plan, not implemented. Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. This plan does not supersede current loader behavior or rewrite historical evidence.
+Status: EXT-01 compatibility passed its full gate; physical renames EXT-02/03 are in progress, and retirement EXT-04 remains planned. See the [EXT-01 report](../../reports/extension-compatibility/README.md). Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. This plan does not supersede current loader behavior or rewrite historical evidence.
 
 | Meaning | Target | Existing | Classification rule |
 |---|---|---|---|
@@ -10,6 +10,10 @@ Status: user-directed plan, not implemented. Decision recorded 2026-09-27 agains
 | Quirin C ABI definitions | `.qrlib` | `.qcorelib` | Existing native-library ABI definition/manifest grammar; renaming does not widen linkage or contract authority |
 
 `.qv` identifies contract mode, not a proof certificate and not evidence that a contract body has been proved. `.qr` identifies runtime source, not a native executable. The extensions do not change grammar, semantics, checking obligations, provider trust or verdicts. Keep `.qcore` as a migration alias until the retirement gate below passes; do not silently interpret a contract as an executable from its suffix.
+
+## User-directed scope update (2026-09-27)
+
+The user subsequently required outdated historical sources to be changed or removed to avoid confusion. This supersedes the frozen-source exclusions below for EXT-02/03: rename all 621 classified inputs (195 `.qv`, 421 `.qr`, five `.qrlib`), update runnable examples and links, and distinguish original measurement provenance from current source names. Historical verdicts and digests remain factual records of their measured revision, not silently rewritten results. The earlier preservation statements describe the original plan and EXT-01 compatibility measurement only. After these renames, the separate [runtime import card](../runtime-imports/README.md) adds relative `.qr` imports and rewrites current and archived source examples from `import` to `#import`.
 
 ## Inventory at the planning base
 

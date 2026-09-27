@@ -1,0 +1,6 @@
+import QCore.SourceExtensions
+#print axioms QCore.SourceExtensions.accepted_mode_is_parsed_mode
+#print axioms QCore.SourceExtensions.formal_acceptance_requires_contract
+#print axioms QCore.SourceExtensions.runtime_never_admits_contract
+#print axioms QCore.SourceExtensions.legacy_preserves_every_mode
+#print axioms QCore.SourceExtensions.warning_does_not_replace_outcome

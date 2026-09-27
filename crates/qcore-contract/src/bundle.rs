@@ -97,7 +97,7 @@ fn matches_checkout_digest(bytes: &[u8], expected: &str) -> bool {
 
 fn asset_path(value: &str) -> bool {
     value.starts_with("contracts/")
-        && value.ends_with(".qcore")
+        && (value.ends_with(".qcore") || value.ends_with(".qv"))
         && !value.contains(['\\', ':'])
         && value
             .split('/')
@@ -217,6 +217,7 @@ fn load_includes(
     if pins.is_empty() || pins.len() > 4096 {
         return Err("contract include pins must be a nonempty, bounded object".into());
     }
+    crate::extension_compatibility::reject_alias_collisions(pins.keys().map(String::as_str))?;
     let mut expected = Vec::new();
     for (key, pin) in &pins {
         if !valid_contract_crate_name(&pin.crate_name)
@@ -255,10 +256,10 @@ fn load_includes(
         if !matches_checkout_digest(&bytes, &pin.sha256) {
             return Err(format!("included parent changed: {key}"));
         }
-        texts.insert(
-            key.clone(),
-            String::from_utf8(bytes).map_err(|e| e.to_string())?,
-        );
+        let source = String::from_utf8(bytes).map_err(|e| e.to_string())?;
+        crate::extension_compatibility::validate_source_name(key, &source)
+            .map_err(|error| format!("{key}: {error}"))?;
+        texts.insert(key.clone(), source);
     }
     let mut reached = std::collections::BTreeSet::new();
     while let Some(key) = pending.pop() {
@@ -307,6 +308,9 @@ impl ContractBundle {
         {
             return Err("invalid contract path or digest".into());
         }
+        crate::extension_compatibility::reject_alias_collisions(
+            inventory.contracts.keys().map(String::as_str),
+        )?;
         let root = manifest
             .parent()
             .filter(|parent| !parent.as_os_str().is_empty())
@@ -337,6 +341,8 @@ impl ContractBundle {
             if source.trim().is_empty() {
                 return Err(format!("empty contract: {path}"));
             }
+            crate::extension_compatibility::validate_source_name(&path, &source)
+                .map_err(|error| format!("{path}: {error}"))?;
             contracts.insert(path, source);
         }
         let included = load_includes(&root, inventory.includes, &contracts, &mut retained)?;

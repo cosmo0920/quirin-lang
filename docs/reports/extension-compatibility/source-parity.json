@@ -1,0 +1,3706 @@
+{
+  "accepted": 353,
+  "changed": 0,
+  "comparison": "Current reader at legacy and proposed names; explicit filename substitution only; warning fields excluded. Default compile options, no native manifest selection. Not a C corpus audit or a baseline binary comparison.",
+  "refused": 263,
+  "rows": [
+    {
+      "new": "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/addressable.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/adjacent.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/bitwise/masked_condition.qr",
+      "old": "compiler/tests/fixtures/bitwise/masked_condition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/bitwise/negated_condition.qr",
+      "old": "compiler/tests/fixtures/bitwise/negated_condition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/bitwise/negated_condition_twin.qr",
+      "old": "compiler/tests/fixtures/bitwise/negated_condition_twin.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/branch/conditional_release.qr",
+      "old": "compiler/tests/fixtures/branch/conditional_release.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/branch/unbranched_twin.qr",
+      "old": "compiler/tests/fixtures/branch/unbranched_twin.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/branch_arms/call_else_arm.qr",
+      "old": "compiler/tests/fixtures/branch_arms/call_else_arm.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/branch_arms/call_then_arm.qr",
+      "old": "compiler/tests/fixtures/branch_arms/call_then_arm.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/branch_arms/early_return.qr",
+      "old": "compiler/tests/fixtures/branch_arms/early_return.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/compose/borrowed_render.qr",
+      "old": "compiler/tests/fixtures/compose/borrowed_render.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/compose/chain.qr",
+      "old": "compiler/tests/fixtures/compose/chain.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/compose/chain_hand_written.qr",
+      "old": "compiler/tests/fixtures/compose/chain_hand_written.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/connectives/short_circuit_or.qr",
+      "old": "compiler/tests/fixtures/connectives/short_circuit_or.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/connectives/short_circuit_or_twin.qr",
+      "old": "compiler/tests/fixtures/connectives/short_circuit_or_twin.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/contract_inherit_adoption/resource_memory_hand_written.qv",
+      "old": "compiler/tests/fixtures/contract_inherit_adoption/resource_memory_hand_written.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/contract_inherit_adoption/resource_string_written_out.qv",
+      "old": "compiler/tests/fixtures/contract_inherit_adoption/resource_string_written_out.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv",
+      "old": "compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/contract_inherit_qcore_provider/monkey_memory_hand_written.qv",
+      "old": "compiler/tests/fixtures/contract_inherit_qcore_provider/monkey_memory_hand_written.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/contracts/alloc_acquire.qv",
+      "old": "compiler/tests/fixtures/contracts/alloc_acquire.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT01/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT02/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT03/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT04/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT04/write_after_joins.qr",
+      "old": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT05/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT05/remainder_fits.qr",
+      "old": "compiler/tests/fixtures/ct/CT05/remainder_fits.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT06/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT06/copy_read_first.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/copy_read_first.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT06/no_copy.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/no_copy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/past_extent_read.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/past_extent_read.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/past_range_byte.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/past_range_byte.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/read_loan.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/read_loan.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT08/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT08/disjoint.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/disjoint.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT08/no_loan.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/no_loan.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT09/bad_field.qr",
+      "old": "compiler/tests/fixtures/ct/CT09/bad_field.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT09/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT10/addressable.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/addressable.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT10/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT10/distinct_units.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/distinct_units.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT11/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT11/write_after_alias.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/write_after_alias.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT11/write_before_alias.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/write_before_alias.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT12/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT13/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT13/unjoined_failure.qr",
+      "old": "compiler/tests/fixtures/ct/CT13/unjoined_failure.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT14/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT14/drop_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/drop_before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT14/read_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT15/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT16/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT16/unclean_worker.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/unclean_worker.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT17/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT18/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT18/owned_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT18/owned_payload.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT19/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT19/joined_sibling.qr",
+      "old": "compiler/tests/fixtures/ct/CT19/joined_sibling.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT20/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT20/undropped.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/undropped.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT20/unjoined.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/unjoined.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT21/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT21/discharged.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/discharged.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT21/unopened.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/unopened.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/acquiring.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/acquiring.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/both_models.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/both_models.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/no_discharge.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_discharge.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/no_open.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_open.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/no_region.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_region.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/spawn_after.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/spawn_after.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/spent_out.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/spent_out.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT22/wrong_region.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/wrong_region.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/minted.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/minted.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/no_arm.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/no_arm.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/partial.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/partial.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/restored.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/restored.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT23/spent.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/spent.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/after_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/after_join.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/double_discharge.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/double_discharge.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/in_error_arm.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/in_error_arm.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/independent_owner.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/independent_owner.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/missing_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/missing_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/nested_if.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/nested_if.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/nested_loop.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/nested_loop.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT24/unsupported_body.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/unsupported_body.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_scalar.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_scalar.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_twice.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_twice.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_unknown.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_unknown.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT25/live_share_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/live_share_drop.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT26/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT27/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr",
+      "old": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT28/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT28/child_unlocks.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT28/own_acquisition.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT29/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT29/restored.qr",
+      "old": "compiler/tests/fixtures/ct/CT29/restored.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT30/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT30/released.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/released.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT31/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT31/performed.qr",
+      "old": "compiler/tests/fixtures/ct/CT31/performed.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT32/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT32/joined_outside.qr",
+      "old": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT33/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT33/unranked.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/unranked.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT34/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT35/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT35/repeated_entry.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT35/two_cells.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/two_cells.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT36/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT36/summed_allocation.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT37/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT37/unconsumed_result.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/unconsumed_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT37/undropped_result.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/undropped_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT38/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT38/split_within_total.qr",
+      "old": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT39/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT39/work_bound_only.qr",
+      "old": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT40/contracts.qv",
+      "old": "compiler/tests/fixtures/ct/CT40/contracts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/closed_custodian.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/closed_custodian.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/datagram_pair.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/datagram_pair.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/listener_question.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/listener_question.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/not_a_socket.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/not_a_socket.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT42/two_connections.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/two_connections.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT43/contracts.qv",
+      "old": "compiler/tests/fixtures/ct/CT43/contracts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT44/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT44/drop_after_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/drop_after_join.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT44/move_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/move_before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT45/contracts.qv",
+      "old": "compiler/tests/fixtures/ct/CT45/contracts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT45/destructor_contract.qv",
+      "old": "compiler/tests/fixtures/ct/CT45/destructor_contract.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/absent_protocol.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/absent_protocol.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/guard_local.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/guard_local.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/no_crossing.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/no_crossing.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/share_generation.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/share_generation.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT46/unguarded_reach.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/unguarded_reach.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT47/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT47/modeless.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/modeless.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT47/move_transfer.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/move_transfer.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT47/read_share.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/read_share.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT47/write_lease.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/write_lease.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT48/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT48/never_asserted.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT48/reasserted.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT49/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT49/parent_only.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/parent_only.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT50/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT50/stale_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/stale_drop.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/ct/CT50/stale_read.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/stale_read.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/case.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/case.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/contracts/buffer_api.qv",
+      "old": "compiler/tests/fixtures/extern_calls/contracts/buffer_api.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/out_slot.qr",
+      "old": "compiler/tests/fixtures/extern_calls/out_slot.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/realloc.qr",
+      "old": "compiler/tests/fixtures/extern_calls/realloc.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/realloc_failure.qr",
+      "old": "compiler/tests/fixtures/extern_calls/realloc_failure.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/released.qr",
+      "old": "compiler/tests/fixtures/extern_calls/released.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/round_trip.qr",
+      "old": "compiler/tests/fixtures/extern_calls/round_trip.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/scalar_result.qr",
+      "old": "compiler/tests/fixtures/extern_calls/scalar_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/stored.qr",
+      "old": "compiler/tests/fixtures/extern_calls/stored.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/extern_calls/stored_failure.qr",
+      "old": "compiler/tests/fixtures/extern_calls/stored_failure.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/f02/concurrent_round_trip.qr",
+      "old": "compiler/tests/fixtures/f02/concurrent_round_trip.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/native_library/contracts/buffer_lib.qv",
+      "old": "compiler/tests/fixtures/native_library/contracts/buffer_lib.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/pipe/lines_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/lines_piped.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/pipe/realloc_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/realloc_piped.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/pipe/round_trip_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/round_trip_piped.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/pipe/scalar_result_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/scalar_result_piped.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/region/discharged_pack.qr",
+      "old": "compiler/tests/fixtures/region/discharged_pack.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/region/hand_written_twin.qr",
+      "old": "compiler/tests/fixtures/region/hand_written_twin.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/resource_helpers/round_trip.qr",
+      "old": "compiler/tests/fixtures/resource_helpers/round_trip.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/slice_permissions/disjoint_halves.qr",
+      "old": "compiler/tests/fixtures/slice_permissions/disjoint_halves.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/slice_permissions/overlapping_write.qr",
+      "old": "compiler/tests/fixtures/slice_permissions/overlapping_write.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/source_loop/copy.qr",
+      "old": "compiler/tests/fixtures/source_loop/copy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/source_record/point.qr",
+      "old": "compiler/tests/fixtures/source_record/point.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_buffer/bytes.qr",
+      "old": "compiler/tests/fixtures/std_buffer/bytes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_buffer/silent.qr",
+      "old": "compiler/tests/fixtures/std_buffer/silent.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_modules/lines.qr",
+      "old": "compiler/tests/fixtures/std_modules/lines.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_modules/logger_only.qr",
+      "old": "compiler/tests/fixtures/std_modules/logger_only.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_string/composed.qr",
+      "old": "compiler/tests/fixtures/std_string/composed.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_string/silent.qr",
+      "old": "compiler/tests/fixtures/std_string/silent.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_string/slices.qr",
+      "old": "compiler/tests/fixtures/std_string/slices.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/std_string/text.qr",
+      "old": "compiler/tests/fixtures/std_string/text.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qr",
+      "old": "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qr",
+      "old": "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/unsafe_linkage/round_trip.qr",
+      "old": "compiler/tests/fixtures/unsafe_linkage/round_trip.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qr",
+      "old": "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "contract/profiles/libevent-core/libevent_memory.qv",
+      "old": "contract/profiles/libevent-core/libevent_memory.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-audit/tests/fixtures/alloc_acquire.qv",
+      "old": "crates/qcore-audit/tests/fixtures/alloc_acquire.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-audit/tests/fixtures/alloc_release.qv",
+      "old": "crates/qcore-audit/tests/fixtures/alloc_release.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv",
+      "old": "crates/qcore-audit/tests/fixtures/revision_mode/queue.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/address_of_member_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/address_of_member_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/alias_aggregate_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/alias_aggregate_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/borrow_residuals.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/borrow_residuals.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/c02p_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/c02p_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/chained_tail_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/chained_tail_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/constructor_residuals_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/constructor_residuals_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/derived_result_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/derived_result_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/descriptor_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/descriptor_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/neighbours_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/neighbours_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_read_bound_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_read_bound_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/prod_contracts_generic.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/prod_contracts_generic.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_remove.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_remove.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_store.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_store.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_internal_make.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_internal_make.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_nullable.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_nullable.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_realloc.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_realloc.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/q_rich_modes.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/q_rich_modes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/r_return_call.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/r_return_call.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/z_reach.qv",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/z_reach.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-cfl/contracts/cfl/table.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-cfl/contracts/cfl/table.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/hand_written.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/hand_written.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/heap.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/heap.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/internal.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/internal.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/string.qv",
+      "old": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/string.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-verification/tests/fixtures/generic_source/cleanup.qv",
+      "old": "crates/qcore-verification/tests/fixtures/generic_source/cleanup.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-verification/tests/fixtures/generic_source/counter.qv",
+      "old": "crates/qcore-verification/tests/fixtures/generic_source/counter.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-verification/tests/fixtures/generic_source/destructor.qv",
+      "old": "crates/qcore-verification/tests/fixtures/generic_source/destructor.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "crates/qcore-verification/tests/fixtures/generic_source/unlink.qv",
+      "old": "crates/qcore-verification/tests/fixtures/generic_source/unlink.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qv",
+      "old": "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P21_span_line4.qr",
+      "old": "docs/reports/remaining-d01/probes/P21_span_line4.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qr",
+      "old": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/P28_byte_offsets.qr",
+      "old": "docs/reports/remaining-d01/probes/P28_byte_offsets.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/d01_boundary_first.qr",
+      "old": "docs/reports/remaining-d01/probes/d01_boundary_first.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-d01/probes/d01_boundary_second.qr",
+      "old": "docs/reports/remaining-d01/probes/d01_boundary_second.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-g03/libevent-core/libevent_memory.qv",
+      "old": "docs/reports/remaining-g03/libevent-core/libevent_memory.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qv",
+      "old": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT26/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT26/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT27/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT27/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT29/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT29/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT29/restored.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT29/restored.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT30/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT30/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t03/fixtures/CT30/released.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT30/released.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t04/fixtures/CT24/case.qr",
+      "old": "docs/reports/remaining-t04/fixtures/CT24/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t04/fixtures/CT25/case.qr",
+      "old": "docs/reports/remaining-t04/fixtures/CT25/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t05/fixtures/CT03/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT03/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t05/fixtures/CT04/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT04/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t05/fixtures/CT05/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT05/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-t05/fixtures/CT11/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT11/case.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S01_bool_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S01_bool_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S02_u32_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S02_u32_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qr",
+      "old": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S05_own_item_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S05_own_item_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S06_nested_own_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S06_nested_own_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S07_i32_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S07_i32_positive.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S08_unit_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S08_unit_positive.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S09_missing_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S09_missing_return.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S11_call_with_argument.qr",
+      "old": "docs/reports/remaining-v03/probes/S11_call_with_argument.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qr",
+      "old": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qr",
+      "old": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qr",
+      "old": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qr",
+      "old": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qr",
+      "old": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S23_acquire_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S23_acquire_positive.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qr",
+      "old": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qr",
+      "old": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qr",
+      "old": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qr",
+      "old": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S31_return_after_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S31_return_after_return.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S34_result_generic_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S34_result_generic_type.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qr",
+      "old": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qr",
+      "old": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qr",
+      "old": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qr",
+      "old": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qr",
+      "old": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T10_nested_own_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T10_nested_own_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qr",
+      "old": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qr",
+      "old": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qr",
+      "old": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qr",
+      "old": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qr",
+      "old": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qr",
+      "old": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/T21_unknown_worker.qr",
+      "old": "docs/reports/remaining-v03/probes/T21_unknown_worker.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X01_tuple_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X01_tuple_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X02_array_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X02_array_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X03_slice_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X03_slice_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X04_pointer_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X04_pointer_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X05_never_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X05_never_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X06_borrow_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X06_borrow_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X07_quant_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X07_quant_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X08_function_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X08_function_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X09_task_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X09_task_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X10_mutex_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X10_mutex_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X11_own_empty.qr",
+      "old": "docs/reports/remaining-v03/probes/X11_own_empty.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X12_own_no_args.qr",
+      "old": "docs/reports/remaining-v03/probes/X12_own_no_args.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qr",
+      "old": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qr",
+      "old": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v03/probes/X15_empty_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X15_empty_result.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P08-valid-named-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P08-valid-named-use.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qr",
+      "old": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr",
+      "old": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qr",
+      "old": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qr",
+      "old": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qr",
+      "old": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qr",
+      "old": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qr",
+      "old": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qr",
+      "old": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qv",
+      "old": "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qr",
+      "old": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P21-span-line4.qr",
+      "old": "docs/reports/remaining-v04/probes/P21-span-line4.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qr",
+      "old": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qr",
+      "old": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qr",
+      "old": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P25-multifile-a.qr",
+      "old": "docs/reports/remaining-v04/probes/P25-multifile-a.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qr",
+      "old": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qr",
+      "old": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qr",
+      "old": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a01_requires.qr",
+      "old": "docs/reports/remaining-v07/probes/a01_requires.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a02_ensures.qr",
+      "old": "docs/reports/remaining-v07/probes/a02_ensures.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a03_quant.qr",
+      "old": "docs/reports/remaining-v07/probes/a03_quant.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a04_first_main.qr",
+      "old": "docs/reports/remaining-v07/probes/a04_first_main.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a04_second_bound.qr",
+      "old": "docs/reports/remaining-v07/probes/a04_second_bound.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qr",
+      "old": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a06_never_referenced.qr",
+      "old": "docs/reports/remaining-v07/probes/a06_never_referenced.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qr",
+      "old": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a11_library_mode.qr",
+      "old": "docs/reports/remaining-v07/probes/a11_library_mode.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a12_contract_mode.qv",
+      "old": "docs/reports/remaining-v07/probes/a12_contract_mode.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qr",
+      "old": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a14_verify_scope.qr",
+      "old": "docs/reports/remaining-v07/probes/a14_verify_scope.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qr",
+      "old": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qr",
+      "old": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b01_outer_resolution.qr",
+      "old": "docs/reports/remaining-v07/probes/b01_outer_resolution.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qr",
+      "old": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b03_header_unresolved.qr",
+      "old": "docs/reports/remaining-v07/probes/b03_header_unresolved.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b04_binder_escape.qr",
+      "old": "docs/reports/remaining-v07/probes/b04_binder_escape.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b05_sibling_leak.qr",
+      "old": "docs/reports/remaining-v07/probes/b05_sibling_leak.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qr",
+      "old": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qr",
+      "old": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qr",
+      "old": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qr",
+      "old": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b10_cross_file_first.qr",
+      "old": "docs/reports/remaining-v07/probes/b10_cross_file_first.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/b10_cross_file_second.qr",
+      "old": "docs/reports/remaining-v07/probes/b10_cross_file_second.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qr",
+      "old": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c02_nested_worker.qr",
+      "old": "docs/reports/remaining-v07/probes/c02_nested_worker.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qr",
+      "old": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qr",
+      "old": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qr",
+      "old": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qr",
+      "old": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/d01_boundary_first.qr",
+      "old": "docs/reports/remaining-v07/probes/d01_boundary_first.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/d01_boundary_second.qr",
+      "old": "docs/reports/remaining-v07/probes/d01_boundary_second.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/remaining-v07/probes/d02_boundary_record.qr",
+      "old": "docs/reports/remaining-v07/probes/d02_boundary_record.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qv",
+      "old": "docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w43-libc-printf-family/measurement/family9.qv",
+      "old": "docs/reports/w43-libc-printf-family/measurement/family9.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w43-libc-result-alias/measurement/new13.qv",
+      "old": "docs/reports/w43-libc-result-alias/measurement/new13.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w43-libc-result-alias/measurement/restrict14.qv",
+      "old": "docs/reports/w43-libc-result-alias/measurement/restrict14.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w44-libc-residuals/measurement/residuals8.qv",
+      "old": "docs/reports/w44-libc-residuals/measurement/residuals8.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w44-libc-residuals/measurement/stage3-names.qv",
+      "old": "docs/reports/w44-libc-residuals/measurement/stage3-names.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w44-libc-residuals/measurement/stage4-names.qv",
+      "old": "docs/reports/w44-libc-residuals/measurement/stage4-names.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w44-libc-residuals/measurement/valist4.qv",
+      "old": "docs/reports/w44-libc-residuals/measurement/valist4.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w5-configured-audit/demo/memory.qv",
+      "old": "docs/reports/w5-configured-audit/demo/memory.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w5-configured-process-audit/second-codebase/alloc.qv",
+      "old": "docs/reports/w5-configured-process-audit/second-codebase/alloc.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w5-configured-process-audit/second-codebase/frame.qv",
+      "old": "docs/reports/w5-configured-process-audit/second-codebase/frame.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w5-configured-process-audit/second-codebase/policy.qv",
+      "old": "docs/reports/w5-configured-process-audit/second-codebase/policy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w5-configured-process-audit/second-codebase/rules.qv",
+      "old": "docs/reports/w5-configured-process-audit/second-codebase/rules.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w6-native-source-tasks/native-copy.qr",
+      "old": "docs/reports/w6-native-source-tasks/native-copy.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qr",
+      "old": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qr",
+      "old": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/branching/condition_tier.qr",
+      "old": "examples/branching/condition_tier.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/branching/conditional_release.qr",
+      "old": "examples/branching/conditional_release.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/branching/early_return.qr",
+      "old": "examples/branching/early_return.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/cycle12.qr",
+      "old": "examples/cycle12.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/events/self_pipe.qr",
+      "old": "examples/events/self_pipe.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/events/socket_server.qr",
+      "old": "examples/events/socket_server.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/events/wake_payload.qr",
+      "old": "examples/events/wake_payload.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/events/write_interest.qr",
+      "old": "examples/events/write_interest.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/extern/borrowed_render.qr",
+      "old": "examples/extern/borrowed_render.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/extern/buffer_round_trip.qr",
+      "old": "examples/extern/buffer_round_trip.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/extern/contracts/buffer_api.qv",
+      "old": "examples/extern/contracts/buffer_api.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/extern/scalar_results.qr",
+      "old": "examples/extern/scalar_results.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/http/computed_length.qr",
+      "old": "examples/http/computed_length.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/http/exchange.qr",
+      "old": "examples/http/exchange.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/http/raw_request.qr",
+      "old": "examples/http/raw_request.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/loops/buffer_copy.qr",
+      "old": "examples/loops/buffer_copy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/loops/lend_fill.qr",
+      "old": "examples/loops/lend_fill.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/pipes/rendered_lines.qr",
+      "old": "examples/pipes/rendered_lines.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/pipes/scalar_stages.qr",
+      "old": "examples/pipes/scalar_stages.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/pipes/scalar_stages_hand_written.qr",
+      "old": "examples/pipes/scalar_stages_hand_written.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/records/owned_field.qr",
+      "old": "examples/records/owned_field.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/records/pixel_writes.qr",
+      "old": "examples/records/pixel_writes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/records/point.qr",
+      "old": "examples/records/point.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/scalar/calls.qr",
+      "old": "examples/scalar/calls.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/scalar/printing.qr",
+      "old": "examples/scalar/printing.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/sockets/inet_v4_echo.qr",
+      "old": "examples/sockets/inet_v4_echo.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/sockets/inet_v6_echo.qr",
+      "old": "examples/sockets/inet_v6_echo.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/sockets/tcp_echo.qr",
+      "old": "examples/sockets/tcp_echo.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/sockets/udp_echo.qr",
+      "old": "examples/sockets/udp_echo.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/stdio/barrier.qr",
+      "old": "examples/stdio/barrier.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/stdio/pipeline.qr",
+      "old": "examples/stdio/pipeline.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/stdio/renderings.qr",
+      "old": "examples/stdio/renderings.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/stdio/severities.qr",
+      "old": "examples/stdio/severities.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/strings/computed_length.qr",
+      "old": "examples/strings/computed_length.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/strings/looped_fill.qr",
+      "old": "examples/strings/looped_fill.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/strings/status_line.qr",
+      "old": "examples/strings/status_line.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/threads/core_context.qr",
+      "old": "examples/threads/core_context.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/threads/owned_buffer.qr",
+      "old": "examples/threads/owned_buffer.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/threads/shared_readers.qr",
+      "old": "examples/threads/shared_readers.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/threads/two_workers.qr",
+      "old": "examples/threads/two_workers.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "examples/unsafe-linkage/unchecked_calls.qr",
+      "old": "examples/unsafe-linkage/unchecked_calls.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/conformance/tests/fixtures/configured_boolean_source/sample.qv",
+      "old": "providers/conformance/tests/fixtures/configured_boolean_source/sample.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qv",
+      "old": "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.qv",
+      "old": "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/conformance/tests/fixtures/configured_boolean_source/source_projection.qv",
+      "old": "providers/conformance/tests/fixtures/configured_boolean_source/source_projection.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+      "old": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "old": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
+      "old": "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "old": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "old": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "old": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/composition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/event_payload.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/event_payload.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/logging.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/memory.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+      "old": "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+      "old": "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
+      "old": "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "old": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "old": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "old": "providers/quirin-provider-cfl/contracts/cfl/time.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore",
+      "outcome": "refused",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "old": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/dirent.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/dlfcn.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/errno.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/math.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/math.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/memory.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/process.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/process.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/regex.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/socket.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/stdio.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/stdlib.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/string.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/string.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/sys_stat.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/threads.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/time.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/time.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "old": "providers/quirin-provider-libc/contracts/libc/unistd.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "old": "providers/quirin-provider-mpack/contracts/mpack/writer.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "old": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-plugin/tests/fixtures/example-user-crate/quirin-provider-acme/contracts/acme/pool.qv",
+      "old": "providers/quirin-provider-plugin/tests/fixtures/example-user-crate/quirin-provider-acme/contracts/acme/pool.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
+      "old": "providers/quirin-provider-shared/contracts/language/quantified_indices.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
+      "old": "providers/quirin-provider-shared/contracts/library/custody_evidence.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
+      "old": "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    },
+    {
+      "new": "providers/quirin-provider-shared/contracts/library/source_projection.qv",
+      "old": "providers/quirin-provider-shared/contracts/library/source_projection.qcore",
+      "outcome": "accepted",
+      "same_except_source_path_and_warning": true
+    }
+  ],
+  "source_files": 616,
+  "source_tip": "1d19a5e9c1148316088e0b6514a162a39df66f07"
+}

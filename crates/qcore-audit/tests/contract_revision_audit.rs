@@ -457,3 +457,44 @@ fn the_mutation_table() {
         }
     }
 }
+
+#[test]
+fn qv_directory_discovery_and_lock_evaluation_preserve_checked_contracts() {
+    if !clang_available() {
+        return;
+    }
+    let legacy = Tree::new(true);
+    succeeded(&legacy.pin(&[]));
+    succeeded(&legacy.audit("old/r.json"));
+    let current = Tree::new(true);
+    fs::rename(
+        current.0.join("contracts/queue.qcore"),
+        current.0.join("contracts/queue.qv"),
+    )
+    .unwrap();
+    fs::write(
+        current.0.join("manifest.json"),
+        "{\"schema_version\":1,\"modules\":[\"contracts/queue.qv\"]}\n",
+    )
+    .unwrap();
+    succeeded(&current.pin(&[]));
+    succeeded(&current.pin(&["--check"]));
+    succeeded(&current.audit("new/r.json"));
+    assert_eq!(
+        legacy.statuses("old/r.json"),
+        current.statuses("new/r.json")
+    );
+    assert_eq!(
+        legacy.read("old/r.contracts.json")["contract_revision"]["counts"],
+        current.read("new/r.contracts.json")["contract_revision"]["counts"]
+    );
+    fs::write(
+        current.0.join("contracts/queue.qcore"),
+        fixture("queue.qcore"),
+    )
+    .unwrap();
+    assert!(
+        !current.pin(&["--check"]).status.success(),
+        "two aliases must not be picked by directory order"
+    );
+}

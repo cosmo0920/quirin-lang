@@ -261,4 +261,6 @@ import QCore.Sr5Soundness
 import QCore.MetricTraceContractGaps
 import QCore.ScalarObservationContracts
 
+import QCore.SourceExtensions
+
 /-! The executable formal core of QCore-C revision 0.1. -/

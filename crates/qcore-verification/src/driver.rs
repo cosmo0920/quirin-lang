@@ -1007,6 +1007,8 @@ pub enum SourceExecutionProfile {
 
 #[derive(Clone, Debug)]
 pub struct CompiledModule {
+    /// Structured naming notices; never safety diagnostics or verdict inputs.
+    pub extension_warnings: Vec<qcore_frontend::source_extension::ExtensionWarning>,
     pub checked: CheckedSourceModule,
     pub execution_profile: SourceExecutionProfile,
     pub declaration_count: usize,
@@ -1073,7 +1075,53 @@ struct FileRange {
 /// and an unvalidated provider allegation is `Q703`. Use
 /// `VerifierRegistry::resolve_source_scopes` for configuration validation
 /// alone.
+/// Collect naming notices separately from error diagnostics, including for a
+/// source whose body will later be refused. Paths are retained as spelled.
+#[must_use]
+pub fn input_extension_warnings(
+    files: &[SourceFile],
+    options: &CompileOptions,
+) -> Vec<qcore_frontend::source_extension::ExtensionWarning> {
+    use qcore_frontend::source_extension::{
+        ExtensionWarning, legacy_manifest_warning, legacy_source_warning,
+    };
+    let mut warnings = Vec::new();
+    for file in files {
+        match qcore_frontend::frontend::parse_source_module_mode(&file.source) {
+            Ok(mode) => warnings.extend(legacy_source_warning(&file.path, mode)),
+            Err(_) if file.path.ends_with(".qcore") => warnings.push(ExtensionWarning {
+                kind: "legacy-source-extension",
+                path: file.path.clone(),
+                mode: "unresolved".into(),
+                recommended_extension: ".qv (contract) or .qr (runtime)",
+            }),
+            Err(_) => {}
+        }
+    }
+    if let Some(manifests) = &options.native_libraries {
+        for path in manifests.keys() {
+            warnings.extend(legacy_manifest_warning(path));
+        }
+    }
+    warnings
+}
+
 pub fn compile_files_with_registry(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    let warnings = input_extension_warnings(files, options);
+    for warning in &warnings {
+        eprintln!("{warning}");
+    }
+    compile_files_with_registry_inner(files, options, registry).map(|mut module| {
+        module.extension_warnings = warnings;
+        module
+    })
+}
+
+fn compile_files_with_registry_inner(
     files: &[SourceFile],
     options: &CompileOptions,
     registry: &VerifierRegistry,
@@ -1084,6 +1132,10 @@ pub fn compile_files_with_registry(
             "no input files were provided",
         )]);
     }
+    qcore_frontend::source_extension::reject_alias_collisions(
+        files.iter().map(|file| file.path.as_str()),
+    )
+    .map_err(|message| vec![plain_diagnostic("Q403", message)])?;
     let (_, ranges) = combine_files(files);
     let mut stripped = Vec::new();
     let mut modes = Vec::new();
@@ -1100,6 +1152,19 @@ pub fn compile_files_with_registry(
                 &ranges,
             )]
         })?;
+        qcore_frontend::source_extension::validate_source_extension(&file.path, parsed.mode)
+            .map_err(|message| {
+                vec![map_raw_diagnostic(
+                    "Q403",
+                    SemanticPass::NameResolution,
+                    Span {
+                        start: range.start,
+                        end: range.start,
+                    },
+                    message,
+                    &ranges,
+                )]
+            })?;
         qcore_frontend::module_imports::check_source_imports(&parsed).map_err(|errors| {
             errors
                 .into_iter()
@@ -1524,6 +1589,7 @@ pub fn compile_files_with_registry(
     };
     if mode != SourceModuleMode::Executable {
         return Ok(CompiledModule {
+            extension_warnings: Vec::new(),
             checked: CheckedSourceModule::Sequential(Box::new(checked)),
             execution_profile: SourceExecutionProfile::SequentialCleanupV1,
             declaration_count: typed.declarations.len(),
@@ -1572,6 +1638,7 @@ pub fn compile_files_with_registry(
     let source_location = locate(function.source.span.start, &ranges);
     let (c_source, source_map) = add_source_mapping(raw_c, &entry, source_location);
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Sequential(Box::new(checked)),
         execution_profile: SourceExecutionProfile::SequentialCleanupV1,
         declaration_count: typed.declarations.len(),
@@ -3963,6 +4030,7 @@ fn compile_bitfield_task_source(
         )]
     })?;
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::BitfieldTasks(Box::new(CheckedBitfieldTaskModule {
             lowered,
             certificate,
@@ -4223,6 +4291,7 @@ fn task_route(
         })
         .collect();
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: match composed {
             Some(composed) => CheckedSourceModule::ComposedTasks(Box::new(composed)),
             None => CheckedSourceModule::ScopedTasks(Box::new(checked)),
@@ -4460,6 +4529,27 @@ fn load_native_libraries(
     let Some(sources) = options.native_libraries.as_ref() else {
         return Ok(NativeLibraries::default());
     };
+    qcore_frontend::source_extension::reject_alias_collisions(sources.keys().map(String::as_str))
+        .map_err(|message| {
+        vec![map_raw_diagnostic(
+            "Q039",
+            SemanticPass::NativeLibrary,
+            span,
+            message,
+            ranges,
+        )]
+    })?;
+    for path in sources.keys() {
+        qcore_frontend::source_extension::validate_manifest_extension(path).map_err(|message| {
+            vec![map_raw_diagnostic(
+                "Q039",
+                SemanticPass::NativeLibrary,
+                span,
+                message,
+                ranges,
+            )]
+        })?;
+    }
     NativeLibraries::load(sources).map_err(|refusal| {
         let code = match refusal {
             SelectionRefusal::Manifest { .. } => "Q039",
@@ -5181,6 +5271,7 @@ fn compile_extern_source(
             )]
         })?;
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ExternCalls(Box::new(CheckedExternModule {
             lowered,
             certificate,
@@ -5402,6 +5493,7 @@ fn compile_composed_source(
         custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Composed(Box::new(CheckedComposedModule {
             lowered,
             certificate,
@@ -5503,6 +5595,7 @@ fn compile_std_io_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardIo(Box::new(CheckedStdIoModule {
             lowered,
             certificate,
@@ -5623,6 +5716,7 @@ fn compile_resource_call_source(
         }
     }
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
             lowered: buffer_lowered,
             certificate,
@@ -5729,6 +5823,7 @@ fn compile_buffer_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
             lowered,
             certificate,
@@ -5887,6 +5982,7 @@ fn compile_socket_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardSocket(Box::new(CheckedSocketModule {
             lowered,
             certificate,
@@ -6071,6 +6167,7 @@ fn compile_http_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardHttp(Box::new(CheckedHttpModule {
             lowered,
             certificate,
@@ -6174,6 +6271,7 @@ fn compile_string_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::StandardString(Box::new(CheckedStringModule {
             lowered,
             certificate,
@@ -6295,6 +6393,7 @@ fn compile_event_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::Event(Box::new(CheckedEventModule {
             lowered,
             certificate,
@@ -6397,6 +6496,7 @@ fn compile_mutex_source(
         mutex_c_emit::TraceShape::Outside { .. } => None,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked,
         execution_profile: SourceExecutionProfile::CheckedMutexGuardsV1,
         declaration_count: typed.declarations.len(),
@@ -6500,6 +6600,7 @@ fn compile_epoch_source(
         custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::CheckedEpochBound(Box::new(CheckedEpochModule {
             lowered,
             certificate,
@@ -6673,6 +6774,7 @@ fn compile_composed_epoch_source(
         Some(region) => Some(check_composed_region(&tasks, region, ranges)?),
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ComposedEpochTasks(Box::new(ComposedEpochModule {
             tasks: *tasks,
             composed,
@@ -7045,6 +7147,7 @@ fn compile_scalar_calls(
         (None, None, None)
     };
     Ok(CompiledModule {
+        extension_warnings: Vec::new(),
         checked: CheckedSourceModule::ScalarCalls(Box::new(checked)),
         execution_profile: SourceExecutionProfile::ScalarCallsV1,
         declaration_count: typed.declarations.len(),

@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Extension migration: [EXT-01](reports/extension-compatibility/README.md) passed its compatibility gate (6,096 Rust tests, 215 Lean audits, 365 Python tests; provider gate 129 tests and five verified packages). Physical renames are in progress. All 616 tracked source inputs retain their outcomes under proposed aliases (353 accepted, 263 refused); these are source compilation outcomes, not safety coverage. The compatibility measurement kept historical names unchanged; the user subsequently authorized renaming archived sources as well, with explicit original-measurement provenance.
+
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
 Current corpus and system-slice figures were measured on 2026-09-27 by
