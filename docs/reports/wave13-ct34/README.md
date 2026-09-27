@@ -150,7 +150,7 @@ control. Measured on the fixture bytes **before the manifest was touched**, that
 is not available:
 
 ```
-$ qcorec check growth_onto_unprotected.qcore
+$ qcorec check growth_onto_unprotected.qr
 Q600: the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }
 ```
 

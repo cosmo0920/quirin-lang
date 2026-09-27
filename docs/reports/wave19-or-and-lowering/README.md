@@ -164,8 +164,8 @@ chain and a nested `if` — which is why this card adds **no semantic rule**:
 The card's load-bearing measurement, in the form wave 18 used for the pipe:
 
 ```
-qcorec emit -o or.c   fixtures/connectives/short_circuit_or.qcore
-qcorec emit -o twin.c fixtures/connectives/short_circuit_or_twin.qcore
+qcorec emit -o or.c   fixtures/connectives/short_circuit_or.qr
+qcorec emit -o twin.c fixtures/connectives/short_circuit_or_twin.qr
 diff or.c twin.c        # empty
 ```
 

@@ -428,8 +428,8 @@ under **both** line-ending conventions, and
 for the extern twin. Reproducible from the CLI:
 
 ```
-qcorec emit -o piped.c   fixtures/pipe/lines_piped.qcore
-qcorec emit -o unpiped.c fixtures/std_modules/lines.qcore
+qcorec emit -o piped.c   fixtures/pipe/lines_piped.qr
+qcorec emit -o unpiped.c fixtures/std_modules/lines.qr
 diff piped.c unpiped.c        # empty
 ```
 

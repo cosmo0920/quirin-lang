@@ -60,7 +60,7 @@ stdout/stderr are archived in `native-run.json` and adjacent compressed artifact
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-reused-address.c \
-  compiler/tests/fixtures/ct/CT50/case.qcore
+  compiler/tests/fixtures/ct/CT50/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -include compiler/tests/fixtures/ct/CT50/reused_mapping.h \

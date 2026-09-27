@@ -636,6 +636,6 @@ python3 docs/reports/w43-return-expression/scripts/baseline_identity.py <out> do
 python3 docs/reports/contract-inherit-adoption/scripts/arbiter_compare.py <left> <right> <out.json>
 python3 docs/reports/contract-inherit-adoption/scripts/census.py . <out.json>
 python3 docs/reports/contract-inherit-adoption/scripts/wrapper_census.py . <fluent-bit-source> <out.json>
-target/release/examples/declared_abi_census providers/quirin-provider-libc/contracts/libc/string.qcore <written-out wrappers> -- <185 units>.i
+target/release/examples/declared_abi_census providers/quirin-provider-libc/contracts/libc/string.qv <written-out wrappers> -- <185 units>.i
 python3 docs/reports/contract-inherit-adoption/scripts/update_ledger.py   # once
 ```

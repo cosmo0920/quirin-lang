@@ -33,7 +33,7 @@ residue is four specific syntactic forms, named in §5.
 ```sh
 cargo build -p qcorec
 ./target/debug/qcorec check --entry main PROBE.qcore     # all probes except S26
-./target/debug/qcorec check S26_library_mode_unknown_types.qcore   # library mode
+./target/debug/qcorec check S26_library_mode_unknown_types.qr   # library mode
 ```
 
 71 single-file probes, each written to be minimal. Every probe was run twice:

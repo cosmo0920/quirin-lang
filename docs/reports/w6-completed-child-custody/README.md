@@ -60,7 +60,7 @@ that shared input is archived and hashed as well.
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct37.c \
-  compiler/tests/fixtures/ct/CT37/case.qcore
+  compiler/tests/fixtures/ct/CT37/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -include compiler/tests/fixtures/ct/CT37/completion_before_join.h \

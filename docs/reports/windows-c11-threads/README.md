@@ -14,7 +14,7 @@ macOS keeps its existing pthread branch. Both source routes admit Windows.
 From a Visual Studio x64 developer shell at the repository root:
 
 ```powershell
-cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qcore -o generated.c
+cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qr -o generated.c
 cl /nologo /std:c11 /W4 /WX generated.c /Fe:generated.exe
 .\generated.exe
 ```

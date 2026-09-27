@@ -109,7 +109,7 @@ of arbitrary thread runtimes or failed-join reclamation.
 
 ```sh
 cargo run --quiet -p qcorec -- emit \
-  docs/reports/w6-native-source-tasks/native-copy.qcore -o /tmp/qcore-task-copy.c
+  docs/reports/w6-native-source-tasks/native-copy.qr -o /tmp/qcore-task-copy.c
 clang -std=c11 -pthread -Wall -Wextra -Werror \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   /tmp/qcore-task-copy.c -o /tmp/qcore-task-copy

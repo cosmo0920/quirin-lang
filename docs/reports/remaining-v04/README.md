@@ -158,7 +158,7 @@ fn main() -> i32 { return 0; }
 ```
 
 ```
-$ ./target/debug/qcorec check probes/P21-span-line4.qcore
+$ ./target/debug/qcorec check probes/P21-span-line4.qr
 probes/P21-span-line4.qcore:1:1: Q016: unknown dimension `Missing`
 dimension Bytes : Idx + Ordered;
 ^
