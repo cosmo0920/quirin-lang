@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Constraint-14 census for card CONTRACT-INHERIT.
 
-Measures, over every tracked Quirin source (`*.qcore`, `*.qc`, archived probes
+Measures, over every tracked Quirin source (`*.qcore`, `*.qv`, `*.qr`, `*.qc`, archived probes
 included) and every tracked Rust/Python/Markdown/JSON file that could embed a
 Quirin program in a string, the spellings this card claims:
 
@@ -59,7 +59,7 @@ def tracked():
 def main():
     output = Path(sys.argv[1])
     files = tracked()
-    sources = [name for name in files if name.endswith((".qcore", ".qc"))]
+    sources = [name for name in files if name.endswith((".qcore", ".qv", ".qr", ".qc"))]
     embedders = [name for name in files
                  if name.endswith((".rs", ".py", ".json", ".el", ".lean"))
                  and not name.startswith("third_party/")]

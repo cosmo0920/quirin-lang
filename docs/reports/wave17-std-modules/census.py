@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Card STD-MODULES, phase 1: the reproducible half of the census.
 
-Scans every source-side `.qcore` file (everything outside `contract/qcore/`,
+Scans every source-side `.qcore`/`.qr` file (everything outside `contract/qcore/`,
 which holds declarative C contracts, not source programs) and reports the three
 facts the card's class-(a) finding rests on:
 
@@ -27,8 +27,9 @@ OUTPUT_WORDS = {
 def source_files(root: pathlib.Path) -> list[pathlib.Path]:
     return sorted(
         path
-        for path in root.rglob("*.qcore")
-        if ".git" not in path.parts
+        for path in root.rglob("*")
+        if path.suffix in {".qcore", ".qr"}
+        and ".git" not in path.parts
         and "third_party" not in path.parts
         and not str(path.relative_to(root)).startswith("contract/qcore/")
     )
@@ -57,7 +58,7 @@ def main() -> int:
                 if head in OUTPUT_WORDS:
                     output_heads.append((path, line.strip()))
 
-    print(f"source-side .qcore files scanned: {len(files)}")
+    print(f"source-side .qcore/.qr files scanned: {len(files)}")
     print(f"string literals outside comments: {len(strings)}")
     for path, line in strings:
         print(f"    {path.relative_to(root)}: {line[:80]}")

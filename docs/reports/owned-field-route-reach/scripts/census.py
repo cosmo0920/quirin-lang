@@ -9,7 +9,7 @@ answer is not "is a word free" but **"does any program in this tree spell the
 shape"** — a program that did would change meaning, and one that does not
 cannot.
 
-Three counts, over every `.qcore`/`.qc` file in the tree (comments stripped):
+Three counts, over every `.qcore`/`.qv`/`.qr`/`.qc` file in the tree (comments stripped):
 
 1. `let NAME = NAME ;` — the claimed shape, anywhere.
 2. `: string` in field-type position — the `AGGREGATE-VIEW-FIELD` spelling.
@@ -39,7 +39,7 @@ def main() -> int:
     files = sorted(
         p
         for p in root.rglob("*")
-        if p.suffix in {".qcore", ".qc"}
+        if p.suffix in {".qcore", ".qv", ".qr", ".qc"}
         and ".git" not in p.parts
         and "target" not in p.parts
         and "measure" not in p.parts

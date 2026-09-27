@@ -2,7 +2,7 @@
 """Emission census for card LOOPS-ON-COMPOSED-ROUTES (wave 39).
 
 Runs two `quirin` binaries — the base tree's and this card's — over every
-`.qcore` file in the repository (outside `target/`) with `quirin emit`, and
+`.qcore`/`.qv`/`.qr` source file in the repository (outside `target/`) with `quirin emit`, and
 compares, program by program: whether each admitted the program, and whether
 the emitted C is byte-identical. The claim the census supports is that every
 program the base admitted is admitted after the card with byte-identical C —
@@ -47,8 +47,9 @@ def main() -> int:
     root = Path(args.root)
     programs = sorted(
         p
-        for p in root.rglob("*.qcore")
-        if "target" not in p.parts and ".lake" not in p.parts and ".git" not in p.parts
+        for p in root.rglob("*")
+        if p.suffix in {".qcore", ".qv", ".qr"}
+        and "target" not in p.parts and ".lake" not in p.parts and ".git" not in p.parts
     )
     rows = []
     counts = {
