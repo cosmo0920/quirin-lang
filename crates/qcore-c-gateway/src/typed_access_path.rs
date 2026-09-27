@@ -18,7 +18,7 @@ use crate::typed_c_ast::{children, kind, translation_unit_ast};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
-static PARITY_SINK: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+static PARITY_SINK: Mutex<Option<BufWriter<File>>> = Mutex::new(None);
 
 pub(crate) fn parity_enabled() -> bool {
     std::env::var_os(PARITY_PATH).is_some()
@@ -37,6 +37,17 @@ pub(crate) fn record_parity(
     if !parity_enabled() {
         return;
     }
+    let Some((source_sha256, dialect, frontend)) = ANALYSED_SOURCE.with(|cell| {
+        let context = cell.borrow();
+        let context = context.as_ref()?;
+        Some((
+            context.source_sha256.clone(),
+            format!("{:?}", context.dialect),
+            format!("{:?}", context.request),
+        ))
+    }) else {
+        return;
+    };
     let disagreement = match (old, new) {
         (Some((old_scalar, old_chains)), Some(new)) => {
             old_scalar != &new.scalar || old_chains != new.chains || new.borrowed_destination
@@ -46,6 +57,9 @@ pub(crate) fn record_parity(
     };
     let value = serde_json::json!({
         "function": function,
+        "source_sha256": source_sha256,
+        "dialect": dialect,
+        "frontend": frontend,
         "line": line,
         "texts": texts,
         "old_route": old_route,
@@ -58,17 +72,13 @@ pub(crate) fn record_parity(
         "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
         "disagreement": disagreement,
     });
-    let Ok(mut guard) = PARITY_SINK.lock() else {
-        return;
-    };
+    let mut guard = PARITY_SINK.lock().expect("typed access parity sink lock");
     let writer = guard.get_or_insert_with(|| {
-        let path = std::env::var_os(PARITY_PATH)?;
-        File::create(path).ok().map(BufWriter::new)
+        let path = std::env::var_os(PARITY_PATH).expect("typed access parity path");
+        BufWriter::new(File::create(path).expect("typed access parity sink"))
     });
-    if let Some(writer) = writer.as_mut() {
-        let _ = writeln!(writer, "{value}");
-        let _ = writer.flush();
-    }
+    writeln!(writer, "{value}").expect("typed access parity write");
+    writer.flush().expect("typed access parity flush");
 }
 
 #[derive(Clone, Debug)]
@@ -94,6 +104,7 @@ thread_local! {
 
 struct SourceContext {
     source: Arc<String>,
+    source_sha256: String,
     dialect: CCompilerDialect,
     request: LegacyCertificateRequest,
     ast: OnceCell<Option<Value>>,
@@ -111,6 +122,7 @@ pub(crate) fn enter_source(
     SourceScope(ANALYSED_SOURCE.with(|cell| {
         cell.replace(Some(SourceContext {
             source: Arc::new(source.to_owned()),
+            source_sha256: qcore_schemas::sha256_hex(source.as_bytes()),
             dialect,
             request: request
                 .cloned()
