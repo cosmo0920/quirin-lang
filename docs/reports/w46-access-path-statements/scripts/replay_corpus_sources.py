@@ -4,8 +4,10 @@
 Usage: replay_corpus_sources.py AFTER_DIAGNOSTICS PARITY_JSONL FRONTEND_CONTEXTS_JSONL
        COMPILE_DATABASES PINNED_SOURCE_ROOTS CHANGED_FUNCTIONS_GZ OUTPUT_JSON
 
-COMPILE_DATABASES and PINNED_SOURCE_ROOTS are comma-separated absolute paths;
-the corpus includes both Fluent Bit libraries and Monkey units.
+COMPILE_DATABASES and PINNED_SOURCE_ROOTS are comma-separated absolute paths,
+in Fluent Bit, then Monkey order. The corpus example selects Monkey units from
+its separate compile database, even when a byte-identical copy exists under
+Fluent Bit's `lib/monkey` tree.
 
 The replay uses the archived Rust request's include paths, definitions,
 HistoricalStdin input and parity dialect, then requires the SHA-256 of Clang's
@@ -43,6 +45,8 @@ def main():
         raise SystemExit(__doc__)
     diagnostics, parity, contexts, compile_dbs, source_roots, changes, output = map(pathlib.Path, sys.argv[1:8])
     source_roots = [pathlib.Path(value).resolve() for value in str(source_roots).split(",")]
+    if len(source_roots) != 2 or len(str(compile_dbs).split(",")) != 2:
+        raise SystemExit("corpus replay requires Fluent Bit and Monkey source/database pairs")
     units = read(diagnostics)["units"]
     wanted = {json.loads(line)["unit_index"] for line in gzip.open(changes, "rt")}
     with contexts.open() as stream:
@@ -75,8 +79,9 @@ def main():
         unit = units[index]
         names = {row["function"] for row in unit["functions"]}
         candidates = set().union(*(parity_by_function[name] for name in names))
+        selected_root = source_roots[1] if unit["library"] == "monkey-libevent" else source_roots[0]
         source_candidates = [path for path in sorted(entries[pathlib.Path(unit["file"]).name])
-                             if str(path).endswith(unit["file"])]
+                             if path.is_relative_to(selected_root) and str(path).endswith(unit["file"])]
         matches, attempts = [], []
         for path in source_candidates:
             raw = path.read_bytes()
