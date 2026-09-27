@@ -12,11 +12,13 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::Mutex;
 
+use serde::de::{IgnoredAny, MapAccess, SeqAccess, Visitor};
+use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
 use crate::indirect_chain_access::AccessChain;
 use crate::legacy_c::{C11TranslationUnit, CCompilerDialect, LegacyCertificateRequest, tokenize};
-use crate::typed_c_ast::{children, kind, translation_unit_ast};
+use crate::typed_c_ast::{children, kind, translation_unit_ast_with};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
@@ -195,34 +197,144 @@ struct FunctionEntry {
     by_line: OnceCell<Arc<BTreeMap<usize, Vec<Vec<usize>>>>>,
 }
 
+#[derive(Default)]
+struct RetainedDeclarations {
+    functions: BTreeMap<String, Vec<FunctionEntry>>,
+    fields: BTreeMap<String, Option<FieldFacts>>,
+}
+
+impl RetainedDeclarations {
+    fn accept(&mut self, node: Value) {
+        collect_field_facts(&node, &mut self.fields);
+        if kind(&node) == "FunctionDecl"
+            && children(&node)
+                .iter()
+                .any(|child| kind(child) == "CompoundStmt")
+            && let Some(name) = node["name"].as_str()
+        {
+            self.functions
+                .entry(name.to_owned())
+                .or_default()
+                .push(FunctionEntry {
+                    ast: Arc::new(node),
+                    by_line: OnceCell::new(),
+                });
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for RetainedDeclarations {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct DeclarationsVisitor;
+        impl<'de> Visitor<'de> for DeclarationsVisitor {
+            type Value = RetainedDeclarations;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("a Clang translation-unit declaration array")
+            }
+
+            fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<Self::Value, A::Error> {
+                let mut retained = RetainedDeclarations::default();
+                while let Some(node) = seq.next_element::<Value>()? {
+                    retained.accept(node);
+                }
+                Ok(retained)
+            }
+
+            // serde_json::Value accepts a non-array `inner` but `children` then
+            // returns no declarations. Preserve that refusal and consume the
+            // complete value instead of silently leaving malformed JSON unread.
+            fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+                while map.next_entry::<IgnoredAny, IgnoredAny>()?.is_some() {}
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_bool<E: serde::de::Error>(self, _: bool) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_i64<E: serde::de::Error>(self, _: i64) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_u64<E: serde::de::Error>(self, _: u64) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_f64<E: serde::de::Error>(self, _: f64) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_str<E: serde::de::Error>(self, _: &str) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_string<E: serde::de::Error>(self, _: String) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+
+            fn visit_unit<E: serde::de::Error>(self) -> Result<Self::Value, E> {
+                Ok(RetainedDeclarations::default())
+            }
+        }
+        deserializer.deserialize_any(DeclarationsVisitor)
+    }
+}
+
+struct RetainedRoot(RetainedDeclarations);
+
+impl<'de> Deserialize<'de> for RetainedRoot {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct RootVisitor;
+        impl<'de> Visitor<'de> for RootVisitor {
+            type Value = RetainedRoot;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("a Clang translation-unit AST object")
+            }
+
+            fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+                let mut retained = RetainedDeclarations::default();
+                while let Some(key) = map.next_key::<String>()? {
+                    if key == "inner" {
+                        // `Value` keeps the last duplicate object key. Replace
+                        // every earlier declaration set, including its facts.
+                        retained = map.next_value::<RetainedDeclarations>()?;
+                    } else {
+                        map.next_value::<IgnoredAny>()?;
+                    }
+                }
+                Ok(RetainedRoot(retained))
+            }
+        }
+        deserializer.deserialize_map(RootVisitor)
+    }
+}
+
 impl AstIndex {
+    fn from_json(bytes: &[u8], source: &str) -> Result<Self, serde_json::Error> {
+        // `from_slice` checks the entire document, including trailing bytes.
+        let RetainedRoot(retained) = serde_json::from_slice(bytes)?;
+        Ok(Self {
+            functions: retained.functions,
+            fields: Arc::new(retained.fields),
+            line_starts: line_starts(source),
+        })
+    }
+
+    #[cfg(test)]
     fn from_ast(mut ast: Value, source: &str) -> Self {
-        let mut fields = BTreeMap::new();
-        collect_field_facts(&ast, &mut fields);
-        let mut functions: BTreeMap<String, Vec<FunctionEntry>> = BTreeMap::new();
+        let mut retained = RetainedDeclarations::default();
         if let Some(Value::Array(top_level)) =
             ast.as_object_mut().and_then(|obj| obj.remove("inner"))
         {
             for node in top_level {
-                if kind(&node) == "FunctionDecl"
-                    && children(&node)
-                        .iter()
-                        .any(|child| kind(child) == "CompoundStmt")
-                    && let Some(name) = node["name"].as_str()
-                {
-                    functions
-                        .entry(name.to_owned())
-                        .or_default()
-                        .push(FunctionEntry {
-                            ast: Arc::new(node),
-                            by_line: OnceCell::new(),
-                        });
-                }
+                retained.accept(node);
             }
         }
         Self {
-            functions,
-            fields: Arc::new(fields),
+            functions: retained.functions,
+            fields: Arc::new(retained.fields),
             line_starts: line_starts(source),
         }
     }
@@ -283,9 +395,10 @@ impl StatementIndex {
                         dialect: context.dialect,
                         ..C11TranslationUnit::default()
                     };
-                    translation_unit_ast(&context.source, &unit)
-                        .ok()
-                        .map(|ast| AstIndex::from_ast(ast, &context.source))
+                    translation_unit_ast_with(&context.source, &unit, |bytes| {
+                        AstIndex::from_json(bytes, &context.source)
+                    })
+                    .ok()
                 })
                 .as_ref()?;
             let [function] = ast.functions.get(function)?.as_slice() else {
@@ -1045,5 +1158,58 @@ mod tests {
         let node = serde_json::json!({"range": {"begin": {"offset": 3}}});
         assert_eq!(node_line(&node, 3, &compact.line_starts), Some(2));
         assert_eq!(node_line(&node, 2, &compact.line_starts), None);
+    }
+
+    #[test]
+    fn streamed_decoder_matches_full_value_on_real_clang_ast() {
+        let source = "struct S { int x; }; int f(struct S *p) { p->x = 1; return 0; }";
+        let unit = C11TranslationUnit {
+            source,
+            ..C11TranslationUnit::default()
+        };
+        let (full, streamed) = translation_unit_ast_with(source, &unit, |bytes| {
+            let full: Value = serde_json::from_slice(bytes)?;
+            let streamed = AstIndex::from_json(bytes, source)?;
+            Ok((full, streamed))
+        })
+        .expect("Clang AST");
+        let original = AstIndex::from_ast(full, source);
+        assert_eq!(streamed.fields, original.fields);
+        assert_eq!(streamed.line_starts, original.line_starts);
+        assert_eq!(
+            streamed.functions.keys().collect::<Vec<_>>(),
+            original.functions.keys().collect::<Vec<_>>()
+        );
+        for (name, functions) in &original.functions {
+            assert_eq!(
+                streamed.functions[name]
+                    .iter()
+                    .map(|entry| entry.ast.as_ref())
+                    .collect::<Vec<_>>(),
+                functions
+                    .iter()
+                    .map(|entry| entry.ast.as_ref())
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
+
+    #[test]
+    fn streamed_decoder_uses_last_root_inner_and_rejects_incomplete_json() {
+        let duplicate = br#"{"inner":[{"kind":"FunctionDecl","name":"old","inner":[{"kind":"CompoundStmt"}]}],"inner":{"unused":true},"inner":[{"kind":"FunctionDecl","name":"new","inner":[{"kind":"CompoundStmt"}]}]}"#;
+        let full: Value = serde_json::from_slice(duplicate).unwrap();
+        let original = AstIndex::from_ast(full, "");
+        let streamed = AstIndex::from_json(duplicate, "").unwrap();
+        assert_eq!(
+            streamed.functions.keys().collect::<Vec<_>>(),
+            original.functions.keys().collect::<Vec<_>>()
+        );
+        assert_eq!(streamed.functions["new"].len(), 1);
+        for invalid in [
+            br#"{"inner":["#.as_slice(),
+            br#"{"inner":[]} trailing"#.as_slice(),
+        ] {
+            assert!(AstIndex::from_json(invalid, "").is_err());
+        }
     }
 }
