@@ -1,0 +1,17 @@
+{
+  "source_tip": "380e48f35d38ad3e8eeca27cea1d24db1475ad5e",
+  "source_files": 616,
+  "accepted": 353,
+  "refused": 263,
+  "changed": 0,
+  "comparison": "Current reader at legacy and proposed names using bytes from the sole mapped tracked path; explicit filename substitution only; warning fields excluded. Default compile options, no native manifest selection. Not a C corpus audit or a baseline binary comparison.",
+  "source_parity_exit": 0,
+  "inventory_exit": 0,
+  "inventory_count": 621,
+  "suffixes": {
+    ".qr": 421,
+    ".qv": 195,
+    ".qrlib": 5
+  },
+  "private_logs": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/parity-20260927T131855Z"
+}
