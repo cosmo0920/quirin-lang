@@ -15,6 +15,7 @@ fn pinned_help_and_invalid_options_do_not_start_a_replay() {
         vec!["pinned", "--not-a-flag"],
         vec!["pinned", "--jobs", "1", "--jobs", "2"],
         vec!["pinned", "--jobs", "0"],
+        vec!["pinned", "/tmp", "--not-a-flag"],
     ] {
         let output = Command::new(HOST).args(&args).output().unwrap();
         assert!(!output.status.success(), "{args:?}");

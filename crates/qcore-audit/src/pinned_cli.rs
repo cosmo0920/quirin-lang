@@ -11,10 +11,15 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
     let mut arguments = arguments.into_iter().peekable();
     let mut jobs = None;
     let mut jobs_seen = false;
+    let mut literal_paths = false;
     while let Some(argument) = arguments.peek() {
         if argument == "--help" || argument == "-h" {
             println!("{USAGE}");
             return ExitCode::SUCCESS;
+        } else if argument == "--" {
+            arguments.next();
+            literal_paths = true;
+            break;
         } else if argument == "--jobs" {
             if jobs_seen {
                 eprintln!("--jobs is given twice");
@@ -37,6 +42,20 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
             break;
         }
     }
+    let positional = arguments.collect::<Vec<_>>();
+    if !literal_paths {
+        if let Some(argument) = positional
+            .iter()
+            .find(|argument| argument.to_string_lossy().starts_with('-'))
+        {
+            eprintln!(
+                "unknown pinned option: {}\n{USAGE}",
+                argument.to_string_lossy()
+            );
+            return ExitCode::FAILURE;
+        }
+    }
+    let mut arguments = positional.into_iter();
     let jobs = match crate::parallel::resolve_jobs(jobs.as_deref()) {
         Ok(jobs) => crate::parallel::effective_jobs(jobs),
         Err(error) => {

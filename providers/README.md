@@ -285,8 +285,8 @@ QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json"
   cargo run --quiet -p qcore-audit -- current \
   --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
   --monkey-database build/cycle19/monkey-build/compile_commands.json \
-  build/cycle19/reports/source-effect-source.json \
-  build/cycle19/reports/source-effect-diagnostics.json
+  --monkey-source-report build/cycle19/reports/source-effect-source.json \
+  --report build/cycle19/reports/source-effect-diagnostics.json
 ```
 
 The configuration maps sealed model-library identities to provider IDs and policy

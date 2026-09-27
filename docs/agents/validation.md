@@ -138,8 +138,8 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 
 ## Corpus arbiter and its job count
 
-The pinned corpus arbiter is the release binary `quirin-audit pinned`, run
-through `scripts/run_pinned_audit.py OUT_DIR COMMIT [--inputs-root DIR]
+The pinned corpus arbiter is the release binary `quirin-audit pinned`
+(`cargo build --release -p qcore-audit --bin quirin-audit`), run through `scripts/run_pinned_audit.py OUT_DIR COMMIT [--inputs-root DIR]
 [--census] [--jobs N]`. It analyses translation units on `N` threads
 (`--jobs N` on the command, or `QCORE_AUDIT_JOBS=N`; the default is the
 host's available parallelism, capped at 16), and folds every unit's report

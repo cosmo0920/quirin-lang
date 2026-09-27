@@ -66,8 +66,8 @@ is still an `ensures normal` exit, not a QCore typed exception.
 Run the semantic source checks with the existing Fluent Bit build database:
 
 ```sh
-cargo run --quiet -p qcore-compiler \
-  -- current --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit
+cargo run --quiet -p qcore-audit -- current \
+  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit
 ```
 
 Look for `qcore-contract ...: Checked` for the three field functions. The audit additionally

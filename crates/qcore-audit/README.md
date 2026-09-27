@@ -116,9 +116,9 @@ The configured current-revision route is `quirin-audit current` (see
 below). It requires every selected compilation database to use the configured
 Clang C driver: a GCC database (`/usr/bin/cc`) is rejected once, with
 preparation instructions, before any per-unit work, and is never silently
-rewritten to name Clang. The historical corpus arbiter is `quirin-audit pinned`. Its source adapters
-live in `quirin-source-analysis`, shared with the compiler facade. The
-configured current-revision route remains `quirin-audit current`.
+rewritten to name Clang. The historical corpus arbiter is `quirin-audit pinned`.
+Its source adapters live in `quirin-source-analysis`, shared with the compiler
+facade.
 
 `-Wextra` is transported to Clang preprocessing, syntax checking, and AST import.
 Dollar signs in a quoted C string macro are preserved literally; the adapter does
