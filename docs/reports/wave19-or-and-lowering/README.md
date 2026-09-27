@@ -1,5 +1,8 @@
 # OR-AND-LOWERING — `||` and `&&`, and the operator retable (wave 19, phase 2)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card brief: *"Retable the tokens so `||` is logical or and `&&` logical and,
 freeing single `|`, `&` and `^` for future bitwise operations; lower both
 connectives onto `source.branch.v1`; bitwise semantics out of scope."*
@@ -164,8 +167,8 @@ chain and a nested `if` — which is why this card adds **no semantic rule**:
 The card's load-bearing measurement, in the form wave 18 used for the pipe:
 
 ```
-qcorec emit -o or.c   fixtures/connectives/short_circuit_or.qcore
-qcorec emit -o twin.c fixtures/connectives/short_circuit_or_twin.qcore
+qcorec emit -o or.c   fixtures/connectives/short_circuit_or.qr
+qcorec emit -o twin.c fixtures/connectives/short_circuit_or_twin.qr
 diff or.c twin.c        # empty
 ```
 

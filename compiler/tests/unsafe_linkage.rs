@@ -20,8 +20,8 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qr");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn selection() -> Option<BTreeMap<String, String>> {
     Some(BTreeMap::from([(
@@ -495,7 +495,7 @@ fn an_uncontracted_callee_without_the_waiver_still_refuses_at_q023() {
 fn a_contracted_module_is_unchanged_by_this_card() {
     // The contracted round trip still selects its environment, still refuses
     // without it, and still publishes `DeclaredContract` and no waiver.
-    const CONTRACTED: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+    const CONTRACTED: &str = include_str!("fixtures/extern_calls/round_trip.qr");
     assert_eq!(codes(CONTRACTED, None), ["Q023"]);
     let module = compile_with(CONTRACTED, selection()).unwrap();
     assert!(unchecked_premises(&module).is_empty());

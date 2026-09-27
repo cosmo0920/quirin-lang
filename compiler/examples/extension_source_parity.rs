@@ -1,7 +1,16 @@
 //! EXT-01: compare old and proposed source names on every mapped source.
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use serde_json::json;
-use std::{fs, process::Command};
+use std::{fs, path::Path, process::Command};
+
+fn mapped_source_path<'a>(old: &'a str, new: &'a str) -> Result<&'a str, String> {
+    match (Path::new(old).is_file(), Path::new(new).is_file()) {
+        (true, false) => Ok(old),
+        (false, true) => Ok(new),
+        (true, true) => Err(format!("ambiguous old/new source pair: {old} and {new}")),
+        (false, false) => Err(format!("missing mapped source pair: {old} and {new}")),
+    }
+}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mapping = fs::read_to_string("docs/reports/extension-compatibility/mapping.tsv")?;
@@ -16,7 +25,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if !old.ends_with(".qcore") {
             continue;
         }
-        let source = fs::read_to_string(old)?;
+        // The frozen inventory keeps both historical and proposed spellings.
+        // After physical migration, read the same mapped source from its new
+        // tracked path while checking both reader aliases against its bytes.
+        let read_path = mapped_source_path(old, new)?;
+        let source = fs::read_to_string(read_path)?;
         let old_result =
             compile_files(&[SourceFile::new(old, &source)], &CompileOptions::default());
         let new_result =
@@ -51,7 +64,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if !same {
             changed += 1;
         }
-        rows.push(json!({"old":old,"new":new,"same_except_source_path_and_warning":same,"outcome":outcome}));
+        rows.push(json!({"old":old,"new":new,"read_path":read_path,"mapping_blob":columns[1],"same_except_source_path_and_warning":same,"outcome":outcome}));
     }
     let revision = Command::new("git").args(["rev-parse", "HEAD"]).output()?;
     if !revision.status.success() {
@@ -60,7 +73,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "{}",
         serde_json::to_string_pretty(
-            &json!({"source_tip":String::from_utf8(revision.stdout)?.trim(),"source_files":rows.len(),"accepted":admitted,"refused":refused,"changed":changed,"comparison":"Current reader at legacy and proposed names; explicit filename substitution only; warning fields excluded. Default compile options, no native manifest selection. Not a C corpus audit or a baseline binary comparison.","rows":rows})
+            &json!({"source_tip":String::from_utf8(revision.stdout)?.trim(),"source_files":rows.len(),"accepted":admitted,"refused":refused,"changed":changed,"comparison":"Current reader at legacy and proposed names using bytes from the sole mapped tracked path; explicit filename substitution only; warning fields excluded. Default compile options, no native manifest selection. Not a C corpus audit or a baseline binary comparison.","rows":rows})
         )?
     );
     if changed != 0 {

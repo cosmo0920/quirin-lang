@@ -1,5 +1,8 @@
 # W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-LIBC-CONTRACTS, 2026-09-23, on base `9edad50c` (main after
 QUIRIN-PROVIDER-SHARED). After W43-RETURN-EXPRESSION, 315 Unknown functions
 were blocked only by one uncontracted callee. This card measures which callees
@@ -470,7 +473,7 @@ python3 docs/reports/w43-return-expression/scripts/run_audit.py <before> 9edad50
 python3 docs/reports/w43-return-expression/scripts/baseline_identity.py <before> docs/reports/w43-return-expression/artifacts --worktree-alias
 python3 docs/reports/w43-return-expression/scripts/run_audit.py <after> d5b90c6d         # manifest at 44 modules
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py <before>/resource-diagnostics.json <captured -E -P dir> <unit-texts>
-python3 docs/reports/w43-libc-contracts/scripts/attribute.py <before> <after> <unit-texts> <out.json> providers/quirin-provider-libc/contracts/libc/{dlfcn,math,process,socket,stdio,stdlib,string,sys_stat,threads,time,unistd}.qcore
+python3 docs/reports/w43-libc-contracts/scripts/attribute.py <before> <after> <unit-texts> <out.json> providers/quirin-provider-libc/contracts/libc/{dlfcn,math,process,socket,stdio,stdlib,string,sys_stat,threads,time,unistd}.qv
 python3 docs/reports/w43-libc-contracts/scripts/libc_inventory.py docs/reports/w43-return-expression/artifacts/diagnostics.json.gz <captured -E dir> <fluent-bit-clang-source> <inventory.json>
 python3 docs/reports/w43-libc-contracts/scripts/decisions.py <inventory.json> libc-inventory.json libc-inventory.md <the eleven modules>
 python3 docs/reports/w43-libc-contracts/scripts/libc_names.py <captured -E dir> providers/quirin-provider-libc/libc-names.txt

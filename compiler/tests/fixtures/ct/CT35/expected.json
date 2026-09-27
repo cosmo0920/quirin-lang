@@ -31,7 +31,7 @@
     },
     "controls": [
       {
-        "source": "two_cells.qcore",
+        "source": "two_cells.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "task_count": 2,
@@ -51,7 +51,7 @@
         "note": "Two distinct 4096-byte cells, each read by both tasks, are two footprints: the union is 8192 and the epoch peak rises by exactly that 4096. The union counts cell identities, not readers, which is the claim CT35 makes; only shared_entry_union, epoch_peak, completed_residency and exit_residency move."
       },
       {
-        "source": "repeated_entry.qcore",
+        "source": "repeated_entry.qr",
         "expectation": "reject",
         "diagnostic_sequence": ["Q630"],
         "note": "One task naming the same cell twice is refused at Q630 DuplicateSharedEntry, not silently deduplicated. Without this control, counting-once could be an artifact of a lowering that collapses repeats rather than a checked rule."

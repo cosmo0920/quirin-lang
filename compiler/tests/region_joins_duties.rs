@@ -158,7 +158,7 @@ fn owned_twin() -> String {
 /// reader's independent folds before publication.
 #[test]
 fn ct25_the_cleanup_destroys_the_owner_after_every_join() {
-    let module = accept("case.qcore");
+    let module = accept("case.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -246,7 +246,7 @@ fn the_region_erases_into_its_straight_line_twin_byte_for_byte() {
 /// the remainder is abandoned.
 #[test]
 fn a_body_release_erases_its_duty() {
-    let module = accept("dropped_owner.qcore");
+    let module = accept("dropped_owner.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -264,16 +264,16 @@ fn a_body_release_erases_its_duty() {
 /// (`REGION-JOINS-MULTI-OWNER`).
 #[test]
 fn duty_order_and_the_multi_owner_boundary() {
-    let module = accept("sequenced_owners.qcore");
+    let module = accept("sequenced_owners.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
         .expect("the entry's region is published");
     assert_eq!(evidence.released, vec!["second".to_owned()]);
 
-    assert_eq!(refuse("two_owners.qcore"), vec!["Q600"]);
+    assert_eq!(refuse("two_owners.qr"), vec!["Q600"]);
     assert!(
-        message(fixture("two_owners.qcore")).contains("discards"),
+        message(fixture("two_owners.qr")).contains("discards"),
         "the refusal is the task route's own custody rule"
     );
 }
@@ -285,8 +285,8 @@ fn duty_order_and_the_multi_owner_boundary() {
 /// (`Q306`).
 #[test]
 fn the_models_own_refusals_hold_with_a_real_duty() {
-    assert_eq!(refuse("no_discharge_duty.qcore"), vec!["Q305"]);
-    assert_eq!(refuse("no_open_duty.qcore"), vec!["Q306"]);
+    assert_eq!(refuse("no_discharge_duty.qr"), vec!["Q305"]);
+    assert_eq!(refuse("no_open_duty.qr"), vec!["Q306"]);
 }
 
 /// The duty reader's own shape refusals, each at `Q302` with the rule named:
@@ -295,12 +295,12 @@ fn the_models_own_refusals_hold_with_a_real_duty() {
 /// spelling, which names no task-route resource and stays refused.
 #[test]
 fn the_duty_reader_refuses_its_own_shapes() {
-    let refused = refuse("outer_drop.qcore");
+    let refused = refuse("outer_drop.qr");
     assert_eq!(refused, vec!["Q302"]);
-    assert!(message(fixture("outer_drop.qcore")).contains("REGION-OUTER-LIVE-RESOURCES"));
+    assert!(message(fixture("outer_drop.qr")).contains("REGION-OUTER-LIVE-RESOURCES"));
 
-    assert_eq!(refuse("colliding_owner.qcore"), vec!["Q302"]);
-    assert!(message(fixture("colliding_owner.qcore")).contains("collides with a binding"));
+    assert_eq!(refuse("colliding_owner.qr"), vec!["Q302"]);
+    assert!(message(fixture("colliding_owner.qr")).contains("collides with a binding"));
 
     // The sequential spelling stays refused, with the admitted set named.
     let acquiring = with_region(
@@ -390,7 +390,7 @@ fn the_epoch_certificates_are_unmoved_by_a_duty() {
 fn the_native_run_frees_every_owner() {
     use std::process::Command;
 
-    let module = accept("case.qcore");
+    let module = accept("case.qr");
     let directory = std::env::temp_dir().join(format!(
         "qcore-region-duties-{}-{}",
         std::process::id(),

@@ -42,7 +42,7 @@ use qcore_verifier_host::WitnessChecker;
 
 /// This family's own pinned contract.
 pub const COMPOSITION_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv"
 );
 
 /// This family's own derivation recipe: the exact bytes the retained ChunkIO

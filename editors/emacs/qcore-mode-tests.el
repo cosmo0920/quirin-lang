@@ -16,7 +16,7 @@
   (get-text-property (- (point) (length text)) 'face))
 
 (ert-deftest qcore-mode-file-associations ()
-  (dolist (name '("program.qcore" "contract.qcore"))
+  (dolist (name '("program.qr" "contract.qv" "legacy.qcore"))
     (with-temp-buffer
       (setq buffer-file-name name)
       (set-auto-mode)
@@ -127,7 +127,7 @@
   (dolist (directory '("contract/qcore" "examples" "compiler/tests/fixtures/ct"))
     (dolist (file (directory-files-recursively
                    (expand-file-name directory qcore-mode-test--root)
-                   "\\.qcore\\'"))
+                   "\\.\\(qv\\|qr\\|qcore\\)\\'"))
       (with-temp-buffer
         (insert-file-contents file)
         (qcore-mode)

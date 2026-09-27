@@ -4,7 +4,7 @@ set_option maxRecDepth 10000
 
 namespace QCore.MonkeyWaitSourcePolicy
 
-/-! Executable parity model for `monkey/wait_source_policy.qcore`.
+/-! Executable parity model for `monkey/wait_source_policy.qv`.
 
 The model separates facts derived from typed source summaries from the trusted
 expected values. In particular, artifact acceptance compares one complete

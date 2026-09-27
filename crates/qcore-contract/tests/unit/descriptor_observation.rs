@@ -2,7 +2,7 @@ use super::*;
 use serde_json::{Value, json};
 
 const POLICY: &str = include_str!(
-    "../../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore"
+    "../../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv"
 );
 
 fn operand(role: &str, kind: &str, id: i64, generation: u32) -> Value {

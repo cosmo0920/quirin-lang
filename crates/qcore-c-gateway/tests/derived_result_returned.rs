@@ -21,7 +21,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qv");
 
 const DECLARATIONS: &str = "\
 char *d_alloc(unsigned long n); \

@@ -38,17 +38,17 @@ use qcore_core::typed_errors::EffectRow;
 ///
 /// **Card `CT07-TWO-THREAD-REMAP` (wave 37) moved which file in that directory
 /// it is.** CT07's case moved onto the two-thread range write lease, so
-/// `case.qcore` is now a *task*-route program and this card's sequential
-/// program is `sequential_write_halves.qcore`, retained there as that case's
-/// accept control. This include follows it. Pointing at `case.qcore` would
+/// `case.qr` is now a *task*-route program and this card's sequential
+/// program is `sequential_write_halves.qr`, retained there as that case's
+/// accept control. This include follows it. Pointing at `case.qr` would
 /// silently hand this card's tests someone else's program — which is exactly
 /// what the wave-37 lane caught here, so the coupling is now named rather than
 /// implicit.
-const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/sequential_write_halves.qcore");
+const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/sequential_write_halves.qr");
 /// The same program with one bound of the second lend moved from 4 to 3, so
 /// the two ranges share exactly byte 3 — this card's control, now also CT07's
 /// disjointness control in the same directory.
-const OVERLAPPING_LENDS: &str = include_str!("fixtures/ct/CT07/overlapping_lends.qcore");
+const OVERLAPPING_LENDS: &str = include_str!("fixtures/ct/CT07/overlapping_lends.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {

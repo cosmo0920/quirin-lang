@@ -1,5 +1,8 @@
 # PIPE-OPERATOR — `|>`, and the operator token family (wave 18)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card brief: *"The first revision of `std.io` reads poorly — its statement forms
 don't compose. Add a pipe operator `|>` that composes calls so streams read
 naturally for functional programmers."* Plus two mid-card amendments claiming
@@ -428,8 +431,8 @@ under **both** line-ending conventions, and
 for the extern twin. Reproducible from the CLI:
 
 ```
-qcorec emit -o piped.c   fixtures/pipe/lines_piped.qcore
-qcorec emit -o unpiped.c fixtures/std_modules/lines.qcore
+qcorec emit -o piped.c   fixtures/pipe/lines_piped.qr
+qcorec emit -o unpiped.c fixtures/std_modules/lines.qr
 diff piped.c unpiped.c        # empty
 ```
 

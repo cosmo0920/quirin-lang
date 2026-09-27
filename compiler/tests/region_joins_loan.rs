@@ -99,7 +99,7 @@ fn composed(module: &CompiledModule) -> &ComposedEpochModule {
 /// abandoning exactly the parent-local remainder).
 #[test]
 fn ct25_the_cleanup_destroys_the_lent_owner_after_joins_and_loan_expiry() {
-    let module = accept("case.qcore");
+    let module = accept("case.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -312,9 +312,9 @@ fn the_epoch_certificates_are_unmoved_by_a_loan_and_an_adoption() {
 /// a join (which the wave-28 `Q600` ordering rule already forbids).
 #[test]
 fn a_live_share_refuses_the_destruction() {
-    assert_eq!(refuse("live_share_drop.qcore"), vec!["Q600"]);
+    assert_eq!(refuse("live_share_drop.qr"), vec!["Q600"]);
     assert!(
-        message(fixture("live_share_drop.qcore")).contains("LoanOutstanding"),
+        message(fixture("live_share_drop.qr")).contains("LoanOutstanding"),
         "the refusal is the task ledger's own custody rule, naming the loan"
     );
 }
@@ -326,7 +326,7 @@ fn a_live_share_refuses_the_destruction() {
 /// program's real defect.
 #[test]
 fn the_region_cannot_precede_the_loan_expiry() {
-    let mut file = fixture("case.qcore");
+    let mut file = fixture("case.qr");
     // Move the whole region statement above the match: the drop it erases to
     // would then run while the share is still out.
     let source = &mut file.source;
@@ -353,7 +353,7 @@ fn the_region_cannot_precede_the_loan_expiry() {
 /// remainder is abandoned.
 #[test]
 fn an_adopted_owner_released_in_the_body_erases_its_duty() {
-    let module = accept("adopted_then_dropped.qcore");
+    let module = accept("adopted_then_dropped.qr");
     let evidence = composed(&module)
         .region
         .as_ref()
@@ -366,11 +366,11 @@ fn an_adopted_owner_released_in_the_body_erases_its_duty() {
 /// named: a name the entry does not bind, and one owner taken twice.
 #[test]
 fn the_adoption_reader_refuses_its_own_shapes() {
-    assert_eq!(refuse("adopt_unknown.qcore"), vec!["Q302"]);
-    assert!(message(fixture("adopt_unknown.qcore")).contains("which the entry does not bind"));
+    assert_eq!(refuse("adopt_unknown.qr"), vec!["Q302"]);
+    assert!(message(fixture("adopt_unknown.qr")).contains("which the entry does not bind"));
 
-    assert_eq!(refuse("adopt_twice.qcore"), vec!["Q302"]);
-    assert!(message(fixture("adopt_twice.qcore")).contains("takes `owner` twice"));
+    assert_eq!(refuse("adopt_twice.qr"), vec!["Q302"]);
+    assert!(message(fixture("adopt_twice.qr")).contains("takes `owner` twice"));
 }
 
 /// An adopted name whose binding is not an owned Buffer in the erased program
@@ -380,10 +380,10 @@ fn the_adoption_reader_refuses_its_own_shapes() {
 /// beside the erasure (constraint 15m).
 #[test]
 fn an_adopted_scalar_is_refused_by_the_unedited_task_route() {
-    let refused = refuse("adopt_scalar.qcore");
+    let refused = refuse("adopt_scalar.qr");
     assert_eq!(refused, vec!["Q500"]);
     assert!(
-        message(fixture("adopt_scalar.qcore")).contains("drop requires an owned buffer"),
+        message(fixture("adopt_scalar.qr")).contains("drop requires an owned buffer"),
         "the refusal is the task route's own"
     );
 }
@@ -394,10 +394,10 @@ fn an_adopted_scalar_is_refused_by_the_unedited_task_route() {
 /// route's existing custody `Q600` (`REGION-JOINS-MULTI-OWNER`, unchanged).
 #[test]
 fn an_acquisition_beside_an_adopted_owner_keeps_the_multi_owner_boundary() {
-    let refused = refuse("adopt_and_acquire.qcore");
+    let refused = refuse("adopt_and_acquire.qr");
     assert_eq!(refused, vec!["Q600"]);
     assert!(
-        message(fixture("adopt_and_acquire.qcore")).contains("discards"),
+        message(fixture("adopt_and_acquire.qr")).contains("discards"),
         "the refusal is the task route's own custody rule"
     );
 }
@@ -407,7 +407,7 @@ fn an_acquisition_beside_an_adopted_owner_keeps_the_multi_owner_boundary() {
 /// copy creation, both refuse at `Q600` naming both lists.
 #[test]
 fn the_capture_reconciliation_reads_loans_in_both_directions() {
-    let mut copy_for_loan = fixture("case.qcore");
+    let mut copy_for_loan = fixture("case.qr");
     copy_for_loan.source = copy_for_loan
         .source
         .replace("            read;\n", "            copy;\n");
@@ -417,7 +417,7 @@ fn the_capture_reconciliation_reads_loans_in_both_directions() {
     assert!(refused[0].message.contains("declares captures [copy]"));
     assert!(refused[0].message.contains("passes [read]"));
 
-    let mut read_for_copy = fixture("case.qcore");
+    let mut read_for_copy = fixture("case.qr");
     read_for_copy.source = read_for_copy
         .source
         .replace("reader(read owner share FULL)", "reader_copy(copy value)")
@@ -448,7 +448,7 @@ fn the_capture_reconciliation_reads_loans_in_both_directions() {
 fn the_native_run_frees_the_lent_owner() {
     use std::process::Command;
 
-    let module = accept("case.qcore");
+    let module = accept("case.qr");
     let directory = std::env::temp_dir().join(format!(
         "qcore-region-loan-{}-{}",
         std::process::id(),

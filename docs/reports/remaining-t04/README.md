@@ -1,5 +1,8 @@
 # T04 — `ScopedReadLoansV1`: one bounded scoped read loan
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Date: 2026-09-08. Base checkpoint: `9478b94` (the delegated-increment tip).
 Depends on the owned-task profile it extends
 ([W6 owned source tasks](../w6-owned-source-tasks/README.md),

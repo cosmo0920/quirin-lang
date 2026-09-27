@@ -1,5 +1,8 @@
 # W43-LIBC-PRINTF-FAMILY: the printf family, declared and attributed leaf by leaf
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-LIBC-PRINTF-FAMILY, 2026-09-25, on base `f8b41209` (main after the
 CONTRACT-INHERIT-ADOPTION integration). It discharges `LIBC-PRINTF-FAMILY`:
 `printf`, `fprintf`, `snprintf` and `sprintf` are declared in
@@ -95,7 +98,7 @@ pointer, stream errors, `errno`, locale and threads.
 (`declared_abi_census`, the production decision) ran over the 185 units
 captured from this card's own run
 ([census/family9.txt](census/family9.txt), from the measurement-only module
-[measurement/family9.qcore](measurement/family9.qcore)). It was then rerun on
+[measurement/family9.qv](measurement/family9.qv)). It was then rerun on
 the whole shipped manifest:
 
 | Member | Units agreeing | Withdrawn | Leaves / functions at the baseline |
@@ -495,7 +498,7 @@ python3 docs/reports/w43-libc-printf-family/scripts/identity.py measure/before d
 python3 docs/reports/w43-libc-printf-family/scripts/capture_run.py measure/capture-run
 python3 docs/reports/w43-libc-result-alias/scripts/strip.py
 cargo build --release -p qcore-c-gateway --example declared_abi_census
-target/release/examples/declared_abi_census docs/reports/w43-libc-printf-family/measurement/family9.qcore -- measure/capture/plain/*.i
+target/release/examples/declared_abi_census docs/reports/w43-libc-printf-family/measurement/family9.qv -- measure/capture/plain/*.i
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py measure/before/resource-diagnostics.json measure/capture/ppP measure/unit-texts
 python3 docs/reports/w43-libc-printf-family/scripts/call_shapes.py measure/before/resource-diagnostics.json measure/unit-texts <out> printf fprintf snprintf sprintf
 python3 docs/reports/w43-libc-printf-family/scripts/line_bound.py measure/before/resource-diagnostics.json measure/unit-texts <out> printf fprintf snprintf sprintf

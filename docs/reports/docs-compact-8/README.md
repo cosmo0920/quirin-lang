@@ -1,5 +1,8 @@
 # `DOCS-COMPACT-8` — the wave-40 compaction pass over `AGENTS.md`, `CLAUDE.md`, `README.md`
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Base:** `d6a57f66` — the card was measured first at `6dc484ad` (then
 `origin/main`), and **re-derived**, not rebased, after `STABILITY-REEVAL-4`
 merged (§10). **Scope:** `AGENTS.md`, `CLAUDE.md`, `README.md`, plus the

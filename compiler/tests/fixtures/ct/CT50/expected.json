@@ -21,14 +21,14 @@
     "header": "reused_mapping.h",
     "rejection_controls": [
       {
-        "source": "stale_read.qcore",
+        "source": "stale_read.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "not an initialized owned buffer"
         }
       },
       {
-        "source": "stale_drop.qcore",
+        "source": "stale_drop.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "not an initialized owned buffer"

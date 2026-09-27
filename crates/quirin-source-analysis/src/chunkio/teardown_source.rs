@@ -6,7 +6,7 @@ use crate::legacy_c::C11TranslationUnit;
 use crate::typed_source::{SourceImportProfile, SourceResult, import_source_functions};
 
 pub const MEMORY_BACKEND_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv"
 );
 
 pub fn check_memory_backend_source(
@@ -39,7 +39,7 @@ pub fn check_memory_backend_source(
 }
 
 pub const COUNTER_CONTRACT: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv");
 
 pub fn check_counter_sources(
     unit: &C11TranslationUnit<'_>,
@@ -78,9 +78,8 @@ pub fn check_counter_sources(
         .collect()
 }
 
-pub const LIST_UNLINK_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore"
-);
+pub const LIST_UNLINK_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv");
 
 pub fn check_list_unlink_source(
     unit: &C11TranslationUnit<'_>,

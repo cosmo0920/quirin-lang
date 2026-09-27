@@ -1,5 +1,8 @@
 # O04-B09B10 — member addresses and custody-taking bound reads — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-READ-BOUND
 ([`docs/reports/remaining-o04-read-bound/README.md`](../remaining-o04-read-bound/README.md)
 §7), whose success exit C6 carried nine remaining refusals, and of O00's
@@ -260,7 +263,7 @@ and are **not** proved: declaration completeness, and C effective types. C02-P's
 recorded may-alias boundary (**C02-P-ALIAS**) is inherited and not widened.
 
 This card adds **five** declared callee premises, in the new fixture module
-[`o04_b09b10_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore),
+[`o04_b09b10_callees.qr`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr),
 which lives with the gateway test fixtures so the pinned `contract/qcore` corpus
 count of 60 is untouched. Each is a **trusted assumption**, and each was checked
 against the pinned upstream sources rather than assumed:

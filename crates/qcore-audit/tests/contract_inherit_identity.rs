@@ -49,14 +49,14 @@ fn inherited(parent: &str) -> ResourceContracts {
         namespace: "fluent_bit".into(),
         version: "0.1.0".into(),
         dependencies: BTreeSet::from(["quirin-provider-libc".into()]),
-        modules: BTreeMap::from([("fluent_bit/memory.qcore".into(), CHILD.into())]),
+        modules: BTreeMap::from([("fluent_bit/memory.qv".into(), CHILD.into())]),
         published: BTreeSet::new(),
     };
     load_published_resource_contracts(
         &ContractLoadPath::new([libc, flb]).unwrap(),
         &[PublishedModuleRef::new(
             "quirin-provider-fluent-bit",
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
         )],
     )
     .unwrap()
@@ -80,7 +80,7 @@ fn the_parent_text_is_part_of_the_trust_context_identity() {
     assert_eq!(before.source_assumptions(), after.source_assumptions());
     assert_ne!(identity(&before), identity(&after));
     let provenance = inclusion_provenance(&before).unwrap();
-    let chain = &provenance["modules"]["quirin-provider-fluent-bit:fluent_bit/memory.qcore"]["inherited"]
+    let chain = &provenance["modules"]["quirin-provider-fluent-bit:fluent_bit/memory.qv"]["inherited"]
         ["flb_free"];
     assert_eq!(chain[0]["declaration"], "free");
     assert_eq!(chain[0]["module"]["crate_name"], "quirin-provider-libc");

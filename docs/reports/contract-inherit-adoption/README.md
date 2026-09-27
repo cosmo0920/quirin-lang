@@ -1,5 +1,8 @@
 # CONTRACT-INHERIT-ADOPTION: contract inclusion and inheritance in the real provider crates
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card CONTRACT-INHERIT-ADOPTION, 2026-09-24, on base `dfe10c92` (main after the
 CONTRACT-INHERIT integration). [CONTRACT-INHERIT](../contract-inherit/README.md)
 added `#include "CRATE:MODULE";` and `contract inherit [NS::]NAME;` and tested
@@ -633,6 +636,6 @@ python3 docs/reports/w43-return-expression/scripts/baseline_identity.py <out> do
 python3 docs/reports/contract-inherit-adoption/scripts/arbiter_compare.py <left> <right> <out.json>
 python3 docs/reports/contract-inherit-adoption/scripts/census.py . <out.json>
 python3 docs/reports/contract-inherit-adoption/scripts/wrapper_census.py . <fluent-bit-source> <out.json>
-target/release/examples/declared_abi_census providers/quirin-provider-libc/contracts/libc/string.qcore <written-out wrappers> -- <185 units>.i
+target/release/examples/declared_abi_census providers/quirin-provider-libc/contracts/libc/string.qv <written-out wrappers> -- <185 units>.i
 python3 docs/reports/contract-inherit-adoption/scripts/update_ledger.py   # once
 ```

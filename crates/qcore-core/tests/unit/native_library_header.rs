@@ -53,7 +53,7 @@ fn headerless_text(entries: &str) -> String {
 
 fn libraries(text: &str) -> NativeLibraries {
     let mut sources = BTreeMap::new();
-    sources.insert("demo.qcorelib".to_owned(), text.to_owned());
+    sources.insert("demo.qrlib".to_owned(), text.to_owned());
     NativeLibraries::load(&sources).expect("the manifest loads")
 }
 
@@ -157,7 +157,7 @@ fn a_header_the_manifest_names_and_nobody_supplied_refuses() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::NotSupplied {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
         }
     );
@@ -175,7 +175,7 @@ fn a_measured_digest_that_is_not_the_declared_one_refuses() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::DigestMismatch {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             declared: HEADER_DIGEST.to_owned(),
             measured: OTHER_DIGEST.to_owned(),
@@ -222,7 +222,7 @@ fn a_directive_outside_the_v1_subset_refuses_the_whole_header() {
         assert_eq!(
             refusal(failure),
             HeaderRefusal::UnsupportedDirective {
-                manifest: "demo.qcorelib".to_owned(),
+                manifest: "demo.qrlib".to_owned(),
                 reference: "include/demo.h".to_owned(),
                 directive: keyword.to_owned(),
             },
@@ -242,7 +242,7 @@ fn conditional_regions_that_do_not_close_refuse_the_whole_header() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnbalancedConditional {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
         }
     );
@@ -260,7 +260,7 @@ fn a_declaration_only_inside_a_conditional_region_refuses_naming_that_reason() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::ConditionalDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         },
@@ -289,7 +289,7 @@ fn the_include_guard_is_read_at_depth_zero_and_a_second_conditional_is_not() {
     assert_eq!(
         refusal(check("unchecked fn demo_extra(int32_t) -> int32_t;", &header).unwrap_err()),
         HeaderRefusal::ConditionalDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_extra".to_owned(),
         }
@@ -323,7 +323,7 @@ fn an_ifndef_that_is_not_the_file_wide_guard_is_a_conditional_region() {
             .unwrap_err()
         ),
         HeaderRefusal::ConditionalDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         }
@@ -337,7 +337,7 @@ fn an_include_is_never_followed_so_a_type_it_defines_is_unreadable() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnreadableResult {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_open".to_owned(),
             spelling: "other_handle_t".to_owned(),
@@ -356,7 +356,7 @@ fn a_symbol_the_header_defines_as_a_macro_is_not_an_exported_symbol() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::MacroSymbol {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         }
@@ -397,7 +397,7 @@ fn a_bound_symbol_the_header_does_not_declare_refuses() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UndeclaredSymbol {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         }
@@ -437,7 +437,7 @@ fn a_static_declaration_is_not_an_exported_symbol() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::InternalDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         },
@@ -485,7 +485,7 @@ fn an_empty_parameter_list_specifies_nothing_and_refuses() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnspecifiedParameters {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_now".to_owned(),
         },
@@ -513,7 +513,7 @@ fn a_variadic_declaration_refuses() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::VariadicDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_log".to_owned(),
         }
@@ -534,7 +534,7 @@ fn two_declarations_that_project_differently_are_ambiguous() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::AmbiguousDeclaration {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
         }
@@ -568,7 +568,7 @@ fn an_export_decoration_macro_makes_the_declaration_unreadable_by_name() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnreadableResult {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_add".to_owned(),
             spelling: "DEMO_EXPORT_SYMBOL int32_t".to_owned(),
@@ -648,7 +648,7 @@ fn a_function_pointer_parameter_is_read_and_cannot_be_spelled() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnspellableParameter {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_packer_init".to_owned(),
             parameter: 2,
@@ -683,7 +683,7 @@ fn a_floating_result_is_read_and_cannot_be_spelled() {
     assert_eq!(
         refusal(failure),
         HeaderRefusal::UnspellableResult {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             reference: "include/demo.h".to_owned(),
             symbol: "demo_now".to_owned(),
             projection: "f64",
@@ -1422,7 +1422,7 @@ fn a_declared_include_texts_digest_decides_before_it_is_read() {
             .expect_err("a substituted include text refuses"),
         ),
         HeaderRefusal::IncludeDigestMismatch {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             spelling: "\"demo_visibility.h\"".to_owned(),
             reference: "include/demo_visibility.h".to_owned(),
             declared: DECORATION_DIGEST.to_owned(),
@@ -1446,7 +1446,7 @@ fn a_declared_include_text_that_is_not_supplied_refuses_by_name() {
     assert_eq!(
         refusal(check_header_bindings(&libraries, &sources).expect_err("the text is missing")),
         HeaderRefusal::IncludeNotSupplied {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             spelling: "\"demo_visibility.h\"".to_owned(),
             reference: "include/demo_visibility.h".to_owned(),
         }
@@ -1470,7 +1470,7 @@ fn a_declared_include_text_nothing_reaches_refuses_by_name() {
             .expect_err("an unreached declared text refuses"),
         ),
         HeaderRefusal::IncludeNotReached {
-            manifest: "demo.qcorelib".to_owned(),
+            manifest: "demo.qrlib".to_owned(),
             spelling: "\"demo_visibility.h\"".to_owned(),
         }
     );

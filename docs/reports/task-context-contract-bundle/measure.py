@@ -14,6 +14,10 @@ spec.loader.exec_module(context)
 baseline = json.loads((OUT/'baseline.json').read_text())
 base = baseline['base']
 
+if any((ROOT / "providers").glob("*/contracts/**/*.qv")):
+    raise SystemExit("Historical checkpoint only: this replay pins the pre-migration 96-module corpus. "
+                     "Use the recorded report revision; it cannot measure the current .qv corpus.")
+
 def old(path):
     return subprocess.check_output(['git', '-C', str(ROOT), 'show', f'{base}:{path}'])
 

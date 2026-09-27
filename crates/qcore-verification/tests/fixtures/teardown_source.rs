@@ -23,9 +23,8 @@ pub const UNLINK_HELPER: &str = "__mk_list_del";
 pub const NODE_C_TYPE: &str = "struct mk_list *";
 pub const NODE_QCORE_TYPE: &str = "ListNode";
 pub const UNLINK_SOURCE: &str = "struct mk_list { struct mk_list *prev; struct mk_list *next; }; static inline void __mk_list_del(struct mk_list *prev, struct mk_list *next) { prev->next=next; next->prev=prev; } static inline void mk_list_del(struct mk_list *entry) { __mk_list_del(entry->prev,entry->next); entry->prev=(void *)0; entry->next=(void *)0; }";
-pub const UNLINK_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore"
-);
+pub const UNLINK_CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv");
 
 pub const DESTRUCTOR_FUNCTION: &str = "cio_memfs_close";
 pub const ROOT_C_TYPE: &str = "struct cio_chunk *";
@@ -43,7 +42,7 @@ void cio_memfs_close(struct cio_chunk *ch) {
     free(mf);
 }";
 pub const DESTRUCTOR_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv"
 );
 /// The inventory `memory_backend.qcore` declares, in the order the importer
 /// is handed it. `derive` refuses a projection that names any other set.

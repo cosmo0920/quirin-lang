@@ -1,4 +1,4 @@
-//! Tracked EXT-01 source inventory. Run from a checkout root:
+//! Tracked source inventory (legacy and current Quirin suffixes). Run from a checkout root:
 //! `cargo run -q -p qcore-frontend --example extension_inventory > mapping.tsv`.
 //! The index supplies paths and blob identities; the language parsers supply modes.
 
@@ -42,7 +42,17 @@ fn refused_candidate(stem: &str, source: &str) -> (String, &'static str) {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = Command::new("git")
-        .args(["ls-files", "--stage", "-z", "--", "*.qcore", "*.qcorelib"])
+        .args([
+            "ls-files",
+            "--stage",
+            "-z",
+            "--",
+            "*.qcore",
+            "*.qcorelib",
+            "*.qv",
+            "*.qr",
+            "*.qrlib",
+        ])
         .output()?;
     if !output.status.success() {
         return Err(format!("git ls-files failed: {}", output.status).into());
@@ -67,52 +77,58 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         let source = fs::read_to_string(path)?;
         let archive = path.starts_with("docs/reports/");
-        let (result, new_path, decision, detail) =
-            if let Some(stem) = path.strip_suffix(".qcorelib") {
-                match load_native_library_manifest(&source) {
-                    Ok(_) => (
-                        "abi_manifest",
-                        format!("{stem}.qrlib"),
-                        "parsed",
-                        String::new(),
-                    ),
-                    Err(error) => (
-                        "abi_parse_error",
-                        String::new(),
-                        "unresolved",
-                        format!("{error:?}"),
-                    ),
+        let (result, new_path, decision, detail) = if let Some(stem) = path
+            .strip_suffix(".qcorelib")
+            .or_else(|| path.strip_suffix(".qrlib"))
+        {
+            match load_native_library_manifest(&source) {
+                Ok(_) => (
+                    "abi_manifest",
+                    format!("{stem}.qrlib"),
+                    "parsed",
+                    String::new(),
+                ),
+                Err(error) => (
+                    "abi_parse_error",
+                    String::new(),
+                    "unresolved",
+                    format!("{error:?}"),
+                ),
+            }
+        } else {
+            let stem = path
+                .strip_suffix(".qcore")
+                .or_else(|| path.strip_suffix(".qv"))
+                .or_else(|| path.strip_suffix(".qr"))
+                .ok_or("unexpected suffix")?;
+            match parse_source_program(&source) {
+                Ok(program) => {
+                    let (mode, suffix) = match program.mode {
+                        SourceModuleMode::Contract => ("contract", ".qv"),
+                        SourceModuleMode::Executable => ("executable", ".qr"),
+                        SourceModuleMode::Library => ("library", ".qr"),
+                    };
+                    (mode, format!("{stem}{suffix}"), "parsed", String::new())
                 }
-            } else {
-                let stem = path.strip_suffix(".qcore").ok_or("unexpected suffix")?;
-                match parse_source_program(&source) {
-                    Ok(program) => {
-                        let (mode, suffix) = match program.mode {
-                            SourceModuleMode::Contract => ("contract", ".qv"),
-                            SourceModuleMode::Executable => ("executable", ".qr"),
-                            SourceModuleMode::Library => ("library", ".qr"),
-                        };
-                        (mode, format!("{stem}{suffix}"), "parsed", String::new())
-                    }
-                    Err(error) => {
-                        let (candidate, decision) = refused_candidate(stem, &source);
-                        let detail = format!(
-                            "{} at {}..{}",
-                            error.message, error.span.start, error.span.end
-                        );
-                        if scan_contract_inclusion(&source).is_ok_and(|syntax| !syntax.is_empty()) {
-                            (
-                                "contract_inclusion_syntax",
-                                format!("{stem}.qv"),
-                                "syntax_parsed_loader_resolution_required",
-                                detail,
-                            )
-                        } else {
-                            ("source_parse_error", candidate, decision, detail)
-                        }
+                Err(error) => {
+                    let (candidate, decision) = refused_candidate(stem, &source);
+                    let detail = format!(
+                        "{} at {}..{}",
+                        error.message, error.span.start, error.span.end
+                    );
+                    if scan_contract_inclusion(&source).is_ok_and(|syntax| !syntax.is_empty()) {
+                        (
+                            "contract_inclusion_syntax",
+                            format!("{stem}.qv"),
+                            "syntax_parsed_loader_resolution_required",
+                            detail,
+                        )
+                    } else {
+                        ("source_parse_error", candidate, decision, detail)
                     }
                 }
-            };
+            }
+        };
         println!(
             "{}\t{}\t{}\t{}\t{}\t{}\t{}",
             field(path),

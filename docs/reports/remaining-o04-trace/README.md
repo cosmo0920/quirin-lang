@@ -1,5 +1,8 @@
 # O04-TRACE — the variadic tail and one level of nesting — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-B09B10
 ([`docs/reports/remaining-o04-b09b10/README.md`](../remaining-o04-b09b10/README.md)
 §9), whose follow-on **`O04-B09B10-TRACE`** reads: *"C6's whole residual is one
@@ -124,7 +127,7 @@ mode: every named parameter still needs one.
 The **vocabulary** is production: the loader clause ships. The **declaration
 that `flb_trace` has a data tail** is a premise about `flb_trace`, and it lives
 with the gateway test fixtures, in
-[`o04_trace_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore),
+[`o04_trace_callees.qr`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr),
 following card O04-B09B10's precedent for exactly the same class of premise.
 
 **So the pinned `contract/qcore` corpus count stays at 60 modules and no
@@ -344,7 +347,7 @@ completeness and C effective types. C02-P's recorded may-alias boundary
 (**C02-P-ALIAS**) is inherited and not widened.
 
 This card adds **two** declared callee premises, in the new fixture module
-[`o04_trace_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore).
+[`o04_trace_callees.qr`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr).
 Each is a **trusted assumption**, checked against the pinned upstream sources
 rather than assumed:
 

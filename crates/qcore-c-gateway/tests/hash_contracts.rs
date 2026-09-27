@@ -45,18 +45,18 @@ const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
 const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
 const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
 const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
-const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
-const ARMS_CALLEES: &str = include_str!("fixtures/contracts/o04_arms_callees.qcore");
-const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qcore");
+const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qv");
+const ARMS_CALLEES: &str = include_str!("fixtures/contracts/o04_arms_callees.qr");
+const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qr");
 /// O04-B09B10's four non-hash premises, reproduced; see the fixture header.
-const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qcore");
+const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qr");
 /// The declaration O04-B09B10 measured under, kept for the byte comparison.
-const B09B10_CALLEES: &str = include_str!("fixtures/contracts/o04_b09b10_callees.qcore");
+const B09B10_CALLEES: &str = include_str!("fixtures/contracts/o04_b09b10_callees.qr");
 /// **The production contract module this card lands.**
 const PUBLICATION: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv"
 );
-const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/hash_contracts_generic.qcore");
+const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/hash_contracts_generic.qv");
 
 /// The refusal a call outside its declared premise carries.
 const OUTSIDE: &str = "call to `p_publish` outside its declared literal-argument premise";

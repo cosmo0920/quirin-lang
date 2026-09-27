@@ -17,28 +17,28 @@
     "task_ledger_check"
   ],
   "evidence_target": "linux",
-  "notes": "ScopedReadLoansV1 (cards T05 and WRITE-LEND-TASKS), mapped by CT-WIRE-LANE-4 (wave 32). The parent lends the worker a read share of the buffer its frame owns and then destroys that buffer while the worker is live and unjoined: the capture's environment expires before the join. The checked task ledger's own LoanOutstanding refuses it, attributed to the `drop buffer;` statement and naming the resource, the outstanding amount and the BORROWING TASK - the capture, not the handle, which is card T00's archived blocker for this case measured obsolete. The scenario's second disjunct, `environment moves before join`, has the source form T00 said it lacked and is pinned as its own refusing control (move_before_join.qcore: `move buffer` handing custody to a second worker while the first share is out, same code, same LoanOutstanding, attributed to the moving statement). Two accepted controls separate the construct from its position in both directions: the identical program with the destruction after the join checks (drop_after_join.qcore, ScopedReadLoansV1), and the identical destruction in the identical position with no buffer capture out checks too (scalar_capture_drop.qcore, ScopedOwnedTasksV1). A fourth control pins the frame's own expiry - a bare `return` out of the thread scope with the share still out, refused at Q600 ScopeBusy naming the frame. BOUNDARY: the captured storage is a HEAP buffer bound to a parent-frame local; this language has no stack-allocated capturable resource, so `stack` has no referent and the case is mapped on the frame-owned-resource shape (docs/reports/ct-wire-lane-4/README.md section 4). No native, sanitizer or proof evidence is claimed: the fixture is a refusal that reaches no backend.",
+  "notes": "ScopedReadLoansV1 (cards T05 and WRITE-LEND-TASKS), mapped by CT-WIRE-LANE-4 (wave 32). The parent lends the worker a read share of the buffer its frame owns and then destroys that buffer while the worker is live and unjoined: the capture's environment expires before the join. The checked task ledger's own LoanOutstanding refuses it, attributed to the `drop buffer;` statement and naming the resource, the outstanding amount and the BORROWING TASK - the capture, not the handle, which is card T00's archived blocker for this case measured obsolete. The scenario's second disjunct, `environment moves before join`, has the source form T00 said it lacked and is pinned as its own refusing control (move_before_join.qr: `move buffer` handing custody to a second worker while the first share is out, same code, same LoanOutstanding, attributed to the moving statement). Two accepted controls separate the construct from its position in both directions: the identical program with the destruction after the join checks (drop_after_join.qr, ScopedReadLoansV1), and the identical destruction in the identical position with no buffer capture out checks too (scalar_capture_drop.qr, ScopedOwnedTasksV1). A fourth control pins the frame's own expiry - a bare `return` out of the thread scope with the share still out, refused at Q600 ScopeBusy naming the frame. BOUNDARY: the captured storage is a HEAP buffer bound to a parent-frame local; this language has no stack-allocated capturable resource, so `stack` has no referent and the case is mapped on the frame-owned-resource shape (docs/reports/ct-wire-lane-4/README.md section 4). No native, sanitizer or proof evidence is claimed: the fixture is a refusal that reaches no backend.",
   "source_reject": {
     "diagnostic_sequence": [
       "Q600"
     ],
     "controls": [
       {
-        "source": "drop_after_join.qcore",
+        "source": "drop_after_join.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedReadLoansV1",
         "note": "Byte-identical to the case but for one statement's position: the destruction moved to after the join. Checks. The construct CT44 names is the expiry BEFORE the join, and removing exactly that relative position moves the verdict."
       },
       {
-        "source": "scalar_capture_drop.qcore",
+        "source": "scalar_capture_drop.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedOwnedTasksV1",
         "note": "The identical destruction in the identical position, with a scalar `copy` capture instead of the buffer's read share, so a child is still live and unjoined across it. Checks. The refusal is keyed to the CAPTURE, not to destroying a resource while some child runs and not to the statement's position on its own."
       },
       {
-        "source": "move_before_join.qcore",
+        "source": "move_before_join.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -46,12 +46,12 @@
         "note": "The scenario's second disjunct: the environment MOVES rather than expiring - `move buffer` handing custody to a second worker while the first worker's read share is out. Same code, same LoanOutstanding, attributed to the moving statement. This is the direct measurement of card T00's archived claim that this half has no source form."
       },
       {
-        "source": "frame_exit_before_join.qcore",
+        "source": "frame_exit_before_join.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
         ],
-        "note": "The frame's own expiry, with no destruction written at all: a bare `return` out of the thread scope while the share is out, refused at Q600 ScopeBusy whose message names the frame. Pinned as a control and not as the case, because card CT-WIRE-LANE-3 examined this refusal for CT24 and recorded that the task route executes no destroy at scope exit; the case is written instead on the statement whose executed meaning drop_after_join.qcore demonstrates."
+        "note": "The frame's own expiry, with no destruction written at all: a bare `return` out of the thread scope while the share is out, refused at Q600 ScopeBusy whose message names the frame. Pinned as a control and not as the case, because card CT-WIRE-LANE-3 examined this refusal for CT24 and recorded that the task route executes no destroy at scope exit; the case is written instead on the statement whose executed meaning drop_after_join.qr demonstrates."
       }
     ]
   }

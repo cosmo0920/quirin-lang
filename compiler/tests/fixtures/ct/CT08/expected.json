@@ -22,14 +22,14 @@
     ],
     "controls": [
       {
-        "source": "disjoint.qcore",
+        "source": "disjoint.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",
         "note": "Boundary: the overlapping byte moved outside both lent ranges. Admitted, with the owner's writes read back by a third view, so the refusal is keyed to the overlap rather than to writing a borrowed buffer at all. This program was CT07's own case at the wave-28 mapping; CT07's case is the write-lend program since card CT07-WRITE-REMAP, which keeps the read-loan program as its accept control."
       },
       {
-        "source": "no_loan.qcore",
+        "source": "no_loan.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",

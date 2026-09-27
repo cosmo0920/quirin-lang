@@ -1,5 +1,8 @@
 # P06 — Define the first CTraces provider capability
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Outcome: designed, not implemented.** No CTraces function is accepted by any
 implemented core checker, so the card's precondition for implementing
 ("only if an adequate core checker already exists") is not met. The deliverable
@@ -12,7 +15,7 @@ corpus (59 modules) and `qcore-schemas` (4.0.0) are unchanged. The four pinned
 185-unit artifacts were not touched and not re-measured.
 
 - Design: [`docs/design/CTRACES_PROVIDER_CAPABILITY_V1.md`](../../design/CTRACES_PROVIDER_CAPABILITY_V1.md)
-- Contract text: [`ctraces_span_dropped_counts.qcore`](ctraces_span_dropped_counts.qcore)
+- Contract text: [`ctraces_span_dropped_counts.qv`](ctraces_span_dropped_counts.qv)
 - Census tool: [`ctraces_census.py`](ctraces_census.py) → [`census.json`](census.json)
 - Boundary test: `crates/qcore-verification/tests/ctraces_capability_boundary.rs`
 - Excerpt fixture: [`ctraces_span_excerpt.c`](ctraces_span_excerpt.c)

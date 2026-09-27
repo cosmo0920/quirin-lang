@@ -1,5 +1,8 @@
 # W45-FB-RETRY-LIFETIME: counted users and container publication, decided on the singleplex queue
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W45-FB-RETRY-LIFETIME, 2026-09-26, base `74579af6` ("Record the
 w45-fb-retry-fault-injection integration gate"). It is the first semantic
 slice of P1.3 (FB-RETRY-LIFETIME) of the
@@ -25,9 +28,9 @@ ran: the obligations are **checked Fluent Bit provider contracts** decided by
     A per-path pass checks every clause against the body it is declared for and
     applies a declaration of a defined body only where its body validates.
 * **The obligations as provider contracts**
-  ([`task_users.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore),
-  [`output_singleplex.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore),
-  [`monkey/intrusive_list.qcore`](../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore)).
+  ([`task_users.qv`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv),
+  [`output_singleplex.qv`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv),
+  [`monkey/intrusive_list.qv`](../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv)).
   `quirin-audit` publishes a verdict per clause (`user_count_clauses`):
   * **OR-1 refuted** at `src/flb_output.c:376` (the C2 shape), a provisional
     `Unsafe` candidate under the synchronous-proxy premise;
@@ -328,7 +331,7 @@ docs/reports/w45-fb-retry-lifetime/scripts/run-current.sh attempt-2 slice-after 
 docs/reports/w45-fb-retry-lifetime/scripts/run-current.sh attempt-2 slice-after-providers target/release/quirin-audit \
   --selection contract/profiles/fluent-bit/system-selection.json --load-path providers/contract-load-path.json \
   --provider quirin-provider-fluent-bit --provider quirin-provider-libc \
-  --provider qcore-provider-libevent:monkey/intrusive_list.qcore --jobs 4
+  --provider qcore-provider-libevent:monkey/intrusive_list.qv --jobs 4
 python3 docs/reports/w45-fb-retry-lifetime/scripts/slice_summary.py $OUT/attempt-2/slice-after/resource-diagnostics.json \
   --before $OUT/attempt-2/slice-before/resource-diagnostics.json
 ```

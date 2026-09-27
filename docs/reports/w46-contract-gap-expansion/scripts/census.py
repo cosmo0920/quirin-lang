@@ -30,7 +30,7 @@ def main():
     declarations = collections.defaultdict(list)
     libc = set()
     for name in paths:
-        if not name.endswith(".qcore"):
+        if not name.endswith((".qcore", ".qv")):
             continue
         text = (root / name).read_text()
         for symbol in re.findall(r"\bextern\s+fn\s+(\w+)\s*\(", text):

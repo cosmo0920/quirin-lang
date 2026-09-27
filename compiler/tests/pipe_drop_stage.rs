@@ -60,7 +60,7 @@ fn message(source: &str) -> String {
 // ---------------------------------------------------------------- the modules
 
 /// A composed `source.std-io-tasks.v1` module — the shape
-/// `examples/threads/owned_buffer.qcore` has.
+/// `examples/threads/owned_buffer.qr` has.
 const COMPOSED: &str = "import std.concurrency;
 import std.logger;
 import std.fmt;
@@ -548,8 +548,8 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 // 4. The published example (card `PIPE-INTRINSIC-EXAMPLE`)
 // ---------------------------------------------------------------------------
 
-/// `examples/threads/owned_buffer.qcore`, as published.
-const OWNED_BUFFER: &str = include_str!("../../examples/threads/owned_buffer.qcore");
+/// `examples/threads/owned_buffer.qr`, as published.
+const OWNED_BUFFER: &str = include_str!("../../examples/threads/owned_buffer.qr");
 
 #[test]
 fn the_published_example_emits_what_its_hand_written_form_emits() {

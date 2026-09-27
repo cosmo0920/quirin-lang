@@ -54,30 +54,28 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 
 // --- The published sources. ---
 
-const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qv");
 const BUFFER_API_C: &str = include_str!("../../examples/extern/buffer_api.c");
 const UNCHECKED_API_C: &str = include_str!("../../examples/unsafe-linkage/unchecked_api.c");
 
-const RENDERINGS: &str = include_str!("../../examples/stdio/renderings.qcore");
-const SEVERITIES: &str = include_str!("../../examples/stdio/severities.qcore");
-const BARRIER: &str = include_str!("../../examples/stdio/barrier.qcore");
-const PIPELINE: &str = include_str!("../../examples/stdio/pipeline.qcore");
+const RENDERINGS: &str = include_str!("../../examples/stdio/renderings.qr");
+const SEVERITIES: &str = include_str!("../../examples/stdio/severities.qr");
+const BARRIER: &str = include_str!("../../examples/stdio/barrier.qr");
+const PIPELINE: &str = include_str!("../../examples/stdio/pipeline.qr");
 
-const RENDERED_LINES: &str = include_str!("../../examples/pipes/rendered_lines.qcore");
-const SCALAR_STAGES: &str = include_str!("../../examples/pipes/scalar_stages.qcore");
-const SCALAR_STAGES_HAND: &str =
-    include_str!("../../examples/pipes/scalar_stages_hand_written.qcore");
+const RENDERED_LINES: &str = include_str!("../../examples/pipes/rendered_lines.qr");
+const SCALAR_STAGES: &str = include_str!("../../examples/pipes/scalar_stages.qr");
+const SCALAR_STAGES_HAND: &str = include_str!("../../examples/pipes/scalar_stages_hand_written.qr");
 
-const CONDITIONAL_RELEASE: &str =
-    include_str!("../../examples/branching/conditional_release.qcore");
-const CONDITION_TIER: &str = include_str!("../../examples/branching/condition_tier.qcore");
-const EARLY_RETURN: &str = include_str!("../../examples/branching/early_return.qcore");
+const CONDITIONAL_RELEASE: &str = include_str!("../../examples/branching/conditional_release.qr");
+const CONDITION_TIER: &str = include_str!("../../examples/branching/condition_tier.qr");
+const EARLY_RETURN: &str = include_str!("../../examples/branching/early_return.qr");
 
-const BUFFER_ROUND_TRIP: &str = include_str!("../../examples/extern/buffer_round_trip.qcore");
-const SCALAR_RESULTS: &str = include_str!("../../examples/extern/scalar_results.qcore");
-const BORROWED_RENDER: &str = include_str!("../../examples/extern/borrowed_render.qcore");
+const BUFFER_ROUND_TRIP: &str = include_str!("../../examples/extern/buffer_round_trip.qr");
+const SCALAR_RESULTS: &str = include_str!("../../examples/extern/scalar_results.qr");
+const BORROWED_RENDER: &str = include_str!("../../examples/extern/borrowed_render.qr");
 
-const UNCHECKED_CALLS: &str = include_str!("../../examples/unsafe-linkage/unchecked_calls.qcore");
+const UNCHECKED_CALLS: &str = include_str!("../../examples/unsafe-linkage/unchecked_calls.qr");
 
 // --- The published pages. ---
 
@@ -95,7 +93,7 @@ const UNSAFE_README: &str = include_str!("../../examples/unsafe-linkage/README.m
 /// against, selected under the path the READMEs name.
 fn contracts() -> Option<BTreeMap<String, String>> {
     Some(BTreeMap::from([(
-        "examples/extern/contracts/buffer_api.qcore".to_owned(),
+        "examples/extern/contracts/buffer_api.qv".to_owned(),
         CONTRACTS.to_owned(),
     )]))
 }
@@ -130,7 +128,7 @@ fn contracted(name: &str, source: &str) -> CompiledModule {
 
 /// The rendered diagnostics a source is refused with, in order.
 fn refusal(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> Vec<String> {
-    compile_named("refusal.qcore", source, extern_contracts)
+    compile_named("refusal.qr", source, extern_contracts)
         .map(|module| module.execution_profile)
         .expect_err("this program must be refused")
         .iter()
@@ -140,7 +138,7 @@ fn refusal(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> 
 
 /// Just the codes, from the same refusal.
 fn refusal_codes(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> Vec<String> {
-    compile_named("refusal.qcore", source, extern_contracts)
+    compile_named("refusal.qr", source, extern_contracts)
         .map(|module| module.execution_profile)
         .expect_err("this program must be refused")
         .into_iter()
@@ -306,9 +304,9 @@ fn documented(readme: &str, marker: &str) -> Vec<String> {
 #[test]
 fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
     for (name, source) in [
-        ("stdio/renderings.qcore", RENDERINGS),
-        ("stdio/severities.qcore", SEVERITIES),
-        ("stdio/barrier.qcore", BARRIER),
+        ("stdio/renderings.qr", RENDERINGS),
+        ("stdio/severities.qr", SEVERITIES),
+        ("stdio/barrier.qr", BARRIER),
     ] {
         let module = plain(name, source);
         assert_eq!(
@@ -319,7 +317,7 @@ fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
         assert_eq!(module.entry.as_deref(), Some("main"));
         // The derived effect row is exactly `io`: this route's operand grammar
         // admits no resource, so it can neither allocate nor mutate one. That
-        // is the claim `renderings.qcore` makes in prose.
+        // is the claim `renderings.qr` makes in prose.
         let checked = module.checked.as_standard_io().unwrap();
         assert_eq!(checked.certificate.effects.iter().count(), 1);
         assert!(
@@ -331,14 +329,14 @@ fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
     }
 
     // The barrier-only module needs no rendering import and names none.
-    let barrier = plain("stdio/barrier.qcore", BARRIER);
+    let barrier = plain("stdio/barrier.qr", BARRIER);
     let checked = barrier.checked.as_standard_io().unwrap();
     assert_eq!(checked.certificate.flushes, 1);
     assert!(checked.certificate.renderings.is_empty());
     assert!(!BARRIER.contains("import std.fmt;"));
 
     // And the composed example is composed: neither half is published alone.
-    let pipeline = contracted("stdio/pipeline.qcore", PIPELINE);
+    let pipeline = contracted("stdio/pipeline.qr", PIPELINE);
     assert_eq!(
         pipeline.execution_profile,
         SourceExecutionProfile::ComposedStdIoExternV1
@@ -358,50 +356,41 @@ fn every_published_example_defines_exactly_one_entry_point() {
     // asserted: the assembler guarantees it writes one entry point, not that no
     // fragment carries another.
     for (name, module) in [
-        (
-            "stdio/renderings",
-            plain("stdio/renderings.qcore", RENDERINGS),
-        ),
-        (
-            "stdio/severities",
-            plain("stdio/severities.qcore", SEVERITIES),
-        ),
-        ("stdio/barrier", plain("stdio/barrier.qcore", BARRIER)),
-        (
-            "stdio/pipeline",
-            contracted("stdio/pipeline.qcore", PIPELINE),
-        ),
+        ("stdio/renderings", plain("stdio/renderings.qr", RENDERINGS)),
+        ("stdio/severities", plain("stdio/severities.qr", SEVERITIES)),
+        ("stdio/barrier", plain("stdio/barrier.qr", BARRIER)),
+        ("stdio/pipeline", contracted("stdio/pipeline.qr", PIPELINE)),
         (
             "pipes/rendered_lines",
-            plain("pipes/rendered_lines.qcore", RENDERED_LINES),
+            plain("pipes/rendered_lines.qr", RENDERED_LINES),
         ),
         (
             "branching/conditional_release",
-            plain("branching/conditional_release.qcore", CONDITIONAL_RELEASE),
+            plain("branching/conditional_release.qr", CONDITIONAL_RELEASE),
         ),
         (
             "branching/condition_tier",
-            plain("branching/condition_tier.qcore", CONDITION_TIER),
+            plain("branching/condition_tier.qr", CONDITION_TIER),
         ),
         (
             "branching/early_return",
-            plain("branching/early_return.qcore", EARLY_RETURN),
+            plain("branching/early_return.qr", EARLY_RETURN),
         ),
         (
             "extern/buffer_round_trip",
-            contracted("extern/buffer_round_trip.qcore", BUFFER_ROUND_TRIP),
+            contracted("extern/buffer_round_trip.qr", BUFFER_ROUND_TRIP),
         ),
         (
             "extern/scalar_results",
-            contracted("extern/scalar_results.qcore", SCALAR_RESULTS),
+            contracted("extern/scalar_results.qr", SCALAR_RESULTS),
         ),
         (
             "extern/borrowed_render",
-            contracted("extern/borrowed_render.qcore", BORROWED_RENDER),
+            contracted("extern/borrowed_render.qr", BORROWED_RENDER),
         ),
         (
             "unsafe-linkage/unchecked_calls",
-            plain("unsafe-linkage/unchecked_calls.qcore", UNCHECKED_CALLS),
+            plain("unsafe-linkage/unchecked_calls.qr", UNCHECKED_CALLS),
         ),
     ] {
         let c = module
@@ -425,9 +414,9 @@ fn every_published_example_defines_exactly_one_entry_point() {
 #[test]
 fn every_stdio_example_prints_through_the_single_emission_route() {
     for (name, module) in [
-        ("renderings", plain("stdio/renderings.qcore", RENDERINGS)),
-        ("severities", plain("stdio/severities.qcore", SEVERITIES)),
-        ("pipeline", contracted("stdio/pipeline.qcore", PIPELINE)),
+        ("renderings", plain("stdio/renderings.qr", RENDERINGS)),
+        ("severities", plain("stdio/severities.qr", SEVERITIES)),
+        ("pipeline", contracted("stdio/pipeline.qr", PIPELINE)),
     ] {
         let c = module.c_source.as_deref().unwrap();
         if name == "pipeline" {
@@ -455,19 +444,19 @@ fn the_stdio_examples_match_their_reference_execution_per_stream() {
     for (label, module, extra) in [
         (
             "renderings",
-            plain("stdio/renderings.qcore", RENDERINGS),
+            plain("stdio/renderings.qr", RENDERINGS),
             Vec::new(),
         ),
         (
             "severities",
-            plain("stdio/severities.qcore", SEVERITIES),
+            plain("stdio/severities.qr", SEVERITIES),
             Vec::new(),
         ),
-        ("barrier", plain("stdio/barrier.qcore", BARRIER), Vec::new()),
+        ("barrier", plain("stdio/barrier.qr", BARRIER), Vec::new()),
         (
             "pipeline",
             contracted(
-                "stdio/pipeline.qcore",
+                "stdio/pipeline.qr",
                 &PIPELINE.replace("log_level trace;", ""),
             ),
             vec![("buffer_api.c", BUFFER_API_C)],
@@ -490,7 +479,7 @@ fn the_stdio_examples_match_their_reference_execution_per_stream() {
 fn the_stdio_page_publishes_the_transcripts_its_programs_print() {
     let (renderings_out, renderings_err) = run(
         "renderings-doc",
-        plain("stdio/renderings.qcore", RENDERINGS)
+        plain("stdio/renderings.qr", RENDERINGS)
             .c_source
             .as_deref()
             .unwrap(),
@@ -507,7 +496,7 @@ fn the_stdio_page_publishes_the_transcripts_its_programs_print() {
 
     let (severities_out, severities_err) = run(
         "severities-doc",
-        plain("stdio/severities.qcore", SEVERITIES)
+        plain("stdio/severities.qr", SEVERITIES)
             .c_source
             .as_deref()
             .unwrap(),
@@ -521,7 +510,7 @@ fn the_stdio_page_publishes_the_transcripts_its_programs_print() {
 
     let (barrier_out, barrier_err) = run(
         "barrier-doc",
-        plain("stdio/barrier.qcore", BARRIER)
+        plain("stdio/barrier.qr", BARRIER)
             .c_source
             .as_deref()
             .unwrap(),
@@ -539,7 +528,7 @@ fn the_stdio_page_publishes_the_transcripts_its_programs_print() {
 
     let (pipeline_out, pipeline_err) = run(
         "pipeline-doc",
-        contracted("stdio/pipeline.qcore", PIPELINE)
+        contracted("stdio/pipeline.qr", PIPELINE)
             .c_source
             .as_deref()
             .unwrap(),
@@ -607,7 +596,7 @@ fn the_import_table_on_the_page_is_the_gate_that_runs() {
 /// comparisons — the page's "the emitted C does not believe it" claim.
 #[test]
 fn the_composed_example_does_not_believe_its_declared_outcomes() {
-    let module = contracted("stdio/pipeline.qcore", PIPELINE);
+    let module = contracted("stdio/pipeline.qr", PIPELINE);
     let c = module.c_source.as_deref().unwrap();
     assert!(c.contains("if (v1 != 56)"), "emitted C: {c}");
     assert!(c.contains("QCORE_DIAG_EXTERN_OUTCOME"));
@@ -628,8 +617,8 @@ fn the_composed_example_does_not_believe_its_declared_outcomes() {
 
 #[test]
 fn the_piped_and_hand_written_chains_emit_the_same_c_byte_for_byte() {
-    let piped = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
-    let hand = contracted("pipes/scalar_stages_hand_written.qcore", SCALAR_STAGES_HAND);
+    let piped = contracted("pipes/scalar_stages.qr", SCALAR_STAGES);
+    let hand = contracted("pipes/scalar_stages_hand_written.qr", SCALAR_STAGES_HAND);
     assert_eq!(
         piped.c_source, hand.c_source,
         "a chain and its hand-written statement sequence must emit the same C11"
@@ -647,7 +636,7 @@ fn the_piped_and_hand_written_chains_emit_the_same_c_byte_for_byte() {
 
 #[test]
 fn the_pipes_examples_match_their_reference_execution() {
-    let lines = plain("pipes/rendered_lines.qcore", RENDERED_LINES);
+    let lines = plain("pipes/rendered_lines.qr", RENDERED_LINES);
     let (expected_out, expected_err) = projections(&lines);
     let (out, err) = run("rendered-lines", lines.c_source.as_deref().unwrap(), &[]);
     assert_eq!(out, expected_out);
@@ -655,7 +644,7 @@ fn the_pipes_examples_match_their_reference_execution() {
 
     // The explicit trace adapter renders the structured extern observations
     // on stdout; source-level IO remains a separate stream projection.
-    let stages = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
+    let stages = contracted("pipes/scalar_stages.qr", SCALAR_STAGES);
     assert!(SCALAR_STAGES.contains("log_level trace;"));
     let (out, err) = run(
         "scalar-stages",
@@ -680,7 +669,7 @@ fn the_pipes_examples_match_their_reference_execution() {
 
 #[test]
 fn the_pipes_page_publishes_the_transcripts_its_programs_print() {
-    let lines = plain("pipes/rendered_lines.qcore", RENDERED_LINES);
+    let lines = plain("pipes/rendered_lines.qr", RENDERED_LINES);
     let (out, err) = run(
         "rendered-lines-doc",
         lines.c_source.as_deref().unwrap(),
@@ -695,7 +684,7 @@ fn the_pipes_page_publishes_the_transcripts_its_programs_print() {
         documented(PIPES_README, "transcript: rendered_lines stderr")
     );
 
-    let stages = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
+    let stages = contracted("pipes/scalar_stages.qr", SCALAR_STAGES);
     let (out, _) = run(
         "scalar-stages-doc",
         stages.c_source.as_deref().unwrap(),
@@ -709,10 +698,10 @@ fn the_pipes_page_publishes_the_transcripts_its_programs_print() {
 }
 
 /// A call with no declared outcome has no `-> N` field, which is the
-/// distinction the pipes page draws against `../stdio/pipeline.qcore`.
+/// distinction the pipes page draws against `../stdio/pipeline.qr`.
 #[test]
 fn an_undeclared_outcome_prints_no_arrow() {
-    let stages = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
+    let stages = contracted("pipes/scalar_stages.qr", SCALAR_STAGES);
     let observation = extern_trace(&stages);
     assert!(
         observation
@@ -724,7 +713,7 @@ fn an_undeclared_outcome_prints_no_arrow() {
         "no call in this example declares an outcome: {observation:?}"
     );
     // And the neighbouring example that does declare one does print it.
-    let declared = contracted("extern/scalar_results.qcore", SCALAR_RESULTS);
+    let declared = contracted("extern/scalar_results.qr", SCALAR_RESULTS);
     assert!(
         extern_trace(&declared)
             .iter()
@@ -788,7 +777,7 @@ fn the_branching_examples_take_the_sequential_route_and_run_clean() {
             "transcript: early_return stdout",
         ),
     ] {
-        let module = plain(&format!("branching/{label}.qcore"), source);
+        let module = plain(&format!("branching/{label}.qr"), source);
         assert_eq!(
             module.execution_profile,
             SourceExecutionProfile::SequentialCleanupV1,
@@ -842,7 +831,7 @@ fn the_documented_bitwise_refusal_is_the_refusal_the_compiler_gives() {
     );
     // The grouped spelling the page tells the reader to write is the program.
     let grouped = program.replace("mask | 3 == 15", "(mask | 3) == 15");
-    compile_named("grouped.qcore", &grouped, None).expect("the parenthesized spelling checks");
+    compile_named("grouped.qr", &grouped, None).expect("the parenthesized spelling checks");
     // The same rule in the other direction, for `!`.
     let negated = program.replace("mask | 3 == 15", "!3 < 5");
     assert_eq!(refusal_codes(&negated, None), ["Q045"]);
@@ -877,7 +866,7 @@ fn every_row_of_the_documented_lowering_table_is_a_byte_identity() {
     const Y: &str = "        drop a;\n";
 
     let emit = |source: &str| {
-        compile_named("table.qcore", source, None)
+        compile_named("table.qr", source, None)
             .expect("both spellings check")
             .c_source
             .unwrap()
@@ -921,7 +910,7 @@ fn every_row_of_the_documented_lowering_table_is_a_byte_identity() {
 /// and removing that discharge refuses there rather than at the join.
 #[test]
 fn removing_the_early_arms_discharge_refuses_at_that_exit() {
-    let module = plain("branching/early_return.qcore", EARLY_RETURN);
+    let module = plain("branching/early_return.qr", EARLY_RETURN);
     // The published entry returns 1 — the returning arm is the one that runs.
     assert!(
         format!("{:?}", module.reference_observation.as_ref().unwrap()).contains("value: 1"),
@@ -944,17 +933,17 @@ fn removing_the_early_arms_discharge_refuses_at_that_exit() {
 fn the_extern_examples_check_against_the_published_contract_module() {
     for (name, source, profile) in [
         (
-            "extern/buffer_round_trip.qcore",
+            "extern/buffer_round_trip.qr",
             BUFFER_ROUND_TRIP,
             SourceExecutionProfile::ComposedStdIoExternV1,
         ),
         (
-            "extern/scalar_results.qcore",
+            "extern/scalar_results.qr",
             SCALAR_RESULTS,
             SourceExecutionProfile::ComposedStdIoExternV1,
         ),
         (
-            "extern/borrowed_render.qcore",
+            "extern/borrowed_render.qr",
             BORROWED_RENDER,
             SourceExecutionProfile::ComposedStdIoExternV1,
         ),
@@ -1072,7 +1061,7 @@ fn a_borrowed_render_after_the_release_refuses() {
 
     // The renderings really do name the identity the trace names, rather than
     // any byte of the object: `r1` is rendered as `1` and as `0x00000001`.
-    let module = contracted("extern/borrowed_render.qcore", BORROWED_RENDER);
+    let module = contracted("extern/borrowed_render.qr", BORROWED_RENDER);
     let observation = module.extern_observation.as_deref().unwrap();
     assert!(extern_trace(&module).contains(&"acquire demo_alloc r1 ok".to_owned()));
     assert!(observation.contains(&"out: 1".to_owned()));
@@ -1097,7 +1086,7 @@ fn a_borrowed_render_without_a_custody_model_refuses() {
 fn the_unsafe_linkage_example_carries_every_waiver_by_name() {
     use qcore_compiler::extern_call::ExternAssumption;
 
-    let module = plain("unsafe-linkage/unchecked_calls.qcore", UNCHECKED_CALLS);
+    let module = plain("unsafe-linkage/unchecked_calls.qr", UNCHECKED_CALLS);
     assert_eq!(
         module.execution_profile,
         SourceExecutionProfile::ComposedStdIoExternV1
@@ -1123,7 +1112,7 @@ fn the_unsafe_linkage_example_carries_every_waiver_by_name() {
 
 #[test]
 fn the_unsafe_linkage_example_runs_against_the_real_uncontracted_c() {
-    let module = plain("unsafe-linkage/unchecked_calls.qcore", UNCHECKED_CALLS);
+    let module = plain("unsafe-linkage/unchecked_calls.qr", UNCHECKED_CALLS);
     let (out, err) = run(
         "unchecked-calls",
         module.c_source.as_deref().unwrap(),
@@ -1159,18 +1148,18 @@ fn the_unsafe_linkage_example_runs_against_the_real_uncontracted_c() {
 /// the page's `Q039` sentence.
 #[test]
 fn a_manifest_that_does_not_load_refuses_the_module() {
-    const MANIFEST: &str = include_str!("../../examples/unsafe-linkage/unchecked_demo.qcorelib");
+    const MANIFEST: &str = include_str!("../../examples/unsafe-linkage/unchecked_demo.qrlib");
     let broken = MANIFEST.replace("data_model lp64;", "data_model ilp32;");
     let diagnostics = compile_files(
         &[SourceFile::new(
-            "unchecked_calls.qcore".to_owned(),
+            "unchecked_calls.qr".to_owned(),
             UNCHECKED_CALLS,
         )],
         &CompileOptions {
             entry: None,
             extern_contracts: None,
             native_libraries: Some(BTreeMap::from([(
-                "examples/unsafe-linkage/unchecked_demo.qcorelib".to_owned(),
+                "examples/unsafe-linkage/unchecked_demo.qrlib".to_owned(),
                 broken,
             )])),
             native_library_headers: None,
@@ -1189,14 +1178,14 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
     // rather than adding a sixth.
     let sharpened = compile_files(
         &[SourceFile::new(
-            "unchecked_calls.qcore".to_owned(),
+            "unchecked_calls.qr".to_owned(),
             UNCHECKED_CALLS,
         )],
         &CompileOptions {
             entry: None,
             extern_contracts: None,
             native_libraries: Some(BTreeMap::from([(
-                "examples/unsafe-linkage/unchecked_demo.qcorelib".to_owned(),
+                "examples/unsafe-linkage/unchecked_demo.qrlib".to_owned(),
                 MANIFEST.to_owned(),
             )])),
             native_library_headers: None,
@@ -1219,8 +1208,8 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
 // under the sanitizers and byte-compares both streams. The gap is what this
 // suite adds *beyond* a per-card test:
 //
-//   1. **A directory scan.** Every `.qcore` program in a family directory is
-//      indexed on that family's page, and every `.qcore` a page names exists.
+//   1. **A directory scan.** Every `.qr` program in a family directory is
+//      indexed on that family's page, and every `.qr` a page names exists.
 //      An explicit list cannot notice a file nobody added it to — which is
 //      exactly how `examples/sockets/` came to be published without a row in
 //      `examples/README.md` until the HTTP card added one.
@@ -1248,26 +1237,26 @@ const LOOPS_README: &str = include_str!("../../examples/loops/README.md");
 const RECORDS_README: &str = include_str!("../../examples/records/README.md");
 const INDEX_README: &str = include_str!("../../examples/README.md");
 
-const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qcore");
-const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qcore");
-const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
-const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
-const EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
-const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qcore");
-const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qcore");
-const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qcore");
-const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qcore");
-const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qcore");
-const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qcore");
-const RECORD_POINT: &str = include_str!("../../examples/records/point.qcore");
-const PIXEL_WRITES: &str = include_str!("../../examples/records/pixel_writes.qcore");
-const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qcore");
+const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qr");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qr");
+const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qr");
+const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qr");
+const EXCHANGE: &str = include_str!("../../examples/http/exchange.qr");
+const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qr");
+const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qr");
+const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qr");
+const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qr");
+const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qr");
+const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qr");
+const RECORD_POINT: &str = include_str!("../../examples/records/point.qr");
+const PIXEL_WRITES: &str = include_str!("../../examples/records/pixel_writes.qr");
+const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qr");
 // Card `LOOPS-ON-COMPOSED-ROUTES` (wave 39): a `for` beside a lend and a `for`
 // in a composed string/buffer module. Their sanitized native runs are
 // `loops_on_composed_routes.rs`'s; this suite holds their pages to the model.
-const LEND_FILL: &str = include_str!("../../examples/loops/lend_fill.qcore");
-const LOOPED_FILL: &str = include_str!("../../examples/strings/looped_fill.qcore");
-const CYCLE12: &str = include_str!("../../examples/cycle12.qcore");
+const LEND_FILL: &str = include_str!("../../examples/loops/lend_fill.qr");
+const LOOPED_FILL: &str = include_str!("../../examples/strings/looped_fill.qr");
+const CYCLE12: &str = include_str!("../../examples/cycle12.qr");
 
 /// `examples/`, on disk. The scan below is the point: a constant list cannot
 /// notice a program nobody added to it.
@@ -1306,7 +1295,7 @@ fn family_directories() -> Vec<String> {
     families
 }
 
-/// The `.qcore` programs one family directory publishes, sorted. Not recursive:
+/// The `.qr` programs one family directory publishes, sorted. Not recursive:
 /// `examples/extern/contracts/` holds a declared contract module, which is a
 /// support file rather than a published program, and its page says so.
 fn published_programs(family: &str) -> Vec<String> {
@@ -1314,7 +1303,7 @@ fn published_programs(family: &str) -> Vec<String> {
     let mut programs: Vec<String> = tracked_example_paths()
         .iter()
         .filter_map(|path| path.strip_prefix(&prefix))
-        .filter(|name| !name.contains('/') && name.ends_with(".qcore"))
+        .filter(|name| !name.contains('/') && name.ends_with(".qr"))
         .map(str::to_owned)
         .collect();
     programs.sort();
@@ -1340,7 +1329,7 @@ fn link_targets(page: &str, suffix: &str) -> Vec<String> {
 }
 
 /// Every published program is indexed on its own family page, and every
-/// `.qcore` a family page links exists.
+/// `.qr` a family page links exists.
 ///
 /// This is the check an explicit list cannot make. `examples/sockets/` was
 /// published with no row in `examples/README.md` at all until the HTTP card
@@ -1363,13 +1352,13 @@ fn every_published_program_is_indexed_and_every_indexed_program_exists() {
         );
         for program in &programs {
             assert!(
-                link_targets(&page, ".qcore")
+                link_targets(&page, ".qr")
                     .iter()
                     .any(|target| target == program || target.ends_with(&format!("/{program}"))),
                 "examples/{family}/{program} is published but its page does not link it"
             );
         }
-        for target in link_targets(&page, ".qcore") {
+        for target in link_targets(&page, ".qr") {
             let resolved = examples_root().join(family).join(&target);
             assert!(
                 resolved.exists(),
@@ -1396,7 +1385,7 @@ fn the_examples_index_names_every_family_and_only_real_ones() {
     }
     // Non-vacuous in the other direction: the index links files too, and each
     // of those exists as well.
-    for target in link_targets(INDEX_README, ".qcore") {
+    for target in link_targets(INDEX_README, ".qr") {
         assert!(
             examples_root().join(&target).exists(),
             "examples/README.md links `{target}`, which does not exist"
@@ -1409,98 +1398,98 @@ fn the_examples_index_names_every_family_and_only_real_ones() {
 fn the_newer_families_take_the_routes_their_pages_say_they_take() {
     for (name, source, profile) in [
         (
-            "strings/status_line.qcore",
+            "strings/status_line.qr",
             STATUS_LINE,
             SourceExecutionProfile::StandardStringV1,
         ),
         (
-            "strings/computed_length.qcore",
+            "strings/computed_length.qr",
             COMPUTED_LENGTH,
             SourceExecutionProfile::StandardStringV1,
         ),
         (
-            "sockets/tcp_echo.qcore",
+            "sockets/tcp_echo.qr",
             TCP_ECHO,
             SourceExecutionProfile::StandardSocketV1,
         ),
         (
-            "sockets/udp_echo.qcore",
+            "sockets/udp_echo.qr",
             UDP_ECHO,
             SourceExecutionProfile::StandardSocketV1,
         ),
         (
-            "http/exchange.qcore",
+            "http/exchange.qr",
             EXCHANGE,
             SourceExecutionProfile::StandardHttpV1,
         ),
         // The page's own contrast: the hand-written twin is **not** on the HTTP
         // route, because nothing in it declares a message.
         (
-            "http/raw_request.qcore",
+            "http/raw_request.qr",
             RAW_REQUEST,
             SourceExecutionProfile::StandardSocketV1,
         ),
         (
-            "events/self_pipe.qcore",
+            "events/self_pipe.qr",
             SELF_PIPE,
             SourceExecutionProfile::EventV1,
         ),
         (
-            "events/wake_payload.qcore",
+            "events/wake_payload.qr",
             WAKE_PAYLOAD,
             SourceExecutionProfile::EventV1,
         ),
         (
-            "events/write_interest.qcore",
+            "events/write_interest.qr",
             WRITE_INTEREST,
             SourceExecutionProfile::EventV1,
         ),
         // And the composed one is the socket route's, which models both halves —
         // the events page says exactly that.
         (
-            "events/socket_server.qcore",
+            "events/socket_server.qr",
             SOCKET_SERVER,
             SourceExecutionProfile::StandardSocketV1,
         ),
         (
-            "loops/buffer_copy.qcore",
+            "loops/buffer_copy.qr",
             BUFFER_COPY,
             SourceExecutionProfile::StandardBufferV1,
         ),
         // A `for` beside a lend stays on the buffer route; a `for` in a module
         // that spells the bridge is the composed string route's.
         (
-            "loops/lend_fill.qcore",
+            "loops/lend_fill.qr",
             LEND_FILL,
             SourceExecutionProfile::StandardBufferV1,
         ),
         (
-            "strings/looped_fill.qcore",
+            "strings/looped_fill.qr",
             LOOPED_FILL,
             SourceExecutionProfile::StandardStringV1,
         ),
         // A record is admitted on the buffer route and on no other, so both
-        // records programs are that route's — including `point.qcore`, which
+        // records programs are that route's — including `point.qr`, which
         // holds no buffer at all.
         (
-            "records/point.qcore",
+            "records/point.qr",
             RECORD_POINT,
             SourceExecutionProfile::StandardBufferV1,
         ),
         (
-            "records/pixel_writes.qcore",
+            "records/pixel_writes.qr",
             PIXEL_WRITES,
             SourceExecutionProfile::StandardBufferV1,
         ),
         // Card `AGGREGATE-OWNED-FIELD`: a record that owns is a program that
         // acquires, so route selection did not move.
         (
-            "records/owned_field.qcore",
+            "records/owned_field.qr",
             OWNED_FIELD,
             SourceExecutionProfile::StandardBufferV1,
         ),
         (
-            "cycle12.qcore",
+            "cycle12.qr",
             CYCLE12,
             SourceExecutionProfile::SequentialCleanupV1,
         ),
@@ -1514,33 +1503,33 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
 /// sentence that says so.
 #[test]
 fn the_check_only_example_is_the_only_one_that_emits_no_c() {
-    let write_interest = plain("events/write_interest.qcore", WRITE_INTEREST);
+    let write_interest = plain("events/write_interest.qr", WRITE_INTEREST);
     assert!(
         write_interest.c_source.is_none(),
         "the event route's write arm is checked and not executed"
     );
     assert!(write_interest.extern_observation.is_none());
-    assert!(INDEX_README.contains("events/write_interest.qcore"));
+    assert!(INDEX_README.contains("events/write_interest.qr"));
 
     // Every other program in every family this file names does emit C. The
     // threads family is `thread_examples.rs`'s and is not read here.
     for (name, source) in [
-        ("strings/status_line.qcore", STATUS_LINE),
-        ("strings/computed_length.qcore", COMPUTED_LENGTH),
-        ("sockets/tcp_echo.qcore", TCP_ECHO),
-        ("sockets/udp_echo.qcore", UDP_ECHO),
-        ("http/exchange.qcore", EXCHANGE),
-        ("http/raw_request.qcore", RAW_REQUEST),
-        ("events/self_pipe.qcore", SELF_PIPE),
-        ("events/wake_payload.qcore", WAKE_PAYLOAD),
-        ("events/socket_server.qcore", SOCKET_SERVER),
-        ("loops/buffer_copy.qcore", BUFFER_COPY),
-        ("loops/lend_fill.qcore", LEND_FILL),
-        ("strings/looped_fill.qcore", LOOPED_FILL),
-        ("records/point.qcore", RECORD_POINT),
-        ("records/pixel_writes.qcore", PIXEL_WRITES),
-        ("records/owned_field.qcore", OWNED_FIELD),
-        ("cycle12.qcore", CYCLE12),
+        ("strings/status_line.qr", STATUS_LINE),
+        ("strings/computed_length.qr", COMPUTED_LENGTH),
+        ("sockets/tcp_echo.qr", TCP_ECHO),
+        ("sockets/udp_echo.qr", UDP_ECHO),
+        ("http/exchange.qr", EXCHANGE),
+        ("http/raw_request.qr", RAW_REQUEST),
+        ("events/self_pipe.qr", SELF_PIPE),
+        ("events/wake_payload.qr", WAKE_PAYLOAD),
+        ("events/socket_server.qr", SOCKET_SERVER),
+        ("loops/buffer_copy.qr", BUFFER_COPY),
+        ("loops/lend_fill.qr", LEND_FILL),
+        ("strings/looped_fill.qr", LOOPED_FILL),
+        ("records/point.qr", RECORD_POINT),
+        ("records/pixel_writes.qr", PIXEL_WRITES),
+        ("records/owned_field.qr", OWNED_FIELD),
+        ("cycle12.qr", CYCLE12),
     ] {
         assert!(
             plain(name, source).c_source.is_some(),
@@ -1561,98 +1550,98 @@ fn the_check_only_example_is_the_only_one_that_emits_no_c() {
 fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
     for (name, source, readme, out_marker, err_marker) in [
         (
-            "strings/status_line.qcore",
+            "strings/status_line.qr",
             STATUS_LINE,
             STRINGS_README,
             "transcript: status_line stdout",
             None,
         ),
         (
-            "sockets/tcp_echo.qcore",
+            "sockets/tcp_echo.qr",
             TCP_ECHO,
             SOCKETS_README,
             "transcript: tcp_echo",
             None,
         ),
         (
-            "sockets/udp_echo.qcore",
+            "sockets/udp_echo.qr",
             UDP_ECHO,
             SOCKETS_README,
             "transcript: udp_echo",
             None,
         ),
         (
-            "http/exchange.qcore",
+            "http/exchange.qr",
             EXCHANGE,
             HTTP_README,
             "transcript: exchange",
             None,
         ),
         (
-            "http/raw_request.qcore",
+            "http/raw_request.qr",
             RAW_REQUEST,
             HTTP_README,
             "transcript: raw_request",
             None,
         ),
         (
-            "events/self_pipe.qcore",
+            "events/self_pipe.qr",
             SELF_PIPE,
             EVENTS_README,
             "transcript: self_pipe stdout",
             None,
         ),
         (
-            "events/wake_payload.qcore",
+            "events/wake_payload.qr",
             WAKE_PAYLOAD,
             EVENTS_README,
             "transcript: wake_payload stdout",
             Some("transcript: wake_payload stderr"),
         ),
         (
-            "events/socket_server.qcore",
+            "events/socket_server.qr",
             SOCKET_SERVER,
             EVENTS_README,
             "transcript: socket_server stdout",
             None,
         ),
         (
-            "loops/buffer_copy.qcore",
+            "loops/buffer_copy.qr",
             BUFFER_COPY,
             LOOPS_README,
             "transcript: buffer_copy stdout",
             Some("transcript: buffer_copy stderr"),
         ),
         (
-            "loops/lend_fill.qcore",
+            "loops/lend_fill.qr",
             LEND_FILL,
             LOOPS_README,
             "transcript: lend_fill stdout",
             None,
         ),
         (
-            "strings/looped_fill.qcore",
+            "strings/looped_fill.qr",
             LOOPED_FILL,
             STRINGS_README,
             "transcript: looped_fill stdout",
             None,
         ),
         (
-            "records/point.qcore",
+            "records/point.qr",
             RECORD_POINT,
             RECORDS_README,
             "transcript: point stdout",
             Some("transcript: point stderr"),
         ),
         (
-            "records/pixel_writes.qcore",
+            "records/pixel_writes.qr",
             PIXEL_WRITES,
             RECORDS_README,
             "transcript: pixel_writes stdout",
             None,
         ),
         (
-            "records/owned_field.qcore",
+            "records/owned_field.qr",
             OWNED_FIELD,
             RECORDS_README,
             "transcript: owned_field stdout",
@@ -1672,13 +1661,13 @@ fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
         }
     }
 
-    // `computed_length.qcore` is the one page that shows its transcript with the
+    // `computed_length.qr` is the one page that shows its transcript with the
     // carriage returns removed, and says so in the sentence above the block: the
     // program writes a CRLF-framed head, and a `\r` is not something a reader
     // can see. Compared with the `\r`s stripped from the *projection* rather
     // than with the page's claim weakened — and the presence of those `\r`s is
     // asserted right here so the strip cannot hide their loss.
-    let computed = plain("strings/computed_length.qcore", COMPUTED_LENGTH);
+    let computed = plain("strings/computed_length.qr", COMPUTED_LENGTH);
     let (out, err) = projections(&computed);
     assert!(err.is_empty());
     assert!(
@@ -1754,7 +1743,7 @@ fn the_newer_transcript_checks_would_notice_a_changed_line() {
 /// would be an ASan or LSan finding rather than a passing test.
 #[test]
 fn the_loop_example_runs_clean_and_matches_its_reference_execution() {
-    let module = plain("loops/buffer_copy.qcore", BUFFER_COPY);
+    let module = plain("loops/buffer_copy.qr", BUFFER_COPY);
     let (expected_out, expected_err) = projections(&module);
     let (out, err) = run("buffer-copy", module.c_source.as_deref().unwrap(), &[]);
     assert_eq!(out, expected_out, "buffer_copy: stdout");
@@ -1774,7 +1763,7 @@ fn the_loop_example_runs_clean_and_matches_its_reference_execution() {
 /// makes the run above a check of the unrolling rather than a restatement of it.
 #[test]
 fn the_loop_page_publishes_the_c_the_backend_really_writes() {
-    let module = plain("loops/buffer_copy.qcore", BUFFER_COPY);
+    let module = plain("loops/buffer_copy.qr", BUFFER_COPY);
     let c = module.c_source.as_deref().unwrap();
     let published = block(LOOPS_README, "emitted: copy-loop");
     let published = published.trim_end();
@@ -1813,7 +1802,7 @@ fn the_documented_zero_bound_refusal_is_the_refusal_the_compiler_gives() {
     // Non-vacuous: the same program with a bound of one is admitted, so what the
     // page pins is the zero rather than the shape.
     let one = program.replace("0..0", "0..1");
-    compile_named("one.qcore", &one, None).expect("a bound of one is a loop");
+    compile_named("one.qr", &one, None).expect("a bound of one is a loop");
 }
 
 /// The three refusals the page names beside it, and the one it says is not this
@@ -1858,9 +1847,9 @@ fn the_loop_refusals_the_page_names_beside_it_hold() {
 /// transcripts.
 ///
 /// The two programs are each other's leak control, and the page says so.
-/// `point.qcore` allocates nothing at all, so its run is a **negative**
+/// `point.qr` allocates nothing at all, so its run is a **negative**
 /// control: LSan reporting a leak would mean the aggregate had acquired
-/// something the model says it cannot. `pixel_writes.qcore` allocates one real
+/// something the model says it cannot. `pixel_writes.qr` allocates one real
 /// buffer and releases it, so its run is a **positive** control: a lost
 /// release would be a finding, and the two records beside the buffer change
 /// nothing about that.
@@ -1869,14 +1858,14 @@ fn the_record_examples_run_clean_and_match_their_reference_execution() {
     for (label, name, source, out_marker, err_marker) in [
         (
             "record-point",
-            "records/point.qcore",
+            "records/point.qr",
             RECORD_POINT,
             "transcript: point stdout",
             Some("transcript: point stderr"),
         ),
         (
             "pixel-writes",
-            "records/pixel_writes.qcore",
+            "records/pixel_writes.qr",
             PIXEL_WRITES,
             "transcript: pixel_writes stdout",
             None,
@@ -1886,7 +1875,7 @@ fn the_record_examples_run_clean_and_match_their_reference_execution() {
         // whole-record drop, the other through the binding it moved out to.
         (
             "owned-field",
-            "records/owned_field.qcore",
+            "records/owned_field.qr",
             OWNED_FIELD,
             "transcript: owned_field stdout",
             None,
@@ -1911,7 +1900,7 @@ fn the_record_examples_run_clean_and_match_their_reference_execution() {
 /// prelude in a program that acquires nothing.
 #[test]
 fn the_records_page_publishes_the_struct_the_backend_really_writes() {
-    let point = plain("records/point.qcore", RECORD_POINT);
+    let point = plain("records/point.qr", RECORD_POINT);
     let c = point.c_source.as_deref().unwrap();
     let published = block(RECORDS_README, "emitted: point-struct");
     let published = published.trim_end();
@@ -1930,23 +1919,23 @@ fn the_records_page_publishes_the_struct_the_backend_really_writes() {
     // program holding none carries no allocator at all.
     assert!(
         !c.contains("qcore_bytes_new"),
-        "point.qcore acquires nothing and must carry no buffer prelude"
+        "point.qr acquires nothing and must carry no buffer prelude"
     );
     // And the neighbouring program does hold a buffer, so the contrast is a
     // fact about the programs rather than about the backend.
-    let pixel = plain("records/pixel_writes.qcore", PIXEL_WRITES);
+    let pixel = plain("records/pixel_writes.qr", PIXEL_WRITES);
     assert!(
         pixel
             .c_source
             .as_deref()
             .unwrap()
             .contains("qcore_bytes_new"),
-        "pixel_writes.qcore acquires a real buffer"
+        "pixel_writes.qr acquires a real buffer"
     );
     // Card `AGGREGATE-OWNED-FIELD`: the page's struct for the record that
     // owns — pointer members — is the one the backend writes, the initializer
     // is the move, and the whole-record drop frees the one member still held.
-    let owned = plain("records/owned_field.qcore", OWNED_FIELD);
+    let owned = plain("records/owned_field.qr", OWNED_FIELD);
     let owned_c = owned.c_source.as_deref().unwrap();
     let published = block(RECORDS_README, "emitted: frame-struct");
     assert!(
@@ -1978,7 +1967,7 @@ fn the_documented_incomplete_construction_is_the_refusal_the_compiler_gives() {
     // Non-vacuous: the same construction with the field supplied is admitted,
     // so what the page pins is the totality rule rather than the shape.
     let complete = program.replace("Point { x: 1 }", "Point { x: 1, y: 2 }");
-    compile_named("complete.qcore", &complete, None).expect("the complete construction checks");
+    compile_named("complete.qr", &complete, None).expect("the complete construction checks");
 }
 
 /// The four refusals the page names beside it, each earned by exactly the

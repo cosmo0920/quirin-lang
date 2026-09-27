@@ -1,5 +1,8 @@
 # O04-READ-BOUND — reading a member back through a base this body bound — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-B08
 ([`docs/reports/remaining-o04-b08/README.md`](../remaining-o04-b08/README.md)
 §7), whose last open boundary was **`O04-B08-READ-BOUND-BASE`**:
@@ -113,7 +116,7 @@ O04's nine premises, O04-ARMS's two and O04-B08's two (**P-B08-SHALLOW** and the
 derived** — including that the constructor's own body does not discharge its
 declared contract. **This card adds no new declared premise and no new contract
 text:** `flb_routes_mask_set_by_tag` was already declared in the byte-unchanged
-[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore),
+[`o04_path.qv`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv),
 with its first parameter `Borrowed`, by card O04.
 
 Two premises are inherited from C02 and are **not** proved: declaration

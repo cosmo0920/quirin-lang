@@ -1,0 +1,109 @@
+[
+  {
+    "name": "submodule",
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "exit": 0,
+    "seconds": 0.026321351993829012
+  },
+  {
+    "name": "rust",
+    "argv": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 233.08934562804643
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 2.3273417690070346
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 3.1937506070244126
+  },
+  {
+    "name": "reevaluation-probe",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "exit": 0,
+    "seconds": 0.3855930480058305
+  },
+  {
+    "name": "reevaluation-followup",
+    "argv": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "exit": 0,
+    "seconds": 0.6918901430326514
+  },
+  {
+    "name": "lean",
+    "argv": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 13.01541192503646
+  },
+  {
+    "name": "python",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 24.238653162959963
+  },
+  {
+    "name": "clang-version",
+    "argv": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.01306573097826913
+  }
+]

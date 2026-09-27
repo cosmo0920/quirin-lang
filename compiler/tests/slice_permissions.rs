@@ -25,10 +25,10 @@ use qcore_core::std_string::{StringStorage, ranges_overlap};
 /// Two disjoint loans live at once, with the owner writing between them — the
 /// shape a CT07 mapping needs, kept as a file so a lane can point at the
 /// program rather than at a string in a test.
-const DISJOINT_HALVES: &str = include_str!("fixtures/slice_permissions/disjoint_halves.qcore");
+const DISJOINT_HALVES: &str = include_str!("fixtures/slice_permissions/disjoint_halves.qr");
 /// The same program with one byte of the write moved **inside** a lent range —
 /// the shape a CT08 mapping needs, and this card's control for the one above.
-const OVERLAPPING_WRITE: &str = include_str!("fixtures/slice_permissions/overlapping_write.qcore");
+const OVERLAPPING_WRITE: &str = include_str!("fixtures/slice_permissions/overlapping_write.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {

@@ -3,7 +3,7 @@
 //!
 //! The prelude spells the Monkey list macros as the pinned headers do, and
 //! `mk_list_add` / `mk_list_del` carry the declared container clauses of
-//! `monkey/intrusive_list.qcore`, so every fixture reaches the gateway in the
+//! `monkey/intrusive_list.qv`, so every fixture reaches the gateway in the
 //! preprocessed form a production unit does.
 
 use qcore_c_gateway::legacy_c::{
@@ -50,7 +50,7 @@ fn contracts() -> ResourceContracts {
         &[
             (
                 "q_base.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_base.qv").to_owned(),
             ),
             ("list.qcore".to_owned(), LIST.to_owned()),
         ]

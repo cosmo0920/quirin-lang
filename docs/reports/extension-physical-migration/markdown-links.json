@@ -1,0 +1,562 @@
+[
+  {
+    "document": "docs/design/CTRACES_PROVIDER_CAPABILITY_V1.md",
+    "links": [
+      {
+        "old": "../reports/remaining-p06/ctraces_span_dropped_counts.qcore",
+        "new": "../reports/remaining-p06/ctraces_span_dropped_counts.qv",
+        "source": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/plans/fluent-bit-system-coverage/README.md",
+    "links": [
+      {
+        "old": "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",
+        "new": "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "source": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore"
+      },
+      {
+        "old": "../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore",
+        "new": "../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv",
+        "source": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore"
+      },
+      {
+        "old": "../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore",
+        "new": "../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+        "source": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/core-concurrency-prelude/README.md",
+    "links": [
+      {
+        "old": "../../../examples/threads/core_context.qcore",
+        "new": "../../../examples/threads/core_context.qr",
+        "source": "examples/threads/core_context.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04-arms/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04-b08/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04-b09b10/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04-read-bound/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04-trace/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore"
+      },
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-o04/README.md",
+    "links": [
+      {
+        "old": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore",
+        "new": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv",
+        "source": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/remaining-p06/README.md",
+    "links": [
+      {
+        "old": "ctraces_span_dropped_counts.qcore",
+        "new": "ctraces_span_dropped_counts.qv",
+        "source": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w43-descriptor-native-check/README.md",
+    "links": [
+      {
+        "old": "../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore",
+        "new": "../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
+        "source": "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w43-libc-printf-family/PREDICTION.md",
+    "links": [
+      {
+        "old": "measurement/family9.qcore",
+        "new": "measurement/family9.qv",
+        "source": "docs/reports/w43-libc-printf-family/measurement/family9.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w43-libc-printf-family/README.md",
+    "links": [
+      {
+        "old": "measurement/family9.qcore",
+        "new": "measurement/family9.qv",
+        "source": "docs/reports/w43-libc-printf-family/measurement/family9.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w43-libc-result-alias/README.md",
+    "links": [
+      {
+        "old": "measurement/restrict14.qcore",
+        "new": "measurement/restrict14.qv",
+        "source": "docs/reports/w43-libc-result-alias/measurement/restrict14.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w44-libc-residuals/PREDICTION.md",
+    "links": [
+      {
+        "old": "measurement/residuals8.qcore",
+        "new": "measurement/residuals8.qv",
+        "source": "docs/reports/w44-libc-residuals/measurement/residuals8.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w45-fb-backlog-custody/README.md",
+    "links": [
+      {
+        "old": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore",
+        "new": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "source": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore"
+      }
+    ]
+  },
+  {
+    "document": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "links": [
+      {
+        "old": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore",
+        "new": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "source": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qcore"
+      },
+      {
+        "old": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore",
+        "new": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+        "source": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qcore"
+      },
+      {
+        "old": "../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore",
+        "new": "../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "source": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/README.md",
+    "links": [
+      {
+        "old": "events/write_interest.qcore",
+        "new": "events/write_interest.qr",
+        "source": "examples/events/write_interest.qcore"
+      },
+      {
+        "old": "cycle12.qcore",
+        "new": "cycle12.qr",
+        "source": "examples/cycle12.qcore"
+      },
+      {
+        "old": "sockets/tcp_echo.qcore",
+        "new": "sockets/tcp_echo.qr",
+        "source": "examples/sockets/tcp_echo.qcore"
+      },
+      {
+        "old": "http/computed_length.qcore",
+        "new": "http/computed_length.qr",
+        "source": "examples/http/computed_length.qcore"
+      },
+      {
+        "old": "strings/status_line.qcore",
+        "new": "strings/status_line.qr",
+        "source": "examples/strings/status_line.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/branching/README.md",
+    "links": [
+      {
+        "old": "conditional_release.qcore",
+        "new": "conditional_release.qr",
+        "source": "examples/branching/conditional_release.qcore"
+      },
+      {
+        "old": "condition_tier.qcore",
+        "new": "condition_tier.qr",
+        "source": "examples/branching/condition_tier.qcore"
+      },
+      {
+        "old": "early_return.qcore",
+        "new": "early_return.qr",
+        "source": "examples/branching/early_return.qcore"
+      },
+      {
+        "old": "conditional_release.qcore",
+        "new": "conditional_release.qr",
+        "source": "examples/branching/conditional_release.qcore"
+      },
+      {
+        "old": "condition_tier.qcore",
+        "new": "condition_tier.qr",
+        "source": "examples/branching/condition_tier.qcore"
+      },
+      {
+        "old": "early_return.qcore",
+        "new": "early_return.qr",
+        "source": "examples/branching/early_return.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/events/README.md",
+    "links": [
+      {
+        "old": "self_pipe.qcore",
+        "new": "self_pipe.qr",
+        "source": "examples/events/self_pipe.qcore"
+      },
+      {
+        "old": "wake_payload.qcore",
+        "new": "wake_payload.qr",
+        "source": "examples/events/wake_payload.qcore"
+      },
+      {
+        "old": "write_interest.qcore",
+        "new": "write_interest.qr",
+        "source": "examples/events/write_interest.qcore"
+      },
+      {
+        "old": "socket_server.qcore",
+        "new": "socket_server.qr",
+        "source": "examples/events/socket_server.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/extern/README.md",
+    "links": [
+      {
+        "old": "buffer_round_trip.qcore",
+        "new": "buffer_round_trip.qr",
+        "source": "examples/extern/buffer_round_trip.qcore"
+      },
+      {
+        "old": "scalar_results.qcore",
+        "new": "scalar_results.qr",
+        "source": "examples/extern/scalar_results.qcore"
+      },
+      {
+        "old": "borrowed_render.qcore",
+        "new": "borrowed_render.qr",
+        "source": "examples/extern/borrowed_render.qcore"
+      },
+      {
+        "old": "contracts/buffer_api.qcore",
+        "new": "contracts/buffer_api.qv",
+        "source": "examples/extern/contracts/buffer_api.qcore"
+      },
+      {
+        "old": "borrowed_render.qcore",
+        "new": "borrowed_render.qr",
+        "source": "examples/extern/borrowed_render.qcore"
+      },
+      {
+        "old": "../stdio/pipeline.qcore",
+        "new": "../stdio/pipeline.qr",
+        "source": "examples/stdio/pipeline.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/http/README.md",
+    "links": [
+      {
+        "old": "exchange.qcore",
+        "new": "exchange.qr",
+        "source": "examples/http/exchange.qcore"
+      },
+      {
+        "old": "computed_length.qcore",
+        "new": "computed_length.qr",
+        "source": "examples/http/computed_length.qcore"
+      },
+      {
+        "old": "raw_request.qcore",
+        "new": "raw_request.qr",
+        "source": "examples/http/raw_request.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/loops/README.md",
+    "links": [
+      {
+        "old": "buffer_copy.qcore",
+        "new": "buffer_copy.qr",
+        "source": "examples/loops/buffer_copy.qcore"
+      },
+      {
+        "old": "lend_fill.qcore",
+        "new": "lend_fill.qr",
+        "source": "examples/loops/lend_fill.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/pipes/README.md",
+    "links": [
+      {
+        "old": "rendered_lines.qcore",
+        "new": "rendered_lines.qr",
+        "source": "examples/pipes/rendered_lines.qcore"
+      },
+      {
+        "old": "scalar_stages.qcore",
+        "new": "scalar_stages.qr",
+        "source": "examples/pipes/scalar_stages.qcore"
+      },
+      {
+        "old": "scalar_stages_hand_written.qcore",
+        "new": "scalar_stages_hand_written.qr",
+        "source": "examples/pipes/scalar_stages_hand_written.qcore"
+      },
+      {
+        "old": "scalar_stages_hand_written.qcore",
+        "new": "scalar_stages_hand_written.qr",
+        "source": "examples/pipes/scalar_stages_hand_written.qcore"
+      },
+      {
+        "old": "../stdio/pipeline.qcore",
+        "new": "../stdio/pipeline.qr",
+        "source": "examples/stdio/pipeline.qcore"
+      },
+      {
+        "old": "../extern/contracts/buffer_api.qcore",
+        "new": "../extern/contracts/buffer_api.qv",
+        "source": "examples/extern/contracts/buffer_api.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/records/README.md",
+    "links": [
+      {
+        "old": "point.qcore",
+        "new": "point.qr",
+        "source": "examples/records/point.qcore"
+      },
+      {
+        "old": "pixel_writes.qcore",
+        "new": "pixel_writes.qr",
+        "source": "examples/records/pixel_writes.qcore"
+      },
+      {
+        "old": "owned_field.qcore",
+        "new": "owned_field.qr",
+        "source": "examples/records/owned_field.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/scalar/README.md",
+    "links": [
+      {
+        "old": "calls.qcore",
+        "new": "calls.qr",
+        "source": "examples/scalar/calls.qcore"
+      },
+      {
+        "old": "printing.qcore",
+        "new": "printing.qr",
+        "source": "examples/scalar/printing.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/sockets/README.md",
+    "links": [
+      {
+        "old": "tcp_echo.qcore",
+        "new": "tcp_echo.qr",
+        "source": "examples/sockets/tcp_echo.qcore"
+      },
+      {
+        "old": "udp_echo.qcore",
+        "new": "udp_echo.qr",
+        "source": "examples/sockets/udp_echo.qcore"
+      },
+      {
+        "old": "inet_v4_echo.qcore",
+        "new": "inet_v4_echo.qr",
+        "source": "examples/sockets/inet_v4_echo.qcore"
+      },
+      {
+        "old": "inet_v6_echo.qcore",
+        "new": "inet_v6_echo.qr",
+        "source": "examples/sockets/inet_v6_echo.qcore"
+      },
+      {
+        "old": "../events/socket_server.qcore",
+        "new": "../events/socket_server.qr",
+        "source": "examples/events/socket_server.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/stdio/README.md",
+    "links": [
+      {
+        "old": "renderings.qcore",
+        "new": "renderings.qr",
+        "source": "examples/stdio/renderings.qcore"
+      },
+      {
+        "old": "severities.qcore",
+        "new": "severities.qr",
+        "source": "examples/stdio/severities.qcore"
+      },
+      {
+        "old": "barrier.qcore",
+        "new": "barrier.qr",
+        "source": "examples/stdio/barrier.qcore"
+      },
+      {
+        "old": "pipeline.qcore",
+        "new": "pipeline.qr",
+        "source": "examples/stdio/pipeline.qcore"
+      },
+      {
+        "old": "barrier.qcore",
+        "new": "barrier.qr",
+        "source": "examples/stdio/barrier.qcore"
+      },
+      {
+        "old": "pipeline.qcore",
+        "new": "pipeline.qr",
+        "source": "examples/stdio/pipeline.qcore"
+      },
+      {
+        "old": "../pipes/scalar_stages.qcore",
+        "new": "../pipes/scalar_stages.qr",
+        "source": "examples/pipes/scalar_stages.qcore"
+      },
+      {
+        "old": "../extern/contracts/buffer_api.qcore",
+        "new": "../extern/contracts/buffer_api.qv",
+        "source": "examples/extern/contracts/buffer_api.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/strings/README.md",
+    "links": [
+      {
+        "old": "status_line.qcore",
+        "new": "status_line.qr",
+        "source": "examples/strings/status_line.qcore"
+      },
+      {
+        "old": "computed_length.qcore",
+        "new": "computed_length.qr",
+        "source": "examples/strings/computed_length.qcore"
+      },
+      {
+        "old": "looped_fill.qcore",
+        "new": "looped_fill.qr",
+        "source": "examples/strings/looped_fill.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/threads/README.md",
+    "links": [
+      {
+        "old": "two_workers.qcore",
+        "new": "two_workers.qr",
+        "source": "examples/threads/two_workers.qcore"
+      },
+      {
+        "old": "owned_buffer.qcore",
+        "new": "owned_buffer.qr",
+        "source": "examples/threads/owned_buffer.qcore"
+      },
+      {
+        "old": "shared_readers.qcore",
+        "new": "shared_readers.qr",
+        "source": "examples/threads/shared_readers.qcore"
+      },
+      {
+        "old": "core_context.qcore",
+        "new": "core_context.qr",
+        "source": "examples/threads/core_context.qcore"
+      }
+    ]
+  },
+  {
+    "document": "examples/unsafe-linkage/README.md",
+    "links": [
+      {
+        "old": "unchecked_calls.qcore",
+        "new": "unchecked_calls.qr",
+        "source": "examples/unsafe-linkage/unchecked_calls.qcore"
+      },
+      {
+        "old": "unchecked_demo.qcorelib",
+        "new": "unchecked_demo.qrlib",
+        "source": "examples/unsafe-linkage/unchecked_demo.qcorelib"
+      }
+    ]
+  }
+]

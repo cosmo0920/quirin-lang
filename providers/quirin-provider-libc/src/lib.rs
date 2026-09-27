@@ -23,81 +23,63 @@
 pub const NAMESPACE: &str = "libc";
 
 /// The owned modules another contract module may `#include`, sorted: a
-/// subset of [`CONTRACTS`]' logical paths. `libc/memory.qcore` (`malloc`,
-/// `calloc`, `free`) and `libc/string.qcore` (`strdup`, `strndup`) are
+/// subset of [`CONTRACTS`]' logical paths. `libc/memory.qv` (`malloc`,
+/// `calloc`, `free`) and `libc/string.qv` (`strdup`, `strndup`) are
 /// published: `quirin-provider-fluent-bit` inherits its allocator and
 /// string-duplication wrappers from them. Publication makes a module's text
 /// part of every inheriting contract's identity, so a published module's
 /// SHA-256 is pinned in `providers/contract-load-path.json`.
-pub const PUBLISHED: &[&str] = &["libc/memory.qcore", "libc/string.qcore"];
+pub const PUBLISHED: &[&str] = &["libc/memory.qv", "libc/string.qv"];
 
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
-/// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
+/// is the name `contract/corpus.json` resolves (for example `libc/errno.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
-        "libc/dirent.qcore",
-        include_str!("../contracts/libc/dirent.qcore"),
+        "libc/dirent.qv",
+        include_str!("../contracts/libc/dirent.qv"),
+    ),
+    ("libc/dlfcn.qv", include_str!("../contracts/libc/dlfcn.qv")),
+    ("libc/errno.qv", include_str!("../contracts/libc/errno.qv")),
+    ("libc/math.qv", include_str!("../contracts/libc/math.qv")),
+    (
+        "libc/memory.qv",
+        include_str!("../contracts/libc/memory.qv"),
     ),
     (
-        "libc/dlfcn.qcore",
-        include_str!("../contracts/libc/dlfcn.qcore"),
+        "libc/process.qv",
+        include_str!("../contracts/libc/process.qv"),
     ),
     (
-        "libc/errno.qcore",
-        include_str!("../contracts/libc/errno.qcore"),
+        "libc/pthread_mutex.qv",
+        include_str!("../contracts/libc/pthread_mutex.qv"),
+    ),
+    ("libc/regex.qv", include_str!("../contracts/libc/regex.qv")),
+    (
+        "libc/socket.qv",
+        include_str!("../contracts/libc/socket.qv"),
+    ),
+    ("libc/stdio.qv", include_str!("../contracts/libc/stdio.qv")),
+    (
+        "libc/stdlib.qv",
+        include_str!("../contracts/libc/stdlib.qv"),
     ),
     (
-        "libc/math.qcore",
-        include_str!("../contracts/libc/math.qcore"),
+        "libc/string.qv",
+        include_str!("../contracts/libc/string.qv"),
     ),
     (
-        "libc/memory.qcore",
-        include_str!("../contracts/libc/memory.qcore"),
+        "libc/sys_stat.qv",
+        include_str!("../contracts/libc/sys_stat.qv"),
     ),
     (
-        "libc/process.qcore",
-        include_str!("../contracts/libc/process.qcore"),
+        "libc/threads.qv",
+        include_str!("../contracts/libc/threads.qv"),
     ),
+    ("libc/time.qv", include_str!("../contracts/libc/time.qv")),
     (
-        "libc/pthread_mutex.qcore",
-        include_str!("../contracts/libc/pthread_mutex.qcore"),
-    ),
-    (
-        "libc/regex.qcore",
-        include_str!("../contracts/libc/regex.qcore"),
-    ),
-    (
-        "libc/socket.qcore",
-        include_str!("../contracts/libc/socket.qcore"),
-    ),
-    (
-        "libc/stdio.qcore",
-        include_str!("../contracts/libc/stdio.qcore"),
-    ),
-    (
-        "libc/stdlib.qcore",
-        include_str!("../contracts/libc/stdlib.qcore"),
-    ),
-    (
-        "libc/string.qcore",
-        include_str!("../contracts/libc/string.qcore"),
-    ),
-    (
-        "libc/sys_stat.qcore",
-        include_str!("../contracts/libc/sys_stat.qcore"),
-    ),
-    (
-        "libc/threads.qcore",
-        include_str!("../contracts/libc/threads.qcore"),
-    ),
-    (
-        "libc/time.qcore",
-        include_str!("../contracts/libc/time.qcore"),
-    ),
-    (
-        "libc/unistd.qcore",
-        include_str!("../contracts/libc/unistd.qcore"),
+        "libc/unistd.qv",
+        include_str!("../contracts/libc/unistd.qv"),
     ),
 ];
 

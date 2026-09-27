@@ -17,20 +17,20 @@
     "mutex_invariant_check"
   ],
   "evidence_target": "linux",
-  "notes": "source.mutex.guard.v1 with card T03-F's guard-scoped facts: a refinement established under one guard and relied on under a later acquisition of the same mutex is refused at Q616 StaleProtectedFact. The cascade is exactly [Q616] — the release that dropped the fact was itself well formed, so nothing else is outstanding. The spec expectation for this case is 'invalidate/re-establish, never assume', and both directions execute: the reasserted.qcore control re-establishes the fact under the second guard and is accepted, so re-establishment is a real path rather than a permanent poisoning; the never_asserted.qcore control declares a fact and uses it with no assertion anywhere and refuses at Q600 UnknownFact, so Q616 is specifically staleness and not merely absence. The name/identity split is what makes this a semantic refusal rather than a lexical one: the fact binder is declared at thread-scope level so the name resolves in the second section, and the *model* refuses the use — a body-local binder would have produced the weaker Q013 unknown-name refusal that the T03 CT integration report already recorded as insufficient. Only parser and type_checker execute on the case artifact; cfg is unassessed because this route has no CFG stage. NOT established: a fact has no predicate — it is an identity scoped to a guard and an interval, and nothing checks what it says, so this is refinement *invalidation* and not refinement content. The reasserted.qcore control is single-task and does emit C (unlike CT28/CT31/CT32's controls), but the CT harness route-checks it rather than compiling or running it; evidence_target=linux records host gating by the Q500 target refusal. The sanitized native evidence for the fact forms is card T03-F's own two runs, not this case's.",
+  "notes": "source.mutex.guard.v1 with card T03-F's guard-scoped facts: a refinement established under one guard and relied on under a later acquisition of the same mutex is refused at Q616 StaleProtectedFact. The cascade is exactly [Q616] — the release that dropped the fact was itself well formed, so nothing else is outstanding. The spec expectation for this case is 'invalidate/re-establish, never assume', and both directions execute: the reasserted.qr control re-establishes the fact under the second guard and is accepted, so re-establishment is a real path rather than a permanent poisoning; the never_asserted.qr control declares a fact and uses it with no assertion anywhere and refuses at Q600 UnknownFact, so Q616 is specifically staleness and not merely absence. The name/identity split is what makes this a semantic refusal rather than a lexical one: the fact binder is declared at thread-scope level so the name resolves in the second section, and the *model* refuses the use — a body-local binder would have produced the weaker Q013 unknown-name refusal that the T03 CT integration report already recorded as insufficient. Only parser and type_checker execute on the case artifact; cfg is unassessed because this route has no CFG stage. NOT established: a fact has no predicate — it is an identity scoped to a guard and an interval, and nothing checks what it says, so this is refinement *invalidation* and not refinement content. The reasserted.qr control is single-task and does emit C (unlike CT28/CT31/CT32's controls), but the CT harness route-checks it rather than compiling or running it; evidence_target=linux records host gating by the Q500 target refusal. The sanitized native evidence for the fact forms is card T03-F's own two runs, not this case's.",
   "checked_mutex_reject": {
     "diagnostic_sequence": [
       "Q616"
     ],
     "controls": [
       {
-        "source": "reasserted.qcore",
+        "source": "reasserted.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "note": "re-establishing the refinement under the second guard mints a fresh fact and checks, so the refusal demands re-establishment rather than forbidding the program outright. Single-task: this control does emit C, though the harness route-checks it and does not run it."
       },
       {
-        "source": "never_asserted.qcore",
+        "source": "never_asserted.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"

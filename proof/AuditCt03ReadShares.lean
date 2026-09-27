@@ -7,7 +7,7 @@ import QCore.Ct03ReadShares
 -- CT03's own trace terms (`QCore.Ct03ReadShares`). The named runner
 -- `compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape`
 -- checks the reference run event for event against the real pipeline's
--- execution of `compiler/tests/fixtures/ct/CT03/case.qcore`, recomputes the
+-- execution of `compiler/tests/fixtures/ct/CT03/case.qr`, recomputes the
 -- digest pin and runs the same total decision procedure on the artifact.
 
 -- The alphabet extension is conservative: on write-free traces the extended

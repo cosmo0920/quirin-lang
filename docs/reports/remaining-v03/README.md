@@ -1,5 +1,8 @@
 # V03 — R04: admitted source signatures, results and exits (adversarial probe matrix)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Date:** 2026-09-07. **Worktree HEAD at write time:** `ea2af0f`
 (`536dc01` plus two report-only commits; no implementation commit landed
 during this card). **Card type:** verify_or_repair, executed as report-only.
@@ -30,7 +33,7 @@ residue is four specific syntactic forms, named in §5.
 ```sh
 cargo build -p qcorec
 ./target/debug/qcorec check --entry main PROBE.qcore     # all probes except S26
-./target/debug/qcorec check S26_library_mode_unknown_types.qcore   # library mode
+./target/debug/qcorec check S26_library_mode_unknown_types.qr   # library mode
 ```
 
 71 single-file probes, each written to be minimal. Every probe was run twice:

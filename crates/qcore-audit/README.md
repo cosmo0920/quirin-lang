@@ -258,8 +258,8 @@ QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
   --monkey-database "$out/monkey/monkey-build/compile_commands.json" \
   --load-path providers/contract-load-path.json \
   --provider quirin-provider-libc \
-  --provider quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore \
-  --provider qcore-provider-chunkio:chunkio/chunk_residency.qcore \
+  --provider quirin-provider-fluent-bit:fluent_bit/resource_memory.qv \
+  --provider qcore-provider-chunkio:chunkio/chunk_residency.qv \
   --monkey-source-report "$out/reports/monkey-source.json" \
   --report "$out/reports/resource-diagnostics.json" \
   --jobs 16
@@ -278,8 +278,8 @@ the repository root):
   "load_path": "providers/contract-load-path.json",
   "providers": [
     "quirin-provider-libc",
-    "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
-    "qcore-provider-chunkio:chunkio/chunk_residency.qcore"
+    "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+    "qcore-provider-chunkio:chunkio/chunk_residency.qv"
   ],
   "monkey_source_report": "build/cycle19/clang/REV/reports/monkey-source.json",
   "report": "build/cycle19/clang/REV/reports/resource-diagnostics.json",

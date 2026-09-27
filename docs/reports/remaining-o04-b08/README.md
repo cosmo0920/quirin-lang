@@ -1,5 +1,8 @@
 # O04-B08 — aggregate stores and the aggregate branch condition — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-ARMS
 ([`docs/reports/remaining-o04-arms/README.md`](../remaining-o04-arms/README.md)
 §3.2), which settled four of the six exits of byte-verbatim
@@ -145,7 +148,7 @@ discharge its declared contract. This card adds two:
 | Premise | Status |
 |---|---|
 | **P-B08-SHALLOW** — a declared `resource_released` release names exactly one identity; a plain C field store carries no declared destructor obligation | **assumed** (§1.3) |
-| `flb_time_now` takes no argument and returns no custody | **assumed**, declared in [`o04_b08_callees.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore) |
+| `flb_time_now` takes no argument and returns no custody | **assumed**, declared in [`o04_b08_callees.qr`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr) |
 
 Two premises are inherited unchanged from C02 and are **not** proved:
 declaration completeness, and C effective types. C02-P's recorded may-alias

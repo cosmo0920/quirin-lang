@@ -1,5 +1,8 @@
 # W46 contract gap expansion
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Astra owns the gap census and integration; Sol 6 at medium
 reasoning implemented the libc/Libevent/Monkey, metric/trace and Fluent Bit event
 tracks in isolated worktrees. Base `9bce3986`. The

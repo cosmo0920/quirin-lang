@@ -17,7 +17,7 @@
     "proof"
   ],
   "evidence_target": "linux",
-  "notes": "source.tasks.v1 (ScopedWriteLeasesV1) with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped from the sequential write lend by card CT07-TWO-THREAD-REMAP (wave 37). Two WRITE authorities over disjoint ranges of one allocation's int32_t payload — lend buffer 0..2 and lend buffer 2..4 — are held by TWO THREADS, each worker writing a byte through its own lease, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT CHANGED FROM WAVE 30, and it is the scenario's own word: CT07-WRITE-REMAP's two write authorities were bindings of ONE SEQUENTIAL ENTRY — 'NOT two threads', as that card said in its own semantic profile, naming WRITE-LEND-TASKS as the residual. That residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR. WHAT DID NOT CHANGE: no count moved — CT07 was mapped before this card and is mapped after it, and this is evidence quality, not coverage (constraint 23). BOUNDARIES, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4, residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36) — so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence, and NOT by a race detector; and the proof stage stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). The bounds half is split across the two layers that own it: past_range_byte.qcore refuses a real payload byte at the LEASE it goes through, and past_extent_read.qcore refuses a real owner access at the PAYLOAD's extent. The disjointness half is overlapping_leases.qcore's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap. TSAN CITATION (card TSAN-ROWS-2, wave 39; a citation, not a stage flip - no stage of this row moves): compiler/tests/task_route_tsan.rs reads THIS fixture through the real pipeline (compile_files, entry null) and runs its own emitted C under ThreadSanitizer through the pthread binding of tests/support/thread_sanitizer.rs, changing no emitted byte - unbound it dies at the 0x18 fault every task program dies at (every_subject_dies_unbound_at_the_one_fault); bound it runs clean under the unforced schedule (every_subject_runs_clean_under_thread_sanitizer_when_bound) and under two FORCED schedules (every_subject_runs_clean_under_each_forced_schedule): both workers created and released before either body runs and both threads live until both bodies have run, and last-created first with each body to completion - zero races, stdout byte-identical to the reference execution, the realised schedule read back from the harness's own trace. The overlap mutation on this fixture is reported under all three schedules (overlapping_writers_are_reported_under_every_schedule), 20 of 20 runs each (docs/reports/tsan-rows-2/artifacts/catch-rates.json). So the sentence above that reads 'there is NO ThreadSanitizer evidence' describes wave 37's state and is superseded by this citation; 'two threads write distinct memory locations without a race' is now ALSO carried by a race detector, over the schedules named, with TASK-ROUTE-TSAN-PTHREAD-BINDING's and TSAN-FORCED-BODY-OVERLAP-NOT-FORCED's boundaries. CT07's case is pinned as the write-lend flagship without its logger (ct07s_case_is_the_flagship_without_its_logger).",
+  "notes": "source.tasks.v1 (ScopedWriteLeasesV1) with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped from the sequential write lend by card CT07-TWO-THREAD-REMAP (wave 37). Two WRITE authorities over disjoint ranges of one allocation's int32_t payload — lend buffer 0..2 and lend buffer 2..4 — are held by TWO THREADS, each worker writing a byte through its own lease, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT CHANGED FROM WAVE 30, and it is the scenario's own word: CT07-WRITE-REMAP's two write authorities were bindings of ONE SEQUENTIAL ENTRY — 'NOT two threads', as that card said in its own semantic profile, naming WRITE-LEND-TASKS as the residual. That residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR. WHAT DID NOT CHANGE: no count moved — CT07 was mapped before this card and is mapped after it, and this is evidence quality, not coverage (constraint 23). BOUNDARIES, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4, residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36) — so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence, and NOT by a race detector; and the proof stage stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). The bounds half is split across the two layers that own it: past_range_byte.qr refuses a real payload byte at the LEASE it goes through, and past_extent_read.qr refuses a real owner access at the PAYLOAD's extent. The disjointness half is overlapping_leases.qr's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap. TSAN CITATION (card TSAN-ROWS-2, wave 39; a citation, not a stage flip - no stage of this row moves): compiler/tests/task_route_tsan.rs reads THIS fixture through the real pipeline (compile_files, entry null) and runs its own emitted C under ThreadSanitizer through the pthread binding of tests/support/thread_sanitizer.rs, changing no emitted byte - unbound it dies at the 0x18 fault every task program dies at (every_subject_dies_unbound_at_the_one_fault); bound it runs clean under the unforced schedule (every_subject_runs_clean_under_thread_sanitizer_when_bound) and under two FORCED schedules (every_subject_runs_clean_under_each_forced_schedule): both workers created and released before either body runs and both threads live until both bodies have run, and last-created first with each body to completion - zero races, stdout byte-identical to the reference execution, the realised schedule read back from the harness's own trace. The overlap mutation on this fixture is reported under all three schedules (overlapping_writers_are_reported_under_every_schedule), 20 of 20 runs each (docs/reports/tsan-rows-2/artifacts/catch-rates.json). So the sentence above that reads 'there is NO ThreadSanitizer evidence' describes wave 37's state and is superseded by this citation; 'two threads write distinct memory locations without a race' is now ALSO carried by a race detector, over the schedules named, with TASK-ROUTE-TSAN-PTHREAD-BINDING's and TSAN-FORCED-BODY-OVERLAP-NOT-FORCED's boundaries. CT07's case is pinned as the write-lend flagship without its logger (ct07s_case_is_the_flagship_without_its_logger).",
   "native_heap_scenarios": {
     "execution_profile": "ScopedWriteLeasesV1",
     "alloc_prefix": "LEASE_ALLOC ",
@@ -36,7 +36,7 @@
     "ubsan_options": "halt_on_error=1:print_stacktrace=1",
     "rejection_controls": [
       {
-        "source": "overlapping_leases.qcore",
+        "source": "overlapping_leases.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "OverlappingLeases"
@@ -46,7 +46,7 @@
         ]
       },
       {
-        "source": "past_range_byte.qcore",
+        "source": "past_range_byte.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "does not fit the leased range"
@@ -56,7 +56,7 @@
         ]
       },
       {
-        "source": "past_extent_read.qcore",
+        "source": "past_extent_read.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "outside the payload's"
@@ -66,7 +66,7 @@
         ]
       },
       {
-        "source": "overlapping_lends.qcore",
+        "source": "overlapping_lends.qr",
         "diagnostic": {
           "code": "Q054",
           "message_contains": "the checked ownership discipline refuses this program"
@@ -76,7 +76,7 @@
         ]
       },
       {
-        "source": "out_of_extent_lend.qcore",
+        "source": "out_of_extent_lend.qr",
         "diagnostic": {
           "code": "Q053",
           "message_contains": "is not a range of `store`, whose declared extent is 8 bytes"
@@ -86,7 +86,7 @@
         ]
       },
       {
-        "source": "loan_index_out_of_extent.qcore",
+        "source": "loan_index_out_of_extent.qr",
         "diagnostic": {
           "code": "Q054",
           "message_contains": "lies outside"
@@ -99,12 +99,12 @@
     ],
     "accept_controls": [
       {
-        "source": "sequential_write_halves.qcore",
+        "source": "sequential_write_halves.qr",
         "execution_profile": "StandardBufferV1",
         "note": "wave 30's own case program: two write lends over disjoint ranges of one eight-byte buffer, both held by one sequential entry's bindings. The weaker reading of `independently`, retained so the remap extends the family of admitted disjointness shapes rather than replacing it."
       },
       {
-        "source": "read_loan.qcore",
+        "source": "read_loan.qr",
         "execution_profile": "StandardStringV1",
         "note": "wave 28's own case program: two disjoint READ loans beside the owner's retained write authority. Kept for the reason wave 30 kept it — two overlapping reads conflict on nothing, and refusing them would refuse the mechanism the borrow window rests on."
       }

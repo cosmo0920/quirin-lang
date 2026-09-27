@@ -201,7 +201,7 @@ def main():
                      "validate_integrity_observations", "--", str(records), str(observations)],
                     cwd=REPO, capture_output=True)
     (output / "validation.json").write_text(validated.stdout)
-    contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qcore"
+    contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qv"
     checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
                    "check_contract_observations", "--", str(contract), str(observations)],
                   cwd=REPO, capture_output=True)

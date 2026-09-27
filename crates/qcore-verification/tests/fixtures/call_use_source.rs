@@ -18,10 +18,10 @@ use qcore_verification::call_use_source::{
 use std::path::PathBuf;
 
 pub const ATTEMPT_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv"
 );
 pub const DELETE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv"
 );
 
 /// The wrapper body the in-process `cio_file.c` route reads.

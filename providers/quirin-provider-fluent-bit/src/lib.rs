@@ -19,83 +19,83 @@ pub const PUBLISHED: &[&str] = &[];
 
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
-/// is the name `contract/corpus.json` resolves (for example `fluent_bit/hash_table_publication.qcore`).
+/// is the name `contract/corpus.json` resolves (for example `fluent_bit/hash_table_publication.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
-        "fluent_bit/hash_table_publication.qcore",
-        include_str!("../contracts/fluent_bit/hash_table_publication.qcore"),
+        "fluent_bit/hash_table_publication.qv",
+        include_str!("../contracts/fluent_bit/hash_table_publication.qv"),
     ),
     (
-        "fluent_bit/input_chunk_destroy.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_destroy.qcore"),
+        "fluent_bit/input_chunk_destroy.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_destroy.qv"),
     ),
     (
-        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore"),
+        "fluent_bit/input_chunk_destroy_direct_routes.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_destroy_direct_routes.qv"),
     ),
     (
-        "fluent_bit/input_chunk_helpers.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_helpers.qcore"),
+        "fluent_bit/input_chunk_helpers.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_helpers.qv"),
     ),
     (
-        "fluent_bit/input_chunk_is_up.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_is_up.qcore"),
+        "fluent_bit/input_chunk_is_up.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_is_up.qv"),
     ),
     (
-        "fluent_bit/input_chunk_name.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_name.qcore"),
+        "fluent_bit/input_chunk_name.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_name.qv"),
     ),
     (
-        "fluent_bit/input_chunk_sizes.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_sizes.qcore"),
+        "fluent_bit/input_chunk_sizes.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_sizes.qv"),
     ),
     (
-        "fluent_bit/input_chunk_total_size.qcore",
-        include_str!("../contracts/fluent_bit/input_chunk_total_size.qcore"),
+        "fluent_bit/input_chunk_total_size.qv",
+        include_str!("../contracts/fluent_bit/input_chunk_total_size.qv"),
     ),
     (
-        "fluent_bit/logging.qcore",
-        include_str!("../contracts/fluent_bit/logging.qcore"),
+        "fluent_bit/logging.qv",
+        include_str!("../contracts/fluent_bit/logging.qv"),
     ),
     (
-        "fluent_bit/memory.qcore",
-        include_str!("../contracts/fluent_bit/memory.qcore"),
+        "fluent_bit/memory.qv",
+        include_str!("../contracts/fluent_bit/memory.qv"),
     ),
     (
-        "fluent_bit/output_flush_id.qcore",
-        include_str!("../contracts/fluent_bit/output_flush_id.qcore"),
+        "fluent_bit/output_flush_id.qv",
+        include_str!("../contracts/fluent_bit/output_flush_id.qv"),
     ),
     (
-        "fluent_bit/output_singleplex.qcore",
-        include_str!("../contracts/fluent_bit/output_singleplex.qcore"),
+        "fluent_bit/output_singleplex.qv",
+        include_str!("../contracts/fluent_bit/output_singleplex.qv"),
     ),
     (
-        "fluent_bit/resource_memory.qcore",
-        include_str!("../contracts/fluent_bit/resource_memory.qcore"),
+        "fluent_bit/resource_memory.qv",
+        include_str!("../contracts/fluent_bit/resource_memory.qv"),
     ),
     (
-        "fluent_bit/resource_string.qcore",
-        include_str!("../contracts/fluent_bit/resource_string.qcore"),
+        "fluent_bit/resource_string.qv",
+        include_str!("../contracts/fluent_bit/resource_string.qv"),
     ),
     (
-        "fluent_bit/routes_mask.qcore",
-        include_str!("../contracts/fluent_bit/routes_mask.qcore"),
+        "fluent_bit/routes_mask.qv",
+        include_str!("../contracts/fluent_bit/routes_mask.qv"),
     ),
     (
-        "fluent_bit/storage_backlog.qcore",
-        include_str!("../contracts/fluent_bit/storage_backlog.qcore"),
+        "fluent_bit/storage_backlog.qv",
+        include_str!("../contracts/fluent_bit/storage_backlog.qv"),
     ),
     (
-        "fluent_bit/task_route_queries.qcore",
-        include_str!("../contracts/fluent_bit/task_route_queries.qcore"),
+        "fluent_bit/task_route_queries.qv",
+        include_str!("../contracts/fluent_bit/task_route_queries.qv"),
     ),
     (
-        "fluent_bit/task_users.qcore",
-        include_str!("../contracts/fluent_bit/task_users.qcore"),
+        "fluent_bit/task_users.qv",
+        include_str!("../contracts/fluent_bit/task_users.qv"),
     ),
     (
-        "fluent_bit/time.qcore",
-        include_str!("../contracts/fluent_bit/time.qcore"),
+        "fluent_bit/time.qv",
+        include_str!("../contracts/fluent_bit/time.qv"),
     ),
 ];
 

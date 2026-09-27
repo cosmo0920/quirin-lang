@@ -8,7 +8,7 @@
   "stages_executed": ["parse", "legacy_c_twin"],
   "notes": "CT40's construct is a C construct: a store of an owned pointer into an object that outlives the call. No QCore syntax expresses it, so the case's artifact is the C twin in case.c, analyzed through the real unrestricted-C gateway. The scenario expects `Not certified; unsupported lifetime/publication protocol`, and that is what the gateway reports since card CTWIN-PUBLISH: the publication is refused, so the projection is withdrawn rather than completed. Two invariance controls bound what the mapping claims. `plain_pointer.c` removes `_Atomic` and does not move one byte of the verdict — the projection derives no atomicity or synchronization fact, so it cannot — and `no_release.c` removes the release instead and is still refused, so the refusal is the publication and not the `prematurely freed` half of the scenario title. Nothing here decides what reads the published object; the measurement is that no certificate is issued for a publication protocol this projection does not model.",
   "legacy_c_twin": {
-    "contracts": ["contracts.qcore"],
+    "contracts": ["contracts.qv"],
     "attributed_to": "the publication `g_published = p`, a store of a tracked identity into a file-scope object that outlives the call",
     "verdict": "unknown",
     "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
@@ -22,7 +22,7 @@
     "controls": [
       {
         "source": "no_publication.c",
-        "contracts": ["contracts.qcore"],
+        "contracts": ["contracts.qv"],
         "expectation": "safe",
         "reason": null,
         "function_status": {
@@ -33,7 +33,7 @@
       },
       {
         "source": "plain_pointer.c",
-        "contracts": ["contracts.qcore"],
+        "contracts": ["contracts.qv"],
         "expectation": "unknown",
         "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
         "function_status": {
@@ -47,7 +47,7 @@
       },
       {
         "source": "no_release.c",
-        "contracts": ["contracts.qcore"],
+        "contracts": ["contracts.qv"],
         "expectation": "unknown",
         "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
         "function_status": {

@@ -1,5 +1,8 @@
 # Wave-13 CT lane — CT34 mapped from card CT34-GROWTH's proposal
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Wave 13. One case moves: **CT34** (protected owned graph grows/replaces
 identities) maps on the existing `mutex_guard` route. CT coverage moves
 **31/50 → 32/50 mapped**, unmapped **19 → 18**.
@@ -150,7 +153,7 @@ control. Measured on the fixture bytes **before the manifest was touched**, that
 is not available:
 
 ```
-$ qcorec check growth_onto_unprotected.qcore
+$ qcorec check growth_onto_unprotected.qr
 Q600: the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }
 ```
 

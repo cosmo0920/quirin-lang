@@ -20,14 +20,14 @@
     "header": "worker_allocation.h",
     "rejection_controls": [
       {
-        "source": "unclean_worker.qcore",
+        "source": "unclean_worker.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "owned buffer"
         }
       },
       {
-        "source": "unclean_allocation_failure.qcore",
+        "source": "unclean_allocation_failure.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "owned buffer"

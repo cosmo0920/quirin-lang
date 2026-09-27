@@ -1,5 +1,8 @@
 # W44-QUIRIN-AUDIT-PROVIDERS: providers for `quirin-audit`, `quirin-audit current`, contracts only
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W44-QUIRIN-AUDIT-PROVIDERS, 2026-09-25, on base `a2a63ced` ("Record the
 w44-collection-allocation integration and archive the combined baseline").
 Mid-card, the user widened the scope three times:
@@ -64,8 +67,8 @@ QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
   --monkey-database "$out/monkey/monkey-build/compile_commands.json" \
   --load-path providers/contract-load-path.json \
   --provider quirin-provider-libc \
-  --provider quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore \
-  --provider qcore-provider-chunkio:chunkio/chunk_residency.qcore \
+  --provider quirin-provider-fluent-bit:fluent_bit/resource_memory.qv \
+  --provider qcore-provider-chunkio:chunkio/chunk_residency.qv \
   --monkey-source-report "$out/reports/monkey-source.json" \
   --report "$out/reports/resource-diagnostics.json" --jobs 16
 ```

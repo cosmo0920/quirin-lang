@@ -20,14 +20,14 @@
     "header": "completion_before_join.h",
     "rejection_controls": [
       {
-        "source": "read_before_join.qcore",
+        "source": "read_before_join.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "not an initialized owned buffer"
         }
       },
       {
-        "source": "drop_before_join.qcore",
+        "source": "drop_before_join.qr",
         "diagnostic": {
           "code": "Q600",
           "message_contains": "not an initialized owned buffer"

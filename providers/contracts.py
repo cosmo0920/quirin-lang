@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent
 # the providers/quirin-provider-*/contracts data crates. The ChunkIO provider also handles
 # Fluent Bit's busy-state API.
 OWNERS = {
-    "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qcore"),
+    "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qv"),
     "qcore-provider-cmetrics": ("cmetrics",),
     "qcore-provider-ctraces": ("ctraces",),
     "qcore-provider-libevent": ("monkey",),

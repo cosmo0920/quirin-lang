@@ -27,7 +27,7 @@ def main():
     binary.chmod(0o755)
     before = json.loads(pathlib.Path(args.baseline).read_text()) if args.baseline else None
     files = list(before['files']) if before else [p for p in subprocess.check_output(
-        ['git', 'ls-files', '-z'], text=True).split('\0') if p.endswith(('.qcore', '.qc'))]
+        ['git', 'ls-files', '-z'], text=True).split('\0') if p.endswith(('.qcore', '.qv', '.qr', '.qc'))]
 
     def invoke(mode, name):
         command = [str(binary), mode, name]

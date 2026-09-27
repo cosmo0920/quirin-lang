@@ -4,7 +4,7 @@
 The honesty question of card C-GATEWAY-RETURN-POSITION sub-shape B: clearing a
 return refusal on a call whose callee is uncontracted merely exchanges one
 refusal for another. This measures, over the real population rather than a
-sample, how many of those callees are (a) declared in the .qcore contract
+sample, how many of those callees are (a) declared in the .qcore/.qv contract
 corpus, (b) defined in the same analysed unit so that W4 could derive a
 validated summary, or (c) neither.
 
@@ -25,7 +25,7 @@ def declared_names():
     names = set()
     for dirpath, _dirs, files in os.walk(CONTRACTS):
         for fn in files:
-            if not fn.endswith('.qcore'):
+            if not fn.endswith(('.qcore', '.qv')):
                 continue
             text = open(os.path.join(dirpath, fn), errors='replace').read()
             # strip line comments so a name quoted in prose is not counted

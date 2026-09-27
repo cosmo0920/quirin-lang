@@ -31,7 +31,7 @@
     },
     "controls": [
       {
-        "source": "restored.qcore",
+        "source": "restored.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {
@@ -42,7 +42,7 @@
         "note": "The whole grant returns to the epoch on the error edge: error(move); resolved against the row's own credit clause. Admitted with restored = credit and nothing spent."
       },
       {
-        "source": "spent.qcore",
+        "source": "spent.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -53,7 +53,7 @@
         "note": "The conservative disposition, spelled: error(drop); - the creator's failure handling spends the whole grant."
       },
       {
-        "source": "no_arm.qcore",
+        "source": "no_arm.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {},
@@ -61,10 +61,10 @@
           "effort": 100,
           "memory": 4096
         },
-        "note": "Attribution: removing exactly the error(...) clause removes the refusal, and the elided arm publishes the identical all-spent split spent.qcore publishes - eliding is spelling the conservative reading, so no pre-existing epoch program changed."
+        "note": "Attribution: removing exactly the error(...) clause removes the refusal, and the elided arm publishes the identical all-spent split spent.qr publishes - eliding is spelling the conservative reading, so no pre-existing epoch program changed."
       },
       {
-        "source": "partial.qcore",
+        "source": "partial.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "restored": {
@@ -78,7 +78,7 @@
         "note": "Boundary: error(move 1024 effort 25); - the split is a real componentwise division of the grant, not a flag, and it adds back to the grant on both axes."
       },
       {
-        "source": "minted.qcore",
+        "source": "minted.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q636"

@@ -139,14 +139,14 @@ class ContractItemizationTest(unittest.TestCase):
         return diff_artifacts.diff_contracts(self.BEFORE, self.AFTER, full)
 
     def test_canonical_locations_compare_without_rewriting_raw_identity(self):
-        old = "/old/contract/qcore/monkey/memory.qcore"
-        provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        shared = "/new/providers/quirin-provider-shared/contracts/monkey/memory.qcore"
+        old = "/old/contract/qcore/monkey/memory.qv"
+        provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qv"
+        second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qv"
+        shared = "/new/providers/quirin-provider-shared/contracts/monkey/memory.qv"
         # The pre-QUIRIN-PROVIDER-SHARED spelling of the shared root must still
         # compare, so a diff across that move names the same logical module.
-        former_shared = "/old/providers/shared/contracts/monkey/memory.qcore"
-        library = "/new/providers/quirin-provider-libc/contracts/monkey/memory.qcore"
+        former_shared = "/old/providers/shared/contracts/monkey/memory.qv"
+        library = "/new/providers/quirin-provider-libc/contracts/monkey/memory.qv"
         for path in [provider, second, shared, former_shared, library]:
             self.assertEqual(diff_artifacts.contract_module(old), diff_artifacts.contract_module(path))
         result = diff_artifacts.diff_contracts({"sources": {old: "policy"}}, {"sources": {provider: "changed"}}, False)

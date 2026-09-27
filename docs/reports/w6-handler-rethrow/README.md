@@ -1,5 +1,8 @@
 # CT20: join and account for results before rethrow
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `e4593ec`, 2026-09-07. CT20 is now mapped to an executed source fixture:
 an in-scope handler for failed second creation joins its earlier child, drops the
 returned owned Buffer and raises the bound payload-free `SpawnError`. This uses
@@ -58,7 +61,7 @@ Reproduce the source/native/reference comparison:
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct20.c \
-  compiler/tests/fixtures/ct/CT20/case.qcore
+  compiler/tests/fixtures/ct/CT20/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -DQCORE_CT_FAIL_ALLOC=0 -DQCORE_CT_FAIL_CREATE=2 \

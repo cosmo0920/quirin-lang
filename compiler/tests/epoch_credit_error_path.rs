@@ -128,8 +128,8 @@ CLAUSE
 /// axis.
 #[test]
 fn abandoning_a_childs_credit_on_the_creators_error_edge_is_refused() {
-    assert_eq!(refuse("case.qcore"), vec!["Q635"]);
-    let message = messages("case.qcore").remove(0);
+    assert_eq!(refuse("case.qr"), vec!["Q635"]);
+    let message = messages("case.qr").remove(0);
     assert!(
         message.contains("CreditAbandonedAtErrorArm")
             && message.contains("task: 1")
@@ -140,7 +140,7 @@ fn abandoning_a_childs_credit_on_the_creators_error_edge_is_refused() {
     // The edge the case rests on is real and derived, not assumed: the creation
     // can fail *and* the join can observe a raised child, which is the edge on
     // which the child existed and held the grant.
-    let admitted = accept("no_arm.qcore");
+    let admitted = accept("no_arm.qr");
     let composed = admitted
         .checked
         .as_composed_epoch_tasks()
@@ -164,10 +164,10 @@ fn abandoning_a_childs_credit_on_the_creators_error_edge_is_refused() {
 #[test]
 fn every_admitted_arm_splits_its_grant_and_the_split_adds_back() {
     for (name, restored, spent) in [
-        ("restored.qcore", both(4096, 100), Quantity::zero()),
-        ("spent.qcore", Quantity::zero(), both(4096, 100)),
-        ("no_arm.qcore", Quantity::zero(), both(4096, 100)),
-        ("partial.qcore", both(1024, 25), both(3072, 75)),
+        ("restored.qr", both(4096, 100), Quantity::zero()),
+        ("spent.qr", Quantity::zero(), both(4096, 100)),
+        ("no_arm.qr", Quantity::zero(), both(4096, 100)),
+        ("partial.qr", both(1024, 25), both(3072, 75)),
     ] {
         let module = accept(name);
         let composed = module
@@ -233,8 +233,8 @@ fn every_admitted_arm_splits_its_grant_and_the_split_adds_back() {
 /// refused at `Q636`, the flat epoch's per-task credit band.
 #[test]
 fn restoring_more_than_the_grant_is_refused_end_to_end() {
-    assert_eq!(refuse("minted.qcore"), vec!["Q636"]);
-    let message = messages("minted.qcore").remove(0);
+    assert_eq!(refuse("minted.qr"), vec!["Q636"]);
+    let message = messages("minted.qr").remove(0);
     // Axis order decides which excess is named first: `effort` sorts before
     // `memory`, and the fixture over-restores on both.
     assert!(
@@ -251,9 +251,9 @@ fn restoring_more_than_the_grant_is_refused_end_to_end() {
 /// spelling `error(drop);` changes nothing at all.
 #[test]
 fn the_bound_certificate_is_unchanged_by_the_error_path() {
-    let elided = accept("no_arm.qcore");
-    let spelled = accept("spent.qcore");
-    let restored = accept("restored.qcore");
+    let elided = accept("no_arm.qr");
+    let spelled = accept("spent.qr");
+    let restored = accept("restored.qr");
 
     let bound = |module: &CompiledModule| {
         module
@@ -555,7 +555,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 /// recheck condition, exercised without going through the driver.
 #[test]
 fn a_forged_plan_against_a_published_program_is_refused() {
-    let module = accept("partial.qcore");
+    let module = accept("partial.qr");
     let composed = module
         .checked
         .as_composed_epoch_tasks()

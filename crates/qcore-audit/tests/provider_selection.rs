@@ -633,7 +633,7 @@ fn cycle19_selection(repository: &Path) -> Vec<String> {
 fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     let repository = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let entries = cycle19_selection(&repository);
-    // 49 -> 50: W45-FB-BACKLOG-CUSTODY's `fluent_bit/storage_backlog.qcore`.
+    // 49 -> 50: W45-FB-BACKLOG-CUSTODY's `fluent_bit/storage_backlog.qv`.
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     assert_eq!(entries.len(), 54);
     let resolved = resolve_providers(

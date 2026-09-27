@@ -1,23 +1,23 @@
 # Scalar calls and explicit output
 
-[calls.qcore](calls.qcore) computes 42 through parameterized helper functions
-without printing it. [printing.qcore](printing.qcore) uses the same scalar-call
+[calls.qr](calls.qr) computes 42 through parameterized helper functions
+without printing it. [printing.qr](printing.qr) uses the same scalar-call
 profile and writes the computed value explicitly. Check and emit either file:
 
 ```sh
-cargo run -p qcorec --bin quirin -- check examples/scalar/calls.qcore
-cargo run -p qcorec --bin quirin -- emit -o /tmp/scalar-calls.c examples/scalar/calls.qcore
+cargo run -p qcorec --bin quirin -- check examples/scalar/calls.qr
+cargo run -p qcorec --bin quirin -- emit -o /tmp/scalar-calls.c examples/scalar/calls.qr
 cc -std=c11 /tmp/scalar-calls.c -o /tmp/scalar-calls
 /tmp/scalar-calls
 ```
 
-The `calls.qcore` executable is silent. The emitted C contains real helper
+The `calls.qr` executable is silent. The emitted C contains real helper
 functions and calls; returning 42 does not itself write a diagnostic or result
 banner. Arithmetic uses checked signed i32, including explicit
 overflow/division guards, and a guard failure exits 86 without writing to stdout
 or stderr.
 
-`printing.qcore` imports `std.io` and uses `print(f);`. That statement evaluates
+`printing.qr` imports `std.io` and uses `print(f);`. That statement evaluates
 `f` and writes its i32 value followed by one newline to stdout:
 
 <!-- transcript: printing stdout -->

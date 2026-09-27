@@ -24,7 +24,7 @@
     ],
     "controls": [
       {
-        "source": "write_after_joins.qcore",
+        "source": "write_after_joins.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "ScopedReadSharesV1",

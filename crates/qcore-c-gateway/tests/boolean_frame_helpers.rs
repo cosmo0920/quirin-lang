@@ -13,7 +13,7 @@ use serde_json::json;
 
 const REVISION: &str = "1234567890abcdef1234567890abcdef12345678";
 const RULES: &str = include_str!(
-    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 const LAYOUT: &str = "struct sample_record { int ready; int other_model; int metadata; };";
 static NEXT: AtomicUsize = AtomicUsize::new(0);

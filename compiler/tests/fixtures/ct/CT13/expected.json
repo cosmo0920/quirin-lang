@@ -17,7 +17,7 @@
   "evidence_target": "linux",
   "native_create_recovery": {
     "header": "create_failure.h",
-    "unjoined_source": "unjoined_failure.qcore",
+    "unjoined_source": "unjoined_failure.qr",
     "success_i32": 7,
     "recovery_i32": 42
   },

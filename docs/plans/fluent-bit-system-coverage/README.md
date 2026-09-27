@@ -41,11 +41,11 @@ Existing constraints particularly relevant to this review:
 
 - [Cycle 19C](../../cycles/CYCLE_19.md) already requires identity-indexed chunk
   lifecycle, route/task custody, accounting and independent failure paths.
-- [Chunk residency declarations](../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore)
+- [Chunk residency declarations](../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv)
   are trusted custody premises, not proofs of successful residency transitions
-  or capacity enforcement. [Counter declarations](../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore)
+  or capacity enforcement. [Counter declarations](../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv)
   require range and exclusivity premises; callers must establish them.
-- [Busy-state contract](../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore)
+- [Busy-state contract](../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv)
   distinguishes the wrapper busy flag from the underlying chunk lock.
 - [CT24's withdrawn mapping](../../reports/ct-wire-lane-3/README.md#4-ct24--withdrawn-with-the-measurement)
   demonstrates why refusal for placement is not evidence about cleanup duties.

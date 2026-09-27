@@ -111,7 +111,7 @@ impl Fixture {
 
         fs::write(
             root.join("memory.qcore"),
-            include_str!("fixtures/alloc_release.qcore"),
+            include_str!("fixtures/alloc_release.qv"),
         )
         .unwrap();
         fs::write(

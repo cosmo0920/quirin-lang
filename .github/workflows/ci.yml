@@ -163,7 +163,7 @@ jobs:
           foreach ($case in @('CT13', 'CT26')) {
             $source = Join-Path $env:RUNNER_TEMP "$case.c"
             $binary = Join-Path $env:RUNNER_TEMP "$case.exe"
-            cargo run -p qcorec -- emit "compiler/tests/fixtures/ct/$case/case.qcore" -o $source
+            cargo run -p qcorec -- emit "compiler/tests/fixtures/ct/$case/case.qr" -o $source
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
             & $env:QCORE_CLANG -std=c11 -Wall -Wextra -Werror $source -o $binary
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

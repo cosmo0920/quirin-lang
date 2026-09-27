@@ -1,5 +1,8 @@
 # CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, 2026-09-25, on base `2d0b77e1`
 (the CONTRACT-INHERIT-ADOPTION merge), with main `f8b41209` (the integrator's
 matrix repair and adoption confirmation, docs only) merged in. It applies the

@@ -21,7 +21,7 @@ use qcore_core::source_loop::{
 };
 use qcore_core::std_buffer::{self, BufferEvent, BufferOperand, BufferProgram};
 
-const COPY: &str = include_str!("fixtures/source_loop/copy.qcore");
+const COPY: &str = include_str!("fixtures/source_loop/copy.qr");
 
 fn compile(
     source: &str,
@@ -821,7 +821,7 @@ fn the_accessor_prelude_reaches_a_write_that_only_a_loop_body_performs() {
 /// Byte identity for a program that uses none of this card's construct.
 #[test]
 fn a_module_without_a_loop_emits_byte_identically() {
-    const BYTES: &str = include_str!("fixtures/std_buffer/bytes.qcore");
+    const BYTES: &str = include_str!("fixtures/std_buffer/bytes.qr");
     let before = include_str!("fixtures/source_loop/bytes_expected.c");
     let module = compile(BYTES).unwrap();
     assert_eq!(

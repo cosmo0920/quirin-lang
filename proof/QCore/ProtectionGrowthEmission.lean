@@ -469,7 +469,7 @@ theorem a_growthless_trace_renders_independently_of_the_certificate
 
 /-! ## Decidable scenarios
 
-The trace of `compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore`:
+The trace of `compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr`:
 one generation over `x`, a section that writes `x`, grows onto `y` and writes
 `y`, then a second section that reads both. -/
 

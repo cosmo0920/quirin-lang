@@ -1,5 +1,8 @@
 # W45-FB-BACKLOG-CUSTODY: intrusive-list iteration, element identity and checked backlog specifications
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W45-FB-BACKLOG-CUSTODY, 2026-09-26. Base `74579af6`; `main` merged in
 twice: `84ebad57` (W45-FB-RETRY-LIFETIME) at `95b7399e`, then `2f9131a8`
 (W45-CONTRACT-REVISION-MODE) at `d6c1f756`. The measured code is `6b07bd5d`
@@ -225,7 +228,7 @@ extended.
 
 ### 2.4 The contract module
 
-[`storage_backlog.qcore`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qcore)
+[`storage_backlog.qv`](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv)
 declares the twelve `sb.c` functions:
 
 * `sb_allocate_chunk`: owned-nullable result, borrowed arguments;

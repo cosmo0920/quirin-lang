@@ -2,7 +2,7 @@
  * (card `NATIVE-LIBRARY-HEADER`).
  *
  * This is a **real** `.h`, not a transcription of one: the manifest
- * `fixtures/native_library/buffer_lib_header.qcorelib` names it and its digest,
+ * `fixtures/native_library/buffer_lib_header.qrlib` names it and its digest,
  * and every declaration below is read from this text and compared against that
  * manifest's own entry spellings. It is written inside the v1 subset the design
  * note defines — an include guard, comments, `#include`s that are never

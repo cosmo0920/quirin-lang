@@ -30,7 +30,7 @@
     },
     "controls": [
       {
-        "source": "summed_allocation.qcore",
+        "source": "summed_allocation.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "task_count": 2,
@@ -44,7 +44,7 @@
         "note": "The same two peaks under a zero overhead and an allocation of exactly 8192: admitted, with the epoch peak equal to the allocation. This is the upper control of the straddle, and it also shows the overhead is a declared addend rather than a constant folded into the peak."
       },
       {
-        "source": "maximized_allocation.qcore",
+        "source": "maximized_allocation.qr",
         "expectation": "reject",
         "diagnostic_sequence": ["Q637", "Q638"],
         "note": "One byte below the summed peak. A maximized reading would have called 5120 the peak and admitted this too, so the refusal is what makes the summing falsifiable. Both codes are pinned: the credits exceed the allocation and so does the epoch, which distinguishes a per-task check from a whole-epoch one."

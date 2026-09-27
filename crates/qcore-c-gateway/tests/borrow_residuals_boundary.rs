@@ -28,7 +28,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/borrow_residuals.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/borrow_residuals.qv");
 
 const DECLARATIONS: &str = "\
 typedef unsigned long y_word; \

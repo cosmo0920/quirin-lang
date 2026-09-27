@@ -1,5 +1,8 @@
 # `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base: `main` at `e878b362`; gate at `ae73b5f9` (§7). Linux arm only (Ubuntu clang 21.1.8 / glibc 2.43 /
 x86-64); no Windows or Apple claim is made anywhere in this card
 (`TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN` stays).

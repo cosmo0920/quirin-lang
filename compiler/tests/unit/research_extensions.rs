@@ -28,7 +28,7 @@ fn aggregate_certificate_contains_all_six_discharges() {
     // `.qcore` module through the total-or-reject v1 loader.
     let contracts = crate::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
         "q_base.qcore".to_owned(),
-        include_str!("../../../crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qcore")
+        include_str!("../../../crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qv")
             .to_owned(),
     )]))
     .unwrap();

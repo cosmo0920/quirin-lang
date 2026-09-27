@@ -22,7 +22,7 @@ const DECLARATIONS: &str = "void *q_alloc(void); void q_free(void *); void q_tra
 fn contracts(declared: Option<&str>) -> ResourceContracts {
     let mut sources = vec![(
         "q_base.qcore".to_owned(),
-        include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+        include_str!("fixtures/contracts/q_base.qv").to_owned(),
     )];
     if let Some(declared) = declared {
         sources.push(("reach_declared.qcore".to_owned(), declared.to_owned()));

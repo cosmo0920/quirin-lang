@@ -42,7 +42,7 @@
     ],
     "controls": [
       {
-        "source": "no_crossing.qcore",
+        "source": "no_crossing.qr",
         "expectation": "accept_emitting",
         "diagnostic_sequence": [],
         "message_fragment": null,
@@ -59,7 +59,7 @@
         "emission_refusal": null
       },
       {
-        "source": "unguarded_reach.qcore",
+        "source": "unguarded_reach.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q611"
@@ -70,7 +70,7 @@
         "emission_refusal": null
       },
       {
-        "source": "absent_protocol.qcore",
+        "source": "absent_protocol.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -81,7 +81,7 @@
         "emission_refusal": null
       },
       {
-        "source": "mismatched_protocol.qcore",
+        "source": "mismatched_protocol.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -92,7 +92,7 @@
         "emission_refusal": null
       },
       {
-        "source": "share_generation.qcore",
+        "source": "share_generation.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q600"
@@ -103,7 +103,7 @@
         "emission_refusal": null
       },
       {
-        "source": "guard_local.qcore",
+        "source": "guard_local.qr",
         "expectation": "accept_unrendered",
         "diagnostic_sequence": [],
         "message_fragment": null,

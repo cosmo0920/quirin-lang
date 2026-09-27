@@ -30,13 +30,14 @@ def main() -> int:
     for path in sorted(providers.rglob("*")):
         if "target" in path.parts or not path.is_file():
             continue
-        if path.suffix in (".qcore", ".json") or path.name in ("contracts.lock", "Cargo.toml"):
+        if path.suffix in (".qcore", ".qv", ".json") or path.name in ("contracts.lock", "Cargo.toml"):
             destination = out / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, destination)
     flipped = []
-    modules = sorted((out / "providers/quirin-provider-fluent-bit/contracts/fluent_bit")
-                     .glob("input_chunk_*.qcore"))
+    modules = sorted(p for p in
+                     (out / "providers/quirin-provider-fluent-bit/contracts/fluent_bit")
+                     .glob("input_chunk_*") if p.suffix in (".qcore", ".qv"))
     for module in modules:
         text = module.read_text()
         flipped += re.findall(r"^extern fn ([a-z_0-9]+)", text, re.M)

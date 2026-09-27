@@ -39,7 +39,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/c02p_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/c02p_generic.qv");
 
 /// C02-P's declarations, verbatim, so the two families share one surface.
 const DECLARATIONS: &str = "\

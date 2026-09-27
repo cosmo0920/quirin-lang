@@ -1,5 +1,8 @@
 # W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-DESCRIPTOR-RESOURCE-TRACKING, 2026-09-25, on base `f8b41209` (main
 after CONTRACT-INHERIT-ADOPTION's matrix repair), merged with main `0a07cb57`
 (W43-INDIRECT-ACCESS-GENERAL, CONTRACT-INHERIT-QCORE-PROVIDER-NAMING and
@@ -587,7 +590,7 @@ python3 docs/reports/w43-descriptor-resource-tracking/scripts/path_alias_diff.py
 python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/after3 06ee9fe4
 docs/reports/w43-descriptor-resource-tracking/scripts/capture_run.sh measure/capture-run  # tee wrapper, pre-merge CLASS-A binary
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/strip.py
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/census.py docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qcore abi-census.txt
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/census.py docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qv abi-census.txt
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py measure/class-a/resource-diagnostics.json measure/capture/ppP measure/unit-texts
 python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/class-a3 measure/after3 measure/unit-texts attr.json docs/reports/w43-descriptor-resource-tracking/measurement/shipped-names.txt
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/classes.py measure/before-main measure/class-a3 measure/after3 attr.json classes.json

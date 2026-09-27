@@ -1,5 +1,8 @@
 # `CT07-TWO-THREAD-PROOF-LEG` (wave 39) — bind CT07's disjointness theorem to its artifact through the ledger
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base `e878b362` (`origin/main` at branch time, confirmed equal). Report
 directory: this one. Evidence files beside this README:
 `ct_stage_evidence.json` (the integrator's flip, superseding the wave-37

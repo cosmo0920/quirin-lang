@@ -1,5 +1,8 @@
 # `AGGREGATE-OWNED-FIELD` (wave 39) — an owned buffer inside a record: the IR first, then the route
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Card:** `AGGREGATE-OWNED-FIELD` · **Wave:** 39 · **Base:** `e878b362`
 (`origin/main` at branch time, confirmed equal) · **Date:** 2026-09-18.
 

@@ -16,7 +16,7 @@
     "diagnostic_sequence": ["Q639"],
     "controls": [
       {
-        "source": "work_bound_only.qcore",
+        "source": "work_bound_only.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "task_count": 2,

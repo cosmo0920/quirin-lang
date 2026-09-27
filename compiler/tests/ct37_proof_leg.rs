@@ -14,7 +14,7 @@
 //! trace the F02 relation admits against it.
 //!
 //! This test binds those theorems to **CT37's own artifact**: it compiles
-//! `compiler/tests/fixtures/ct/CT37/case.qcore` through the real pipeline,
+//! `compiler/tests/fixtures/ct/CT37/case.qr` through the real pipeline,
 //! executes the checked task module's reference execution, derives the
 //! admitted causal order with the production observer, and
 //!
@@ -42,7 +42,7 @@ use qcore_core::task_trace_relation::{
     AdmittedCausalOrder, ObservedEvent, ObservedOutcome, relate,
 };
 
-const CT37_SOURCE: &str = include_str!("fixtures/ct/CT37/case.qcore");
+const CT37_SOURCE: &str = include_str!("fixtures/ct/CT37/case.qr");
 
 /// `QCore.Ct37CompletionCapsule.ct37_trace_digest`, proved by the Lean kernel
 /// on the `referenceRun` term this artifact must reproduce.
@@ -268,7 +268,7 @@ fn discharges_completion_capsule(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct37_reference_events() -> Vec<ObservedEvent> {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT37_SOURCE)],
+        &[SourceFile::new("case.qr", CT37_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT37 is the manifest's accepted completion-capsule case");

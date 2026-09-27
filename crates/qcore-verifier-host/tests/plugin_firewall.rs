@@ -16,7 +16,7 @@ use std::sync::Arc;
 use qcore_schemas::verdict::Verdict;
 use qcore_verifier_host::*;
 
-const MODULE: &str = "quirin-provider-acme:acme/pool.qcore";
+const MODULE: &str = "quirin-provider-acme:acme/pool.qv";
 
 fn task() -> VerificationTask {
     let mut task = VerificationTask {

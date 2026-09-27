@@ -8,527 +8,527 @@
   "flexible": [
     {
       "function": "__errno_location",
-      "module": "libc/errno.qcore",
+      "module": "libc/errno.qv",
       "contract_sha256": "9e00d4065a62fe1dd8aa9d9476ae77ae47c5b179918b7a717a12f15068935d71"
     },
     {
       "function": "access",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "7dbf0fd618d56492ff935165e2183baea34e2b1bd91bd575e41d77845d18b59d"
     },
     {
       "function": "atoi",
-      "module": "libc/stdlib.qcore",
+      "module": "libc/stdlib.qv",
       "contract_sha256": "d2842cfc0c7cc4bfb763cb34df2f95582aee84c8608df0c5aa4346b984c40398"
     },
     {
       "function": "calloc",
-      "module": "libc/memory.qcore",
+      "module": "libc/memory.qv",
       "contract_sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1"
     },
     {
       "function": "ceil",
-      "module": "libc/math.qcore",
+      "module": "libc/math.qv",
       "contract_sha256": "3dd76e345b16abffd8dad9a62a975851341a0d57d76ec6a7302826f1c8f2043c"
     },
     {
       "function": "close",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "0b4424f08d057594b5aeb04c54a41450b34fef63d3a9a21a216bc89b14e18e64"
     },
     {
       "function": "closedir",
-      "module": "libc/dirent.qcore",
+      "module": "libc/dirent.qv",
       "contract_sha256": "77c49ac67224f2e85cc8b856d3e9fccd44d0eaff109294cbc95707573e46f40c"
     },
     {
       "function": "cnd_timedwait",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "f29b33d0220abaf212cf12d430b02bb5bd6779150ba7c9e8ba9757a278b26975"
     },
     {
       "function": "cnd_wait",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "45cbcf47880c9b0b5c7c6b0444f93bea623624579627a9decd618dcb6595e8ab"
     },
     {
       "function": "dlerror",
-      "module": "libc/dlfcn.qcore",
+      "module": "libc/dlfcn.qv",
       "contract_sha256": "9b40cc67a31f09ff15d03af531eaf65c51f111564e1b10c1a1642eac4ce190b1"
     },
     {
       "function": "dlsym",
-      "module": "libc/dlfcn.qcore",
+      "module": "libc/dlfcn.qv",
       "contract_sha256": "446134db1c7659773dd6281eab248c04375c749eff0d9c0eecdf317d8d24ebfe"
     },
     {
       "function": "fabs",
-      "module": "libc/math.qcore",
+      "module": "libc/math.qv",
       "contract_sha256": "61ab1e106ac2bdcc12c9b785a0babd530aa7ca982b10288295a1e7db4e3c630a"
     },
     {
       "function": "fclose",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "1b9d7b267b8bb232deffdb9499168cbdf384907ae80069ad912e64fe9e2cd1d4"
     },
     {
       "function": "fcntl",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "6127a36d7da8666bdb538ee4aaf9bd53020d2ad0a5fe7bccb6f515eeaa57481d"
     },
     {
       "function": "fflush",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "3bbe7b6aa1ebb59aef2125a06342cc125a181d01619d23ef3a392d75bdc4fe53"
     },
     {
       "function": "fileno",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "5f729ea470dea8816148e57b19c9f5be68417a3ecb55cb33673216636ba4fb12"
     },
     {
       "function": "floor",
-      "module": "libc/math.qcore",
+      "module": "libc/math.qv",
       "contract_sha256": "785690073ee50f28e2e0aa91c03bda020089e2213c2482e3874ee81920c67690"
     },
     {
       "function": "fopen",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "424f2cc666589b27a6d740c38d270763e8219176f81a8af83b34fc6929909eac"
     },
     {
       "function": "fprintf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "721652410d062d9b84ba00819b55542941050b62405040f625afb8d8b41c65b3"
     },
     {
       "function": "free",
-      "module": "libc/memory.qcore",
+      "module": "libc/memory.qv",
       "contract_sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22"
     },
     {
       "function": "fstat",
-      "module": "libc/sys_stat.qcore",
+      "module": "libc/sys_stat.qv",
       "contract_sha256": "0d0c4d32e1207cdd00ddb6a264f89cd5c32f1dede617c846667749f9e769ef3e"
     },
     {
       "function": "gai_strerror",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "0bb5ab483a34d08f8471a5247ed6eb2524d5343966688358aa8b81fcf037767b"
     },
     {
       "function": "getegid",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "500705ea318e7bad54f9e82ff7fa0fcdf3f41d6536536c53cc620fd8c10f091a"
     },
     {
       "function": "geteuid",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "3ec3db5c3669294e63dae8d2212b171b20d5ee1a419a4c400e98447a018398df"
     },
     {
       "function": "getpagesize",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "46b3d96f956014af04aa71dd79a3dd9dd636e43952a48fb2a993b301d7fbf01e"
     },
     {
       "function": "getpeername",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "886a32d461d5b3175a62eeeb65f827ca8b6aca7d4ea0bc0761ac2ddb88a90484"
     },
     {
       "function": "getsockopt",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "e918f6dbbb7eecff033d173e08380c677aa7250dcbeb0213fc429996e5b84616"
     },
     {
       "function": "gettimeofday",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "4340c5abc8ff84b416bcf449e94b04849b03a7c63aca49ca40e0b5514662371b"
     },
     {
       "function": "gmtime_r",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "038b337e3dff0bb84e92be430d2f10bf0dcf6413c7957c58ecdfcec2282a9475"
     },
     {
       "function": "htonl",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "80bc93ecf53771b1b24915ceab314499a45aaaefa94872ce44bd14a2fd3ed7d5"
     },
     {
       "function": "listen",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "3fc18d3b40796f1e8297afa490eda1ec1e11834a0404c5a67747798ee617f739"
     },
     {
       "function": "localtime_r",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "a0b09836999b13f7f2705676d7d5e38cf59f443f416c8eae64be1de74f3cad5a"
     },
     {
       "function": "malloc",
-      "module": "libc/memory.qcore",
+      "module": "libc/memory.qv",
       "contract_sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7"
     },
     {
       "function": "memchr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "34fd29a1b0213b2cb5e472926dad4d0a51e717aa83ccfde23bccda720eadb000"
     },
     {
       "function": "memcmp",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "28d333709b7c70d5bcd6e6d8c81c06aec7d92747c6dbd7855b253c2733118c08"
     },
     {
       "function": "memcpy",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "883bfc1a1628516ad622404650dee0f7a490033179c4b0be01ed125987428074"
     },
     {
       "function": "memmove",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "7de35ae5b95b64f5b63e4631bc2000345ab95c545a3c53cfe89b0479b01a6f94"
     },
     {
       "function": "memrchr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "a33d9b55b5f15b9b415adfb3b94176b29a8ce5f88c93030108e644bf8498e0b0"
     },
     {
       "function": "memset",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "05ca1acccd0a9a43f068f546434b67bf47c4e984a041fb900518835cb13e2233"
     },
     {
       "function": "mkdir",
-      "module": "libc/sys_stat.qcore",
+      "module": "libc/sys_stat.qv",
       "contract_sha256": "c7aa25bac9a38a408cb89f91814dd042034c476ef7a9939a603b88b8f430c85c"
     },
     {
       "function": "mtx_lock",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "3329d2e3428f720177ec9b1315dbac5103c2da41224fe6ae3782833f35287914"
     },
     {
       "function": "mtx_unlock",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "d7fc0ef7cf9b6f1bb7327321eb4caf23d526003e8999ac3aed44a128df37994b"
     },
     {
       "function": "ntohl",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "b49efadd62efeafd271c408a44311de26a57edf30b081684e84da25d30a5b957"
     },
     {
       "function": "open",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "cb570c4223ed30c146c8af607f7e232d80579129aadfd0720a17b09710d4366b"
     },
     {
       "function": "opendir",
-      "module": "libc/dirent.qcore",
+      "module": "libc/dirent.qv",
       "contract_sha256": "32cae8e29140770592d1230ac60beff56375b1680eb750b019f1c0df5c47edf0"
     },
     {
       "function": "perror",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "50536c0e1241f2c583d114fbab69aa83babbfec20f3f0c240598397d6cba4c56"
     },
     {
       "function": "pow",
-      "module": "libc/math.qcore",
+      "module": "libc/math.qv",
       "contract_sha256": "8aedff84e10aa80375f256cdb81b39bee9e0b3a1d49f5c5e1c7516d59602c7b3"
     },
     {
       "function": "prctl",
-      "module": "libc/process.qcore",
+      "module": "libc/process.qv",
       "contract_sha256": "575ec8bad42d0dcfaf48d3187fe91286a71ebae7175a6b6922ecc98e87421df8"
     },
     {
       "function": "printf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "d0bae961f9fabe8fb40c90d117fca447130f7721c7178000ea267437e18f321e"
     },
     {
       "function": "pthread_attr_setdetachstate",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "9b1bce57ad14220dc0ee1c6418eedc599b6da2e983d90fb3fbc157faf9eac26e"
     },
     {
       "function": "pthread_kill",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "01f51ee40dc97836fa730f2496b418ff393bc92722c621c6a8e69310a5ed98d0"
     },
     {
       "function": "pthread_mutex_lock",
-      "module": "libc/pthread_mutex.qcore",
+      "module": "libc/pthread_mutex.qv",
       "contract_sha256": "4e9a0d63356ce1dfa2a3b52a95533ea94e7d53acb2a2639ca5c66cdf8ede7e7c"
     },
     {
       "function": "pthread_mutex_unlock",
-      "module": "libc/pthread_mutex.qcore",
+      "module": "libc/pthread_mutex.qv",
       "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e"
     },
     {
       "function": "pthread_rwlock_rdlock",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "709206d054c7797d0ff22119ab2868ae067a706fe1bfd0ecc6181ca421bb4466"
     },
     {
       "function": "pthread_rwlock_unlock",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "42885a15851b607e61ba463dfa5c3f0074bd98a7e55e06e63bfe09b7c545ef59"
     },
     {
       "function": "pthread_rwlock_wrlock",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "8ff83112e81b35e6fb00cdc06db589d39121fb23db14df23307ba161f473d207"
     },
     {
       "function": "pthread_self",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "d3955288dfdfa2bf4cf2281e8f6d6ed17fd28a5fcf1abec9f549a1b27187cffa"
     },
     {
       "function": "pthread_setcancelstate",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "889269bfc3a7b9b9215c7dcf34f4cd0ac32a4cb32b77c4ffb9cb2de100d4ecf4"
     },
     {
       "function": "pthread_setcanceltype",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "4a6737f4ae6c63d1e3a3572c67548110e0473fdbcf45f29f59a5486ddba4f975"
     },
     {
       "function": "pthread_sigmask",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "c699abe5a9342edd5307237672ae2370391f84742ede19c5070460cec663e1e4"
     },
     {
       "function": "rand_r",
-      "module": "libc/stdlib.qcore",
+      "module": "libc/stdlib.qv",
       "contract_sha256": "2d7f3cd9fae74b39260b30f749989a7be674dbd9c5da62366b62edbbc15b8f73"
     },
     {
       "function": "read",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b"
     },
     {
       "function": "recv",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "d5b2f4b329eb5c226bfa3be67fa56ac5ea8ea160f157b11bcebcba8816d67220"
     },
     {
       "function": "regerror",
-      "module": "libc/regex.qcore",
+      "module": "libc/regex.qv",
       "contract_sha256": "7597699f8daed9d4437640eb02e345b891f6600329cda6b33ee5dd9b476a6bab"
     },
     {
       "function": "regexec",
-      "module": "libc/regex.qcore",
+      "module": "libc/regex.qv",
       "contract_sha256": "c25d522b158ab52d1efcdb4fa2b7d629c339dfc6d2e037aabaaad135f6f56aac"
     },
     {
       "function": "remove",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "d2b6c0ac6826d83f74115d23975111fabf77ec2a833b34a836351400e7eeac6d"
     },
     {
       "function": "send",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "038a3b393e8423d54b66b282a8d53459320f7b7876fca96d84ff8b781bb38890"
     },
     {
       "function": "sendfile",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "09fefe94523ec2e28171a70e00ff72f7dd167c2e378c16d0d422b6415bdb0fb4"
     },
     {
       "function": "setsid",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "8e018fff0a7456537aacf31fc83ac63089667fae0d0af82e3efd4bbd94699619"
     },
     {
       "function": "setsockopt",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "5d6820ca9e63c6be63a23707ca955439ab2df603dd655b7363e687e3f4ff0fd6"
     },
     {
       "function": "sigaddset",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "9d834776a9cbaca2801a9085ce69b17b11f7753b64c8978711b883f48d8d22bb"
     },
     {
       "function": "sigemptyset",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "d982dc6132ec2c8972e3944b7227fcf468d4520f018a1304e8e6c86b551f3dba"
     },
     {
       "function": "sigfillset",
-      "module": "libc/threads.qcore",
+      "module": "libc/threads.qv",
       "contract_sha256": "ac61da2151704dcadf2c3134cf1cc661599454f43b8ac4e11464ae8054e3362a"
     },
     {
       "function": "sleep",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "6a5334fff099770761d1306ba3f7545dfef4ccd5026481501768798c68917e4b"
     },
     {
       "function": "snprintf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "1acdf35a37e8c9af9125a14eddd92b9d5e1324ded76beaef9219dc66b3196b9c"
     },
     {
       "function": "socket",
-      "module": "libc/socket.qcore",
+      "module": "libc/socket.qv",
       "contract_sha256": "e14c95429745ee7ed469e50acbbadf3970f26ec585347c9164b870205a246a15"
     },
     {
       "function": "sprintf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "5bef05522bf1d1d2866dce9378d27e11e6e7e7e24ce16358ceee1040c29fb854"
     },
     {
       "function": "srand",
-      "module": "libc/stdlib.qcore",
+      "module": "libc/stdlib.qv",
       "contract_sha256": "560f7b7f86f425094587a0c95f021bca9b14c353ec4f5d075cc16a0d995ecbc7"
     },
     {
       "function": "stat",
-      "module": "libc/sys_stat.qcore",
+      "module": "libc/sys_stat.qv",
       "contract_sha256": "60cdcd7942f74210feb3a40180fd25808bfaa66448e6b4013ca747e2a503df1c"
     },
     {
       "function": "strcasecmp",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "a59e46ac4e1077a9fae5e5d7dd677ba38bfc13f44439dffa8d0c695f7c646e4d"
     },
     {
       "function": "strcasestr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "07359f5076a948371c612eb159ce282cbb235e6af6d7ca317283793c6115e219"
     },
     {
       "function": "strchr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "0b0185faf889f711c6c19b5389718731be7f6955167080e870b08f9fcbfdc015"
     },
     {
       "function": "strcmp",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "6eb73531dcc1f710f2c7053827851dcb9ad8577784c45f221701f022e141cfdc"
     },
     {
       "function": "strcpy",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "2a97bb31c346d4b8c773efd4e2d659d66e2d3d4e8574aa020c4c2e34791a1878"
     },
     {
       "function": "strdup",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "df0d0b224585ec41cb414c157ec316421a917515100b2e6cc3a9e1da8f46b86b"
     },
     {
       "function": "strerror",
-      "module": "libc/errno.qcore",
+      "module": "libc/errno.qv",
       "contract_sha256": "af191a9b5a7c436af614878404a3663f3d2fcace58fc84dc9a7a5437138afd48"
     },
     {
       "function": "strerror_r",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "7b799c7cebd71e54947ec327931c15f552f70c0792116d8b52768e6ccd2ff5bb"
     },
     {
       "function": "strftime",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "d83b153d9242e4d4706294658ae3b1e77081f70aa0a0af1d8327a162084d576b"
     },
     {
       "function": "strlen",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "20462f0cfea207b0091240c32529c73c8554328ada0e30ff6256b2cfd1bde3fd"
     },
     {
       "function": "strncmp",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "502ba704d738d3b0debce91b5a754edcf37b4e0348fbbfe8df8cb09040196ebc"
     },
     {
       "function": "strncpy",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "b988760bdad09d08b11caefa080cfd4e9ce575ae4cd1602a9444cee5b8005302"
     },
     {
       "function": "strndup",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46"
     },
     {
       "function": "strnlen",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "019e2bcb27088183f30ec41efde8c7129538ce236c339ecc85e92023aff5650d"
     },
     {
       "function": "strrchr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "4a81fc626ff6c0cce286e8d9ab1a3cd3deba557c98d12bdf7011c08d407866bd"
     },
     {
       "function": "strstr",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "contract_sha256": "14ce1db84cd91074b6d909b758ba5903a510f3d6f8183bed3f5e5f8aafb7e4a4"
     },
     {
       "function": "sysconf",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "9952680d44829bc9d8399fb4b18468941d42e0c777a386dd54ec2303386f0b10"
     },
     {
       "function": "system",
-      "module": "libc/stdlib.qcore",
+      "module": "libc/stdlib.qv",
       "contract_sha256": "828eeea0a95caaa82381e606d3c84476cac23e8f0db9b7fbf8e6b7c7f6901422"
     },
     {
       "function": "time",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "0d1f335080f344836bd108e9633c4702179532729762c9a53951c64f1493486a"
     },
     {
       "function": "timegm",
-      "module": "libc/time.qcore",
+      "module": "libc/time.qv",
       "contract_sha256": "f3a3c13c3e507ccdab43747f545b7a7a674ed7e71b6d1fe194088592e78136e7"
     },
     {
       "function": "umask",
-      "module": "libc/sys_stat.qcore",
+      "module": "libc/sys_stat.qv",
       "contract_sha256": "7e9d554cab7a91be641a8f9857cd836bec082ccccf2668fa01bd730621754f00"
     },
     {
       "function": "unlink",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "8476f186d43a015c0e1b2cb18ed55f9bd63bbc11a6f3c7a693c650be817742db"
     },
     {
       "function": "usleep",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "3d52495590e0892e2f80e6a6625c63859d69b342cd38cc6b91e55a5158349570"
     },
     {
       "function": "vprintf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "6ed92e1bb90cd35ae01d773fc43f968e4f13f1c0272fcea32590a252e3be33e8"
     },
     {
       "function": "vsnprintf",
-      "module": "libc/stdio.qcore",
+      "module": "libc/stdio.qv",
       "contract_sha256": "344cd5692eaad20afdb7f17e2c627951f0fd9a3ef2a73abb4d06dba3022d2675"
     },
     {
       "function": "write",
-      "module": "libc/unistd.qcore",
+      "module": "libc/unistd.qv",
       "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180"
     }
   ]

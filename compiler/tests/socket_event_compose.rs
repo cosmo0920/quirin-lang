@@ -19,7 +19,7 @@ use qcore_core::std_event::Interest;
 use qcore_core::std_io::Stream;
 use qcore_core::typed_errors::Effect;
 
-const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qcore");
+const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qr");
 const EVENTS_README: &str = include_str!("../../examples/events/README.md");
 
 fn compile(
@@ -1179,7 +1179,7 @@ fn the_readme_transcript_is_the_real_one() {
         "the page's transcript must be the one the pipeline produces: {transcript:?}"
     );
     assert!(
-        readme.contains("socket_server.qcore"),
+        readme.contains("socket_server.qr"),
         "the page must index the program"
     );
 }

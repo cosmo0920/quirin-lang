@@ -1,0 +1,116 @@
+[
+  {
+    "document": "docs/design/CTRACES_PROVIDER_CAPABILITY_V1.md",
+    "old_label": "`docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore`",
+    "new_label": "`docs/reports/remaining-p06/ctraces_span_dropped_counts.qv`",
+    "target": "../reports/remaining-p06/ctraces_span_dropped_counts.qv"
+  },
+  {
+    "document": "docs/reports/core-concurrency-prelude/README.md",
+    "old_label": "`core_context.qcore`",
+    "new_label": "`core_context.qr`",
+    "target": "../../../examples/threads/core_context.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04-arms/README.md",
+    "old_label": "`o04_arms_callees.qcore`",
+    "new_label": "`o04_arms_callees.qr`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04-b08/README.md",
+    "old_label": "`o04_b08_callees.qcore`",
+    "new_label": "`o04_b08_callees.qr`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04-b09b10/README.md",
+    "old_label": "`o04_b09b10_callees.qcore`",
+    "new_label": "`o04_b09b10_callees.qr`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04-read-bound/README.md",
+    "old_label": "`o04_path.qcore`",
+    "new_label": "`o04_path.qv`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv"
+  },
+  {
+    "document": "docs/reports/remaining-o04-trace/README.md",
+    "old_label": "`o04_trace_callees.qcore`",
+    "new_label": "`o04_trace_callees.qr`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04-trace/README.md",
+    "old_label": "`o04_trace_callees.qcore`",
+    "new_label": "`o04_trace_callees.qr`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr"
+  },
+  {
+    "document": "docs/reports/remaining-o04/README.md",
+    "old_label": "`o04_path.qcore`",
+    "new_label": "`o04_path.qv`",
+    "target": "../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv"
+  },
+  {
+    "document": "docs/reports/remaining-p06/README.md",
+    "old_label": "`ctraces_span_dropped_counts.qcore`",
+    "new_label": "`ctraces_span_dropped_counts.qv`",
+    "target": "ctraces_span_dropped_counts.qv"
+  },
+  {
+    "document": "docs/reports/w43-descriptor-native-check/README.md",
+    "old_label": "`library/descriptor_native_observation.qcore`",
+    "new_label": "`library/descriptor_native_observation.qv`",
+    "target": "../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv"
+  },
+  {
+    "document": "docs/reports/w43-libc-printf-family/PREDICTION.md",
+    "old_label": "measurement/family9.qcore",
+    "new_label": "measurement/family9.qv",
+    "target": "measurement/family9.qv"
+  },
+  {
+    "document": "docs/reports/w43-libc-printf-family/README.md",
+    "old_label": "measurement/family9.qcore",
+    "new_label": "measurement/family9.qv",
+    "target": "measurement/family9.qv"
+  },
+  {
+    "document": "docs/reports/w43-libc-result-alias/README.md",
+    "old_label": "measurement/restrict14.qcore",
+    "new_label": "measurement/restrict14.qv",
+    "target": "measurement/restrict14.qv"
+  },
+  {
+    "document": "docs/reports/w44-libc-residuals/PREDICTION.md",
+    "old_label": "measurement/residuals8.qcore",
+    "new_label": "measurement/residuals8.qv",
+    "target": "measurement/residuals8.qv"
+  },
+  {
+    "document": "docs/reports/w45-fb-backlog-custody/README.md",
+    "old_label": "`storage_backlog.qcore`",
+    "new_label": "`storage_backlog.qv`",
+    "target": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv"
+  },
+  {
+    "document": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "old_label": "`task_users.qcore`",
+    "new_label": "`task_users.qv`",
+    "target": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv"
+  },
+  {
+    "document": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "old_label": "`output_singleplex.qcore`",
+    "new_label": "`output_singleplex.qv`",
+    "target": "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv"
+  },
+  {
+    "document": "docs/reports/w45-fb-retry-lifetime/README.md",
+    "old_label": "`monkey/intrusive_list.qcore`",
+    "new_label": "`monkey/intrusive_list.qv`",
+    "target": "../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv"
+  }
+]

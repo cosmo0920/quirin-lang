@@ -1,5 +1,8 @@
 # CONTRACT-VIEW-PROJECTION-CHECK: checked relations between the views of one function
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card CONTRACT-VIEW-PROJECTION-CHECK, 2026-09-25, on base `f8b41209` (main after
 the CONTRACT-INHERIT-ADOPTION matrix repair).
 
@@ -279,7 +282,7 @@ text (review, as for every model here), and the enumeration lemma behind
 The module is unchanged (SHA-256 `b1c44c63…2645aad`, equal to the Cycle 19
 record's `contract_sha256`). Its native consumer was rerun on the 145 retained
 executions:
-`cargo run -p qcore-compiler --example check_contract_observations -- providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore docs/reports/cycle19-native-contracts/flb_mem_observation.jsonl`,
+`cargo run -p qcore-compiler --example check_contract_observations -- providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv docs/reports/cycle19-native-contracts/flb_mem_observation.jsonl`,
 exit 0, 145 checked (10/50/40/40/5), output **byte-identical** to
 `cycle19-native-contracts/flb_mem_contract_result.json`. No fresh native
 execution was compiled: the harness drives git in the shared pinned checkout

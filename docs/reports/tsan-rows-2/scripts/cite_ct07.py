@@ -3,7 +3,7 @@
 
 Appends one sentence to the manifest's `semantic_profile` for CT07
 (docs/reevaluation/ct_manifest.json) and to the fixture's `notes`
-(compiler/tests/fixtures/ct/CT07/case.qcore's expected.json). Neither text is
+(compiler/tests/fixtures/ct/CT07/case.qr's expected.json). Neither text is
 byte-pinned anywhere (ct_corpus.rs asserts the profile is non-empty; the
 generator copies it), no `stages` entry moves, and the "there is NO
 ThreadSanitizer evidence" sentence each already carries is kept as the wave-37

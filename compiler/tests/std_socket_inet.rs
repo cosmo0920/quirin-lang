@@ -24,10 +24,10 @@ mod windows_c;
 #[path = "../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
-const V4_ECHO: &str = include_str!("../../examples/sockets/inet_v4_echo.qcore");
-const V6_ECHO: &str = include_str!("../../examples/sockets/inet_v6_echo.qcore");
-const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
-const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
+const V4_ECHO: &str = include_str!("../../examples/sockets/inet_v4_echo.qr");
+const V6_ECHO: &str = include_str!("../../examples/sockets/inet_v6_echo.qr");
+const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qr");
+const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qr");
 const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
 
 fn compile(
@@ -757,7 +757,7 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
         .filter(|path| {
             matches!(
                 path.extension().and_then(|extension| extension.to_str()),
-                Some("qcore" | "qc")
+                Some("qcore" | "qc" | "qr" | "qv")
             )
         })
         .collect();
@@ -769,7 +769,7 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
 
     // The exclusion is the address reader itself, so the census asks it the one
     // question that matters: over every statement-shaped token window of every
-    // `.qcore`/`.qc` file in the repository, does it ever claim a host span?
+    // current `.qr`/`.qv` or legacy `.qcore`/`.qc` file in the repository, does it ever claim a host span?
     // It must claim one only inside this card's own two examples.
     let mut hits = Vec::new();
     for path in &files {
@@ -791,8 +791,8 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
     assert_eq!(
         hits,
         vec![
-            root.join("examples/sockets/inet_v4_echo.qcore"),
-            root.join("examples/sockets/inet_v6_echo.qcore"),
+            root.join("examples/sockets/inet_v4_echo.qr"),
+            root.join("examples/sockets/inet_v6_echo.qr"),
         ],
         "the address host rule must claim a span only inside this card's own examples"
     );

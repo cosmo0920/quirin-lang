@@ -9,13 +9,13 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 use qcore_schemas::contract::{ResourceParameterMode, ResourceReturnMode};
 
 const CHUNK: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv"
 );
 const MASK: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv"
 );
 const MEMORY: &str =
-    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qcore");
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
 const CHUNK_MARKER: &str = "// W46-FLUENT-ROUTING-QUERY-CONTRACTS.";
 const MASK_MARKER: &str = "// W46-FLUENT-ROUTING-QUERY-CONTRACTS.";
 
@@ -30,14 +30,14 @@ fn contracts(with_card: bool) -> ResourceContracts {
     };
     load_resource_contract_sources(&BTreeMap::from([
         (
-            "fluent_bit/input_chunk_is_up.qcore".to_owned(),
+            "fluent_bit/input_chunk_is_up.qv".to_owned(),
             select(CHUNK, CHUNK_MARKER),
         ),
         (
-            "fluent_bit/routes_mask.qcore".to_owned(),
+            "fluent_bit/routes_mask.qv".to_owned(),
             select(MASK, MASK_MARKER),
         ),
-        ("libc/memory.qcore".to_owned(), MEMORY.to_owned()),
+        ("libc/memory.qv".to_owned(), MEMORY.to_owned()),
     ]))
     .expect("production modules load")
 }

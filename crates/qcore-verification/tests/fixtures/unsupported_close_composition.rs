@@ -41,7 +41,7 @@ pub use filesystem::{PROBE, PROBE_FUNCTION, UNIT, WRAPPER, backend, clang_availa
 
 /// This family's own pinned contract.
 pub const COMPOSITION_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv"
 );
 
 pub fn revision() -> String {

@@ -7,7 +7,7 @@ restoring the pristine bytes with the mtime advanced past the mutation's
 (`MUTATION-HARNESS-MTIME-RESTORE`); the run ends by re-checking every restored
 file's sha256 and re-running the whole leg green.
 
-  F  fixture mutations of compiler/tests/fixtures/ct/CT07/case.qcore, run
+  F  fixture mutations of compiler/tests/fixtures/ct/CT07/case.qr, run
      through the credited executor `ct07_artifact_is_the_lean_proved_disjoint_
      halves_shape` — and the catch point is READ OFF THE PANIC LINE: a panic
      inside `artifact_of` ("the checker refused the program before the binding
@@ -35,7 +35,7 @@ import sys
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[4]
-FIXTURE = ROOT / "compiler/tests/fixtures/ct/CT07/case.qcore"
+FIXTURE = ROOT / "compiler/tests/fixtures/ct/CT07/case.qr"
 LEG = ROOT / "compiler/tests/ct07_proof_leg.rs"
 LEAN = ROOT / "proof/QCore/Ct07LeaseLedger.lean"
 EXECUTOR = "ct07_artifact_is_the_lean_proved_disjoint_halves_shape"

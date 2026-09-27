@@ -3,20 +3,20 @@ use crate::contract_loader::load_resource_contract_sources;
 use serde_json::{Value, json};
 
 const UNISTD: &str =
-    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/unistd.qcore");
+    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/unistd.qv");
 const SOCKET: &str =
-    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/socket.qcore");
+    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/socket.qv");
 const STDIO: &str =
-    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/stdio.qcore");
+    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/stdio.qv");
 const DIRENT: &str =
-    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/dirent.qcore");
+    include_str!("../../../../providers/quirin-provider-libc/contracts/libc/dirent.qv");
 
 fn landed() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
-        ("libc/unistd.qcore".to_string(), UNISTD.to_string()),
-        ("libc/socket.qcore".to_string(), SOCKET.to_string()),
-        ("libc/stdio.qcore".to_string(), STDIO.to_string()),
-        ("libc/dirent.qcore".to_string(), DIRENT.to_string()),
+        ("libc/unistd.qv".to_string(), UNISTD.to_string()),
+        ("libc/socket.qv".to_string(), SOCKET.to_string()),
+        ("libc/stdio.qv".to_string(), STDIO.to_string()),
+        ("libc/dirent.qv".to_string(), DIRENT.to_string()),
     ]))
     .expect("the landed libc descriptor modules load")
 }
@@ -362,7 +362,7 @@ fn pinned_ctr_random_get_run_binds_a_zero_descriptor_and_leaks_it() {
     assert_eq!(binding.bound["open"].zero_results, 1);
     assert!(!binding.bound.contains_key("close"));
     let policy = include_str!(
-        "../../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore"
+        "../../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv"
     );
     let replay =
         crate::descriptor_observation::check_descriptor_observations(records, policy).unwrap();

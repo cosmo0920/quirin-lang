@@ -1,5 +1,8 @@
 # O04 — Validate one constructor-to-caller custody path — 2026-09-08
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Execution of the single bounded path card O00 recommended
 ([`docs/reports/remaining-o00/README.md`](../remaining-o00/README.md) §8):
 **per-arm constructor-to-caller cleanup discharge on the early-return arms of
@@ -174,7 +177,7 @@ promote an imprecise function (Lean:
 
 Acceptance item 1 is "derive or name every entry premise". Nine premises are
 **named, not derived**; they live in
-[`o04_path.qcore`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore),
+[`o04_path.qv`](../../../crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv),
 one clause per declaration, deliberately **outside** `contract/qcore` so the
 pinned corpus stays at 59 modules and nothing here is offered as a production
 declaration.

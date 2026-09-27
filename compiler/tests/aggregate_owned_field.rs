@@ -24,7 +24,7 @@ use qcore_core::source_record::{FieldType, FieldValue, RecordField, RecordRefusa
 use qcore_core::std_buffer::{self, BufferEvent, BufferOperand, BufferProgram, FieldMove};
 use qcore_core::typed_errors::EffectRow;
 
-const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qcore");
+const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qr");
 
 fn compile(
     source: &str,

@@ -1,5 +1,8 @@
 # `CT-CTWIN-LANE` — wave 35's CT mapping lane
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Result: CT46 mapped (45/50 → 46/50). CT41, CT42, CT10 and CT24 re-measured
 and deliberately left unmapped.**
 

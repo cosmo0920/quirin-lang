@@ -14,14 +14,14 @@ run() {
     printf 'exit=%s\n\n' "$?"
 }
 
-run "d01 file boundary (expect d01_boundary_second.qcore:1:1)" \
-    "$HERE/d01_boundary_first.qcore" "$HERE/d01_boundary_second.qcore"
-run "P21 in-file span (expect 4:1)" "$HERE/P21_span_line4.qcore"
-run "P22 pass agreement (expect Q010 and Q016 both at 4:1)" "$HERE/P22_span_dupaxis.qcore"
-run "P28 parse offsets (expect 3:18, bytes 48..55)" "$HERE/P28_byte_offsets.qcore"
-run "P25+P26 multi-file (expect P26_multifile_badaxis.qcore:2:1)" \
-    "$HERE/P25_multifile_dimension.qcore" "$HERE/P26_multifile_badaxis.qcore"
+run "d01 file boundary (expect d01_boundary_second.qr:1:1)" \
+    "$HERE/d01_boundary_first.qr" "$HERE/d01_boundary_second.qr"
+run "P21 in-file span (expect 4:1)" "$HERE/P21_span_line4.qr"
+run "P22 pass agreement (expect Q010 and Q016 both at 4:1)" "$HERE/P22_span_dupaxis.qr"
+run "P28 parse offsets (expect 3:18, bytes 48..55)" "$HERE/P28_byte_offsets.qr"
+run "P25+P26 multi-file (expect P26_multifile_badaxis.qr:2:1)" \
+    "$HERE/P25_multifile_dimension.qr" "$HERE/P26_multifile_badaxis.qr"
 run "P26+P25 reversed (expect the same file, not argument order)" \
-    "$HERE/P26_multifile_badaxis.qcore" "$HERE/P25_multifile_dimension.qcore"
+    "$HERE/P26_multifile_badaxis.qr" "$HERE/P25_multifile_dimension.qr"
 run "P25+P27 control (expect acceptance)" \
-    "$HERE/P25_multifile_dimension.qcore" "$HERE/P27_multifile_goodaxis.qcore"
+    "$HERE/P25_multifile_dimension.qr" "$HERE/P27_multifile_goodaxis.qr"

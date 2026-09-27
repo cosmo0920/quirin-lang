@@ -1,5 +1,8 @@
 # CT50: a reused address does not revive an old Buffer identity
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `6824aa5`, 2026-09-07. CT50 is now mapped through actual source,
 reference execution and native Linux storage reuse. No parser, checker, core,
 backend or Lean semantics change is needed: the owned-task implementation already
@@ -60,7 +63,7 @@ stdout/stderr are archived in `native-run.json` and adjacent compressed artifact
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-reused-address.c \
-  compiler/tests/fixtures/ct/CT50/case.qcore
+  compiler/tests/fixtures/ct/CT50/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -include compiler/tests/fixtures/ct/CT50/reused_mapping.h \

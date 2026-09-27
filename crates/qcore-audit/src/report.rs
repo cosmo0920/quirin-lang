@@ -690,7 +690,7 @@ mod tests {
         // W1 literal-site migration: loaded from a `.qcore` fixture module.
         let contracts = load_resource_contract_sources(&BTreeMap::from([(
             "alloc_acquire.qcore".to_owned(),
-            include_str!("../tests/fixtures/alloc_acquire.qcore").to_owned(),
+            include_str!("../tests/fixtures/alloc_acquire.qv").to_owned(),
         )]))
         .unwrap();
         Ok(UnrestrictedLegacyResult::Unsafe(
@@ -703,7 +703,7 @@ mod tests {
         // W1 literal-site migration: loaded from a `.qcore` fixture module.
         let contracts = load_resource_contract_sources(&BTreeMap::from([(
             "alloc_acquire.qcore".to_owned(),
-            include_str!("../tests/fixtures/alloc_acquire.qcore").to_owned(),
+            include_str!("../tests/fixtures/alloc_acquire.qv").to_owned(),
         )]))
         .unwrap();
         let summary = analyze_legacy_c_translation_unit(

@@ -24,14 +24,14 @@
     ],
     "controls": [
       {
-        "source": "addressable.qcore",
+        "source": "addressable.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "BitfieldConcurrencyV1",
         "note": "The identical worker window over two ordinary disjoint fields admits the footprint property."
       },
       {
-        "source": "distinct_units.qcore",
+        "source": "distinct_units.qr",
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "BitfieldConcurrencyV1",

@@ -13,4 +13,4 @@ data only; it links no provider runtime and is not an executable package.
 crate as part of the complete shared set. Consumers still select modules
 explicitly; see [corpus conventions](../../contract/README.md).
 
-Fluent Bit's busy-state API is provider-owned by `qcore-provider-chunkio` (`fluent_bit/busy_state.qcore`) and deliberately not duplicated here; the corpus index refuses a duplicate logical name.
+Fluent Bit's busy-state API is provider-owned by `qcore-provider-chunkio` (`fluent_bit/busy_state.qv`) and deliberately not duplicated here; the corpus index refuses a duplicate logical name.

@@ -40,31 +40,29 @@ use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
 const HELPERS: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv"
 );
 const TIME: &str =
-    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qcore");
-const RESIDENCY: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore"
-);
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv");
+const RESIDENCY: &str =
+    include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv");
 
 /// The production modules card PROD-CONTRACTS landed, byte-unchanged.
-const LOGGING: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qcore"
-);
+const LOGGING: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv");
 const CHUNK_NAME: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv"
 );
 const ROUTES_MASK: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv"
 );
 /// Card HASH-CONTRACTS' module, byte-unchanged.
 const PUBLICATION: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore"
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv"
 );
 /// The production constructor/destructor pair, byte-unchanged.
 const OPEN_CLOSE: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore"
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv"
 );
 
 /// The earlier cards' fixture premise sets, all byte-unchanged.
@@ -72,11 +70,11 @@ const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
 const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
 const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
 const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
-const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
-const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qcore");
-const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qcore");
+const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qv");
+const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qr");
+const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qr");
 
-const GENERIC: &str = include_str!("fixtures/contracts/neighbours_generic.qcore");
+const GENERIC: &str = include_str!("fixtures/contracts/neighbours_generic.qv");
 
 /// The existing rejection an uncontracted call in a condition keeps.
 const CONDITION: &str = "unmodeled call, aggregate or indirect access in branch condition";
@@ -871,53 +869,53 @@ fn the_modules_under_test_are_the_production_ones() {
         );
     }
     // 9 -> 12 manifest-selected modules, deliberately; 12 -> 14 by card
-    // CONSTRUCTOR-RESIDUALS' deliberate addition of `libc/errno.qcore` and
-    // `monkey/intrusive_list.qcore`; 14 -> 16 by card
+    // CONSTRUCTOR-RESIDUALS' deliberate addition of `libc/errno.qv` and
+    // `monkey/intrusive_list.qv`; 14 -> 16 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition of
-    // `libc/pthread_mutex.qcore`; 15 -> 16 by card
+    // `libc/pthread_mutex.qv`; 15 -> 16 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER's deliberate addition of
-    // `msgpack/packer.qcore`, which that card measured at a payoff the earlier
+    // `msgpack/packer.qv`, which that card measured at a payoff the earlier
     // one measured at zero; 16 -> 17 by card
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate addition of
-    // `fluent_bit/input_chunk_destroy.qcore`, a third declaration of a
+    // `fluent_bit/input_chunk_destroy.qv`, a third declaration of a
     // function this very unit defines, under the same
     // declaration-beats-summary arrangement this card established. This card's
     // six declarations are asserted above by name, so the count moving does
     // not weaken what it pins. 17 -> 18 by card AOM-DESTROY-SIBLINGS, which
-    // adds `fluent_bit/input_chunk_destroy_direct_routes.qcore`, a fourth
+    // adds `fluent_bit/input_chunk_destroy_direct_routes.qv`, a fourth
     // declaration of a function this very unit defines. 18 -> 19 by card
-    // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qcore` —
+    // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qv` —
     // a fifth and sixth declaration of functions this very unit defines,
     // under the same declaration-beats-summary arrangement. 19 -> 21 by card
-    // W31-CORPUS-CONTRACTS-2, which adds `chunkio/chunk_sizes.qcore` and
-    // `fluent_bit/input_chunk_total_size.qcore` — the latter a seventh
+    // W31-CORPUS-CONTRACTS-2, which adds `chunkio/chunk_sizes.qv` and
+    // `fluent_bit/input_chunk_total_size.qv` — the latter a seventh
     // declaration of a function this very unit defines, on the same
     // arrangement.
 
     // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
     // function-cover yield over the 193 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
-    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
-    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    // `cfl/sds_lifetime.qv`, `cmetrics/context_lifetime.qv`,
+    // `ctraces/context_lifetime.qv`, `librdkafka/cjson.qv`,
+    // `librdkafka/kafka_mem.qv` and `monkey/logging.qv`.
 
     // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
     // by function-cover yield over the 163 baseline functions blocked only by
-    // uncontracted-call leaves: `cfl/time.qcore`,
-    // `cmetrics/metric_values.qcore`, `cmetrics/mpack_utils.qcore`,
-    // `mpack/writer.qcore`, `librdkafka/lz4_stream.qcore` and
-    // `librdkafka/topic_partition.qcore`.
+    // uncontracted-call leaves: `cfl/time.qv`,
+    // `cmetrics/metric_values.qv`, `cmetrics/mpack_utils.qv`,
+    // `mpack/writer.qv`, `librdkafka/lz4_stream.qv` and
+    // `librdkafka/topic_partition.qv`.
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qv`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
-    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
-    // `fluent_bit/output_singleplex.qcore`.
-    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qv`).
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qv`.
+    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qv` and
+    // `fluent_bit/output_singleplex.qv`.
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qv`
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     assert_eq!(contracts.source_assumptions().len(), 54);

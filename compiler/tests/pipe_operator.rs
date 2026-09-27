@@ -21,15 +21,15 @@ use qcore_compiler::{
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qcore");
-const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
-const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qcore");
-const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
-const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qcore");
-const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qr");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qr");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qr");
+const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qr");
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qr");
+const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qr");
+const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {
@@ -618,7 +618,7 @@ fn a_multi_stage_pipeline_is_its_hand_written_statement_sequence() {
     // The load-bearing claim of this card, in the same form wave 18 used for
     // one stage: a chain is *the same program* as the sequence a reader would
     // have written, so it emits byte-identical C11 and observes identically.
-    // `realloc_piped.qcore` is a three-stage pipeline over a shipped fixture,
+    // `realloc_piped.qr` is a three-stage pipeline over a shipped fixture,
     // not a program written to make a test pass.
     for [piped, unpiped] in [with_line_endings(REALLOC_PIPED)]
         .into_iter()

@@ -73,7 +73,7 @@ fn message(source: &str) -> String {
 
 /// A composed `source.std-io-tasks.v1` module: a worker owns a buffer, the
 /// parent joins it back and says something about it. This is the shape
-/// `examples/threads/owned_buffer.qcore` has.
+/// `examples/threads/owned_buffer.qr` has.
 const COMPOSED: &str = "import std.concurrency;
 import std.logger;
 import std.fmt;

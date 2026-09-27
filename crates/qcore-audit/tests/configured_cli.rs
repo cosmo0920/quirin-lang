@@ -74,7 +74,7 @@ impl Fixture {
         fs::create_dir_all(root.join("profiles/sample")).unwrap();
         fs::write(
             root.join("alloc.qcore"),
-            include_str!("fixtures/alloc_acquire.qcore"),
+            include_str!("fixtures/alloc_acquire.qv"),
         )
         .unwrap();
         fs::write(

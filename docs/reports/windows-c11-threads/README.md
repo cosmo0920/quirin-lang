@@ -1,5 +1,8 @@
 # Windows C11 thread emission
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Date: 2026-09-08.
 
 ## Scope and build
@@ -14,7 +17,7 @@ macOS keeps its existing pthread branch. Both source routes admit Windows.
 From a Visual Studio x64 developer shell at the repository root:
 
 ```powershell
-cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qcore -o generated.c
+cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qr -o generated.c
 cl /nologo /std:c11 /W4 /WX generated.c /Fe:generated.exe
 .\generated.exe
 ```

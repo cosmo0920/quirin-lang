@@ -114,15 +114,15 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/ct/CT01/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT01/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT12/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT12/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT14/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT14/case.qr",
             "role": "case"
           }
         ],
@@ -166,11 +166,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/ct/CT02/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT02/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+            "path": "compiler/tests/fixtures/ct/CT14/read_before_join.qr",
             "role": "control"
           }
         ],
@@ -182,11 +182,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/ct/CT03/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT03/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+            "path": "compiler/tests/fixtures/ct/CT04/write_after_joins.qr",
             "role": "control"
           }
         ],
@@ -198,11 +198,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/ct/CT08/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT08/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/slice_permissions/overlapping_write.qcore",
+            "path": "compiler/tests/fixtures/slice_permissions/overlapping_write.qr",
             "role": "non_ct_fixture"
           }
         ],
@@ -214,11 +214,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/ct/CT09/case.qcore",
+            "path": "compiler/tests/fixtures/ct/CT09/case.qr",
             "role": "case"
           },
           {
-            "path": "compiler/tests/fixtures/source_record/point.qcore",
+            "path": "compiler/tests/fixtures/source_record/point.qr",
             "role": "non_ct_fixture"
           }
         ],
@@ -230,11 +230,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qcore",
+            "path": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qr",
             "role": "non_ct_fixture"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT10/distinct_units.qcore",
+            "path": "compiler/tests/fixtures/ct/CT10/distinct_units.qr",
             "role": "control"
           }
         ],
@@ -246,11 +246,11 @@
         "decision": "disclose",
         "members": [
           {
-            "path": "compiler/tests/fixtures/bitfield_concurrency/addressable.qcore",
+            "path": "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
             "role": "non_ct_fixture"
           },
           {
-            "path": "compiler/tests/fixtures/ct/CT10/addressable.qcore",
+            "path": "compiler/tests/fixtures/ct/CT10/addressable.qr",
             "role": "control"
           }
         ],
@@ -266,20 +266,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT01/case.qr",
       "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Linux native allocation, pointer-preserving child return, creator join and exactly-once parent drop agree with reference execution. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "harness_verdict_mode": "native_owned_transfer",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -291,13 +291,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -321,7 +321,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -335,7 +335,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -346,7 +346,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -363,7 +363,7 @@
         "proof": {
           "status": "executed",
           "executor": "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
-          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qr",
           "observations": 1
         },
         "atomic_publication_check": {
@@ -379,20 +379,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT02/case.qr",
       "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. The parent read after successful move rejects at Q600; CT01 supplies the accepted native control. Failed creation retains the original parent binding. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT02/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT02/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -404,13 +404,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT02/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT02/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -464,20 +464,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT03/case.qr",
       "semantic_profile": "ScopedReadSharesV1: one owned Buffer lent to two children with complementary halves of the 1024-unit read authority, both reading it while the parent also reads it, and Buffer writes on either side of the lending window because a write demands reconstructed exclusive authority. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and three fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - one object allocated and released exactly once across two live borrowers, a refused second creation returning only its own share, and a refused join returning none and reclaiming nothing. The complementary refusals are mapped as CT04 and CT05. This is not evidence about arbitrary schedules, other targets or the C memory model; ThreadSanitizer does not intercept C11 thrd_create, so data-race freedom rests on the checker's no-write-while-shared rule. The lending budget is over authority handed out, not a separation-logic fraction; disjoint slicing, write shares, more than two readers, byte accounting and nested workers stay refused.",
       "harness_verdict_mode": "native_heap_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -489,13 +489,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -519,7 +519,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -532,7 +532,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -543,7 +543,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -553,7 +553,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -566,7 +566,7 @@
         "proof": {
           "status": "executed",
           "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
-          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qr",
           "observations": 1
         },
         "atomic_publication_check": {
@@ -582,20 +582,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT04/case.qr",
       "semantic_profile": "ScopedReadSharesV1: the parent writes its Buffer while both children still hold their halves. Refused with the exact single-entry cascade [Q600] carrying LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2, 3] }, which names the outstanding total and every borrower rather than the bare fact of a loan. An accepted Linux control moves the same write after both joins, so the refusal is keyed to the outstanding shares and not to writing at all. A rejection carries no execution post-state, so only parse and check are executed.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -607,13 +607,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -668,20 +668,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT05/case.qr",
       "semantic_profile": "ScopedReadSharesV1: two children each request the whole read authority for one allocation. Refused with the exact single-entry cascade [Q600] carrying ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }; the excess request is refused as a whole and the outstanding total is unchanged. An accepted Linux control lends 511 and 513 of the same allocation, so the budget boundary is a boundary rather than a blanket refusal of two borrowers. A rejection carries no execution post-state, so only parse and check are executed.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -693,13 +693,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -754,19 +754,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT06/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT06/case.qr",
       "semantic_profile": "StandardStringV1: an immutable UTF-8 {ptr, len} view of an owned std.buffer's own bytes, copied into a second name by a whole-extent slice ({ptr = p + 0, len = 2 - 0}), inside one flat sequential entry. The obligation the original carries is measured to follow the copy: the release names the copy, not the view it was taken from. Owning copies, mutable aliases, aliases crossing a function or a thread, and pointer values the language gives no type remain outside this route.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT06/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT06/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT06/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT06/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -833,19 +833,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT07/case.qr",
       "semantic_profile": "ScopedWriteLeasesV1 with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped by card CT07-TWO-THREAD-REMAP (wave 37) from the sequential write lend card CT07-WRITE-REMAP (wave 30) mapped, which had itself remapped the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one allocation's int32_t payload - lend buffer 0..2 and lend buffer 2..4 - held by TWO THREADS, each worker writing a byte through its own lease in its own body, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT MOVED, and it is the scenario's own word: wave 30's two write authorities were bindings of ONE SEQUENTIAL ENTRY - 'NOT two threads', as that card's own semantic profile said, naming WRITE-LEND-TASKS as the residual; that residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR, and the single allocation checked by address. WHAT DID NOT MOVE: no count - CT07 was mapped before this card and is mapped after it, so this is evidence quality and not coverage (constraint 23). Boundaries, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4; residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36), so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence and NOT by a race detector; and proof stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). Bounds are split across the two layers that own them: past_range_byte.qcore refuses a real payload byte at the LEASE it goes through, and past_extent_read.qcore refuses a real owner access at the PAYLOAD's extent. Disjointness is overlapping_leases.qcore's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap. TSAN CITATION (card TSAN-ROWS-2, wave 39; a citation, not a stage flip - no stage of this row moves): compiler/tests/task_route_tsan.rs reads THIS fixture through the real pipeline (compile_files, entry null) and runs its own emitted C under ThreadSanitizer through the pthread binding of tests/support/thread_sanitizer.rs, changing no emitted byte - unbound it dies at the 0x18 fault every task program dies at (every_subject_dies_unbound_at_the_one_fault); bound it runs clean under the unforced schedule (every_subject_runs_clean_under_thread_sanitizer_when_bound) and under two FORCED schedules (every_subject_runs_clean_under_each_forced_schedule): both workers created and released before either body runs and both threads live until both bodies have run, and last-created first with each body to completion - zero races, stdout byte-identical to the reference execution, the realised schedule read back from the harness's own trace. The overlap mutation on this fixture is reported under all three schedules (overlapping_writers_are_reported_under_every_schedule), 20 of 20 runs each (docs/reports/tsan-rows-2/artifacts/catch-rates.json). So the sentence above that reads 'there is NO ThreadSanitizer evidence' describes wave 37's state and is superseded by this citation; 'two threads write distinct memory locations without a race' is now ALSO carried by a race detector, over the schedules named, with TASK-ROUTE-TSAN-PTHREAD-BINDING's and TSAN-FORCED-BODY-OVERLAP-NOT-FORCED's boundaries. CT07's case is pinned as the write-lend flagship without its logger (ct07s_case_is_the_flagship_without_its_logger).",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -857,13 +857,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -887,7 +887,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -900,7 +900,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -911,7 +911,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -921,7 +921,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -934,7 +934,7 @@
         "proof": {
           "status": "executed",
           "executor": "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qr",
           "observations": 1
         },
         "atomic_publication_check": {
@@ -951,19 +951,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT08/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT08/case.qr",
       "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion, taking the REJECT arm of the case's expected text: a write whose one-byte range [1, 2) overlaps a live loan's [0, 2) on exactly one byte is refused at Q078 naming the footprint that decided it, with the overlap decided at check time by max low < min high. The boundary control moves the byte outside both ranges and is admitted (CT07's own case shape at the wave-28 mapping; CT07's case is the write-lend program since card CT07-WRITE-REMAP); the attribution control runs the identical write with no live loan and is admitted. The `analyzer potential/unknown` arm is not claimed: Unknown remains the gateway's verdict vocabulary, and the source harness's is accept/reject.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT08/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT08/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT08/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT08/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1030,19 +1030,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT09/case.qr",
       "semantic_profile": "StandardBufferV1 with source.record.v1 (card AGGREGATES-V1): three declared record fields constructed with three different check-time-constant values, all three read back and printed, plus a second value of the same type read in another order. The ACCESS proof is supplied - construction totality, projection soundness and distinctness are checked, and the bad_field control refuses a read outside the declaration at Q052 - but the LAYOUT leg is an executed sanitized byte-comparison OBSERVATION, not a proof (AGGREGATE-CT09-LAYOUT): that a C compiler's designated initializer and member reads agree with the model is cross-checked by the per-stream comparison of the case's own emitted C under ASan/UBSan/LSan, nothing proves it, and the proof stage stays unassessed. A record is a plain value of scalars with no custody; nothing here measures aggregates holding resources, nested aggregates, or concurrent field access.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1072,13 +1072,13 @@
         "sequential_whole_program": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1
         },
         "sequential_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1094,7 +1094,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1105,7 +1105,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1115,7 +1115,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT09/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1142,31 +1142,31 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "bitfield_concurrency",
-      "source_fixture": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT10/case.qr",
       "semantic_profile": "BitfieldConcurrencyV1 property certificate (card CT10-SOURCE-LAYOUT): two real task spawns carry write captures to adjacent bit-fields of one explicitly laid-out record. On the explicit all-spawns-and-joins-succeed premise, source-derived FieldStorage::BitfieldUnit values reach the unedited DisjointFootprintsV1 checker, which refuses shared storage unit 0 as Q661. The declared target layout and Rust-to-Lean correspondence remain premises. This mapping claims parse, elaborate, footprint lowering, and footprint check only: no scoped-task ledger, failure-path custody, C emission, reference execution, native execution, sanitizer evidence, or case-bound proof. Ordinary disjoint fields and distinct bit-field units are admitted controls under the same property-only route.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qr",
           "observations": 1
         },
         "footprint_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qr",
           "observations": 1
         },
         "task_lowering": {
@@ -1227,19 +1227,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT11/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT11/case.qr",
       "semantic_profile": "StandardStringV1: the same borrow_utf8 bridge, used as this corpus's first LOCAL shared alias. A byte write into the std.buffer demands the buffer's exclusive write authority back, and is refused while the view survives; the same write before the alias exists and after its last read are both admitted. Write shares, permission arithmetic and any cross-frame or cross-thread alias remain outside this route.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT11/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT11/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT11/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT11/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1306,20 +1306,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT12/case.qr",
       "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Injected native creation failure restores the original buffer binding for read/drop, with no child or join obligation. A successful-create control transfers the same pointer through child return and creator join. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "harness_verdict_mode": "native_owned_transfer",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1331,13 +1331,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1361,7 +1361,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -1375,7 +1375,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -1386,7 +1386,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
-          "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT12/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -1416,20 +1416,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT13/case.qr",
       "semantic_profile": "Linux ScopedCopyTasksV1 explicit creation recovery: real source matches the second spawn result. Failure preserves the first task until the Err arm explicitly joins its exact native thread, then returns42. Success joins both children and returns7; initial failure has no child. A failure arm omitting the prior join rejects with Q600 ScopeBusy. Reference and native outcomes agree for all3 fixture creation scripts. This tests scalar copies and task obligations, not owned/loan capture restoration, arbitrary handlers or other native platforms.",
       "harness_verdict_mode": "native_create_recovery",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1441,13 +1441,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1471,7 +1471,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -1485,7 +1485,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -1496,7 +1496,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
-          "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT13/case.qr",
           "observations": 3,
           "host_gate": [
             "linux",
@@ -1526,20 +1526,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT14/case.qr",
       "semantic_profile": "Linux ScopedOwnedTasksV1: the native adapter waits for the actual worker body and completion-record write before creation returns to the parent. Parent read/drop of the moved Buffer before join reject at Q600 despite worker completion. The accepted control joins, consumes the owned Result and drops the original generation. Exact pointers and join-before-reclamation checks retain the allocation and environment while completed but unjoined. This is one owned Buffer, not loan/share restoration or a general scheduler proof.",
       "harness_verdict_mode": "native_task_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1551,13 +1551,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1581,7 +1581,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1595,7 +1595,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1606,7 +1606,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT14/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1637,20 +1637,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT15/case.qr",
       "semantic_profile": "Linux ScopedCopyTasksV1 native fault evidence: a real i32-copy worker is created; successful control joins then frees the environment and returns 42. An injected native join failure establishes no quiescence and aborts before result publication or environment reclamation. The fault is supplied only by a test runtime adapter. Reference execution covers the successful control; native join failure has no returning reference transition. No source-owned payload/loan restoration, full runtime refinement or other-platform native conformance is claimed.",
       "harness_verdict_mode": "native_join_failure",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1662,13 +1662,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1692,7 +1692,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -1706,7 +1706,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -1717,7 +1717,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
-          "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT15/case.qr",
           "observations": 2,
           "host_gate": [
             "linux",
@@ -1747,20 +1747,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT16/case.qr",
       "semantic_profile": "Linux ScopedOwnedTasksV1 worker-local allocation: a real child acquires up to two Buffers, explicitly drops all acquired locals before raising WorkerError::Failed or a bound AllocError, and the creator joins before receiving the error. Four native/reference scenarios cover success, either allocation failure and creation failure with exact pointer/thread checks. Missing cleanup in either worker error arm rejects at Q600. The earlier sequential implicit-cleanup control remains separately executed. Loans, owned error payloads, arbitrary handlers and native refinement proofs remain open.",
       "harness_verdict_mode": "native_task_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1772,13 +1772,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1802,7 +1802,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -1816,7 +1816,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -1827,7 +1827,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT16/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -1858,20 +1858,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT17/case.qr",
       "semantic_profile": "ScopedErrorPayloadV1: exactly one owned Buffer rides an explicitly tagged worker error out of one child, through its completion capsule and its creator's join, and is taken out of the bound error exactly once. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and five fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - the success path releases all three objects inside the child, either worker allocation failure carries the parent's original identity back and releases every local it does not carry, a refused creation transfers nothing, and a refused join reclaims neither payload nor environment. Two negative controls pin that an undelivered payload and an unreleased taken payload are refused at Q600. One payload, one flat own<Buffer>: recursive owned graphs, several payloads, mixed declared rows, nested workers and loans inside payloads stay refused, and no race detector covers this backend.",
       "harness_verdict_mode": "native_heap_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1883,13 +1883,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -1913,7 +1913,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 5,
           "host_gate": [
             "linux",
@@ -1926,7 +1926,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 5,
           "host_gate": [
             "linux",
@@ -1937,7 +1937,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 5,
           "host_gate": [
             "linux",
@@ -1947,7 +1947,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qr",
           "observations": 5,
           "host_gate": [
             "linux",
@@ -1973,20 +1973,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT18/case.qr",
       "semantic_profile": "ScopedErrorPayloadV1: a scoped capture borrow cannot leave its child inside an error payload. Refused with the exact single-entry cascade [Q500] carrying 'an error payload requires own<Buffer>', at the raise that writes it rather than at the join. An accepted Linux control is the same program whose worker owns its payload, so the refusal is keyed to the borrowed capture and not to the raise form. A rejection carries no execution post-state, so only parse and check are executed.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -1998,7 +1998,7 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
@@ -2056,20 +2056,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT19/case.qr",
       "semantic_profile": "Actual scoped-copy task source checking: a second spawn with immediate ? has a dynamic failure edge leaving the first live handle, and rejects with Q600 ScopeBusy. The separate joined_sibling.qcore control joins the first task before creating the second; Linux checking/reference execution accepts it with both children joined. The rejected case executes parser/type checker only. No resource capture, sibling recovery handler or native execution of the rejected program is claimed.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT19/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT19/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2081,13 +2081,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT19/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT19/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2141,20 +2141,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT20/case.qr",
       "semantic_profile": "Linux ScopedOwnedTasksV1: an in-scope second-creation error handler joins the first child, drops its returned Buffer and rethrows the bound payload-free SpawnError. Four native/reference scenarios cover success, allocation failure and each creation failure with exact buffer/environment identities and join-before-reclamation checks. Omitting the sibling join or returned-buffer drop rejects at Q600. Owned error payloads, loans, arbitrary handlers, worker allocation and native refinement proofs remain open.",
       "harness_verdict_mode": "native_task_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2166,13 +2166,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2196,7 +2196,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -2210,7 +2210,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -2221,7 +2221,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT20/case.qr",
           "observations": 4,
           "host_gate": [
             "linux",
@@ -2252,19 +2252,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT21/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT21/case.qr",
       "semantic_profile": "SequentialCleanupV1 with source.region.v1 (card QUANT-REGION-SOURCE), the first source path to RegionOp::QuantOpen. A region acquires one resource and raises, so the error edge seals a cleanup pack holding one live duty - positive access permission; `quant open R as pack` binds it as a linear capability and the handler leaves without the one `discharge pack;` that must consume it. Refused by the unedited qcore_core::error_region model at Q305. The attribution control adds the discharge and is admitted (and emits); the boundary control never opens the pack and is refused by the neighbouring Q306 rule, so neither way of discarding live custody is writable. This route has no joins and no credit: what is measured is the access permission the pack holds, on one flat sequential entry.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT21/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT21/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT21/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT21/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2331,19 +2331,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "composed_epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT22/case.qr",
       "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE and REGION-CREDIT-JOINS): a flat-epoch plan over a real checked scoped-task region whose parent writes, after its one spawn and its one join, an error region that credits 5, spends 2 and takes its decided error edge; the catch's `quant open R as pack` binds the sealed pack as a linear capability and `discharge pack;` abandons exactly the parent-local remainder 3, the kernel's own explicit AbandonCredit decided by the unedited qcore_core::error_region model. ADMITTED, with the composed premises stated: the pack is DUTY-FREE (the composed body admits no acquisition - REGION-JOINS-DUTIES refuses one at Q302 - so the one thing the opening can discard is the parent-local remainder), and ALL JOINS PRECEDE THE REGION (every TrySpawn/Join span of the checked task IR precedes the region statement, refused at Q600 in both directions when false, so no child exists and no child holds any grant at the opening). The published abandoned_credit is re-derived by the driver from an independent fold of the written statements before publication, and the harness compares the whole published split - granted/restored/spent under the four unchanged FlatEpochBoundV1 premises, plus the abandoned figure - wholesale. The region erases from emission and the epoch charges no axis for the parent-local strict credit (REGION-JOINS-EPOCH-AXIS); no native or sanitizer evidence is claimed, and the region's credit quantities are written statements, not measurements of any execution.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2355,13 +2355,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2373,13 +2373,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -2397,7 +2397,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2408,7 +2408,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2418,7 +2418,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2445,19 +2445,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "composed_epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT23/case.qr",
       "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE and CT23-CREDIT-ERROR-PATH): a flat-epoch plan over a real checked scoped-task region whose creator holds both derived error edges - the creation can fail and the join can observe a raised child, the edge on which the child existed and held the grant. The plan's error(close); declares that the creator's own error edge abandons the credit the epoch granted the creation, and is refused with the exact cascade [Q635] naming the task and the abandoned figure. Four admitting controls pin the published credit split on every disposition (restored + spent = credit, including a real componentwise division), and the minted control pins the Q636 mint refusal. Every quantity is a DECLARED figure under the four unchanged FlatEpochBoundV1 premises: the derived half is the error-edge shape, the declared half is the disposition, and no credit is derived from any execution. The epoch half emits nothing; the emitted C is the task route's own, byte-identical whatever the error arm says, and no native or sanitizer evidence is claimed.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2469,13 +2469,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2487,13 +2487,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT23/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -2537,19 +2537,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "composed_epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT24/case.qr",
       "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, card CT24-CLEANUP-TASK-COMPOSITION): a flat-epoch plan over a checked scoped-task region whose parent owns `owner`, lends its worker a counted read share at the spawn, and then directly in the exact Result::Ok arm executes a handled region that adopts the same owner. The discharge erases to a real `drop owner;` at the region's own source position, before the later join; the unedited task ledger refuses that release at Q600 LoanOutstanding. The case's own artifact executes parse, elaboration, task lowering and task-ledger checking, then returns from compile_task_source before epoch lowering or epoch-bound checking. Accepted controls do not confer stage credit: the same cleanup after join admits and publishes released=[owner], abandoned=3, and cleanup of an independent owner before join does the same, proving the case is neither a blanket placement refusal nor an unsupported-region fallback. Refused controls pin missing join [Q600], arbitrary nested if/loop and spawn-error-arm placement [Q302], double cleanup-pack use [Q304], and unsupported region-body syntax [Q302]. Direct task-scope regions retain the prior after-every-creation-and-join gate; only this exact success-arm statement receives the conditional placement. Region strict credit remains creator-local and does not settle or abandon the child's epoch grant. No native evidence: the case is refused before emission. No proof stage: QCore.CleanupTaskComposition is audited abstract Lean parity, but no runner binds this fixture to it and faithful Rust/Lean correspondence remains a review premise.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2561,13 +2561,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2623,19 +2623,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "composed_epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT25/case.qr",
       "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): a flat-epoch plan over a real checked scoped-task region whose parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins, and only then writes an error region that ADOPTS the owner (`move owner;`), credits 5, spends 2 and takes its decided error edge; the catch's `quant open R as pack` binds the sealed pack as a linear capability and `discharge pack;` destroys the adopted owner and abandons exactly the parent-local remainder 3 -- the unedited qcore_core::error_region model's own Destroy and AbandonCredit on the discharge. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact, each carried by a named rule: CLEANUP DESTROYS OWNER by the model's Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (the discharge's `drop owner;` is written into the region's blanks after every join, where the unedited task route checks it; the published `released = [owner]` is read out of the model's own cleanup trace and cross-checked against the reader's independent duty fold before publication); AFTER JOINS by the wave-28 span rule (every TrySpawn/Join span of the checked task IR precedes the region statement, refused at Q600 in both directions when false) re-asserted on the published ledger; AND LOAN EXPIRY by three facts of unedited models -- the owner IS lent (the derived capture list is [[read]], from the checked IR's ScalarOperand::Loan, reconciled against the declared `read;` clause), the share RETURNS AT THE JOIN (the task ledger's own reclamation), and the destruction is ORDERED AFTER the expiry because the joins precede the region -- while the pre-expiry destruction is a measured refusal (the ledger's own LoanOutstanding, live_share_drop.qcore) and so is the pre-loan one (the erased drop before the spawn leaves no owned buffer to lend, before_join.qcore). The runner compares the whole published evidence wholesale -- the credit-recovery split under the four unchanged FlatEpochBoundV1 premises, the abandoned figure, the released duty list and both capture lists -- and re-asserts the adopting-pack premise (exactly one published body Acquire per released owner) and the span premise on the published objects. BOUNDARIES: both write authorities and the loan live in one entry's task scope -- the lender on this route is always the creator (REGION-JOINS-LOAN's discharge of T08-COMPOSE-LOAN) and creator-scope bytes are outside the epoch allocation (REGION-JOINS-EPOCH-AXIS, re-measured by that card: certificates byte-identical with and without the loan and the adoption). The region erases from emission (measured byte-for-byte against a hand-written twin by compiler/tests/region_joins_loan.rs, not re-measured here); the region's credit quantities are written statements, not measurements of any execution; and no native, sanitizer or proof evidence is claimed -- the capability card's native counting-allocator run carries no sanitizer, so none is readable from it (constraint 23), and the emission/native stages read unassessed (CT-COMPOSED-NATIVE).",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2647,13 +2647,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -2665,13 +2665,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -2689,7 +2689,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2700,7 +2700,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2710,7 +2710,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
-          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2737,20 +2737,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT26/case.qr",
       "semantic_profile": "source.mutex.guard.v1 lowered onto the unedited CheckedMutexInvariantV1 checker: two lexical critical sections over one mutex generation and one declared footprint, on one Linux thread. Executed from the fixture: parse, elaborate, lower, check, independent certificate recheck, C11 emission, and a run of the emitted C under ASan/UBSan/LSan whose stdout agrees line for line with interpret_mutex_program over the checked event list. `cfg` is unassessed because this route has no CFG stage at all. One thread, one target, one compiler invocation: not evidence about contention, scheduling, publication or the C memory model. DeclaredFootprintShape and InvariantPredicateDeclared are carried premises, and source-to-trace refinement is unproved in both Rust and Lean.",
       "harness_verdict_mode": "checked_mutex_sanitized",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2768,13 +2768,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -2795,7 +2795,7 @@
         "mutex_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2805,7 +2805,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2816,7 +2816,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2826,7 +2826,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
-          "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT26/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -2852,20 +2852,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT27/case.qr",
       "semantic_profile": "source.mutex.guard.v1: a second `mutex guards` over an already protected footprint is refused at Q617 FootprintAlreadyProtected, so no composite protocol is admitted; the exact ordered cascade [Q617, Q600 UnknownMutex] is pinned. The disjoint_payloads control declares two generations over two disjoint payloads and is accepted, so the refusal is keyed to the shared payload rather than to the number of mutexes. Only parser and type_checker execute on the case artifact; the accepted control compiles through the Linux-only emission path, which is what evidence_target records. No composite or nested protection protocol, lock ordering, or post-creation protection growth is established.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT27/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT27/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2883,13 +2883,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT27/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT27/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -2938,20 +2938,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT28/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task written inside a critical section can lexically name the creator's guard, and acting through it is refused at Q612 WrongGuardAffinity; the exact ordered cascade [Q612, Q600 JoinWhileGuardHeld] is pinned, so the refusal is shown not to have released the guard the creator still holds. Both halves of the scenario execute: the case uses the creator's guard (`read buf with g`), and the child_unlocks control unlocks it (`close g`), refusing identically, so affinity is keyed to the acting task and not to the operation. The own_acquisition control is accepted: the same child takes its own acquisition of the same generation and the creator reads after the join. Only parser and type_checker execute; cfg is unassessed because this route emits from a checked event list and has no CFG stage. No native evidence: the accepted control is multi-task and this backend emits one thread, so it is published checked with c_source: None, and evidence_target records the Q500 host gate rather than a compiled or executed run.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -2969,13 +2969,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3024,20 +3024,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT29/case.qr",
       "semantic_profile": "source.mutex.guard.v1: a typed-error exit taken with the invariant open is refused at Q614 InvariantOpenAtErrorExit, with the exact ordered cascade [Q614, Q619, Q600, Q600, Q600] pinned so the refusal is shown not to have released the guard. The restored.qcore control closes the invariant before raising the same error and is accepted, which is the scenario's `unless restored` half. Q613 and Q614 stay distinct codes: the error path is attributed separately from the normal path, and the Lean theorem typed_error_exit_obeys_the_normal_release_rule proves both exits obey the same release rule. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. The invariant predicate has no runtime representation and stays the InvariantPredicateDeclared premise.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT29/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT29/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3055,13 +3055,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT29/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT29/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3110,20 +3110,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT30/case.qr",
       "semantic_profile": "source.mutex.guard.v1: a guard-derived borrow still live at its critical section's end is refused at Q615 GuardBorrowEscape, with the exact ordered cascade [Q615, Q619, Q600, Q600, Q600] pinned. Two escape mechanisms execute: this one, and the escaped_borrow control, where naming the borrow binder after its block fails at Q013 unknown name because the binder is body-local; Q013 is recorded as name resolution and deliberately not relabelled as a concurrency verdict. The released.qcore control takes the same borrow, reads through the guard and drops it inside the section, and is accepted. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. This profile refuses task creation outright, so a borrow cannot travel to a child here at all: no claim is made that a guard is unmovable in a future profile that admits tasks.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT30/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT30/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3141,13 +3141,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT30/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT30/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3196,20 +3196,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT31/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card T03-F's `wait NAME;` form: an announced acquisition a child never performs blocks the generation's destruction at scope exit, refused at Q619 NonquiescentMutexDestruction with the exact ordered cascade [Q619, Q600 NonquiescentDestruction, Q600 OutstandingMutex, Q600 OutstandingWaiter] pinned; every entry after the first shows the refused destruction left the generation, the protected resource and the waiter outstanding rather than quietly destroying one of them. RegisterWaiter had no source form before T03-F, which is why this case was unmappable. The performed control has the announcing task perform the acquisition, withdrawing the announcement, and is accepted. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: `wait` is in the emission-refused set, so the control publishes with c_source: None and evidence_target records the Q500 host gate only. This is the model's waiter bookkeeping, not a blocking-acquisition or deadlock claim.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3227,13 +3227,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3282,20 +3282,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT32/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task created and joined strictly inside a critical section is refused at Q600 JoinWhileGuardHeld, and the cascade is exactly one entry long because the empty child body is well formed and nothing else is disturbed. The joined_outside control moves the identical block one statement past the section's end and is accepted, so the refusal is keyed to the join landing while a guard is held. This is the unedited T02 checker rule: T03-F declined to widen it, so a join strictly inside a guard is a refusal in this profile rather than a feature. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: the accepted control is multi-task and publishes with c_source: None; evidence_target records the Q500 host gate only.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3313,13 +3313,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3368,20 +3368,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT33/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT33/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card CT33-RANKS's opt-in lock-rank discipline. Two generations over disjoint resources are declared at ranks 1 and 2, and the case writes both nestings: `b` inside `a`, then `a` inside `b`. Only the descending acquisition is refused, at Q624 LockRankViolation naming both sides of the failed comparison, and the exact ordered cascade [Q624, Q612 DeadGuard] is pinned \u2014 the trailing entry is the refused Lock minting no guard, so the refusal is shown not to have silently released or created one. The accepted control differs by one statement: the second section nests `b` inside `a` again, and it checks through the checked mutex-guard route, so the refusal is attributable to the acquisition order rather than to nesting or to ranks being declared. A second control keeps the case's shape with both declarations unranked and refuses with [Q622, Q622], the pre-existing NestedProtectingMutex represented refusal, so an unranked module is measured unmoved. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage. native_sanitized is unassessed, not executed: card CT33-RANKS's sanitized run of an equivalent ranked nested trace is a core-level test in crates/qcore-core/tests/unit/mutex_c_emit.rs, not a harness runner, and the schema-2 gate lists exactly which cases may read executed. No native evidence and no deadlock-freedom claim: this model has no blocking, and cross-task acquisition order is outside the rule R2 checks.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3399,13 +3399,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3454,20 +3454,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT34/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared with generations over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned and every entry says something: the section unlocks with its invariant still open (Q613 InvariantOpenAtUnlock), the growth's own refusal sits SECOND rather than first because the lowering mints the new predicate identity before the core decides (Q617; card boundary CT34-GROWTH-CASCADE, recorded rather than concealed), the generation is destroyed with its guard still live (Q619), the section's `close` names a declared identity the generation never took because the refused growth installed nothing (Q613 InvalidInvariantWitness), and scope exit finds the resource, the guard and the generation outstanding (three Q600). Every entry after Q617 is what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were. The admitted control differs by exactly ONE TOKEN - the growth names the unprotected `z` instead of `y` - so the refusal is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_growth`: the core admits it, records one admitted protection growth, and compile_files returns a compiled module carrying emitted C. Card CT34-SANITIZED retired card CT34-GROWTH's boundary 3 (CT34-GROWTH-NATIVE): the backend now renders a growth the certificate admits, as no mtx_t operation at all plus one bookkeeping line, because a footprint is a DECLARED SHAPE and a C mutex has no extent to widen; a growth no certificate admits is refused at UnadmittedProtectionGrowth. A second control grows onto the generation's OWN declared interval and refuses with the identical seven-entry cascade, so W4's one-protector rule is measured to cover this generation's shape too. There is no shrink or replacement form in this profile at all, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage. native_sanitized is executed and harness-gated: a third control, growth_then_guarded_access.qcore, writes the originally declared region under the guard, grows onto a second allocation, writes the newly protected region under the SAME guard and reads both in a second section; the harness compiles its emitted C under ASan/UBSan/LSan, runs it, and compares stdout line for line with interpret_mutex_program. The case's own fixture is a refusal that emits nothing, so the four native stages name that control's file as their artifact - the only file a compiler in this case ever saw - rather than case.qcore. The run witnesses in-bounds access to real allocations inside the growing section's own lock/unlock pair and full reclamation under LeakSanitizer; it witnesses NOTHING about a C mutex protecting the grown region, about contention, about any schedule, or about the invariant predicate.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3485,13 +3485,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -3512,7 +3512,7 @@
         "mutex_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3522,7 +3522,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3533,7 +3533,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3543,7 +3543,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
-          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3569,20 +3569,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT35/case.qr",
       "semantic_profile": "source.epoch.bound.v1: two workers each declare `read page;` for the one `let page = share 4096;` cell, so the lowering names one cell identity and the checker's shared entry union counts 4096 once; the published epoch peak is 4096 + (1024 + 1024) + (512 + 2*128) = 6912. The mapping asserts every nonzero axis of the published certificate, not merely that the epoch checked. The two_cells control declares a second distinct 4096-byte cell that both workers read and measures 8192, so the union counts identities and not readers; the repeated_entry control names the same cell twice in one worker and is refused at Q630 rather than deduplicated. DeclaredTaskFootprints, DeclaredRuntimeOverhead, DisjointSharedStorageCells and NoScheduleModel are carried unchanged on the certificate: nothing here imports a footprint from C, from an allocator or from a run.",
       "harness_verdict_mode": "epoch_bound_figures",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3606,13 +3606,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -3654,20 +3654,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT36/case.qr",
       "semantic_profile": "source.epoch.bound.v1: two independent workers declare `peak 3072;` and `peak 5120;`. Every assignment of phases to independent tasks is an admitted configuration, so the peaks are summed rather than maximized: the published concurrent private peak is 8192 and the epoch peak is 8192 + (512 + 2*128) = 8960, at least the summed peaks plus the modeled overhead. Two controls straddle the summed figure with the same two peaks \u2014 an allocation of 8192 is admitted and 8191 is refused with the ordered cascade [Q637, Q638] \u2014 and a maximized reading would have called 5120 the peak and admitted both, so the refusal is what makes the summing falsifiable. The overhead figures are a declared premise; a `measured RUNS` suffix in their place is Q640.",
       "harness_verdict_mode": "epoch_bound_figures",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3691,13 +3691,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -3739,20 +3739,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT37/case.qr",
       "semantic_profile": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open.",
       "harness_verdict_mode": "native_task_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3764,13 +3764,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -3794,7 +3794,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3808,7 +3808,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3819,7 +3819,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -3837,7 +3837,7 @@
         "proof": {
           "status": "executed",
           "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
-          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qr",
           "observations": 1
         },
         "atomic_publication_check": {
@@ -3853,20 +3853,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT38/case.qr",
       "semantic_profile": "source.epoch.bound.v1: two children each declare `credit 6144 effort 100;` out of an epoch that declares `bound 8192 effort 1000;`. Each child's own demand fits its own credit, so no per-task check refuses it; the granted total 12288 exceeds the 8192 allocation and the exact ordered cascade is [Q637] CreditsExceedAllocation on the memory axis. The control splits the same total within it (4096 + 4096 = 8192) and is admitted with granted_credits.memory = allocation.memory = 8192, so the refusal is keyed to the sum and not to the split.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3890,13 +3890,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -3938,20 +3938,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "epoch",
-      "source_fixture": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT39/case.qr",
       "semantic_profile": "source.epoch.bound.v1: a well-accounted epoch additionally writes `bound effort as latency;`, asking for its work bound as a completion time. The driver derives and independently rechecks the bound first and only then puts the claim to the profile's own epoch_wall_clock_bound, which always refuses: the exact ordered cascade is [Q639] WallClockUnavailable. The control is the same epoch without the claim, admitted with work_total on the effort axis = 800 and NoScheduleModel on the certificate, so a consumer cannot drop the premise and read the total as a finish time. There is no core count, queueing or preemption anywhere in this profile.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -3975,13 +3975,13 @@
         "epoch_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qr",
           "observations": 1
         },
         "epoch_bound_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qr",
           "observations": 1
         },
         "sequential_whole_program": {
@@ -4193,19 +4193,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "sequential",
-      "source_fixture": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT42/case.qr",
       "semantic_profile": "StandardSocketV1 (card QUIRIN-SOCKET-V1) composed with the derived protocol cells of card CT42-PROTOCOL-CELL through the `disjoint NAME NAME;` question card CT42-CELL-ROUTE (wave 39) routes from source. CT42's scenario is `Two descriptors share an underlying logical state`, expected `Preserve shared protocol-cell identity`, and the case is REFUSED with each word carried by a named rule. TWO DESCRIPTORS: `client` and `server`, two source names each bound to its own socket descriptor, the connector and the accepted binding of one completed TCP connection. SHARE AN UNDERLYING LOGICAL STATE: the transport checker's own cross-name rules (a send through one is decided by the other's committed stream; a close of one is refused while the other's bytes sit unread), which qcore_core::socket_footprint reads off the admitted program's decided connection structure as one protocol cell with two custodians and projects as DeriveDescriptorAlias events onto the UNEDITED DisjointFootprintsV1 checker. PRESERVE SHARED PROTOCOL-CELL IDENTITY: the program asks that the two be treated as disjoint custodians and the unedited checker refuses at Q664 SharedProtocolCell naming the cell, attributed to the question, under the Concurrency pass that owns the band -- reached by condition extension, no code allocated. Five controls separate the refusal from its surroundings: the listener and an end ADMITTED (and emitting the case's C byte for byte, the question erasing), the ends of two different connections ADMITTED, a datagram pair ADMITTED (CT42-CELL-UDP-QUEUE re-affirmed with its ground), a closed custodian refused Q083 then Q082 by the inherited checkers before any cell is derived, a scalar at the position refused Q081. BOUNDARY: no dup-like alias over one open description exists on any route (CT42-CELL-DUP-SOURCE), so `descriptors` is carried by the connection-cell reading; the C-twin arm stays blocked on the contract loader's int-typed identity (CT-CTWIN-DESCRIPTOR), out of this card's scope. The refusal is a check-time decision over one flat statement sequence; no C is emitted for the case, nothing is executed, and no native, sanitizer or proof evidence is claimed.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4235,7 +4235,7 @@
         "sequential_whole_program": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qr",
           "observations": 1
         },
         "sequential_reference_execution": {
@@ -4360,19 +4360,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT44/case.qr",
       "semantic_profile": "ScopedReadLoansV1 (cards T05 and WRITE-LEND-TASKS) over the checked scoped-task ledger. CT44's scenario is `Stack capture expires or environment moves before join`, expected Reject, and the case is REFUSED with each word carried by a named rule of an unedited model except one, stated as a boundary below. CAPTURE by the checked task IR's own loan: the parent lends `read buffer share FULL` at the spawn and the refusal names the resource, the outstanding amount and the BORROWING TASK -- LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] } -- which is the capture, not the handle, and is card T00's archived blocker for this case (`the available rejection is about the handle, not about a capture whose environment expires`) measured obsolete on this tree. EXPIRES by the written `drop buffer;` statement, whose executed meaning on this route is a real destruction: the identical program with that statement after the join is ADMITTED (drop_after_join.qcore, ScopedReadLoansV1). BEFORE JOIN because that relative position is exactly what moves the verdict, pinned in both directions -- the same destruction in the same position with a scalar capture instead of the buffer's share also checks (scalar_capture_drop.qcore, ScopedOwnedTasksV1), so the refusal is keyed to the capture and not to destroying while a child runs, nor to the position alone. OR ENVIRONMENT MOVES by the scenario's second disjunct, which has the source form card T00 recorded it lacked (`captures are copied into a checked environment, so environment moves before join has no source form` -- true at T00's checkpoint, where share captures did not lower at all, and false here): `move buffer` handing custody to a second worker while the first share is out, refused at the same Q600 LoanOutstanding, attributed to the moving statement (move_before_join.qcore). The frame's own expiry is pinned as a fourth control rather than as the case -- a bare return out of the thread scope with the share out, refused at Q600 ScopeBusy whose message names the frame -- because card CT-WIRE-LANE-3 (wave 31) recorded that the task route executes no destroy at scope exit, so the case is written instead on the statement whose executed meaning an admitting control demonstrates. BOUNDARY: the captured storage is a HEAP buffer bound to a parent-frame local; this language has no stack-allocated capturable resource, so `stack` has NO REFERENT and the case is mapped on the frame-owned-resource shape, on the CT06 precedent for an inexpressible vehicle. What carries the hazard is that `thread scope` IS the scoped-thread construct and the ledger refuses exactly the expiry or transfer of the captured resource before the join. No native, sanitizer or proof evidence is claimed: the fixture is a refusal that reaches no backend.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT44/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT44/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4384,13 +4384,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT44/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT44/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -4531,20 +4531,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT46/case.qr",
       "semantic_profile": "CheckedMutexGuardsV1: a `protected N` payload -- the transferability judgment's TransferKind::ProtectedResource, sendable over a derivable synchronization edge and not freely shareable -- declared to cross into a child task under the generation that protects it (TransferMode::ShareUnderMutex requesting ShareProtocol::CheckedMutex), with every reach of the payload by either task naming a guard. Since card MUTEX-SHARE-CROSS-EMISSION (wave 36) the crossing also EXECUTES: the child is a real C11 thread that performs its own mtx_lock/mtx_unlock on the generation, and the emitted program's standard output is compared byte for byte under ASan/UBSan/LSan with interpret_mutex_program's observation of the same checked trace. The evidence is acquisition/release pairing across a real thread boundary and the validity of the protected allocation, on one Linux target. It is NOT evidence about contention or any data race: the checked trace is a total order whose child segment is contiguous, so the faithful rendering joins the child immediately and the creator performs no trace event while the child runs (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION); no TSan row exists anywhere in this repository. CT46's own words `wrapper` and `non-Sync but Send` have no referent in this language and are carried by the judgment's classification instead; the task route's own own<Buffer> still cannot request mutex mediation (MUTEX-SHARE-CROSS-TASK-BUFFER). TSAN CITATION (wave-39 close, 2026-09-18, discharging CT46-NOTES-PREDATE-TSAN-ROW on the CT07 precedent of docs/reports/tsan-rows-2/scripts/cite_ct07.py; a citation, not a stage flip - no stage of this row moves): the sentence above saying TSan is run nowhere in this repository describes wave 36's state and is superseded. Since wave 37 (card TASK-ROUTE-TSAN) the crossing has a ThreadSanitizer row on a CT46-shaped twin (crates/qcore-core/tests/unit/mutex_c_emit.rs), and since wave 39 (card TSAN-ROWS-2) on THIS fixture's own lowering: compiler/tests/task_route_tsan.rs::ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam lowers the case through compile_files, dies unbound at the one 0x18 fault, runs clean bound under ThreadSanitizer with stdout byte-identical to interpret_mutex_program's observation, and shows the schedule-forcing header attaches to nothing on this backend (the mutex backend calls thrd_create bare: no worker released, no schedule line). The row is serial by construction and claims no contention - the recorded decision: merge 0150c904 records MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION as RETIRED on its own second arm, in its words 'a DECISION, recorded as such, that this route's native evidence stays serial by construction', taken by card TSAN-ROWS-2 in its section 6 and recorded at that merge as accepted.",
       "harness_verdict_mode": "checked_mutex_crossing",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4562,13 +4562,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -4589,7 +4589,7 @@
         "mutex_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4599,7 +4599,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4610,7 +4610,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4620,7 +4620,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
-          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4646,19 +4646,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT47/case.qr",
       "semantic_profile": "The transferability judgment (qcore_core::transfer, cards CT46-SENDSYNC and CT47-COPY-CAPTURE) over ScopedOwnedTasksV1's checked spawn boundary. CT47's scenario is `Raw pointer is Copy but no transfer/share contract exists`, expected `Reject automatic cross-thread acceptance`, and the case is REFUSED with each word carried by a named rule of an unedited model except one, stated as a boundary below. BUT NO TRANSFER/SHARE CONTRACT EXISTS by the judgment itself: the capture `spawn s reader(copy buffer)` is refused at Q600, attributed to the capture span at the crossing construct, with a message that names the missing contract and enumerates the three this kind does carry (`move`, `read PLACE share N`, `lend PLACE LOW..HIGH`). IS COPY at the MODE level: `copy` is this route's bit-duplication mode and the judgment classifies `own<Buffer>` as SENDABLE, so the refusal is for the mode and not a vacuous `this kind never crosses` -- the audited theorem QCore.Transferability.copyOfTheOwnedBufferIsRefusedForItsMode pins exactly that cell, and theBoundaryIsDecidedExactlyOnce pins that refusal and admission partition the whole 13 x 4 x 13 boundary matrix. REJECT AUTOMATIC ACCEPTANCE in two measured halves: the explicit request is refused by the judgment (the case), and the automatic form is not spellable at all -- a capture with no declared mode does not parse (Q000, the grammar, byte-identical to the wave-26 measurement), pinned as modeless.qcore. The attribution is complete rather than illustrative: all three contracts the message enumerates are supplied by accepted controls (move_transfer.qcore ScopedOwnedTasksV1, read_share.qcore ScopedReadSharesV1, write_lease.qcore ScopedWriteLeasesV1) and every one of them admits the program. BOUNDARIES: this language has no raw pointer type -- DeclaredTypeTag::Pointer is Unmodeled and a declared pointer parameter refuses long before a capture is considered -- so `raw pointer` has NO REFERENT and the bit-copy of an owned handle is the nearest expressible shape (the CT06 precedent, whose `same pointer` scenario is mapped on a {ptr, len} view with `pointer values the language gives no type remain outside this route` published in its own profile). Relatedly, no QCore type is both freely duplicable and resource-bearing, because resource kinds are linear, so the dangerous COMBINATION the scenario names is prevented by the type system and this fixture demonstrates the rule at the boundary rather than the combination itself. Before card CT47-COPY-CAPTURE (wave 29) this same shape fell through to the C backend's Q500 executable-subset catch-all, which is why the wave-26 CT lane measured it and declined to map. No native, sanitizer or proof evidence is claimed for this artifact: the fixture is a refusal that reaches no backend, and the Lean theorems prove the model's judgment rather than this case's fixture (T00.7 stays open; proof stays 3 of 45).",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT47/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT47/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4670,13 +4670,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT47/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT47/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -4732,20 +4732,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "mutex_guard",
-      "source_fixture": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT48/case.qr",
       "semantic_profile": "source.mutex.guard.v1 with card T03-F's guard-scoped facts: a refinement established under one guard and relied on under a later acquisition of the same mutex is refused at Q616 StaleProtectedFact, cascade exactly [Q616] because the release that dropped the fact was itself well formed. Both directions of the spec's invalidate/re-establish expectation execute: the reasserted control re-establishes the fact under the second guard and is accepted; the never_asserted control refuses at Q600 UnknownFact, so Q616 is staleness rather than absence. The binder is declared at thread-scope level so the name resolves and the model refuses the use, which is the semantic refusal the T03 CT integration report recorded the weaker Q013 unknown-name refusal as insufficient for. Only parser and type_checker execute; cfg is unassessed (no CFG stage). Not established: a fact has no predicate, so this is refinement invalidation and not refinement content. The reasserted control is single-task and does emit C, but the harness route-checks it rather than running it; evidence_target records the Q500 host gate.",
       "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4763,13 +4763,13 @@
         "mutex_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qr",
           "observations": 1
         },
         "mutex_invariant_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qr",
           "observations": 1
         },
         "epoch_lowering": {
@@ -4818,19 +4818,19 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT49/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT49/case.qr",
       "semantic_profile": "ComposedStdIoTasksV1 (source.std-io-tasks.v1) with a source line in a worker body, so the declared observation relation is qcore.obs-reordering.v1 rather than byte equality. The emitted program performs each worker's lines on that worker's own thread; the reference execution runs each worker eagerly at its spawn; and the two are compared window by window and emitter by emitter on standard error while standard output stays byte-compared. Linux ASan/UBSan/LSan. Nothing here is a claim about the scheduler: an admitted run says that run's stream lies in the admitted set.",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4842,13 +4842,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -4872,7 +4872,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4885,7 +4885,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -4896,7 +4896,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 16,
           "host_gate": [
             "linux",
@@ -4906,7 +4906,7 @@
         "native_sanitized": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
-          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qr",
           "observations": 16,
           "host_gate": [
             "linux",
@@ -4933,20 +4933,20 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "route": "task",
-      "source_fixture": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "source_fixture": "compiler/tests/fixtures/ct/CT50/case.qr",
       "semantic_profile": "Linux ScopedOwnedTasksV1 Buffer lifetime identity: two successful root allocations are separated by real munmap/mmap at the same numeric address using MAP_FIXED_NOREPLACE. Native release hooks check generations 1 and 2, exact mapping identity and complete release. Stale read/drop of the first consumed binding after the new allocation reject at Q600. Native stdout agrees with reference generation events. This covers owned Buffer mappings, not arbitrary raw pointers, descriptors, allocator failures or full source/native refinement.",
       "harness_verdict_mode": "native_task_scenarios",
       "stages": {
         "parse": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1
         },
         "elaborate": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1
         },
         "footprint_lowering": {
@@ -4958,13 +4958,13 @@
         "task_lowering": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1
         },
         "task_ledger_check": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1
         },
         "mutex_lowering": {
@@ -4988,7 +4988,7 @@
         "task_reference_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -5002,7 +5002,7 @@
         "c_emission": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1,
           "host_gate": [
             "linux",
@@ -5013,7 +5013,7 @@
         "native_execution": {
           "status": "executed",
           "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1,
           "host_gate": [
             "linux"
@@ -5029,7 +5029,7 @@
         "proof": {
           "status": "executed",
           "executor": "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
-          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
           "observations": 1
         },
         "atomic_publication_check": {

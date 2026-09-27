@@ -70,7 +70,7 @@ def sources(repository, tracked=None):
         for path in _walk(directory, tracked):
             if path.is_symlink():
                 raise ValueError(f"symbolic link in corpus: {path}")
-            if path.is_file() and path.suffix == ".qcore":
+            if path.is_file() and path.suffix in {".qcore", ".qv"}:
                 logical = path.relative_to(directory).as_posix()
                 if logical in result:
                     raise ValueError(f"duplicate logical contract: {logical}")
@@ -86,7 +86,7 @@ _EXTERN_FN = re.compile(r"^\s*(?:unsafe\s+)?extern\s+fn\s+([A-Za-z_][A-Za-z0-9_]
 
 
 def declared_functions(path):
-    """`extern fn` names a `.qcore` module declares, `//` comments removed."""
+    """`extern fn` names a contract module declares, `//` comments removed."""
     text = "\n".join(line.split("//", 1)[0] for line in Path(path).read_text().split("\n"))
     return _EXTERN_FN.findall(text)
 
@@ -103,7 +103,7 @@ def libc_names(repository):
 def libc_placement_violations(repository, tracked=None):
     """Every (module, name) declaring a libc/POSIX function outside the libc crate.
 
-    Scanned: every canonical corpus module and every `.qcore` under `providers/`.
+    Scanned: every canonical corpus module and every contract source under `providers/`.
     A name is libc/POSIX when it is in the libc crate's generated name list or is
     declared by a module of the libc crate itself. Card W43-LIBC-CONTRACTS.
     """
@@ -114,7 +114,7 @@ def libc_placement_violations(repository, tracked=None):
     providers = repository / "providers"
     if providers.is_dir():
         modules |= {path.resolve() for path in _walk(providers, _tracked_paths(repository, tracked))
-                    if path.suffix == ".qcore" and path.is_file()}
+                    if path.suffix in {".qcore", ".qv"} and path.is_file()}
     owned = [path for path in modules if path.is_relative_to(crate)]
     if not owned:
         raise ValueError(f"no contract module under {crate}")
@@ -130,7 +130,7 @@ def libc_placement_violations(repository, tracked=None):
     return violations
 
 
-_INCLUDE = re.compile(r'^[ \t]*#[ \t]*include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_/-]+\.qcore)"[ \t]*;', re.M)
+_INCLUDE = re.compile(r'^[ \t]*#[ \t]*include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_/-]+\.(?:qcore|qv))"[ \t]*;', re.M)
 _INHERIT = re.compile(r"\bcontract\s+inherit\s+(?:([A-Za-z_]\w*)::)?([A-Za-z_]\w*)\s*;")
 
 
@@ -163,7 +163,7 @@ def libc_inheritance(repository, tracked=None):
     providers = repository / "providers"
     if providers.is_dir():
         modules |= {path.resolve() for path in _walk(providers, _tracked_paths(repository, tracked))
-                    if path.suffix == ".qcore" and path.is_file()}
+                    if path.suffix in {".qcore", ".qv"} and path.is_file()}
     references, violations = [], []
     for path in sorted(modules):
         if path.is_relative_to(crate):

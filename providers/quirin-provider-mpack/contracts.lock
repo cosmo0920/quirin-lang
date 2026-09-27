@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "mpack_finish_array",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "e4613eadf70d4a6e0a0f60099a16f0c6c6c0327689925599e99d301ebf367c38",
       "identities": [
         {
@@ -52,7 +52,7 @@
     },
     {
       "function": "mpack_finish_map",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "75387bcd10e7af6482930b0a0ad717a360a300172b2b2ab2b048bb64db67a9f6",
       "identities": [
         {
@@ -97,7 +97,7 @@
     },
     {
       "function": "mpack_write_bin",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "0edfa7f32ed9ac5b6185c762790c7a2b1c86f106435b249e47ede996f5af0ddd",
       "identities": [
         {
@@ -162,7 +162,7 @@
     },
     {
       "function": "mpack_write_cstr",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "da5f33ef49649f828fd09b005dfa4ad1a0903060d24c09bd8d9757705f1cc874",
       "identities": [
         {
@@ -227,7 +227,7 @@
     },
     {
       "function": "mpack_write_double",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "b67206170e83aa5dddd2428e44df9c4ae7353498f5d979242b95ff2a2d9b1101",
       "identities": [
         {
@@ -292,7 +292,7 @@
     },
     {
       "function": "mpack_write_false",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "e0ac3a097416143528c37e83861d82d8021d44e595643f540529f073e440da8c",
       "identities": [
         {
@@ -357,7 +357,7 @@
     },
     {
       "function": "mpack_write_i64",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "d57d75c66cb5d00a6dab7d24d8cc233e1e75de30de501e8361a3ed68d7229237",
       "identities": [
         {
@@ -422,7 +422,7 @@
     },
     {
       "function": "mpack_write_str",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "be529caf3c7e293f5f41fca8b12a541509e2627b522cd88ddf49c25ea89b4dca",
       "identities": [
         {
@@ -487,7 +487,7 @@
     },
     {
       "function": "mpack_write_true",
-      "module": "mpack/writer.qcore",
+      "module": "mpack/writer.qv",
       "contract_sha256": "e3efd0f233d99742fa6a10c5f52fda631a81ef9aa78f9450c119c1d3e1668422",
       "identities": [
         {

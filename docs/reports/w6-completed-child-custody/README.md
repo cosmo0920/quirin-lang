@@ -1,5 +1,8 @@
 # CT14 and CT37: completed children retain custody until join
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `8876cd4`, 2026-09-07. CT14 is newly mapped to real source/native
 conformance, and CT37 now runs a real worker allocation through a completion
 record and parent join. No language, checker, core, native runtime, contract or
@@ -60,7 +63,7 @@ that shared input is archived and hashed as well.
 ```sh
 cargo test -p qcore-compiler --test ct_corpus
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct37.c \
-  compiler/tests/fixtures/ct/CT37/case.qcore
+  compiler/tests/fixtures/ct/CT37/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -include compiler/tests/fixtures/ct/CT37/completion_before_join.h \

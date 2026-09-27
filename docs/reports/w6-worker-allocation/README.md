@@ -1,5 +1,8 @@
 # Leaf-worker Buffer allocation and CT16 cleanup
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `376f102`, 2026-09-07. `ScopedOwnedTasksV1` now permits nonrecursive,
 task-free leaf workers to allocate actual heap Buffers, return a fresh Buffer,
 or release their local allocations before returning or raising a payload-free
@@ -82,7 +85,7 @@ cargo test -p qcore-compiler --test owned_source_tasks --test ct_corpus
 cargo test -p qcore-frontend --test owned_tasks
 cargo test --workspace
 cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct16.c \
-  compiler/tests/fixtures/ct/CT16/case.qcore
+  compiler/tests/fixtures/ct/CT16/case.qr
 clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   -DQCORE_CT_ALLOC_TASK=1 -DQCORE_CT_FAIL_ALLOC=2 -DQCORE_CT_FAIL_CREATE=0 \

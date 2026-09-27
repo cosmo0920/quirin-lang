@@ -80,14 +80,14 @@ fn fixture_crates() -> Vec<PublishedContractCrate> {
             LIBC,
             &[],
             read_crate_modules(LIBC),
-            &["libc/string.qcore", "libc/heap.qcore"],
+            &["libc/string.qv", "libc/heap.qv"],
         ),
-        krate(CFL, &[], read_crate_modules(CFL), &["cfl/table.qcore"]),
+        krate(CFL, &[], read_crate_modules(CFL), &["cfl/table.qv"]),
         krate(
             FLB,
             &[LIBC, CFL],
             read_crate_modules(FLB),
-            &["fluent_bit/wrappers.qcore"],
+            &["fluent_bit/wrappers.qv"],
         ),
         krate(APP, &[FLB], read_crate_modules(APP), &[]),
     ]
@@ -109,7 +109,7 @@ fn load(
 }
 
 fn hand_written() -> ResourceContracts {
-    let text = read_crate_modules(FLB)["fluent_bit/hand_written.qcore"].clone();
+    let text = read_crate_modules(FLB)["fluent_bit/hand_written.qv"].clone();
     load_resource_contract_sources(&BTreeMap::from([("hand_written.qcore".to_owned(), text)]))
         .unwrap()
 }
@@ -120,7 +120,7 @@ fn hand_written() -> ResourceContracts {
 
 #[test]
 fn inherited_wrappers_load_exactly_like_their_hand_written_equivalent() {
-    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
+    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
     let written = hand_written();
     // Custody modes, owner indices and result modes: identical.
     assert_eq!(inherited.functions(), written.functions());
@@ -155,8 +155,8 @@ fn inherited_wrappers_load_exactly_like_their_hand_written_equivalent() {
 
 #[test]
 fn the_retained_source_is_the_parent_contract_under_the_positional_renaming() {
-    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
-    let key = format!("{FLB}:fluent_bit/wrappers.qcore");
+    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
+    let key = format!("{FLB}:fluent_bit/wrappers.qv");
     let text = &inherited.source_assumptions()[&key];
     assert!(!text.contains("#include"));
     assert!(!text.contains("inherit"));
@@ -186,8 +186,8 @@ fn the_retained_source_is_the_parent_contract_under_the_positional_renaming() {
 
 #[test]
 fn evidence_carries_each_chain_with_crate_version_module_and_digest() {
-    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
-    let key = format!("{FLB}:fluent_bit/wrappers.qcore");
+    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
+    let key = format!("{FLB}:fluent_bit/wrappers.qv");
     let evidence = &inherited.inclusion_evidence()[&key];
     let libc = read_crate_modules(LIBC);
     assert_eq!(evidence.module.crate_name, FLB);
@@ -199,19 +199,19 @@ fn evidence_carries_each_chain_with_crate_version_module_and_digest() {
     assert_eq!(
         evidence.included.keys().cloned().collect::<Vec<_>>(),
         [
-            format!("{CFL}:cfl/table.qcore"),
-            format!("{LIBC}:libc/heap.qcore"),
-            format!("{LIBC}:libc/string.qcore"),
+            format!("{CFL}:cfl/table.qv"),
+            format!("{LIBC}:libc/heap.qv"),
+            format!("{LIBC}:libc/string.qv"),
         ]
     );
     let memcpy = &evidence.inherited["flb_memcpy"];
     assert_eq!(memcpy.len(), 1);
     assert_eq!(memcpy[0].declaration, "memcpy");
     assert_eq!(memcpy[0].module.crate_name, LIBC);
-    assert_eq!(memcpy[0].module.module, "libc/string.qcore");
+    assert_eq!(memcpy[0].module.module, "libc/string.qv");
     assert_eq!(
         memcpy[0].module.sha256,
-        sha256_hex(libc["libc/string.qcore"].as_bytes())
+        sha256_hex(libc["libc/string.qv"].as_bytes())
     );
     // The own-module chain: flb_sds_destroy -> flb_free -> libc::free.
     let chain: Vec<_> = evidence.inherited["flb_sds_destroy"]
@@ -224,8 +224,8 @@ fn evidence_carries_each_chain_with_crate_version_module_and_digest() {
 
 #[test]
 fn a_chain_crosses_three_crates_through_direct_dependencies_only() {
-    let inherited = load(&fixture_load_path(), &[(APP, "app/chain.qcore")]).unwrap();
-    let key = format!("{APP}:app/chain.qcore");
+    let inherited = load(&fixture_load_path(), &[(APP, "app/chain.qv")]).unwrap();
+    let key = format!("{APP}:app/chain.qv");
     let evidence = &inherited.inclusion_evidence()[&key];
     let chain: Vec<_> = evidence.inherited["app_copy"]
         .iter()
@@ -251,10 +251,7 @@ fn a_chain_crosses_three_crates_through_direct_dependencies_only() {
 fn selecting_the_parent_module_beside_the_child_is_still_one_function_each() {
     let both = load(
         &fixture_load_path(),
-        &[
-            (FLB, "fluent_bit/wrappers.qcore"),
-            (LIBC, "libc/string.qcore"),
-        ],
+        &[(FLB, "fluent_bit/wrappers.qv"), (LIBC, "libc/string.qv")],
     )
     .unwrap();
     assert!(both.contract("memcpy").is_some());
@@ -274,18 +271,18 @@ fn environment_digest(contracts: &ResourceContracts) -> String {
 
 #[test]
 fn a_change_to_the_parent_text_changes_the_childs_contract_identity() {
-    let before = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
+    let before = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
     let mut crates = fixture_crates();
     // A comment-only edit: the elaborated text and the modes do not move, but
     // the parent's identity does, and so does the environment's.
     crates[0]
         .modules
-        .get_mut("libc/string.qcore")
+        .get_mut("libc/string.qv")
         .unwrap()
         .push_str("// edited\n");
     let after = load(
         &ContractLoadPath::new(crates).unwrap(),
-        &[(FLB, "fluent_bit/wrappers.qcore")],
+        &[(FLB, "fluent_bit/wrappers.qv")],
     )
     .unwrap();
     assert_eq!(before.functions(), after.functions());
@@ -300,7 +297,7 @@ fn an_environment_without_inclusion_serializes_exactly_as_before() {
     let json = serde_json::to_value(&written).unwrap();
     let keys: Vec<_> = json.as_object().unwrap().keys().cloned().collect();
     assert_eq!(keys, ["functions", "source_assumptions"]);
-    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
+    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
     let json = serde_json::to_value(&inherited).unwrap();
     assert!(json.get("inclusion_evidence").is_some());
     let round: ResourceContracts = serde_json::from_value(json).unwrap();
@@ -317,8 +314,8 @@ fn assert_code(result: Result<impl std::fmt::Debug, String>, code: &str) -> Stri
 
 #[test]
 fn tampered_or_orphaned_evidence_is_refused_on_recheck() {
-    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qcore")]).unwrap();
-    let key = format!("{FLB}:fluent_bit/wrappers.qcore");
+    let inherited = load(&fixture_load_path(), &[(FLB, "fluent_bit/wrappers.qv")]).unwrap();
+    let key = format!("{FLB}:fluent_bit/wrappers.qv");
     let json = serde_json::to_value(&inherited).unwrap();
     let mutate = |edit: &dyn Fn(&mut serde_json::Value)| {
         let mut value = json.clone();
@@ -329,21 +326,21 @@ fn tampered_or_orphaned_evidence_is_refused_on_recheck() {
     // A retained parent edited without its digest.
     assert_code(
         mutate(&|v| {
-            v["inclusion_evidence"][&key]["included"][format!("{LIBC}:libc/heap.qcore")]["source"] =
+            v["inclusion_evidence"][&key]["included"][format!("{LIBC}:libc/heap.qv")]["source"] =
                 "module contract;\n".into();
         }),
         "QI016",
     );
     // A retained parent edited *with* a matching digest: the replay no longer
     // reproduces the retained elaborated text.
-    let edited = read_crate_modules(LIBC)["libc/heap.qcore"].replace(
+    let edited = read_crate_modules(LIBC)["libc/heap.qv"].replace(
         "nullable);\n    ensures normal resource_return_none",
         "nonnull);\n    ensures normal resource_return_none",
     );
     assert_code(
         mutate(&|v| {
             let entry =
-                &mut v["inclusion_evidence"][&key]["included"][format!("{LIBC}:libc/heap.qcore")];
+                &mut v["inclusion_evidence"][&key]["included"][format!("{LIBC}:libc/heap.qv")];
             entry["source"] = edited.clone().into();
             entry["identity"]["sha256"] = sha256_hex(edited.as_bytes()).into();
         }),
@@ -353,7 +350,7 @@ fn tampered_or_orphaned_evidence_is_refused_on_recheck() {
     assert_code(
         mutate(&|v| {
             let extra =
-                v["inclusion_evidence"][&key]["included"][format!("{CFL}:cfl/table.qcore")].clone();
+                v["inclusion_evidence"][&key]["included"][format!("{CFL}:cfl/table.qv")].clone();
             v["inclusion_evidence"][&key]["included"]["quirin-provider-cfl:cfl/extra.qcore"] =
                 extra;
         }),
@@ -461,8 +458,8 @@ fn child(includes: &[&str], body: &str) -> String {
     text
 }
 
-const STRING: &str = "quirin-provider-libc:libc/string.qcore";
-const HEAP: &str = "quirin-provider-libc:libc/heap.qcore";
+const STRING: &str = "quirin-provider-libc:libc/string.qv";
+const HEAP: &str = "quirin-provider-libc:libc/heap.qv";
 const COPY: &str = "extern fn c(a: ptr<mut, u8>, b: ptr<const, u8>, n: usize) -> ptr<mut, u8>";
 
 #[test]
@@ -531,9 +528,9 @@ fn qi002_extension_clauses_are_refused() {
 #[test]
 fn qi003_malformed_targets_are_refused() {
     for target in [
-        "libc/string.qcore",
-        "quirin-provider-libc:../libc/string.qcore",
-        "quirin-provider-libc:/libc/string.qcore",
+        "libc/string.qv",
+        "quirin-provider-libc:../libc/string.qv",
+        "quirin-provider-libc:/libc/string.qv",
     ] {
         assert_code(
             with_child(
@@ -570,7 +567,7 @@ fn qi004_an_undeclared_or_absent_crate_is_refused() {
     assert_code(
         with_child(
             &child(
-                &["quirin-provider-mpack:mpack/writer.qcore"],
+                &["quirin-provider-mpack:mpack/writer.qv"],
                 "extern fn f() -> unit contract inherit mpack::g;\n",
             ),
             &[],
@@ -581,7 +578,7 @@ fn qi004_an_undeclared_or_absent_crate_is_refused() {
     let mut crates = fixture_crates();
     crates[0].modules.insert(
         "libc/up.qcore".into(),
-        child(&["quirin-provider-cfl:cfl/table.qcore"], "extern fn f(p: ptr<mut, u8>, q: ptr<mut, u8>, n: usize) -> i32 contract inherit cfl::cfl_table_put;\n"),
+        child(&["quirin-provider-cfl:cfl/table.qv"], "extern fn f(p: ptr<mut, u8>, q: ptr<mut, u8>, n: usize) -> i32 contract inherit cfl::cfl_table_put;\n"),
     );
     assert_code(
         load(
@@ -597,7 +594,7 @@ fn qi005_an_unpublished_or_absent_module_is_refused() {
     assert_code(
         with_child(
             &child(
-                &["quirin-provider-libc:libc/internal.qcore"],
+                &["quirin-provider-libc:libc/internal.qv"],
                 "extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::internal_release;\n",
             ),
             &[],
@@ -618,7 +615,7 @@ fn qi005_an_unpublished_or_absent_module_is_refused() {
     assert_code(
         with_child(
             &child(
-                &["quirin-provider-fluent-bit:fluent_bit/hand_written.qcore"],
+                &["quirin-provider-fluent-bit:fluent_bit/hand_written.qv"],
                 "extern fn f(p: ptr<mut, u8>) -> unit contract inherit fluent_bit::flb_free;\n",
             ),
             &[],
@@ -716,7 +713,7 @@ fn qi008_an_unknown_parent_is_refused() {
 
 #[test]
 fn qi009_two_published_modules_of_one_crate_declaring_the_parent_are_ambiguous() {
-    let duplicate = read_crate_modules(LIBC)["libc/string.qcore"].clone();
+    let duplicate = read_crate_modules(LIBC)["libc/string.qv"].clone();
     let error = assert_code(
         with_child(
             &child(
@@ -830,7 +827,7 @@ fn qi012_a_capturing_or_diverging_renaming_is_refused() {
 
 #[test]
 fn qi013_entry_points_without_a_load_path_refuse_inclusion() {
-    let text = read_crate_modules(FLB)["fluent_bit/wrappers.qcore"].clone();
+    let text = read_crate_modules(FLB)["fluent_bit/wrappers.qv"].clone();
     let sources = BTreeMap::from([("wrappers.qcore".to_owned(), text)]);
     assert_code(load_resource_contract_sources(&sources), "QI013");
     assert_code(variadic_data_tails(&sources), "QI013");
@@ -1038,7 +1035,7 @@ fn qi019_a_namespace_that_names_no_directly_included_crate_is_refused() {
     crates[3].modules.insert(
         "app/reexport.qcore".into(),
         child(
-            &["quirin-provider-fluent-bit:fluent_bit/wrappers.qcore"],
+            &["quirin-provider-fluent-bit:fluent_bit/wrappers.qv"],
             &format!("{COPY} contract inherit libc::memcpy;\n"),
         ),
     );
@@ -1079,7 +1076,7 @@ fn a_refused_module_leaves_no_partial_environment() {
     let result = load(
         &ContractLoadPath::new(crates).unwrap(),
         &[
-            (FLB, "fluent_bit/wrappers.qcore"),
+            (FLB, "fluent_bit/wrappers.qv"),
             (FLB, "fluent_bit/bad.qcore"),
         ],
     );

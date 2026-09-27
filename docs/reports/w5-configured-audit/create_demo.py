@@ -24,7 +24,8 @@ for args in [
 ]:
     subprocess.run(["git", "-C", str(checkout), *args], check=True)
 commit = subprocess.check_output(["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True).strip()
-(root / "memory.qcore").write_text("""module contract;
+# The archived measurement used memory.qcore; this creates its current .qv input.
+(root / "memory.qv").write_text("""module contract;
 extern fn alloc() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -42,7 +43,7 @@ def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n")
 
-write(root / "contracts.json", {"schema_version": 1, "modules": ["memory.qcore"]})
+write(root / "contracts.json", {"schema_version": 1, "modules": ["memory.qv"]})
 library = {
     "pin": "sample", "source_roots": [{"root": "src", "selection": "top_level"}],
     "audited_files": [{"path": "src/" + name, "sha256": hashlib.sha256(source.encode()).hexdigest()} for name, source in sources.items()],

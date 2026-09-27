@@ -62,7 +62,7 @@ mod windows_c;
 /// second literal to drift, and CT07's case is pinned as this program without
 /// its logger by `ct07s_case_is_the_flagship_without_its_logger` there.
 const DISJOINT_EXERCISE: &str =
-    include_str!("fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore");
+    include_str!("fixtures/write_lend_tasks_exercise/disjoint_exercise.qr");
 
 /// The flagship without its `log_level`, so it stays on the plain scoped-task
 /// route and its reference run is an ordinary `TaskExecutionObservation` — the

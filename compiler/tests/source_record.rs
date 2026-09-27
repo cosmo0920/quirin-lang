@@ -25,7 +25,7 @@ use qcore_core::std_buffer::{self, BufferEvent, BufferOperand, BufferProgram};
 use qcore_frontend::frontend::{DeclarationKind, parse_source_program};
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 
-const POINT: &str = include_str!("fixtures/source_record/point.qcore");
+const POINT: &str = include_str!("fixtures/source_record/point.qr");
 
 fn compile(
     source: &str,

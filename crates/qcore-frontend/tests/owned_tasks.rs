@@ -6,7 +6,7 @@ use qcore_core::task_execution::{
 use qcore_frontend::frontend::{elaborate_source, parse_source_program};
 use qcore_frontend::source_tasks::lower_source_tasks;
 
-const ROUND_TRIP: &str = include_str!("../../../compiler/tests/fixtures/ct/CT01/case.qcore");
+const ROUND_TRIP: &str = include_str!("../../../compiler/tests/fixtures/ct/CT01/case.qr");
 
 fn checked(source: &str) -> Result<CheckedTaskModule, String> {
     let parsed = parse_source_program(source).map_err(|e| e.to_string())?;

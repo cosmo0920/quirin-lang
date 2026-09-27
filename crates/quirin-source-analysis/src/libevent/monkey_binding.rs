@@ -190,7 +190,7 @@ pub fn account_monkey_callbacks(
 
 /// Native QCore policy for the replay boundary, separate from callback postconditions.
 pub const CALLBACK_BINDING_CONTRACTS: &str = include_str!(
-    "../../../../providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore"
+    "../../../../providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv"
 );
 
 type Memory = BTreeMap<(u64, String), (String, i64)>;

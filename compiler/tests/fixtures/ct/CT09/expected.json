@@ -42,7 +42,7 @@
     ],
     "controls": [
       {
-        "source": "bad_field.qcore",
+        "source": "bad_field.qr",
         "expectation": "reject",
         "diagnostic_sequence": [
           "Q052",

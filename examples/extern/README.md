@@ -4,15 +4,15 @@ Calling C whose behaviour you have written down.
 
 | Example | What it demonstrates |
 |---|---|
-| [buffer_round_trip.qcore](buffer_round_trip.qcore) | One resource's whole life across the boundary |
-| [scalar_results.qcore](scalar_results.qcore) | Scalar results, and why they may leave the boundary |
-| [borrowed_render.qcore](borrowed_render.qcore) | `borrow NAME`: rendering a live resource without consuming it |
+| [buffer_round_trip.qr](buffer_round_trip.qr) | One resource's whole life across the boundary |
+| [scalar_results.qr](scalar_results.qr) | Scalar results, and why they may leave the boundary |
+| [borrowed_render.qr](borrowed_render.qr) | `borrow NAME`: rendering a live resource without consuming it |
 
 Supporting files, shared with [../stdio/](../stdio/) and [../pipes/](../pipes/):
 
 | File | What it is |
 |---|---|
-| [contracts/buffer_api.qcore](contracts/buffer_api.qcore) | The **declared** model of the C API |
+| [contracts/buffer_api.qv](contracts/buffer_api.qv) | The **declared** model of the C API |
 | [buffer_api.c](buffer_api.c) | The C itself — unverified, and linked beside the emitted unit |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs),
@@ -27,7 +27,7 @@ cargo test -p qcore-compiler --test examples_suite
 
 ## The contract is a declaration, not a proof
 
-Loading `contracts/buffer_api.qcore` asserts nothing about `buffer_api.c`. It is
+Loading `contracts/buffer_api.qv` asserts nothing about `buffer_api.c`. It is
 a `ContractTrust::Declared` assumption (contract spec §C06): the checker reads
 the clauses as **given**, records `DeclaredContract("demo_sum")` and one such
 premise per admitted callee in the certificate, and the driver prints those
@@ -68,7 +68,7 @@ C really compares the returned pointer against the declared outcome.
 `move b` at the release is where custody leaves the function. Use `b` after it
 and the module refuses; forget the release and it refuses too.
 
-`buffer_round_trip.qcore` explicitly selects `log_level trace;`, rendering its
+`buffer_round_trip.qr` explicitly selects `log_level trace;`, rendering its
 typed resource and call observations on stdout:
 
 <!-- transcript: buffer_round_trip stdout -->
@@ -97,7 +97,7 @@ without one binds whatever the callee returned. Where it is written, the emitted
 C compares the real result and exits `70` rather than continuing with a number
 nobody computed; the structured outcome event records that value.
 
-`scalar_results.qcore` also specifies `log_level trace;`, so it writes:
+`scalar_results.qr` also specifies `log_level trace;`, so it writes:
 
 <!-- transcript: scalar_results stdout -->
 ```text
@@ -111,7 +111,7 @@ return
 
 ## `borrow NAME`: a line about a resource that is still alive
 
-[borrowed_render.qcore](borrowed_render.qcore) renders something *about* a live
+[borrowed_render.qr](borrowed_render.qr) renders something *about* a live
 resource without consuming it, releasing it, or laundering its identity into a
 value.
 
@@ -187,7 +187,7 @@ For C that has **no** contract, and no CLI obstacle, see
 
 * **No rendering on this route alone.** `source.extern-call.v1` has no `print`.
   Getting a total onto a stream means composing with `std.io`, which is
-  [../stdio/pipeline.qcore](../stdio/pipeline.qcore).
+  [../stdio/pipeline.qr](../stdio/pipeline.qr).
 * **A borrowed render needs a custody model.** Written on the plain
   `source.std-io.v1` route it refuses at `Q028` — not because that route
   forbids it, but because that route has no identity map at all, so there is

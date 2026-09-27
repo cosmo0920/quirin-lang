@@ -36,11 +36,11 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
-const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
-const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib_decorated.qcorelib";
-const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib_decorated.qcorelib");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qv";
+const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qv");
+const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib_decorated.qrlib";
+const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib_decorated.qrlib");
 const HEADER_REFERENCE: &str = "include/qcore_buffer_demo_decorated.h";
 const HEADER: &str = include_str!("fixtures/native_library/include/qcore_buffer_demo_decorated.h");
 const VISIBILITY_REFERENCE: &str = "include/qcore_buffer_demo_visibility.h";
@@ -282,19 +282,16 @@ fn a_decoration_that_changes_the_type_is_not_erased() {
     // this refusal reported an empty parameter list, which `compare_reading`
     // compares for arity before it reaches the result — so it produced exactly
     // that false disagreement.
-    let wave22 = include_str!("fixtures/native_library/buffer_lib_header.qcorelib");
+    let wave22 = include_str!("fixtures/native_library/buffer_lib_header.qrlib");
     let rehashed = wave22.replace(
-        "sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d",
+        "sha256:aa92b5d783202524bad45bcc39750944ab19af0547f555429623fc8a2a49a657",
         &format!(
             "sha256:{}",
             qcore_compiler::digest::sha256_hex(text(&decorated).as_bytes())
         ),
     );
     let refusals = codes(
-        (
-            "fixtures/native_library/buffer_lib_header.qcorelib",
-            &rehashed,
-        ),
+        ("fixtures/native_library/buffer_lib_header.qrlib", &rehashed),
         supplied(&[("include/qcore_buffer_demo.h", &decorated)]),
     );
     assert_eq!(
@@ -577,10 +574,10 @@ fn a_manifest_declaring_no_include_is_the_wave_22_binding() {
     // The wave-22 fixture manifest and its header, compiled with the wave-22
     // transport. Declaring no include text is the default and reads exactly as
     // it did.
-    let headerless = include_str!("fixtures/native_library/buffer_lib_header.qcorelib");
+    let headerless = include_str!("fixtures/native_library/buffer_lib_header.qrlib");
     let module = compile(
         (
-            "fixtures/native_library/buffer_lib_header.qcorelib",
+            "fixtures/native_library/buffer_lib_header.qrlib",
             headerless,
         ),
         supplied(&[("include/qcore_buffer_demo.h", PLAIN)]),
@@ -611,7 +608,7 @@ fn an_include_statement_without_a_header_is_refused_at_load() {
     let edited = text(MANIFEST)
         .replace("header include/qcore_buffer_demo_decorated.h;\n", "")
         .replace(
-            "header_hash sha256:88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e;\n",
+            "header_hash sha256:ddbdc03f8e7ffda837b01f97575ad1b35dedc1134f70b9410fa4e635dc48e2bc;\n",
             "",
         );
     assert!(

@@ -35,10 +35,14 @@ def main():
         text=True).splitlines())
     added = {}
     for name in files:
-        if not name.endswith(".qcore"):
+        if not name.endswith((".qcore", ".qv")):
             continue
+        # A suffix-only migration is not an added declaration.
+        old_name = str(pathlib.PurePosixPath(name).with_suffix(".qcore"))
+        baseline_name = name if name in previous else old_name
         before = subprocess.check_output(
-            ["git", "show", f"{args.base}:{name}"], cwd=root, text=True) if name in previous else ""
+            ["git", "show", f"{args.base}:{baseline_name}"], cwd=root, text=True
+        ) if baseline_name in previous else ""
         after = (root / name).read_text()
         for symbol in sorted(declarations(after) - declarations(before)):
             if symbol in added:

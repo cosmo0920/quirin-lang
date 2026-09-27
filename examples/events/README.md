@@ -16,17 +16,17 @@ Design record: [`docs/design/STD_EVENT_V1.md`](../../docs/design/STD_EVENT_V1.md
 
 | Program | What it shows |
 |---|---|
-| [`self_pipe.qcore`](self_pipe.qcore) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
-| [`wake_payload.qcore`](wake_payload.qcore) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
-| [`write_interest.qcore`](write_interest.qcore) | The check-only arm: a write registration is checked in full and emits no C. |
-| [`socket_server.qcore`](socket_server.qcore) | A **checked socket** registered with the reactor: the server shape, waiting on two descriptors and taking its accept and its receive in its own body. Route `source.socket.v1`, card `SOCKET-EVENT-COMPOSE`. |
+| [`self_pipe.qr`](self_pipe.qr) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
+| [`wake_payload.qr`](wake_payload.qr) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
+| [`write_interest.qr`](write_interest.qr) | The check-only arm: a write registration is checked in full and emits no C. |
+| [`socket_server.qr`](socket_server.qr) | A **checked socket** registered with the reactor: the server shape, waiting on two descriptors and taking its accept and its receive in its own body. Route `source.socket.v1`, card `SOCKET-EVENT-COMPOSE`. |
 
 **Every line in these programs is spelled as a pipeline.** `value |> log info dec;`
 is the form, and the statement form it desugars to emits the same C byte for
 byte — so this is a rule about how the examples read, not a restriction on the
 route.
 
-## `self_pipe.qcore`
+## `self_pipe.qr`
 
 ```qcore
 import std.event;
@@ -78,7 +78,7 @@ be compared against a reference at all. This is the discipline card
 `STD-FMT-BORROW` fixed for a borrowed render, applied to the same problem, and
 it is also why the trace above is identical on all three platform arms.
 
-## `wake_payload.qcore` — the byte a wake delivered
+## `wake_payload.qr` — the byte a wake delivered
 
 ```qcore
 import std.event;
@@ -159,7 +159,7 @@ and exits non-zero on disagreement, so the second named premise —
 program that drains without naming a byte carries this premise no more than a
 program with no wait carries the readiness one.
 
-## `socket_server.qcore` — a checked socket as an event source
+## `socket_server.qr` — a checked socket as an event source
 
 Card `SOCKET-EVENT-COMPOSE`. This program is the one on this page that is **not**
 a `source.event.v1` module: a module that both dispatches and sockets takes the
@@ -300,10 +300,10 @@ second time: it reads each transcript on this page out of its marked block and
 compares it with the reference execution, and it holds the table above to the
 directory — every program indexed, every row a file that exists.
 
-The first target runs `self_pipe.qcore`; the second runs `wake_payload.qcore`
+The first target runs `self_pipe.qr`; the second runs `wake_payload.qr`
 and compares **both** streams — the selected system trace on stdout and the two
 source-authored lines on stderr — against the reference observation. The third
-runs `socket_server.qcore` and compares its stdout with its own reference
+runs `socket_server.qr` and compares its stdout with its own reference
 observation; that program's transport arm is `source.socket.v1`'s shim rather
 than this page's, so its Windows and Apple arms are compile-path-correct only
 (`SOCKET-EVENT-WINDOWS-RUN`, `SOCKET-EVENT-APPLE-RUN`) and

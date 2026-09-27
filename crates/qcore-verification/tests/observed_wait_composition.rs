@@ -17,9 +17,9 @@ use std::path::PathBuf;
 const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
 const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
 const WRAPPER_CONTRACT: &str =
-    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore");
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv");
 const COMPOSITION_CONTRACT: &str =
-    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore");
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qv");
 
 fn contracts() -> MonkeyWaitContracts {
     MonkeyWaitContracts::parse(WRAPPER_CONTRACT, COMPOSITION_CONTRACT).unwrap()
@@ -270,7 +270,7 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
         "native_run_manifest_sha256",
         "source_file.mk_core/mk_event.c",
         "source_summary.cb_wait_2_timeout",
-        "contract.monkey/composition.qcore",
+        "contract.monkey/composition.qv",
     ] {
         let mut changed = input(&source, &observations, &bindings);
         changed.assumptions.insert(key.into(), "unrelated".into());

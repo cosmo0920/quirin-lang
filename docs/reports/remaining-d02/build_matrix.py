@@ -488,7 +488,9 @@ ct_section = {
         "scripts/ct_stage_summary.py, and the script asserts that the manifest, every archived "
         "per-card ct_stage_evidence.json and docs/reviews/r0_3/acceptance.json all agree before "
         "it writes anything. Card T00-CT-SCHEMA ended the thirteen-case divergence that came "
-        "from reading T00's eleven-case coverage.json alone."
+        "from reading T00's eleven-case coverage.json alone. Auxiliary evidence retains its original "
+        "recorded filename spellings; these are historical references, not current runnable paths. "
+        "See docs/reports/extension-physical-migration/aux-reference-attribution.json for current aliases."
     ),
     "derived_from": [
         "docs/reevaluation/ct_manifest.json",

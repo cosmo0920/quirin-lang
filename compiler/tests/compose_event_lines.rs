@@ -23,8 +23,8 @@ use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qcore");
-const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qcore");
+const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qr");
+const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qr");
 const README: &str = include_str!("../../examples/events/README.md");
 
 fn compile(

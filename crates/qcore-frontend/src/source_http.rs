@@ -49,7 +49,7 @@
 //! |---|---|---|
 //! | `request`, `response`, `header`, `http`, `method`, `version`, `status`, `reason` | **0** | clean |
 //! | `content` | **0** | **chosen** for the content statement |
-//! | `body` | **8** | **rejected** — it is a *binding name* in two shipped fixtures (`examples/strings/status_line.qcore`, `compiler/tests/fixtures/std_string/text.qcore`), referenced by `print body;`, `body \|> print;` and `len(body)`. Reserving it would refuse programs that ship today |
+//! | `body` | **8** | **rejected** — it is a *binding name* in two shipped fixtures (`examples/strings/status_line.qr`, `compiler/tests/fixtures/std_string/text.qr`), referenced by `print body;`, `body \|> print;` and `len(body)`. Reserving it would refuse programs that ship today |
 //! | `message` | **2** | **rejected** — a contract `extern fn` parameter, referenced inside `ensures normal resource_borrowed(message);` |
 //! | `payload` | **49** | **rejected** |
 //! | `field`, `head` | 5, 6 | not needed |

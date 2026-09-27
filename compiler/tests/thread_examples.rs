@@ -58,19 +58,19 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 const EXAMPLES: [(&str, &str); 4] = [
     (
         "two_workers",
-        include_str!("../../examples/threads/two_workers.qcore"),
+        include_str!("../../examples/threads/two_workers.qr"),
     ),
     (
         "owned_buffer",
-        include_str!("../../examples/threads/owned_buffer.qcore"),
+        include_str!("../../examples/threads/owned_buffer.qr"),
     ),
     (
         "shared_readers",
-        include_str!("../../examples/threads/shared_readers.qcore"),
+        include_str!("../../examples/threads/shared_readers.qr"),
     ),
     (
         "core_context",
-        include_str!("../../examples/threads/core_context.qcore"),
+        include_str!("../../examples/threads/core_context.qr"),
     ),
 ];
 

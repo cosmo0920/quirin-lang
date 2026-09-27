@@ -1,5 +1,8 @@
 # W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W44-LIBC-RESIDUALS, 2026-09-25. It started on base `c1e69bb5` and was
 re-measured on main `5355998d`, after merging W44-INDIRECT-CHAIN-ACCESS and
 W44-CORPUS-CALLEE-SUMMARIES. It works the four libc-side residuals beside the
@@ -778,7 +781,7 @@ python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py measure/before/res
 python3 docs/reports/w44-libc-residuals/scripts/header_inline_census.py measure/capture/pp <out>
 cargo build --release -p qcore-c-gateway --example declared_abi_census
 target/release/examples/declared_abi_census cycle19-resource-contracts.json measure/capture/plain/*.i
-target/release/examples/declared_abi_census docs/reports/w44-libc-residuals/measurement/valist4.qcore -- measure/capture/plain/*.i
+target/release/examples/declared_abi_census docs/reports/w44-libc-residuals/measurement/valist4.qv -- measure/capture/plain/*.i
 # stage binaries: build with the stage's later analyzer files checked out from main, save, restore
 cargo build --release -p qcore-compiler --example cycle19_fluent_bit_libraries_audit   # ×4, see §6
 # BEFORE and stages 0-2 with main's stdio.qcore and errno.qcore on disk, then 3, then 4
@@ -789,8 +792,8 @@ sh docs/reports/w44-libc-residuals/scripts/identity.sh measure/v2/before docs/re
 python3 docs/reports/w44-libc-residuals/scripts/cmp_runs.py measure/v2/before measure/v2/stage0
 python3 docs/reports/w44-libc-residuals/scripts/attribute_tail.py measure/v2/stage0 measure/v2/stage1 measure/unit-texts <out>
 python3 docs/reports/w44-libc-residuals/scripts/attribute_scope.py measure/v2/stage1 measure/v2/stage2 measure/unit-texts <out> docs/reports/w44-libc-residuals/measurement/header-inline-names.txt
-python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/v2/stage2 measure/v2/stage3 measure/unit-texts <out> docs/reports/w44-libc-residuals/measurement/stage3-names.qcore
-python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/v2/stage3 measure/v2/stage4 measure/unit-texts <out> docs/reports/w44-libc-residuals/measurement/stage4-names.qcore
+python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/v2/stage2 measure/v2/stage3 measure/unit-texts <out> docs/reports/w44-libc-residuals/measurement/stage3-names.qv
+python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/v2/stage3 measure/v2/stage4 measure/unit-texts <out> docs/reports/w44-libc-residuals/measurement/stage4-names.qv
 python3 docs/reports/w44-libc-residuals/scripts/compose_stages.py measure/v2/before measure/v2/stage4 <out> <stage1> <stage2> <stage3> <stage4>
 python3 docs/reports/w44-libc-residuals/scripts/leaf_census.py measure/v2/stage4/resource-diagnostics.json <out> <names>
 python3 docs/reports/w44-libc-residuals/scripts/tail_nested_lines.py measure/v2/stage4/resource-diagnostics.json measure/unit-texts <out>

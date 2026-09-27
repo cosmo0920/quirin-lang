@@ -1,5 +1,8 @@
 # BITWISE-CONDITIONS — the integer tier, unary `!` and condition bindings (wave 20)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card brief: *"Unify three named follow-ons that all live in the
 condition/expression tier — `BITWISE-OPERATORS`, `IF-CONNECTIVE-NEGATION` and
 `IF-CONDITION-BINDINGS`. Decide v1 scope by measurement. Precedence declared
@@ -242,8 +245,8 @@ ConditionTree::Not(inner) => build_connective_branch(span, inner, else_output, t
 pin is the measurement:
 
 ```
-qcorec emit -o negated.c fixtures/bitwise/negated_condition.qcore
-qcorec emit -o twin.c    fixtures/bitwise/negated_condition_twin.qcore
+qcorec emit -o negated.c fixtures/bitwise/negated_condition.qr
+qcorec emit -o twin.c    fixtures/bitwise/negated_condition_twin.qr
 diff negated.c twin.c     # empty
 ```
 

@@ -25,10 +25,10 @@ use qcore_verification::cleanup_vocabulary::{
 };
 
 const OUTCOMES: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );
 const DELETE: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv"
 );
 
 fn field(name: &str, c_type: &str, reset: ResetValue) -> CleanupField {

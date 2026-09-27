@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "cfl_sds_destroy",
-      "module": "cfl/sds_lifetime.qcore",
+      "module": "cfl/sds_lifetime.qv",
       "contract_sha256": "35529034b5141fb407fda784094208c87f4295ba829e14e0066d6de5fb44814e",
       "identities": [
         {
@@ -39,7 +39,7 @@
     },
     {
       "function": "cfl_sds_len",
-      "module": "cfl/sds_lifetime.qcore",
+      "module": "cfl/sds_lifetime.qv",
       "contract_sha256": "8cb934c5b6d2d63ffcc58ce03989d5d76c333552869f68cbb747c9ff04c0067c",
       "identities": [
         {
@@ -71,7 +71,7 @@
     },
     {
       "function": "cfl_time_now",
-      "module": "cfl/time.qcore",
+      "module": "cfl/time.qv",
       "contract_sha256": "6f320509501456d9b499e641f0b8ec8e7c905ad4c9e2ef0e2264c81c6d9f8466",
       "identities": [
         {

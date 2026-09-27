@@ -14,6 +14,10 @@ W = pathlib.Path(
 )
 
 
+if not (W / "contract/qcore").is_dir():
+    raise SystemExit("Historical checkpoint only: set W to the report revision checkout "
+                     "containing contract/qcore. Use docs/STATUS.md for current measurements.")
+
 def out(label, value):
     print(f"{label:44s} {value}")
 

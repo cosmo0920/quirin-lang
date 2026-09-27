@@ -21,7 +21,7 @@ work/
   quirin-provider-acme/
     Cargo.toml                   [package] name = "quirin-provider-acme"
     src/lib.rs                   pub const NAMESPACE: &str = "acme";  pub const PUBLISHED: &[&str] = &[];
-    contracts/acme/pool.qcore    resource-v1 contracts
+    contracts/acme/pool.qv    resource-v1 contracts
     contracts.lock               `quirin-audit pin`, after review (pinned contracts)
     quirin-plugin.json           checker bindings and explicit overrides
     checkers/pool-check/         a checker package (optional)
@@ -55,7 +55,7 @@ contracts:
 
 ```json
 { "schema_version": 1,
-  "checkers": [ { "module": "acme/pool.qcore",
+  "checkers": [ { "module": "acme/pool.qv",
                   "functions": ["acme_pool_get", "acme_pool_put"],
                   "package": "checkers/pool-check" } ],
   "overrides": [] }

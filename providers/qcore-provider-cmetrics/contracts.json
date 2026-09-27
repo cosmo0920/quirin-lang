@@ -2,9 +2,9 @@
   "schema_version": 1,
   "plugin_id": "qcore.cmetrics",
   "contracts": {
-    "contracts/cmetrics/context_lifetime.qcore": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db",
-    "contracts/cmetrics/counter_reset.qcore": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
-    "contracts/cmetrics/metric_values.qcore": "efd616e9203de9aa4d68b6f0d2cf45876b79a2bcbc16c277f594c5b64fe5c2ef",
-    "contracts/cmetrics/mpack_utils.qcore": "9d06739a154e927adf7b9b80e31ceb376b49071100a280b55de4897244dd39dc"
+    "contracts/cmetrics/context_lifetime.qv": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db",
+    "contracts/cmetrics/counter_reset.qv": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+    "contracts/cmetrics/metric_values.qv": "efd616e9203de9aa4d68b6f0d2cf45876b79a2bcbc16c277f594c5b64fe5c2ef",
+    "contracts/cmetrics/mpack_utils.qv": "9d06739a154e927adf7b9b80e31ceb376b49071100a280b55de4897244dd39dc"
   }
 }

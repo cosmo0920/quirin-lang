@@ -1,0 +1,2562 @@
+{
+  "assets": [
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/addressable.qcore",
+      "sha256": "d91828fc546b4b10fb57736dba483373216057bc119e622782baefb4bdeaac1c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/adjacent.qcore",
+      "sha256": "4c28693912b06fdc7fa5c5ae4ba14ebbcad468a8c723e601465aa238c9cdf24c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qr",
+      "old": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qcore",
+      "sha256": "57c3072d319d2d3b8948b5435501c0419ee632c5145312f68524cda30503dc17"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitwise/masked_condition.qr",
+      "old": "compiler/tests/fixtures/bitwise/masked_condition.qcore",
+      "sha256": "b9c1d9b05f3e6b9549c5e1e197080ce1a933fe41035c5c26af8389bafb6b7618"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitwise/negated_condition.qr",
+      "old": "compiler/tests/fixtures/bitwise/negated_condition.qcore",
+      "sha256": "564f965a53e58a87c9051f37a8582ac8242609397d3fe15fb975bef8f67ae481"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/bitwise/negated_condition_twin.qr",
+      "old": "compiler/tests/fixtures/bitwise/negated_condition_twin.qcore",
+      "sha256": "46dbc1bf3b4d5191e9e63935e7c7caf5121bed47d6700ee65d6bb8e7e0937a20"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/branch/conditional_release.qr",
+      "old": "compiler/tests/fixtures/branch/conditional_release.qcore",
+      "sha256": "6656758c566c75b63b6a91922a9631ea6416e2e4d20bbdbfb0ab2b7317238a85"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/branch/unbranched_twin.qr",
+      "old": "compiler/tests/fixtures/branch/unbranched_twin.qcore",
+      "sha256": "6d9b335c88f2cf1db7e0447fd54c60aae12889c7674fcabad3ca71d11fa3e021"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/branch_arms/call_else_arm.qr",
+      "old": "compiler/tests/fixtures/branch_arms/call_else_arm.qcore",
+      "sha256": "fc0c497226bef226a710c6d628243bcb02d71e8a576977f24dc6a1703ce81952"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/branch_arms/call_then_arm.qr",
+      "old": "compiler/tests/fixtures/branch_arms/call_then_arm.qcore",
+      "sha256": "c5a134e93c251ec614827a36c97e89b5355108da40798bc86c6f053d80fcfd19"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/branch_arms/early_return.qr",
+      "old": "compiler/tests/fixtures/branch_arms/early_return.qcore",
+      "sha256": "ae733bfca4084824eecb2061e83687d040a88a406d3d3c63924045e826dcb958"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/compose/borrowed_render.qr",
+      "old": "compiler/tests/fixtures/compose/borrowed_render.qcore",
+      "sha256": "9cd73bc9f9204ce844fa648a60cbab9e81156ee9f8c4d0841f84a05b475b7d64"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/compose/chain.qr",
+      "old": "compiler/tests/fixtures/compose/chain.qcore",
+      "sha256": "a4583878285399fbc89ecd654561e7193ba02136aab97b35b24d1d6ff7d443a6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/compose/chain_hand_written.qr",
+      "old": "compiler/tests/fixtures/compose/chain_hand_written.qcore",
+      "sha256": "e92537bd63aa537103adfe0b753e835401b65c4f13f460eb1aa776ae5a6990a1"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/connectives/short_circuit_or.qr",
+      "old": "compiler/tests/fixtures/connectives/short_circuit_or.qcore",
+      "sha256": "c4e6b159a998d4b2bcfafcba0c71f1e90bb88cb141ac3b8cdcb2ff5efc1242f4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/connectives/short_circuit_or_twin.qr",
+      "old": "compiler/tests/fixtures/connectives/short_circuit_or_twin.qcore",
+      "sha256": "175ac9bea1076a95a7044aa9dbeb60652fa885d8322feaf30fc5b50425e182b9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT01/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "sha256": "131f635d9579a7da9833a7e51f305a5aa3306b2542808c17558ced982f5e909c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT02/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "sha256": "c775f7218f3394e7d5ed809fd366587cd330af8b4d68a248048b35a94e208a7b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT03/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "sha256": "7c75577b59733994bac462404ee51173d4376336b5351d1d9e9b6a380d634be6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT04/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "sha256": "50afea64bc359e311dc3acd61c9dd3ff5fa37b7c99061470005714ee423c1dcd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT04/write_after_joins.qr",
+      "old": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+      "sha256": "7c75577b59733994bac462404ee51173d4376336b5351d1d9e9b6a380d634be6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT05/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "sha256": "2d5218c7c9323a5947a7b6c1bd4919d551eda0245408abadfd818961a5b1fcab"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT05/remainder_fits.qr",
+      "old": "compiler/tests/fixtures/ct/CT05/remainder_fits.qcore",
+      "sha256": "24913c77796f72e0d573ca80aa7fc041f434dce12eb28e75b2a58d64c6653abd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT06/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/case.qcore",
+      "sha256": "62f2fda63babc06765149a6e6e46d30e6594864ad7bbe5ff798858b6eb36a0b0"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT06/copy_read_first.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/copy_read_first.qcore",
+      "sha256": "b495b810cff8df64bf5d3a5a1229706a13abd552cc6641c0d0584eabcfaa13e9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT06/no_copy.qr",
+      "old": "compiler/tests/fixtures/ct/CT06/no_copy.qcore",
+      "sha256": "2d881fae93f2df40a52f9345268b18f68ec96495c5519367a52472a4a29dea45"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "sha256": "a4ef61f285c94356d7c4ef1e70aff937ac258230b90660c3985ef5baf7babb75"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+      "sha256": "152f1cc61e82f1e27d7b5403332e6ac8771a73032078550457d18a1f9d5556d6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+      "sha256": "75bb0da7b75faca572d1561f118e42c8a14885a7fe5106e37792424ec1f17d7f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qcore",
+      "sha256": "f030edcfea60c583fbd5c0d709254ce239c27b6527073f7ec800a7bf1611957f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+      "sha256": "4137f6e7081b163b954571b8b0550d91b9758b3bb315d4f48ce017632c167a9e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/past_extent_read.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/past_extent_read.qcore",
+      "sha256": "5f91770e5b110fab98c55857a21ed11c289b776d90fba825122a97d188ccfe8c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/past_range_byte.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/past_range_byte.qcore",
+      "sha256": "47bd3cab018a3c83aae594a7312a01f96180d32ffda11ab8a121f2f8528f3d3c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/read_loan.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/read_loan.qcore",
+      "sha256": "2f871df3b74b1e3ebdcebbed225dd3bfcd328d418ef4b7e1c0fa7acfd5b12845"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qr",
+      "old": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore",
+      "sha256": "6ebaf1b7d26498e59952e443bb6082eb9329ce89368623f43f352efea14bd996"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT08/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/case.qcore",
+      "sha256": "29f2f013edbbde7f68eb8881b2c3776abf5da3dd9c05743e7c11133c13538fa9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT08/disjoint.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/disjoint.qcore",
+      "sha256": "ad1718af8087a2095b3d7f72d9545d588550a06cc1ce895589fb0d7ee3a39010"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT08/no_loan.qr",
+      "old": "compiler/tests/fixtures/ct/CT08/no_loan.qcore",
+      "sha256": "71cc21059cbf821e0ad2b0390a2e97060a43eee0b5467e7cf6207f0c359e7ac8"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT09/bad_field.qr",
+      "old": "compiler/tests/fixtures/ct/CT09/bad_field.qcore",
+      "sha256": "36456b7c387f9f5c28d99cb09a137f19de1a4f07f4635b2a8b03c8dfc412c591"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT09/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "sha256": "9a793c465809c3dd3fff452aa31f22f185cfc6825f86e9af4cb9f9ff51810f86"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT10/addressable.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/addressable.qcore",
+      "sha256": "d91828fc546b4b10fb57736dba483373216057bc119e622782baefb4bdeaac1c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT10/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "sha256": "5b5cbe2f4485f4ec86ceb6541581d7dae01e4d2de98d820b94e81a528cc7e692"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT10/distinct_units.qr",
+      "old": "compiler/tests/fixtures/ct/CT10/distinct_units.qcore",
+      "sha256": "57c3072d319d2d3b8948b5435501c0419ee632c5145312f68524cda30503dc17"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT11/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/case.qcore",
+      "sha256": "330062a16355f850afbde3bac606e550d009a521a99af31b4b57ef0dba67024b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT11/write_after_alias.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/write_after_alias.qcore",
+      "sha256": "22a0f878ab7145e6826c6515180df08916b1f75ccae621f7af7de7ad3b852609"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT11/write_before_alias.qr",
+      "old": "compiler/tests/fixtures/ct/CT11/write_before_alias.qcore",
+      "sha256": "c236f7fd346293b51c098adcda156dcab5f5b13425eb251fc10b7e829af115b7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT12/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "sha256": "131f635d9579a7da9833a7e51f305a5aa3306b2542808c17558ced982f5e909c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT13/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "sha256": "76c2c192c27547aed64423e61e9e8c770d1074295d323c1cdc50ed0922a30817"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT13/unjoined_failure.qr",
+      "old": "compiler/tests/fixtures/ct/CT13/unjoined_failure.qcore",
+      "sha256": "6cec4ef7d5f744550999c80a6af68f55c35371aa095d12abb76f5033f95199bd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT14/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "sha256": "131f635d9579a7da9833a7e51f305a5aa3306b2542808c17558ced982f5e909c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT14/drop_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/drop_before_join.qcore",
+      "sha256": "3e8ab10afda9ae0ab10812593b7f333a6aac6e07a34e7eb3652aac15007342c1"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT14/read_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+      "sha256": "c775f7218f3394e7d5ed809fd366587cd330af8b4d68a248048b35a94e208a7b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT15/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "sha256": "74123f6ea82889ff3182e97067b9b5028f6015050403199b56e42e0d8a371239"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT16/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "sha256": "9788c0c947dac01a5f63f635f751f168761b6f0e796bfc3fb3999212c27615e3"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qcore",
+      "sha256": "3672e036e967a22ba1e5821fe66f59f44f9a67950ad81317597f18ef91233a39"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT16/unclean_worker.qr",
+      "old": "compiler/tests/fixtures/ct/CT16/unclean_worker.qcore",
+      "sha256": "f25bb2b7de85b39ba7dd9ef219634f963637dfafcbe72b6b0a00fdb3d4a8a3a2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT17/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "sha256": "a6f67f2da6976a90b5879619bfc9794ff5bde30d57d8a35bc6ac90149b9ba83a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qcore",
+      "sha256": "a2ef7232b834bd5984803012407e9a67be713b2dbc01c01ca1dcd3b37741cb95"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qcore",
+      "sha256": "db477976f247a6a8d039252b37bbc162dbf7f9f2858594205bba7863d0886732"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT18/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "sha256": "31fc28de2e0e10ae0a45e0f2cc509a70753531aa3f31b7fcb48b950bde9abf63"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT18/owned_payload.qr",
+      "old": "compiler/tests/fixtures/ct/CT18/owned_payload.qcore",
+      "sha256": "908e8d4e0873399fb765e03677f0e8d3713b748ab3c035d7c18c75431c9f670b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT19/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "sha256": "3d236cbbd80cf6e7ef58592f575a24f26159bfe89cdf6ad4938271492f3755fd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT19/joined_sibling.qr",
+      "old": "compiler/tests/fixtures/ct/CT19/joined_sibling.qcore",
+      "sha256": "604f7290145fce96d0468164b12e1b8424eda88d0de0f5566d8f41a4063dd31e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT20/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "sha256": "e6cb78522262c2be8a30f0a7c5643398c7fe639d4d87878dc5cc4571d0b3f4ed"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT20/undropped.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/undropped.qcore",
+      "sha256": "47dabca1a22cf45b7ac39ae84be7c75b9b20f6cc1938156d3bb0f8422b1fd495"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT20/unjoined.qr",
+      "old": "compiler/tests/fixtures/ct/CT20/unjoined.qcore",
+      "sha256": "c628b45e094bdd24bf31a3b5bcae351307bfb07497d0c58a972780b7fb0c934d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT21/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/case.qcore",
+      "sha256": "2d09af6a3022ce2296d8a2488fca9031b87260eb4dcf5867595cbb290e3f61e7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT21/discharged.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/discharged.qcore",
+      "sha256": "1cc49c252444a780d50f2cac0bbe66057fbc1d84564f1f066d6ba5af8fdd7df7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT21/unopened.qr",
+      "old": "compiler/tests/fixtures/ct/CT21/unopened.qcore",
+      "sha256": "55b4b54f2be24349683c5825d4a0ce8b999b35ab6a3d20e3452e07fddffdd1c1"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/acquiring.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/acquiring.qcore",
+      "sha256": "af3666ae0d47bded2fe1627617df21776b64197f7cac25ac0a207254f8645a67"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/before_join.qcore",
+      "sha256": "43de0b92647831b89ebe350e1d16645709d7bdb13a97c5f0a4f561cfdd15043e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/both_models.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/both_models.qcore",
+      "sha256": "76a3991f22001d2714c88e185479e02dabc61e82d92150477602ae21908e505d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "sha256": "05bd26fd098d47455817a9beb56403bdab096b6acd219d37611ac381cce332c6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/no_discharge.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_discharge.qcore",
+      "sha256": "4c6681df6000398469793bacca65a3e9d5919c3461a7a34f3aa8ff8e635dd134"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/no_open.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_open.qcore",
+      "sha256": "87381b7d409893eef1759f08c2f342beb3309a914e509655e305f8ae4e4fbaf9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/no_region.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/no_region.qcore",
+      "sha256": "8c2969f684b32db7d3f36004346c004b3a175f3da3930a1a6d20a23531be1b06"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/spawn_after.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/spawn_after.qcore",
+      "sha256": "408d2167e7fe8fbd1579dbccc4dfaa0df8cf0f556faf070697ce609379f5607b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/spent_out.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/spent_out.qcore",
+      "sha256": "01b91416f5240c3f4b999b8339491c241e25f072319096a9013cdae65bf20dfe"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT22/wrong_region.qr",
+      "old": "compiler/tests/fixtures/ct/CT22/wrong_region.qcore",
+      "sha256": "bf2eb4969c263bbd88c7a293374983b46fdcc6d18fe829070579a4a6ed19dc2f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "sha256": "902a6568dbe1bd2036cf2432cc2207b8899b1b8da7dec6b09196ffad6be3bf14"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/minted.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/minted.qcore",
+      "sha256": "f7e5a4c804934769d3a946847a44e111ef6dcf9d6c34aed726949434f135418a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/no_arm.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/no_arm.qcore",
+      "sha256": "1833cb6b2a4c409296d16d61e6fc4ad14e7ff4c2c66c309bb7e378552378f5a8"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/partial.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/partial.qcore",
+      "sha256": "516dacc4531d6fe27af779c109a23406fba9718e7b334fdcad3d8ef5b978d8aa"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/restored.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/restored.qcore",
+      "sha256": "24b41952be526d73bcc48e321e826a6d830a3e4833e9626cbbc7f9b0088c8bdc"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT23/spent.qr",
+      "old": "compiler/tests/fixtures/ct/CT23/spent.qcore",
+      "sha256": "c690f9001208c59d66bb577a100c0fd5a656cb90d2c0a51d85c534a31d00bdfc"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/after_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/after_join.qcore",
+      "sha256": "ea84bd5834dc11572e3aab9f268b7aecaa2a424bd57d6811d357b9f0a9ec52e0"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "sha256": "2d3b639698f90070515ea3d411d2eb629f869cf5ff5812338a0c6dd6247ff5c2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/double_discharge.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/double_discharge.qcore",
+      "sha256": "3efe850242c02ccb1638c61d5b2a42e4c8c6eb16d694863a314f6faee84d1d69"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/in_error_arm.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/in_error_arm.qcore",
+      "sha256": "6ffd3f7c4653ffc171fc82e8bc4fceda19422f99dc4d338a62c62c34a2949c78"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/independent_owner.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/independent_owner.qcore",
+      "sha256": "7daf0247a86e13e3967febe6422658a0ee961428c54558236012b85037217a61"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/missing_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/missing_join.qcore",
+      "sha256": "28d9c34f7bb593c7878c17cc87d9d907f8b2695989d2d84ff73d404bb5bba8d6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/nested_if.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/nested_if.qcore",
+      "sha256": "39a8f71912b8fcdb2cb98bb8b28c7f6feb785a84fccdc1c1baf61fb2fbeace79"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/nested_loop.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/nested_loop.qcore",
+      "sha256": "360d1ca393d87cc5a9e4752669c860492ec8dd711bed988896256044905bac9d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT24/unsupported_body.qr",
+      "old": "compiler/tests/fixtures/ct/CT24/unsupported_body.qcore",
+      "sha256": "c5d66293fde14e1f362fc32d58746690b0a13014cdbb49150ff01da4be315657"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qcore",
+      "sha256": "5e7f9a5dd9db990b336f8848077987eb437e2166819ab3d29fa80aacd055ef76"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_scalar.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_scalar.qcore",
+      "sha256": "0f8c03aee509248ec2a5fc9249dc076357ebec346de3fa75cc4f44575358e38a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_twice.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_twice.qcore",
+      "sha256": "a9623e208e4ba5ac10a6185c76c1ea4aa6c8e0c2cd66bf3a07d47731a46a2cb4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/adopt_unknown.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopt_unknown.qcore",
+      "sha256": "4a6718626de06e6cd8edbb19700f4699ab9f0d2d264432bd770587c1124b6c76"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qcore",
+      "sha256": "f4b8bbdccf12c295c21c3ee4740971c30a753e10b89c35c8b3eabe71f0fcbcdc"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/before_join.qcore",
+      "sha256": "6b031918838fa689d5144d3262ba7a3559cfccc8ccfaf65dc7856325c9e483bd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "sha256": "15e5db5d8aef55ac5e8a3e30ebc000a32637c174cfcb3df593477b17b53bff36"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT25/live_share_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT25/live_share_drop.qcore",
+      "sha256": "61c6ce5b91386457f0f4af41cf4f9d41802b473e48dad7f3c73fab235f2f23eb"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT26/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "sha256": "29e2dd0de2cf792f7694606e372159c636005f1ae497289f706dcdb99f8f2961"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT27/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "sha256": "437f97979c0fe2f98eb58b548d268b52b4794c86827a1001d3abab772ce186b4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr",
+      "old": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore",
+      "sha256": "675227718e8c6fb537f496e1b9818e6a71f2b2e091ed62bf0c916a5966a99a4a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT28/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "sha256": "47dc42ce147e3d5e08d614fe55e1ffb850b901ee178f13adcac70f9716c1cd15"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT28/child_unlocks.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
+      "sha256": "04a217dace09957a757e889e2c51cb3e95ad716ad5850bb3cfd3325165f1dcd5"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT28/own_acquisition.qr",
+      "old": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
+      "sha256": "d34187719ed02bc52fdc80b8886c7affb8b88c9bb3b355cbf9ea1223650ce3d7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT29/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "sha256": "014e4488740324dbff777469dd7b90dd3a72574378462bdb74e2a89bee84bcc5"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT29/restored.qr",
+      "old": "compiler/tests/fixtures/ct/CT29/restored.qcore",
+      "sha256": "3240bc43d906b6ea4be28a583d3ad20adc1289a288d31775bec9d8017d219b2d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT30/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "sha256": "f57f5e115e67db4d69addeebd701195732d69b73f8940c4fce9278a0b20ac8f9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore",
+      "sha256": "6bff7eb866956b2309a584142709a685f89e3f89866770e829e5554f1eaab84b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT30/released.qr",
+      "old": "compiler/tests/fixtures/ct/CT30/released.qcore",
+      "sha256": "f937aee26db20fd31c05045b5ba30f5985c3f0631312b64bb73a031539e5f731"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT31/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "sha256": "67d965755bc3cb3b54fc7a563ad5780f7a5c3df6cf9b05c6ce10ae73c834c6e7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT31/performed.qr",
+      "old": "compiler/tests/fixtures/ct/CT31/performed.qcore",
+      "sha256": "b28533b6df351456d9831f65f9efdf4dbc4204c0b908f25351b0e102b0dd7673"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT32/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "sha256": "ee77e56eaf703a54094e33c9add36572e17a153a5663dd361c61ea4a776c73b7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT32/joined_outside.qr",
+      "old": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
+      "sha256": "d65535630983e275469ae48dfbe2d25483c8eea8e3674f3c3bbd48a80cc1ef31"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore",
+      "sha256": "1a4cbaa3c05c5f020edf025b3293ac5507f2f4f0ef2ab911be19a673ea2615da"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT33/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/case.qcore",
+      "sha256": "e0bf9332a38074a6d25d0b9e8d72f20e38635aeb3c8b3c042f979cedf4c42fef"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT33/unranked.qr",
+      "old": "compiler/tests/fixtures/ct/CT33/unranked.qcore",
+      "sha256": "843f36aec14a69c635823583b83c7472198785b190aae56e6611b6d807bfa945"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT34/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "sha256": "62077749fa84bcbcc4ddcd002ef826144a16c3ea54fbb1b6cfa2e05cc501641f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+      "sha256": "bf8697c5d0c208292003c85d54eafd3e2823441cb2c188e2eff4c247e700e23a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+      "sha256": "f4101918d74aef6cb09cf4666d76801358458fb8b24e34f605ac6482771b1ebe"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
+      "old": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "sha256": "4e4862c3ca8ba3f835bea788435aecd2c7214072b3e6f7daf219e07ffa5a3d49"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT35/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "sha256": "ed7a26fd0071776119f32889ea4cc71439243c26697a40b30d49f35ca44524b6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT35/repeated_entry.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore",
+      "sha256": "bcc3d2ad46766579e7dc9cd8d941ca70abe3ea48a62248f6bf5d527eab4e5f8e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT35/two_cells.qr",
+      "old": "compiler/tests/fixtures/ct/CT35/two_cells.qcore",
+      "sha256": "77789d52f96f1ab65f77c02127e481d9809d04be02c341e64f3628b6b4ab3e7e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT36/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "sha256": "7f82b2fa1bc2c72a330d6eacf02cf50139082cc2e9cedf181350b641c56d7f33"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore",
+      "sha256": "6de15f11d5e6f125cafe98ccaed9c5bf064a9a52c719033ba8cc2de3a4c087a2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT36/summed_allocation.qr",
+      "old": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore",
+      "sha256": "84dc792c04fb55a5b9702b9b8508007eb05f72a8fc3935216e97013f9f79363c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT37/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "sha256": "890d275e9a42ecf782bec4bf053ae0ae60d516cfb53ff5b1fa87c852805875b2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT37/unconsumed_result.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/unconsumed_result.qcore",
+      "sha256": "bc00ac8e2ba302a68990efefe2f0473136d630b979ce40eaeac6b786eaf73ba7"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT37/undropped_result.qr",
+      "old": "compiler/tests/fixtures/ct/CT37/undropped_result.qcore",
+      "sha256": "0b6f1525d335f3fdaa9d7671b13cc980649ac04a9f51670a54d9af6e21a53555"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT38/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "sha256": "f68bad5f8e057126331d9e22d22138b853084aa52c03afab49292311cb39057d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT38/split_within_total.qr",
+      "old": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore",
+      "sha256": "3189fd241ab0d4179be12242cc5601bb925c9eecc0d1e4cc0a8e01855c2615a4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT39/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "sha256": "dbb0591e49de0ac8a2c44443598c24c96930e86496d1a03f9a6061f2177d8f76"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT39/work_bound_only.qr",
+      "old": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore",
+      "sha256": "b1ee745de8a471249e15404e34d58482a5f551dd9f3ebcccbcb806fd1dafa498"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "sha256": "a24d1e046c7e3c785de585c1d3e6c06688a25607a689553e4a083e9b0fed9a87"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/closed_custodian.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/closed_custodian.qcore",
+      "sha256": "fb9a6eecea4850f9bab6c166fffaad22a981d8b9967e9a14ae98705fd2f1c0d2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/datagram_pair.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/datagram_pair.qcore",
+      "sha256": "62d58063fb09ebef5709ed03eee236df1b4d5f2be2e2fc7123fe39240cf2733c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/listener_question.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/listener_question.qcore",
+      "sha256": "d5d7cb86d6e67787b7bf01c85a9e28ba920720a4a908f20844f33736e9c65aeb"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/not_a_socket.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/not_a_socket.qcore",
+      "sha256": "98c89ae49554af697589352758f3ff8bf2f72b0e85d4f6e761cb471a48cc1f70"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT42/two_connections.qr",
+      "old": "compiler/tests/fixtures/ct/CT42/two_connections.qcore",
+      "sha256": "bae144d628f873e87ee6c79a37e43f428d64fb85be58c5307e003b6533a852f5"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT44/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "sha256": "f27611b2f4ac23da7d130709eb6318519b54801f8571a1245639db436dc71804"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT44/drop_after_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/drop_after_join.qcore",
+      "sha256": "3ddf9b40ae17f8a0014201f268a14f12b5f385e6cf2fb373d840862c0b55a640"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qcore",
+      "sha256": "7c45c301af853348a28b4ebfc710bad2831037abfc33b302f1ea6da9dc16b6df"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT44/move_before_join.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/move_before_join.qcore",
+      "sha256": "5c4817e00e3a0ab17c4d4e2bf804dbe59b51517c6ef403916ccf3cc791da7789"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qcore",
+      "sha256": "db053538193c15053a2f6f8449999aaadb09dd04068390d7b6300ca4d175963e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/absent_protocol.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/absent_protocol.qcore",
+      "sha256": "d56db985f78e583ae43ae2c2d079f27d10c24614393d5dbdc4c9f1aa1a405fa9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "sha256": "874d71eb3c7b30bffae909485cbf8b3e81859cf6ecf4501105c372320581d9a3"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/guard_local.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/guard_local.qcore",
+      "sha256": "b05d99b554408889c38e91d14bdffa881844e59fcc21386dfa0eb23554b5c7f3"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qcore",
+      "sha256": "750c6beef141dd0913c5abbff09b04f64a49ad936150f14c2eaa369b8855d3f3"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/no_crossing.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/no_crossing.qcore",
+      "sha256": "0c9c51002cfe0fbf066536b30ce8604c66386ab8d156e86cc051e580f6e56ab2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/share_generation.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/share_generation.qcore",
+      "sha256": "15ea795751a85f2debb66eb21bc17e92ab1c4a7e6098a68ac1fb1273413f9d64"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT46/unguarded_reach.qr",
+      "old": "compiler/tests/fixtures/ct/CT46/unguarded_reach.qcore",
+      "sha256": "f2dfa44ad0610e38a627062e8b3d7eb2b0ad7a0a4aba3fa05ef0186f895f330a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT47/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "sha256": "e92bcd971816fdc347a103a052818124d314ba9366e35f93bc8235af0f47f1fa"
+    },
+    {
+      "kind": "source_parse_error",
+      "new": "compiler/tests/fixtures/ct/CT47/modeless.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/modeless.qcore",
+      "sha256": "d903ee3d8899260931e8f83664c9c52975812c091f0f3cf62101a53fe5210323"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT47/move_transfer.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/move_transfer.qcore",
+      "sha256": "4ec721700b2bff192493261599bcfeecaa60d99e71d01c155077dfe8b4d5aaa8"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT47/read_share.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/read_share.qcore",
+      "sha256": "a624a728be7d566730cef1a125544f0009f94fd7c869e2009f9e9d4f47c0a7c0"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT47/write_lease.qr",
+      "old": "compiler/tests/fixtures/ct/CT47/write_lease.qcore",
+      "sha256": "ceee099f3273f6f3a8eb09a43951bc2bea6c0ba9ae190b117ee87733d58cfccb"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT48/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "sha256": "b302db0fbdb5eee406e998ab25e194036fbaf25ee8ec3cb5dd980b2ca8ae082f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT48/never_asserted.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
+      "sha256": "7b0bdc25cbdfbf7f49501c5e8aa704e04db5f2180fde417b936a06091005794a"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT48/reasserted.qr",
+      "old": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
+      "sha256": "6adca5879fc544311dd7ab8ad8b45d45faec0cbfdd80b01bc0a0e7711b12194c"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qcore",
+      "sha256": "9ed34db8769b0b7e763a87642a5774b494cc12951c1b12fb9f63ae72468adc13"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT49/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/case.qcore",
+      "sha256": "6d45bc04e3b86566b427f96ab9e20578a847e037ccbbe7b73a258865dab03368"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT49/parent_only.qr",
+      "old": "compiler/tests/fixtures/ct/CT49/parent_only.qcore",
+      "sha256": "022eba60c29fa06528558ae7d5b550ca1c69a3314806d7ff3c0e08f115a595a8"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT50/case.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "sha256": "b0c56c88b2271dd7ab60defcb2a037d0bf5f796ec2e9c4f0ceaa34ef82ae4376"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT50/stale_drop.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/stale_drop.qcore",
+      "sha256": "c5c2bb18c72681ad3394cdfe9c548fa5646e23f59fea942c50344a9857b951c2"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/ct/CT50/stale_read.qr",
+      "old": "compiler/tests/fixtures/ct/CT50/stale_read.qcore",
+      "sha256": "4bb497cd0bd958b4035e6e13b2c425b58ea2921bbbd3626b5575525f3e32b4e1"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qcore",
+      "sha256": "ac60b15a798765332dafb63b33d85e0f390aeeeba8c7a68f604053db9e680a63"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qcore",
+      "sha256": "6097af67e5ebe5940c23a989a9db24ca8305214c25847c5a475dc924c1c54ab4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qcore",
+      "sha256": "d6cbe8cb9a7172c1e0dcb4367db2896862d8e30bb533af8e6bba1150ce2e126d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/case.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/case.qcore",
+      "sha256": "fa0a8679adb0ac426153f05e697a46e6bd2e3141fd4eb1f82ed78b1b8ccdc89b"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qcore",
+      "sha256": "ce7c3c95a60628925435f7c0817fa32d9841255f2caf5964f0f396fe7a0e6cb6"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qcore",
+      "sha256": "f7ca9ba71566bba58ba38d9137b2e6da315608e976fe4073bf5e3f50fc98c707"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qcore",
+      "sha256": "ac1a80e1b1fa8397fd42136d3f52b9d66b006d6f71d4eea8c64e13010ee440ad"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qcore",
+      "sha256": "07f912f8e08557f1ef7521a7850a3c449866f97e9083cc4d376b618a0d2b28b4"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qcore",
+      "sha256": "8eab9c423b8dc0bf5b8476854ddccd10af0ff355becc3be8dfe69e322b349af8"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qcore",
+      "sha256": "cb00bcb29ae1865bd6d50e679ec5ae7d899865c32ab9af3b5312186bc8717733"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qr",
+      "old": "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qcore",
+      "sha256": "0d4ad634226cea3266551c34ffa72f24079cc5fbcad9a5a75b0257e877001837"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/out_slot.qr",
+      "old": "compiler/tests/fixtures/extern_calls/out_slot.qcore",
+      "sha256": "775a31907ec65deef9002dd8380294420d20e7c06da85c689f67df35149c4cce"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/realloc.qr",
+      "old": "compiler/tests/fixtures/extern_calls/realloc.qcore",
+      "sha256": "bceeb33c2e2a6963fae9c9c3b02f9f4ebbef515528551f5e158a70862a748b01"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/realloc_failure.qr",
+      "old": "compiler/tests/fixtures/extern_calls/realloc_failure.qcore",
+      "sha256": "93db723509d7b25568ce3785d29a36b569fbb8a67a3ab83192d53080ce28cf8e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/released.qr",
+      "old": "compiler/tests/fixtures/extern_calls/released.qcore",
+      "sha256": "a2e4c8133b7a2922df9c1430e26ed9b0dafd74666bfc90e144f15cad903a1fcb"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/round_trip.qr",
+      "old": "compiler/tests/fixtures/extern_calls/round_trip.qcore",
+      "sha256": "68fdaca36b69aa318fd700e513e73343dabec5feec880d85767d03e105e17c48"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/scalar_result.qr",
+      "old": "compiler/tests/fixtures/extern_calls/scalar_result.qcore",
+      "sha256": "fea8400adca47a1f1ce018ce0e16aaeb573ac5dd264ce37dcf61db410ec5f4bc"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/stored.qr",
+      "old": "compiler/tests/fixtures/extern_calls/stored.qcore",
+      "sha256": "18ec0ae39ba4b1f185d13f3ea48299eeb9b1318f5a6de9a04819cb9008fe7b3e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/extern_calls/stored_failure.qr",
+      "old": "compiler/tests/fixtures/extern_calls/stored_failure.qcore",
+      "sha256": "e91e087f02ae1d012e5ed54ba10c224b41a63cd86892ddf73b3943f8753d9316"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/f02/concurrent_round_trip.qr",
+      "old": "compiler/tests/fixtures/f02/concurrent_round_trip.qcore",
+      "sha256": "8712376b3f3d3db0f063f56562c36d64168eaf020b14518355297d08a3b39386"
+    },
+    {
+      "kind": "abi_manifest",
+      "new": "compiler/tests/fixtures/native_library/buffer_lib.qrlib",
+      "old": "compiler/tests/fixtures/native_library/buffer_lib.qcorelib",
+      "sha256": "b727101225d78ca7c96f4f21a5a23a4ac31c27b05235faa543cfc3020be75330"
+    },
+    {
+      "kind": "abi_manifest",
+      "new": "compiler/tests/fixtures/native_library/buffer_lib_decorated.qrlib",
+      "old": "compiler/tests/fixtures/native_library/buffer_lib_decorated.qcorelib",
+      "sha256": "ac42b26ee59f00f8f6e3d4ed527c4ce7c7d680a557f6f61c47b874fdb0e97665"
+    },
+    {
+      "kind": "abi_manifest",
+      "new": "compiler/tests/fixtures/native_library/buffer_lib_header.qrlib",
+      "old": "compiler/tests/fixtures/native_library/buffer_lib_header.qcorelib",
+      "sha256": "26f064a72d8af180d1e791d4d60f7c761b311661ac03d675449fb3372f360640"
+    },
+    {
+      "kind": "abi_manifest",
+      "new": "compiler/tests/fixtures/native_library/unchecked_demo.qrlib",
+      "old": "compiler/tests/fixtures/native_library/unchecked_demo.qcorelib",
+      "sha256": "024e50c72d58239db78fd4067450d1fd22eda74954dd8a520fe708c1113a122f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/pipe/lines_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/lines_piped.qcore",
+      "sha256": "36c5d2bf019cd6d0ffdc816b8d7e357a795196694f956bf550abad3916eae88f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/pipe/realloc_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/realloc_piped.qcore",
+      "sha256": "a4a82150b74e9ba4d7cadf73a667e41b0abdebe86ce707af21c451dab648c5d9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/pipe/round_trip_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/round_trip_piped.qcore",
+      "sha256": "3ef67632db0e9d51864fb288e9190c6a1676141c2c38961e17c1f0ff9aa3cd46"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/pipe/scalar_result_piped.qr",
+      "old": "compiler/tests/fixtures/pipe/scalar_result_piped.qcore",
+      "sha256": "863a456876107c251d44e1b9590e1eee57b7df3a778a00ddaa60c06a1417dcf3"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/region/discharged_pack.qr",
+      "old": "compiler/tests/fixtures/region/discharged_pack.qcore",
+      "sha256": "58b8c878fd92d753e3206370a4478a0b89e52507956535fe16d2582bd6d16d97"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/region/hand_written_twin.qr",
+      "old": "compiler/tests/fixtures/region/hand_written_twin.qcore",
+      "sha256": "0ccaa00e5707bb54808889318bbd0246f09e4888eeea71d30d7bd619f3485ba0"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/resource_helpers/round_trip.qr",
+      "old": "compiler/tests/fixtures/resource_helpers/round_trip.qcore",
+      "sha256": "d0bd24e95b567aae06d1a56f498023f7d947e2cfbb7116ba9ee51cfff206c50e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/slice_permissions/disjoint_halves.qr",
+      "old": "compiler/tests/fixtures/slice_permissions/disjoint_halves.qcore",
+      "sha256": "2e76f95be8d20f088e0bae4112ab4c6a41b3bc3a2a32817aa2de050dc3b58a9e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/slice_permissions/overlapping_write.qr",
+      "old": "compiler/tests/fixtures/slice_permissions/overlapping_write.qcore",
+      "sha256": "29f2f013edbbde7f68eb8881b2c3776abf5da3dd9c05743e7c11133c13538fa9"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/source_loop/copy.qr",
+      "old": "compiler/tests/fixtures/source_loop/copy.qcore",
+      "sha256": "b74db1301e459fc2dd14c1a7e8c6cd5cf45d83498dca5a6ec91fe8e2be26873d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/source_record/point.qr",
+      "old": "compiler/tests/fixtures/source_record/point.qcore",
+      "sha256": "9a793c465809c3dd3fff452aa31f22f185cfc6825f86e9af4cb9f9ff51810f86"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_buffer/bytes.qr",
+      "old": "compiler/tests/fixtures/std_buffer/bytes.qcore",
+      "sha256": "ec68d6df95251ab04605b6b2faa3c7490b290636c15b1bc286e35556983ea541"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_buffer/silent.qr",
+      "old": "compiler/tests/fixtures/std_buffer/silent.qcore",
+      "sha256": "c11b0d3383ddcbebf6aff75dda1bdc0af10a6d7127c54f7f1b0e886f5a0d821e"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_modules/lines.qr",
+      "old": "compiler/tests/fixtures/std_modules/lines.qcore",
+      "sha256": "58d145654b20ea0511e981da435ce199e6db5337e3470c5600c2273d9281fedd"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_modules/logger_only.qr",
+      "old": "compiler/tests/fixtures/std_modules/logger_only.qcore",
+      "sha256": "7bd9fc365a96998b4b3da1e493b2979554564f11e14142e30944f9e9481cc98d"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_string/composed.qr",
+      "old": "compiler/tests/fixtures/std_string/composed.qcore",
+      "sha256": "a211410b0a241516f98b2f9c03e69014dec310d6247f0204781cb30e28bf60b5"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_string/silent.qr",
+      "old": "compiler/tests/fixtures/std_string/silent.qcore",
+      "sha256": "dcb6229fcc7ec75738e2d16203a0942b1ba016ac1bd161cc2091e7f7d0536d28"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_string/slices.qr",
+      "old": "compiler/tests/fixtures/std_string/slices.qcore",
+      "sha256": "9689ccd2abcd07e58cd31fbd38ee33868e26fba74f2b2a8426a8ed7d67ac47db"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/std_string/text.qr",
+      "old": "compiler/tests/fixtures/std_string/text.qcore",
+      "sha256": "3259bcea19af446a03f2d5936f46d89519b66b514b6992b272995e681ee67869"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qr",
+      "old": "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qcore",
+      "sha256": "646e517cf2847c983cbd97337e5b040df85c13daa388755186c928dcc5495d82"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qr",
+      "old": "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qcore",
+      "sha256": "75bae4245890de0db98514023d7e38e0c850531df74448b8f528661f3b07978f"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/unsafe_linkage/round_trip.qr",
+      "old": "compiler/tests/fixtures/unsafe_linkage/round_trip.qcore",
+      "sha256": "baaa3e73bda30a32b5f5d82494393d036a1bc3a792d7b462d827cad32fe7c4ce"
+    },
+    {
+      "kind": "executable",
+      "new": "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qr",
+      "old": "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore",
+      "sha256": "eceed0a1042b4eadd394e84dff1c04062cdbf6443c2f0a9adf84201f0951a33b"
+    },
+    {
+      "kind": "executable",
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qcore",
+      "sha256": "700f794ac35d6c8754f85d16f06c2364b7e39da1c51c000547d33c1e34c85cbb"
+    },
+    {
+      "kind": "executable",
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore",
+      "sha256": "7a22f3f87bf56929ee17ed87b610724228f52f951a67132969e51b4c38d9104b"
+    },
+    {
+      "kind": "executable",
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore",
+      "sha256": "8db0ee5a8464d58bfcb6c003ad408260e83d48eefd0920d223258f82f22f78d2"
+    },
+    {
+      "kind": "executable",
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore",
+      "sha256": "dddc9fdfcbb25743ba7ea238e89a8f5b93b3947e7882da637ac805c8a923c51c"
+    },
+    {
+      "kind": "executable",
+      "new": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr",
+      "old": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore",
+      "sha256": "4f3f5d7d6dd1528327fab188ef5cbaa81ad5b06606f78e0411a905f271ee20f3"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-d01/probes/P21_span_line4.qr",
+      "old": "docs/reports/remaining-d01/probes/P21_span_line4.qcore",
+      "sha256": "5879318ace36ac231bc51022751b919979fd88d9c35711cafe8625202376d11a"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore",
+      "sha256": "8e7bb1a289d88be8697f96bfc1462981ea8538bc6501b03c534f42fcf6e89d13"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qr",
+      "old": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qcore",
+      "sha256": "4c9abd4ff2c1127393c00d2fd9b4c6e833d3377d3e59b4d71e95b64bb3ec0328"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore",
+      "sha256": "e2fc9571863c8e6a8f69f81a32c16f8e18f4d432b04f86dbf3c9decfa8753b1f"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qr",
+      "old": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qcore",
+      "sha256": "90d975f1cde53015e162be67cbd271f815b3a6b02d5215eef2b1d67889eea404"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-d01/probes/P28_byte_offsets.qr",
+      "old": "docs/reports/remaining-d01/probes/P28_byte_offsets.qcore",
+      "sha256": "966d2120f47f9adbf4c357da1960fbe88656e83e687d8207fd5ed94252618802"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-d01/probes/d01_boundary_first.qr",
+      "old": "docs/reports/remaining-d01/probes/d01_boundary_first.qcore",
+      "sha256": "c53554f73fe3910c5ed769d2129f95c5228ab98058d3e771401d562b6b29eac9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-d01/probes/d01_boundary_second.qr",
+      "old": "docs/reports/remaining-d01/probes/d01_boundary_second.qcore",
+      "sha256": "0da99a604a587336625d6d451b7cfb96ff17c270ff49f1b34d8a6b405da65d4e"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT26/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT26/case.qcore",
+      "sha256": "0d0c8653567e1801143360cc91ddbbf93fb160f2f09b5b962f8e71a4f1a670f8"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT27/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT27/case.qcore",
+      "sha256": "fb7de26fc673252e3c4cd85bd585e23b5b466360b54e42f569aa7a4350699550"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT29/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT29/case.qcore",
+      "sha256": "1c3ab0ceaa106ab998c249313517297c1096581a2aa60cfe7c1133f3ef818e9f"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT29/restored.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT29/restored.qcore",
+      "sha256": "d4d2ea043bac40e5f1be75249bb876581ffe14afaa644c3f9394e76486e01c37"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT30/case.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT30/case.qcore",
+      "sha256": "c485eb4766dc6d979f0818ffd7d37014d7312c94aa8e367f2ad798b7cc628614"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t03/fixtures/CT30/released.qr",
+      "old": "docs/reports/remaining-t03/fixtures/CT30/released.qcore",
+      "sha256": "be68f898baa2bfa1eb537ff194ec5760ff2d812ab3d58b268f2d4c1f274e7125"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t04/fixtures/CT24/case.qr",
+      "old": "docs/reports/remaining-t04/fixtures/CT24/case.qcore",
+      "sha256": "fda504e7ffbe62a20764867b1a1cd895a873ae4cc5384e94322722a7ecbdaad5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t04/fixtures/CT25/case.qr",
+      "old": "docs/reports/remaining-t04/fixtures/CT25/case.qcore",
+      "sha256": "9fa6444952d2694e7349f234aca61037d06fa45ee33826b3eb0d9f70c47ecc57"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t05/fixtures/CT03/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT03/case.qcore",
+      "sha256": "2451ac76107b9bf2bec17e549733e4c0b0926cc98f0cb217ea1adeaade236a35"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t05/fixtures/CT04/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT04/case.qcore",
+      "sha256": "d809ec4d0b07ccc5655e83f7e3ed250a8827be45faac17522faf1496e21a38f5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t05/fixtures/CT05/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT05/case.qcore",
+      "sha256": "2a2fba9b75a509e10016b2a45070981ae7bd97c621c39886d272bb74f60d5cc4"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-t05/fixtures/CT11/case.qr",
+      "old": "docs/reports/remaining-t05/fixtures/CT11/case.qcore",
+      "sha256": "58869b5aaeeffeb648b19dcbeb85afffb2587d9d81187b228e1d97005ad90cfe"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S01_bool_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S01_bool_result.qcore",
+      "sha256": "93d4ec4c76b5663646dbf77ac2879acd3424cad869751dfc4ec7d2bc5e86fbc5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S02_u32_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S02_u32_result.qcore",
+      "sha256": "2184d9f8ed6f84e9fa1f5f9ecac9d8fa2fe1528791488d165c9b118c64c46c92"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qcore",
+      "sha256": "97ba55e0f50c8e91b3a0cf5cf8c7947899a9914818a1858d9404c5810d9c28f9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qr",
+      "old": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qcore",
+      "sha256": "89e08d0e4ce2136e4d02802e907654a9d526c60d47ecb7085081c2ca48becbda"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S05_own_item_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S05_own_item_result.qcore",
+      "sha256": "a06e8a49951941ec190a1431e8077e0468b4b801f10516dec96cecc4f6d45758"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S06_nested_own_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S06_nested_own_result.qcore",
+      "sha256": "7a48732f88fca031e15c299b0b8997184638d742ffc0ec6b6ae67ac58a8558cb"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S07_i32_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S07_i32_positive.qcore",
+      "sha256": "e92c615cf2ad5c97750d4c38fbcb7f96f2a5f99aecc8ba033d48934e6e423a73"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S08_unit_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S08_unit_positive.qcore",
+      "sha256": "ebd6729008344eecccdf9886a0bbbe5ef9727f220fcf33229f783cd0af46afa7"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S09_missing_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S09_missing_return.qcore",
+      "sha256": "a26f0a20cfdd336c16146ccd6803df911fad1da5de79810283cf1a4f4098e7a1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qcore",
+      "sha256": "b41a5cee3030275732090d7bf8e1215d79b67bf8058d59ac38f635cd53f1fc1c"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S11_call_with_argument.qr",
+      "old": "docs/reports/remaining-v03/probes/S11_call_with_argument.qcore",
+      "sha256": "8ddeb16731eb44afd9dbf2dbad0637371f82c073895123f547262a0cf3117396"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qr",
+      "old": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qcore",
+      "sha256": "6697f0bca0dfbc4f4715b84be1484980bb09fdcedb07e2ca98c0275ff0c44bcd"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qcore",
+      "sha256": "24c360297d4b72a61e2ea3f4bea5a9c9b6d523e4aa79d7fb272881221d19292b"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qr",
+      "old": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qcore",
+      "sha256": "bbfd69c13c2d066e77af0fa88736433d1724cbfc1067659b482c9cc5ab12eae9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qcore",
+      "sha256": "7cf32d7eb58e5784b033d0dd26f3d71448fc51080ab11143c428dc8db2a7ddd7"
+    },
+    {
+      "kind": "source_parse_error",
+      "new": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qcore",
+      "sha256": "578e9e09145e975ea98b88520db0db1746f37a19a56d41c85917c122720ab777"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qr",
+      "old": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qcore",
+      "sha256": "077383a1b8d938ebc6dca4fc76303d15d33840bc4ded7b0d6abe614fd58afaff"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qr",
+      "old": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qcore",
+      "sha256": "cd4d4cb73f68dde513cc290da5c865be8912ef57a015546cc7151d9b43cae9a3"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qcore",
+      "sha256": "50e7df1caff15be97476afc35672946cd8af2f8718b78ff83fcfacf0fb11e786"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qcore",
+      "sha256": "122919b925bbbb5493220bc5932852733deb3718732fa1e3a25327c2d35632ea"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qr",
+      "old": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qcore",
+      "sha256": "584ed66fd030f429457e33b92358f1602bdcc5533e09a04ec332ea6e23736b9b"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore",
+      "sha256": "ae3c4d0a74ff6e48382bb60f75b411da8913fcee3126de4bfc14719421ef0660"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S23_acquire_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/S23_acquire_positive.qcore",
+      "sha256": "f4885777cb5016ced0163c5606fddd7c66c0d7e0992931fe11ba694ca3033b68"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qr",
+      "old": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore",
+      "sha256": "72f82e14ac11e706dc9a9939c443da6f6261552605fd5825fb4c71c6ae13c909"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qr",
+      "old": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore",
+      "sha256": "51fb74b6833fbf167fdbf4c0c3041287def15911f0d3dec1777dff723f977d34"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qr",
+      "old": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qcore",
+      "sha256": "52945fc199c99a1f752ce49f98d6026ae738e03ff571d024cfa54209ede20ada"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qcore",
+      "sha256": "61c0d488dd1f6036975da112ffd9ed55c584a5f2dc0de6e4d4163b46ddec2caf"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qcore",
+      "sha256": "a250a651d0c695c1234ec2e38781c92dcc634f718dadd58bb69ce5011abf5456"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qcore",
+      "sha256": "9866839a9f6f778c112f0dbfb7ca3e6532b136acb213125a9eafdae712453f0b"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qr",
+      "old": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qcore",
+      "sha256": "7907a33f67440e231604231f8a23595aa13d526289d9365247a241fc01985a00"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S31_return_after_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S31_return_after_return.qcore",
+      "sha256": "27fb993b39e7fd58a594e7073241805ac0c99d6a6234bfa7fe9457b7348adab4"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qr",
+      "old": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qcore",
+      "sha256": "9d4c66729980c8a279f0558801737aeed52972557cbb4d6d0a85d5773b6d2f04"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qr",
+      "old": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qcore",
+      "sha256": "21633d5e720f50db9cf27e8b2bdcc3c4e88c79261ec176704114eccd76838bd5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S34_result_generic_type.qr",
+      "old": "docs/reports/remaining-v03/probes/S34_result_generic_type.qcore",
+      "sha256": "ab4b774a32cda69961832b04477023764fbcd26a4da1ba9cb2917f64864e62f5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qr",
+      "old": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qcore",
+      "sha256": "1b12f75e018d536bdb8bbf89e792b47453ecdb566c2635e8e34480fcac60f669"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qcore",
+      "sha256": "d84c3ddd99735eda114b8c798620e565a1857cca785d574bd2e69fc2697e450d"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qcore",
+      "sha256": "8772ae406ae13071d6f2d9fea0605d60d697c22c7ea25fde817a7514ced930a9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qr",
+      "old": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qcore",
+      "sha256": "842dcc4a2cd2aa817fae7d1df3146303a45b654c52a9995cb15dbb9b3a9103a5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qr",
+      "old": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qcore",
+      "sha256": "be4ec35bbeb14b9d8d2649041562598d4f02851f0bd561f7f25c862aa8d9514c"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qr",
+      "old": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qcore",
+      "sha256": "87fcc387a46431653f8cb7628039da6ee2a4df6009bc99967c71e946ddd3a158"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qcore",
+      "sha256": "56fcda1bdd70dc124f18a07fc83be5e34fe493e1ad57a5d2ef69c3717e07b00b"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qcore",
+      "sha256": "2e93f479a95fd3f539a96bd2990918dce8354f3ef6da25f53250e0c782fcceca"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qcore",
+      "sha256": "7d80d9b0aa3b8b10fa7e4f89037fe591cffb3d28e8118376695b987177b015a9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qr",
+      "old": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qcore",
+      "sha256": "03a39ed6f2e95be3a19fe612b2f83b17a34a109785f6ffcc8ec3101c6851f5f8"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T10_nested_own_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T10_nested_own_result.qcore",
+      "sha256": "222cc8470b976a816925e4cd9109e371b2ccce95aef7ef9d386363cdd3262c52"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qr",
+      "old": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qcore",
+      "sha256": "b80797633cacbed0325c6fd4efcf0731bdf9a55c4860752c6c9380546a547e76"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qr",
+      "old": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qcore",
+      "sha256": "eb331a0eccffb94f0c847baf4214c9023aae60994da3fa9e5af48c9d055a8995"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qr",
+      "old": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qcore",
+      "sha256": "46135f6bdf93b543aedfb8dcc8e53b42f69ecda065013116d89b6f4f25a1706e"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qr",
+      "old": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qcore",
+      "sha256": "535555b6406cd137b4002f0b002bfaad4ee2be4ea3db58e7c94a93d51f0592dc"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qr",
+      "old": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qcore",
+      "sha256": "bed3547ccd1dba7058b0eaf9127b7da66607ec77f18a9890eb2d30c4418e4bd2"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qr",
+      "old": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qcore",
+      "sha256": "216d4d55e35814ca23a6f11732a5198da2cf381289a44e73ae8fbeb2603343ea"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qr",
+      "old": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qcore",
+      "sha256": "02f8ba814c6817e2ad35411703464b6a0e1f017c35432fd17c9485b13199044a"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qr",
+      "old": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qcore",
+      "sha256": "90a181c8b7a839349f2d0ad5b69f1637e4110479cc141693ad793cd6787d893f"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qr",
+      "old": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qcore",
+      "sha256": "b50dfcc8642da1390adcf2c6889d9c70c7c9c6157bfdfc1aaedf769b28f1054c"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qr",
+      "old": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qcore",
+      "sha256": "0894c4dd703d8b91064a3fdc961ee658c07afe7e1622117e7c312599305d0940"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/T21_unknown_worker.qr",
+      "old": "docs/reports/remaining-v03/probes/T21_unknown_worker.qcore",
+      "sha256": "0ea9bef39e1d9c75100da27b26a1cba4578ae6f273e6220dbd02e34fa90f84e5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X01_tuple_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X01_tuple_result.qcore",
+      "sha256": "65b5a19a880d05a3ffa084c57996e150bc945600939bc3aeb6af9325365d1417"
+    },
+    {
+      "kind": "source_parse_error",
+      "new": "docs/reports/remaining-v03/probes/X02_array_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X02_array_result.qcore",
+      "sha256": "cb873dca7b6bd5fdb9c28005d6e5becfbadb196d261a01f1323017d30562069c"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X03_slice_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X03_slice_result.qcore",
+      "sha256": "2356ff16385e082df2cce3a0f9422e2cd18fccc564f358e9fc67dc9c1074f3fe"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X04_pointer_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X04_pointer_result.qcore",
+      "sha256": "dfa1140c8d75d627ae141377028da60e63c95e7e17efe7c750516b818a9efe09"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X05_never_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X05_never_result.qcore",
+      "sha256": "7eadece72ff64f50798d8093d219862fb385f149c97704c4e6b666bdd1a28ff6"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X06_borrow_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X06_borrow_result.qcore",
+      "sha256": "894fd5006d55c514d2f3236bb8aa3c7d2573f0edacf585722bd865f787f24fd2"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X07_quant_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X07_quant_result.qcore",
+      "sha256": "f787bc2fb27e581e12428cbc37e2b1a1677777f90334f93aca763121bdae4137"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X08_function_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X08_function_result.qcore",
+      "sha256": "eae6b9651dd302c8dc9b57422966ec8780a10b725835fe31085d1c13f6115327"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X09_task_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X09_task_result.qcore",
+      "sha256": "02d6394bebab36162c5f3a4d221d037d296641e8a5e76d1629628b80051fc39f"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X10_mutex_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X10_mutex_result.qcore",
+      "sha256": "bc6052b9e1b9dfa6ad199b32dec0b1bd0b18e0a453d4491aee58b9372f1751b6"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X11_own_empty.qr",
+      "old": "docs/reports/remaining-v03/probes/X11_own_empty.qcore",
+      "sha256": "587b0260e71057c79caa1de499343efa40820a0e2771810a89e8b5b29173a8b6"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X12_own_no_args.qr",
+      "old": "docs/reports/remaining-v03/probes/X12_own_no_args.qcore",
+      "sha256": "f4007782edad944d58aa548a34727f62846bc5c1f53b2abe2dfc49f1b0cfd004"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qr",
+      "old": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qcore",
+      "sha256": "640e4516f79febd221cfa4f8741776fc2122459ad8b9b5d8cbd0b4eeb542a28f"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qr",
+      "old": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qcore",
+      "sha256": "77f52e1e9092f35dde36ea27c04b3aa23eaffc5a4b7e82185d5df66be286042d"
+    },
+    {
+      "kind": "source_parse_error",
+      "new": "docs/reports/remaining-v03/probes/X15_empty_result.qr",
+      "old": "docs/reports/remaining-v03/probes/X15_empty_result.qcore",
+      "sha256": "4f9cc17a9a0e6d828d48fe4349782cf06e666a7ba1349d6bd30f62293409e344"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qcore",
+      "sha256": "36e8b91b68ad8d6e37b145397c32819da22458434746e862e527790c87c5f647"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore",
+      "sha256": "364eae5812b7ef96d6bae45a7096a20c0b3c171ba23531ade5a63a495ada1e26"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore",
+      "sha256": "c1d9e3d70d94686e5b5c65977c5fc7e9989c5ed3d95ad3f8f4df01b70260a757"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore",
+      "sha256": "c345b2f6b6900baf9cda73df143892dbdd63234b322a177691b41981a119e534"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qcore",
+      "sha256": "fe620ba81a09892a1f0550271c2891e6d40f42fb09e87b4a6d0d97dec6c65c6a"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qcore",
+      "sha256": "5bc327466f3799e93119d2c5b631862450715ee78f2612ee273d3aa0d57c83f8"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qcore",
+      "sha256": "e8f733ecc13f79b322c712b5c7725c0e83f278b5abaa9b0d9bbffb910e563a9d"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P08-valid-named-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P08-valid-named-use.qcore",
+      "sha256": "31158d1c206d6f65d7a1f3554fe5b048e0e8988e90c29e25c6e98214520769b1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qr",
+      "old": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qcore",
+      "sha256": "fca10fe92f0102a3b6a628b412ae48bad70a137e59d03cda4993591361322f60"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr",
+      "old": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qcore",
+      "sha256": "903059b54b14f05a3b7ee6be430550dccf7510dee425c47cc788314087cdf1dd"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qr",
+      "old": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore",
+      "sha256": "e8799d0dcf16b8e5b5f6ceb4b1c94b2db95e9514527932ad4df864ef2f31a5e8"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qr",
+      "old": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore",
+      "sha256": "0a46012d4ec39eac3099b90378b8e852206718db157c64b428592654ccc14bd8"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qr",
+      "old": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qcore",
+      "sha256": "3abb7d819c82e17ee9e22010807f81e5efa5d61484c7b3e75d1b273c92436e59"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qr",
+      "old": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qcore",
+      "sha256": "4ca3930a7417cc83974b06bf73a49afed16de532d63f991b101deb060d6983e9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qr",
+      "old": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qcore",
+      "sha256": "9971f3f4d526a36e2efc6be7370982bc1cc8b094cd62e41112ff985799d8113d"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qr",
+      "old": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qcore",
+      "sha256": "6caaea8dc682a6a35b1ee1a7a27fe4345de7567549e679d79f0aa46eaf8cda14"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qr",
+      "old": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qcore",
+      "sha256": "c23f980ee35821b286edfce9ee4135eac139a0cb4498f5ba16432c20c44aab85"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qr",
+      "old": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qcore",
+      "sha256": "ccced58a66412fdb3826bfc640d320fea650ca3c6fc2c14d803141df41574713"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qr",
+      "old": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qcore",
+      "sha256": "999daba9b1744ebde3330b26a7fac0f1e86dab20d82d1563df5633de2dfce7e1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P21-span-line4.qr",
+      "old": "docs/reports/remaining-v04/probes/P21-span-line4.qcore",
+      "sha256": "5879318ace36ac231bc51022751b919979fd88d9c35711cafe8625202376d11a"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qr",
+      "old": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore",
+      "sha256": "c44da6678b0bc30554870dbdd7cfe2a262623c3b8dba26089ba335489ce34be2"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qr",
+      "old": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qcore",
+      "sha256": "7542951e15109e45499d0ee7387b74d30831ed4d66886601a6cb69b3cceb6753"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qr",
+      "old": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qcore",
+      "sha256": "c53554f73fe3910c5ed769d2129f95c5228ab98058d3e771401d562b6b29eac9"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v04/probes/P25-multifile-a.qr",
+      "old": "docs/reports/remaining-v04/probes/P25-multifile-a.qcore",
+      "sha256": "4c9abd4ff2c1127393c00d2fd9b4c6e833d3377d3e59b4d71e95b64bb3ec0328"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qr",
+      "old": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qcore",
+      "sha256": "e2fc9571863c8e6a8f69f81a32c16f8e18f4d432b04f86dbf3c9decfa8753b1f"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qr",
+      "old": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qcore",
+      "sha256": "8f1bddfee15a503f58323a1a224980e8aef2313c9a709656f816afb1fb164599"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qr",
+      "old": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qcore",
+      "sha256": "892fa9ff5bbe2cdf9d51531b1a9a9f915d7f7ee51cb74e0b838af72322be6187"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a01_requires.qr",
+      "old": "docs/reports/remaining-v07/probes/a01_requires.qcore",
+      "sha256": "b9ea66d395dd56f5051a6ce0eb79d853fc8bba16f7930f1146cea5f4771f717d"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a02_ensures.qr",
+      "old": "docs/reports/remaining-v07/probes/a02_ensures.qcore",
+      "sha256": "7b80d9b5561c254ee5640bd5b02ca77fff8b8845e315e0437b9077ef5a57d598"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a03_quant.qr",
+      "old": "docs/reports/remaining-v07/probes/a03_quant.qcore",
+      "sha256": "2334523c4fe586f9ff9ca867de06763c8e52f8e5e42e9adcb791075d11559bf7"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a04_first_main.qr",
+      "old": "docs/reports/remaining-v07/probes/a04_first_main.qcore",
+      "sha256": "c53554f73fe3910c5ed769d2129f95c5228ab98058d3e771401d562b6b29eac9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a04_second_bound.qr",
+      "old": "docs/reports/remaining-v07/probes/a04_second_bound.qcore",
+      "sha256": "32a736806c090435d6a547ec49016fc55a295d4e27ffe67b92cba0cc22ea5bd5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qr",
+      "old": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore",
+      "sha256": "1c510d9c078a34e1c2d12100da4aaab1fdfbbe40d157a6224a46ea3a86966b13"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a06_never_referenced.qr",
+      "old": "docs/reports/remaining-v07/probes/a06_never_referenced.qcore",
+      "sha256": "b6a56c8f5dcdb93fb507764d5fe4a6219f177b508f52d31615cc81d23533f3b1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qr",
+      "old": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qcore",
+      "sha256": "278bc96bbe0d0e9e14e097e3bd09a98727b00e19256cb2602193ac00366300fd"
+    },
+    {
+      "kind": "library",
+      "new": "docs/reports/remaining-v07/probes/a11_library_mode.qr",
+      "old": "docs/reports/remaining-v07/probes/a11_library_mode.qcore",
+      "sha256": "ddab95618883af825f1369a9d98d343e37e695ef2d42b653b3a23b4096ff6cf1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qr",
+      "old": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qcore",
+      "sha256": "d06854e5ac66d0d3044e25a468544c3ec0ccee2d0a56d45ff3b84337bfe84b9e"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a14_verify_scope.qr",
+      "old": "docs/reports/remaining-v07/probes/a14_verify_scope.qcore",
+      "sha256": "82ca67b6e4c8650ad131845abdf741eb04de3f898c74b6297026ce2937a90814"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qr",
+      "old": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qcore",
+      "sha256": "81bd6ba10937a3e12f28557017600aef7e75b95a08ce7d9dcf6c1258c9c8197b"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qr",
+      "old": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore",
+      "sha256": "975abdada80eda1580e45646bf0ace577dd4346f82e874c2f1641caacb971f97"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b01_outer_resolution.qr",
+      "old": "docs/reports/remaining-v07/probes/b01_outer_resolution.qcore",
+      "sha256": "12c7e8e6863b31782056b22ca294d182f24fc89683fdca295d2b81a497429cc3"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qr",
+      "old": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore",
+      "sha256": "c6795bb775d502a2cdd925c24c45d6d6cb03ff82c61855fd2e8c544319d7fe39"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b03_header_unresolved.qr",
+      "old": "docs/reports/remaining-v07/probes/b03_header_unresolved.qcore",
+      "sha256": "c4aae1e97822fb6355c7a779b7c42fddf784d2ca1cb2a5a804d0c1aa41dc19c6"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b04_binder_escape.qr",
+      "old": "docs/reports/remaining-v07/probes/b04_binder_escape.qcore",
+      "sha256": "714f5d874a1cadb13ef32f8a63c86f3bdf9796f892271f6126a696b0646dd20a"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b05_sibling_leak.qr",
+      "old": "docs/reports/remaining-v07/probes/b05_sibling_leak.qcore",
+      "sha256": "76c1656a848d80768f8872b401ab6f9f1dd6376213c745cae4cffe51bb64c9c3"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qr",
+      "old": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore",
+      "sha256": "9604f4ff3fedb4545b98ede914e549ecf45a4eb6e2d6dde9a3d9d16e7cd9b399"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qr",
+      "old": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore",
+      "sha256": "5b1056657a3f6fd21fc56a6cbeb04c1e64e8357b5395adc8bea08697a971c9f1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qr",
+      "old": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore",
+      "sha256": "63fa32bb888223de1e398db6d16b513a7bf4148b9bbac976987d95319ae2c8df"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qr",
+      "old": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore",
+      "sha256": "b9c8c9fc4e313df8c0c6b77bbc47472a673f8251445ea29034293c2f911c41ff"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b10_cross_file_first.qr",
+      "old": "docs/reports/remaining-v07/probes/b10_cross_file_first.qcore",
+      "sha256": "bb68399ddaf627e103d7c4b747e52981da9d6cdfaf07599de3802172297704ea"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/b10_cross_file_second.qr",
+      "old": "docs/reports/remaining-v07/probes/b10_cross_file_second.qcore",
+      "sha256": "32c1c0ae64f83f723ca30df9c8dd426ddbeea4f1ab38e981610cf28d1fc2bf4e"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qr",
+      "old": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore",
+      "sha256": "cc63335656a945cd7a58d27b17fdd9225fc43f3569c32e3ce0620b43ef02b0bc"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c02_nested_worker.qr",
+      "old": "docs/reports/remaining-v07/probes/c02_nested_worker.qcore",
+      "sha256": "5ea90531221a298430f0ef8af0ad575e9ebcd0f8ccc08335b723b9640821327f"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qr",
+      "old": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore",
+      "sha256": "e69080b54cd2cfc4778faeb8699dd8e7234daf0ca765ad046741207bedc1fdb7"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qr",
+      "old": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore",
+      "sha256": "49acb5dd5ae59ffec0801618f5fe4401ceb3c4677c3c802f1350fe242dbcd476"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qr",
+      "old": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore",
+      "sha256": "4df3a9b5ec10ca1d87b7f145e3a3c30d5972528ef04394433a833adb59c9712d"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore",
+      "sha256": "245aeccebbd24ebd857ff23737184fa4eb2b3db2deba5672238565870abc4e81"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore",
+      "sha256": "4dee894dcea7e2c8e5a493369b0d678ade69a4dd35070da005f903a9cb2a0a93"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qr",
+      "old": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qcore",
+      "sha256": "0d61d51fa2e376f1b37f33e26c4b292ef51bfae6b31a1ac7ca847450966815a3"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qr",
+      "old": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore",
+      "sha256": "13e0c79019573a3ff2cbaf86527f6bfa0d7caff2a5a999ff4dece3393aad8f99"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/d01_boundary_first.qr",
+      "old": "docs/reports/remaining-v07/probes/d01_boundary_first.qcore",
+      "sha256": "c53554f73fe3910c5ed769d2129f95c5228ab98058d3e771401d562b6b29eac9"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/remaining-v07/probes/d01_boundary_second.qr",
+      "old": "docs/reports/remaining-v07/probes/d01_boundary_second.qcore",
+      "sha256": "0da99a604a587336625d6d451b7cfb96ff17c270ff49f1b34d8a6b405da65d4e"
+    },
+    {
+      "kind": "source_parse_error",
+      "new": "docs/reports/remaining-v07/probes/d02_boundary_record.qr",
+      "old": "docs/reports/remaining-v07/probes/d02_boundary_record.qcore",
+      "sha256": "b8fa2c00886a6e89c689c063718f84947d568312f563745298108d0d5fc8ca69"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qcore",
+      "sha256": "b25e4c712741143a3a5fd5b5dea44eaf57baa3e53fa693478a9c47861dc9d4c5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qcore",
+      "sha256": "27521463d64e91dea6cb03a09ea119772ad280665f44823155e9d0f4ef9b7f6e"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qcore",
+      "sha256": "e015039a76aa0611a20390a7f7564a0901305ac7dd4246a9c07f31d642bc8def"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qcore",
+      "sha256": "e9da2de5d18734d27e6f525048917d0189304051a1b97c4ab33c45e812d7d0aa"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qcore",
+      "sha256": "88e52f2d164bd85785107f33bdfd3e60484f46d6e67371e4af99bd42c8e3d6d5"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qcore",
+      "sha256": "f6bcb2fca62a19ad590a80ec99dbcaa43089b6a7eee441c5cb1efcdbfc3a4dac"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qr",
+      "old": "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qcore",
+      "sha256": "5a2943b2d8d817a0e6b4aaf4b3466866c43c0fdc5c07afc69778a7324e4ad488"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/w6-native-source-tasks/native-copy.qr",
+      "old": "docs/reports/w6-native-source-tasks/native-copy.qcore",
+      "sha256": "132894e423cd63f0e60c865d81f31c857f589a6bb86f3a4aad6506669cd73fa1"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qr",
+      "old": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qcore",
+      "sha256": "00dcfdc45e4a4a13146788d6ca4c106217a0891db7b9fd8d773021eea849d738"
+    },
+    {
+      "kind": "executable",
+      "new": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qr",
+      "old": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qcore",
+      "sha256": "708fe7002a066463f9448878ed75e24db36c6a3de62a02657ca1deb4dd6774eb"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/branching/condition_tier.qr",
+      "old": "examples/branching/condition_tier.qcore",
+      "sha256": "68ad09ae640c8adf6d38c070f909f432c9f6ee3d8437befc6be079432343550e"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/branching/conditional_release.qr",
+      "old": "examples/branching/conditional_release.qcore",
+      "sha256": "b2e2a96d3e11647f7e49babe2565c7aeb0172f0588ad0d5ea3f5f0683c4f11b6"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/branching/early_return.qr",
+      "old": "examples/branching/early_return.qcore",
+      "sha256": "67716a7c82d2974dda91f99c63ee6da98456b586ef25e7071e8e7b830c43076d"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/cycle12.qr",
+      "old": "examples/cycle12.qcore",
+      "sha256": "44ea0a215a51e06009b213e9f52b0f89c1d63b0176778e93419ecad4bbfe297c"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/events/self_pipe.qr",
+      "old": "examples/events/self_pipe.qcore",
+      "sha256": "897ad45b8fde77233660e264eda747ab7b68f5d991305af6fe4699cd76295877"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/events/socket_server.qr",
+      "old": "examples/events/socket_server.qcore",
+      "sha256": "27eb0e131b4331b15140fb77baa227fba075a4ddf7871bd5adf1215a6d69fc30"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/events/wake_payload.qr",
+      "old": "examples/events/wake_payload.qcore",
+      "sha256": "0c489b84da3b628b31763298a1d98be1a365db2875cea08c9e6135a43362725e"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/events/write_interest.qr",
+      "old": "examples/events/write_interest.qcore",
+      "sha256": "d4b4ba35ea8dc60f1c71cc9a0fdfe0acd614a1183d6b07cf0b2fa04a4a4049f1"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/extern/borrowed_render.qr",
+      "old": "examples/extern/borrowed_render.qcore",
+      "sha256": "168253d4ba150e52c5210c48d7d4901a4fa109246fdf4710e6f0a09b909a536c"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/extern/buffer_round_trip.qr",
+      "old": "examples/extern/buffer_round_trip.qcore",
+      "sha256": "a5e9cc7213a5f5f61c26590cb0b9a096268e9b616ca67048bf6fda41b291c1c6"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/extern/scalar_results.qr",
+      "old": "examples/extern/scalar_results.qcore",
+      "sha256": "fe3c0bade39861da87f5f66f2bca9551bc09bb78e8db2004e9a1683aa0b727ed"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/http/computed_length.qr",
+      "old": "examples/http/computed_length.qcore",
+      "sha256": "3cda5a63a9c704f0884346fdd05783956acbcc718a2d75b79712dfabc4c57378"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/http/exchange.qr",
+      "old": "examples/http/exchange.qcore",
+      "sha256": "d12b9bef01aff878110733bbc5d5ecd7185d04a4f5aee424238e04835d453be3"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/http/raw_request.qr",
+      "old": "examples/http/raw_request.qcore",
+      "sha256": "32cc2e6b515fcebe213fc5dfb3877f28959b20fb9b750f503de0dff99a389d1e"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/loops/buffer_copy.qr",
+      "old": "examples/loops/buffer_copy.qcore",
+      "sha256": "6cefc8ae768dd2721a0eefcc5d5a8c49a8dba72e7274d519460419b55a54e32d"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/loops/lend_fill.qr",
+      "old": "examples/loops/lend_fill.qcore",
+      "sha256": "3a32a4570dfceff72e06e9d1b7dbbf4b61d2cad1dbac0f70bb472611e35ef4c3"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/pipes/rendered_lines.qr",
+      "old": "examples/pipes/rendered_lines.qcore",
+      "sha256": "d563ea696515e5fee05d5cfe4778282bbef734b8d50cee980fcee1b5c5a283e0"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/pipes/scalar_stages.qr",
+      "old": "examples/pipes/scalar_stages.qcore",
+      "sha256": "4a7829a4aa081f9ef6ad85c78fe6938d212a77380e4f7f16dfcfbf68b3c6a9da"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/pipes/scalar_stages_hand_written.qr",
+      "old": "examples/pipes/scalar_stages_hand_written.qcore",
+      "sha256": "b952b172e15a103b44d4c7d3b04b3fc90b5219f80d8e7a746ed36807d8970ad5"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/records/owned_field.qr",
+      "old": "examples/records/owned_field.qcore",
+      "sha256": "b5bd9c7606b1084cc5910266d36f65b612cb7f0e868ca5ce9f8c3c76d2ac0b67"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/records/pixel_writes.qr",
+      "old": "examples/records/pixel_writes.qcore",
+      "sha256": "435ad32a5e9b473047a2d764d6008320fe96e4c68bec5f232155d794f9150948"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/records/point.qr",
+      "old": "examples/records/point.qcore",
+      "sha256": "565c36750a5acda940f1131a298e973599379806c9e887196683220de30f2d93"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/scalar/calls.qr",
+      "old": "examples/scalar/calls.qcore",
+      "sha256": "0084f7ca21eb3772ad114fd1d4ae21028446b3a680cdd23a476bbd724653b45a"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/scalar/printing.qr",
+      "old": "examples/scalar/printing.qcore",
+      "sha256": "cdd14e9125b695f4f2f988f4738efcd539e21435b0d12a12a5b86e6fbbde63f2"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/sockets/inet_v4_echo.qr",
+      "old": "examples/sockets/inet_v4_echo.qcore",
+      "sha256": "a16541464cf0fa514a3fa9a126ece788fefa2a784c5350a1c3bc88f44b7dfff6"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/sockets/inet_v6_echo.qr",
+      "old": "examples/sockets/inet_v6_echo.qcore",
+      "sha256": "70f85d238f11ee51391b7c92d60edac45e9d5abdbf16f8022c2437766b15587d"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/sockets/tcp_echo.qr",
+      "old": "examples/sockets/tcp_echo.qcore",
+      "sha256": "9a18996ec6ff0501f6fc73abb6e7653a75426af6f62401fc43c2d2d1671de667"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/sockets/udp_echo.qr",
+      "old": "examples/sockets/udp_echo.qcore",
+      "sha256": "eb02abb90a8311de7464c048003da7b6bd76ddb7764699dcec9c5e09ea489741"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/stdio/barrier.qr",
+      "old": "examples/stdio/barrier.qcore",
+      "sha256": "423562ee08577f3afb759e43f8996fd9ea6936880fdfeefa651fc85d4857535f"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/stdio/pipeline.qr",
+      "old": "examples/stdio/pipeline.qcore",
+      "sha256": "c8b979bf87ab09d8107306b1cdd1c73fc1570619b1fd2fcf6d7b590d13c79d79"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/stdio/renderings.qr",
+      "old": "examples/stdio/renderings.qcore",
+      "sha256": "fb3099f4774fcec3370a87f66cd8487c6ebab46ac45995122139b35e30b69459"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/stdio/severities.qr",
+      "old": "examples/stdio/severities.qcore",
+      "sha256": "5224edf43ba0a91e87fc2977d02775d9270f565b412e70adc1d70b5193e331e5"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/strings/computed_length.qr",
+      "old": "examples/strings/computed_length.qcore",
+      "sha256": "a7765b87d76a13d8e6f3d4dc70d952665e822561bd69d515e154670dabf9eb30"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/strings/looped_fill.qr",
+      "old": "examples/strings/looped_fill.qcore",
+      "sha256": "213f3d0ac5cc483b6eac0dcd8bb9ed7a7479575a202b648fca3d8aabe9a14291"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/strings/status_line.qr",
+      "old": "examples/strings/status_line.qcore",
+      "sha256": "c6c1e17f19fdd2e6b5dd4654ad6e2150031842bde8b59b28611fe8a6a5a1af0a"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/threads/core_context.qr",
+      "old": "examples/threads/core_context.qcore",
+      "sha256": "136079af22dc373cd3eebc4a549c07b4c47cca2b27b44952cfe5fc2aa28f4a2f"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/threads/owned_buffer.qr",
+      "old": "examples/threads/owned_buffer.qcore",
+      "sha256": "3f10fc8d3df4a293493b728f69adfd551f7f9653d53d57f13f777c500f392f4c"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/threads/shared_readers.qr",
+      "old": "examples/threads/shared_readers.qcore",
+      "sha256": "de073891680edcb5526c80131404ae1da6f53b6f337ee4a03ffc9d992825db01"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/threads/two_workers.qr",
+      "old": "examples/threads/two_workers.qcore",
+      "sha256": "1407214157c8867239929ebcfc1573e168c72b93d0575f08c5cde154495a2149"
+    },
+    {
+      "kind": "executable",
+      "new": "examples/unsafe-linkage/unchecked_calls.qr",
+      "old": "examples/unsafe-linkage/unchecked_calls.qcore",
+      "sha256": "373dc655de9abfb555b59b80360bdc641880dd881be40d29d0345239d84cb177"
+    },
+    {
+      "kind": "abi_manifest",
+      "new": "examples/unsafe-linkage/unchecked_demo.qrlib",
+      "old": "examples/unsafe-linkage/unchecked_demo.qcorelib",
+      "sha256": "d859b8f75d8e7e3ffa9c14268ce2e67d26fd6c3ce588710d2a9d2549035a9880"
+    }
+  ],
+  "base": "0d2917cdbb58e7a366b1ccce67fbaa99eb456a20",
+  "scope": "EXT-03: 421 runtime sources including 164 archived inputs, five ABI manifests"
+}

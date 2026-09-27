@@ -38,7 +38,7 @@ def main():
     for crate in sorted((ROOT / "providers").glob("quirin-provider-*")):
         prefix = f"providers/{crate.name}/"
         entry = {"contracts": {}}
-        for path in sorted((crate / "contracts").rglob("*.qcore")):
+        for path in sorted(p for p in (crate / "contracts").rglob("*") if p.suffix in (".qcore", ".qv")):
             logical = path.relative_to(crate / "contracts").as_posix()
             needle = f"{crate.name}/contracts/{logical}"
             users = sorted(n for n, t in texts.items() if needle in t and not n.startswith(prefix))

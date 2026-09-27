@@ -967,7 +967,7 @@ const RETURN_NONE: BridgeRule = BridgeRule {
     meaning: RuleMeaning::UnitResult,
 };
 
-/// `fluent_bit/memory.qcore`'s allocator-observation ghosts (the native
+/// `fluent_bit/memory.qv`'s allocator-observation ghosts (the native
 /// evaluation's adapter, `docs/reports/cycle19-native-contracts/`):
 /// `result_null` is the 0/1 null test of the returned pointer, `live_after`
 /// counts tracked live allocations after the call, `result_is_backend` says
@@ -1006,7 +1006,7 @@ pub const ALLOCATOR_OBSERVATION_BRIDGE: Bridge = Bridge {
     ],
 };
 
-/// `chunkio/memory_close.qcore`'s lifecycle-mechanism propositions
+/// `chunkio/memory_close.qv`'s lifecycle-mechanism propositions
 /// (`qcore_verification::memory_close_composition`): `nullable_owned_chunk`
 /// is the caller's raw nullable ownership, `chunk_was_nonnull` the entry null
 /// test, `chunk_released` the release of the chunk object itself.
@@ -1028,7 +1028,7 @@ pub const CHUNK_CLOSE_MECHANISM_BRIDGE: Bridge = Bridge {
     ],
 };
 
-/// `chunkio/chunk_destructor.qcore`'s language lifecycle: the chunk is
+/// `chunkio/chunk_destructor.qv`'s language lifecycle: the chunk is
 /// `own<Chunk> use one` (consumed), `chunk_is_live` its liveness, and
 /// `chunk_name_and_object_are_released` the release of the chunk object.
 pub const CHUNK_CLOSE_LANGUAGE_BRIDGE: Bridge = Bridge {
@@ -1158,8 +1158,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // against the resource-v1 view (which inherits libc's clauses).
     RegisteredRelation {
         function: "flb_calloc",
-        detailed: "fluent_bit/memory.qcore",
-        view: "fluent_bit/resource_memory.qcore",
+        detailed: "fluent_bit/memory.qv",
+        view: "fluent_bit/resource_memory.qv",
         check: RelationCheck::Projection {
             bridge: &ALLOCATOR_OBSERVATION_BRIDGE,
         },
@@ -1168,8 +1168,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "flb_free",
-        detailed: "fluent_bit/memory.qcore",
-        view: "fluent_bit/resource_memory.qcore",
+        detailed: "fluent_bit/memory.qv",
+        view: "fluent_bit/resource_memory.qv",
         check: RelationCheck::Projection {
             bridge: &ALLOCATOR_OBSERVATION_BRIDGE,
         },
@@ -1178,8 +1178,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "flb_malloc",
-        detailed: "fluent_bit/memory.qcore",
-        view: "fluent_bit/resource_memory.qcore",
+        detailed: "fluent_bit/memory.qv",
+        view: "fluent_bit/resource_memory.qv",
         check: RelationCheck::Projection {
             bridge: &ALLOCATOR_OBSERVATION_BRIDGE,
         },
@@ -1189,8 +1189,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // ChunkIO close: two lifecycle profiles and the resource-v1 view.
     RegisteredRelation {
         function: "cio_chunk_close",
-        detailed: "chunkio/chunk_destructor.qcore",
-        view: "chunkio/resource_open_close.qcore",
+        detailed: "chunkio/chunk_destructor.qv",
+        view: "chunkio/resource_open_close.qv",
         check: RelationCheck::Projection {
             bridge: &CHUNK_CLOSE_LANGUAGE_BRIDGE,
         },
@@ -1205,8 +1205,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "cio_chunk_close",
-        detailed: "chunkio/memory_close.qcore",
-        view: "chunkio/resource_open_close.qcore",
+        detailed: "chunkio/memory_close.qv",
+        view: "chunkio/resource_open_close.qv",
         check: RelationCheck::Projection {
             bridge: &CHUNK_CLOSE_MECHANISM_BRIDGE,
         },
@@ -1215,8 +1215,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "cio_chunk_close",
-        detailed: "chunkio/chunk_destructor.qcore",
-        view: "chunkio/memory_close.qcore",
+        detailed: "chunkio/chunk_destructor.qv",
+        view: "chunkio/memory_close.qv",
         check: RelationCheck::LifecycleProfiles,
         assumed_premises: &[],
         finding: None,
@@ -1228,8 +1228,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // an unlink that releases nothing).
     RegisteredRelation {
         function: "mk_list_del",
-        detailed: "chunkio/list_unlink.qcore",
-        view: "monkey/intrusive_list.qcore",
+        detailed: "chunkio/list_unlink.qv",
+        view: "monkey/intrusive_list.qv",
         check: RelationCheck::LifecycleProfiles,
         assumed_premises: &[],
         finding: None,
@@ -1238,8 +1238,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // retained Chunk-flavour policy.
     RegisteredRelation {
         function: "cio_error_reset",
-        detailed: "chunkio/error_frame.qcore",
-        view: "chunkio/error_state.qcore",
+        detailed: "chunkio/error_frame.qv",
+        view: "chunkio/error_state.qv",
         check: RelationCheck::RenamedFrame {
             renaming: &[
                 ("Chunk", "cio_chunk"),
@@ -1257,8 +1257,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // declarations its consumer checks.
     RegisteredRelation {
         function: "_mk_event_loop_create",
-        detailed: "monkey/wait_source_policy.qcore",
-        view: "monkey/wrapper_paths.qcore",
+        detailed: "monkey/wait_source_policy.qv",
+        view: "monkey/wrapper_paths.qv",
         check: RelationCheck::SourceShape {
             projection: None,
             nominals: MONKEY_NOMINALS,
@@ -1268,8 +1268,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "_mk_event_loop_destroy",
-        detailed: "monkey/wait_source_policy.qcore",
-        view: "monkey/wrapper_paths.qcore",
+        detailed: "monkey/wait_source_policy.qv",
+        view: "monkey/wrapper_paths.qv",
         check: RelationCheck::SourceShape {
             projection: None,
             nominals: MONKEY_NOMINALS,
@@ -1279,8 +1279,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "_mk_event_wait_2",
-        detailed: "monkey/wait_source_policy.qcore",
-        view: "monkey/wrapper_paths.qcore",
+        detailed: "monkey/wait_source_policy.qv",
+        view: "monkey/wrapper_paths.qv",
         check: RelationCheck::SourceShape {
             projection: None,
             nominals: MONKEY_NOMINALS,
@@ -1290,8 +1290,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     },
     RegisteredRelation {
         function: "_mk_event_wait_with_flags",
-        detailed: "monkey/wait_source_policy.qcore",
-        view: "monkey/wrapper_paths.qcore",
+        detailed: "monkey/wait_source_policy.qv",
+        view: "monkey/wrapper_paths.qv",
         check: RelationCheck::SourceShape {
             projection: None,
             nominals: MONKEY_NOMINALS,
@@ -1303,8 +1303,8 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
     // C callback's third parameter.
     RegisteredRelation {
         function: "cb_wait_2_timeout",
-        detailed: "monkey/wait_source_policy.qcore",
-        view: "monkey/composition.qcore",
+        detailed: "monkey/wait_source_policy.qv",
+        view: "monkey/composition.qv",
         check: RelationCheck::SourceShape {
             projection: Some(&[2]),
             nominals: MONKEY_NOMINALS,

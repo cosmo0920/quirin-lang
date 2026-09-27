@@ -215,7 +215,7 @@ def subsets : List String → List (List String)
 def states (fields : List Field) : List (List String) :=
   (subsets (fields.map Field.name)).filter (realizable fields)
 
-/-- The memory-backend inventory `providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore`
+/-- The memory-backend inventory `providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv`
 declares. -/
 def memfsFields : List Field :=
   [ ⟨"backend", none⟩,

@@ -1,7 +1,7 @@
 //! The SDK for **user-defined contracts and checker plugins** (card
 //! W45-USER-CONTRACT-PLUGINS; contract specification §C11.1).
 //!
-//! A user writes `.qcore` resource contracts in their own crate, outside the
+//! A user writes `.qv` resource contracts in their own crate, outside the
 //! Quirin repository, laid out like the `quirin-provider-*` crates, and may
 //! attach an out-of-process **checker plugin** to a module's contracts. This
 //! crate is the user's side of that arrangement. It carries **no production

@@ -17,9 +17,9 @@
 mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const TEXT: &str = include_str!("fixtures/std_string/text.qcore");
-const SLICES: &str = include_str!("fixtures/std_string/slices.qcore");
-const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qcore");
+const TEXT: &str = include_str!("fixtures/std_string/text.qr");
+const SLICES: &str = include_str!("fixtures/std_string/slices.qr");
+const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qr");
 const STRINGS_README: &str = include_str!("../../examples/strings/README.md");
 
 fn options() -> CompileOptions {
@@ -637,7 +637,7 @@ fn a_scalar_piped_into_a_selectorless_print_refuses_at_the_routes_own_code() {
 
 #[test]
 fn the_scalar_only_fixture_is_byte_identical() {
-    // The card's own base: `fixtures/std_string/slices.qcore` renders no text,
+    // The card's own base: `fixtures/std_string/slices.qr` renders no text,
     // so its emitted C must not contain the text prelude at all, and its
     // observation must be exactly what card `STRING-SLICE` published.
     let module = compile(SLICES).unwrap();

@@ -1,5 +1,8 @@
 # W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-LIBC-RESULT-ALIAS, 2026-09-24, on base `a7a936d9` (main after the
 W43-LIBC-CONTRACTS integration). `memcpy` returns its first argument, and
 `strchr` returns a pointer into its first argument or NULL. The resource
@@ -469,7 +472,7 @@ not edited.
 
 The fourteen prototypes W43-LIBC-CONTRACTS withdrew for `__restrict` were
 re-measured with both census tools
-([measurement/restrict14.qcore](measurement/restrict14.qcore), a
+([measurement/restrict14.qv](measurement/restrict14.qv), a
 measurement-only module; [abi-evidence.json](abi-evidence.json), `restrict14`).
 The base tool withdrew every row. This card's tool reads them as follows:
 

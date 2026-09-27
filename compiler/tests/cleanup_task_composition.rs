@@ -31,7 +31,7 @@ fn compile(name: &str) -> Result<CompiledModule, Vec<qcore_compiler::FileDiagnos
 
 #[test]
 fn cleanup_of_the_lent_owner_before_join_is_rejected_at_the_cleanup() {
-    let diagnostics = compile("before_join.qcore").expect_err("the cleanup must refuse");
+    let diagnostics = compile("before_join.qr").expect_err("the cleanup must refuse");
     assert_eq!(diagnostics.len(), 1, "one refusal, not a cascade");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(
@@ -51,7 +51,7 @@ fn cleanup_of_the_lent_owner_before_join_is_rejected_at_the_cleanup() {
 
 #[test]
 fn the_same_cleanup_after_join_is_admitted_and_published() {
-    let module = compile("after_join.qcore").expect("the loan has expired");
+    let module = compile("after_join.qr").expect("the loan has expired");
     let composed = module
         .checked
         .as_composed_epoch_tasks()
@@ -64,7 +64,7 @@ fn the_same_cleanup_after_join_is_admitted_and_published() {
 #[test]
 fn cleanup_of_an_independent_owner_before_join_is_admitted() {
     let module =
-        compile("independent_owner.qcore").expect("a live task does not block independent cleanup");
+        compile("independent_owner.qr").expect("a live task does not block independent cleanup");
     let composed = module
         .checked
         .as_composed_epoch_tasks()

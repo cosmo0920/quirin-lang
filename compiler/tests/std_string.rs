@@ -15,8 +15,8 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_string::StringStorage;
 
-const SLICES: &str = include_str!("fixtures/std_string/slices.qcore");
-const SILENT: &str = include_str!("fixtures/std_string/silent.qcore");
+const SLICES: &str = include_str!("fixtures/std_string/slices.qr");
+const SILENT: &str = include_str!("fixtures/std_string/silent.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {
@@ -900,8 +900,8 @@ fn the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable() {
     // a test rather than left as a claim in a report. `len` is **not** reserved
     // globally, because the pinned contract corpus references a parameter of
     // that name inside an `ensures` clause
-    // (`providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore`,
-    // `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore`). The contextual rule fires only
+    // (`providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv`,
+    // `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv`). The contextual rule fires only
     // before `(`, so the reference below — `len` followed by `)` — is still
     // collected and still resolves against the declared parameter.
     //

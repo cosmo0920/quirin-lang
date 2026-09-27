@@ -13,9 +13,8 @@ use qcore_core::event_reactor::{
 use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 
-const POLICY: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qcore"
-);
+const POLICY: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv");
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimeoutTeardownError {
@@ -39,7 +38,7 @@ fn text_fact(source: &str, function: &str, fact: &str) -> Result<String, Timeout
 /// textually identical copy; it now evaluates the owner's declaration and
 /// binds the owner's digest beside its own.
 const SOURCE_IDENTITY_OWNER: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore"
+    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv"
 );
 const SOURCE_IDENTITY: &str = "source_identity";
 
@@ -73,7 +72,7 @@ impl TimeoutTeardownContracts {
         {
             return Err(TimeoutTeardownError::Policy(format!(
                 "the timeout policy must not redeclare `{SOURCE_IDENTITY}`; its owner is \
-                 monkey/wait_source_policy.qcore"
+                 monkey/wait_source_policy.qv"
             )));
         }
         Ok(Self {
@@ -95,7 +94,7 @@ pub struct TimeoutTeardownSourceProjection {
     libevent_event_c_digest: String,
     contract_digest: String,
     /// SHA-256 of the module owning the evaluated `source_identity`
-    /// declaration (`monkey/wait_source_policy.qcore`).
+    /// declaration (`monkey/wait_source_policy.qv`).
     source_identity_digest: String,
     teardown_path_indices: Vec<usize>,
     path_call_sequences: Vec<Vec<String>>,

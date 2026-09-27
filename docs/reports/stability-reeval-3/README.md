@@ -1,5 +1,8 @@
 # STABILITY-REEVAL #3 — the cadence's third firing
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Card:** `STABILITY-REEVAL` #3, wave 38. **Base:** `e69083a6` (`origin/main`
 at branch time, confirmed equal by `git rev-parse`; over `0f6eb0a6`, the
 wave-36 close). **Method:** `CLAUDE.md`'s four steps, over waves 36–37.

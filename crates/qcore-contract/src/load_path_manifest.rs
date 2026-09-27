@@ -20,9 +20,9 @@
 //!       "version": "0.1.0",
 //!       "contracts": "quirin-provider-libc/contracts",
 //!       "dependencies": [],
-//!       "modules": ["libc/errno.qcore", "libc/memory.qcore"],
-//!       "published": { "libc/memory.qcore": "<sha256>" },
-//!       "resource_view": ["libc/errno.qcore", "libc/memory.qcore"]
+//!       "modules": ["libc/errno.qv", "libc/memory.qv"],
+//!       "published": { "libc/memory.qv": "<sha256>" },
+//!       "resource_view": ["libc/errno.qv", "libc/memory.qv"]
 //!     }
 //!   ]
 //! }
@@ -58,7 +58,7 @@
 //!   "extends": "/opt/quirin/providers/contract-load-path.json",
 //!   "crates": [ { "name": "quirin-provider-acme", "…": "…" } ],
 //!   "overrides": [],
-//!   "checkers": [ { "crate": "quirin-provider-acme", "module": "acme/pool.qcore",
+//!   "checkers": [ { "crate": "quirin-provider-acme", "module": "acme/pool.qv",
 //!                   "functions": ["pool_get"], "package": "checkers/pool-check" } ]
 //! }
 //! ```

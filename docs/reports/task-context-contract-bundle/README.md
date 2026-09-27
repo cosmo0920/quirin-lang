@@ -1,5 +1,8 @@
 # TASK-CONTEXT-CONTRACT-BUNDLE — task reading and pinned policy data pilot
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base: `ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6`. This increment implements
 one documentation-routing pilot and one configured contract consumer. It retains
 the existing compatibility adapters and changes no `.qcore` predicate, native
