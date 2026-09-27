@@ -477,7 +477,7 @@ diff archived. The admitted sets are the routes' attribution files.
   beside them;
 - the wave-46 increment paragraph;
 - the plan's P1 status row;
-- the ledger: ten amended entries and two registered residuals. None is
+- the ledger: eleven amended entries and two registered residuals. None is
   retired, since this card discharges nothing (§10);
 - a STATUS row;
 - a regenerated `docs/reports/INDEX.md`.

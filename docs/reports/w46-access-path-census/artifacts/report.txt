@@ -130,7 +130,7 @@ P3/cross-unit-ceiling: freed 242 {'Safe': 242} rounds [(0, 227, 227), (1, 15, 15
   refused path (static-local)                                  1
   residual call: cross-unit+external+indirect+same-unit        1
 
-## Reasons of non-Safe predictions (P3, same-unit)
+## Reasons of non-Safe predictions (P3, same-unit; reason parts, up to four per function)
     236  tracked root X not null-tested before line N
      33  tracked root X not null-tested before line N (may_bind unobserved: fail-closed)
 
