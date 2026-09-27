@@ -171,7 +171,7 @@ def main():
         if hit and hit["verdict"] != "Safe":
             for part in hit["reason"].split("; "):
                 reasons[re.sub(r"`[^`]*`", "X", re.sub(r"line \d+", "line N", part))] += 1
-    say("## Reasons of non-Safe predictions (P3, same-unit)")
+    say("## Reasons of non-Safe predictions (P3, same-unit; reason parts, up to four per function)")
     for key, value in reasons.most_common(12):
         say(f"  {value:5}  {key}")
     say()
