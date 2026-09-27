@@ -393,21 +393,17 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                 } else {
                     written
                 };
-                if logical.ends_with(".qv") {
-                    let parsed = parse_source_program(&text)
-                        .map_err(|error| format!("{logical}: {error}"))?;
-                    qcore_frontend::source_extension::validate_source_extension(
-                        &logical,
-                        parsed.mode,
-                    )
+                let mode = qcore_frontend::frontend::parse_source_module_mode(&text)
                     .map_err(|error| format!("{logical}: {error}"))?;
-                } else if let Ok(parsed) = parse_source_program(&text) {
-                    if let Some(warning) = qcore_frontend::source_extension::legacy_source_warning(
-                        &logical,
-                        parsed.mode,
-                    ) {
-                        eprintln!("{warning}");
-                    }
+                qcore_frontend::source_extension::validate_source_extension(&logical, mode)
+                    .map_err(|error| format!("{logical}: {error}"))?;
+                if mode != qcore_frontend::frontend::SourceModuleMode::Contract {
+                    return Err(format!("{logical}: expected a module contract"));
+                }
+                if let Some(warning) =
+                    qcore_frontend::source_extension::legacy_source_warning(&logical, mode)
+                {
+                    eprintln!("{warning}");
                 }
                 if modules.insert(logical.clone(), text).is_some() {
                     return Err(format!("duplicate logical contract: {logical}"));
