@@ -21,3 +21,37 @@ contract {
     ensures normal resource_user_neutral();
     ensures normal resource_return_none();
 };
+
+// W46-FLUENT-ROUTING-QUERY-CONTRACTS. At 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+// and 046accf6aded7906f66a1baf0202da349e521736, the static inline
+// input_chunk_has_magic_bytes in src/flb_input_chunk.c:291-307 returns early
+// for a short length and otherwise reads only buf[0] and buf[1]. Its byte
+// extent is a C caller obligation, outside this custody projection.
+extern fn input_chunk_has_magic_bytes(buf: ptr<mut, u8>, len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+// In the same two source pins, :2915-2941 / :2955-2981, these static inline
+// predicates only compare scalar fields of the input, storage, and ChunkIO
+// objects. They neither change the instance's chunk accounting nor call its
+// pause/resume callbacks. Nested pointer validity remains a C obligation.
+extern fn flb_input_chunk_is_mem_overlimit(instance: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(instance);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_chunk_is_storage_overlimit(instance: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(instance);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};

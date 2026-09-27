@@ -930,6 +930,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w46-fluent-event-contract-gaps](w46-fluent-event-contract-gaps/README.md) | W46-FLUENT-EVENT-CONTRACT-GAPS |
 
+| [w46-fluent-routing-query-contracts](w46-fluent-routing-query-contracts/README.md) | W46 Fluent routing query contracts |
+
 | [w46-libc-event-contract-gaps](w46-libc-event-contract-gaps/README.md) | W46-LIBC-EVENT-CONTRACT-GAPS |
 
 | [w46-metric-aggregate-contracts](w46-metric-aggregate-contracts/README.md) | W46 metric aggregate contracts |

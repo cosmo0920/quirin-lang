@@ -295,4 +295,21 @@ theorem an_opaque_flush_after_neutral_is_unknown :
     delta [.neutral, .neutral, .opaque] = none := by
   decide
 
+/-! W46-FLUENT-ROUTING-QUERY-CONTRACTS: the five reviewed query bodies are
+    represented by neutral operations. This is a model of the declared premise,
+    not a proof that arbitrary Fluent Bit C or callbacks have that effect. -/
+
+/-- Five classified queries preserve the caller's known counted-user delta. -/
+theorem five_routing_queries_preserve_delta (ops : List UOp) :
+    delta ([.neutral, .neutral, .neutral, .neutral, .neutral] ++ ops) = delta ops := by
+  simp only [List.cons_append, List.nil_append]
+  rw [a_neutral_helper_preserves_delta, a_neutral_helper_preserves_delta,
+    a_neutral_helper_preserves_delta, a_neutral_helper_preserves_delta,
+    a_neutral_helper_preserves_delta]
+
+/-- Classifying queries does not decide a later opaque routing lifecycle call. -/
+theorem opaque_routing_after_queries_remains_unknown :
+    delta [.neutral, .neutral, .neutral, .neutral, .neutral, .opaque] = none := by
+  decide
+
 end QCore.CountedUsers

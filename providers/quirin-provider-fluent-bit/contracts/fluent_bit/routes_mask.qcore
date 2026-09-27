@@ -73,3 +73,25 @@ contract {
     ensures normal resource_borrowed(router);
     ensures normal resource_return_none();
 };
+
+// W46-FLUENT-ROUTING-QUERY-CONTRACTS. Both pinned sources (66910c10 and
+// 046accf6) have identical bodies at src/flb_routes_mask.c:36-43 and :175-185.
+// get_slots reads one scalar field after a null check. is_empty performs a
+// length-bounded memcmp over caller-owned mask storage and the router's empty
+// mask; this declaration does not establish the buffers' extents.
+extern fn flb_routes_mask_get_slots(router: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(router);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_routes_mask_is_empty(routes_mask: ptr<mut, u8>, router: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(routes_mask);
+    ensures normal resource_borrowed(router);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
