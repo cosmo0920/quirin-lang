@@ -866,7 +866,10 @@ fn a_bound_view_needs_the_string_module() {
     );
     assert_eq!(codes(&body), ["Q015"]);
     assert!(messages(&body)[0].contains("std.string"));
-    let with_import = body.replace("#import std.http;", "#import std.http;\n#import std.string;");
+    let with_import = body.replace(
+        "#import std.http;",
+        "#import std.http;\n#import std.string;",
+    );
     compile(&with_import).expect("admitted with the string module");
 }
 
