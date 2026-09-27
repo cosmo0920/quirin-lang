@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/target/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/contract/profiles/fluent-bit/system-selection.json",
+    "--jobs",
+    "16",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/private/w47/before/system/resource-diagnostics.json"
+  ],
+  "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "qcore_revision": "1257520b6cb146c7dbf6bc28aa421096685247f4",
+  "binary_sha256": "eb69c8b5e10c8c9fcff806b38d2a997691292f3169e4ca3ffd2ed52e510991d3",
+  "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+  "start": "2026-09-27T08:13:23.294601+00:00",
+  "exit": 0,
+  "end": "2026-09-27T08:15:17.753849+00:00"
+}

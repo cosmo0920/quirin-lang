@@ -939,3 +939,47 @@ which is not a second authority.
     no-return call or a handle kind stays undeclared with its reason, and a
     system library outside the audited source has no pinnable identity.
     [Report](../reports/w46-external-callee-contracts/README.md).
+
+<a id="constraint-10k"></a>
+
+10k. **A typed access path is read in a condition operand, a return or a
+    call actual only after every older route of that position refused, and
+    only where C evaluates it.** Card W47-ACCESS-PATH-POSITIONS
+    (`legacy_typed_positions.rs`, `typed_access_positions.rs`) applies the
+    W46-ACCESS-PATH-STATEMENTS reader, with every refusal it has (unions and
+    typedef-hidden unions, bitfields, casts within a path, volatile/atomic,
+    pointer arithmetic, a tracked mixed embedded/indexed path, pointer
+    stores, calls, missing or ambiguous AST facts), to a sub-expression
+    matched by its line and exact tokens to one Clang node. (1) A call-free
+    condition operand lowers to the typed read with no destination and no
+    frame, checked at the operand's node before either edge; operands are
+    wired by rule 5h's desugaring, so an operand of `&&`, `||` or `?:` that C
+    skips on a path contributes no obligation there, and `p && p->x` reaches
+    `p->x` only on the edge the existing null branch refined. A call-free
+    condition is desugared only when an operand needed this reader; one
+    `NAME = PATH` operand (a declared non-formal local) is P2's statement,
+    then the existing null or neutral decision on `NAME`, whose identity
+    refusal constraint 10b keeps. (2) A `return` of one scalar value, or of
+    one pointer read whose every root the custody closure proves never bound
+    **and** `may_bind` does not name (rule 5b's premise), evaluates the read
+    with a `NoOp` exit: nothing is escaped or handed back. An array member
+    returned by decay is an interior address and refuses (rule 5j); `&&`,
+    `||`, `?:`, assignments and calls in a return refuse. (3) A call actual
+    the lexical recogniser refused joins W44-INDIRECT-CALL-ARGUMENT-ACCESS's
+    probe only at a `Borrowed` or declared data-tail position of a callee
+    whose contract or validated summary is in force; a pointer-valued actual
+    needs never-bound roots and keeps `ArgumentReads`; its chains keep their
+    per-link obligations. A custody-taking position, an uncontracted callee
+    and a position beyond the declaration keep the refusal. (4) The
+    owner-aware enum arm counts `enum TAG` for a declared tag, or a typedef
+    whose declaration is directly an `EnumType`, as a scalar; every other
+    typedef spelling keeps the positive-builtin refusal. **Do not** consult
+    this reader before an older route of the position (hard invariant 3; the
+    `QCORE_TYPED_PATH_PARITY` stream records both, with a `position` key, and
+    claims no parity), relax the pointer-return premise to `never_bound`
+    alone (it would admit a return through a written or call-argument root,
+    which rule 5b's pins refuse), or admit a connective inside one read.
+    Premises stated, not proved: faithful Clang extraction and node matching
+    (trust boundary 28), and that a never-bound root reaches no tracked
+    place (P2's premise). `QCore.TypedAccessPathPositions`;
+    [report](../reports/w47-access-path-positions/README.md).

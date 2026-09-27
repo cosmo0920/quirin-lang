@@ -1,0 +1,13 @@
+{
+ "note": "W47-ACCESS-PATH-POSITIONS, 2026-09-27. Standing gate by private/w47/tools/gate.sh at b9da6879 in this card's worktree, CARGO_INCREMENTAL=0, every exit in its own file (copied to gate/), no pipe; logs private under private/w47/gate/. submodule 0 (libevent d82464a2); run_test_binaries.py 0: 328 units, 340 summaries; 6070 passed; 0 failed; 11 ignored (private/test-binaries/20260927T104046Z-2073737/summary.json); cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 214 (AuditTypedAccessPathPositions added); unittest discover -s scripts/tests 0 (364 OK) after the matrix regeneration; build_docs_index.py --check 0; clang --version 0 in this worktree. Census feature: cargo clippy -p qcore-c-gateway --features indirect-census --all-targets 0; cargo test -p qcore-c-gateway --features indirect-census --lib 0 (612 passed); cargo clean --profile dev 0. No providers/ path is touched; the provider workspace's cargo test was run only to measure provider_tests: exit 0, 129 passed, 0 failed, 1 ignored over 43 summaries, provider cargo clean --profile dev 0. The first full gate at 555763d1 (private/w47/gate-attempt1/) failed: runner exit 101 (6062 passed, 8 failed, 11 ignored; private/test-binaries/20260927T102650Z-1886054/), fmt 1, clippy 101 (an 8-argument matcher, a constant assertion); Lean, both reevaluation examples, Python and docs index exited 0. The eight failures were one fixture error in the new getter control and seven older-route grammar-limit pins the typed fallback now reads; each is re-pinned with its reason in b9da6879 (README, Tests). The AFTER arbiter binary was built at 9b2ac682; b9da6879 changes the analyzer only by removing an argument that was always the never-bound closure (clippy) and edits tests and records.",
+ "workspace_tests": 6070,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 214,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

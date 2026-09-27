@@ -1,0 +1,132 @@
+{
+ "after_parity_rows": 18994,
+ "after_position_rows": {
+  "call-argument|call-argument-access|False": 1458,
+  "call-argument|call-argument-access|True": 964,
+  "call-argument|old_refusal|False": 2578,
+  "call-argument|old_refusal|True": 630,
+  "condition|condition-access|False": 272,
+  "condition|condition-access|True": 4844,
+  "condition|old_refusal|False": 512,
+  "condition|old_refusal|True": 1422,
+  "return|old_refusal|False": 70,
+  "return|return-family|False": 18,
+  "return|return-family|True": 28
+ },
+ "before_parity_rows": 6298,
+ "changed_functions": 81,
+ "functions": {
+  "after": {
+   "Safe": 63,
+   "Unknown": 381,
+   "Unsafe": 4
+  },
+  "before": {
+   "Safe": 56,
+   "Unknown": 388,
+   "Unsafe": 4
+  }
+ },
+ "leaf_attribution": {
+  "added|unknown_alias|direct": 99,
+  "added|unsupported:OTHER|nondirect": 6,
+  "removed|unknown_alias|nondirect": 6,
+  "removed|unsupported:COND|direct": 128,
+  "removed|unsupported:COND|direct-continuation": 1,
+  "removed|unsupported:COND|nondirect": 8,
+  "removed|unsupported:IND|direct": 18,
+  "removed|unsupported:IND|nondirect": 8,
+  "removed|unsupported:UNC|nondirect": 4
+ },
+ "leaf_families": {
+  "after": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported:COND": 418,
+   "unsupported:IND": 1348,
+   "unsupported:OTHER": 418,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 715
+  },
+  "before": {
+   "counted_user": 4,
+   "unknown_alias": 892,
+   "unsupported:COND": 555,
+   "unsupported:IND": 1374,
+   "unsupported:OTHER": 412,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 719
+  }
+ },
+ "move_counts": {
+  "Unknown->Safe": 7
+ },
+ "moves": [
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "library": "fluent-bit-system",
+   "unit": 0
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit",
+   "library": "fluent-bit-system",
+   "unit": 7
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit_status",
+   "library": "fluent-bit-system",
+   "unit": 7
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit",
+   "library": "fluent-bit-system",
+   "unit": 8
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit_status",
+   "library": "fluent-bit-system",
+   "unit": 8
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_output.c",
+   "function": "flb_output_check",
+   "library": "fluent-bit-system",
+   "unit": 13
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_output.c",
+   "function": "flb_output_check",
+   "library": "fluent-bit-system",
+   "unit": 14
+  }
+ ],
+ "units": {
+  "after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  }
+ }
+}

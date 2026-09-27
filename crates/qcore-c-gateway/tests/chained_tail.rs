@@ -238,10 +238,15 @@ fn the_depth_bound_is_inherited_unchanged() {
         probe("top->deeper->deep->mid->leaf").diagnostics.is_empty(),
         "four selections are at the bound and must be admitted"
     );
-    assert_eq!(
-        unsupported(&probe("top->deeper->deep->mid->leaf->label")),
-        vec!["indirect memory access is outside the resource projection"],
-        "five selections must be refused, not truncated"
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins this deliberately:
+    // this rule's bound is unchanged, and the fifth selection is now read by
+    // the typed call-actual fallback asked after it, whole and never
+    // truncated, with a per-hop obligation on every link.
+    assert!(
+        probe("top->deeper->deep->mid->leaf->label")
+            .diagnostics
+            .is_empty(),
+        "five selections are read by the typed fallback, not truncated"
     );
 }
 
@@ -290,22 +295,25 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
     // call argument rule admits in a declared tail under the base's
     // dereference obligation (pinned in
     // `a_scalar_value_in_a_tail_is_admitted_by_the_call_argument_rule`).
-    let rows: [(&str, &str); 11] = [
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins this table
+    // deliberately. The chained-tail rule is unchanged and still refuses every
+    // row; the Clang-typed call-actual fallback asked after it now reads five
+    // of them in the declared tail under its per-hop obligations over the
+    // untracked formals (an indexed byte, a sibling of a bitfield, a
+    // typedef-spelled link, an embedded record, a chain past this rule's
+    // bound). They move to `TYPED` below; the rest keep their refusal.
+    let rows: [(&str, &str); 6] = [
         // The chain is not the whole actual.
         ("&storage->leaf->label", INDIRECT),
-        ("storage->leaf->label[0]", INDIRECT),
         ("*storage->leaf->label", INDIRECT),
         ("storage->flag = 1", INDIRECT),
-        // A link the reader did not fully type.
+        // A link the reader did not fully type: a union stays refused.
         ("uh->view->leaf", INDIRECT),
-        ("bh->bits->label", INDIRECT),
-        ("td->leaf->label", INDIRECT),
-        ("hold->v.k", INDIRECT),
-        // Depth beyond the inherited bound.
-        ("top->deeper->deep->mid->leaf->label", INDIRECT),
         // A chain whose base this body may bind: the base is laundered by a
-        // whole-object address-of elsewhere in the same body.
-        ("storage->self->flag", INDIRECT),
+        // whole-object address-of elsewhere in the same body. Since W47 the
+        // typed actual reads the chain and the flow obligation refuses the
+        // laundered base (`UnknownAlias` of `storage`), in place of the gate.
+        ("storage->self->flag", "UnknownAlias:storage"),
         // A nested call whose INNER actual is a chain: premise N9 is
         // deliberately NOT widened, and neither is the lexical gate's view of a
         // nested call's arguments. Measured: the gate reports the access first,
@@ -313,6 +321,13 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
         // O04-B09B10's nested-call wording. Both are the same `Unknown`; the
         // load-bearing fact is that the shape is refused, unchanged.
         ("y_id(storage->leaf)", INDIRECT),
+    ];
+    const TYPED: [&str; 5] = [
+        "storage->leaf->label[0]",
+        "bh->bits->label",
+        "td->leaf->label",
+        "hold->v.k",
+        "top->deeper->deep->mid->leaf->label",
     ];
     for (actual, expected) in rows {
         let body = if actual == "storage->self->flag" {
@@ -326,10 +341,28 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
             probe_body(actual)
         };
         let summary = summary(&body, "y_probe");
+        if let Some(variable) = expected.strip_prefix("UnknownAlias:") {
+            assert!(
+                summary.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::UnknownAlias { variable: found } if found == variable
+                )),
+                "`{actual}` must keep an obligation on `{variable}`, got {:?}",
+                summary.diagnostics
+            );
+            continue;
+        }
         assert!(
             unsupported(&summary).contains(&expected),
             "`{actual}` must keep `{expected}`, got {:?}",
             unsupported(&summary)
+        );
+    }
+    for actual in TYPED {
+        assert!(
+            probe(actual).diagnostics.is_empty(),
+            "`{actual}` is read by the W47 typed call-actual fallback: {:?}",
+            probe(actual).diagnostics
         );
     }
     // The launder is load-bearing: the SAME chain, in the SAME statement, with

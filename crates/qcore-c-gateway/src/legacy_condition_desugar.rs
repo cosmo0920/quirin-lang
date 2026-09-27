@@ -489,7 +489,10 @@ impl Parser<'_> {
             if !self.admit_derived_returns {
                 census(self, _line, position, condition, &Err(Refusal::NoCall));
             }
-            return None;
+            // Card W47-ACCESS-PATH-POSITIONS (rule 10k): a refused call-free
+            // expression is desugared only when an operand needed the typed
+            // access-path reader; otherwise its refusal stays.
+            return self.typed_call_free_plan(condition, position);
         }
         let saved = (self.next_site, self.element_lowerings);
         let outcome = self.condition_plan(condition, position);
@@ -584,9 +587,17 @@ impl Parser<'_> {
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
         if !contains_call(tokens) {
-            return self
-                .call_free_decision(tokens, position)
-                .ok_or(Refusal::CallFreeLeafRefused);
+            if let Some(plan) = self.call_free_decision(tokens, position) {
+                return Ok(plan);
+            }
+            // Card W47-ACCESS-PATH-POSITIONS: one `NAME = PATH` operand.
+            let (assignment, decision) = self
+                .typed_assignment_operand(tokens, position)
+                .ok_or(Refusal::CallFreeLeafRefused)?;
+            return Ok(LeafPlan {
+                calls: vec![assignment],
+                decision,
+            });
         }
         let calls = top_level_calls(&texts)?;
         // A connective below the leaf's top level would make a call's
@@ -758,8 +769,17 @@ impl Parser<'_> {
             }
         } else if self.supported_expression(tokens, ExpressionRole::Decides) {
             LegacyInstruction::NoOp
+        } else if let Some(access) = self.condition_access(tokens) {
+            *access
         } else {
-            *self.condition_access(tokens)?
+            // Card W47-ACCESS-PATH-POSITIONS (rule 10k): the typed operand
+            // read, asked after every route above refused.
+            let read = self.typed_condition_decision(tokens)?;
+            // A read refines nothing, so it may also dispatch a switch.
+            return Some(LeafPlan {
+                calls: Vec::new(),
+                decision: read,
+            });
         };
         if position == Position::Switch && decision != LegacyInstruction::NoOp {
             return None;
@@ -768,6 +788,29 @@ impl Parser<'_> {
             calls: Vec::new(),
             decision,
         })
+    }
+
+    /// Card **W47-ACCESS-PATH-POSITIONS**: the plan of a refused call-free
+    /// controlling expression, kept only when at least one operand was
+    /// decided by the typed access-path reader. A plan that is not kept
+    /// restores the classifier's counters.
+    fn typed_call_free_plan(
+        &mut self,
+        condition: &[Token],
+        position: Position,
+    ) -> Option<Box<ConditionPlan>> {
+        let saved = (self.next_site, self.element_lowerings);
+        let uses = self.typed_position_uses.get();
+        let outcome = self.condition_plan(condition, position);
+        let typed = self.typed_position_uses.get() > uses;
+        self.typed_position_uses.set(uses);
+        match outcome {
+            Ok(plan) if ADMIT && typed => Some(Box::new(plan)),
+            _ => {
+                (self.next_site, self.element_lowerings) = saved;
+                None
+            }
+        }
     }
 
     /// The assignment group holding the `=` at `at`: exactly

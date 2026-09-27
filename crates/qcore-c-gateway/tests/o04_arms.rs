@@ -264,6 +264,23 @@ fn every_untyped_link_keeps_its_unknown_and_its_diagnostic() {
         let result = analyze_generic(body, "w");
         let w = function(program(&result), "w");
         assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+        // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins three rows
+        // deliberately. This chain rule still refuses them; the Clang-typed
+        // call-actual fallback asked after it reads each pointer actual (a
+        // record Clang completes, a chain past this rule's bound, a subscripted
+        // link) at `h_open`'s borrowed position over the untracked formal. The
+        // gate refusal gives way to the fixture's own obligation: `h` is used
+        // by `h_close` without a null test. Still Unknown, never Safe.
+        if TYPED.contains(&label) {
+            assert!(
+                !unsupported(w).contains(&INDIRECT)
+                    && unsupported(w)
+                        .contains(&"nullable resource `h` used by a non-null contract"),
+                "{label}: the typed actual exposes the unguarded result, got {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         assert!(
             unsupported(w).contains(&INDIRECT),
             "{label}: the existing diagnostic must be retained, got {:?}",
@@ -271,6 +288,12 @@ fn every_untyped_link_keeps_its_unknown_and_its_diagnostic() {
         );
     }
 }
+
+const TYPED: [&str; 3] = [
+    "an intermediate link whose record body the reader refuses",
+    "a chain longer than the bound is refused, not truncated",
+    "a subscripted link is not a member selection",
+];
 
 /// A chain must not manufacture a discharge. An arm that returns without
 /// releasing is still a reported residual, and the function is still `Unsafe`.

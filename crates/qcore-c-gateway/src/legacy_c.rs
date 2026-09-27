@@ -113,6 +113,12 @@ pub use descriptor_custody::ValidityFact;
 #[path = "legacy_condition_desugar.rs"]
 mod condition_desugar;
 
+// Card W47-ACCESS-PATH-POSITIONS (rule 10k): the Clang-typed access-path layer
+// in condition operands, returns and call actuals, each a fallback after the
+// position's existing routes. The hooks below naming the card are thin.
+#[path = "legacy_typed_positions.rs"]
+mod typed_positions;
+
 // Card W44-LEAK-PIN-AUDIT: the refused-escape rule, the cast return
 // (`RETURN-CAST-PLACE-NOT-ESCAPED`) and the leak-witness census.
 #[path = "legacy_refused_operands.rs"]
@@ -3058,6 +3064,7 @@ fn build_function_cfg_with(
         element_origins: container_publication::ForeignOrigins::default(),
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
+        typed_position_uses: std::cell::Cell::new(0),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4339,6 +4346,9 @@ struct Parser<'a> {
     /// Lazily parsed Clang AST of the token stream this CFG reads.
     typed_path_index: std::cell::OnceCell<Option<crate::typed_access_path::StatementIndex>>,
     typed_path_function: String,
+    /// Card W47-ACCESS-PATH-POSITIONS: how many condition operands the typed
+    /// reader decided so far; a call-free plan is kept only if it grew.
+    typed_position_uses: std::cell::Cell<usize>,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,
@@ -5287,6 +5297,13 @@ impl Parser<'_> {
     /// keep their dereference obligation at the header. Bounds are not
     /// decided.
     fn condition_access(&self, condition: &[Token]) -> Option<Box<LegacyInstruction>> {
+        let access = self.condition_access_routes(condition)?;
+        // Card W47-ACCESS-PATH-POSITIONS: parity only.
+        self.record_typed_position_legacy(condition, "condition", "condition-access", &access);
+        Some(access)
+    }
+
+    fn condition_access_routes(&self, condition: &[Token]) -> Option<Box<LegacyInstruction>> {
         // Card W45-PARENTHESISED-CALLEE: `self.opaque_callee`.
         if contains_call(condition) || contains_braces(condition) || self.opaque_callee(condition) {
             return None;
@@ -6285,9 +6302,14 @@ impl Parser<'_> {
         if return_call::lowers_refused_whole_call(expression, &texts, refused) {
             return Some((instruction, false));
         }
-        // Card W45-RETURN-EXPRESSION-FAMILIES. Asked last, after every route
-        // above has declined; see `return_family`.
-        self.return_family_instruction(expression, &texts, line)
+        // Card W45-RETURN-EXPRESSION-FAMILIES. Asked after every route above
+        // has declined; see `return_family`.
+        if let Some(family) = self.return_family_instruction(expression, &texts, line) {
+            self.record_typed_position_legacy(expression, "return", "return-family", &family.0);
+            return Some(family);
+        }
+        // Card W47-ACCESS-PATH-POSITIONS (rule 10k). Asked last.
+        self.typed_return_instruction(expression)
     }
 
     /// Classify one complete statement, then apply card
