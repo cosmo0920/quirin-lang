@@ -369,6 +369,18 @@ impl ContractLoadPath {
                 krate.modules.keys().map(String::as_str),
             )
             .map_err(|message| invalid(&krate.name, message))?;
+            for (module, source) in &krate.modules {
+                let mode = qcore_frontend::frontend::parse_source_module_mode(source)
+                    .map_err(|error| invalid(module, error.to_string()))?;
+                validate_source_extension(module, mode)
+                    .map_err(|message| invalid(module, message))?;
+                if mode != SourceModuleMode::Contract {
+                    return Err(invalid(module, "expected a module contract".into()));
+                }
+                if let Some(warning) = legacy_source_warning(module, mode) {
+                    eprintln!("{warning}");
+                }
+            }
             if let Some(module) = krate
                 .published
                 .iter()
@@ -918,9 +930,6 @@ impl<'r> Elaborator<'r> {
                     "module is not a `module contract;` module".into(),
                 ));
             }
-            if let Some(warning) = legacy_source_warning(key, parsed.mode) {
-                eprintln!("{warning}");
-            }
             return Ok(Elaborated {
                 identity,
                 source: source.to_owned(),
@@ -987,9 +996,6 @@ impl<'r> Elaborator<'r> {
                 InclusionCode::Qi001,
                 "module is not a `module contract;` module".into(),
             ));
-        }
-        if let Some(warning) = legacy_source_warning(key, parsed.mode) {
-            eprintln!("{warning}");
         }
         let own: Vec<SourceDeclaration> =
             parsed.declarations.into_iter().map(|d| d.value).collect();
