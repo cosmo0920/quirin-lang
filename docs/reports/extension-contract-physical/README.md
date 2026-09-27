@@ -56,7 +56,8 @@ renamed source need targeted edits and a provenance note.
 ## Required sequence after the compatibility gate
 
 1. Record a pre-change `quirin-audit pin --verify-contracts` result on the
-   old load path and archive its log. Then rename exactly the mapped files;
+   old load path and archive its log. Then use the [guarded source migrator](migrate_sources.py)
+   to rename exactly the mapped files;
    preserve bytes except the nine mapped include target suffixes.
 2. Rewrite includes and active exact references in the appropriate scope.
    Use [the guarded lock module migrator](migrate_lock_modules.py) to change
