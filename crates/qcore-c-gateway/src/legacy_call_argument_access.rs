@@ -706,6 +706,7 @@ impl Parser<'_> {
                 // the unextended walker), so no admitted actual carries a
                 // chain whose link obligations would be dropped here.
                 chains: Vec::new(),
+                borrowed_destination: false,
             });
         }
         if !names.is_empty() || !pointer_bases.is_empty() || !pointer_places.is_empty() {

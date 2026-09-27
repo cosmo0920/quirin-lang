@@ -1,0 +1,15 @@
+import QCore.TypedAccessPathStatements
+
+/-! Audited abstract companion to W46-ACCESS-PATH-STATEMENTS. -/
+
+#print axioms QCore.TypedAccessPathStatements.missing_type_refuses
+#print axioms QCore.TypedAccessPathStatements.pointer_store_refuses
+#print axioms QCore.TypedAccessPathStatements.union_refuses
+#print axioms QCore.TypedAccessPathStatements.cast_refuses
+#print axioms QCore.TypedAccessPathStatements.call_refuses
+#print axioms QCore.TypedAccessPathStatements.any_unlisted_form_refuses
+#print axioms QCore.TypedAccessPathStatements.refused_shape_has_no_lowering
+#print axioms QCore.TypedAccessPathStatements.every_hop_discharge_adds_no_diagnostic
+#print axioms QCore.TypedAccessPathStatements.nonpointer_store_preserves_custody
+#print axioms QCore.TypedAccessPathStatements.pointer_read_binds_no_custody
+#print axioms QCore.TypedAccessPathStatements.refused_pointer_read_stays_unknown

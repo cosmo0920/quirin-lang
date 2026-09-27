@@ -159,6 +159,7 @@ import QCore.MemberRelease
 import QCore.MemoKey
 import QCore.SizeofOperand
 import QCore.IndirectChainAccess
+import QCore.TypedAccessPathStatements
 import QCore.AssignmentDestinationSuffix
 import QCore.SubObjectStore
 import QCore.GenericSelection

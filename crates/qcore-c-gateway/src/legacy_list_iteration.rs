@@ -833,6 +833,7 @@ impl super::Parser<'_> {
                 destination: Some(destination.to_owned()),
                 frame: None,
                 chains,
+                borrowed_destination: false,
             }
         };
         let cursor = shape.cursor.clone();
@@ -985,6 +986,7 @@ impl super::Parser<'_> {
             destination: Some(shape.destination),
             frame: None,
             chains,
+            borrowed_destination: false,
         })
     }
 

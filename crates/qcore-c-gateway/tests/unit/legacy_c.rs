@@ -696,9 +696,14 @@ fn malformed_and_missing_functions_are_parse_errors() {
 #[test]
 fn unrestricted_projection_retains_successful_siblings() {
     let source = "void bad(void *target) { goto *target; }\nvoid subject(void) { return; }";
-    let analysis =
-        analyze_legacy_c_translation_unit_selected_partial(source, "subject", &contracts(), None)
-            .unwrap();
+    let analysis = analyze_legacy_c_translation_unit_selected_partial(
+        source,
+        "subject",
+        &contracts(),
+        None,
+        (CCompilerDialect::C11, None),
+    )
+    .unwrap();
     assert_eq!(analysis.summary.status, AnalysisStatus::Unknown);
     assert!(analysis.summary.functions.contains_key("subject"));
     assert!(!analysis.summary.functions.contains_key("bad"));

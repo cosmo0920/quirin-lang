@@ -616,6 +616,7 @@ impl Parser<'_> {
                 destination: None,
                 frame: None,
                 chains: Vec::new(),
+                borrowed_destination: false,
             },
             false,
         ))

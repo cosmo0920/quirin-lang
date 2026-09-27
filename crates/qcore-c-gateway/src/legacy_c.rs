@@ -393,6 +393,10 @@ pub enum LegacyInstruction {
         /// chain root is also in `bases`. Empty for every access the
         /// single-selection route admits.
         chains: Vec<crate::indirect_chain_access::AccessChain>,
+        /// W46: a pointer-valued path read binds a target-free borrowed alias.
+        /// It carries no custody and any later dereference/release must resolve
+        /// under its own rules. Older scalar routes always set this false.
+        borrowed_destination: bool,
     },
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `BASE[INDEX] = CALL(...)`
     /// or `BASE[INDEX] = NULL`, where `BASE` is declared `T **BASE` and the
@@ -1890,6 +1894,8 @@ pub fn analyze_legacy_c(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
+    let _typed_path_source =
+        crate::typed_access_path::enter_source(source, CCompilerDialect::C11, None);
     let tokens = tokenize(source);
     analyze_legacy_c_tokens(&tokens, function, contracts)
 }
@@ -2141,6 +2147,7 @@ fn analyze_preprocessed_unrestricted_c11(
         entry,
         contracts,
         source_functions.as_deref(),
+        (dialect, Some(&request)),
     ) {
         Ok(summary) => summary,
         Err(error) => {
@@ -2420,6 +2427,7 @@ pub fn check_legacy_safety_certificate(
         &certificate.entry,
         &certificate.contracts,
         selected,
+        (certificate.dialect, Some(&certificate.target_scope.request)),
     )
     .map_err(|error| format!("certificate source cannot be reanalyzed: {error}"))?;
     if let Some(error) = recomputed.projection_failures.first() {
@@ -2528,6 +2536,7 @@ fn analyze_legacy_c_translation_unit_selected(
         entry,
         contracts,
         selected_functions,
+        (CCompilerDialect::C11, None),
     )?;
     if let Some(error) = analysis.projection_failures.into_iter().next() {
         return Err(error);
@@ -2602,7 +2611,10 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     entry: &str,
     contracts: &ResourceContracts,
     selected_functions: Option<&[String]>,
+    typed_context: (CCompilerDialect, Option<&LegacyCertificateRequest>),
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
+    let (dialect, request) = typed_context;
+    let _typed_path_source = crate::typed_access_path::enter_source(source, dialect, request);
     let (tokens, conditionals) = tokenize_with_conditionals(source);
     // Card W45-PARENTHESISED-CALLEE: every body's `(f)(x)` is rewritten to
     // `f(x)` first, so the hold, both withdrawals, W4 and every classifier
@@ -3044,6 +3056,8 @@ fn build_function_cfg_with(
         list_frames: Vec::new(),
         caller_formals,
         element_origins: container_publication::ForeignOrigins::default(),
+        typed_path_index: std::cell::OnceCell::new(),
+        typed_path_function: function.to_owned(),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -3419,8 +3433,8 @@ fn protected_resource_formals(
 
 #[derive(Clone, Debug)]
 pub(crate) struct Token {
-    text: String,
-    line: usize,
+    pub(crate) text: String,
+    pub(crate) line: usize,
 }
 
 /// Width of a C11 5.1.1.2 phase-2 line splice at `cursor`, if there is one.
@@ -4322,6 +4336,9 @@ struct PointerDistinctCondition {
 
 struct Parser<'a> {
     tokens: &'a [Token],
+    /// Lazily parsed Clang AST of the token stream this CFG reads.
+    typed_path_index: std::cell::OnceCell<Option<crate::typed_access_path::StatementIndex>>,
+    typed_path_function: String,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,
@@ -4430,6 +4447,63 @@ struct Parser<'a> {
 }
 
 impl Parser<'_> {
+    /// Consult the Clang statement index only after the old classifier has
+    /// named an access refusal. Missing or ambiguous AST facts refuse.
+    fn typed_path_plan(&self, tokens: &[Token]) -> Option<crate::typed_access_path::StatementPlan> {
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let function = &self.typed_path_function;
+        let index = self
+            .typed_path_index
+            .get_or_init(|| crate::typed_access_path::StatementIndex::read(function))
+            .as_ref()?;
+        index.statement(&texts, tokens.first()?.line, |name| {
+            self.typed_bases.never_bound(name)
+        })
+    }
+
+    fn typed_path_statement(&self, tokens: &[Token]) -> Option<LegacyInstruction> {
+        let plan = self.typed_path_plan(tokens)?;
+        if crate::typed_access_path::parity_enabled() {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            crate::typed_access_path::record_parity(
+                &self.typed_path_function,
+                tokens.first()?.line,
+                &texts,
+                "old_refusal",
+                None,
+                Some(&plan),
+            );
+        }
+        if plan.accesses == 0 {
+            return Some(match plan.scalar.destination {
+                Some(destination) => LegacyInstruction::ForgetScalar { destination },
+                None => LegacyInstruction::NoOp,
+            });
+        }
+        Some(LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .scalar
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.scalar.bases,
+            destination: plan.scalar.destination,
+            frame: plan
+                .scalar
+                .writes_through_pointer
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: plan.chains,
+            borrowed_destination: plan.borrowed_destination,
+        })
+    }
+
     /// Card **AOM-BINDING-POISON**: the bindings one refused statement spares.
     ///
     /// Called only where `texts` is the **complete** token text of the refused
@@ -5220,6 +5294,7 @@ impl Parser<'_> {
                     destination: None,
                     frame: None,
                     chains: Vec::new(),
+                    borrowed_destination: false,
                 }));
             };
             return Some(Box::new(self.chain_access_instruction(chained, false)));
@@ -5234,6 +5309,7 @@ impl Parser<'_> {
             destination: None,
             frame: None,
             chains: Vec::new(),
+            borrowed_destination: false,
         }))
     }
 
@@ -6358,7 +6434,26 @@ impl Parser<'_> {
                 &self.typed_types,
                 &self.typed_bases,
             ) {
+                if crate::typed_access_path::parity_enabled() {
+                    let new = self.typed_path_plan(tokens);
+                    crate::typed_access_path::record_parity(
+                        &self.typed_path_function,
+                        tokens.first().map_or(0, |token| token.line),
+                        &texts,
+                        "chain",
+                        Some((&chained.plan, &chained.chains)),
+                        new.as_ref(),
+                    );
+                }
                 return self.chain_access_instruction(chained, true);
+            }
+            // W46-ACCESS-PATH-STATEMENTS: only an access refusal reaches the
+            // Clang reader. Both established shape readers remain first.
+            if matches!(&instruction, LegacyInstruction::Unknown { description, .. }
+                if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
+                && let Some(typed) = self.typed_path_statement(tokens)
+            {
+                return typed;
             }
             // Card W45-SUB-OBJECT-STORES: a sub-object store through a
             // resolved, typed base, after both typed access routes declined.
@@ -6385,6 +6480,17 @@ impl Parser<'_> {
             }
             return instruction;
         };
+        if crate::typed_access_path::parity_enabled() {
+            let new = self.typed_path_plan(tokens);
+            crate::typed_access_path::record_parity(
+                &self.typed_path_function,
+                tokens.first().map_or(0, |token| token.line),
+                &texts,
+                "scalar",
+                Some((&plan, &[])),
+                new.as_ref(),
+            );
+        }
         LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .record_bases
@@ -6404,6 +6510,7 @@ impl Parser<'_> {
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
+            borrowed_destination: false,
         }
     }
 
@@ -6557,6 +6664,7 @@ impl Parser<'_> {
             frame: (statement && plan.writes_through_pointer)
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: chained.chains,
+            borrowed_destination: false,
         }
     }
 
@@ -6622,6 +6730,7 @@ impl Parser<'_> {
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
+            borrowed_destination: false,
         }];
         sequence.extend(effects.into_iter().map(|effect| match effect {
             crate::index_traversal::TraversalEffect::Step(step) => LegacyInstruction::PointerStep {
@@ -12506,6 +12615,7 @@ fn transfer_base(
         destination,
         frame,
         chains,
+        borrowed_destination,
         ..
     } = &node.instruction
     {
@@ -12534,7 +12644,19 @@ fn transfer_base(
             }
         }
         if let Some(destination) = destination {
-            state.pointers.remove(destination);
+            if *borrowed_destination {
+                state.pointers.insert(
+                    destination.clone(),
+                    AbstractPointer {
+                        targets: BTreeSet::new(),
+                        unknown: true,
+                        may_be_null: true,
+                        derivation: Derivation::Identity,
+                    },
+                );
+            } else {
+                state.pointers.remove(destination);
+            }
         }
         if let Some(frame) = frame {
             for (place, pointer) in state.pointers.iter_mut() {
