@@ -34,5 +34,19 @@
     "exit": 0,
     "seconds": 0.013040182995609939,
     "private_log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/final-checks/diff.log"
+  },
+  {
+    "name": "python-after-provenance",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "tests": 365,
+    "private_log": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration/final-checks/python-after-provenance.log"
   }
 ]

@@ -1,0 +1,293 @@
+{
+  "note": "Matrix regeneration restores original auxiliary measurement references from their archived records. Live stage and executable paths use canonical suffixes. These aliases are retrieval metadata, not a new measurement.",
+  "references": [
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        0,
+        "auxiliary_executed_stages",
+        "cli_end_to_end",
+        "note"
+      ],
+      "current_reference": "qcorec check + emit + clang + run on CT01/case.qr (Linux-gated)",
+      "historical_record": "qcorec check + emit + clang + run on CT01/case.qcore (Linux-gated)"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        0,
+        "auxiliary_executed_stages",
+        "frontend_mutation_matrix",
+        "executor"
+      ],
+      "current_reference": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qr)",
+      "historical_record": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qcore)"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        15,
+        "auxiliary_executed_stages",
+        "sequential_control",
+        "note"
+      ],
+      "current_reference": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qr; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qr",
+      "historical_record": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qcore; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        26,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        27,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT28/own_acquisition.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        27,
+        "auxiliary_executed_stages",
+        "refused_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT28/child_unlocks.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        28,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT29/restored.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT29/restored.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        29,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT30/released.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT30/released.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        29,
+        "auxiliary_executed_stages",
+        "refused_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        30,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT31/performed.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT31/performed.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        31,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT32/joined_outside.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        32,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        32,
+        "auxiliary_executed_stages",
+        "unranked_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT33/unranked.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT33/unranked.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        33,
+        "auxiliary_executed_stages",
+        "one_token_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        33,
+        "auxiliary_executed_stages",
+        "own_footprint_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        34,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT35/two_cells.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT35/two_cells.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        34,
+        "auxiliary_executed_stages",
+        "refused_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT35/repeated_entry.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        35,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT36/summed_allocation.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        35,
+        "auxiliary_executed_stages",
+        "refused_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        36,
+        "auxiliary_executed_stages",
+        "sequential_control",
+        "note"
+      ],
+      "current_reference": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qr; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qr",
+      "historical_record": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        37,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT38/split_within_total.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        38,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT39/work_bound_only.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        47,
+        "auxiliary_executed_stages",
+        "accepted_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT48/reasserted.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT48/reasserted.qcore"
+    },
+    {
+      "key": [
+        "ct_conformance",
+        "ct_rows",
+        47,
+        "auxiliary_executed_stages",
+        "refused_control",
+        "artifact"
+      ],
+      "current_reference": "compiler/tests/fixtures/ct/CT48/never_asserted.qr",
+      "historical_record": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore"
+    }
+  ]
+}

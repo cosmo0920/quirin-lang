@@ -1,6 +1,6 @@
 # Planned Quirin extension migration
 
-Status: EXT-01 compatibility passed its full gate; physical renames EXT-02/03 are in progress, and retirement EXT-04 remains planned. See the [EXT-01 report](../../reports/extension-compatibility/README.md). Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. The user subsequently required updating or removing outdated historical files. The migration updates archived sources and runnable references, while recorded measurements remain explicitly attributed to their original revision.
+Status: EXT-01 compatibility passed its full gate; physical renames EXT-02/03 passed their combined gate ([report](../../reports/extension-physical-migration/README.md)); retirement EXT-04 remains planned. See the [EXT-01 report](../../reports/extension-compatibility/README.md). Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. The user subsequently required updating or removing outdated historical files. The migration updates archived sources and runnable references, while recorded measurements remain explicitly attributed to their original revision.
 
 | Meaning | Target | Existing | Classification rule |
 |---|---|---|---|
