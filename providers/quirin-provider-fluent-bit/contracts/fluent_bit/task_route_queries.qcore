@@ -1,0 +1,49 @@
+module contract;
+
+// W46-FLUENT-EVENT-CONTRACT-GAPS, Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+// and 046accf6aded7906f66a1baf0202da349e521736.
+// flb_task.h:226/248 defines the route-status helpers inline. The getter
+// traverses task->routes and returns a scalar; the setter traverses the same
+// list and writes only route->status. Neither relinks a route, retains an
+// argument or changes task->users. The C bodies in each including unit check
+// these declarations; unmatched bodies are a fail-closed disagreement.
+
+extern fn flb_task_get_route_status(task: ptr<mut, u8>, o_ins: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(o_ins);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_task_set_route_status(task: ptr<mut, u8>, o_ins: ptr<mut, u8>, new_status: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(o_ins);
+    ensures normal resource_borrowed(new_status);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+// flb_task.c:399 scans retry records for an output and returns attempts or
+// -1. :477 scans task lists and reads users and retries to count running
+// tasks. Reading a count is not a counted-user increment or decrement.
+
+extern fn flb_task_retry_count(task: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_task_running_count(config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(config);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};

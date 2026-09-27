@@ -169,6 +169,16 @@ contract {
     ensures normal resource_user_neutral();
     ensures normal resource_return_none();
 };
+
+// W46: scalar event/status query, with the same custody and user effects as
+// the pinned Fluent Bit input/route queries.
+extern fn e_status(node: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(node);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
 "#;
 
 const PRELUDE: &str = r#"
@@ -190,6 +200,7 @@ int u_enqueue(struct u_queue *q, struct u_task *t);
 int u_flush(struct u_task *t);
 void u_log(int n);
 int u_unknown(void);
+int e_status(struct p_node *node);
 "#;
 
 fn contracts() -> ResourceContracts {
@@ -846,4 +857,56 @@ fn the_loader_refuses_misplaced_clauses() {
         "    ensures normal resource_borrowed(t);\n    ensures normal resource_published(t, t);\n",
         "t: ptr<mut, u8>"
     ));
+}
+
+#[test]
+fn a_scalar_status_helper_keeps_custody_and_liveness_obligations() {
+    let summary = analyse(
+        r#"
+int e_status(struct p_node *node) { return node->value; }
+
+void e_live(void)
+{
+    struct p_node *node;
+    node = p_malloc(sizeof(struct p_node));
+    if (!node) { return; }
+    e_status(node);
+    p_free(node);
+}
+
+void e_dead(void)
+{
+    struct p_node *node;
+    node = p_malloc(sizeof(struct p_node));
+    if (!node) { return; }
+    p_free(node);
+    e_status(node);
+}
+"#,
+        "e_live",
+    );
+    let live = function(&summary, "e_live");
+    assert_eq!(live.status, AnalysisStatus::Safe, "{:?}", kinds(live));
+    let dead = function(&summary, "e_dead");
+    assert_ne!(dead.status, AnalysisStatus::Safe, "{:?}", kinds(dead));
+}
+
+#[test]
+fn a_status_contract_with_the_wrong_c_declaration_is_withdrawn() {
+    let source = PRELUDE.replace(
+        "int e_status(struct p_node *node);",
+        "int e_status(int value);",
+    );
+    let source = format!("{source}\nint e_bad(void) {{ return e_status(1); }}");
+    let summary = analyze_legacy_c_translation_unit(&source, "e_bad", &contracts())
+        .expect("the mismatched declaration is valid C");
+    let bad = function(&summary, "e_bad");
+    assert_ne!(bad.status, AnalysisStatus::Safe, "{:?}", kinds(bad));
+    assert!(
+        kinds(bad)
+            .iter()
+            .any(|kind| kind.contains("withdrawn against its C declaration")),
+        "{:?}",
+        kinds(bad)
+    );
 }
