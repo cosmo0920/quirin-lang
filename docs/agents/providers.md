@@ -238,5 +238,6 @@ provider_resource_views`, then each view and all views together), and `check`
 recomputes it and refuses a view that names a refused module, omits an
 accepted one or is missing. The Rust load-path reader refuses an unsorted view
 or one naming an unowned module (`QI014`). Packages are unchanged: the view
-lives only in the load path. The eleven views total 47 modules, exactly
-`cycle19-resource-contracts.json`'s. [Report](../reports/w44-provider-resource-view/README.md).
+lives only in the load path. The union of the resource views must equal
+`cycle19-resource-contracts.json`'s selected modules; current counts are in
+[STATUS](../STATUS.md). [Report](../reports/w44-provider-resource-view/README.md).

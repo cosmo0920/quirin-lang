@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 511
+  "named_followups": 518
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -7952,13 +7952,6 @@
    "recorded_by": "WAVE-36-CLOSE"
   },
   {
-   "id": "W36-CTRACES-FAMILY-FIRST",
-   "title": "contract/qcore/ctraces/ is a new family whose convention is one card's choice",
-   "why": "The family has one module. Its manifest placement (after `cmetrics/`, before `monkey/`) and the module name `context_lifetime.qcore`, paired with cmetrics' identically-named sibling, are W36-CORPUS-CONTRACTS-3's choice alone and no convention was found to follow. DISCHARGE: integrator confirmation, or a second `ctraces` module settling the convention.",
-   "source": "docs/reports/w36-corpus-contracts-3/README.md",
-   "recorded_by": "WAVE-36-CLOSE"
-  },
-  {
    "id": "STANDALONE-HOST-CLOSED-INPUT-LOAD",
    "title": "The sixth constraint-16 row measured failing at mid-range load, after its repair",
    "why": "`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` (crates/qcore-verifier-host/tests/standalone_host.rs:175) failed once inside a full gate at load average ~40 on 16 cores and passed 12/12 in isolation at load 23.7 to 27.6. This is the row's first measurement at the MIDDLE of the load range - wave 35 measured it at ~100 and at ~6.5 - and it is post-poll(2)-repair, so the repair narrows the failure window without closing it. The card proposed the measurement as ADDING a sixth row; the row had been the sixth since the wave-35 close, so the WAVE-36-CLOSE declined that half and landed the measurement beside the existing row instead. DISCHARGE: the 1s wall-clock bound is pinned against a measured margin, or the repair is reopened - never by weakening the bound.",
@@ -8887,7 +8880,7 @@
   {
    "id": "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED",
    "title": "`realpath` (argument 2 or fresh allocation) and `pthread_getspecific` (retained storage) stay undeclared",
-   "why": "Of W43-LIBC-RESULT-ALIAS-NAMES's list, card W43-LIBC-RESULT-ALIAS declared the exact aliases (`memcpy`, `memmove`, `memset`, `strcpy`, `strncpy`, `gmtime_r`, `localtime_r`) and the interior pointers (`strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`, `memrchr`) and refused two by name. `realpath(path, resolved)` returns `resolved` when it is non-null and otherwise a fresh `malloc` allocation the caller must free: its result mode depends on an argument's value, which v1 cannot state (C04.4, no value-dependent modes; `resource_literal_argument(resolved, 0)` could restrict a declaration to the fresh arm, but function names are unique across a selection, so the derived arm would stay undeclared). `pthread_getspecific(key)` returns a pointer an earlier `pthread_setspecific` retained, which aliases no argument of this call. Measured at the baseline: 1 leaf / 1 function for `realpath`, 16 leaves / 15 functions for `pthread_getspecific`; `realpath` sole-blocks no function and `pthread_getspecific` one. Discharge condition: a value-conditional result reading of `realpath` (owned when `resolved` is NULL, derived otherwise) with Lean parity, measured on the corpus, or its literal-premise fresh arm alone; and a retained-storage mode (or recorded refusal) for `pthread_getspecific` together with W43-LIBC-CALLBACK-RETAIN's `pthread_setspecific`.",
+   "why": "Of W43-LIBC-RESULT-ALIAS-NAMES's list, card W43-LIBC-RESULT-ALIAS declared the exact aliases (`memcpy`, `memmove`, `memset`, `strcpy`, `strncpy`, `gmtime_r`, `localtime_r`) and the interior pointers (`strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`, `memrchr`) and refused two by name. `realpath(path, resolved)` returns `resolved` when it is non-null and otherwise a fresh `malloc` allocation the caller must free: its result mode depends on an argument's value, which v1 cannot state (C04.4, no value-dependent modes; `resource_literal_argument(resolved, 0)` could restrict a declaration to the fresh arm, but function names are unique across a selection, so the derived arm would stay undeclared). `pthread_getspecific(key)` returns a pointer an earlier `pthread_setspecific` retained, which aliases no argument of this call. Measured at the baseline: 1 leaf / 1 function for `realpath`, 16 leaves / 15 functions for `pthread_getspecific`; `realpath` sole-blocks no function and `pthread_getspecific` one. Discharge condition: a value-conditional result reading of `realpath` (owned when `resolved` is NULL, derived otherwise) with Lean parity, measured on the corpus, or its literal-premise fresh arm alone; and a retained-storage mode (or recorded refusal) for `pthread_getspecific` together with W43-LIBC-CALLBACK-RETAIN's `pthread_setspecific`. AMENDED (W46-CONTRACT-GAP-EXPANSION): flb_output_thread_instance_get is another retained-storage result, tracked by W46-FLUENT-TLS-RETAINED-RESULT (six call leaves in the configured system baseline). The new flb_output_flush_id_get declaration returns only a scalar and does not publish the TLS pointer. The retained-result vocabulary gap is not discharged by that wrapper declaration.",
    "source": "docs/reports/w43-libc-result-alias/README.md",
    "recorded_by": "W43-LIBC-RESULT-ALIAS"
   },
@@ -10479,6 +10472,62 @@
    "why": "MEASURED by card W46-ACCESS-PATH-CENSUS: 1,641 IND, COND and RET leaves have an access path with a step selecting a union member (librdkafka's `rko->rko_u.*`, the OpenTelemetry protobuf `oneof` members, `rd_kafka_vu_t.u.*`), and for 53 Unknown functions it is the only refusal the P3 scope leaves (every other leaf expressible, every call served). The typed layer of plan P2/P3 keeps them refused: which member is live is not the object's declared type. DISCHARGE: a card that states the live member (a tag test dominating the access, or a contract) and admits exactly that, with Lean parity and a measured re-pin; or a recorded decision that union paths stay refused.",
    "source": "docs/reports/w46-access-path-census/README.md",
    "recorded_by": "W46-ACCESS-PATH-CENSUS"
+  },
+  {
+   "id": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS",
+   "title": "Libevent debug and count queries can invoke configured lock callbacks",
+   "why": "event_get_events, event_get_priority, event_get_fd, event_get_base, event_get_callback, event_get_callback_arg and base count/priority queries cannot receive unconditional neutral custody declarations because their debug/setup or locking path can invoke configured lock callbacks. Discharge with a source-profile premise that excludes those callbacks and a checked configuration binding, or a richer callback effect with gateway and Lean parity, then pin every body variant and measure.",
+   "source": "docs/reports/w46-libc-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-MONKEY-BACKEND-QUERY-ARMS",
+   "title": "Review every selected backend and static-result relation for mk_event_backend",
+   "why": "mk_event_backend dispatches to _mk_event_backend selected from five backend implementation files; review every selected body and static-result mode before a pinned declaration. This is distinct from the backend wait and registration residual in W46-EXTERNAL-RESIDUAL-RANKING.",
+   "source": "docs/reports/w46-libc-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-METRIC-TRACE-REACHABLE-OWNERSHIP",
+   "title": "Trace ID member aliases and ownership-replacing setters remain undeclared",
+   "why": "ctr_id_get_buf returns cid->buf, a separate allocation whose lifetime is tied to the ID, not an interior pointer of cid. ctr_id_set releases and replaces that member. Other trace status/schema/ID/attribute setters can retain, replace or allocate reachable ownership. The scalar declarations do not model these effects. The baseline census records five ctr_id_get_buf and one ctr_id_set uncontracted-call leaves, none a sole blocker. Discharge with a member-owner lifetime and replacement relation, gateway refusal controls and audited Lean parity, then pin and remeasure the affected callers.",
+   "source": "docs/reports/w46-metric-trace-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-METRIC-TRACE-CALLBACK-PREMISES",
+   "title": "Metric logging and trace mpack helpers need explicit callback-effect premises",
+   "why": "cmt_log_print can call cmt->log_cb; ctr_mpack_consume_* can reach mpack fill/error callbacks. Scalar returns do not establish custody neutrality on these paths. cmt_log_print has 43 uncontracted-call leaves in the archived baseline, none alone deciding a function. Discharge by expressing and enforcing the callback effects or a configuration premise that excludes those paths, with Rust controls and Lean parity, then record source pins and corpus measurements.",
+   "source": "docs/reports/w46-metric-trace-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-FLUENT-METADATA-CALLBACK-EFFECT",
+   "title": "Input-chunk metadata scalar queries reach unconstrained logging callbacks",
+   "why": "flb_input_chunk_has_direct_routes and flb_input_chunk_get_event_type call cio_meta_read; the file path can enter mmap_file, whose diagnostic path invokes cio->options.log_cb. The callback has no bounded custody or counted-user effect in the selected contract vocabulary. A metadata-view helper also publishes borrowed interior pointers via an out parameter. These two queries stay undeclared. Discharge by a checked callback effect and view-lifetime reading, then remeasure the corpus and system slice.",
+   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT",
+   "title": "Input-chunk output-size accounting wrappers reach configurable log callbacks",
+   "why": "flb_input_chunk_output_size_subtract and flb_input_chunk_update_output_instances conditionally log; the logging path can update counters and invoke a configured metrics log callback. Without a checked bound on its custody and counted-user effects, neither wrapper gets an unconditional neutral contract. Discharge by constraining the callback path or a guarded contract with audited semantics, then remeasure.",
+   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-FLUENT-TLS-RETAINED-RESULT",
+   "title": "Raw output-thread TLS getter returns retained storage",
+   "why": "flb_output_thread_instance_get returns a thread-local pointer that aliases retained storage, like pthread_getspecific. Resource-v1 return_none cannot express that relation. It stays undeclared even though the scalar flb_output_flush_id_get wrapper can be stated as a borrowed/neutral caller effect. Discharge with a retained-result relation and matching Lean parity or a recorded refusal.",
+   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
+  },
+  {
+   "id": "W46-FLUENT-FLUSH-LIFECYCLE-BOUNDARY",
+   "title": "Flush create, destroy, finished and dispatch effects remain unmodeled",
+   "why": "Flush create/destroy/finished/dispatch can retain or release flush/task resources and run callbacks; this card's ID helper contract does not state their effects or imply lifecycle safety. Preserve the existing OR-1/OR-7 defining-body refutations (provisional Unsafe) and their Unknown callers. Discharge this residual only by stating and checking the still-unstated lifecycle effects with Rust controls and matching Lean parity; adding those contracts does not require overturning valid refutations.",
+   "source": "docs/reports/w46-fluent-event-contract-gaps/README.md",
+   "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

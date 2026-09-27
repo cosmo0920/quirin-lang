@@ -1,0 +1,12 @@
+{
+  "entry": {
+    "id": "W36-CTRACES-FAMILY-FIRST",
+    "title": "contract/qcore/ctraces/ is a new family whose convention is one card's choice",
+    "why": "The family has one module. Its manifest placement (after `cmetrics/`, before `monkey/`) and the module name `context_lifetime.qcore`, paired with cmetrics' identically-named sibling, are W36-CORPUS-CONTRACTS-3's choice alone and no convention was found to follow. DISCHARGE: integrator confirmation, or a second `ctraces` module settling the convention.",
+    "source": "docs/reports/w36-corpus-contracts-3/README.md",
+    "recorded_by": "WAVE-36-CLOSE"
+  },
+  "decision": "discharged by integrator confirmation",
+  "discharging_card": "W46-CONTRACT-GAP-EXPANSION",
+  "reason": "Confirm qcore-provider-ctraces ownership, the ctraces namespace and contracts/ctraces directory, and context_lifetime.qcore as the existing context/ID/span facade module. This confirms repository organization only; it proves no C body and does not prevent future modules for other families."
+}
