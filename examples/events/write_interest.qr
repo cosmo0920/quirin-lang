@@ -1,4 +1,4 @@
-import std.event;
+#import std.event;
 
 // A write registration. The model expresses it and the reactor checks it in
 // full — the custody edge, the teardown order, the endpoint releases — but its

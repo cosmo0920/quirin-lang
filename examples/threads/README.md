@@ -10,8 +10,8 @@ Linux and macOS. The Windows instructions below use MSVC's `cl.exe`.
 | [shared_readers.qr](shared_readers.qr) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
 | [core_context.qr](core_context.qr) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
 
-All four also `import std.logger;` and `import std.fmt;` (and `two_workers`
-additionally `import std.io;`), which is what lets them say something of their
+All four also `#import std.logger;` and `#import std.fmt;` (and `two_workers`
+additionally `#import std.io;`), which is what lets them say something of their
 own beside the trace the compiler synthesizes — see
 [Reading the output](#reading-the-output).
 
@@ -22,7 +22,7 @@ The frontend lowers these examples into the checked models exposed by
 compiler and library implementers. Every `.qr` example explicitly opts in:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 ```
 
@@ -34,7 +34,7 @@ with `Q014`; user-file imports are not yet supported.
 
 | QCore source operation | Core model operation | Lean model |
 |---|---|---|
-| `import std.concurrency;` | Exact `ModuleImports::resolve`, initially empty | `ModuleImports` proves explicit selection and fail-closed resolution |
+| `#import std.concurrency;` | Exact `ModuleImports::resolve`, initially empty | `ModuleImports` proves explicit selection and fail-closed resolution |
 | `thread scope context` | `ScopedTaskLedger::enter_scope` / `exit_scope` | `TaskExecution` checks handle quiescence; it is not a complete lexical-scope model |
 | `spawn context worker(move buffer)` | `reserve`, then `commit` or `rollback` | `ScopedTasks` proves custody transfer and rollback; `TaskExecution` models creation outcomes |
 | Worker `return move buffer` | `complete` retains a completion capsule | `ScopedTasks` / `TaskExecution` distinguish completion from collection |

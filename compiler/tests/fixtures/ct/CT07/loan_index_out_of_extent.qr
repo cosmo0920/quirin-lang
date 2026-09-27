@@ -1,6 +1,6 @@
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 // CT07's bounds control, the loan's own index: the case program (case.qcore)
 // with one store's index moved from 1 to 4 — `right` is a lend of [4, 8), so

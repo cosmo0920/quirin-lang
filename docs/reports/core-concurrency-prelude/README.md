@@ -1,5 +1,7 @@
 # Core concurrency prelude — 2026-09-08
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 > Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
 
 
@@ -9,7 +11,7 @@ and routes the frontend and verification driver through it. It does not move or
 duplicate the semantic implementations. The original core module paths and the
 compiler compatibility paths retain the same Rust types and functions.
 
-QCore source now requires an explicit `import std.concurrency;` in each file
+QCore source now requires an explicit `#import std.concurrency;` in each file
 that uses concurrency. This intentionally changes source admission: concurrency
 is unavailable by default, including in uncalled bodies and library modules.
 

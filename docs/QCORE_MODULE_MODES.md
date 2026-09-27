@@ -95,7 +95,7 @@ Bundled semantic modules require an explicit top-level `import` in each source
 file. The current registry contains `std.concurrency`:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 ```
 

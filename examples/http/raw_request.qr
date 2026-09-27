@@ -18,10 +18,10 @@
 // refusal with its own diagnostic. That contrast is the card's whole point: a
 // payload a program *writes* is bytes, and a message a program *declares* is
 // checked.
-import std.socket;
-import std.string;
-import std.fmt;
-import std.io;
+#import std.socket;
+#import std.string;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

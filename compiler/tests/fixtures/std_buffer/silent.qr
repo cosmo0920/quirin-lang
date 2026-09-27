@@ -1,4 +1,4 @@
-import std.buffer;
+#import std.buffer;
 
 // A buffer module that writes no line. It pins that `std.buffer` grants no
 // output capability of its own: this file imports neither `std.io` nor

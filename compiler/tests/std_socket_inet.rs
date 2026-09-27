@@ -60,9 +60,9 @@ fn codes(source: &str) -> Vec<String> {
 /// A one-entry module around `body`, importing what this card's fixtures need.
 fn module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.socket;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
+        "#import std.socket;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc } {".to_owned(),
     ];
@@ -507,8 +507,8 @@ fn the_loan_sees_the_same_listener_through_an_address() {
         "return;",
     ];
     let source = module(&body).replace(
-        "import std.socket;",
-        "import std.socket;\nimport std.event;",
+        "#import std.socket;",
+        "#import std.socket;\n#import std.event;",
     );
     assert!(
         codes(&source).contains(&"Q083".to_owned()),

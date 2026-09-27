@@ -1,5 +1,7 @@
 # TRACE-STDIO — one printing route, and the evidence that stood on the old one (wave 19)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: *"The concurrency module's emitted code carries DEBUG PRINTS — the
 compiler-synthesized `printf` trace instrumentation the STD-MODULES census
 classified as class (b). These debug prints must NOT remain as raw synthesized
@@ -264,7 +266,7 @@ than glossed.
 
 ### 4.1 The per-site distinction, decided by measurement
 
-The brief asked for source-meaningful prints to become declared `import std.io;`
+The brief asked for source-meaningful prints to become declared `#import std.io;`
 usage and verification machinery to stay synthesized, "the distinction per site
 recorded". Measured, the distinction is uniform, and it is not a judgement call:
 

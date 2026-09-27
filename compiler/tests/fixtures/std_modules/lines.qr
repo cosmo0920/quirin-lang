@@ -1,6 +1,6 @@
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // All three modules in one entry (card STD-MODULES). Every rendered value is a
 // scalar: `source.std-io.v1` has no operand form that could denote a resource,

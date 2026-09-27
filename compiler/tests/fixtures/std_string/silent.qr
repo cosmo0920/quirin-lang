@@ -5,7 +5,7 @@
 // `Mut` effect (amendment §7), unlike the sibling buffer route where an
 // acquisition always derives `Alloc`. And its emitted program allocates nothing
 // and frees nothing, so a sanitized run has nothing to find and nothing to leak.
-import std.string;
+#import std.string;
 
 fn main() -> unit {
     let text = "quirin";

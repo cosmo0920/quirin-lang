@@ -60,10 +60,10 @@ fn messages(source: &str) -> String {
 /// the rule it names against the same declarations.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -838,13 +838,13 @@ fn a_module_without_a_loop_emits_byte_identically() {
 /// precedent, and the follow-on is `LOOP-ROUTE-WIDENING`.
 #[test]
 fn the_standard_io_route_still_refuses_a_nested_block() {
-    let source = "import std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io } {\n    for i in 0..3 { print dec i; }\n    return;\n}\n";
+    let source = "#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects { io } {\n    for i in 0..3 { print dec i; }\n    return;\n}\n";
     assert_eq!(codes(source), ["Q030"]);
 }
 
 #[test]
 fn a_task_scope_still_refuses_a_loop() {
-    let source = "import std.concurrency;\nconcurrency checked;\n\nfn main() -> unit {\n    thread scope s { for i in 0..2 { } }\n    return;\n}\n";
+    let source = "#import std.concurrency;\nconcurrency checked;\n\nfn main() -> unit {\n    thread scope s { for i in 0..2 { } }\n    return;\n}\n";
     assert!(codes(source).contains(&"Q500".to_owned()));
 }
 
@@ -853,7 +853,7 @@ fn a_task_scope_still_refuses_a_loop() {
 /// is exactly what invariant 1 forbids.
 #[test]
 fn a_loop_outside_the_entry_refuses_rather_than_going_unchecked() {
-    let source = "import std.buffer;\n\nfn helper() -> unit {\n    for i in 0..2 { }\n}\n\nfn main() -> unit effects { alloc, mut } {\n    let b = bytes(4);\n    b[0] = 1;\n    drop b;\n    return;\n}\n";
+    let source = "#import std.buffer;\n\nfn helper() -> unit {\n    for i in 0..2 { }\n}\n\nfn main() -> unit effects { alloc, mut } {\n    let b = bytes(4);\n    b[0] = 1;\n    drop b;\n    return;\n}\n";
     assert!(
         codes(source).contains(&"Q097".to_owned()),
         "{:?}",

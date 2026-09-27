@@ -1,5 +1,7 @@
 # NATIVE-LIBRARY-CONTRACT-SLICE — where pointer symbols belong — 2026-09-11
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card `NATIVE-LIBRARY-CONTRACT-SLICE` of wave 20: **where pointer symbols
 belong**. Wave 18 established that pointers cross exactly where a contract exists
 to state their premise; wave 19 built the manifest but refused a `contract fn`
@@ -13,7 +15,7 @@ there **L2** is the already-implemented ad-hoc declared-contract selection while
 **L3** is manifest-bound contracted. This card lands L3's **trust artifact**
 (artifact identity + ABI premises + each contract) and L3's **callable surface**
 (every mode `source.extern-call.v1` calls, pointers included). It does **not**
-land L3's *selection*: the table's `import std.buffer;` — one name binding all
+land L3's *selection*: the table's `#import std.buffer;` — one name binding all
 four — stays follow-on `NATIVE-LIBRARY-SOURCE-BINDING`, and selection here is
 still the builder's two lists (`extern_contracts` plus `native_libraries`). The
 in-tree numbering is used everywhere below; where this report says "L1" it means
@@ -455,7 +457,7 @@ than worked around, exactly as waves 18 and 19 did for the same row.
 | Name | What is open |
 |---|---|
 | `NATIVE-LIBRARY-HEADER` | reading the library's real exported `.h` instead of the manifest's transcription of it. **Not this card**, and this card sharpens what it needs: the manifest now carries *two* kinds of header spelling, including the pointer spellings, and the reader must reproduce the §C04 projection for all of them without a typed Clang AST (constraint 8's reader discipline) so that W4-style rederivation reproduces the decision. Until it lands, that the manifest's transcription matches the header is a premise — and it is now a premise that pointers rest on, which raises its value without changing its kind. |
-| `NATIVE-LIBRARY-SOURCE-BINDING` | binding a manifest from the *source* file (`import std.buffer;`) rather than resolving by symbol name across the selection. Unchanged by this card and still needing a registry name or a new form, so still a card with a constraint-14 census. |
+| `NATIVE-LIBRARY-SOURCE-BINDING` | binding a manifest from the *source* file (`#import std.buffer;`) rather than resolving by symbol name across the selection. Unchanged by this card and still needing a registry name or a new form, so still a card with a constraint-14 census. |
 | `NATIVE-LIBRARY-MULTI-HASH` | hash algorithms beyond `sha256`. Unchanged; still refused rather than carried opaquely. |
 | `UNSAFE-LINKAGE-ARTIFACT-PROBE` | a builder-side observation comparing a real artifact against the pin. Unchanged, and still an observation that could never be more. |
 | `UNSAFE-LINKAGE-CLI` | narrowed again: `qcorec` selects manifests, and now also *renders* the L3 premise, but still selects no **contract environment** — so the L3 premise is unreachable through that binary until this lands (§3). |

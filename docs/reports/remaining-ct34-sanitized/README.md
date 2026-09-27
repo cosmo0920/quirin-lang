@@ -1,5 +1,7 @@
 # CT34-SANITIZED — emitting a protection growth, and what the native run is evidence of
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Wave 14. Card CT34-SANITIZED (CT34-GROWTH-NATIVE): decide the emission semantics
 of `MutexInvariantEvent::GrowProtection`, implement it under exactly the
 checker-admitted conditions, run a fixed sanitized native fixture, and wire
@@ -124,7 +126,7 @@ break every one of these.
 `compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore`:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let x = protected 4;

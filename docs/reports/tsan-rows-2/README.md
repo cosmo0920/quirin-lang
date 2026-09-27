@@ -1,5 +1,7 @@
 # `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 > Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
 
 
@@ -304,7 +306,7 @@ unbound TSan cannot run the route:
 
 The flagship literal is gone from both files: `DISJOINT_EXERCISE` is
 `include_str!` of the one fixture in both, and `ct07s_case_is_the_flagship_without_its_logger`
-pins CT07's case as that program minus `import std.logger;`,
+pins CT07's case as that program minus `#import std.logger;`,
 `log_level trace;` and the `io` effect. `run_native` is unchanged for every
 other caller (it delegates to `run_native_threads` with `false`).
 

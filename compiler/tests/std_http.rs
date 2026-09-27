@@ -866,7 +866,7 @@ fn a_bound_view_needs_the_string_module() {
     );
     assert_eq!(codes(&body), ["Q015"]);
     assert!(messages(&body)[0].contains("std.string"));
-    let with_import = body.replace("import std.http;", "import std.http;\nimport std.string;");
+    let with_import = body.replace("#import std.http;", "#import std.http;\n#import std.string;");
     compile(&with_import).expect("admitted with the string module");
 }
 
@@ -960,7 +960,7 @@ fn the_body_spelling_is_not_this_cards_word() {
             "return;",
         ],
     );
-    let source = source.replace("import std.io;", "import std.io;\nimport std.fmt;");
+    let source = source.replace("#import std.io;", "#import std.io;\n#import std.fmt;");
     compile(&source).expect("a module binding `body` still compiles");
 }
 

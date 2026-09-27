@@ -6,7 +6,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 <a id="constraint-13"></a>
 
 <!-- preserved:constraint-13:start -->
-13. Concurrency is opt-in: a file declares `import std.concurrency;`, the
+13. Concurrency is opt-in: a file declares `#import std.concurrency;`, the
     context is unavailable by default, and imports do not leak across
     compilation inputs (`Q014`/`Q015` refuse before checking each file). The
     task profile keeps its separate `concurrency checked;` marker.
@@ -202,7 +202,7 @@ route. The selector must preserve sequential resource intrinsics, literal-only
 legacy programs and unsupported control-flow diagnostic pins. Read retained
 tokens, check every definition, and never treat a closed entry observation as
 proof for all possible function arguments. `print(EXPR);` is this route's one
-output statement: it requires the same file's `import std.io;`, prints one
+output statement: it requires the same file's `#import std.io;`, prints one
 evaluated i32 plus a newline to stdout, and does not require `std.fmt`. An absent
 effect row infers direct and transitive `io`; `effects {io}` permits it and
 explicit `effects {}` refuses it. The emitter contributes `c_program` fragments

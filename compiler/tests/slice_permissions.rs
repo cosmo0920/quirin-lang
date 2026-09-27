@@ -71,11 +71,11 @@ fn messages(source: &str) -> Vec<String> {
 /// measured here is never the import gate or an undeclared effect in disguise.
 fn module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];

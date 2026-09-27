@@ -13,9 +13,9 @@
 // The third view reads the bytes the owner wrote, after the first two windows
 // have closed, which is what makes the admission visible in the observation
 // rather than only in the certificate.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(6);

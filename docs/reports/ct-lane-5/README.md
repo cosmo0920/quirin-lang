@@ -1,5 +1,7 @@
 # `CT-LANE-5` — wave 37's CT mapping lane
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 **Wave 37. Base `0f6eb0a6`. One case re-mapped, three re-measured and left
 unmapped, one not attempted. No count moves.**
 
@@ -461,7 +463,7 @@ deliberate:
 * `CT07/case.qcore` is the plain **scoped-task** form of the `DISJOINT_EXERCISE`
   constant in `compiler/tests/write_lend_tasks_exercise.rs` — a Rust string
   literal, not a fixture file, so it collides with nothing the sweep ranges over.
-  The deliberate differences: no `import std.logger;` and no `log_level trace;`,
+  The deliberate differences: no `#import std.logger;` and no `log_level trace;`,
   so the checked artifact is a `ScopedTasks` module the heap runner consumes
   rather than a `ComposedTasks` one, and both of the owner's byte reads are kept.
 * `CT07/sequential_write_halves.qcore` carries wave 30's case program with a

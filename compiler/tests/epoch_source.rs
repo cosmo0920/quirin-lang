@@ -208,7 +208,7 @@ fn ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound() {
 /// from the admitted module by exactly what its name says.
 fn epoch(workers: &str) -> String {
     format!(
-        "import std.concurrency;\nfn main() -> unit {{\n\
+        "#import std.concurrency;\nfn main() -> unit {{\n\
          thread scope e epoch {{\n\
          let page = share 4096;\n\
          bound 65536 effort 1000;\n\
@@ -322,7 +322,7 @@ fn a_task_beyond_its_own_credit_is_refused_on_the_axis_it_exceeds() {
 fn an_epoch_beyond_its_allocation_is_refused_even_when_every_credit_fits() {
     // Shared storage and the epoch's own overhead belong to no task's credit,
     // so credits fitting is not by itself an epoch that fits.
-    let source = "import std.concurrency;\nfn main() -> unit {\n\
+    let source = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch {\n\
          let page = share 4096;\n\
          bound 4200 effort 1000;\n\
@@ -356,7 +356,7 @@ fn an_unsupported_epoch_shape_is_a_represented_refusal_not_a_silent_omission() {
 
 #[test]
 fn a_measured_run_offered_as_the_declared_overhead_is_refused() {
-    let source = "import std.concurrency;\nfn main() -> unit {\n\
+    let source = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch {\n\
          bound 65536 effort 1000;\n\
          overhead scope 512 thread 128 measured 30;\n\
@@ -369,7 +369,7 @@ fn a_measured_run_offered_as_the_declared_overhead_is_refused() {
 #[test]
 fn structural_epoch_refusals_precede_every_accounting_figure() {
     // An epoch with no tasks.
-    let empty = "import std.concurrency;\nfn main() -> unit {\n\
+    let empty = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch { bound 65536 effort 1000; overhead scope 512 thread 128; }\n\
          }\n";
     assert_eq!(compile(empty).unwrap_err(), vec!["Q630"]);
@@ -396,7 +396,7 @@ fn structural_epoch_refusals_precede_every_accounting_figure() {
 #[test]
 fn quantitative_overflow_is_refused_rather_than_wrapped() {
     let source = format!(
-        "import std.concurrency;\nfn main() -> unit {{\n\
+        "#import std.concurrency;\nfn main() -> unit {{\n\
          thread scope e epoch {{\n\
          bound {max} effort {max};\n\
          overhead scope 0 thread 0;\n\
@@ -416,7 +416,7 @@ fn quantitative_overflow_is_refused_rather_than_wrapped() {
 #[test]
 fn an_epoch_module_needs_the_explicit_concurrency_import() {
     let source = epoch("thread scope w { peak 1; credit 4096 effort 100; join(drop); }")
-        .replace("import std.concurrency;\n", "");
+        .replace("#import std.concurrency;\n", "");
     assert_eq!(compile(&source).unwrap_err(), vec!["Q015"]);
 }
 
@@ -455,7 +455,7 @@ fn forms_outside_the_epoch_grammar_are_refused_on_this_route() {
     // The task profile's spawn/join expressions are a different model: their
     // captures, owned values and completion capsules have no representation in
     // an accounting statement about declared shapes.
-    let spawned = "import std.concurrency;\nfn worker() -> unit { }\n\
+    let spawned = "#import std.concurrency;\nfn worker() -> unit { }\n\
          fn main() -> unit {\n\
          thread scope e epoch {\n\
          bound 65536 effort 1000;\n\
@@ -465,14 +465,14 @@ fn forms_outside_the_epoch_grammar_are_refused_on_this_route() {
          }\n";
     assert_eq!(compile(spawned).unwrap_err(), vec!["Q600"]);
     // A missing allocation or overhead header is a refusal, not a default.
-    let no_allocation = "import std.concurrency;\nfn main() -> unit {\n\
+    let no_allocation = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch {\n\
          overhead scope 512 thread 128;\n\
          thread scope w { peak 1; credit 4096 effort 100; join(drop); }\n\
          }\n\
          }\n";
     assert_eq!(compile(no_allocation).unwrap_err(), vec!["Q600"]);
-    let no_overhead = "import std.concurrency;\nfn main() -> unit {\n\
+    let no_overhead = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope e epoch {\n\
          bound 65536 effort 1000;\n\
          thread scope w { peak 1; credit 4096 effort 100; join(drop); }\n\
@@ -486,7 +486,7 @@ fn a_module_without_the_epoch_marker_keeps_its_existing_route() {
     // The same `thread scope` without `epoch` is the scoped task route, which
     // refuses this body on its own terms. The point is only that the epoch
     // route did not claim it.
-    let source = "import std.concurrency;\nfn main() -> unit {\n\
+    let source = "#import std.concurrency;\nfn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\

@@ -1,7 +1,7 @@
 //! Explicit imports for reusable QCore semantic features.
 //!
 //! This is a Rust library prelude for compiler and library implementers. QCore
-//! source opts in through `import std.concurrency;`; no source feature is
+//! source opts in through `#import std.concurrency;`; no source feature is
 //! enabled by default. See [`crate::module_imports`] for bundled-module resolution.
 
 /// Checked concurrency vocabulary, models and backend entry points.

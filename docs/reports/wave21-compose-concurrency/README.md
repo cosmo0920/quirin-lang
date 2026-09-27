@@ -1,5 +1,7 @@
 # COMPOSE-CONCURRENCY — a module that spawns and prints (wave 21)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: *"The emitted C of the thread examples carries compiler-synthesized
 debug prints, all on the single `QCORE_IO_WRITE` route, but the SOURCE cannot
 spell a debug print of its own. Compose `source.std-io.v1` (and `std.logger`)
@@ -37,10 +39,10 @@ new `QCore.ComposedTasks`.
 ## 1. What is admitted, in one program
 
 ```qcore
-import std.concurrency;
-import std.io;
-import std.logger;
-import std.fmt;
+#import std.concurrency;
+#import std.io;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(value: i32) -> i32 { return value; }

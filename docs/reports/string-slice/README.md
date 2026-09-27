@@ -1,5 +1,7 @@
 # Card `STRING-SLICE` — `source.string.v1`, immutable UTF-8 string views
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Wave 23. Implements the user's 2026-09-11 revision-0.3 amendment
 `docs/design/STRING_SLICE_V1.md` (commit `26bc1651`), specifically its two named
 follow-ons `STRING-SLICE-LEX-TYPE` and `STRING-SLICE-EXEC-C11`, as **one checked
@@ -169,7 +171,7 @@ The answer is structural rather than a filter: `string_uses` scans **function-bo
 statements and nothing else**, so a declaration-level quoted token cannot reach
 it. Pinned by two tests —
 `a_verifier_scope_keeps_its_quoted_version_without_any_string_import` (the
-shipped shape compiles with no `import std.string;` and still refuses at `Q701`,
+shipped shape compiles with no `#import std.string;` and still refuses at `Q701`,
 where it refused before this card) and
 `a_quoted_profile_in_metadata_is_not_a_string_use`.
 
@@ -177,7 +179,7 @@ where it refused before this card) and
 
 `let t = s[0:3];` and `source.buffer.v1`'s byte read `let x = b[0];` share a head:
 a `let`, a name, a `[`. Measured before any change: a slice written with **no
-imports at all** reported `Q015` asking for `import std.buffer;` — a buffer the
+imports at all** reported `Q015` asking for `#import std.buffer;` — a buffer the
 program never named.
 
 The disambiguation is the **colon**, applied in

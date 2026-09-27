@@ -147,7 +147,7 @@ fn byte_encoding_is_not_used_in_either_direction() {
 fn missing_concurrency_import_is_refused_before_route_admission() {
     let source = ADJACENT
         .replace("\r\n", "\n")
-        .replace("import std.concurrency;\n", "");
+        .replace("#import std.concurrency;\n", "");
     let diagnostics = compile(&source).expect_err("concurrency stays opt-in");
     assert_eq!(diagnostics[0].code, "Q015");
 }

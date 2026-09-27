@@ -10,7 +10,7 @@
 // (`Q664`): the identity is preserved rather than lost. The same question
 // over a listener and either end, over the ends of two different connections,
 // or over a datagram pair is admitted (the controls).
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

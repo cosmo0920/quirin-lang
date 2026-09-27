@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT47 -- "Raw pointer is Copy but no transfer/share contract exists",

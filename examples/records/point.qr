@@ -17,9 +17,9 @@
 // The declaration head is the already-reserved `type`, told from the alias
 // `type NAME = …;` by the `{`. No word is reserved for any of this.
 
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 type Point { x: i32, y: i32, weight: i32 }
 

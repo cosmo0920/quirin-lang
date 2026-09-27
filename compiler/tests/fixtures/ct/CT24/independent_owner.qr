@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 fn worker(value: i32) -> i32 { return value; }

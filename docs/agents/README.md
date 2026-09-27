@@ -74,7 +74,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 11 | [source-identity](source-identity.md#constraint-11) | Do not normalize the spelled input path (that changes __FILE__), do… |
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |
-| 13 | [source-routes](source-routes.md#constraint-13) | Concurrency is opt-in: a file declares import std.concurrency;, the… |
+| 13 | [source-routes](source-routes.md#constraint-13) | Concurrency is opt-in: a file declares #import std.concurrency;, the… |
 | 14 | [source-routes](source-routes.md#constraint-14) | New keywords are a recorded compatibility hazard: every candidate is… |
 | 15 | [source-routes](source-routes.md#constraint-15) | Lock ranks and protection growth are opt-in disciplines: unranked… |
 | 15a | [source-routes](source-routes.md#constraint-15a) | A source line in a composed task module stands in the parent's body… |

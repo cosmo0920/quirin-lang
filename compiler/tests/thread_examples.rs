@@ -272,9 +272,9 @@ fn the_documented_transcript_is_the_transcript_the_example_prints() {
 /// compiles, on `source.std-io-tasks.v1`.
 #[test]
 fn a_threaded_module_carries_a_source_line_in_the_parent() {
-    const WITH_IO_EFFECT: &str = "import std.concurrency;
-import std.io;
-import std.fmt;
+    const WITH_IO_EFFECT: &str = "#import std.concurrency;
+#import std.io;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 { return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
@@ -313,9 +313,9 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// `compiler/tests/obs_reordering.rs`.
 #[test]
 fn a_worker_body_carries_a_source_line_when_that_worker_declares_io() {
-    const IN_WORKER: &str = "import std.concurrency;
-import std.io;
-import std.fmt;
+    const IN_WORKER: &str = "#import std.concurrency;
+#import std.io;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 effects { io } { value |> print dec; return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
@@ -346,9 +346,9 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// relation does not cover.
 #[test]
 fn a_worker_line_still_needs_its_own_io_effect_and_the_examples_declare_nothing() {
-    const IN_WORKER_NO_IO: &str = "import std.concurrency;
-import std.io;
-import std.fmt;
+    const IN_WORKER_NO_IO: &str = "#import std.concurrency;
+#import std.io;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 { value |> print dec; return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
@@ -393,7 +393,7 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// deliberately does not lift.
 #[test]
 fn a_spawning_module_that_does_not_compose_keeps_the_task_routes_refusals() {
-    const IO_WITHOUT_A_LINE: &str = "import std.concurrency;
+    const IO_WITHOUT_A_LINE: &str = "#import std.concurrency;
 concurrency checked;
 fn worker(value: i32) -> i32 { return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {

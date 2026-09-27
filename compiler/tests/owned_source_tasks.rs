@@ -291,7 +291,7 @@ fn owned_child_drop_precedes_exact_recoverable_error_collection() {
 
 #[test]
 fn distinct_owned_captures_survive_partial_child_release_and_second_allocation_failure() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
     fn worker(first:own<Buffer> use one,second:own<Buffer> use one)->own<Buffer> {drop first;return move second;}
     fn main()->i32 effects {alloc,throws<AllocError>,spawn,join,may_block} {
       let first=qcore_buffer_new(7)?;
@@ -322,7 +322,7 @@ static void *second_fails(size_t size) { return ++calls == 2 ? NULL : malloc(siz
 }
 
 const FRESH_WORKER: &str = r#"
-import std.concurrency; concurrency checked;
+#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let buffer = qcore_buffer_new(value)?;
     return move buffer;
@@ -370,7 +370,7 @@ fn worker_allocates_fresh_result_and_creator_joins_reads_and_drops_it() {
 }
 
 const WORKER_SECOND_ALLOCATION: &str = r#"
-import std.concurrency; concurrency checked;
+#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let first = qcore_buffer_new(7)?;
     match qcore_buffer_new(value) {
@@ -534,7 +534,7 @@ static void *allocate_for_task(size_t size, uint64_t task, uint64_t attempt) {{
 }
 
 const PARALLEL_FRESH_WORKERS: &str = r#"
-import std.concurrency; concurrency checked;
+#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects {alloc, throws<AllocError>} {
     let buffer = qcore_buffer_new(value)?;
     return move buffer;

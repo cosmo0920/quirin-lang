@@ -38,7 +38,7 @@ fn codes(source: &str) -> Vec<String> {
 /// `EFFECTS` in its row.
 fn module(header: &str, effects: &str, body: &str) -> String {
     format!(
-        "import std.concurrency;
+        "#import std.concurrency;
 {header}concurrency checked;
 fn worker(value: i32) -> i32 {{ return value; }}
 fn main() -> i32 effects {{ {effects} }} {{
@@ -54,7 +54,7 @@ fn main() -> i32 effects {{ {effects} }} {{
     )
 }
 
-const IMPORTS: &str = "import std.io;\nimport std.logger;\nimport std.fmt;\n";
+const IMPORTS: &str = "#import std.io;\n#import std.logger;\n#import std.fmt;\n";
 const EFFECTS: &str = "io, throws<SpawnError>, spawn, join, may_block";
 const TASK_EFFECTS: &str = "throws<SpawnError>, spawn, join, may_block";
 
@@ -102,8 +102,8 @@ fn importing_is_not_using_and_the_task_route_is_kept_byte_for_byte() {
 #[test]
 fn a_printing_module_that_does_not_spawn_keeps_the_standard_io_route() {
     let module = compile(
-        "import std.io;
-import std.fmt;
+        "#import std.io;
+#import std.fmt;
 fn main() -> i32 effects { io } {
     let n = 42;
     print dec n;
@@ -162,8 +162,8 @@ fn extern_calls_beside_a_spawn_keep_the_task_routes_refusal() {
     // `STD-IO-COMPOSE` recorded these two exclusions and this card does not lift
     // them: the conjunction excludes a module that also extern-calls, so both
     // shapes fall through to the task route exactly as before.
-    const EXTERN_AND_SPAWN: &str = "import std.concurrency;
-import std.extern;
+    const EXTERN_AND_SPAWN: &str = "#import std.concurrency;
+#import std.extern;
 concurrency checked;
 extern fn qcore_extern_scale(value: i32) -> i32;
 fn worker(value: i32) -> i32 { return value; }
@@ -186,8 +186,8 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 
     let all_three = EXTERN_AND_SPAWN
         .replace(
-            "import std.extern;",
-            "import std.extern;\nimport std.io;\nimport std.fmt;",
+            "#import std.extern;",
+            "#import std.extern;\n#import std.io;\n#import std.fmt;",
         )
         .replace(
             "        let first_result = join move first?;",
@@ -236,9 +236,9 @@ fn every_rendering_level_and_barrier_is_admitted_in_the_parent() {
 fn a_line_before_any_spawn_is_admitted() {
     // The conservative reading of the boundary, kept as its own pin: a line in
     // the parent before the scope is opened.
-    let source = "import std.concurrency;
-import std.logger;
-import std.fmt;
+    let source = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 { return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
@@ -271,9 +271,9 @@ fn a_line_in_a_worker_body_refuses() {
 
 #[test]
 fn a_borrowed_render_refuses() {
-    let source = "import std.concurrency;
-import std.logger;
-import std.fmt;
+    let source = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
@@ -305,9 +305,9 @@ fn rendering_something_that_is_not_an_i32_refuses() {
     // than being rendered as a number no model computed. The custody discipline
     // is the same one `STD-MODULES` established, over the task value namespace:
     // there is no operand form that could carry a buffer, a loan or a handle.
-    let buffer = "import std.concurrency;
-import std.logger;
-import std.fmt;
+    let buffer = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
@@ -363,16 +363,16 @@ fn writing_without_declaring_io_refuses_at_the_join() {
 fn each_capability_still_needs_its_own_import() {
     for (imports, body) in [
         (
-            "import std.fmt;\nimport std.logger;\n",
+            "#import std.fmt;\n#import std.logger;\n",
             "        first_result |> print dec;",
         ),
         (
-            "import std.fmt;\nimport std.io;\n",
+            "#import std.fmt;\n#import std.io;\n",
             "        first_result |> log info dec;",
         ),
-        ("import std.fmt;\nimport std.io;\n", "        flush;"),
+        ("#import std.fmt;\n#import std.io;\n", "        flush;"),
         (
-            "import std.io;\nimport std.logger;\n",
+            "#import std.io;\n#import std.logger;\n",
             "        first_result |> print dec;",
         ),
     ] {

@@ -2,7 +2,7 @@
 // *different* connections share no state, so each cross-pair question is
 // admitted — which is what keeps the case's refusal a statement about one
 // connection's identity rather than about any two accepted sockets.
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

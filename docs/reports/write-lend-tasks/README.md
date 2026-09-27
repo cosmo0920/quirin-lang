@@ -1,5 +1,7 @@
 # WRITE-LEND-TASKS — write lends crossing the spawn boundary (wave 31)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: the residual `SLICE-PERMISSIONS-WRITE-LEND` named for the half it
 could not reach — *"both parties are one sequential entry's bindings — the F1
 task-crossing remainder"* — and the direction CT10's rejection shape needs:
@@ -99,7 +101,7 @@ is a named residual. Concretely:
 ## 2. The construct
 
 ```qcore
-import std.concurrency; concurrency checked;
+#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }

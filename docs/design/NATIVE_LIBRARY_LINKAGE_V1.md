@@ -95,7 +95,7 @@ manifest must state (§5).
 ## 1. The concept in one paragraph
 
 A **native-backed module** is a bundled capability module in the existing
-registry sense (`import std.buffer;`, following the six-name **[adjusted, A1]**
+registry sense (`#import std.buffer;`, following the six-name **[adjusted, A1]**
 `std.concurrency`/`std.extern`/`std.extern.unsafe`/`std.fmt`/`std.io`/`std.logger`
 precedent, with
 the same `Q014`/`Q015` file-local gating) whose extern surface does not float

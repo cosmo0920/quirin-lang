@@ -16,10 +16,10 @@
 // to `store[2]` in the same body would be refused at `Q054`, because the loan
 // is live there however early in the body it stands.
 
-import std.buffer;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io, alloc, mut } {
     let src = bytes(4);

@@ -1,5 +1,7 @@
 # DOCS-COMPACT — compacting `AGENTS.md` and `CLAUDE.md` to the agent-facing minimum
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 **Date:** 2026-09-10. **Base:** main `8069a99` (wave-15 consolidated).
 **Scope:** documentation only. `git diff --stat` touches exactly `AGENTS.md`,
 `CLAUDE.md`, `DEVELOPMENT.md` and this report directory. No code, test, spec,
@@ -177,7 +179,7 @@ seven groups. Each carries the card that established it.
 | 7 | Leak diagnostics are pinned at 271; movement is a finding to attribute | AGENTS 1916 context, corpus-repin |
 | 8 | Do not normalize the spelled input path; do not let a declared identity survive onto derived text; do not move the Cycle19 route off `HistoricalStdin` without re-measuring; keep `source_input` in `CompileTaskIdentity` | CLAUDE 813–819 |
 | 9 | A `#line` directive must not move the audited scope; `Safe` requires full analysed coverage at the certificate gate | AGENTS 2371–2378 (E01-TAIL) |
-| 10 | Concurrency is opt-in per file (`import std.concurrency;`); imports do not leak across compilation inputs (`Q014`/`Q015`); the task profile keeps its separate `concurrency checked;` marker | AGENTS 1497–1503 |
+| 10 | Concurrency is opt-in per file (`#import std.concurrency;`); imports do not leak across compilation inputs (`Q014`/`Q015`); the task profile keeps its separate `concurrency checked;` marker | AGENTS 1497–1503 |
 | 11 | New reserved words are a compatibility hazard checked against every fixture (T03-F five; T08-EPOCH-SRC eight, `work`→`effort` rather than editing the pinned golden surface; `succeeds`) | AGENTS 1621, 1651, 1797 |
 | 12 | Lock ranks and protection growth are opt-in; unranked modules stay byte-identical; a rank is a declared position, not an assumption | AGENTS 2018–2021, 2174–2177 |
 | 13 | P02-FLAKE: the `RLIMIT_NPROC` assertion is byte-for-byte unchanged with a deterministic companion — do not weaken it | AGENTS 1243–1246, 1813 |

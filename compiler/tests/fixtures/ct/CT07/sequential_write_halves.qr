@@ -15,9 +15,9 @@
 // admitting the configuration it used to rest on would be a regression hiding
 // inside an upgrade. Its own reject twins are retained beside it as this case's
 // sequential rejection controls.
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(8);

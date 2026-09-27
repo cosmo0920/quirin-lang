@@ -6,7 +6,7 @@
 // state. The queue is bounded coupling, not shared protocol state, so the
 // question is admitted: two datagram sockets really are independent
 // custodians.
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let client = udp;

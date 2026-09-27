@@ -1,5 +1,5 @@
-import std.event;
-import std.logger;
+#import std.event;
+#import std.logger;
 
 // One event context, one endpoint pair the program created itself, one read
 // registration on it, one readiness the program induced, one dispatch turn that

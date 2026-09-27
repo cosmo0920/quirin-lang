@@ -73,10 +73,10 @@ fn source_lines(lines: &[&str]) -> String {
 /// the same declarations.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.socket;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.socket;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -858,8 +858,8 @@ fn socketing_without_the_socket_import_refuses() {
 #[test]
 fn the_io_import_alone_does_not_grant_a_socket() {
     let source = source_lines(&[
-        "import std.io;",
-        "import std.fmt;",
+        "#import std.io;",
+        "#import std.fmt;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let a = udp;",
@@ -874,7 +874,7 @@ fn the_io_import_alone_does_not_grant_a_socket() {
 #[test]
 fn the_socket_import_alone_does_not_grant_standard_output() {
     let source = source_lines(&[
-        "import std.socket;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let a = udp;",
@@ -890,7 +890,7 @@ fn the_socket_import_alone_does_not_grant_standard_output() {
 #[test]
 fn importing_the_module_in_another_file_does_not_grant_this_one_the_capability() {
     let granted = source_lines(&[
-        "import std.socket;",
+        "#import std.socket;",
         "",
         "fn helper() -> unit {",
         "    return;",
@@ -930,7 +930,7 @@ fn importing_the_module_in_another_file_does_not_grant_this_one_the_capability()
 #[test]
 fn a_misspelled_module_refuses_as_an_unknown_module() {
     let source = source_lines(&[
-        "import std.sockets;",
+        "#import std.sockets;",
         "",
         "fn main() -> unit {",
         "    return;",
@@ -945,8 +945,8 @@ fn closing_is_not_a_gated_socket_use() {
     // here would make an existing module that closes a guard depend on a module
     // it never needed, which is the exclusion `STD-BUFFER` made for `drop`.
     let source = source_lines(&[
-        "import std.io;",
-        "import std.fmt;",
+        "#import std.io;",
+        "#import std.fmt;",
         "",
         "fn main() -> unit effects { io } {",
         "    print dec 1;",
@@ -966,8 +966,8 @@ fn closing_is_not_a_gated_socket_use() {
 #[test]
 fn a_module_that_buffers_and_sockets_stays_with_the_buffer_route() {
     let source = source_lines(&[
-        "import std.buffer;",
-        "import std.socket;",
+        "#import std.buffer;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let b = bytes(4);",
@@ -999,8 +999,8 @@ fn a_module_that_dispatches_and_sockets_reaches_this_route_and_is_now_admitted()
     // `COMPOSE-EVENT-LINES`'s own rewrite of
     // `a_module_that_both_dispatches_and_prints_stays_with_this_route…`.
     let source = source_lines(&[
-        "import std.event;",
-        "import std.socket;",
+        "#import std.event;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    event open;",

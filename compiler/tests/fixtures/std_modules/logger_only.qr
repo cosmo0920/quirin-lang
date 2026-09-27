@@ -1,4 +1,4 @@
-import std.logger;
+#import std.logger;
 
 // `flush` names no rendering, so a logger-only file that never renders needs no
 // `std.fmt` import. This fixture pins that measurement rather than assuming the

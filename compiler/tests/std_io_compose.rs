@@ -77,10 +77,10 @@ fn codes(source: &str) -> Vec<String> {
 /// One entry body with the standard preamble around it.
 fn module(body: &str) -> String {
     format!(
-        "import std.extern;\n\
-         import std.fmt;\n\
-         import std.io;\n\
-         import std.logger;\n\
+        "#import std.extern;\n\
+         #import std.fmt;\n\
+         #import std.io;\n\
+         #import std.logger;\n\
          \n\
          error Failure {{ Failed; }}\n\
          \n\
@@ -295,8 +295,8 @@ fn an_extern_calling_module_keeps_the_extern_route_byte_for_byte() {
 fn declaring_an_extern_function_without_calling_it_is_not_a_composition() {
     // Declaring is not calling, so a printing module that merely declares an
     // extern function stays on the standard-IO route.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;\n\
                   fn main() -> unit effects { io } {\n    print dec 7;\n    return;\n}\n";
     let compiled = compile_with(source, None).unwrap();
@@ -309,8 +309,8 @@ fn declaring_an_extern_function_without_calling_it_is_not_a_composition() {
 #[test]
 fn importing_the_standard_io_modules_without_using_them_is_not_a_composition() {
     let source = ROUND_TRIP.replace(
-        "import std.extern;",
-        "import std.extern;\nimport std.fmt;\nimport std.io;",
+        "#import std.extern;",
+        "#import std.extern;\n#import std.fmt;\n#import std.io;",
     );
     let compiled = compile(&source).unwrap();
     assert_eq!(
@@ -323,9 +323,9 @@ fn importing_the_standard_io_modules_without_using_them_is_not_a_composition() {
 
 #[test]
 fn a_module_that_prints_and_spawns_keeps_the_task_routes_refusal() {
-    let source = "import std.concurrency;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.concurrency;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> i32 {\n    thread scope s {\n        print dec 1;\n    }\n    return 0;\n}\n";
     assert_eq!(
         compile_with(source, None)
@@ -341,10 +341,10 @@ fn a_module_that_prints_and_spawns_keeps_the_task_routes_refusal() {
 fn a_module_that_calls_prints_and_spawns_still_keeps_the_task_routes_refusal() {
     // All three feature sets at once. The composed selector runs *after* every
     // concurrent selector, so the task route still wins and still refuses.
-    let source = "import std.concurrency;\n\
-                  import std.extern;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.concurrency;\n\
+                  #import std.extern;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   \n\
                   error Failure { Failed; }\n\
                   extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;\n\
@@ -510,13 +510,13 @@ fn an_unknown_rendering_still_refuses() {
 
 #[test]
 fn printing_without_the_io_import_still_refuses_at_q015() {
-    let source = CHAIN.replace("import std.io;", "");
+    let source = CHAIN.replace("#import std.io;", "");
     assert_eq!(codes(&source), ["Q015"]);
 }
 
 #[test]
 fn calling_without_the_extern_import_still_refuses_at_q022() {
-    let source = CHAIN.replace("import std.extern;", "");
+    let source = CHAIN.replace("#import std.extern;", "");
     assert_eq!(codes(&source), ["Q022"]);
 }
 
@@ -629,10 +629,10 @@ fn an_unchecked_linkage_waiver_crosses_the_join_and_stays_visible() {
     // that waiver, and the surface at which a reader sees it must not be lost
     // by composing: `declared_assumptions` is the composed certificate's own
     // extern projection, which is the extern route's list verbatim.
-    let source = "import std.extern;\n\
-                  import std.extern.unsafe;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.extern;\n\
+                  #import std.extern.unsafe;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n\
                   \x20   let n = k_unchecked_add(2, 40) succeeds 42;\n\
@@ -669,7 +669,7 @@ fn an_unchecked_linkage_waiver_crosses_the_join_and_stays_visible() {
 
 #[test]
 fn a_scalar_literal_binds_on_the_extern_route_alone() {
-    let source = "import std.extern;\n\
+    let source = "#import std.extern;\n\
                   error Failure { Failed; }\n\
                   extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n\
@@ -720,9 +720,9 @@ fn an_out_of_range_literal_refuses_rather_than_wrapping() {
 
 #[test]
 fn a_raised_error_ends_the_composed_run_and_its_later_renderings() {
-    let source = "import std.extern;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.extern;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   \n\
                   error Failure { Failed; }\n\
                   extern fn qcore_extern_alloc_failing(size: usize) -> ptr<mut, u8>;\n\
@@ -913,10 +913,10 @@ fn a_borrowed_render_inside_a_thread_scope_keeps_the_task_routes_refusal() {
     // The route boundary, pinned in the same shape card `STD-MODULES` pinned
     // the plain one: a borrow across a task boundary means something this card
     // does not model, and route selection keeps the concurrent model.
-    let source = "import std.concurrency;\n\
-                  import std.extern;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.concurrency;\n\
+                  #import std.extern;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   \n\
                   error Failure { Failed; }\n\
                   \n\

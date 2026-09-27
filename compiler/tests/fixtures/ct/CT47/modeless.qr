@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT47 control -- the AUTOMATIC half of "reject automatic cross-thread

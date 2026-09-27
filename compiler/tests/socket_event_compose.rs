@@ -59,10 +59,10 @@ fn messages(source: &str) -> Vec<String> {
 /// A one-entry composed module around `body`.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.socket;".to_owned(),
-        "import std.event;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
+        "#import std.socket;".to_owned(),
+        "#import std.event;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -129,7 +129,7 @@ fn a_module_that_only_dispatches_stays_with_the_event_route() {
     // The composed guard is a conjunction: a module with no socket vocabulary is
     // a `source.event.v1` module and is unmoved by this card.
     let source = [
-        "import std.event;",
+        "#import std.event;",
         "",
         "fn main() -> i32 effects { io } {",
         "    event open;",
@@ -153,7 +153,7 @@ fn a_module_that_only_dispatches_stays_with_the_event_route() {
 #[test]
 fn a_module_that_only_sockets_stays_on_the_bare_socket_route() {
     let source = [
-        "import std.socket;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let a = udp;",
@@ -188,9 +188,9 @@ fn a_module_that_buffers_and_dispatches_and_sockets_keeps_the_event_routes_refus
     // third one declines it, so the module reaches the route it reached before
     // this card and keeps that route's existing refusal (`EVENT-BUFFER-PAYLOAD`).
     let source = [
-        "import std.buffer;",
-        "import std.event;",
-        "import std.socket;",
+        "#import std.buffer;",
+        "#import std.event;",
+        "#import std.socket;",
         "",
         "fn main() -> i32 effects { io, alloc } {",
         "    event open;",
@@ -217,9 +217,9 @@ fn a_module_that_does_http_and_dispatches_keeps_an_existing_routes_refusal() {
     // `HTTP-V1-EVENT-COMPOSE` is **not** landed by this card and stays a
     // refusal. What this pins is that it stays one, wherever it is decided.
     let source = [
-        "import std.http;",
-        "import std.socket;",
-        "import std.event;",
+        "#import std.http;",
+        "#import std.socket;",
+        "#import std.event;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    event open;",
@@ -240,7 +240,7 @@ fn a_module_that_does_http_and_dispatches_keeps_an_existing_routes_refusal() {
 #[test]
 fn a_composed_module_needs_both_imports() {
     let without_event = [
-        "import std.socket;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    event open;",
@@ -255,11 +255,11 @@ fn a_composed_module_needs_both_imports() {
     .join("\n");
     assert!(
         codes(&without_event).contains(&"Q015".to_owned()),
-        "registering with the reactor needs `import std.event;`: {:?}",
+        "registering with the reactor needs `#import std.event;`: {:?}",
         codes(&without_event)
     );
     let without_socket = [
-        "import std.event;",
+        "#import std.event;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    event open;",
@@ -274,7 +274,7 @@ fn a_composed_module_needs_both_imports() {
     .join("\n");
     assert!(
         codes(&without_socket).contains(&"Q015".to_owned()),
-        "opening a socket needs `import std.socket;`: {:?}",
+        "opening a socket needs `#import std.socket;`: {:?}",
         codes(&without_socket)
     );
 }
@@ -512,7 +512,7 @@ fn the_projection_gives_the_reactor_no_descriptor_of_its_own() {
 #[test]
 fn a_program_that_registers_nothing_publishes_no_reactor_certificate() {
     let source = [
-        "import std.socket;",
+        "#import std.socket;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let a = udp;",
@@ -845,8 +845,8 @@ fn this_route_models_no_wake_and_no_endpoint_pair() {
 #[test]
 fn a_reactor_statement_in_a_helper_is_refused() {
     let source = [
-        "import std.socket;",
-        "import std.event;",
+        "#import std.socket;",
+        "#import std.event;",
         "",
         "fn helper() -> unit {",
         "    dispatch idle;",

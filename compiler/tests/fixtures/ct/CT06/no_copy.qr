@@ -2,9 +2,9 @@
 // through the copy — removed. The release sits exactly where the case refuses
 // it, and is admitted, so the refusal is attributable to the copy rather than
 // to the release's position.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

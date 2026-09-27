@@ -14,9 +14,9 @@
 // refuse at `Q052` ("is not a buffer this entry acquired"). The four bytes
 // printed back are `QCor` in ASCII, the same payload the loops family copies.
 
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 type Rgb { red: i32, green: i32, blue: i32 }
 type Write { at: i32, value: i32 }

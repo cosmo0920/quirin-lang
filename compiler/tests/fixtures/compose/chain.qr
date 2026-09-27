@@ -1,7 +1,7 @@
-import std.extern;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // Card `STD-IO-COMPOSE`: one module that both calls declared extern functions
 // and prints. Everything here is checked twice over — the call sites and the

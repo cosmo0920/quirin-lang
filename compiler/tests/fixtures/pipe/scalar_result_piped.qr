@@ -1,4 +1,4 @@
-import std.extern;
+#import std.extern;
 
 // The piped twin of `extern_calls/scalar_result.qcore`, card
 // `PIPE-SCALAR-RESULT`. The middle statement is the payoff: a **scalar**

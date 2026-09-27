@@ -154,7 +154,7 @@ fn ct25_the_cleanup_destroys_the_lent_owner_after_joins_and_loan_expiry() {
 /// emitted C, source maps and reference observations are comparable byte for
 /// byte with nothing excused by a filename.
 fn with_region(region: &str) -> SourceFile {
-    const SHAPE: &str = r#"import std.concurrency;
+    const SHAPE: &str = r#"#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 fn reader(payload: borrow<Buffer>) -> i32 {

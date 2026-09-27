@@ -8,9 +8,9 @@
 //
 // It does: the release below is refused, and the refusal names `same`, not
 // `view`. The obligation followed the copy.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

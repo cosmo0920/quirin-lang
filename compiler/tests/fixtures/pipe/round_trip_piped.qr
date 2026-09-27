@@ -1,4 +1,4 @@
-import std.extern;
+#import std.extern;
 
 // The piped twin of `fixtures/extern_calls/round_trip.qcore` (card
 // PIPE-OPERATOR). This is where linearity through a pipeline is real: `move b`

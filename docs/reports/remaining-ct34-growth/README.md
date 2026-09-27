@@ -1,5 +1,7 @@
 # CT34-GROWTH — a protection-growth source form, and the rule it is sound under
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Wave 12. Card CT34-GROWTH: decide whether growing a mutex's protected footprint
 is sound in `CheckedMutexInvariantV1`, and if so give it a checked existence and
 a source form, so CT34's scenario can be written down.
@@ -220,7 +222,7 @@ diagnostics in the order the core reports them. `GROWABLE` is
 | checked witness with no growth (control) | `… { open g; read x with g; close g unchanged; }` | accepted |
 | **rank interaction** — ranked module, growth, ascending nesting | ranks 1/2, `grow` then `a` outside `b` | accepted |
 | **rank interaction** — same with the descending nesting | ranks 1/2, `grow` then `b` outside `a` | `["Q624","Q612"]` |
-| growth with no `import std.concurrency;` | — | `["Q015"]` |
+| growth with no `#import std.concurrency;` | — | `["Q015"]` |
 | malformed spellings (missing `guards`, missing resource, outside a section) | — | `["Q600"]` each |
 | undeclared guard or resource name | — | `["Q013"]` each |
 
@@ -381,7 +383,7 @@ refinement of this fixture.
 Case source, measured for the cascade above:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let x = protected 4;

@@ -1,5 +1,7 @@
 # UNSAFE-LINKAGE-ARTIFACT — naming the build a waiver was waived from — 2026-09-10
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card `UNSAFE-LINKAGE-ARTIFACT` of wave 19: the staged residual of card
 `UNSAFE-LINKAGE` (wave 18), which landed unchecked linkage but could only say
 *symbol X, unchecked, at ABI S* — never *from which build*.
@@ -390,7 +392,7 @@ delete it.
 | `NATIVE-LIBRARY-HEADER` | reading the library's real `.h` instead of the manifest's transcription of it. The manifest states the exported declaration in the profile's canonical stdint spellings; a real header reader must be reproducible at certificate recheck without a typed Clang AST, which is the constraint that makes it its own card (`LOADER-ABI`'s precedent). Until then, that the manifest's transcription matches the header is a premise. |
 | `NATIVE-LIBRARY-WITHDRAWAL` | §4.2's per-unit withdrawal semantics, which become the right shape once a contract slice exists (§4 above explains why they are the wrong shape now). |
 | `UNSAFE-LINKAGE-ARTIFACT-PROBE` | a builder-side observation comparing a real artifact against the pin, recorded as an observation and never as a check (§5). |
-| `NATIVE-LIBRARY-SOURCE-BINDING` | binding a manifest from the *source* file rather than resolving by symbol name across the selection — the `import std.buffer;` shape of §1. Today a waiver resolves by name; a source-side binding would make *which library* visible to a reader of the source, as the waiver itself already is. Needs a registry name or a new form, so it is a card with a constraint-14 census. |
+| `NATIVE-LIBRARY-SOURCE-BINDING` | binding a manifest from the *source* file rather than resolving by symbol name across the selection — the `#import std.buffer;` shape of §1. Today a waiver resolves by name; a source-side binding would make *which library* visible to a reader of the source, as the waiver itself already is. Needs a registry name or a new form, so it is a card with a constraint-14 census. |
 | `NATIVE-LIBRARY-MULTI-HASH` | hash algorithms beyond `sha256`. Rejected rather than carried opaquely today, deliberately. |
 | `UNSAFE-LINKAGE-PTR`, `-ARGS`, `-CTX`, `-CLI`, `-EXTENT-PREMISE` | wave 18's follow-ons, all carried unchanged. `-CLI` is narrowed: `qcorec` now selects *manifests* (`--native-library`), but still selects no **contract environment**, which is what that follow-on is about. |
 

@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT44 control -- the environment outliving the join, admitted. Byte-identical

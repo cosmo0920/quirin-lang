@@ -1,5 +1,7 @@
 # UNSAFE-LINKAGE — linking an external library that has no contract — 2026-09-10
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card `UNSAFE-LINKAGE`, opening wave 18, user-directed:
 
 > "We permit linking with unsafe or not-contracted contract or type system, to
@@ -24,7 +26,7 @@ callee it rests on.
 
 | | |
 |---|---|
-| What was added | `import std.extern.unsafe;` gating an `unsafe extern fn NAME(SIG);` declaration (§2) |
+| What was added | `#import std.extern.unsafe;` gating an `unsafe extern fn NAME(SIG);` declaration (§2) |
 | Admitted surface | **scalars by value in, a scalar or `void` out.** Every pointer, in every spelling and position, refuses by name — `ptr<const, u8>` included and deliberately (§3) |
 | Assumption mechanism | `ExternAssumption::UncheckedLinkage { callee, signature }` on the **existing** declared-assumption channel, derived from the program's own callee inventory (§4) |
 | Diagnostics | a new `UncheckedLinkage` pass owning `Q032`–`Q035`, through the §L21 process (§6) |
@@ -67,8 +69,8 @@ independent reasons why that cannot happen.
 Two independent, file-local gates, both required:
 
 ```qcore
-import std.extern;          // calling a declared extern function at all
-import std.extern.unsafe;   // declaring one with no contract
+#import std.extern;          // calling a declared extern function at all
+#import std.extern.unsafe;   // declaring one with no contract
 
 unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;
 ```
@@ -300,7 +302,7 @@ A new semantic pass `UncheckedLinkage` owning the free band `Q032`–`Q035`
 
 | Code | Refusal | Pinned by |
 |---|---|---|
-| `Q032` | an `unsafe extern fn` declaration in a file without `import std.extern.unsafe;` | 4 tests, incl. cross-file non-leakage |
+| `Q032` | an `unsafe extern fn` declaration in a file without `#import std.extern.unsafe;` | 4 tests, incl. cross-file non-leakage |
 | `Q033` | signature outside the closed unchecked table: pointer parameter (3 spellings), pointer result, `unit` parameter, spelling outside the §C04.1 table | 5 tests |
 | `Q034` | a waiver beside a checkable declaration: an inline `contract { … }` block, or a name the selected environment declares | 2 tests + 1 control |
 | `Q035` | a published certificate missing a required waiver premise (publication tripwire) | the tripwire predicate, asserted both ways |
@@ -554,7 +556,7 @@ level carries into a certificate named explicitly:
 
 | Level | Selection | Trust artifact in the certificate | Surface | Status |
 |---|---|---|---|---|
-| **L3** manifest-bound contracted | `import std.buffer;` | artifact identity + ABI premises + each contract | pointers included | designed |
+| **L3** manifest-bound contracted | `#import std.buffer;` | artifact identity + ABI premises + each contract | pointers included | designed |
 | **L2** declared contract | `CompileOptions::extern_contracts` | `DeclaredContract` per callee | pointers included | implemented today |
 | **L1** manifest-resident unsafe | contract-less manifest entry | artifact identity + ABI premises + `UncheckedLinkage` | scalars only | designed (§12.3) |
 | **L0** standalone unsafe | `unsafe extern fn` | `UncheckedLinkage { callee, signature }` | scalars only | **implemented — this card** |

@@ -66,11 +66,11 @@ fn admitted(source: &str) -> qcore_compiler::CompiledModule {
 /// The composed string/buffer route's module.
 fn string_module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -82,10 +82,10 @@ fn string_module(body: &[&str]) -> String {
 
 fn buffer_module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -97,10 +97,10 @@ fn buffer_module(body: &[&str]) -> String {
 
 fn record_module(type_decl: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         type_decl.to_owned(),
         String::new(),

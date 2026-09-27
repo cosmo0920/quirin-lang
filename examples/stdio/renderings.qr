@@ -1,5 +1,5 @@
-import std.fmt;
-import std.io;
+#import std.fmt;
+#import std.io;
 
 // `print` and its two renderings.
 //

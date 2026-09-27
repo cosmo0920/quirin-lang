@@ -575,7 +575,7 @@ fn the_binding_changes_no_emitted_byte() {
 
 /// CT07's case is the flagship's plain scoped-task form, and that relation is
 /// **pinned rather than described**: strip the fixture's comment lines and
-/// normalize whitespace, and it is the flagship minus `import std.logger;`,
+/// normalize whitespace, and it is the flagship minus `#import std.logger;`,
 /// minus `log_level trace;`, minus the `io` effect that the logger needs.
 /// `write_lend_tasks_exercise.rs` reads the same fixture file this file does,
 /// so there is now one flagship and one CT07 case, and this test is the seam
@@ -594,11 +594,11 @@ fn ct07s_case_is_the_flagship_without_its_logger() {
             .join(" ")
     }
     let flagship = normalized(DISJOINT_EXERCISE);
-    assert!(flagship.contains("import std.logger; "));
+    assert!(flagship.contains("#import std.logger; "));
     assert!(flagship.contains("log_level trace; "));
     assert!(flagship.contains("effects { io, alloc,"));
     let flagship_without_logger = flagship
-        .replace("import std.logger; ", "")
+        .replace("#import std.logger; ", "")
         .replace("log_level trace; ", "")
         .replace("effects { io, alloc,", "effects { alloc,");
     assert_eq!(

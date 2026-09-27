@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // "Destroying the owner while a share is live refuses" -- the unedited task

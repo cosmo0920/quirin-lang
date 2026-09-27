@@ -1,6 +1,6 @@
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // The piped twin of `fixtures/std_modules/lines.qcore` (card PIPE-OPERATOR).
 // Statement for statement it says the same thing; the desugaring is a pure

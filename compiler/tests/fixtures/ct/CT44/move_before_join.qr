@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT44 control -- the scenario's SECOND disjunct, refused. "Environment moves

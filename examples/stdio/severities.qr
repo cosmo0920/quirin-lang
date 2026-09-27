@@ -1,5 +1,5 @@
-import std.fmt;
-import std.logger;
+#import std.fmt;
+#import std.logger;
 
 // `log` at every severity the logger has, and the barrier that hands the lines
 // on.

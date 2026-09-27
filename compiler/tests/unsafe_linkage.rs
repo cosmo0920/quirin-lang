@@ -243,11 +243,11 @@ fn the_call_module_alone_does_not_grant_the_waiver() {
     // `std.extern` is the call vocabulary and grants no waiver; the reverse
     // holds too, so an unchecked-linkage file names both modules.
     let source = without_import(ROUND_TRIP, "std.extern.unsafe");
-    assert!(source.contains("import std.extern;"));
+    assert!(source.contains("#import std.extern;"));
     assert_eq!(codes(&source, None), ["Q032"]);
 
     let source = without_import(ROUND_TRIP, "std.extern");
-    assert!(source.contains("import std.extern.unsafe;"));
+    assert!(source.contains("#import std.extern.unsafe;"));
     assert_eq!(codes(&source, None), ["Q022"]);
 }
 
@@ -255,7 +255,7 @@ fn the_call_module_alone_does_not_grant_the_waiver() {
 fn importing_the_waiver_in_another_file_does_not_grant_this_one() {
     let granted = SourceFile::new(
         "granted.qcore",
-        "module library;\nimport std.extern.unsafe;\n",
+        "module library;\n#import std.extern.unsafe;\n",
     );
     let caller = SourceFile::new(
         "caller.qcore",
@@ -282,7 +282,7 @@ fn the_gate_is_on_the_declaration_not_on_a_call_to_it() {
     let source = "unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
                   fn main() -> unit { return; }\n";
     assert_eq!(codes(source, None), ["Q032"]);
-    let permitted = format!("import std.extern.unsafe;\n{source}");
+    let permitted = format!("#import std.extern.unsafe;\n{source}");
     let module = compile_with(&permitted, None).unwrap();
     // With the waiver imported and nothing called, the module is an ordinary
     // sequential one and publishes no premise: no call, no trust consumed.
@@ -389,7 +389,7 @@ fn waiving_a_name_the_selected_environment_contracts_refuses() {
     // The contracted route wins. You may not launder away a contract you have —
     // this is LOADER-ABI's rule applied to the waiver: where a declaration is
     // visible, it is compared.
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   unsafe extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n    \
                   qcore_extern_fill(0, 7);\n    return;\n}\n";
@@ -401,7 +401,7 @@ fn the_same_waiver_with_no_such_contract_selected_refuses_on_its_own_merits() {
     // Control for the test above: with the name absent from the environment the
     // identity gate does not fire, and the declaration is refused by the table
     // instead — so `Q034` above was about the contract, not about the pointer.
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   unsafe extern fn k_absent(buffer: ptr<mut, u8>, value: u32) -> unit;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n    \
                   k_absent(0, 7);\n    return;\n}\n";
@@ -414,7 +414,7 @@ fn a_name_cannot_be_declared_both_ways_in_one_file() {
     // a contract and once waived, and hope the driver picks the waiver. Name
     // resolution refuses it before any of this card's gates run, so the
     // ambiguity never reaches them.
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   extern fn k_dup(a: i32) -> i32;\n\
                   unsafe extern fn k_dup(a: i32) -> i32;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n    \
@@ -430,7 +430,7 @@ fn a_name_cannot_be_declared_both_ways_across_two_files() {
     );
     let waived = SourceFile::new(
         "caller.qcore",
-        "import std.extern;\nimport std.extern.unsafe;\n\
+        "#import std.extern;\n#import std.extern.unsafe;\n\
          unsafe extern fn k_dup(a: i32) -> i32;\n\
          fn main() -> unit effects { io, alloc, mut } {\n    \
          k_dup(2);\n    return;\n}\n",
@@ -483,7 +483,7 @@ fn an_inline_contract_on_a_waived_declaration_refuses() {
 
 #[test]
 fn an_uncontracted_callee_without_the_waiver_still_refuses_at_q023() {
-    let source = "import std.extern;\n\
+    let source = "#import std.extern;\n\
                   extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
                   fn main() -> unit effects { io } {\n    \
                   k_unchecked_add(2, 40);\n    return;\n}\n";
@@ -522,7 +522,7 @@ fn an_unsafe_statement_inside_a_body_still_parses_as_it_did() {
 
 #[test]
 fn a_waiver_may_follow_a_function_body() {
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   fn main() -> unit effects { io, alloc, mut } {\n    \
                   k_unchecked_add(2, 40);\n    return;\n}\n\
                   unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n";
@@ -536,7 +536,7 @@ fn a_waiver_may_follow_a_function_body() {
 
 #[test]
 fn a_module_may_mix_a_contracted_callee_with_an_uncontracted_one() {
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   error Failure { Failed; }\n\
                   extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
                   extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\
@@ -564,7 +564,7 @@ fn a_module_may_mix_a_contracted_callee_with_an_uncontracted_one() {
 fn a_mixed_module_still_needs_its_contract_selection() {
     // One contracted callee is enough to require the environment; the waiver
     // does not excuse the module from selecting one.
-    let source = "import std.extern;\nimport std.extern.unsafe;\n\
+    let source = "#import std.extern;\n#import std.extern.unsafe;\n\
                   error Failure { Failed; }\n\
                   extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
                   extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\

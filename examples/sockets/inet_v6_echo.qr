@@ -15,9 +15,9 @@
 // does NOT fall back to IPv4 — a fallback would bind a different address from
 // the one written here, which is the one thing a declared address exists to
 // prevent.
-import std.socket;
-import std.fmt;
-import std.io;
+#import std.socket;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     let port = 49302;

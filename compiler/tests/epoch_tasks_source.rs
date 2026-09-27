@@ -15,7 +15,7 @@ use qcore_compiler::{
     CompileOptions, CompiledModule, SourceExecutionProfile, SourceFile, compile_files,
 };
 
-const HEAD: &str = r#"import std.concurrency;
+const HEAD: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
@@ -56,7 +56,7 @@ const TASKS: &str = r#"    let buffer = qcore_buffer_new(42)?;
 
 /// The CT20 shape: two distinct workers, one owned move and one scalar copy,
 /// both created inside one scope and joined by the creator.
-const TWO_WORKERS: &str = r#"import std.concurrency;
+const TWO_WORKERS: &str = r#"#import std.concurrency;
 concurrency checked;
 fn owner(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn worker(value: i32) -> i32 { return value; }
@@ -275,7 +275,7 @@ fn the_two_existing_routes_are_unchanged() {
 
     // An epoch declaration with no task profile keeps `source.epoch.bound.v1`.
     let plain_epoch = accept(
-        "import std.concurrency;\nfn main() -> unit {\n    thread scope e epoch {\n        \
+        "#import std.concurrency;\nfn main() -> unit {\n    thread scope e epoch {\n        \
          bound 65536 effort 1000;\n        overhead scope 512 thread 128;\n        thread scope \
          reader { peak 1024; effort 10; credit 4096 effort 100; join(drop); }\n    }\n}\n",
     );

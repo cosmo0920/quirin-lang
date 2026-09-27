@@ -2,7 +2,7 @@
 // `count` is a check-time-constant integer, so the transport checker refuses
 // the position at `Q081` — a custody position naming no socket — and the
 // cell question is never asked.
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

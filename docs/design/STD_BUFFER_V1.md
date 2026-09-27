@@ -63,7 +63,7 @@ changes the contract loader, which this card does not open. §9 records that as
 `crates/qcore-core/src/task_execution.rs`'s `Buffer` is the scoped-task
 profile's model: one `i32` payload, no extent, reached through the
 `qcore_buffer_new` / `qcore_buffer_read` / `qcore_buffer_write` intrinsics under
-`import std.concurrency;`. It is **not modified by this card**, not renamed, and
+`#import std.concurrency;`. It is **not modified by this card**, not renamed, and
 not related to the type below by any conversion. The two models share no code
 and no reserved word.
 
@@ -81,7 +81,7 @@ storage does a QCore source program already have?**
 
 | # | Candidate | Extent? | Byte-addressable? | Reachable from a sequential source program? |
 |---|---|---|---|---|
-| B1 | task-route `Buffer` (`qcore_buffer_new/read/write`) | **no** — "this backend's `Buffer` has no extent" (`source_epoch_tasks.rs:49-53`) | no — one `i32` payload | no: the intrinsics require `import std.concurrency;` and route to the task model |
+| B1 | task-route `Buffer` (`qcore_buffer_new/read/write`) | **no** — "this backend's `Buffer` has no extent" (`source_epoch_tasks.rs:49-53`) | no — one `i32` payload | no: the intrinsics require `#import std.concurrency;` and route to the task model |
 | B2 | extern `*mut u8` through a declared C04 contract | **no** — `ExternAssumption::NoExtentTransport` is a standing premise of every extern certificate | only inside the callee, which QCore does not analyse | yes, but every byte is the callee's premise, not a checked fact |
 | B3 | `OwnershipOp::Acquire`'s `Footprint` | **yes** — `Footprint(BTreeMap<String, u64>)` is an exact componentwise quantity | no — it is a quantity, not storage | the IR is reachable; **no source construct produces a byte-axis acquisition** |
 | B4 | `SourceTypeKind::Array` / `Slice` | type-level names only | no | no value of either type is constructible in any source grammar |
@@ -165,7 +165,7 @@ report pins that by showing the refusals arriving as `OwnershipError` values.
 
 ## 5. The source surface
 
-Behind `import std.buffer;`, gated exactly as the five existing bundled modules
+Behind `#import std.buffer;`, gated exactly as the five existing bundled modules
 are (`Q014` unknown module, `Q015` capability without its file-local import).
 
 ```ebnf

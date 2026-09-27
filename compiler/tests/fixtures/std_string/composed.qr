@@ -9,11 +9,11 @@
 // The buffer is a **positive leak control**: this program allocates, so a lost
 // release is something LSan can find, unlike a string-only fixture whose clean
 // exit only confirms that no allocation was introduced.
-import std.string;
-import std.buffer;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.string;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io, alloc, mut } {
     // Two literals, composed. The result is a payload the source never spelled

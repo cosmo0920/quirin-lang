@@ -1,6 +1,6 @@
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 // CT07's bounds control, the lend's own range: the case program (case.qcore)
 // with one bound of the second lend moved from 8 to 9, one byte past the

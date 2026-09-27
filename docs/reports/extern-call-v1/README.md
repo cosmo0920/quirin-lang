@@ -1,5 +1,7 @@
 # `source.extern-call.v1` — bounded extern-call semantics
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card record for `source.extern-call.v1`, specified in
 [`docs/design/EXTERN_CALL_SEMANTICS_V1.md`](../../design/EXTERN_CALL_SEMANTICS_V1.md).
 Implementation checkpoint: this branch. Date: 2026-09-08.
@@ -19,11 +21,11 @@ corpus is unchanged, and full language conformance stays false.
 
 | Condition | Where | Refusal |
 |---|---|---|
-| The calling file opts in with `import std.extern;` | `qcore_core::module_imports` (`EXTERN_MODULE`, `ModuleImports::extern_calls`), gated in `qcore_frontend::module_imports::check_source_imports` before any checking | `Q014` unknown module name; `Q022` extern call without the import |
+| The calling file opts in with `#import std.extern;` | `qcore_core::module_imports` (`EXTERN_MODULE`, `ModuleImports::extern_calls`), gated in `qcore_frontend::module_imports::check_source_imports` before any checking | `Q014` unknown module name; `Q022` extern call without the import |
 | The callee has a trusted declared contract from an explicit `CompileOptions` selection | `CompileOptions::extern_contracts`, loaded by the unchanged `qcore_contract::contract_loader::load_resource_contract_sources` | `Q023` |
 | The call site satisfies §3 | `qcore_core::extern_call`, `qcore_frontend::source_extern` | `Q024`, `Q025`, `Q026`, `Q027` |
 
-Resolution follows the `import std.concurrency;` precedent exactly: the core
+Resolution follows the `#import std.concurrency;` precedent exactly: the core
 owns exact bundled-module resolution, the frontend refuses before checking each
 file, and importing the module in **another** compilation input grants this file
 nothing (pinned by
@@ -172,7 +174,7 @@ map). Spec §L21 gains one row and one clarifying paragraph in the same change.
 
 | Code | Condition | Emitted by |
 |---|---|---|
-| `Q022` | an extern call in a file without `import std.extern;` | `qcore-frontend::module_imports` |
+| `Q022` | an extern call in a file without `#import std.extern;` | `qcore-frontend::module_imports` |
 | `Q023` | the callee has no admitted declared contract in the explicit selection — no selection, a selection that does not load, a duplicate declaration across selected modules, an absent name, or an environment with no retained source text | `qcore-verification::driver`, `qcore-frontend::source_extern` |
 | `Q024` | the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count | both |
 | `Q025` | the nullable-owned-return adapter is missing, applied to a callee returning no custody, names a declared non-error, or cannot discharge live custody on its error arm | both |

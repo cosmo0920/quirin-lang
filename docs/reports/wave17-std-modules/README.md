@@ -1,5 +1,7 @@
 # STD-MODULES — `std.fmt`, `std.io`, `std.logger` (wave 17)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 > Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
 
 
@@ -210,10 +212,10 @@ permitted, since the constructs are new):
 
 | Refusal | Code | Test |
 |---|---|---|
-| `print` without `import std.io;` | `Q015` | `printing_without_the_io_import_refuses` |
-| `log` without `import std.logger;` | `Q015` | `logging_without_the_logger_import_refuses` |
-| `flush` without `import std.logger;` | `Q015` | `flushing_without_the_logger_import_refuses` |
-| a rendering without `import std.fmt;` | `Q015` | `rendering_without_the_fmt_import_refuses` |
+| `print` without `#import std.io;` | `Q015` | `printing_without_the_io_import_refuses` |
+| `log` without `#import std.logger;` | `Q015` | `logging_without_the_logger_import_refuses` |
+| `flush` without `#import std.logger;` | `Q015` | `flushing_without_the_logger_import_refuses` |
+| a rendering without `#import std.fmt;` | `Q015` | `rendering_without_the_fmt_import_refuses` |
 | `std.io` alone does not grant the logger | `Q015` | `the_io_import_alone_does_not_grant_the_logger` |
 | `std.logger` alone does not grant stdout | `Q015` | `the_logger_import_alone_does_not_grant_standard_output` |
 | a misspelled module (`std.fmtt`, `std.stdio`, `std.log`) | `Q014` | `a_misspelled_module_refuses_as_an_unknown_module` |

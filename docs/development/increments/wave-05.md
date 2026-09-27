@@ -70,7 +70,7 @@ boundaries.
   executables, TOCTOU and the unverified `from_package` loader stay open as
   P01-F3. Evidence: `docs/reports/remaining-p01-f2/README.md`.
 - Bounded extern calls (`source.extern-call.v1`): a source function may call a
-  declared extern function only behind `import std.extern;`, with a trusted
+  declared extern function only behind `#import std.extern;`, with a trusted
   C04 contract selected through `CompileOptions::extern_contracts` (inline
   source contracts stay refused), through a closed bridging table (scalars by
   value, borrowed Buffer, consumed own<Buffer>, nullable owned return) where

@@ -6,9 +6,9 @@
 // convention: `p.z` names no declared field of `Point`, and the program is
 // refused at check time (`Q052`, `source.record.v1`'s own message), so a
 // field read is admitted only against the declaration it projects from.
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 type Point { x: i32, y: i32, weight: i32 }
 

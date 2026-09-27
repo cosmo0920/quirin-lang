@@ -1,4 +1,4 @@
-import std.concurrency; import std.logger; concurrency checked;
+#import std.concurrency; #import std.logger; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 0, 9);
   return 1;

@@ -14,10 +14,10 @@
 // C is a real `for` loop rather than an unrolled body, so the native run is a
 // check of that unrolling rather than a restatement of it.
 
-import std.buffer;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io, alloc, mut } {
     let src = bytes(4);

@@ -1,4 +1,4 @@
-import std.extern;
+#import std.extern;
 
 // Card `PIPE-SCALAR-RESULT`: a non-acquiring call's scalar result bound to a
 // local, and that local passed on at a declared scalar parameter. Neither form

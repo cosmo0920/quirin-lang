@@ -64,10 +64,10 @@ fn source_lines(lines: &[&str]) -> String {
 /// the same declarations.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -587,15 +587,15 @@ fn taking_the_extent_of_something_that_is_not_a_buffer_refuses() {
 
 #[test]
 fn buffering_without_the_buffer_import_refuses() {
-    let source = without_line(BYTES, "import std.buffer;");
+    let source = without_line(BYTES, "#import std.buffer;");
     assert_eq!(codes(&source), ["Q015"]);
 }
 
 #[test]
 fn the_io_import_alone_does_not_grant_the_buffer() {
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let b = bytes(4);",
@@ -609,7 +609,7 @@ fn the_io_import_alone_does_not_grant_the_buffer() {
 #[test]
 fn the_buffer_import_alone_does_not_grant_standard_output() {
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit effects { io, alloc } {",
         "    let b = bytes(4);",
@@ -640,7 +640,7 @@ fn a_misspelled_module_refuses_as_an_unknown_module() {
 #[test]
 fn importing_the_module_in_another_file_does_not_grant_this_one_the_capability() {
     let granted = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn helper() -> unit {",
         "    return;",
@@ -680,7 +680,7 @@ fn a_module_that_imports_without_buffering_needs_no_route() {
     // Importing is not using: a file that imports and never allocates stays on
     // the sequential route, exactly as `STD-MODULES` pinned for its three.
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit {",
         "    return;",
@@ -718,7 +718,7 @@ fn dropping_a_resource_is_not_a_gated_buffer_use() {
                 .collect();
             assert!(
                 !codes.iter().any(|code| code == "Q015"),
-                "`drop` must not require `import std.buffer;`, got {codes:?}"
+                "`drop` must not require `#import std.buffer;`, got {codes:?}"
             );
         }
     }
@@ -808,8 +808,8 @@ fn a_module_that_buffers_and_extern_calls_stays_with_the_extern_route() {
     // the buffer route, which is correct, because declaring a symbol crosses
     // nothing.
     let source = source_lines(&[
-        "import std.buffer;",
-        "import std.extern;",
+        "#import std.buffer;",
+        "#import std.extern;",
         "",
         "extern fn qcore_extern_release(p: ptr<mut, u8>) -> unit;",
         "",
@@ -832,8 +832,8 @@ fn declaring_an_extern_function_without_calling_one_is_not_an_extern_module() {
     // surprising direction: declaring a symbol crosses nothing, so a
     // declaration-only file is still a buffer module and this route checks it.
     let source = source_lines(&[
-        "import std.buffer;",
-        "import std.extern;",
+        "#import std.buffer;",
+        "#import std.extern;",
         "",
         "extern fn qcore_extern_release(p: ptr<mut, u8>) -> unit;",
         "",
@@ -857,8 +857,8 @@ fn a_module_that_buffers_inside_a_thread_scope_keeps_the_concurrency_refusal() {
     // refusal. Unchanged from `STD-MODULES`, and now pinned for the buffer
     // constructs too.
     let source = source_lines(&[
-        "import std.buffer;",
-        "import std.concurrency;",
+        "#import std.buffer;",
+        "#import std.concurrency;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    thread scope s {",
@@ -881,8 +881,8 @@ fn a_printing_module_without_a_buffer_still_selects_the_standard_io_route() {
     // the line-producing statements fails this route's conjunction and falls
     // through byte for byte.
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    print dec 1;",
@@ -899,7 +899,7 @@ fn a_printing_module_without_a_buffer_still_selects_the_standard_io_route() {
 #[test]
 fn a_nested_block_refuses() {
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    let b = bytes(4);",
@@ -919,7 +919,7 @@ fn a_nested_block_refuses() {
 #[test]
 fn a_buffer_construct_outside_the_entry_refuses() {
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn helper() -> unit effects { alloc } {",
         "    let b = bytes(4);",
@@ -955,7 +955,7 @@ fn an_undeclared_effect_refuses() {
 #[test]
 fn an_entry_that_never_returns_refuses() {
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    let b = bytes(4);",
@@ -1022,8 +1022,8 @@ fn a_module_using_none_of_this_card_emits_byte_identically() {
     // existing module travels the identical code path. Pinned against the
     // neighbour route this card was inserted in front of.
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let total = 42;",

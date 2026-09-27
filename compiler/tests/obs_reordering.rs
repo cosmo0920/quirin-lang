@@ -52,10 +52,10 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 /// window in which two emitters could write the same bytes
 /// (`AmbiguousAlphabet`), because then a native line's writer would not be a
 /// function of its bytes. That refusal is pinned below, from source.
-const FIXTURE: &str = "import std.concurrency;
-import std.io;
-import std.logger;
-import std.fmt;
+const FIXTURE: &str = "#import std.concurrency;
+#import std.io;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(value: i32) -> i32 effects { io } {
@@ -541,9 +541,9 @@ fn a_reordering_is_admitted_and_a_reversal_within_an_emitter_is_not() {
 /// about interleaving.
 #[test]
 fn a_worker_line_without_an_io_effect_on_that_worker_is_refused() {
-    const NO_WORKER_IO: &str = "import std.concurrency;
-import std.io;
-import std.fmt;
+    const NO_WORKER_IO: &str = "#import std.concurrency;
+#import std.io;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 { value |> print dec; return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
@@ -576,9 +576,9 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// lifted.
 #[test]
 fn a_line_in_a_function_this_program_never_runs_is_refused() {
-    const UNREACHED: &str = "import std.concurrency;
-import std.logger;
-import std.fmt;
+    const UNREACHED: &str = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 fn helper(value: i32) -> i32 effects { io } { value |> log info dec; return value; }
 fn worker(value: i32) -> i32 { return value; }
@@ -611,9 +611,9 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 /// weakening to a multiset comparison.
 #[test]
 fn two_workers_writing_the_same_line_refuse_the_declaration() {
-    const SAME: &str = "import std.concurrency;
-import std.logger;
-import std.fmt;
+    const SAME: &str = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 fn worker(value: i32) -> i32 effects { io } { value |> log info dec; return value; }
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {

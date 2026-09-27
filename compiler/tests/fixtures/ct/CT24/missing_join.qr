@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 fn reader(payload: borrow<Buffer>) -> i32 {

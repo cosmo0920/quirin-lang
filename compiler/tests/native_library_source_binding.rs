@@ -133,7 +133,7 @@ fn bindings(module: &qcore_compiler::CompiledModule) -> Vec<(String, String, Str
 }
 
 /// `source` with a binding declaration inserted after its first line, which is
-/// the `import std.extern;` every fixture here opens with. Written this way so
+/// the `#import std.extern;` every fixture here opens with. Written this way so
 /// the bound and unbound rows compare *the same program*, differing in the
 /// binding line and nothing else.
 fn bound(source: &str, library: &str) -> String {
@@ -337,7 +337,7 @@ fn a_waived_symbol_of_a_manifest_this_file_did_not_bind_refuses() {
     // something else — `Q041`'s shape, a contradiction rewarded with a premise
     // that says less.
     let source = format!(
-        "import std.extern;\nimport std.extern.unsafe;\nextern library {LIBRARY};\n\nunsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    k_unchecked_add(2, 40);\n    return;\n}}\n"
+        "#import std.extern;\n#import std.extern.unsafe;\nextern library {LIBRARY};\n\nunsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    k_unchecked_add(2, 40);\n    return;\n}}\n"
     );
     assert_eq!(
         codes(&source, slice_selection(), both_manifests()),
@@ -366,7 +366,7 @@ fn a_symbol_no_selected_manifest_binds_is_not_foreign() {
     // symbol *no* manifest claims stays unresident exactly as before, while one
     // an unbound manifest claims refuses. Only the second is a contradiction.
     let source = format!(
-        "import std.extern;\nimport std.extern.unsafe;\nextern library {LIBRARY};\n\nunsafe extern fn k_unnamed_symbol(a: i32) -> i32;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    k_unnamed_symbol(2);\n    return;\n}}\n"
+        "#import std.extern;\n#import std.extern.unsafe;\nextern library {LIBRARY};\n\nunsafe extern fn k_unnamed_symbol(a: i32) -> i32;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    k_unnamed_symbol(2);\n    return;\n}}\n"
     );
     let module = compile(&source, slice_selection(), manifest_selection())
         .expect("an unclaimed symbol is admitted");
@@ -387,13 +387,13 @@ fn a_symbol_no_selected_manifest_binds_is_not_foreign() {
 
 /// A sibling input that declares one waived symbol and binds nothing.
 fn unbound_sibling() -> String {
-    "module library;\nimport std.extern.unsafe;\n\nunsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n".to_owned()
+    "module library;\n#import std.extern.unsafe;\n\nunsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n".to_owned()
 }
 
 /// An entry input that binds the buffer library and calls both surfaces.
 fn bound_entry() -> String {
     format!(
-        "import std.extern;\nextern library {LIBRARY};\n\nerror Failure {{ Failed; }}\n\nextern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\nextern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;\nextern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;\nextern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    qcore_extern_fill(b, 7);\n    qcore_extern_sum(b, 8);\n    qcore_extern_release(move b);\n    k_unchecked_add(2, 40);\n    return;\n}}\n"
+        "#import std.extern;\nextern library {LIBRARY};\n\nerror Failure {{ Failed; }}\n\nextern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\nextern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;\nextern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;\nextern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    qcore_extern_fill(b, 7);\n    qcore_extern_sum(b, 8);\n    qcore_extern_release(move b);\n    k_unchecked_add(2, 40);\n    return;\n}}\n"
     )
 }
 
@@ -437,8 +437,8 @@ fn moving_the_sibling_declaration_into_the_bound_file_refuses() {
     let merged = format!(
         "{}\n{}",
         bound_entry().replace(
-            "import std.extern;",
-            "import std.extern;\nimport std.extern.unsafe;"
+            "#import std.extern;",
+            "#import std.extern;\n#import std.extern.unsafe;"
         ),
         "unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n"
     );
@@ -486,7 +486,7 @@ fn a_library_named_after_a_route_selecting_word_does_not_select_that_route() {
     // whole-token-stream route selectors — `concurrency_span` and
     // `source_tasks::has_source_tasks` — and a binding's tokens are a binding,
     // never a use. Without the exclusion this program would be refused for a
-    // missing `import std.concurrency;` on the strength of a library's name.
+    // missing `#import std.concurrency;` on the strength of a library's name.
     let renamed = MANIFEST.replace("library qcore_buffer_demo;", "library spawn;");
     let selection = map(&[(MANIFEST_PATH, &renamed)]);
     let module = compile(&bound(ROUND_TRIP, "spawn"), slice_selection(), selection)

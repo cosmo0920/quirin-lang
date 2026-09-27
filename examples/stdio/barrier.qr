@@ -1,4 +1,4 @@
-import std.logger;
+#import std.logger;
 
 // `flush` on its own, and what it is worth.
 //

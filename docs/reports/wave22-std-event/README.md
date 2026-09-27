@@ -1,6 +1,8 @@
 # STD-EVENT — a checked event surface over the existing reactor models (wave 22)
 
-Card brief: *"Land `import std.event;` exposing a minimal checked event
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
+Card brief: *"Land `#import std.event;` exposing a minimal checked event
 vocabulary over `os_endpoint` and the reactor/descriptor custody models, which
 are today source-UNREACHABLE (the recorded U3 blocker). Census first: enumerate
 what the models can already express; your surface is the honest projection of
@@ -68,7 +70,7 @@ the same program with every readiness induction removed.
 ## 2. The surface
 
 ```qcore
-import std.event;
+#import std.event;
 
 fn main() -> i32 effects { io } {
     event open;
@@ -292,7 +294,7 @@ card).
 | `Q061` | the **determinism boundary**, including the by-name two-member refusal |
 | `Q062` | the declared `effects { … }` row does not admit the derived one |
 
-`Q015` is reused for a missing `import std.event;`, exactly as `STD-MODULES`
+`Q015` is reused for a missing `#import std.event;`, exactly as `STD-MODULES`
 reuses it, with the message naming the module. No new import code is minted.
 
 **Band assumption, stated as the brief asks.** `Q050` (`ComposedTasks`) is the

@@ -106,7 +106,7 @@ fn the_published_certificate_is_independently_rederivable() {
 
 #[test]
 fn log_level_is_import_gated_unique_and_rechecked() {
-    let source = "import std.logger;\n\
+    let source = "#import std.logger;\n\
                   fn main() -> unit effects { io } {\n\
                       log_level debug;\n\
                       flush;\n\
@@ -128,7 +128,7 @@ fn log_level_is_import_gated_unique_and_rechecked() {
             .contains("qcore_diagnostic_stdout")
     );
 
-    let missing_import = source.replace("import std.logger;\n", "");
+    let missing_import = source.replace("#import std.logger;\n", "");
     assert_eq!(codes(&missing_import), ["Q015"]);
     let duplicate = source.replace("log_level debug;", "log_level debug;\n    log_level trace;");
     assert_eq!(codes(&duplicate), ["Q030"]);
@@ -204,35 +204,35 @@ fn a_logger_only_module_needs_no_rendering_import() {
 
 #[test]
 fn printing_without_the_io_import_refuses() {
-    for source in with_line_endings(&without_line(LINES, "import std.io;")) {
+    for source in with_line_endings(&without_line(LINES, "#import std.io;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
 
 #[test]
 fn logging_without_the_logger_import_refuses() {
-    for source in with_line_endings(&without_line(LINES, "import std.logger;")) {
+    for source in with_line_endings(&without_line(LINES, "#import std.logger;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
 
 #[test]
 fn flushing_without_the_logger_import_refuses() {
-    let source = without_line(LOGGER_ONLY, "import std.logger;");
+    let source = without_line(LOGGER_ONLY, "#import std.logger;");
     assert_eq!(codes(&source), ["Q015"]);
 }
 
 #[test]
 fn rendering_without_the_fmt_import_refuses() {
-    for source in with_line_endings(&without_line(LINES, "import std.fmt;")) {
+    for source in with_line_endings(&without_line(LINES, "#import std.fmt;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
 
 #[test]
 fn the_io_import_alone_does_not_grant_the_logger() {
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       print dec 1;\n    \
                       log info dec 1;\n    \
@@ -243,8 +243,8 @@ fn the_io_import_alone_does_not_grant_the_logger() {
 
 #[test]
 fn the_logger_import_alone_does_not_grant_standard_output() {
-    let source = "import std.fmt;\n\
-                  import std.logger;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.logger;\n\
                   fn main() -> unit effects { io } {\n    \
                       log info dec 1;\n    \
                       print dec 1;\n    \
@@ -256,18 +256,18 @@ fn the_logger_import_alone_does_not_grant_standard_output() {
 #[test]
 fn a_misspelled_module_refuses_as_an_unknown_module() {
     for name in ["std.fmtt", "std.stdio", "std.log"] {
-        let source = LINES.replace("import std.fmt;", &format!("import {name};"));
+        let source = LINES.replace("#import std.fmt;", &format!("import {name};"));
         assert_eq!(codes(&source), ["Q014"], "`{name}` must be unknown");
     }
 }
 
 #[test]
 fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability() {
-    let granting = "import std.fmt;\nimport std.io;\nimport std.logger;\n";
+    let granting = "#import std.fmt;\n#import std.io;\n#import std.logger;\n";
     let diagnostics = compile_files(
         &[
             SourceFile::new("granting.qcore", granting),
-            SourceFile::new("using.qcore", without_line(LINES, "import std.io;")),
+            SourceFile::new("using.qcore", without_line(LINES, "#import std.io;")),
         ],
         &CompileOptions {
             entry: None,
@@ -288,9 +288,9 @@ fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability(
 fn a_module_that_imports_without_printing_needs_no_route() {
     // Importing vocabulary is not using it: this file stays on the sequential
     // route and is not dragged onto `source.std-io.v1`.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
-                  import std.logger;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
+                  #import std.logger;\n\
                   fn main() -> i32 { return 0; }\n";
     let module = compile(source).unwrap();
     assert_eq!(
@@ -318,8 +318,8 @@ fn rendering_a_resource_refuses() {
     // without the concurrency import, so this is a real resource binding — the
     // `let` refuses it as a binding, and the operand refuses it as a rendering.
     // Both halves matter: neither alone would keep a resource unrenderable.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       let r = qcore_acquire(true);\n    \
                       print dec r;\n    \
@@ -336,8 +336,8 @@ fn a_borrowed_render_refuses_on_this_route_for_want_of_a_custody_model() {
     // identity map is empty, so every borrowed render written here refuses.
     // The refusal is structural — the absence of a model, not a rule this
     // route states — and it is the same `Q028` an unbound scalar gets.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       let total = 42;\n    \
                       print dec borrow total;\n    \
@@ -352,8 +352,8 @@ fn a_borrowed_render_of_a_resource_this_route_cannot_bind_still_refuses_twice() 
     // the first place: `qcore_acquire` is refused as a `let` and the borrowed
     // operand is refused for want of a custody model. Both halves are pinned,
     // exactly as `rendering_a_resource_refuses` pins them for a bare operand.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       let r = qcore_acquire(true);\n    \
                       print dec borrow r;\n    \
@@ -388,8 +388,8 @@ fn rendering_an_owned_buffer_refuses() {
     // The concurrency-gated allocation refuses even earlier, at its own import
     // gate. Pinned so the buffer form cannot quietly become renderable if that
     // gate ever moves.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       let b = qcore_buffer_new(42);\n    \
                       print dec b;\n    \
@@ -481,9 +481,9 @@ fn an_entry_that_never_returns_refuses() {
 
 #[test]
 fn printing_inside_a_thread_scope_keeps_the_task_routes_refusal() {
-    let source = "import std.concurrency;\n\
-                  import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.concurrency;\n\
+                  #import std.fmt;\n\
+                  #import std.io;\n\
                   concurrency checked;\n\
                   fn main() -> i32 effects { alloc } {\n    \
                       thread scope s {\n        \

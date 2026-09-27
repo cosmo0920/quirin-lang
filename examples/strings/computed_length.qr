@@ -10,9 +10,9 @@
 // Nothing here is spelled twice. Change a byte of the content and the header
 // changes with it, because the header is derived from the content rather than
 // written beside it.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     // The content: `{"ok":true}`, eleven bytes, written one constant byte at a

@@ -71,10 +71,10 @@ fn admitted(source: &str) -> qcore_compiler::CompiledModule {
 /// The buffer route's module: `std.buffer` plus the line modules.
 fn buffer_module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -87,11 +87,11 @@ fn buffer_module(body: &[&str]) -> String {
 /// The composed string/buffer route's module: `std.string` beside `std.buffer`.
 fn string_module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -977,10 +977,10 @@ fn a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name() {
 fn the_owned_field_refusals_survive_a_for_beside_a_loan() {
     fn record_module(body: &[&str]) -> String {
         let mut source = vec![
-            "import std.buffer;".to_owned(),
-            "import std.fmt;".to_owned(),
-            "import std.io;".to_owned(),
-            "import std.logger;".to_owned(),
+            "#import std.buffer;".to_owned(),
+            "#import std.fmt;".to_owned(),
+            "#import std.io;".to_owned(),
+            "#import std.logger;".to_owned(),
             String::new(),
             "type Packet { tag: i32, buf: bytes }".to_owned(),
             String::new(),
@@ -1060,8 +1060,8 @@ fn the_owned_field_refusals_survive_a_for_beside_a_loan() {
 #[test]
 fn a_for_in_a_string_module_without_a_buffer_still_refuses_as_a_nested_block() {
     let source = [
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    for i in 0..2 {",

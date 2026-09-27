@@ -3,7 +3,7 @@
 // use-after-close (`Q083`) and the transport half's own closed-socket stop
 // (`Q082`) refuse it before the cell question is ever asked, so the case's
 // `Q664` is attributable to the cell and not to any question over `server`.
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

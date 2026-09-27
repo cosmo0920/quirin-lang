@@ -26,10 +26,10 @@
 //
 // WHAT THIS IS NOT: not HTTP/1.1 conformance. It is an executed HTTP/1.1
 // subset with the boundary named — see examples/http/README.md.
-import std.http;
-import std.socket;
-import std.fmt;
-import std.io;
+#import std.http;
+#import std.socket;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     // The request. Every component is a literal, which is what makes the

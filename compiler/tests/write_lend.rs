@@ -88,10 +88,10 @@ fn messages(source: &str) -> Vec<String> {
 /// effect in disguise.
 fn module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -844,10 +844,10 @@ fn a_lend_beside_borrow_utf8_refuses_on_the_composed_route() {
     // overlap rule, and until it exists the composition refuses — which
     // trivially refuses every write lend overlapping a live read loan.
     let source = [
-        "import std.string;",
-        "import std.buffer;",
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.buffer;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let store = bytes(8);",
@@ -875,8 +875,8 @@ fn a_lend_beside_borrow_utf8_refuses_on_the_composed_route() {
 #[test]
 fn lend_without_the_buffer_import_refuses_at_the_gate() {
     let source = [
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let store = bytes(8);",
@@ -903,8 +903,8 @@ fn lend_is_contextual_and_a_scalar_named_lend_is_still_a_program() {
     // `let`'s value position, reserved nowhere, so the word keeps every
     // reading it had.
     let source = [
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let lend = 5;",

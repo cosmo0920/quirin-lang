@@ -66,7 +66,7 @@ fn message(source: &str) -> String {
 /// `body` as its statement sequence.
 fn with_body(body: &str) -> String {
     format!(
-        "import std.event;\nimport std.logger;\nimport std.io;\nimport std.fmt;\n\n\
+        "#import std.event;\n#import std.logger;\n#import std.io;\n#import std.fmt;\n\n\
          fn main() -> i32 effects {{ io }} {{\n{body}\n}}\n"
     )
 }
@@ -333,7 +333,7 @@ fn an_owned_buffer_does_not_cross_into_an_event_module() {
     // ownership ledger's, which is a card of its own
     // (follow-on `EVENT-BUFFER-PAYLOAD`). The line half of the brief is what
     // landed, and the value it renders comes off the endpoint directly.
-    let source = "import std.event;\nimport std.buffer;\nimport std.logger;\nimport std.fmt;\n\n\
+    let source = "#import std.event;\n#import std.buffer;\n#import std.logger;\n#import std.fmt;\n\n\
                   fn main() -> i32 effects { io, alloc } {\n    event open;\n    \
                   let b = bytes(4);\n    drop b;\n    event close;\n    return 0;\n}\n";
     assert!(
@@ -575,7 +575,7 @@ fn a_line_in_a_function_this_route_never_lowers_is_refused() {
     // The route models the entry. A `print` in a helper would otherwise be
     // neither emitted nor refused, which is the one shape a composition can
     // silently drop.
-    let source = "import std.event;\nimport std.io;\nimport std.fmt;\n\n\
+    let source = "#import std.event;\n#import std.io;\n#import std.fmt;\n\n\
                   fn helper() -> i32 {\n    print dec 1;\n    return 0;\n}\n\n\
                   fn main() -> i32 effects { io } {\n    event open;\n    event close;\n    \
                   return 0;\n}\n";
@@ -592,11 +592,11 @@ fn a_composed_line_still_needs_its_own_module() {
     // Each capability is gated by its own module and by no other. The event
     // vocabulary never grants `std.io`, and the import gate runs before route
     // selection, so the refusal names the module rather than the route.
-    let source = "import std.event;\n\nfn main() -> i32 effects { io } {\n    event open;\n    \
+    let source = "#import std.event;\n\nfn main() -> i32 effects { io } {\n    event open;\n    \
                   print dec 1;\n    event close;\n    return 0;\n}\n";
     assert_eq!(codes(source), vec!["Q015".to_owned()]);
     assert!(
-        message(source).contains("import std.io;"),
+        message(source).contains("#import std.io;"),
         "{}",
         message(source)
     );

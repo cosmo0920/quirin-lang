@@ -1,5 +1,7 @@
 # Quiet emission and composable streams
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 This increment implements
 [`QUIET_EMISSION_STREAMS_AMENDMENT.md`](../../design/QUIET_EMISSION_STREAMS_AMENDMENT.md).
 It separates source-authored program I/O from compiler observations without
@@ -14,7 +16,7 @@ threshold above `fatal` and a null sink, so these events produce no process
 stream bytes and add no `<stdio.h>` dependency. A verification harness may
 replace the typed sink and lower the threshold; formatting is not embedded at
 event sites. Maintained hosted profiles additionally admit one explicit
-`log_level LEVEL;` declaration, gated by `import std.logger;`. It installs the
+`log_level LEVEL;` declaration, gated by `#import std.logger;`. It installs the
 shared system-trace stdout adapter and records the threshold in the checked
 certificate. Existing run-time refusal, exit-status, and trap behavior is
 unchanged.

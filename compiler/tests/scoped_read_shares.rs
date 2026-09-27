@@ -32,7 +32,7 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 
 /// One allocation, two children with complementary halves, both reading it
 /// while it is lent, and writes on either side of the lending window.
-const TWO_READERS: &str = "import std.concurrency; concurrency checked;
+const TWO_READERS: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;

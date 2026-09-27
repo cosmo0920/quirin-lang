@@ -1,5 +1,7 @@
 # Wave-13 CT lane — CT34 mapped from card CT34-GROWTH's proposal
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 > Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
 
 
@@ -48,7 +50,7 @@ found by measurement and recorded in §4: the one-token control cannot be an
 The case, verbatim:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let x = protected 4;

@@ -1,7 +1,7 @@
-import std.extern;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // The hand-written twin of `chain.qcore`: the same program with both pipelines
 // spelled as the statement sequences they desugar to. The two emit

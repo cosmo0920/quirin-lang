@@ -54,7 +54,7 @@ semantics changed.
 ### Core concurrency prelude (2026-09-08)
 
 Explicit concurrency imports and core prelude (2026-09-08): source files opt in
-with `import std.concurrency;`; the concurrency context is unavailable by default.
+with `#import std.concurrency;`; the concurrency context is unavailable by default.
 The core owns exact bundled-module resolution; the frontend rejects unknown
 modules (`Q014`) and missing imports (`Q015`) before checking each file, so imports
 do not leak across compilation inputs. The task profile retains its separate

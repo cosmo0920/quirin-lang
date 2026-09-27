@@ -142,7 +142,7 @@ A bound of zero is refused rather than admitted as a loop that does nothing:
 
 <!-- refusal: Q098 -->
 ```qcore
-import std.buffer;
+#import std.buffer;
 
 fn main() -> unit effects { alloc, mut } {
     let b = bytes(4);

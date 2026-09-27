@@ -30,7 +30,7 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 /// locals, and on either allocation failure releases what it acquired and
 /// raises a tagged error carrying the parent's Buffer back. The parent takes
 /// the payload out of the bound error after the join, reads it and releases it.
-const PAYLOAD: &str = "import std.concurrency; concurrency checked;
+const PAYLOAD: &str = "#import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {

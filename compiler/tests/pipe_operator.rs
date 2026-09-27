@@ -283,8 +283,8 @@ fn a_resource_operand_is_still_unrenderable_through_a_pipe() {
     // The effect discipline of `source.std-io.v1` is structural: the operand
     // type has no constructor that could denote a resource. Piping does not
     // add one.
-    let source = "import std.fmt;\n\
-                  import std.io;\n\
+    let source = "#import std.fmt;\n\
+                  #import std.io;\n\
                   fn main() -> unit effects { io } {\n    \
                       let r = qcore_acquire(true);\n    \
                       r |> print dec;\n    \
@@ -551,9 +551,9 @@ fn a_piped_sink_inside_a_thread_scope_keeps_the_task_routes_refusal() {
     // pipe: the operator is gone before route selection runs, so a piped
     // `print` inside a `thread scope` is refused exactly as the unpiped one
     // is, and both refuse for the same reason.
-    let piped = "import std.concurrency;\n\
-                 import std.fmt;\n\
-                 import std.io;\n\
+    let piped = "#import std.concurrency;\n\
+                 #import std.fmt;\n\
+                 #import std.io;\n\
                  concurrency checked;\n\
                  fn main() -> i32 effects { alloc } {\n    \
                      thread scope s {\n        \
@@ -962,12 +962,12 @@ fn a_piped_unsafe_stage_deposits_the_same_waiver_as_its_unpiped_twin() {
     // either — the only result-producing stage binds a resource. The waiver is
     // therefore pinned where it is reachable: the piped and unpiped forms emit
     // identical C and observe identically, so the assumption travels unchanged.
-    let unpiped = "import std.extern;\nimport std.extern.unsafe;\n\n\
+    let unpiped = "#import std.extern;\n#import std.extern.unsafe;\n\n\
                    unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
                    unsafe extern fn k_unchecked_measure(count: u64) -> u64;\n\n\
                    fn main() -> unit effects { io, alloc, mut } {\n    \
                    k_unchecked_add(2, 40);\n    k_unchecked_measure(16);\n    return;\n}\n";
-    let piped = "import std.extern;\nimport std.extern.unsafe;\n\n\
+    let piped = "#import std.extern;\n#import std.extern.unsafe;\n\n\
                  unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
                  unsafe extern fn k_unchecked_measure(count: u64) -> u64;\n\n\
                  fn main() -> unit effects { io, alloc, mut } {\n    \

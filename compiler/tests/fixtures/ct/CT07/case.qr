@@ -26,11 +26,11 @@
 //
 // This program is the plain scoped-task form of the flagship pinned in
 // compiler/tests/write_lend_tasks_exercise.rs as DISJOINT_EXERCISE: it drops
-// that program's `import std.logger;` and `log_level trace;` so the checked
+// that program's `#import std.logger;` and `log_level trace;` so the checked
 // artifact is a ScopedTasks module the heap-scenario runner consumes, and it
 // keeps both of the owner's byte reads. It is not byte-identical to any other
 // fixture on disk — see the report's fixture-duplication disclosure.
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 0, 9);

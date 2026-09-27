@@ -1,5 +1,7 @@
 # CT42-CELL-ROUTE (wave 39) — route the socket protocol cell from source, and map CT42
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Base `e878b362` (= `origin/main` at branch time). Report directory:
 `docs/reports/ct42-cell-route/`. Everything numbered below was measured on
 this worktree; measurement logs live in the worktree-private `measure/` and
@@ -157,7 +159,7 @@ operation:
 
 * **Reader** (`crates/qcore-frontend/src/source_socket.rs`): exactly two
   names then `;`, else `Q080` (shape). `SocketUse::Question` makes it a
-  socket use: it selects the route, it needs `import std.socket;` (`Q015`
+  socket use: it selects the route, it needs `#import std.socket;` (`Q015`
   otherwise, measured), and in a helper it is refused as a construct outside
   the entry (`Q080`, pinned).
 * **Transport half** (`crates/qcore-core/src/std_socket.rs`): both names

@@ -23,10 +23,10 @@
 // Nothing that is not model-determined reaches the output: the port is chosen by
 // the kernel, the descriptor numbers are never printed, and the only lines are
 // the two pipelines at the end.
-import std.socket;
-import std.event;
-import std.fmt;
-import std.io;
+#import std.socket;
+#import std.event;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     event open;

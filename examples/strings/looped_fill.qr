@@ -14,9 +14,9 @@
 // stores to bytes 2 and 3 are judged against `[0, 2)` and admitted; a store
 // to byte 1 in the same body would refuse at `Q078`.
 
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let b = bytes(4);
