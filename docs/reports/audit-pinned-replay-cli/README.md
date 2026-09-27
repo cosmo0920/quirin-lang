@@ -38,8 +38,7 @@ host ptrace policy; its refusal is preserved alongside the probe. The earlier
 single-worker old and new probes were deliberately interrupted (exit 130), as
 recorded above. No interrupted attempt is counted as parity evidence.
 
-The new four-worker replay is measured against the W46 completed archive after
-it exits. The worker-count difference is an execution schedule, covered by
+The completed new four-worker replay is measured against the W46 archive. The worker-count difference is an execution schedule, covered by
 W44's parallel-unit byte parity, and does not relax the comparison here: all
 five complete artifacts and every verdict and coverage count must agree after
 explicit accounting for checkout-root provenance. If they do not, the old
@@ -99,8 +98,6 @@ Only after these measurements passed were the legacy compiler example and
 `support/cycle19_compatibility.rs` removed. The built-in command, shared
 source-analysis crate and live `scripts/run_pinned_audit.py` now own current
 execution. `scripts/tests/test_retired_scripts.py` guards against restoring
-the old files. The latest complete standing gate remains W46 until the parent
-integration runs its combined gate; this card's gate status is pending that
-integration. Private targeted check logs and intermediate failed probes are
+the old files. The [combined integration gate](../audit-checkpoint-files/integration/README.md) passed all steps at `55ac39f5`: 6,059 Rust tests, 365 Python tests and 213 Lean audits. Its first-attempt layering and clippy failures and their corrections are retained in that record. Private targeted check logs and intermediate failed probes are
 under `private/audit-pinned-replay-cli/`, including the successful retired-file
 check (3 tests, exit 0) and the earlier source/CLI build and test records.
