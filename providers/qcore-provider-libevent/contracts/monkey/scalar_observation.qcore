@@ -1,0 +1,69 @@
+module contract;
+
+// W46-LIBC-EVENT-CONTRACT-GAPS. Trusted custody assumptions for the exact
+// Monkey and vendored Libevent bodies reviewed at Fluent Bit 66910c10 and
+// 046accf6 (those bodies are byte-identical), plus pinned Libevent d82464a2.
+// Every pointer is only read or temporarily written, never retained or freed;
+// every result is scalar. No string bounds, event state, or result value is
+// asserted. Source identities in contracts.lock delimit these assumptions.
+
+// mk_string.c:211-307. The private helper and its public wrappers scan only
+// their supplied strings, returning an integer offset or -1.
+extern fn _mk_string_search(string: ptr<const, u8>, search: ptr<const, u8>, sensitive: i32, len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(search);
+    ensures normal resource_borrowed(sensitive);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_string_char_search(string: ptr<const, u8>, c: i32, len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(c);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_string_char_search_r(string: ptr<const, u8>, c: i32, len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(c);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+// mk_event.h:140-144 writes mask and status only. It does not initialize or
+// discard the event's other fields or any resource reachable from them.
+extern fn MK_EVENT_NEW(e: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(e);
+    ensures normal resource_return_none();
+};
+
+// event.c:584-587,2527-2530,3569-3572 in all reviewed Libevent copies.
+// These bodies read an event-base feature scalar, sizeof(struct event), or
+// a compile-time numeric version. They do not take callback or lock paths.
+extern fn event_base_get_features(base: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(base);
+    ensures normal resource_return_none();
+};
+
+extern fn event_get_struct_event_size() -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn event_get_version_number() -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

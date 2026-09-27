@@ -12,6 +12,7 @@
     "contracts/monkey/logging.qcore": "4528964e4b5446b589c54bd93567900c24dd7d247146042a99b316530f7235ef",
     "contracts/monkey/memory.qcore": "661dbb51f45552bcb357022f70be035745727284d6f66ded9ee6e3bbf330ecbe",
     "contracts/monkey/native_platform_matrix.qcore": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
+    "contracts/monkey/scalar_observation.qcore": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
     "contracts/monkey/timeout_teardown.qcore": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b",
     "contracts/monkey/wait_failure_policy.qcore": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
     "contracts/monkey/wait_identity_policy.qcore": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",

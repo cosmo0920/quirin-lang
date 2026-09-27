@@ -30,10 +30,10 @@ class CanonicalCorpus(unittest.TestCase):
         # fluent_bit/output_singleplex.qcore in quirin-provider-fluent-bit.
         # 113 -> 114: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qcore
         # (checked specifications) in quirin-provider-fluent-bit.
-        # 114 -> 117: W46-FLUENT-EVENT-CONTRACT-GAPS adds three Fluent Bit
-        # input-chunk query, task-route and flush-ID modules.
-        self.assertEqual(len(modules), 117)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
+        # 114 -> 118: the W46 contract cards add three Fluent Bit modules
+        # and one provider-owned Monkey/Libevent module.
+        self.assertEqual(len(modules), 118)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 73)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 45)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

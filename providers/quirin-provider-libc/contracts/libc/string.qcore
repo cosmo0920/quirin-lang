@@ -76,6 +76,48 @@ contract {
     ensures normal resource_return_none();
 };
 
+// W46-LIBC-EVENT-CONTRACT-GAPS. glibc string.h:75,174,445 and
+// strings.h:116: these are scalar comparisons or a bounded length query.
+// Each reads its input bytes, retains no pointer, and creates/releases no
+// resource. They assert no bounds, termination, or equality fact.
+extern fn memcmp(s1: ptr<const, u8>, s2: ptr<const, u8>, n: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(s1);
+    ensures normal resource_borrowed(s2);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+extern fn strncmp(s1: ptr<const, u8>, s2: ptr<const, u8>, n: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(s1);
+    ensures normal resource_borrowed(s2);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+extern fn strnlen(s: ptr<const, u8>, maxlen: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(maxlen);
+    ensures normal resource_return_none();
+};
+
+extern fn strcasecmp(s1: ptr<const, u8>, s2: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(s1);
+    ensures normal resource_borrowed(s2);
+    ensures normal resource_return_none();
+};
+
 extern fn strdup(s: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;

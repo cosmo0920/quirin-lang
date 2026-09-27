@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 117,
+  "contract_modules": 118,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6740,7 +6740,7 @@
   "workspace_tests": 6023,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 211,
+  "lean_audits": 212,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6909,6 +6909,7 @@
    "AuditReturnRefusedCallLowering.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
+   "AuditScalarObservationContracts.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",

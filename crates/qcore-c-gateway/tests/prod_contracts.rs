@@ -895,7 +895,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    // 50 -> 53 by W46-FLUENT-EVENT-CONTRACT-GAPS: the input state query,
-    // task route/count helpers, and scalar output flush ID helper.
-    assert_eq!(contracts.source_assumptions().len(), 53);
+    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    assert_eq!(contracts.source_assumptions().len(), 54);
 }

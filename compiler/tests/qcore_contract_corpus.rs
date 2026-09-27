@@ -681,6 +681,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdlib.qcore", "system", 4),
     ("libc/string.qcore", "strcmp", 5),
     ("libc/string.qcore", "strlen", 4),
+    // W46-LIBC-EVENT-CONTRACT-GAPS: scalar byte/string reads. These are
+    // reusable library declarations; the current corpus has no uncontracted
+    // leaves for these four names.
+    ("libc/string.qcore", "memcmp", 6),
+    ("libc/string.qcore", "strncmp", 6),
+    ("libc/string.qcore", "strnlen", 5),
+    ("libc/string.qcore", "strcasecmp", 5),
     ("libc/string.qcore", "strdup", 4),
     ("libc/string.qcore", "strerror_r", 6),
     // Card W43-LIBC-RESULT-ALIAS: thirteen derived-result declarations, each a
@@ -1089,6 +1096,34 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("monkey/native_platform_matrix.qcore", "observed_row", 14),
     ("monkey/native_platform_matrix.qcore", "unknown_row", 4),
+    // W46-LIBC-EVENT-CONTRACT-GAPS: pinned, scalar-only observations.
+    ("monkey/scalar_observation.qcore", "_mk_string_search", 6),
+    (
+        "monkey/scalar_observation.qcore",
+        "mk_string_char_search",
+        5,
+    ),
+    (
+        "monkey/scalar_observation.qcore",
+        "mk_string_char_search_r",
+        5,
+    ),
+    ("monkey/scalar_observation.qcore", "MK_EVENT_NEW", 3),
+    (
+        "monkey/scalar_observation.qcore",
+        "event_base_get_features",
+        3,
+    ),
+    (
+        "monkey/scalar_observation.qcore",
+        "event_get_struct_event_size",
+        2,
+    ),
+    (
+        "monkey/scalar_observation.qcore",
+        "event_get_version_number",
+        2,
+    ),
     // Card CONTRACT-VIEW-PROJECTION-CHECK removed this module's
     // `source_identity` (4 clauses), a textual duplicate of
     // `monkey/wait_source_policy.qcore`'s, which is now its single owner.
@@ -1356,9 +1391,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.3).
-    // 114 -> 117 by W46-FLUENT-EVENT-CONTRACT-GAPS: three Fluent Bit modules
-    // with six bounded, source-pinned custody and counted-user declarations.
-    assert_eq!(sources.len(), 117, "unexpected contract corpus size");
+    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    assert_eq!(sources.len(), 118, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

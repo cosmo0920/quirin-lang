@@ -257,5 +257,6 @@ import QCore.ReservedSpelling
 import QCore.MemberReleaseCallee
 import QCore.Sr5Soundness
 import QCore.MetricTraceContractGaps
+import QCore.ScalarObservationContracts
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -119,6 +119,7 @@
         "monkey/logging.qcore",
         "monkey/memory.qcore",
         "monkey/native_platform_matrix.qcore",
+        "monkey/scalar_observation.qcore",
         "monkey/timeout_teardown.qcore",
         "monkey/wait_failure_policy.qcore",
         "monkey/wait_identity_policy.qcore",
@@ -129,7 +130,8 @@
       "resource_view": [
         "monkey/intrusive_list.qcore",
         "monkey/logging.qcore",
-        "monkey/memory.qcore"
+        "monkey/memory.qcore",
+        "monkey/scalar_observation.qcore"
       ]
     },
     {
@@ -255,7 +257,7 @@
       ],
       "published": {
         "libc/memory.qcore": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
-        "libc/string.qcore": "679d979e08d4c5627cad4675de0a7328fd00c8addd119dfab099a582d243b386"
+        "libc/string.qcore": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
       },
       "resource_view": [
         "libc/dirent.qcore",
