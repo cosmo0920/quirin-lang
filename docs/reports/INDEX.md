@@ -21,6 +21,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
 
+| [audit-pinned-replay-cli](audit-pinned-replay-cli/README.md) | Pinned replay CLI relocation |
+
 ## B
 
 | Card directory | Original report title |
