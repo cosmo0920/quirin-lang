@@ -1,0 +1,51 @@
+{
+ "parity.jsonl": {
+  "baseline_sha256": "8ea1f0b03ece46929fd5426a4a2e6b8581910af50a47494cc6ef12ee9a2a63d7",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "8ea1f0b03ece46929fd5426a4a2e6b8581910af50a47494cc6ef12ee9a2a63d7",
+  "sorted_rows": true
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "baseline_sha256": "cce3afac57e38b4e2f7e472becc7e9b82f79ac3b52f0a8d0f267593b2bffdcb5",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "cce3afac57e38b4e2f7e472becc7e9b82f79ac3b52f0a8d0f267593b2bffdcb5",
+  "sorted_rows": true
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.contracts.json": {
+  "baseline_sha256": "5599ffd5104c546e6e5f81f0158b7a51fc359fbf9a7275f813aabce91cef290c",
+  "byte_identical": false,
+  "identical_after_root_alias": true,
+  "run_sha256": "d8d4fea1ee093ea390de8f11e40ebfda41ebc29fa1ed9528ceec22bb8cde2447",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.invocation.json": {
+  "baseline_sha256": "5fd56f0f5305b476301298b0c5d44d45461694082a8179e3ec500e7957c2aefe",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "cfaec08433cdc359a98bda4ba697732dbc86a1217b6b4c6718f36e3aba4a9a8b",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.json": {
+  "baseline_sha256": "4d9e94e8b056075031e85bab2367c4ddc0e1076e983d513863abe2a62f0d322c",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "a5622980c0f47cbf099c3413c7ab1453aedd729cf0d7dcf6b2b447b6ce211d22",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.source-effects.json": {
+  "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "sorted_rows": false
+ }
+}

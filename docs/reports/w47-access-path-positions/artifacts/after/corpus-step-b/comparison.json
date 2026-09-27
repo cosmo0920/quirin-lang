@@ -1,0 +1,195 @@
+{
+ "after_parity_rows": 92362,
+ "after_position_rows": {
+  "call-argument|call-argument-access|False": 1459,
+  "call-argument|call-argument-access|True": 587,
+  "call-argument|old_refusal|False": 27558,
+  "call-argument|old_refusal|True": 1173,
+  "condition-assignment|old_refusal|False": 80,
+  "condition-assignment|old_refusal|True": 68,
+  "condition|condition-access|False": 709,
+  "condition|condition-access|True": 3964,
+  "condition|old_refusal|False": 16579,
+  "condition|old_refusal|True": 10127,
+  "return|old_refusal|False": 779,
+  "return|old_refusal|True": 120,
+  "return|return-family|False": 287,
+  "return|return-family|True": 554
+ },
+ "before_parity_rows": 88858,
+ "changed_functions": 498,
+ "functions": {
+  "after": {
+   "Safe": 507,
+   "Unknown": 4318,
+   "Unsafe": 9
+  },
+  "before": {
+   "Safe": 494,
+   "Unknown": 4331,
+   "Unsafe": 9
+  }
+ },
+ "leaf_attribution": {
+  "added|unknown_alias|direct": 264,
+  "added|unknown_alias|direct-statement": 349,
+  "added|unknown_alias|nondirect": 398,
+  "removed|unknown_alias|direct": 2,
+  "removed|unknown_alias|nondirect": 2,
+  "removed|unsupported:COND|direct": 397,
+  "removed|unsupported:COND|direct-continuation": 17,
+  "removed|unsupported:COND|nondirect": 5,
+  "removed|unsupported:IND|direct": 15,
+  "removed|unsupported:IND|direct-continuation": 54,
+  "removed|unsupported:IND|direct-statement": 307,
+  "removed|unsupported:IND|nondirect": 1,
+  "removed|unsupported:OTHER|direct-statement": 16,
+  "removed|unsupported:RET|direct": 8,
+  "removed|unsupported:UNC|nondirect": 29
+ },
+ "leaf_families": {
+  "after": {
+   "leak": 34,
+   "summary_conflict": 1,
+   "unknown_alias": 7440,
+   "unsupported:COND": 6369,
+   "unsupported:IND": 15037,
+   "unsupported:OTHER": 5670,
+   "unsupported:RET": 284,
+   "unsupported:UNC": 8902
+  },
+  "before": {
+   "leak": 34,
+   "summary_conflict": 1,
+   "unknown_alias": 6433,
+   "unsupported:COND": 6788,
+   "unsupported:IND": 15414,
+   "unsupported:OTHER": 5686,
+   "unsupported:RET": 292,
+   "unsupported:UNC": 8931
+  }
+ },
+ "move_counts": {
+  "Unknown->Safe": 13
+ },
+ "moves": [
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_kind",
+   "library": "ctraces",
+   "unit": 35
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "lz4frame.c",
+   "function": "LZ4F_resetDecompressionContext",
+   "library": "librdkafka",
+   "unit": 51
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_state_name",
+   "library": "librdkafka",
+   "unit": 69
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_type_name",
+   "library": "librdkafka",
+   "unit": 69
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_clear_last_err",
+   "library": "librdkafka",
+   "unit": 78
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_maybe_clear_heartbeat_failed_err",
+   "library": "librdkafka",
+   "unit": 78
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_rebalance_protocol",
+   "library": "librdkafka",
+   "unit": 78
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_get_offset",
+   "library": "librdkafka",
+   "unit": 99
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_get_err",
+   "library": "librdkafka",
+   "unit": 100
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_set_err",
+   "library": "librdkafka",
+   "unit": 100
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_update_acknowledgement_type",
+   "library": "librdkafka",
+   "unit": 113
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_set_types",
+   "library": "librdkafka",
+   "unit": 135
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_set_types_uniform",
+   "library": "librdkafka",
+   "unit": 135
+  }
+ ],
+ "units": {
+  "after": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ }
+}

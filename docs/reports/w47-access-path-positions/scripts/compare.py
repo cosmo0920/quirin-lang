@@ -13,7 +13,11 @@ BEFORE_DIR and AFTER_DIR each hold `resource-diagnostics.json` and
 * `changed-leaves.jsonl.gz`: every added or removed diagnostic leaf of every
   changed function, with its origin and its attribution: `direct` when an
   admitted W47 position row of the AFTER parity stream names the same
-  function and line, otherwise `nondirect` (reviewed by reading);
+  function and line, `direct-continuation` when such a row is on one of the
+  next six lines of a multi-line statement's refusal, `direct-statement` when
+  a P2 statement row admitted in AFTER but not in BEFORE names the same
+  function and line (the enum arm's statements), otherwise `nondirect`
+  (reviewed by reading);
 * `changed-functions.jsonl.gz`: every function whose diagnostic multiset
   changed.
 
@@ -29,6 +33,10 @@ import pathlib
 import sys
 
 POSITIONS = {"condition", "condition-assignment", "return", "call-argument"}
+# A refusal of these families on line L is also attributed to an admitted W47
+# row of the same function on lines L+1..L+CONTINUATION ("direct-continuation").
+CONTINUED = {"unsupported:COND", "unsupported:RET", "unsupported:IND"}
+CONTINUATION = 6
 
 
 def open_any(path):
@@ -100,6 +108,14 @@ def main():
         if position in POSITIONS and row.get("old_route") == "old_refusal" and row.get("new_admitted"):
             admitted[(row["function"], row["line"])].append(position)
 
+    # P2 statement rows (no `position` key) the typed reader admits in AFTER
+    # but did not admit in BEFORE: the enum arm's statement admissions.
+    def statement_admissions(rows):
+        return {(row["function"], row["line"]) for row in rows
+                if "position" not in row and row.get("old_route") == "old_refusal"
+                and row.get("new_admitted")}
+
+    new_statements = statement_admissions(after_parity) - statement_admissions(before_parity)
     status = {"before": collections.Counter(), "after": collections.Counter()}
     units = {"before": collections.Counter(), "after": collections.Counter()}
     leaves = {"before": collections.Counter(), "after": collections.Counter()}
@@ -142,6 +158,18 @@ def main():
                     d = json.loads(text)
                     positions = admitted.get((name, d["line"]))
                     kind = "direct" if positions else "nondirect"
+                    if not positions and family(d) in CONTINUED:
+                        # A multi-line controlling expression or return: the
+                        # refusal names the statement's first line, the typed
+                        # operand row its own line.
+                        for offset in range(1, CONTINUATION + 1):
+                            positions = admitted.get((name, d["line"] + offset))
+                            if positions:
+                                kind = "direct-continuation"
+                                break
+                    if kind == "nondirect" and (name, d["line"]) in new_statements:
+                        kind = "direct-statement"
+                        positions = ["statement"]
                     attribution[f"{change}|{family(d)}|{kind}"] += 1
                     leaf_rows.append(dict(base, change=change, family=family(d), leaf=d,
                                           attribution=kind, positions=sorted(set(positions or [])),

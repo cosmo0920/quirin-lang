@@ -1,0 +1,16 @@
+[
+  {
+    "id": "W47-ACCESS-PATH-POSITION-RESIDUALS",
+    "title": "Condition, return and call-actual shapes the typed position reader still refuses",
+    "why": "W47-ACCESS-PATH-POSITIONS (gateway rule 10k) serves one call-free condition operand, one NAME = PATH operand, a single-read return and a Borrowed/data-tail call actual. Measured on the AFTER corpus parity stream (artifacts/after/corpus/parity.jsonl.gz, de-duplicated by position_rows.py): the typed reader was asked and refused 4,456 condition-operand rows in 1,241 functions, 275 return rows in 228 functions, 4,456 call-actual rows in 936 functions and 24 condition-assignment rows in 21 functions; 6,369 COND, 284 RET and 15,037 IND leaves remain. Named shapes: a return carrying &&, || or ?: (get_client_rack, get_group_id, get_group_instance_id, get_transactional_id), an assignment or a call inside a return (cJSON_SetNumberHelper, rd_kafka_sasl_cyrus_ready), a ?: actual (rd_kafka_mk_brokername), a nested call inside an actual, an anonymous inline enum member (`enum { ... } state;`, rd_kafka_mock_cgrp_classic_check_state), and an interior address returned by array decay (rd_kafka_name), which stays refused by rule 5j. DISCHARGE: each shape either admitted by a rule that preserves C's evaluation order and the callee's custody premise, with matching audited Lean, negative controls and a measured corpus/system re-pin, or a recorded decision to keep it refused.",
+    "source": "docs/reports/w47-access-path-positions/README.md",
+    "recorded_by": "W47-ACCESS-PATH-POSITIONS"
+  },
+  {
+    "id": "W47-TYPED-ROOT-DECLARATION-READER",
+    "title": "The typed position premises read the lexical declaration reader, which refuses typedef-spelled parameters and locals",
+    "why": "A pointer-valued typed return needs every root never bound by the custody closure (UntrackedBases::never_bound) and not may_bind (rule 5b), and an assignment operand needs a declared local; both read the lexical declaration reader, which answers nothing for a function whose declarations it did not all read. Twelve of the frozen forecast's step-A Safe predictions miss for this reason alone: the one-line getters rd_kafka_messages_get, rd_kafka_opaque, rd_kafka_ConfigEntry_name, rd_kafka_Node_host, rd_kafka_Node_rack, rd_kafka_handle_mock_cluster, rd_kafka_mock_cluster_bootstraps, rd_kafka_mock_cluster_handle, rd_kafka_share_partition_offsets_list_get and rd_kafka_share_partition_offsets_offsets (typedef-spelled `const T *` formals), and rd_kafka_topic_partition_get_leader_epoch and rd_kafka_topic_partition_get_current_leader_epoch (a typedef-spelled local pointer in `if (!(parpriv = rktpar->_private))`). A control in docs/reports/w47-access-path-positions/README.md shows the same getter certifying with a `struct` spelling and refusing with a typedef spelling. DISCHARGE: a custody-closure and declaration answer derived from the same Clang AST the typed reader matches (typedef-resolved), shown to over-approximate every binding the lexical closure names, with matching audited Lean, negative controls (written, address-taken and call-argument roots) and a measured re-pin; never a relaxation of the pointer-return premise to never_bound alone.",
+    "source": "docs/reports/w47-access-path-positions/README.md",
+    "recorded_by": "W47-ACCESS-PATH-POSITIONS"
+  }
+]

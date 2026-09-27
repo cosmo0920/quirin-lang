@@ -1,0 +1,169 @@
+{
+ "moves": [
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "kind": "direct",
+   "library": "fluent-bit-system",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 17924,
+     "origin": "plugins/in_storage_backlog/sb.c:206"
+    }
+   ],
+   "unit": 0
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit",
+   "kind": "direct",
+   "library": "fluent-bit-system",
+   "positions": [
+    "call-argument"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 20068,
+     "origin": "src/flb_engine.c:1735"
+    }
+   ],
+   "unit": 7
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit_status",
+   "kind": "summary-cascade",
+   "library": "fluent-bit-system",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "unresolved resource identity `config`",
+     "family": "unknown_alias",
+     "line": 20080,
+     "origin": "src/flb_engine.c:1751"
+    },
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `flb_engine_exit`",
+     "family": "unsupported:UNC",
+     "line": 20081,
+     "origin": "src/flb_engine.c:1752"
+    }
+   ],
+   "unit": 7
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit",
+   "kind": "direct",
+   "library": "fluent-bit-system",
+   "positions": [
+    "call-argument"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 20068,
+     "origin": "src/flb_engine.c:1735"
+    }
+   ],
+   "unit": 8
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_exit_status",
+   "kind": "summary-cascade",
+   "library": "fluent-bit-system",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "unresolved resource identity `config`",
+     "family": "unknown_alias",
+     "line": 20080,
+     "origin": "src/flb_engine.c:1751"
+    },
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `flb_engine_exit`",
+     "family": "unsupported:UNC",
+     "line": 20081,
+     "origin": "src/flb_engine.c:1752"
+    }
+   ],
+   "unit": 8
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_output.c",
+   "function": "flb_output_check",
+   "kind": "nondirect-review",
+   "library": "fluent-bit-system",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 18961,
+     "origin": "src/flb_output.c:1936"
+    }
+   ],
+   "unit": 13
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "src/flb_output.c",
+   "function": "flb_output_check",
+   "kind": "nondirect-review",
+   "library": "fluent-bit-system",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 18961,
+     "origin": "src/flb_output.c:1936"
+    }
+   ],
+   "unit": 14
+  }
+ ],
+ "tally": {
+  "direct": 3,
+  "nondirect-review": 2,
+  "summary-cascade": 2
+ }
+}

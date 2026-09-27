@@ -327,6 +327,22 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
     assert!(keys.contains(&GATE.to_owned()), "{keys:?}");
 }
 
+/// `W47-TYPED-ROOT-DECLARATION-READER`: the pointer-return premise reads the
+/// lexical declaration reader, which does not read a typedef-spelled formal,
+/// so the same getter certifies with a `struct` spelling and keeps its
+/// refusal with a typedef spelling. Recorded as a residual, never relaxed.
+#[test]
+fn a_typedef_spelled_formal_keeps_the_pointer_return_refusal() {
+    if !clang_available() {
+        return;
+    }
+    let spelled = "struct g_s { char *host; }; const char *w(const struct g_s *node) { return node->host; }";
+    assert_eq!(outcome(spelled), safe());
+    let typedef = "typedef struct g_s g_t; struct g_s { char *host; }; \
+        const char *w(const g_t *node) { return node->host; }";
+    assert_eq!(outcome(typedef), unknown(&[RETURN]));
+}
+
 /// Step B, the owner-aware enum arm: an anonymous enum typedef member is a
 /// scalar in a condition, a store and a short-circuit operand under a tracked
 /// guard; a typedef-hidden union beside it keeps its refusal.

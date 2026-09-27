@@ -1,0 +1,1545 @@
+{
+ "moves": [
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "cmt_histogram.c",
+   "function": "check_buckets",
+   "kind": "direct",
+   "library": "cmetrics",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 5591,
+     "origin": "cmt_histogram.c:201"
+    }
+   ],
+   "unit": 20
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_kind",
+   "kind": "direct",
+   "library": "ctraces",
+   "positions": [
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8966,
+     "origin": "ctr_encode_opentelemetry.c:639"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8969,
+     "origin": "ctr_encode_opentelemetry.c:642"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8972,
+     "origin": "ctr_encode_opentelemetry.c:645"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8975,
+     "origin": "ctr_encode_opentelemetry.c:648"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8978,
+     "origin": "ctr_encode_opentelemetry.c:651"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 8981,
+     "origin": "ctr_encode_opentelemetry.c:654"
+    }
+   ],
+   "unit": 35
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "ctr_id.c",
+   "function": "ctr_id_get_buf",
+   "kind": "direct",
+   "library": "ctraces",
+   "positions": [
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 6840,
+     "origin": "ctr_id.c:125"
+    }
+   ],
+   "unit": 37
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "lz4frame.c",
+   "function": "LZ4F_resetDecompressionContext",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 1808,
+     "origin": "lz4frame.c:1276"
+    }
+   ],
+   "unit": 51
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "nanopb/pb_common.c",
+   "function": "advance_iterator",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 418,
+     "origin": "nanopb/pb_common.c:126"
+    }
+   ],
+   "unit": 53
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_countsIndexFor",
+   "kind": "summary-cascade",
+   "library": "librdkafka",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `rd_hdr_getBucketIndex`",
+     "family": "unsupported:UNC",
+     "line": 4161,
+     "origin": "rdhdrhistogram.c:261"
+    }
+   ],
+   "unit": 67
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_getBucketIndex",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "call-argument"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 4115,
+     "origin": "rdhdrhistogram.c:204"
+    }
+   ],
+   "unit": 67
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_histogram_reset",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 4077,
+     "origin": "rdhdrhistogram.c:158"
+    }
+   ],
+   "unit": 67
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_lowestEquivalentValue",
+   "kind": "summary-cascade",
+   "library": "librdkafka",
+   "positions": [],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `rd_hdr_getBucketIndex`",
+     "family": "unsupported:UNC",
+     "line": 4141,
+     "origin": "rdhdrhistogram.c:234"
+    }
+   ],
+   "unit": 67
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_sizeOfEquivalentValueRange",
+   "kind": "direct+summary-cascade",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `rd_hdr_getBucketIndex`",
+     "family": "unsupported:UNC",
+     "line": 4132,
+     "origin": "rdhdrhistogram.c:224"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 4135,
+     "origin": "rdhdrhistogram.c:227"
+    }
+   ],
+   "unit": 67
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_state_name",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 24770,
+     "origin": "rdkafka.c:6670"
+    }
+   ],
+   "unit": 69
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_type_name",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 24787,
+     "origin": "rdkafka.c:6691"
+    }
+   ],
+   "unit": 69
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_value",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 21736,
+     "origin": "rdkafka_admin.c:2827"
+    }
+   ],
+   "unit": 70
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_assignor.c",
+   "function": "ut_print_toppar_list",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "call-argument",
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 20737,
+     "origin": "rdkafka_assignor.c:930"
+    },
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 20738,
+     "origin": "rdkafka_assignor.c:931"
+    }
+   ],
+   "unit": 72
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_reconnect_backoff",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 22061,
+     "origin": "rdkafka_broker.c:2273"
+    }
+   ],
+   "unit": 75
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_clear_last_err",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 20467,
+     "origin": "rdkafka_cgrp.c:388"
+    }
+   ],
+   "unit": 78
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_maybe_clear_heartbeat_failed_err",
+   "kind": "direct+summary-cascade",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20472,
+     "origin": "rdkafka_cgrp.c:398"
+    },
+    {
+     "attribution": "nondirect",
+     "description": "call to uncontracted function `rd_kafka_cgrp_clear_last_err`",
+     "family": "unsupported:UNC",
+     "line": 20474,
+     "origin": "rdkafka_cgrp.c:400"
+    }
+   ],
+   "unit": 78
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_rebalance_protocol",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20395,
+     "origin": "rdkafka_cgrp.c:176"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20396,
+     "origin": "rdkafka_cgrp.c:177"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20401,
+     "origin": "rdkafka_cgrp.c:184"
+    }
+   ],
+   "unit": 78
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_get_default_topic_conf",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 25100,
+     "origin": "rdkafka_conf.c:3196"
+    }
+   ],
+   "unit": 79
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_AlterConfigs_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19883,
+     "origin": "rdkafka_event.c:341"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_AlterConsumerGroupOffsets_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19979,
+     "origin": "rdkafka_event.c:451"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_AlterUserScramCredentials_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19997,
+     "origin": "rdkafka_event.c:471"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_CreateAcls_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19958,
+     "origin": "rdkafka_event.c:427"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_CreatePartitions_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19876,
+     "origin": "rdkafka_event.c:332"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_CreateTopics_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19862,
+     "origin": "rdkafka_event.c:314"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DeleteAcls_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19972,
+     "origin": "rdkafka_event.c:443"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DeleteConsumerGroupOffsets_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19949,
+     "origin": "rdkafka_event.c:417"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DeleteGroups_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19942,
+     "origin": "rdkafka_event.c:409"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DeleteRecords_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19905,
+     "origin": "rdkafka_event.c:367"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DeleteTopics_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19869,
+     "origin": "rdkafka_event.c:323"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeAcls_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19965,
+     "origin": "rdkafka_event.c:435"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeCluster_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19935,
+     "origin": "rdkafka_event.c:401"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeConfigs_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19898,
+     "origin": "rdkafka_event.c:359"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeConsumerGroups_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19920,
+     "origin": "rdkafka_event.c:384"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeTopics_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19928,
+     "origin": "rdkafka_event.c:393"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_DescribeUserScramCredentials_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19988,
+     "origin": "rdkafka_event.c:461"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_ElectLeaders_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20021,
+     "origin": "rdkafka_event.c:498"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_IncrementalAlterConfigs_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19890,
+     "origin": "rdkafka_event.c:349"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_ListConsumerGroupOffsets_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20013,
+     "origin": "rdkafka_event.c:489"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_ListConsumerGroups_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-continuation",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 19912,
+     "origin": "rdkafka_event.c:375"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_ListOffsets_result",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20006,
+     "origin": "rdkafka_event.c:481"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_config_string",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in switch expression",
+     "family": "unsupported:COND",
+     "line": 19763,
+     "origin": "rdkafka_event.c:190"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 19765,
+     "origin": "rdkafka_event.c:193"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_message_count",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in switch expression",
+     "family": "unsupported:COND",
+     "line": 19753,
+     "origin": "rdkafka_event.c:178"
+    }
+   ],
+   "unit": 82
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_leader_epoch_check",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 21701,
+     "origin": "rdkafka_mock.c:666"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 21703,
+     "origin": "rdkafka_mock.c:668"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 21705,
+     "origin": "rdkafka_mock.c:670"
+    }
+   ],
+   "unit": 91
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_get_offset",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20382,
+     "origin": "rdkafka_op.c:1167"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20384,
+     "origin": "rdkafka_op.c:1169"
+    }
+   ],
+   "unit": 99
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_count_abs_offsets",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 22239,
+     "origin": "rdkafka_partition.c:3815"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 22240,
+     "origin": "rdkafka_partition.c:3816"
+    }
+   ],
+   "unit": 100
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_get_err",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 22695,
+     "origin": "rdkafka_partition.c:4624"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 22696,
+     "origin": "rdkafka_partition.c:4625"
+    }
+   ],
+   "unit": 100
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_reset_offsets",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 22181,
+     "origin": "rdkafka_partition.c:3714"
+    }
+   ],
+   "unit": 100
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_set_err",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 22689,
+     "origin": "rdkafka_partition.c:4613"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 22690,
+     "origin": "rdkafka_partition.c:4614"
+    }
+   ],
+   "unit": 100
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_update_acknowledgement_type",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 20032,
+     "origin": "rdkafka_share_acknowledgement.c:860"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "unrecognized assignment destination",
+     "family": "unsupported:OTHER",
+     "line": 20034,
+     "origin": "rdkafka_share_acknowledgement.c:864"
+    }
+   ],
+   "unit": 113
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdlist.c",
+   "function": "rd_list_first",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 3182,
+     "origin": "rdlist.c:372"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 3184,
+     "origin": "rdlist.c:374"
+    }
+   ],
+   "unit": 125
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdlist.c",
+   "function": "rd_list_last",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 3187,
+     "origin": "rdlist.c:378"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 3189,
+     "origin": "rdlist.c:380"
+    }
+   ],
+   "unit": 125
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_set_types",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct-statement",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 19665,
+     "origin": "rdunittest_fetcher.c:145"
+    }
+   ],
+   "unit": 135
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_set_types_uniform",
+   "kind": "direct",
+   "library": "librdkafka",
+   "positions": [
+    "condition",
+    "statement"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 19656,
+     "origin": "rdunittest_fetcher.c:132"
+    },
+    {
+     "attribution": "direct-statement",
+     "description": "unrecognized assignment destination",
+     "family": "unsupported:OTHER",
+     "line": 19657,
+     "origin": "rdunittest_fetcher.c:133"
+    }
+   ],
+   "unit": 135
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_core/mk_memory.c",
+   "function": "mk_ptr_print",
+   "kind": "direct",
+   "library": "monkey-libevent",
+   "positions": [
+    "call-argument",
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+     "family": "unsupported:COND",
+     "line": 1857,
+     "origin": "mk_core/mk_memory.c:79"
+    },
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 1858,
+     "origin": "mk_core/mk_memory.c:80"
+    }
+   ],
+   "unit": 159
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_core/mk_memory.c",
+   "function": "mk_ptr_to_buf",
+   "kind": "direct+summary-cascade",
+   "library": "monkey-libevent",
+   "positions": [
+    "call-argument",
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 1839,
+     "origin": "mk_core/mk_memory.c:55"
+    },
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 1847,
+     "origin": "mk_core/mk_memory.c:65"
+    },
+    {
+     "attribution": "direct",
+     "description": "indirect memory access is outside the resource projection",
+     "family": "unsupported:IND",
+     "line": 1849,
+     "origin": "mk_core/mk_memory.c:68"
+    },
+    {
+     "attribution": "nondirect",
+     "description": "unresolved resource identity `buf`",
+     "family": "unknown_alias",
+     "line": 1850,
+     "origin": "mk_core/mk_memory.c:69"
+    }
+   ],
+   "unit": 159
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_server/mk_clock.c",
+   "function": "_next_buffer",
+   "kind": "direct",
+   "library": "monkey-libevent",
+   "positions": [
+    "condition",
+    "return"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 3734,
+     "origin": "mk_server/mk_clock.c:57"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 3735,
+     "origin": "mk_server/mk_clock.c:58"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "family": "unsupported:RET",
+     "line": 3738,
+     "origin": "mk_server/mk_clock.c:61"
+    }
+   ],
+   "unit": 164
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_server/mk_fifo.c",
+   "function": "mk_fifo_queue_get",
+   "kind": "direct",
+   "library": "monkey-libevent",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 5229,
+     "origin": "mk_server/mk_fifo.c:204"
+    }
+   ],
+   "unit": 166
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_server/mk_http.c",
+   "function": "mk_http_keepalive_check",
+   "kind": "direct",
+   "library": "monkey-libevent",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 6821,
+     "origin": "mk_server/mk_http.c:1130"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 6822,
+     "origin": "mk_server/mk_http.c:1131"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 6826,
+     "origin": "mk_server/mk_http.c:1135"
+    },
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 6830,
+     "origin": "mk_server/mk_http.c:1141"
+    }
+   ],
+   "unit": 168
+  },
+  {
+   "added": [],
+   "after": "Safe",
+   "before": "Unknown",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_cap",
+   "kind": "direct",
+   "library": "monkey-libevent",
+   "positions": [
+    "condition"
+   ],
+   "removed": [
+    {
+     "attribution": "direct",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "family": "unsupported:COND",
+     "line": 6545,
+     "origin": "mk_server/mk_plugin.c:782"
+    }
+   ],
+   "unit": 175
+  }
+ ],
+ "tally": {
+  "direct": 55,
+  "direct+summary-cascade": 3,
+  "summary-cascade": 2
+ }
+}
