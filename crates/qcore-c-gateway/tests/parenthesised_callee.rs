@@ -505,13 +505,12 @@ fn a_cast_of_a_parenthesised_operand_is_not_a_call() {
         "{:#?}",
         subject(&run)
     );
-    // An assignment of a cast keeps the refusal it had, which names no call.
+    // The scalar assignment with a pure cast now passes the statement reader;
+    // the cast still names no call and carries no resource effect.
     let run =
         unit("typedef long word_t; void subject(void) { int n = 1; word_t m; m = (word_t)(n); }");
-    assert_eq!(
-        unsupported(subject(&run)),
-        ["unsupported assignment expression"]
-    );
+    assert_eq!(subject(&run).status, AnalysisStatus::Safe);
+    assert!(unsupported(subject(&run)).is_empty());
 }
 
 /// A typedef name a body also declares as an object is not trusted as a type:

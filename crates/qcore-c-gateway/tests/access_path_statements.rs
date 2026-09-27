@@ -62,6 +62,7 @@ fn pointer_store_and_union_still_refuse() {
         "union U { int x; }; int subject(union U *u) { int x = u->x; return 0; }",
         "typedef union U { int x; int y; } U; int subject(U *u) { int x = u->x; return 0; }",
         "typedef union U { int x; int y; } U; typedef struct S { U *u; } S; int subject(S *s) { int x = s->u->x; return 0; }",
+        "typedef struct { int x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
     ] {
         let result = run(source);
         let UnrestrictedLegacyResult::Unknown {

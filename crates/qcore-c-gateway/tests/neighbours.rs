@@ -663,9 +663,11 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // which does not resolve in this before-state (its constructor's
     // declaration is withdrawn), so one `UnknownAlias ic` is added. Measured
     // with the repair off in the same tree: 20.
+    // W46 typed scalar statements additionally retain the unresolved `chunk`
+    // base at line 248 when the constructor declarations are withdrawn.
     assert_eq!(
         before.diagnostics.len(),
-        21,
+        22,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );

@@ -732,13 +732,23 @@ fn qual(node: &Value) -> Option<&str> {
 }
 
 fn is_scalar(node: &Value) -> bool {
-    qual(node).is_some_and(|text| {
-        !text.contains(['*', '[', ']', '(', ')'])
-            && !text.contains("struct ")
-            && !text.contains("union ")
-            && !text.contains("volatile")
-            && !text.contains("_Atomic")
-    })
+    // A missing/opaque desugared spelling is not evidence of a scalar. In
+    // particular Clang may leave a typedef to an anonymous struct/union as
+    // `a_lock_t`; the former negative filter admitted it as an integer.
+    let Some(text) = qual(node) else { return false };
+    let words = text.split_whitespace().collect::<Vec<_>>();
+    let mut base = false;
+    for word in words {
+        match word {
+            "const" | "restrict" => {}
+            "signed" | "unsigned" | "short" | "long" => base = true,
+            "char" | "int" | "float" | "double" | "_Bool" | "bool" | "__int128" => {
+                base = true;
+            }
+            _ => return false,
+        }
+    }
+    base
 }
 
 fn is_pointer(node: &Value) -> bool {

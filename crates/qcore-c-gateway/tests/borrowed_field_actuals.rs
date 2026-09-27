@@ -357,13 +357,29 @@ fn a_later_opaque_reassignment_of_the_base_refuses_every_earlier_read() {
     if !clang_available() {
         return;
     }
-    refused(
-        "the base is reassigned from an uncontracted call later in the body",
+    let result = analyze(
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_handle *chunk; storage = in->storage; \
          chunk = b_open(storage->cio, storage->stream, n); storage = b_pick(in); \
          if (!chunk) { return 0; } b_close(chunk); return 0; }",
+        "w",
     );
+    assert!(!matches!(result, UnrestrictedLegacyResult::Safe(_)));
+    let w = function(program(&result), "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown);
+    for base in ["in", "storage"] {
+        assert!(
+            w.diagnostics.iter().any(|d| matches!(
+                &d.kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == base
+            )),
+            "missing {base} alias obligation: {:?}",
+            w.diagnostics
+        );
+    }
+    assert!(w.diagnostics.iter().any(|d| matches!(
+        &d.kind, LegacyDiagnosticKind::Unsupported { description }
+            if description == "call to uncontracted function `b_pick`"
+    )));
 }
 
 /// The rest of the whitelist, one premise violated per row.

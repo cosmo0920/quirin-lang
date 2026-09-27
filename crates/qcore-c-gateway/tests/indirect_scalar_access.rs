@@ -365,12 +365,22 @@ fn a_call_in_the_statement_stays_refused() {
 }
 
 #[test]
-fn a_subscript_whose_index_reads_memory_stays_refused() {
+fn a_subscript_index_can_read_a_second_live_scalar_path() {
     expect(
-        "`p[q[0]] = 1`: the index is itself an access",
+        "`p[q[0]] = 1`: both untracked bases have typed read obligations",
         "void w(char *p, int *q) { p[q[0]] = 1; }",
-        "Unknown",
-        &["unsupported:unrecognized assignment destination"],
+        "Safe",
+        &[],
+    );
+}
+
+#[test]
+fn a_released_pointer_read_in_a_subscript_index_is_a_violation_candidate() {
+    expect(
+        "the index read must discharge its own liveness obligation",
+        "void w(char *p) { char *q; q = x_fresh(1); x_free(q); p[q[0]] = 1; }",
+        "Unsafe",
+        &["unknown_alias:q", "use_after_release"],
     );
 }
 

@@ -15,6 +15,8 @@ open QCore.IndirectScalarAccess
 structure Shape where
   exactType : Bool
   knownFieldOwner : Bool
+  -- True only for an established scalar builtin value type. A typedef whose
+  -- desugared spelling still names an anonymous aggregate supplies no proof.
   scalarValue : Bool
   unionField : Bool
   bitfield : Bool
@@ -50,6 +52,10 @@ theorem missing_type_refuses (p : Shape) (h : p.exactType = false) : admits p = 
   simp [admits, h]
 
 theorem missing_field_owner_refuses (p : Shape) (h : p.knownFieldOwner = false) :
+    admits p = false := by
+  simp [admits, h]
+
+theorem unproven_scalar_value_refuses (p : Shape) (h : p.scalarValue = false) :
     admits p = false := by
   simp [admits, h]
 

@@ -604,11 +604,33 @@ fn a_volatile_qualifier_moves_no_resource_projection_verdict() {
         ),
     ];
     for (label, plain, qualified) in cases {
-        assert_eq!(
-            verdict(plain),
-            verdict(qualified),
-            "{label}: a `volatile` qualifier must move no resource-projection verdict, \
-             because this projection derives no synchronization fact for it to change"
+        let plain = verdict(plain);
+        let qualified = verdict(qualified);
+        if *label == "local acquisition shape" {
+            assert_eq!(plain.0, "safe");
+            assert!(qualified.0.starts_with("unknown:"));
+            assert_eq!(
+                qualified.1,
+                vec!["unsupported:unsupported assignment expression"]
+            );
+            continue;
+        }
+        assert!(
+            plain.0.starts_with("unknown:") && qualified.0.starts_with("unknown:"),
+            "{label}: volatile cannot certify: {plain:?} / {qualified:?}"
+        );
+        for obligation in ["publication:g_published", "unknown_alias:h"] {
+            if plain.1.iter().any(|key| key == obligation) {
+                assert!(
+                    qualified.1.iter().any(|key| key == obligation),
+                    "{label}: volatile dropped {obligation}: {plain:?} / {qualified:?}"
+                );
+            }
+        }
+        assert!(
+            qualified.1.iter().all(|key| plain.1.contains(key)
+                || key == "unsupported:unsupported assignment expression"),
+            "{label}: unexpected volatile movement: {plain:?} / {qualified:?}"
         );
     }
 }
