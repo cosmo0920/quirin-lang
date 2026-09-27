@@ -202,6 +202,14 @@ impl Fixture {
             .unwrap()
     }
 
+    fn dump(&self, args: &[&str]) -> Output {
+        Command::new(env!("CARGO_BIN_EXE_quirin-dump-checkpoint"))
+            .current_dir(&self.0)
+            .args(args)
+            .output()
+            .unwrap()
+    }
+
     fn checkpoint(&self, args: &[&str]) -> Output {
         Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
             .current_dir(&self.0)
@@ -327,6 +335,24 @@ fn per_configuration_checkpoints_match_whole_and_resume_independently() {
         assert_eq!(content(left), content(&right));
         succeeded(&fixture.checkpoint(&["verify", left.to_str().unwrap()]));
     }
+    let sample_path = paths[0].to_str().unwrap();
+    let summary = fixture.dump(&[sample_path]);
+    succeeded(&summary);
+    let summary: serde_json::Value = serde_json::from_slice(&summary.stdout).unwrap();
+    assert_eq!(summary["schema_version"], 3);
+    assert_eq!(summary["units"].as_array().unwrap().len(), 1);
+    let full = fixture.dump(&["--full", sample_path]);
+    succeeded(&full);
+    let full: serde_json::Value = serde_json::from_slice(&full.stdout).unwrap();
+    let verdicts = fixture.dump(&["--section", "verdicts", sample_path]);
+    succeeded(&verdicts);
+    let verdicts: serde_json::Value = serde_json::from_slice(&verdicts.stdout).unwrap();
+    assert_eq!(verdicts, full["verdicts"]);
+    let checkpoint = Checkpoint::from_bytes(&fs::read(&paths[0]).unwrap()).unwrap();
+    assert_eq!(
+        full["result"],
+        serde_json::to_value(&checkpoint.result).unwrap()
+    );
     let alpha = checkpoint_for(&fixture, "qo-1", "alpha/alpha_0.c");
     let unchanged = fs::read(&alpha).unwrap();
     let again = fixture.run(

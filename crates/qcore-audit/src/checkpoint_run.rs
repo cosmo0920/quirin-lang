@@ -149,6 +149,7 @@ pub(crate) fn run(
                     checkpoint.provenance.process_peak_rss_kib = status_kib("VmHWM:");
                     checkpoint.provenance.wall_time_ms = started.elapsed().as_millis() as u64;
                     write_atomically(&path, &checkpoint.to_bytes()?)?;
+                    eprintln!("checkpoint ready: {}", path.display());
                     let result = checkpoint.result;
                     return Ok::<_, String>((
                         path,
@@ -163,6 +164,7 @@ pub(crate) fn run(
             };
             let mut reader = CheckpointReader::open(&path)?;
             let result = reader.section::<ResultSection>("result")?;
+            eprintln!("checkpoint ready: {}", path.display());
             let peak = sampler.finish();
             Ok((
                 path,
@@ -196,6 +198,7 @@ pub(crate) fn run(
     if crate::checkout_head(audit.checkout())? != audit.revision() {
         return Err("checkout HEAD changed during audit; rerun with stable inputs".into());
     }
+    eprintln!("checkpoint linking {} file(s)", paths.len());
     let summary = crate::compose::compose(
         &paths,
         &crate::compose::ComposeOutputs {

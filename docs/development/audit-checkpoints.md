@@ -225,8 +225,9 @@ A checkpoint worker retains one unit's analysis and the ten sections for that
 unit until it atomically renames the file. Up to `--jobs` units may run at once;
 the ordered consumer retains only small completion records. A later unit's
 completed `.qo` is sealed before the consumer waits for an earlier, slower
-unit, so process interruption leaves every already sealed unit available to
-`--resume`. An interrupted unit's `.qo.partial` is ignored and its missing or
+unit, with an immediate `checkpoint ready: PATH` line on standard error.
+After all units finish, `checkpoint linking N file(s)` marks composition.
+Process interruption leaves every already sealed unit available to `--resume`. An interrupted unit's `.qo.partial` is ignored and its missing or
 refused `.qo` is recomputed. Files are synced before rename; Unix also syncs
 the containing directory. Process-interruption recovery is portable, while
 host-crash durability depends on filesystem and platform guarantees. The composer reads one unit's step sections at a
