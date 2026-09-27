@@ -41,6 +41,45 @@ fn reusable_libc_catalog_declares_only_neutral_queries() {
     }
 }
 
+#[test]
+fn libc_scalar_contracts_match_the_host_declared_abi() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load_resource_contract_sources(&BTreeMap::from([(
+        "libc/string.qcore".to_owned(),
+        STRING.to_owned(),
+    )]))
+    .expect("production libc string module loads");
+    for body in [
+        "int test(const void *a, const void *b, size_t n) { return memcmp(a,b,n); }",
+        "int test(const char *a, const char *b, size_t n) { return strncmp(a,b,n); }",
+        "size_t test(const char *a, size_t n) { return strnlen(a,n); }",
+        "int test(const char *a, const char *b) { return strcasecmp(a,b); }",
+    ] {
+        let source =
+            format!("#define _GNU_SOURCE 1\n#include <string.h>\n#include <strings.h>\n{body}\n");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "test",
+            &contracts,
+        )
+        .expect("host declaration parses");
+        let status = match result {
+            UnrestrictedLegacyResult::Safe(_) => AnalysisStatus::Safe,
+            UnrestrictedLegacyResult::Unsafe(s) => s.functions["test"].status,
+            UnrestrictedLegacyResult::Unknown {
+                partial: Some(s), ..
+            } => s.functions["test"].status,
+            other => panic!("no analyzable summary: {other:?}"),
+        };
+        assert_eq!(status, AnalysisStatus::Safe, "{body}");
+    }
+}
+
 fn contracts(with_observation: bool) -> ResourceContracts {
     let mut modules = BTreeMap::from([("libc/memory.qcore".to_owned(), MEMORY.to_owned())]);
     if with_observation {
