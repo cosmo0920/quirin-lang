@@ -65,7 +65,11 @@ validated upstream defect.
 
 The structured corpus pin deliberately moves 114 → 117 modules and adds six
 declarations (46 pinned in `quirin-provider-fluent-bit/contracts.lock`, from
-40). `providers/contracts.py sync` regenerated the load path. A Rust fixture
+40). `providers/contracts.py sync` regenerated the load path. The Cycle 19
+resource manifest selects all three new modules, moving 50 → 53 selected
+modules and 183 → 189 resource-v1 declarations (216 rejected unchanged).
+Its provider-selection and legacy-mode pins now include the six contracts.
+A Rust fixture
 accepts a live borrowed scalar status call, refuses a call after release and
 withdraws a contract whose C prototype disagrees. Lean's counted-user model
 proves that a neutral helper preserves count and pending-release obligations,
@@ -73,7 +77,8 @@ while an opaque lifecycle call remains undecided; the C-to-Lean classification
 and Rust correspondence remain the review premises of trust boundary 28.
 
 Focused results before the standing gate: `qcore_contract_corpus` **4 passed**,
-`retry_lifetime` **21 passed** (two new controls),
+`retry_lifetime` **21 passed** (two new controls), `contract_loader` **10 passed**,
+and `provider_selection` **17 passed** after the selection pin update;
 `providers/contracts.py check` exit **0**, Lean **210/210 audits** exit **0**,
 and `quirin-audit pin --check` at each source revision **6 recorded / 0 not in
 force / 0 stale**, exit **0**. An initial `providers/contracts.py sync` exit 1
@@ -98,7 +103,8 @@ slot. The integration arbiter is performed by the integrator after merge.
   no unintended Safe or Unsafe movement and preserving Unknowns in the
   denominator. Keep the archived W46 external-callee report immutable.
 - Resolve expected shared-file conflicts in `compiler/tests/qcore_contract_corpus.rs`,
-  `providers/contract-load-path.json`,
+  `compiler/tests/contract_loader.rs`, `cycle19-resource-contracts.json`,
+  `crates/qcore-audit/tests/provider_selection.rs`, `providers/contract-load-path.json`,
   `providers/quirin-provider-fluent-bit/contracts.lock`, Lean audit registry,
   and corpus selection pins deliberately.
 
