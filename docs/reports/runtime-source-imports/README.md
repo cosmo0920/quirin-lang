@@ -206,7 +206,7 @@ execution or a C-corpus safety claim. Private originals: `private/runtime-source
 
 A pre-comparison formatting check exited 1 because the longer canonical spelling
 wrapped one test string replacement; `9271b204` applies rustfmt to that statement.
-The subsequent inventory exits 0. The integrated standing gate remains pending.
+The subsequent inventory exits 0. The corrected integrated standing gate is recorded below.
 
 The pinned post-change audit also exits 0. All five JSON result artifacts are
 byte-identical to the pre-change run, including resource diagnostics and the
@@ -220,7 +220,7 @@ claim changes. Both runs use four workers; this card makes no throughput claim.
 The first complete gate (`private/runtime-source-imports-gate-20260927T141703Z`,
 source implementation `9271b204`, documentation through `14f0e205`) ran every
 Rust unit: 339 units / 352 summaries, **6,114 passed, eight failed, 11 ignored**.
-[Step records](failed-gate-steps.json) retain every command and exit. Five failures
+[Step records](failed-gate-steps.json) retain every command and exit. Six failures
 came from dynamic test-source generators/removal needles still spelling bare
 `import`; those helpers now use `#import`, without weakening their refusal
 assertions. Two remaining bookkeeping categories account for the other failures:
@@ -237,3 +237,19 @@ and Lean import move before those boundaries; no semantic or proof statement
 changes. Matrix regeneration refreshes its derived audit inventory before the
 next Python run. Formatting, both reevaluation probes, submodule initialization
 and Clang recording already passed. A fresh corrected gate is required below.
+
+## Corrected integrated gate
+
+At `70d29367`, all nine standing-gate commands exit 0: **6,122 Rust passed,
+zero failed, 11 ignored (339 units / 352 summaries); 216 Lean audits;
+365 Python tests**. Formatting, all-target Clippy, both reevaluation probes,
+submodule initialization and the local Clang recording pass. [Gate](gate.json)
+and [step commands](gate/steps.json) carry the measurements; private logs:
+`/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/runtime-source-imports-gate-20260927T142437Z`. Provider tests/packages are carried explicitly from EXT-02/03;
+provider files are unchanged. This closes the runtime import and explicit
+contract-load-path implementation cards without changing corpus verdicts.
+
+After acceptance-matrix regeneration, the complete Python suite passes again
+(365 tests, exit0); docs-index verification and `git diff --check` also exit0.
+[Final check commands](gate/final-checks.json) and private logs in
+`private/runtime-source-imports/final-checks/` retain these results.

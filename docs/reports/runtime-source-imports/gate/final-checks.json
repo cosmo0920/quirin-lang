@@ -1,0 +1,35 @@
+[
+  {
+    "name": "python",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 23.661993218993302
+  },
+  {
+    "name": "docs-index",
+    "argv": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.04664563701953739
+  },
+  {
+    "name": "diff",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.013867002038750798
+  }
+]

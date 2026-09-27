@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Runtime source imports now support `#import std.fmt;` and relative `.qr` modules with or without the extension. Snapshot-only library APIs, explicit CLI filesystem loading and file-local capabilities are covered by the [runtime import report](reports/runtime-source-imports/README.md). The [contract-load-path check](reports/contract-check-load-path/README.md) resolves published contract inclusions as trusted resource-v1 assumptions, not C-body safety. The 421-source replay retains 168 accepted / 253 refused outcomes and all accepted emitted C; five pinned audit artifacts remain byte-identical.
+
 Extension migration: [EXT-01](reports/extension-compatibility/README.md) passed its compatibility gate (6,096 Rust tests, 215 Lean audits, 365 Python tests; provider gate 129 tests and five verified packages). [EXT-02/03 physical renames](reports/extension-physical-migration/README.md) passed the same core counts and a fresh 129-test provider gate with five verified packages: 195 `.qv`, 421 `.qr`, five `.qrlib`, including archived inputs. All 616 tracked source inputs retain their outcomes under proposed aliases (353 accepted, 263 refused); these are source compilation outcomes, not safety coverage. The compatibility measurement kept historical names unchanged; the user subsequently authorized renaming archived sources as well, with explicit original-measurement provenance.
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
@@ -106,21 +108,19 @@ source-analysis adapters live in `quirin-source-analysis`, shared by the
 compiler and audit crates. All pinned verdicts, coverage and contract text
 match the completed W46 predecessor; three source-effect identity hashes
 change solely because the new worktree is a different current directory,
-with the exact hash cascade accounted in the parity record. The integrated
-standing gate for this relocation is pending; the gate below remains the
-latest completed one.
+with the exact hash cascade accounted in the parity record. The relocation gate is complete; the later runtime-import gate below is the
+latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest merged gate is [W46-CONTRACT-ACCESS-EXPANSION](reports/w46-contract-access-expansion/gate.json)
-at `329ccd05`: **6,051 core Rust passed, 0 failed, 11 ignored over 327 units /
-339 summaries; 129 provider Rust passed, 0 failed, 1 ignored over 43 summaries;
-213 Lean audits; 364 root Python tests; 15 provider Python tests**. All steps
-exit 0, including both reevaluation examples, core/provider fmt and clippy,
-submodule, contract inventory, five package builds/verifications and docs index.
-Clang 21.1.8 was measured in this worktree. Earlier isolated failures and their
-repairs remain disclosed; the final full regenerated-matrix Python check is
-recorded in the report.
+The latest completed gate is [runtime source imports and contract checks](reports/runtime-source-imports/gate.json)
+at `70d29367`: **6,122 core Rust passed, 0 failed, 11 ignored over 339 units /
+352 summaries; 216 Lean audits; 365 root Python tests**. All nine gate steps
+exit 0, including formatting, Clippy and both reevaluation probes. The first
+failed run and exact corrections are retained in the report. Clang 21.1.8 was
+recorded in this worktree. The unchanged provider workspace carries the
+EXT-02/03 measurement: 129 Rust passed, zero failed, one ignored, five packages
+built and verified; this card makes no new provider-run claim.
 
 The five provider crates own **73** canonical contract modules; **45** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
