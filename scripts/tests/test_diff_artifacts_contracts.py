@@ -237,19 +237,19 @@ class RecordedBlindSpotTest(unittest.TestCase):
         expected = {
             "wave13-corpus": {
                 "added": [
-                    "qcore/fluent_bit/input_chunk_name.qv",
-                    "qcore/fluent_bit/logging.qv",
-                    "qcore/fluent_bit/routes_mask.qv",
+                    "qcore/fluent_bit/input_chunk_name.qcore",
+                    "qcore/fluent_bit/logging.qcore",
+                    "qcore/fluent_bit/routes_mask.qcore",
                 ],
                 # HASH-CLAUSE retired the comment carrier in this module; the
                 # wave-14 report could only describe it as a byte-size change.
-                "changed": ["qcore/fluent_bit/hash_table_publication.qv"],
+                "changed": ["qcore/fluent_bit/hash_table_publication.qcore"],
             },
             "wave14-corpus": {
                 "added": [
-                    "qcore/chunkio/chunk_residency.qv",
-                    "qcore/fluent_bit/input_chunk_helpers.qv",
-                    "qcore/fluent_bit/time.qv",
+                    "qcore/chunkio/chunk_residency.qcore",
+                    "qcore/fluent_bit/input_chunk_helpers.qcore",
+                    "qcore/fluent_bit/time.qcore",
                 ],
                 "changed": [],
             },

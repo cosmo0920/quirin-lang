@@ -56,17 +56,17 @@ backfill = load_tool()
 RECORDED_FINDINGS = {
     "docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz": {
         "added": [
-            "qcore/fluent_bit/input_chunk_name.qv",
-            "qcore/fluent_bit/logging.qv",
-            "qcore/fluent_bit/routes_mask.qv",
+            "qcore/fluent_bit/input_chunk_name.qcore",
+            "qcore/fluent_bit/logging.qcore",
+            "qcore/fluent_bit/routes_mask.qcore",
         ],
-        "changed": ["qcore/fluent_bit/hash_table_publication.qv"],
+        "changed": ["qcore/fluent_bit/hash_table_publication.qcore"],
     },
     "docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz": {
         "added": [
-            "qcore/chunkio/chunk_residency.qv",
-            "qcore/fluent_bit/input_chunk_helpers.qv",
-            "qcore/fluent_bit/time.qv",
+            "qcore/chunkio/chunk_residency.qcore",
+            "qcore/fluent_bit/input_chunk_helpers.qcore",
+            "qcore/fluent_bit/time.qcore",
         ],
         "changed": [],
     },

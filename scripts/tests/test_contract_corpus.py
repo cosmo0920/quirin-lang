@@ -49,7 +49,7 @@ class CanonicalCorpus(unittest.TestCase):
         owned = set()
         prefix = contract_corpus.LIBC_CRATE + "/contracts/"
         for relative in files:
-            if relative.startswith(prefix) and relative.endswith(".qcore"):
+            if relative.startswith(prefix) and relative.endswith((".qcore", ".qv")):
                 owned |= set(contract_corpus.declared_functions(root / relative))
         # Every name the libc crate declares is a listed libc/POSIX name.
         self.assertTrue(owned and owned <= names, sorted(owned - names))

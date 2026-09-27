@@ -204,7 +204,8 @@ class BuildMatrixSections(unittest.TestCase):
         self.assertEqual(produced["versions"]["provider_packages"], packages)
         self.assertEqual(
             produced["corpus"]["contract_modules"],
-            sum(len(list((ROOT / "contract" / directory).rglob("*.qcore")))
+            sum(sum(path.suffix in {".qcore", ".qv"}
+                    for path in (ROOT / "contract" / directory).rglob("*"))
                 for directory in json.loads((ROOT / "contract/corpus.json").read_text())["roots"]),
         )
         self.assertEqual(
