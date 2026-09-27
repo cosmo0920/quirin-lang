@@ -1,5 +1,7 @@
 # COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: *"Compose `source.event.v1` with the source line vocabulary so event
 programs can carry source-level output lines."* With the user's own acceptance
 rule, quoted verbatim: **"use pipe operator instead of debug prints on example
@@ -228,7 +230,7 @@ rather than as design, because that is what they are.
 | `wake D 256;` | `Q058` | this route — refused, never truncated |
 | a line in a function this route never lowers | `Q058` | this route (see below) |
 | two ready registrations, with or without a line | `Q061` | unchanged |
-| a `print` without `import std.io;` | `Q015` | the import gate, before route selection |
+| a `print` without `#import std.io;` | `Q015` | the import gate, before route selection |
 | **a rendering operand naming nothing at all** | `Q013` | name resolution, *generically* |
 | **a `let` shadowing an endpoint** | `Q012` | name resolution, *generically* |
 | an owned buffer in an event module | `Q058` | this route (§8.1) |

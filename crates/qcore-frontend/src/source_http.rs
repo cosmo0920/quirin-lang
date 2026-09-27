@@ -242,14 +242,14 @@ pub fn has_source_http(program: &SourceProgram) -> bool {
     !http_uses(program).is_empty()
 }
 
-/// The span of the first statement needing `import std.http;`.
+/// The span of the first statement needing `#import std.http;`.
 #[must_use]
 pub fn http_span(program: &SourceProgram) -> Option<Span> {
     http_uses(program).values().next().copied()
 }
 
 /// The span of the first `let NAME = "…";` in a module this route claims, which
-/// is what needs `import std.string;` **in addition to** `import std.http;`.
+/// is what needs `#import std.string;` **in addition to** `#import std.http;`.
 ///
 /// A quoted token at a method, a target, a field name, a field value or a
 /// content position is deliberately **not** here: those are this module's own

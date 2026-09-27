@@ -69,10 +69,10 @@ fn source_lines(lines: &[&str]) -> String {
 /// missing-import gate in disguise.
 fn module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io } {".to_owned(),
     ];
@@ -348,7 +348,7 @@ fn a_rendered_literal_that_does_not_decode_keeps_the_base_routes_code() {
 #[test]
 fn rendering_a_literal_without_the_string_import_refuses() {
     let source = source_lines(&[
-        "import std.io;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    print \"hello\";",
@@ -362,7 +362,7 @@ fn rendering_a_literal_without_the_string_import_refuses() {
 #[test]
 fn rendering_a_literal_without_the_output_import_refuses() {
     let source = source_lines(&[
-        "import std.string;",
+        "#import std.string;",
         "",
         "fn main() -> unit effects { io } {",
         "    print \"hello\";",
@@ -373,8 +373,8 @@ fn rendering_a_literal_without_the_output_import_refuses() {
     assert!(messages(&source)[0].contains("std.io"));
 
     let logged = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    log info \"hello\";",
@@ -396,7 +396,7 @@ fn a_rendered_string_needs_no_formatting_module() {
         module.execution_profile,
         SourceExecutionProfile::StandardStringV1
     );
-    assert!(!STATUS_LINE.contains("import std.fmt;"));
+    assert!(!STATUS_LINE.contains("#import std.fmt;"));
 }
 
 #[test]
@@ -404,8 +404,8 @@ fn a_rendered_scalar_still_needs_the_formatting_module() {
     // The other direction: narrowing the gate to the selector word did not
     // weaken it.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let s = \"hello\";",
@@ -423,8 +423,8 @@ fn the_imports_do_not_cross_compilation_inputs() {
     // Amendment §2's isolation rule, for the composed capability: importing
     // `std.string` in another input grants this file nothing.
     let importer = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn helper() -> unit {",
         "    return;",
@@ -464,7 +464,7 @@ fn a_constructed_string_at_an_operand_selects_this_route() {
         "let s = \"hello\";\n    print s[0:2];",
     ] {
         let source = format!(
-            "import std.string;\nimport std.io;\nimport std.logger;\n\nfn main() -> unit effects \
+            "#import std.string;\n#import std.io;\n#import std.logger;\n\nfn main() -> unit effects \
              {{ io }} {{\n    {body}\n    return;\n}}\n"
         );
         assert_eq!(
@@ -485,8 +485,8 @@ fn a_bare_name_at_an_operand_does_not_pull_a_standard_io_module_onto_this_route(
     // fault. Claiming it here would answer a question about strings that the
     // module never asked.
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let n = 12;",
@@ -504,8 +504,8 @@ fn a_text_render_outside_the_entry_is_refused() {
     // route: the route models the entry, so a render this route never lowers
     // must be refused rather than silently unmodeled.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn helper() -> unit {",
         "    print \"hello\";",
@@ -527,8 +527,8 @@ fn a_text_render_derives_io_and_nothing_else() {
     // Amendment §7: no `Alloc`, no `Mut`, for any string operation. Rendering
     // reads static bytes and writes them.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit {",
         "    print \"hello\";",
@@ -538,8 +538,8 @@ fn a_text_render_derives_io_and_nothing_else() {
     assert_eq!(codes(&source), ["Q073"]);
 
     let declared = source_lines(&[
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    print \"hello\";",
@@ -621,8 +621,8 @@ fn a_scalar_piped_into_a_selectorless_print_refuses_at_the_routes_own_code() {
     // now refuses at `Q030` naming the missing `dec`/`hex`. Refusal to refusal,
     // and the second names the fault.
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let n = 12;",

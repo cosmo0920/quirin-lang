@@ -61,9 +61,9 @@ fn message(source: &str) -> String {
 
 /// A composed `source.std-io-tasks.v1` module — the shape
 /// `examples/threads/owned_buffer.qr` has.
-const COMPOSED: &str = "import std.concurrency;
-import std.logger;
-import std.fmt;
+const COMPOSED: &str = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
@@ -99,7 +99,7 @@ fn composed(release: &str) -> String {
 /// The plain task route, with the entry's own allocation written by the caller.
 /// The allocation is the one point where nothing else is live, so a refusal
 /// there is about the allocation rather than about what an error arm leaks.
-const TASKS: &str = "import std.concurrency;
+const TASKS: &str = "#import std.concurrency;
 concurrency checked;
 
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
@@ -151,7 +151,7 @@ fn sequential(body: &str) -> String {
 /// `bytes(N)` and extent read `extent(B)` are call-shaped intrinsics of its own.
 fn buffer(body: &str) -> String {
     format!(
-        "import std.buffer;\nimport std.fmt;\nimport std.io;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n{body}\n    return;\n}}\n"
+        "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects {{ io, alloc, mut }} {{\n{body}\n    return;\n}}\n"
     )
 }
 
@@ -285,7 +285,7 @@ fn an_error_payload_take_can_be_released_in_the_same_chain() {
     // error. Taking it into a chain and releasing it there is the shape that
     // makes the releasing entry worth its place: the payload reaches no binding
     // the reader writes.
-    const PAYLOAD: &str = "import std.concurrency; concurrency checked;
+    const PAYLOAD: &str = "#import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -510,7 +510,7 @@ fn releasing_a_borrow_is_the_routes_own_refusal() {
     // A read loan is not a value and carries no custody, so the borrower cannot
     // release it — through a pipe exactly as by hand. `ScopedReadLoansV1`'s own
     // refusal, at its own code.
-    const LOAN: &str = "import std.concurrency;
+    const LOAN: &str = "#import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
@@ -643,7 +643,7 @@ fn a_mutex_route_statement_head_is_not_a_stage() {
     // the criterion: that route's model has no call-shaped intrinsic at all, so
     // no stage can ever produce their operand and an entry would buy nothing but
     // a second spelling.
-    let source = "import std.concurrency;
+    let source = "#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let buf = protected 4;

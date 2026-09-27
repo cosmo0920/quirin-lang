@@ -7,9 +7,9 @@
 // naming that footprint. Nothing else about the program changed, which is what
 // makes the refusal a statement about the overlap rather than about writing a
 // borrowed buffer at all.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(6);

@@ -82,7 +82,7 @@ fn composed(module: &CompiledModule) -> &ComposedEpochModule {
 /// emitted C, source maps and reference observations are comparable byte for
 /// byte with nothing excused by a filename.
 fn with_region(region: &str) -> SourceFile {
-    const SHAPE: &str = r#"import std.concurrency;
+    const SHAPE: &str = r#"#import std.concurrency;
 concurrency checked;
 error Failure { Failed; }
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
@@ -437,7 +437,7 @@ fn both_models_fire_in_one_module() {
 /// this card, exactly as constraint 15j records it gained none from CT23.
 #[test]
 fn the_pure_epoch_route_keeps_its_refusal() {
-    let source = r#"import std.concurrency;
+    let source = r#"#import std.concurrency;
 error Failure { Failed; }
 fn main() -> i32 {
     thread scope plan epoch {

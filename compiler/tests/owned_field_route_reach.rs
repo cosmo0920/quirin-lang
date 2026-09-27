@@ -57,7 +57,7 @@ fn refusal(source: &str) -> (Vec<String>, String) {
 
 fn module(declaration: &str, body: &str) -> String {
     format!(
-        "import std.buffer;\nimport std.fmt;\nimport std.io;\n\n{declaration}\n\nfn main() -> unit \
+        "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\n{declaration}\n\nfn main() -> unit \
          effects {{ io, alloc, mut }} {{\n{body}    return;\n}}\n"
     )
 }
@@ -419,7 +419,7 @@ fn every_other_unknown_field_type_keeps_the_message_it_had() {
 #[test]
 fn a_record_in_a_task_module_refuses_by_its_own_name() {
     const TASK_MODULE: &str = concat!(
-        "import std.concurrency;\n",
+        "#import std.concurrency;\n",
         "concurrency checked;\n\n",
         "RECORD",
         "fn worker(buffer: own<Buffer> use one) -> own<Buffer> {\n",
@@ -474,7 +474,7 @@ fn a_record_in_a_task_module_refuses_by_its_own_name() {
 #[test]
 fn the_socket_routes_creation_form_is_untouched() {
     const SOCKET: &str = concat!(
-        "import std.socket;\nimport std.fmt;\nimport std.io;\n\n",
+        "#import std.socket;\n#import std.fmt;\n#import std.io;\n\n",
         "fn main() -> unit effects { io, alloc } {\n",
         "    let listener = tcp;\n",
         "    bind listener;\n",
@@ -503,7 +503,7 @@ fn the_socket_routes_creation_form_is_untouched() {
 #[test]
 fn the_composed_string_route_keeps_its_own_refusal() {
     const COMPOSED: &str = concat!(
-        "import std.buffer;\nimport std.string;\nimport std.fmt;\nimport std.io;\n\n",
+        "#import std.buffer;\n#import std.string;\n#import std.fmt;\n#import std.io;\n\n",
         "fn main() -> unit effects { io, alloc, mut } {\n",
         "    let b = bytes(2);\n",
         "    b[0] = 104;\n",

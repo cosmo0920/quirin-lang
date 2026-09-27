@@ -79,7 +79,7 @@ fn message(source: &str) -> String {
 
 /// The self-pipe fixture with `body` replacing its statement sequence.
 fn with_body(body: &str) -> String {
-    format!("import std.event;\n\nfn main() -> i32 effects {{ io }} {{\n{body}\n}}\n")
+    format!("#import std.event;\n\nfn main() -> i32 effects {{ io }} {{\n{body}\n}}\n")
 }
 
 // --- The accepted module. ---
@@ -134,7 +134,7 @@ fn the_emitted_program_carries_the_embedded_shim_and_the_explicit_logger_adapter
 #[test]
 fn an_event_module_without_log_level_keeps_the_null_sink_and_needs_no_stdio() {
     let quiet = SELF_PIPE
-        .replace("import std.logger;", "")
+        .replace("#import std.logger;", "")
         .replace("    log_level trace;", "");
     let module = compile(&quiet).unwrap();
     let source = module.c_source.as_deref().unwrap();
@@ -299,11 +299,11 @@ fn the_two_absences_of_a_check_only_module_travel_together() {
 
 #[test]
 fn the_event_vocabulary_needs_its_own_file_local_import() {
-    let without = SELF_PIPE.replace("import std.event;", "");
+    let without = SELF_PIPE.replace("#import std.event;", "");
     let codes = codes(&without);
     assert_eq!(codes, vec!["Q015".to_owned()]);
     assert!(
-        message(&without).contains("import std.event;"),
+        message(&without).contains("#import std.event;"),
         "the message must name the missing module"
     );
 }
@@ -312,13 +312,13 @@ fn the_event_vocabulary_needs_its_own_file_local_import() {
 fn no_other_module_grants_the_event_vocabulary() {
     // `std.io` is a capability, not a key to every other one — the discipline
     // `STD-MODULES` fixed for its own three modules.
-    let wrong = SELF_PIPE.replace("import std.event;", "import std.io;");
+    let wrong = SELF_PIPE.replace("#import std.event;", "#import std.io;");
     assert_eq!(codes(&wrong), vec!["Q015".to_owned()]);
 }
 
 #[test]
 fn an_unknown_module_is_still_an_unknown_module() {
-    let wrong = SELF_PIPE.replace("import std.event;", "import std.events;");
+    let wrong = SELF_PIPE.replace("#import std.event;", "#import std.events;");
     assert_eq!(codes(&wrong), vec!["Q014".to_owned()]);
 }
 
@@ -462,7 +462,7 @@ fn a_module_that_both_dispatches_and_prints_stays_with_this_route_and_is_now_adm
     // What survives of it is the half that is still true: route selection is
     // unmoved, so the module is still an event module and still publishes this
     // profile.
-    let source = "import std.event;\nimport std.io;\nimport std.fmt;\n\n\
+    let source = "#import std.event;\n#import std.io;\n#import std.fmt;\n\n\
                   fn main() -> i32 effects { io } {\n    event open;\n    print dec 1;\n    \
                   event close;\n    return 0;\n}\n";
     let module = compile(source).expect("a composed event module compiles");
@@ -473,7 +473,7 @@ fn a_module_that_both_dispatches_and_prints_stays_with_this_route_and_is_now_adm
     );
     // And the refusal that is still a refusal: a statement head neither route
     // models is still not one `source.event.v1` models.
-    let unmodelled = "import std.event;\n\nfn main() -> i32 effects { io } {\n    event open;\n    \
+    let unmodelled = "#import std.event;\n\nfn main() -> i32 effects { io } {\n    event open;\n    \
                       endpoints a b;\n    drop a;\n    close a;\n    close b;\n    \
                       event close;\n    return 0;\n}\n";
     assert!(codes(unmodelled).contains(&"Q058".to_owned()));
@@ -498,7 +498,7 @@ fn an_event_statement_without_the_io_modules_still_reports_the_io_modules() {
     );
     assert_eq!(codes(&source), vec!["Q015".to_owned()]);
     assert!(
-        message(&source).contains("import std.io;"),
+        message(&source).contains("#import std.io;"),
         "{}",
         message(&source)
     );
@@ -512,7 +512,7 @@ fn an_entry_without_the_io_effect_is_refused() {
 
 #[test]
 fn an_event_statement_outside_the_entry_is_refused() {
-    let source = "import std.event;\n\nfn helper() -> i32 {\n    event open;\n    return 0;\n}\n\n\
+    let source = "#import std.event;\n\nfn helper() -> i32 {\n    event open;\n    return 0;\n}\n\n\
                   fn main() -> i32 effects { io } {\n    event open;\n    event close;\n    \
                   return 0;\n}\n";
     assert!(codes(source).contains(&"Q058".to_owned()));

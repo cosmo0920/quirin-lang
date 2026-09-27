@@ -6,9 +6,9 @@
 // involved. A byte write into `store` demands the buffer's exclusive authority
 // back. The write below asks for exactly that while the alias is still live,
 // and is refused.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

@@ -35,7 +35,7 @@ fn compile(source: &str) -> Result<qcore_compiler::CompiledModule, Vec<String>> 
     })
 }
 
-const GUARDED: &str = "import std.concurrency; fn main() -> unit {\n\
+const GUARDED: &str = "#import std.concurrency; fn main() -> unit {\n\
      thread scope s {\n\
      let buf = protected 4;\n\
      let m = mutex guards buf;\n\
@@ -90,7 +90,7 @@ fn a_guarded_module_selects_the_checked_mutex_profile_and_emits_native_locking()
 /// contention or any other backend.
 #[test]
 fn an_accepted_source_fixture_runs_natively_and_matches_its_reference_execution() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -208,7 +208,7 @@ fn run_native(source: &str) -> Vec<String> {
 
 #[test]
 fn an_unguarded_write_to_a_protected_footprint_is_located_and_refused() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -222,7 +222,7 @@ fn an_unguarded_write_to_a_protected_footprint_is_located_and_refused() {
 
 #[test]
 fn a_broken_invariant_at_the_section_exit_is_located_and_refused() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -244,7 +244,7 @@ fn a_broken_invariant_at_the_section_exit_is_located_and_refused() {
 /// `InvariantPredicateDeclared`, which is the point of the checked witness.
 #[test]
 fn a_checked_witness_module_drops_the_declared_premise_and_still_runs_natively() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -296,7 +296,7 @@ fn a_checked_witness_module_drops_the_declared_premise_and_still_runs_natively()
 /// guard-local child by the test below, which is still outside both shapes.
 #[test]
 fn a_composed_child_task_module_checks_and_runs_natively_with_a_real_child_thread() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -356,7 +356,7 @@ fn a_composed_child_task_module_checks_and_runs_natively_with_a_real_child_threa
 /// without C rather than with C the backend did not produce.
 #[test]
 fn a_guard_local_child_is_checked_and_still_published_without_native_emission() {
-    let source = "import std.concurrency; fn main() -> unit {\n\
+    let source = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -393,7 +393,7 @@ fn a_guard_local_child_is_checked_and_still_published_without_native_emission() 
 fn the_composed_refusals_are_located_on_their_own_statements() {
     // A child acting through the guard it lexically sees (line 6), then the
     // join that landed inside the section (line 6 as well: the block's end).
-    let escaping_guard = "import std.concurrency; fn main() -> unit {\n\
+    let escaping_guard = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -411,7 +411,7 @@ fn the_composed_refusals_are_located_on_their_own_statements() {
 
     // An announced acquisition that outlives its task blocks the generation's
     // destruction at scope exit.
-    let waiter = "import std.concurrency; fn main() -> unit {\n\
+    let waiter = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -426,7 +426,7 @@ fn the_composed_refusals_are_located_on_their_own_statements() {
     );
 
     // A fact relied on after the release that dropped it.
-    let stale = "import std.concurrency; fn main() -> unit {\n\
+    let stale = "#import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\

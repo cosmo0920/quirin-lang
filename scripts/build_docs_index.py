@@ -12,7 +12,7 @@ def render():
             "[Documentation hub](../README.md) · [Wave history](../development/increments/README.md)\n",
             "Generated directory/title lookup, **not a status ledger**. Search an exact\n"
             "card id here; read its report for evidence and the acceptance matrix's\n"
-            "`named_followups` for registered open work. Frozen reports are not rewritten.\n",
+            "`named_followups` for registered open work. Historical measurements retain their original revision; maintained inputs are attributed in migration reports.\n",
             "Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.\n"]
     group = None
     for report in sorted((ROOT / "docs/reports").glob("*/README.md")):

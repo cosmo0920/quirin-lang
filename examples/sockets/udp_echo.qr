@@ -12,9 +12,9 @@
 // and compares it with the bound address of the socket the model says sent the
 // datagram. A stray datagram delivered to the same ephemeral port fails the run
 // rather than being read as this one.
-import std.socket;
-import std.fmt;
-import std.io;
+#import std.socket;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     // Two bound datagram sockets, each at a port the kernel picks. Neither

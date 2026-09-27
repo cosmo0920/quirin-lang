@@ -24,11 +24,11 @@
 //
 // WHAT THIS IS NOT: not HTTP/1.1 conformance. It is an executed HTTP/1.1
 // subset with the boundary named — see examples/http/README.md.
-import std.http;
-import std.socket;
-import std.string;
-import std.fmt;
-import std.io;
+#import std.http;
+#import std.socket;
+#import std.string;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     // The one number this response is about. Every other number below is

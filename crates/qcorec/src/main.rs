@@ -2,16 +2,18 @@ mod plugin_config;
 
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use qcore_compiler::verifier_plugin::ExecutionPolicy;
 use qcore_compiler::{
-    CompileOptions, PluginId, SourceFile, compile_files, compile_files_with_registry,
-    format_diagnostic, load_first_party_registry,
+    CompileOptions, PluginId, SourceFile, compile_files_with_filesystem,
+    compile_files_with_filesystem_with_registry, format_diagnostic, load_first_party_registry,
 };
+use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
+use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
 
-const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -45,6 +47,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     }
     let mut entry = None;
     let mut plugins = None::<PathBuf>;
+    let mut contract_load_path = None::<PathBuf>;
     let mut output = None::<PathBuf>;
     let mut manifests = Vec::<PathBuf>::new();
     let mut inputs = Vec::new();
@@ -60,6 +63,17 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                     arguments
                         .get(index)
                         .ok_or("--plugins requires a config path")?,
+                ));
+            }
+            "--contract-load-path" if command == "check" => {
+                index += 1;
+                if contract_load_path.is_some() {
+                    return Err("--contract-load-path specified more than once".into());
+                }
+                contract_load_path = Some(PathBuf::from(
+                    arguments
+                        .get(index)
+                        .ok_or("--contract-load-path requires a manifest path")?,
                 ));
             }
             "--native-library" => {
@@ -94,6 +108,15 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     }
     if inputs.is_empty() {
         return Err("no input files were provided".into());
+    }
+    if let Some(path) = contract_load_path {
+        if inputs.len() != 1 || entry.is_some() || plugins.is_some() || !manifests.is_empty() {
+            return Err(
+                "--contract-load-path requires exactly one contract input and cannot be combined with --entry, --plugins or --native-library"
+                    .into(),
+            );
+        }
+        return check_published_resource_contract(&path, &inputs[0]);
     }
     let files = inputs
         .iter()
@@ -190,9 +213,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
-        compile_files_with_registry(&files, &options, &registry)
+        compile_files_with_filesystem_with_registry(&files, &options, &registry)
     } else {
-        compile_files(&files, &options)
+        compile_files_with_filesystem(&files, &options)
     };
     let module = compiled.map_err(|diagnostics| {
         diagnostics
@@ -288,6 +311,84 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// This route validates one owned contract input as a trusted resource-v1
+/// assumption. The existing compiler route still rejects unresolved inclusion.
+fn check_published_resource_contract(manifest_path: &Path, input: &Path) -> Result<(), String> {
+    let manifest = load_contract_load_path_manifest(manifest_path).map_err(|e| e.to_string())?;
+    let (crate_name, module) = selected_owned_module(&manifest, input)?;
+    let selected = manifest
+        .load_path
+        .crate_named(&crate_name)
+        .and_then(|krate| krate.modules.get(&module))
+        .ok_or_else(|| format!("{}: module is not owned by the load path", input.display()))?;
+    let input_text =
+        fs::read_to_string(input).map_err(|error| format!("{}: {error}", input.display()))?;
+    if &input_text != selected {
+        return Err(format!(
+            "{}: input differs from the load path's owned source snapshot",
+            input.display()
+        ));
+    }
+    load_published_resource_contracts(
+        &manifest.load_path,
+        &[PublishedModuleRef::new(&crate_name, &module)],
+    )
+    .map_err(|error| format!("{}: {error}", input.display()))?;
+    println!(
+        "validated resource-v1 contract assumptions from `{}` ({crate_name}:{module}); published includes resolved; no C bodies checked or safety verdict established",
+        input.display()
+    );
+    Ok(())
+}
+
+/// Canonical paths establish membership only. The user-spelled `input` is kept
+/// for diagnostics and the result, never replaced with the canonical spelling.
+fn selected_owned_module(
+    manifest: &LoadPathManifest,
+    input: &Path,
+) -> Result<(String, String), String> {
+    let actual = input
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", input.display()))?;
+    let mut selected = None;
+    for (crate_name, root) in &manifest.contract_roots {
+        let canonical_root = root
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", root.display()))?;
+        let Ok(relative) = actual.strip_prefix(&canonical_root) else {
+            continue;
+        };
+        let module = relative
+            .to_str()
+            .ok_or_else(|| format!("{}: contract path is not UTF-8", input.display()))?
+            .replace('\\', "/");
+        if manifest
+            .load_path
+            .crate_named(crate_name)
+            .is_some_and(|krate| krate.modules.contains_key(&module))
+        {
+            if input.file_name() != relative.file_name() {
+                return Err(format!(
+                    "{}: input filename must match its owned module path; no alias substitution is allowed",
+                    input.display()
+                ));
+            }
+            if selected.replace((crate_name.clone(), module)).is_some() {
+                return Err(format!(
+                    "{}: input is owned by more than one load-path crate",
+                    input.display()
+                ));
+            }
+        }
+    }
+    selected.ok_or_else(|| {
+        format!(
+            "{}: input is not an owned contract module on the load path",
+            input.display()
+        )
+    })
 }
 
 /// Print the declared premises a checked module's result holds relative to

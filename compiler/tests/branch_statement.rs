@@ -486,7 +486,7 @@ fn shipped_fixtures_are_unmoved_by_this_card() {
 
 #[test]
 fn the_std_io_route_keeps_its_flat_sequence_refusal() {
-    let source = "import std.fmt;\nimport std.io;\n\
+    let source = "#import std.fmt;\n#import std.io;\n\
         fn main() -> unit effects { io } { let total = 42; if (true) { print dec total; } return; }";
     let codes = compile(source)
         .map(|module| module.execution_profile)
@@ -499,7 +499,7 @@ fn the_std_io_route_keeps_its_flat_sequence_refusal() {
 
 #[test]
 fn the_extern_route_keeps_its_nested_block_refusal() {
-    let source = "import std.extern;\nerror Failure { Failed; }\n\
+    let source = "#import std.extern;\nerror Failure { Failed; }\n\
         extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
         extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\
         fn main() -> unit effects { io, alloc, mut } {\n\
@@ -523,7 +523,7 @@ fn the_extern_route_keeps_its_nested_block_refusal() {
 
 #[test]
 fn the_task_route_keeps_its_profile_refusal() {
-    let source = "import std.concurrency;\nconcurrency checked;\n\
+    let source = "#import std.concurrency;\nconcurrency checked;\n\
         fn main() -> i32 { thread scope s { } if (true) { } return 0; }";
     let codes = compile(source)
         .map(|module| module.execution_profile)

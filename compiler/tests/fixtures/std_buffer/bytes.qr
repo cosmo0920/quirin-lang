@@ -1,7 +1,7 @@
-import std.buffer;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // An owned, extent-carrying byte buffer (card STD-BUFFER).
 //

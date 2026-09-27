@@ -1,6 +1,6 @@
-import std.concurrency;
-import std.logger;
-import std.fmt;
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 // Source counterpart of crates/qcore-core/examples/concurrency_prelude.rs.
 // The frontend lowers these operations into the core task model.
 concurrency checked;

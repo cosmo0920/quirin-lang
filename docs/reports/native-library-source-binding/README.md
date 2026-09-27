@@ -1,5 +1,7 @@
 # Card `NATIVE-LIBRARY-SOURCE-BINDING` — the source file's own library binding
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Wave 23. Follow-on row of
 [`docs/reports/wave22-native-library-header/README.md`](../wave22-native-library-header/README.md)
 §11: *"binding a manifest from the source file … rather than by symbol name
@@ -37,7 +39,7 @@ consequences, both silent:
 **Landed:** `extern library NAME;`, an import-adjacent file-scope declaration.
 
 ```qcore
-import std.extern;
+#import std.extern;
 extern library qcore_buffer_demo;
 
 extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
@@ -46,7 +48,7 @@ extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
 
 ### 2.1 Against the registry-name option
 
-The follow-on row suggested a registry name (`import std.buffer;`) as one
+The follow-on row suggested a registry name (`#import std.buffer;`) as one
 candidate. It was considered and **rejected**, on three grounds:
 
 1. **A registry name is a capability, a binding is an identity.** An `import`
@@ -61,7 +63,7 @@ candidate. It was considered and **rejected**, on three grounds:
    opposite of what the manifest exists for — design §1's "a bundled capability
    module … implemented by a native compiled library" is about the builder's
    library, not only about ours.
-3. **A registry name carries no identity.** `import std.buffer;` names no
+3. **A registry name carries no identity.** `#import std.buffer;` names no
    artifact and no hash, so a certificate could not record which build the file
    bound without going back to the selection — which is the state this card
    exists to leave.
@@ -121,7 +123,7 @@ single bare word**, and those are the exposure:
 
 | Reader | Matches on | Exposure |
 |---|---|---|
-| `qcore_frontend::module_imports::concurrency_span` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload`, `spawn`, `join`, and the pairs `task <` / `mutex <` / `mutex guards` / `mutex rank` | a library named one of the six single words would select the concurrency route and be refused for a missing `import std.concurrency;` — **from its own name** |
+| `qcore_frontend::module_imports::concurrency_span` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload`, `spawn`, `join`, and the pairs `task <` / `mutex <` / `mutex guards` / `mutex rank` | a library named one of the six single words would select the concurrency route and be refused for a missing `#import std.concurrency;` — **from its own name** |
 | `qcore_frontend::source_tasks::has_source_tasks` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write` | the same, for the task route |
 
 The pair forms are unreachable: a binding is `extern library NAME ;`, so `NAME`

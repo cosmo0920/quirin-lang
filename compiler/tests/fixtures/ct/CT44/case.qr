@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT44 -- "Stack capture expires or environment moves before join", expected

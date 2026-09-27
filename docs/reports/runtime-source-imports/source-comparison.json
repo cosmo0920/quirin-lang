@@ -1,0 +1,1593 @@
+{
+  "before_tip": "b7c33df5ed1e7ab3426bc1586bc9d2f850cb9e70",
+  "after_tip": "9271b2049396e27eb1b9752570c5bd9766fe0242",
+  "before_files": 421,
+  "after_files": 421,
+  "before_accepted": 168,
+  "after_accepted": 168,
+  "before_refused": 253,
+  "after_refused": 253,
+  "added": [],
+  "removed": [],
+  "changed_source_files": [
+    "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
+    "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
+    "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qr",
+    "compiler/tests/fixtures/compose/borrowed_render.qr",
+    "compiler/tests/fixtures/compose/chain.qr",
+    "compiler/tests/fixtures/compose/chain_hand_written.qr",
+    "compiler/tests/fixtures/ct/CT01/case.qr",
+    "compiler/tests/fixtures/ct/CT02/case.qr",
+    "compiler/tests/fixtures/ct/CT03/case.qr",
+    "compiler/tests/fixtures/ct/CT04/case.qr",
+    "compiler/tests/fixtures/ct/CT04/write_after_joins.qr",
+    "compiler/tests/fixtures/ct/CT05/case.qr",
+    "compiler/tests/fixtures/ct/CT05/remainder_fits.qr",
+    "compiler/tests/fixtures/ct/CT06/case.qr",
+    "compiler/tests/fixtures/ct/CT06/copy_read_first.qr",
+    "compiler/tests/fixtures/ct/CT06/no_copy.qr",
+    "compiler/tests/fixtures/ct/CT07/case.qr",
+    "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qr",
+    "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qr",
+    "compiler/tests/fixtures/ct/CT07/overlapping_leases.qr",
+    "compiler/tests/fixtures/ct/CT07/overlapping_lends.qr",
+    "compiler/tests/fixtures/ct/CT07/past_extent_read.qr",
+    "compiler/tests/fixtures/ct/CT07/past_range_byte.qr",
+    "compiler/tests/fixtures/ct/CT07/read_loan.qr",
+    "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qr",
+    "compiler/tests/fixtures/ct/CT08/case.qr",
+    "compiler/tests/fixtures/ct/CT08/disjoint.qr",
+    "compiler/tests/fixtures/ct/CT08/no_loan.qr",
+    "compiler/tests/fixtures/ct/CT09/bad_field.qr",
+    "compiler/tests/fixtures/ct/CT09/case.qr",
+    "compiler/tests/fixtures/ct/CT10/addressable.qr",
+    "compiler/tests/fixtures/ct/CT10/case.qr",
+    "compiler/tests/fixtures/ct/CT10/distinct_units.qr",
+    "compiler/tests/fixtures/ct/CT11/case.qr",
+    "compiler/tests/fixtures/ct/CT11/write_after_alias.qr",
+    "compiler/tests/fixtures/ct/CT11/write_before_alias.qr",
+    "compiler/tests/fixtures/ct/CT12/case.qr",
+    "compiler/tests/fixtures/ct/CT13/case.qr",
+    "compiler/tests/fixtures/ct/CT13/unjoined_failure.qr",
+    "compiler/tests/fixtures/ct/CT14/case.qr",
+    "compiler/tests/fixtures/ct/CT14/drop_before_join.qr",
+    "compiler/tests/fixtures/ct/CT14/read_before_join.qr",
+    "compiler/tests/fixtures/ct/CT15/case.qr",
+    "compiler/tests/fixtures/ct/CT16/case.qr",
+    "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qr",
+    "compiler/tests/fixtures/ct/CT16/unclean_worker.qr",
+    "compiler/tests/fixtures/ct/CT17/case.qr",
+    "compiler/tests/fixtures/ct/CT17/undelivered_payload.qr",
+    "compiler/tests/fixtures/ct/CT17/unreleased_payload.qr",
+    "compiler/tests/fixtures/ct/CT18/case.qr",
+    "compiler/tests/fixtures/ct/CT18/owned_payload.qr",
+    "compiler/tests/fixtures/ct/CT19/case.qr",
+    "compiler/tests/fixtures/ct/CT19/joined_sibling.qr",
+    "compiler/tests/fixtures/ct/CT20/case.qr",
+    "compiler/tests/fixtures/ct/CT20/undropped.qr",
+    "compiler/tests/fixtures/ct/CT20/unjoined.qr",
+    "compiler/tests/fixtures/ct/CT22/acquiring.qr",
+    "compiler/tests/fixtures/ct/CT22/before_join.qr",
+    "compiler/tests/fixtures/ct/CT22/both_models.qr",
+    "compiler/tests/fixtures/ct/CT22/case.qr",
+    "compiler/tests/fixtures/ct/CT22/no_discharge.qr",
+    "compiler/tests/fixtures/ct/CT22/no_open.qr",
+    "compiler/tests/fixtures/ct/CT22/no_region.qr",
+    "compiler/tests/fixtures/ct/CT22/spawn_after.qr",
+    "compiler/tests/fixtures/ct/CT22/spent_out.qr",
+    "compiler/tests/fixtures/ct/CT22/wrong_region.qr",
+    "compiler/tests/fixtures/ct/CT23/case.qr",
+    "compiler/tests/fixtures/ct/CT23/minted.qr",
+    "compiler/tests/fixtures/ct/CT23/no_arm.qr",
+    "compiler/tests/fixtures/ct/CT23/partial.qr",
+    "compiler/tests/fixtures/ct/CT23/restored.qr",
+    "compiler/tests/fixtures/ct/CT23/spent.qr",
+    "compiler/tests/fixtures/ct/CT24/after_join.qr",
+    "compiler/tests/fixtures/ct/CT24/case.qr",
+    "compiler/tests/fixtures/ct/CT24/double_discharge.qr",
+    "compiler/tests/fixtures/ct/CT24/in_error_arm.qr",
+    "compiler/tests/fixtures/ct/CT24/independent_owner.qr",
+    "compiler/tests/fixtures/ct/CT24/missing_join.qr",
+    "compiler/tests/fixtures/ct/CT24/nested_if.qr",
+    "compiler/tests/fixtures/ct/CT24/nested_loop.qr",
+    "compiler/tests/fixtures/ct/CT24/unsupported_body.qr",
+    "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qr",
+    "compiler/tests/fixtures/ct/CT25/adopt_scalar.qr",
+    "compiler/tests/fixtures/ct/CT25/adopt_twice.qr",
+    "compiler/tests/fixtures/ct/CT25/adopt_unknown.qr",
+    "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qr",
+    "compiler/tests/fixtures/ct/CT25/before_join.qr",
+    "compiler/tests/fixtures/ct/CT25/case.qr",
+    "compiler/tests/fixtures/ct/CT25/live_share_drop.qr",
+    "compiler/tests/fixtures/ct/CT26/case.qr",
+    "compiler/tests/fixtures/ct/CT27/case.qr",
+    "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr",
+    "compiler/tests/fixtures/ct/CT28/case.qr",
+    "compiler/tests/fixtures/ct/CT28/child_unlocks.qr",
+    "compiler/tests/fixtures/ct/CT28/own_acquisition.qr",
+    "compiler/tests/fixtures/ct/CT29/case.qr",
+    "compiler/tests/fixtures/ct/CT29/restored.qr",
+    "compiler/tests/fixtures/ct/CT30/case.qr",
+    "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr",
+    "compiler/tests/fixtures/ct/CT30/released.qr",
+    "compiler/tests/fixtures/ct/CT31/case.qr",
+    "compiler/tests/fixtures/ct/CT31/performed.qr",
+    "compiler/tests/fixtures/ct/CT32/case.qr",
+    "compiler/tests/fixtures/ct/CT32/joined_outside.qr",
+    "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr",
+    "compiler/tests/fixtures/ct/CT33/case.qr",
+    "compiler/tests/fixtures/ct/CT33/unranked.qr",
+    "compiler/tests/fixtures/ct/CT34/case.qr",
+    "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr",
+    "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr",
+    "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr",
+    "compiler/tests/fixtures/ct/CT35/case.qr",
+    "compiler/tests/fixtures/ct/CT35/repeated_entry.qr",
+    "compiler/tests/fixtures/ct/CT35/two_cells.qr",
+    "compiler/tests/fixtures/ct/CT36/case.qr",
+    "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr",
+    "compiler/tests/fixtures/ct/CT36/summed_allocation.qr",
+    "compiler/tests/fixtures/ct/CT37/case.qr",
+    "compiler/tests/fixtures/ct/CT37/unconsumed_result.qr",
+    "compiler/tests/fixtures/ct/CT37/undropped_result.qr",
+    "compiler/tests/fixtures/ct/CT38/case.qr",
+    "compiler/tests/fixtures/ct/CT38/split_within_total.qr",
+    "compiler/tests/fixtures/ct/CT39/case.qr",
+    "compiler/tests/fixtures/ct/CT39/work_bound_only.qr",
+    "compiler/tests/fixtures/ct/CT42/case.qr",
+    "compiler/tests/fixtures/ct/CT42/closed_custodian.qr",
+    "compiler/tests/fixtures/ct/CT42/datagram_pair.qr",
+    "compiler/tests/fixtures/ct/CT42/listener_question.qr",
+    "compiler/tests/fixtures/ct/CT42/not_a_socket.qr",
+    "compiler/tests/fixtures/ct/CT42/two_connections.qr",
+    "compiler/tests/fixtures/ct/CT44/case.qr",
+    "compiler/tests/fixtures/ct/CT44/drop_after_join.qr",
+    "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qr",
+    "compiler/tests/fixtures/ct/CT44/move_before_join.qr",
+    "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qr",
+    "compiler/tests/fixtures/ct/CT46/absent_protocol.qr",
+    "compiler/tests/fixtures/ct/CT46/case.qr",
+    "compiler/tests/fixtures/ct/CT46/guard_local.qr",
+    "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qr",
+    "compiler/tests/fixtures/ct/CT46/no_crossing.qr",
+    "compiler/tests/fixtures/ct/CT46/share_generation.qr",
+    "compiler/tests/fixtures/ct/CT46/unguarded_reach.qr",
+    "compiler/tests/fixtures/ct/CT47/case.qr",
+    "compiler/tests/fixtures/ct/CT47/modeless.qr",
+    "compiler/tests/fixtures/ct/CT47/move_transfer.qr",
+    "compiler/tests/fixtures/ct/CT47/read_share.qr",
+    "compiler/tests/fixtures/ct/CT47/write_lease.qr",
+    "compiler/tests/fixtures/ct/CT48/case.qr",
+    "compiler/tests/fixtures/ct/CT48/never_asserted.qr",
+    "compiler/tests/fixtures/ct/CT48/reasserted.qr",
+    "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qr",
+    "compiler/tests/fixtures/ct/CT49/case.qr",
+    "compiler/tests/fixtures/ct/CT49/parent_only.qr",
+    "compiler/tests/fixtures/ct/CT50/case.qr",
+    "compiler/tests/fixtures/ct/CT50/stale_drop.qr",
+    "compiler/tests/fixtures/ct/CT50/stale_read.qr",
+    "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qr",
+    "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qr",
+    "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/case.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qr",
+    "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qr",
+    "compiler/tests/fixtures/extern_calls/out_slot.qr",
+    "compiler/tests/fixtures/extern_calls/realloc.qr",
+    "compiler/tests/fixtures/extern_calls/realloc_failure.qr",
+    "compiler/tests/fixtures/extern_calls/released.qr",
+    "compiler/tests/fixtures/extern_calls/round_trip.qr",
+    "compiler/tests/fixtures/extern_calls/scalar_result.qr",
+    "compiler/tests/fixtures/extern_calls/stored.qr",
+    "compiler/tests/fixtures/extern_calls/stored_failure.qr",
+    "compiler/tests/fixtures/f02/concurrent_round_trip.qr",
+    "compiler/tests/fixtures/pipe/lines_piped.qr",
+    "compiler/tests/fixtures/pipe/realloc_piped.qr",
+    "compiler/tests/fixtures/pipe/round_trip_piped.qr",
+    "compiler/tests/fixtures/pipe/scalar_result_piped.qr",
+    "compiler/tests/fixtures/resource_helpers/round_trip.qr",
+    "compiler/tests/fixtures/slice_permissions/disjoint_halves.qr",
+    "compiler/tests/fixtures/slice_permissions/overlapping_write.qr",
+    "compiler/tests/fixtures/source_loop/copy.qr",
+    "compiler/tests/fixtures/source_record/point.qr",
+    "compiler/tests/fixtures/std_buffer/bytes.qr",
+    "compiler/tests/fixtures/std_buffer/silent.qr",
+    "compiler/tests/fixtures/std_modules/lines.qr",
+    "compiler/tests/fixtures/std_modules/logger_only.qr",
+    "compiler/tests/fixtures/std_string/composed.qr",
+    "compiler/tests/fixtures/std_string/silent.qr",
+    "compiler/tests/fixtures/std_string/slices.qr",
+    "compiler/tests/fixtures/std_string/text.qr",
+    "compiler/tests/fixtures/unsafe_linkage/round_trip.qr",
+    "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qr",
+    "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qr",
+    "examples/branching/condition_tier.qr",
+    "examples/branching/conditional_release.qr",
+    "examples/branching/early_return.qr",
+    "examples/events/self_pipe.qr",
+    "examples/events/socket_server.qr",
+    "examples/events/wake_payload.qr",
+    "examples/events/write_interest.qr",
+    "examples/extern/borrowed_render.qr",
+    "examples/extern/buffer_round_trip.qr",
+    "examples/extern/scalar_results.qr",
+    "examples/http/computed_length.qr",
+    "examples/http/exchange.qr",
+    "examples/http/raw_request.qr",
+    "examples/loops/buffer_copy.qr",
+    "examples/loops/lend_fill.qr",
+    "examples/pipes/rendered_lines.qr",
+    "examples/pipes/scalar_stages.qr",
+    "examples/pipes/scalar_stages_hand_written.qr",
+    "examples/records/owned_field.qr",
+    "examples/records/pixel_writes.qr",
+    "examples/records/point.qr",
+    "examples/scalar/printing.qr",
+    "examples/sockets/inet_v4_echo.qr",
+    "examples/sockets/inet_v6_echo.qr",
+    "examples/sockets/tcp_echo.qr",
+    "examples/sockets/udp_echo.qr",
+    "examples/stdio/barrier.qr",
+    "examples/stdio/pipeline.qr",
+    "examples/stdio/renderings.qr",
+    "examples/stdio/severities.qr",
+    "examples/strings/computed_length.qr",
+    "examples/strings/looped_fill.qr",
+    "examples/strings/status_line.qr",
+    "examples/threads/core_context.qr",
+    "examples/threads/owned_buffer.qr",
+    "examples/threads/shared_readers.qr",
+    "examples/threads/two_workers.qr",
+    "examples/unsafe-linkage/unchecked_calls.qr"
+  ],
+  "changed_outcomes": [
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT26/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT27/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT29/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT29/restored.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT30/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t03/fixtures/CT30/released.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t04/fixtures/CT24/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t04/fixtures/CT25/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT03/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT04/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT05/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-t05/fixtures/CT11/case.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T10_nested_own_result.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/T21_unknown_worker.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X09_task_result.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v03/probes/X10_mutex_result.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b01_outer_resolution.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b03_header_unresolved.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b04_binder_escape.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b05_sibling_leak.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/b10_cross_file_first.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c02_nested_worker.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/w6-native-source-tasks/native-copy.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    },
+    {
+      "path": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qr",
+      "before": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      },
+      "after": {
+        "diagnostics": [
+          {
+            "code": "Q015",
+            "message": "concurrency requires an explicit `#import std.concurrency;` in this source file",
+            "pass": "NameResolution"
+          }
+        ],
+        "kind": "refused"
+      }
+    }
+  ],
+  "boundary": "Default snapshot compile outcomes and emitted-C hashes; source hashes intentionally change with spelling. Diagnostics compare code/pass/message, not source spans. No native or C-corpus coverage claim.",
+  "diagnostic_spelling_only_changes": 58,
+  "semantic_or_emitted_c_changes": 0
+}

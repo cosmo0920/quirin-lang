@@ -67,7 +67,7 @@ const DISJOINT_EXERCISE: &str =
 /// The flagship without its `log_level`, so it stays on the plain scoped-task
 /// route and its reference run is an ordinary `TaskExecutionObservation` — the
 /// shape `reference_trace` consumes.
-const NO_LEASE_FREE_EXERCISE: &str = "import std.concurrency; concurrency checked;
+const NO_LEASE_FREE_EXERCISE: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 0, 9);
   return 1;
@@ -104,7 +104,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// published `examples/threads` programs — used to attribute a native failure
 /// to the route rather than to the exercise.
 #[cfg(target_os = "linux")]
-const LEASE_FREE_WORKERS: &str = "import std.concurrency; concurrency checked;
+const LEASE_FREE_WORKERS: &str = "#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
 }
@@ -126,7 +126,7 @@ fn main() -> i32 effects { spawn, join, may_block } {
 /// A leasing program whose worker exercises nothing: the lease is transferred
 /// and reclaimed exactly as wave 31 left it, and the owner reads the whole
 /// payload rather than a byte.
-const NO_BYTE_ACCESS: &str = "import std.concurrency; concurrency checked;
+const NO_BYTE_ACCESS: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -350,7 +350,7 @@ fn the_owner_has_no_byte_write() {
 /// (`WRITE-LEND-EXERCISE-LOAN-BYTE-READ`).
 #[test]
 fn a_read_share_admits_no_byte_view() {
-    let source = "import std.concurrency; concurrency checked;
+    let source = "#import std.concurrency; concurrency checked;
 fn reader(share: borrow<Buffer>) -> i32 {
   let byte = qcore_buffer_read(share, 0);
   return byte;

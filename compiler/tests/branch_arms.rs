@@ -608,10 +608,10 @@ fn the_other_routes_keep_their_refusals_for_the_widened_arms() {
     // An arm that returns and an arm that calls are still only admitted on the
     // sequential route; the widening is of the arm subset, not of route
     // admission (`IF-ROUTE-WIDENING` is unchanged).
-    let std_io = "import std.fmt;\nimport std.io;\n\
+    let std_io = "#import std.fmt;\n#import std.io;\n\
         fn main() -> unit effects { io } { let total = 42; if (true) { print dec total; return; } return; }";
     assert_eq!(codes(std_io), vec!["Q030"]);
-    let task = "import std.concurrency;\nconcurrency checked;\n\
+    let task = "#import std.concurrency;\nconcurrency checked;\n\
         fn main() -> i32 { thread scope s { } if (true) { return 1; } return 0; }";
     assert_eq!(codes(task), vec!["Q500"]);
 }

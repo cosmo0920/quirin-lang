@@ -24,8 +24,8 @@ what this card defines — is the *call*.
 A source function may call a declared extern function when, and only when:
 
 1. the calling file explicitly opts in with a bundled-module import
-   (working name `import std.extern;`), following the
-   `import std.concurrency;` precedent (core-owned resolution, `Q014`/`Q015`
+   (working name `#import std.extern;`), following the
+   `#import std.concurrency;` precedent (core-owned resolution, `Q014`/`Q015`
    refusal before checking, no cross-file leakage);
 2. the callee has a **trusted declared contract** admitted by the existing
    resource-contract v1 loader vocabulary (§C04/G05), supplied through an

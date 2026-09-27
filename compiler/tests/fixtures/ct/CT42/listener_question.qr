@@ -2,7 +2,7 @@
 // the accept the pair's traffic never touches the listener's state, so the
 // question over `client` and `listener` is admitted and its judgement is
 // published on the cell certificate. Everything else is the case's program.
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;

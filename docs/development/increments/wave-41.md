@@ -12,7 +12,7 @@
 
 **`SOURCE-SCALAR-CALLS-V1` (2026-09-20).** Implemented explicit i32/unit source
 functions, immutable i32 locals, checked arithmetic, direct acyclic calls and
-value returns, plus user-requested `import std.io; print(expr);` for an evaluated
+value returns, plus user-requested `#import std.io; print(expr);` for an evaluated
 i32 and newline. I/O effects propagate through calls and explicit empty rows
 refuse them. The backend contributes fragments and an entry body to the existing
 C assembler, emits one main, and prints no automatic result/fault diagnostics.

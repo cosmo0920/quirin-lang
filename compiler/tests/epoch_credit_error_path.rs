@@ -87,7 +87,7 @@ fn both(memory: u64, work: u64) -> Quantity {
 /// substituted. `clause` is exactly one line (possibly empty), so every variant
 /// has the same line count and the same blanked task half.
 fn with_clause(clause: &str) -> String {
-    const SHAPE: &str = r#"import std.concurrency;
+    const SHAPE: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let buffer = qcore_buffer_new(value)?;
@@ -335,7 +335,7 @@ fn the_emitted_c_is_unchanged_by_the_error_arm_byte_for_byte() {
 /// carried-over structural code the epoch routes already share. No new code.
 #[test]
 fn the_error_clause_grammar_refuses_its_own_malformed_forms() {
-    const HEAD: &str = r#"import std.concurrency;
+    const HEAD: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let buffer = qcore_buffer_new(value)?;
@@ -419,7 +419,7 @@ fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, 
 /// clause is admitted and publishes an all-spent split.
 #[test]
 fn the_declarative_route_has_no_error_edge_and_says_so_from_the_cores_band() {
-    const PURE: &str = r#"import std.concurrency;
+    const PURE: &str = r#"#import std.concurrency;
 fn main() -> unit {
     thread scope epoch_scope epoch {
         bound 65536 effort 1000;
@@ -497,7 +497,7 @@ CLAUSE        }
 /// of an edge is recorded, never assumed in either direction.
 #[test]
 fn the_derived_edges_follow_the_checked_region_and_nothing_else() {
-    const INFALLIBLE: &str = r#"import std.concurrency;
+    const INFALLIBLE: &str = r#"#import std.concurrency;
 concurrency checked;
 fn worker(value: i32) -> i32 { return value; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {

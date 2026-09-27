@@ -132,7 +132,7 @@ fn ends_with_semicolon(window: &[&Token], cursor: usize) -> bool {
 /// [`SELECTING_KEYWORDS`], if any.
 ///
 /// One detector serves both the import gate and route selection, so a file can
-/// never be routed here without having needed `import std.event;`, or need the
+/// never be routed here without having needed `#import std.event;`, or need the
 /// import without being routed here — the discipline `STD-MODULES` established
 /// for its own three capabilities.
 ///

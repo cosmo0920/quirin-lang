@@ -20,9 +20,9 @@
 // — a read loan beside the owner's retained write authority — stays admitted
 // beside the stronger one, so the remap extends the family of admitted
 // disjointness shapes rather than replacing it.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(6);

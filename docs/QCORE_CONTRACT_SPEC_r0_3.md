@@ -38,6 +38,14 @@ The current repository shares one structural syntax among several consumers. The
 
 A caller MUST select the interpreter deliberately. The v1 marker is mandatory within the resource loader; it does not make the ordinary `quirin check` command automatically dispatch every contract to that loader. Current verifier scopes enter bounded core derivation/dispatch; unsupported lifecycle source effects still leave obligations incomplete.
 
+For a contract owned by a published load-path manifest, the resource-v1 admission check is explicit:
+
+```sh
+quirin check --contract-load-path providers/contract-load-path.json providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv
+```
+
+This selects one owned contract module, including an owned module that is not itself published. Each included parent must be published by an owned or directly declared dependency crate and must satisfy its recorded digest. The result validates trusted resource-v1 assumptions and inherited-clause agreement; it checks no C bodies and establishes no safety verdict. Without this option, unresolved inclusion still refuses at the structural parser.
+
 A verification result MUST account for every clause relevant to the requested property. Clauses can be retained without interpretation by an editor or structural tool, but the output MUST NOT imply that retained clauses were discharged. A consumer MUST reject an unsupported semantic clause, return Unknown for its requested property, or explicitly limit its claim to a different covered property. Silently deleting a clause and publishing the original full-contract claim is forbidden.
 
 The ordinary checker now rejects nonempty source function contract clauses with Q021 until enforced. Extern envelopes remain structural unless an explicit consumer is invoked. Neither structural retention nor Q021 rejection proves arbitrary postconditions. See R08.
@@ -781,3 +789,17 @@ contract inherit libc::memcpy;
 **The real load path and selections** (card CONTRACT-INHERIT-ADOPTION). Each `quirin-provider-*` crate records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`, and each executable `qcore-provider-*` crate records them in its `src/main.rs` (card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING; the conformance harness `qcore-provider-conformance` owns no contracts and is not a load-path crate). `python3 providers/contracts.py sync` writes `providers/contract-load-path.json` from Cargo metadata (package name, version, and the normal dependencies that are themselves load-path crates) and those constants, with every owned module listed and every published module's SHA-256 pinned; `check` refuses a stale file. Core consumers read it as data (`qcore_contract::load_path_manifest`), never by linking a provider crate, and MUST refuse (`QI014`) a malformed manifest, a module list that differs from the crate's contract directory, and a published module whose text is not its pin. A resource manifest of **schema 2** names that file as `load_path` and MAY select a module by `CRATE:MODULE` reference (the `#include` spelling) beside path entries; path entries MUST resolve and be retained exactly as in schema 1, a reference is elaborated and gated as above and retained under its `CRATE:MODULE` key, and one total-or-reject load covers both kinds. The corpus index `contract/corpus.json` schema 2 names the same load path so that a corpus consumer reads an inheriting module as its elaboration. Clause-count pins count elaborated clauses; the written inheritance is pinned separately.
 
 The refusal codes are the loader-owned `QI001`–`QI020`, listed in [the diagnostics namespace page](agents/diagnostics.md). Implementation: `crates/qcore-frontend/src/contract_inclusion.rs` (directive scanner), `crates/qcore-contract/src/contract_inclusion.rs` (load path, resolver, elaborator, replay), `crates/qcore-contract/src/contract_loader.rs` (v1 loader). Lean model: `proof/QCore/ContractInherit.lean`. Rationale and evidence: [CONTRACT-INHERIT](reports/contract-inherit/README.md).
+
+## Runtime source import boundary
+
+Runtime `#import "./helper";` and `#import "../shared/helper.qr";` belong to
+the runtime source-bundle resolver. They MUST NOT select contract modules,
+load contract assumptions or substitute for the published `#include` path.
+A contract source containing a runtime-file import refuses. Canonical bundled
+capability imports are `#import std.extern;`; bare standard-module imports
+remain compatible. Neither a runtime import nor another file's bundled imports
+grant a caller an extern-call capability or unchecked declaration waiver.
+The caller requires its own `std.extern`; the file declaring an unchecked
+extern requires its own `std.extern.unsafe`. CLI `check --contract-load-path`
+retains its separate explicit contract-loader dispatch and does not enable
+runtime dependency loading.

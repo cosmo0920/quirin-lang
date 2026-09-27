@@ -61,11 +61,11 @@ fn messages(source: &str) -> Vec<String> {
 /// here is never the missing-import gate or an undeclared effect in disguise.
 fn module(body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
     ];
@@ -325,8 +325,8 @@ fn a_composition_derives_neither_alloc_nor_mut() {
     // in its declared row. Written without the `module` helper precisely so the
     // declared row is the narrow one.
     let source = [
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let s = concat(\"a\", \"b\");",
@@ -883,9 +883,9 @@ fn a_stored_byte_outside_the_range_keeps_refusing_in_a_composed_module() {
 #[test]
 fn a_buffer_outside_the_entry_refuses_rather_than_going_unmodelled() {
     let source = [
-        "import std.string;",
-        "import std.buffer;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.buffer;",
+        "#import std.io;",
         "",
         "fn helper() -> unit {",
         "    let c = bytes(1);",
@@ -912,8 +912,8 @@ fn a_buffer_outside_the_entry_refuses_rather_than_going_unmodelled() {
 #[test]
 fn the_bridge_needs_the_string_module() {
     let source = [
-        "import std.buffer;",
-        "import std.io;",
+        "#import std.buffer;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let b = bytes(1);",
@@ -937,8 +937,8 @@ fn the_bridge_needs_the_string_module() {
 #[test]
 fn the_bridge_needs_the_buffer_module() {
     let source = [
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let b = bytes(1);",
@@ -962,9 +962,9 @@ fn the_bridge_needs_the_buffer_module() {
 #[test]
 fn a_composed_module_derives_alloc_and_mut_and_must_declare_them() {
     let source = [
-        "import std.string;",
-        "import std.buffer;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.buffer;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let b = bytes(1);",
@@ -1038,8 +1038,8 @@ fn a_module_that_buffers_and_slices_without_the_bridge_keeps_the_buffer_routes_r
 #[test]
 fn a_composing_module_that_holds_no_buffer_needs_no_buffer_module() {
     let source = [
-        "import std.string;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let s = concat(\"a\", \"b\");",
@@ -1059,9 +1059,9 @@ fn the_two_contextual_words_are_reserved_nowhere() {
     // they are ordinary names, which is what keeps the pinned corpus — and any
     // program that happens to use either word — untouched.
     let source = [
-        "import std.string;",
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let concat = 1;",
@@ -1263,9 +1263,9 @@ fn the_loop_route_is_unchanged_by_this_cards_refactor() {
     // even though the only store is inside the body, which is `LOOP-V1`'s
     // depth-recursive `any_event` scan surviving the composition.
     let source = [
-        "import std.buffer;",
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.buffer;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let b = bytes(3);",

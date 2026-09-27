@@ -489,7 +489,7 @@ fn an_undeclared_caught_error_refuses_in_the_typed_error_band() {
 
 #[test]
 fn the_task_route_keeps_its_profile_refusal() {
-    let source = "import std.concurrency;\nconcurrency checked;\n\
+    let source = "#import std.concurrency;\nconcurrency checked;\n\
         error Failure { Failed; }\n\
         fn main() -> i32 { thread scope s { } \
         error region R { qcore_check(false, Failure); } catch (Failure) { } return 0; }";

@@ -321,7 +321,7 @@ pub fn has_source_buffer(program: &SourceProgram) -> bool {
     !buffer_uses(program).is_empty()
 }
 
-/// The span of the first statement needing `import std.buffer;`.
+/// The span of the first statement needing `#import std.buffer;`.
 #[must_use]
 pub fn buffer_span(program: &SourceProgram) -> Option<Span> {
     buffer_uses(program).values().next().copied()

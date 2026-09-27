@@ -187,8 +187,8 @@ than defaulted:
 
 <!-- refusal: Q051 -->
 ```qcore
-import std.fmt;
-import std.io;
+#import std.fmt;
+#import std.io;
 
 type Point { x: i32, y: i32 }
 

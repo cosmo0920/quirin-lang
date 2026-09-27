@@ -1,6 +1,6 @@
 # Quirin library and contract modules
 
-A `.qcore` file can declare its compilation intent before its declarations:
+A `.qv` contract or `.qr` runtime file can declare its compilation intent before its declarations:
 
 ```qcore
 module contract;
@@ -44,9 +44,9 @@ semantic checks in each mode.
 
 ```sh
 cargo run -p qcorec -- check \
-  providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore
+  providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv
 cargo run -p qcorec -- check \
-  providers/quirin-provider-shared/contracts/language/quantified_indices.qcore
+  providers/quirin-provider-shared/contracts/language/quantified_indices.qv
 ```
 
 All files indexed by `contract/corpus.json` now use `module contract;`; none needs a dummy
@@ -87,15 +87,15 @@ dependent function typing, symbolic inference from runtime values, or a proof
 of quantitative transfers through arbitrary bodies. Cost total/peak types and
 extensions to the separate legacy `quant<access, ...>` profile remain outside
 this addition. The native regression fixture is
-`providers/quirin-provider-shared/contracts/language/quantified_indices.qcore`.
+`providers/quirin-provider-shared/contracts/language/quantified_indices.qv`.
 
 ## Explicit bundled module imports
 
-Bundled semantic modules require an explicit top-level `import` in each source
-file. The current registry contains `std.concurrency`:
+Bundled semantic modules require an explicit top-level `#import` in each source
+file. For example, concurrency vocabulary uses `std.concurrency`:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 ```
 
@@ -107,5 +107,34 @@ including in uncalled bodies and non-executable modules. Each input file is
 checked before combining declarations: another file's import cannot grant it
 concurrency. Importing vocabulary does not discharge operation checks or make an
 unsupported profile executable. The task profile still requires its
-`concurrency checked;` marker. User-file/package resolution, import aliases,
-wildcards, reexports and implicit/transitive imports are not implemented.
+`concurrency checked;` marker. Bare standard-module `import` remains a legacy
+parser compatibility form; maintained sources use `#import`. Import aliases,
+wildcards, package search and reexports are not implemented.
+
+
+## Relative runtime modules
+
+In a `.qr` source, `#import "./helper";` and `#import "./helper.qr";` both select
+`helper.qr` relative to the importing file. Imports may be nested. A dependency
+may be unmarked or declare `module library;`; explicit executable and contract
+dependencies are refused. The explicit input roots select the compilation mode,
+so an unmarked helper does not turn a library root into an executable.
+
+`quirin check` and `quirin emit` resolve these files from disk. Library compile
+APIs use supplied snapshots by default; filesystem loading requires an explicit
+API. Repeated and diamond imports reuse a loaded snapshot. Missing files,
+ambiguous identities, cycles and resource-limit violations refuse. Runtime
+imports never resolve `.qv` contracts or `.qrlib` ABI manifests. Declarations
+share the existing global namespace and duplicate names remain errors. Each
+file must request its own standard capabilities, including extern-call access.
+
+For a contract that uses published `#include` declarations, use the separate
+contract-assumption check:
+
+```sh
+cargo run -p qcorec -- check --contract-load-path providers/contract-load-path.json \
+  providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv
+```
+
+That command validates the resource-v1 declarations against the supplied load
+path and published pins. It checks no C bodies and establishes no safety verdict.

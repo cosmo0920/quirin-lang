@@ -1,5 +1,7 @@
 # STD-BUFFER — `std.buffer`, a checked owned byte buffer (wave 22)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: *"QCore has NO string type, zero string literals, and its one buffer
 model carries a single `i32` payload with no extent. The std.http direction needs
 a source-level byte-buffer tier: `std.buffer` — a checked, owned,
@@ -11,7 +13,7 @@ Design note written first, as the brief required:
 [`docs/design/STD_BUFFER_V1.md`](../../design/STD_BUFFER_V1.md).
 
 **What landed.** A source-level route `source.buffer.v1` behind
-`import std.buffer;`: `let b = bytes(8);` acquires eight zeroed bytes,
+`#import std.buffer;`: `let b = bytes(8);` acquires eight zeroed bytes,
 `b[0] = 65;` writes one, `let x = b[0];` reads one, `let n = extent(b);` binds
 the length as an ordinary integer, `drop b;` releases. Emission is
 self-contained C11 — `calloc`, `free` and two bounds-checked accessors defined
@@ -47,7 +49,7 @@ extent-carrying storage does a QCore source program already have?**
 
 | # | Candidate | Extent? | Byte-addressable? | Reachable from a sequential source program? |
 |---|---|---|---|---|
-| B1 | task-route `Buffer` (`qcore_buffer_new/read/write`) | **no** — "this backend's `Buffer` has no extent" (`crates/qcore-frontend/src/source_epoch_tasks.rs:49-53`) | no — one `i32` payload | no: the intrinsics require `import std.concurrency;` and route to the task model |
+| B1 | task-route `Buffer` (`qcore_buffer_new/read/write`) | **no** — "this backend's `Buffer` has no extent" (`crates/qcore-frontend/src/source_epoch_tasks.rs:49-53`) | no — one `i32` payload | no: the intrinsics require `#import std.concurrency;` and route to the task model |
 | B2 | an extern `*mut u8` through a declared C04 contract | **no** — `ExternAssumption::NoExtentTransport` is a standing premise of every extern certificate | only inside the callee, which QCore does not analyse | yes, but every byte is the callee's premise, not a checked fact |
 | B3 | `OwnershipOp::Acquire`'s `Footprint` | **yes** — `Footprint(BTreeMap<String, u64>)`, an exact componentwise quantity (`crates/qcore-core/src/ownership.rs:9`) | no — it is a quantity, not storage | the IR is reachable; **no source construct produced a byte-axis acquisition** |
 | B4 | `SourceTypeKind::Array` / `Slice` | type-level names only | no | no value of either type is constructible in any source grammar |
@@ -771,7 +773,7 @@ rather than a backlog item.
 ## 13. Draft increment paragraph
 
 > A checked owned byte buffer (STD-BUFFER), the spine head of the `std.http`
-> direction: `source.buffer.v1` behind `import std.buffer;` — `let b = bytes(8);`
+> direction: `source.buffer.v1` behind `#import std.buffer;` — `let b = bytes(8);`
 > acquires eight zeroed bytes, `b[0] = 65;` writes one, `let x = b[0];` reads one,
 > `let n = extent(b);` binds the length as an ordinary integer, `drop b;`
 > releases. **The census is half the result**: the extent capability the tree

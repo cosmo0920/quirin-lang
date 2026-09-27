@@ -1,5 +1,7 @@
 # SOURCE-SCALAR-CALLS-V1
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 2026-09-20. Base: `418af31dfa4567085f68882d7fab7d2e69a042c7`.
 Implementation and validation record for ordinary Quirin scalar functions and explicit standard I/O.
 
@@ -29,7 +31,7 @@ arithmetic and explicit narrowing/division guards, terminating silently with exi
 automatic result banner or stderr diagnostic. Functions cannot allocate, transfer
 ownership or throw.
 
-`import std.io; print(f);` evaluates the i32 expression `f` and writes its decimal
+`#import std.io; print(f);` evaluates the i32 expression `f` and writes its decimal
 value plus a newline to stdout through the existing `io_emit::write_line` backend.
 No std.fmt import is needed for this form. I/O is inferred when the effect row is
 absent; `effects {io}` permits it, and `effects {}` refuses direct or transitive

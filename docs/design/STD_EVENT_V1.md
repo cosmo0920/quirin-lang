@@ -238,7 +238,7 @@ below is stable under such a shift.
 | `Q062` | the declared `effects { … }` row does not admit the derived one |
 
 `Q015` (a capability used without its file-local import) is reused for a missing
-`import std.event;`, exactly as `STD-MODULES` reused it for the three IO
+`#import std.event;`, exactly as `STD-MODULES` reused it for the three IO
 modules. No new import diagnostic code is minted.
 
 ## 7. Reserved words — the constraint-14 census

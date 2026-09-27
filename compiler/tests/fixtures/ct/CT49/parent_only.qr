@@ -9,10 +9,10 @@
 // This is what keeps CT49's mapping a statement about a declaration rather than
 // a blanket weakening of the corpus's stream comparison: the partial order is
 // what a worker-body line buys, and a program without one keeps byte equality.
-import std.concurrency;
-import std.io;
-import std.logger;
-import std.fmt;
+#import std.concurrency;
+#import std.io;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(value: i32) -> i32 { return value; }

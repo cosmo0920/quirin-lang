@@ -63,7 +63,7 @@ fn messages(source: &str) -> String {
 /// measures the rule it names against the same surroundings.
 fn module(declaration: &str, body: &str) -> String {
     format!(
-        "import std.buffer;\nimport std.fmt;\nimport std.io;\n\n{declaration}\n\nfn main() -> unit \
+        "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\n{declaration}\n\nfn main() -> unit \
          effects {{ io, alloc, mut }} {{\n{body}    return;\n}}\n"
     )
 }
@@ -470,7 +470,7 @@ fn the_refusals_that_stay_where_they_were() {
     assert_eq!(codes(&rendered), ["Q052"]);
     assert!(messages(&rendered).contains("read the field you mean first"));
 
-    let string = "import std.string;\nimport std.fmt;\nimport std.io;\n\nfn main() -> unit effects \
+    let string = "#import std.string;\n#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects \
                   { io } {\n    let s = \"hi\";\n    drop s;\n    return;\n}\n";
     assert_eq!(codes(string), ["Q068"]);
 }
@@ -586,7 +586,7 @@ fn the_model_refuses_a_value_of_the_other_kind_at_a_field() {
 /// own code, owned field or not.
 #[test]
 fn the_composed_string_route_still_refuses_a_record_with_an_owned_field() {
-    let source = "import std.buffer;\nimport std.string;\nimport std.fmt;\nimport std.io;\n\ntype \
+    let source = "#import std.buffer;\n#import std.string;\n#import std.fmt;\n#import std.io;\n\ntype \
                   Packet { tag: i32, buf: bytes }\n\nfn main() -> unit effects { io, alloc, mut } \
                   {\n    let b = bytes(2);\n    b[0] = 104;\n    b[1] = 105;\n    let s = \
                   borrow_utf8(b);\n    let p = Packet { tag: 1, buf: b };\n    print s;\n    drop \

@@ -5,7 +5,7 @@
 // access through a lease must state a footprint that fits the lease it goes
 // through, rebased onto the lease's own base; the refusal names the range.
 // This is a check-time refusal, not a run-time trap.
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 2, 9);

@@ -1,0 +1,13 @@
+{
+  "note": "Combined runtime #import and contract-load-path gate at70d29367; 339 Rust units/352 summaries, 11 ignored, zero failed. All nine commands exit0. Private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/runtime-source-imports-gate-20260927T142437Z. Provider129 and packages5 are carried from the completed EXT-02/03 provider gate; no provider files changed or new provider run claimed. Clang recorded for this run. First failed integrated gate and exact corrections retained. All five pinned audit artifacts byte-identical; no new safety coverage claim.",
+  "workspace_tests": 6122,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 216,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

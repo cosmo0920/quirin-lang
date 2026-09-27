@@ -6,10 +6,10 @@
 // impossible, and the declaration is refused rather than downgraded to a
 // multiset comparison — which is what stops "compare up to a partial order"
 // from being a licence to stop comparing.
-import std.concurrency;
-import std.io;
-import std.logger;
-import std.fmt;
+#import std.concurrency;
+#import std.io;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(value: i32) -> i32 effects { io } {

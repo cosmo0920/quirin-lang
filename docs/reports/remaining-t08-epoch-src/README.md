@@ -1,5 +1,7 @@
 # T08-EPOCH-SRC — a source form for the flat-epoch bound
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Date: 2026-09-09. Baseline: `5589839` (wave-6 consolidation `d91316b` plus two
 follow-up commits). Branch: `claude/t08-epoch-src` (isolated worktree).
 Workstream W6, lane Source, kind implementation, scope M.
@@ -141,7 +143,7 @@ profile does not have, a worker with no credit clause, two clauses of the same
 kind in one worker, two allocations, `join(close)` with nothing retained, an
 epoch scope that is not the whole entry body, a second declaration, a
 `spawn`/`join` task expression, a missing allocation header and a missing
-overhead header. A missing `import std.concurrency;` is `Q015` from the
+overhead header. A missing `#import std.concurrency;` is `Q015` from the
 existing import gate, before any of this.
 
 Four refusals of the core's band are **unreachable from this source form** and

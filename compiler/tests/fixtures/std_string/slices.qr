@@ -8,10 +8,10 @@
 // The observation is scalar-only and deliberately so: amendment §7 defers
 // rendering text to `STRING-SLICE-IO`, so what is printed is the *length* of
 // each view, which is exactly the number this route claims to know in O(1).
-import std.string;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.string;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io } {
     // Five ASCII bytes.

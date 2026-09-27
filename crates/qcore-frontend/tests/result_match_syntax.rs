@@ -35,7 +35,7 @@ fn arm_statements<'a>(
 
 #[test]
 fn canonical_spawn_match_preserves_complete_scrutinee_patterns_and_arms() {
-    let source = "import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { match spawn s worker(copy x) { Result::Ok { value: h } => { join move h; } Result::Err { error: e } => { e; } } } }";
+    let source = "#import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { match spawn s worker(copy x) { Result::Ok { value: h } => { join move h; } Result::Err { error: e } => { e; } } } }";
     let parsed = parse_source_program(source).unwrap();
     let syntax = &parsed.result_matches()[0];
     assert_eq!(syntax.scrutinee_source, "spawn s worker(copy x)");
@@ -116,7 +116,7 @@ fn result_arm_bindings_neither_leak_nor_resolve_their_own_scrutinee() {
 
 #[test]
 fn nested_match_and_scope_shadowing_keep_each_binder_identity() {
-    let source = "import std.concurrency; fn main(r: i32) -> unit { match r { Result::Ok { value: h } => { thread scope s { let h = h; h; } match h { Result::Ok { value: h } => { h; } Result::Err { error: e } => { e; } } } Result::Err { error: e } => { e; } } }";
+    let source = "#import std.concurrency; fn main(r: i32) -> unit { match r { Result::Ok { value: h } => { thread scope s { let h = h; h; } match h { Result::Ok { value: h } => { h; } Result::Err { error: e } => { e; } } } Result::Err { error: e } => { e; } } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let matches = typed_matches(&typed);
     assert_eq!(matches.len(), 2);
@@ -139,7 +139,7 @@ fn nested_match_and_scope_shadowing_keep_each_binder_identity() {
 
 #[test]
 fn direct_join_match_is_resolved_without_implicit_propagation() {
-    let source = "import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s worker(copy x)?; match join move h { Result::Ok { value: value } => { value; } Result::Err { error: e } => { e; } } } }";
+    let source = "#import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { let h = spawn s worker(copy x)?; match join move h { Result::Ok { value: value } => { value; } Result::Err { error: e } => { e; } } } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let matched = typed_matches(&typed)[0];
     let Some(ResolvedResultMatchScrutinee::Task(task)) = &matched.scrutinee else {
@@ -209,11 +209,11 @@ fn arm_binders_cannot_impersonate_scope_or_worker_roles() {
         "match x { Result::Ok { value: worker } => { let h = spawn s worker(copy x); } Result::Err { error: e } => { } }",
     ] {
         let source = format!(
-            "import std.concurrency; fn worker(x: i32) -> unit {{ return; }} fn main(x: i32) -> unit {{ thread scope s {{ {body} }} }}"
+            "#import std.concurrency; fn worker(x: i32) -> unit {{ return; }} fn main(x: i32) -> unit {{ thread scope s {{ {body} }} }}"
         );
         assert!(elaborate_source(&parse_source_program(&source).unwrap()).is_err());
     }
-    let source = "import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { match x { Result::Ok { value: worker } => { worker; } Result::Err { error: s } => { s; } } let h = spawn s worker(copy x); } }";
+    let source = "#import std.concurrency; fn worker(x: i32) -> unit { return; } fn main(x: i32) -> unit { thread scope s { match x { Result::Ok { value: worker } => { worker; } Result::Err { error: s } => { s; } } let h = spawn s worker(copy x); } }";
     elaborate_source(&parse_source_program(source).unwrap()).unwrap();
 }
 

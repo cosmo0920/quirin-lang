@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 // CT47 control -- the SHARE contract supplied, admitted. Byte-identical to

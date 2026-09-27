@@ -12,10 +12,10 @@
 // and 9 — because the declared relation refuses a window in which two emitters
 // could write the same line (`AmbiguousAlphabet`): a native line's writer must
 // be a function of its bytes.
-import std.concurrency;
-import std.io;
-import std.logger;
-import std.fmt;
+#import std.concurrency;
+#import std.io;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(value: i32) -> i32 effects { io } {

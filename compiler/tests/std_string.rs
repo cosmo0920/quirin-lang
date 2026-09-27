@@ -53,10 +53,10 @@ fn source_lines(lines: &[&str]) -> String {
 /// the same declarations.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.string;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
-        "import std.logger;".to_owned(),
+        "#import std.string;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
+        "#import std.logger;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -82,8 +82,8 @@ fn the_accepted_module_selects_the_string_route() {
 fn a_repeated_import_is_idempotent() {
     // Amendment §2: "Repeated imports are idempotent."
     let doubled = SLICES.replace(
-        "import std.string;",
-        "import std.string;\nimport std.string;",
+        "#import std.string;",
+        "#import std.string;\n#import std.string;",
     );
     let once = compile(SLICES).unwrap();
     let twice = compile(&doubled).unwrap();
@@ -96,7 +96,7 @@ fn a_repeated_import_is_idempotent() {
 fn an_unknown_near_miss_module_name_refuses() {
     // `std.string` is one registry entry, not a prefix rule.
     let source = source_lines(&[
-        "import std.strings;",
+        "#import std.strings;",
         "",
         "fn main() -> unit {",
         "    return;",
@@ -121,7 +121,7 @@ fn a_literal_without_the_import_refuses() {
 #[test]
 fn a_length_query_without_the_import_refuses() {
     let source = source_lines(&[
-        "import std.string;",
+        "#import std.string;",
         "",
         "fn helper() -> unit {",
         "    return;",
@@ -136,7 +136,7 @@ fn a_length_query_without_the_import_refuses() {
     // With the import this is admitted; the point of the pair below is that
     // each capability is gated, so measure the same body without it.
     assert!(compile(&source).is_ok());
-    let without = source.replace("import std.string;\n", "");
+    let without = source.replace("#import std.string;\n", "");
     assert_eq!(codes(&without), ["Q015"]);
 }
 
@@ -170,7 +170,7 @@ fn an_import_in_another_compilation_input_grants_nothing() {
     // Constraint 13, for the ninth module: imports do not leak across
     // compilation inputs, and the gate runs before checking each file.
     let importer = source_lines(&[
-        "import std.string;",
+        "#import std.string;",
         "",
         "fn helper() -> unit {",
         "    return;",
@@ -200,7 +200,7 @@ fn an_import_in_another_compilation_input_grants_nothing() {
 #[test]
 fn the_buffer_module_does_not_grant_the_string_capability() {
     let source = source_lines(&[
-        "import std.buffer;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    let s = \"hello\";",
@@ -216,7 +216,7 @@ fn the_buffer_module_does_not_grant_the_string_capability() {
 #[test]
 fn the_string_module_does_not_grant_the_buffer_capability() {
     let source = source_lines(&[
-        "import std.string;",
+        "#import std.string;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    let b = bytes(4);",
@@ -234,8 +234,8 @@ fn the_string_module_does_not_grant_an_output_stream() {
     // Amendment §7: this amendment does not make `std.io` or `std.logger`
     // accept anything, and it certainly does not open a stream.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.fmt;",
+        "#import std.string;",
+        "#import std.fmt;",
         "",
         "fn main() -> unit effects { io } {",
         "    let s = \"hello\";",
@@ -252,9 +252,9 @@ fn the_string_module_does_not_grant_an_output_stream() {
 #[test]
 fn the_output_modules_do_not_grant_the_string_capability() {
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
-        "import std.logger;",
+        "#import std.fmt;",
+        "#import std.io;",
+        "#import std.logger;",
         "",
         "fn main() -> unit effects { io } {",
         "    let s = \"hello\";",
@@ -271,7 +271,7 @@ fn the_output_modules_do_not_grant_the_string_capability() {
 #[test]
 fn the_concurrency_module_does_not_grant_the_string_capability() {
     let source = source_lines(&[
-        "import std.concurrency;",
+        "#import std.concurrency;",
         "",
         "fn main() -> unit {",
         "    let s = \"hello\";",
@@ -296,7 +296,7 @@ fn a_verifier_scope_keeps_its_quoted_version_without_any_string_import() {
     // the front end, both in the `verifier_scope` reader — a plugin `version`
     // and a plugin `profile`. This is the shipped shape from
     // `compiler/tests/cycle20_verifier_plugins.rs`, verbatim in the part that
-    // matters, compiled with **no** `import std.string;` at all.
+    // matters, compiled with **no** `#import std.string;` at all.
     let source = source_lines(&[
         "verify scope fluent_bit {",
         "  plugin qcore.libevent version \"0.1\" profile linux_epoll capabilities { event_traces };",
@@ -815,9 +815,9 @@ fn a_module_that_strings_and_extern_calls_keeps_the_extern_route_refusal() {
     // rather than assumed, and the absence of a `Q068`–`Q073` code in the result
     // is the measurement.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.extern;",
-        "import std.extern.unsafe;",
+        "#import std.string;",
+        "#import std.extern;",
+        "#import std.extern.unsafe;",
         "",
         "extern fn puts(text: ptr<const, u8>) -> i32;",
         "",
@@ -844,8 +844,8 @@ fn a_module_that_strings_and_buffers_keeps_the_buffer_route_refusal() {
     // the buffer route refuses the statements it does not model at its own
     // `Q051`.
     let source = source_lines(&[
-        "import std.string;",
-        "import std.buffer;",
+        "#import std.string;",
+        "#import std.buffer;",
         "",
         "fn main() -> unit effects { alloc } {",
         "    let b = bytes(4);",
@@ -860,8 +860,8 @@ fn a_module_that_strings_and_buffers_keeps_the_buffer_route_refusal() {
 #[test]
 fn a_module_that_strings_and_spawns_keeps_its_concurrency_refusal() {
     let source = source_lines(&[
-        "import std.string;",
-        "import std.concurrency;",
+        "#import std.string;",
+        "#import std.concurrency;",
         "",
         "concurrency checked;",
         "",
@@ -909,7 +909,7 @@ fn the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable() {
     // widening of the rule fails in this card's own suite instead of in the
     // corpus test.
     let source = source_lines(&[
-        "import std.extern;",
+        "#import std.extern;",
         "",
         "extern fn take_len(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>",
         "    requires resource_valid(str)",
@@ -932,9 +932,9 @@ fn the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable() {
 #[test]
 fn writing_a_line_still_requires_the_io_effect_to_be_declared() {
     let source = source_lines(&[
-        "import std.string;",
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.string;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit {",
         "    let s = \"hello\";",
@@ -949,7 +949,7 @@ fn writing_a_line_still_requires_the_io_effect_to_be_declared() {
 #[test]
 fn a_string_construct_outside_the_entry_refuses() {
     let source = source_lines(&[
-        "import std.string;",
+        "#import std.string;",
         "",
         "fn helper() -> unit {",
         "    let s = \"hello\";",
@@ -1050,8 +1050,8 @@ fn a_module_using_none_of_this_card_emits_byte_identically() {
     // existing module travels the identical code path. Pinned against the
     // neighbour route this card was inserted in front of.
     let source = source_lines(&[
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io } {",
         "    let total = 42;",
@@ -1078,9 +1078,9 @@ fn the_buffer_route_is_unchanged_by_the_colon_disambiguation() {
     // access cannot hold one — its index is an integer literal or a bound name —
     // so the accepted set of that route is unchanged, and this pins it.
     let source = source_lines(&[
-        "import std.buffer;",
-        "import std.fmt;",
-        "import std.io;",
+        "#import std.buffer;",
+        "#import std.fmt;",
+        "#import std.io;",
         "",
         "fn main() -> unit effects { io, alloc, mut } {",
         "    let b = bytes(8);",

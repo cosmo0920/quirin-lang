@@ -11,10 +11,10 @@
 // `std.fmt` is imported because this module renders a *scalar* on its last
 // line. A module that rendered only text would not need it: a rendering
 // selector is `std.fmt`'s and a string needs none.
-import std.string;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.string;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io } {
     // The HTTP/1.1 status line, spelled as one literal. Its character set —

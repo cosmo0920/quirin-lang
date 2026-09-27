@@ -8,9 +8,9 @@
 // therefore keyed to the overlap — `max low < min high` on the write's
 // one-byte range against each live loan — and not to writing a borrowed
 // buffer at all.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(6);

@@ -12,10 +12,10 @@
 // the checker reads out of the ownership ledger's own footprint, so the four
 // accesses are proved in range before a byte of C is emitted.
 
-import std.buffer;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io, alloc, mut } {
     let src = bytes(4);

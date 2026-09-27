@@ -1,4 +1,4 @@
-import std.extern;
+#import std.extern;
 
 // The piped twin of `fixtures/extern_calls/realloc.qcore` (card `PIPE-CHAIN`).
 //

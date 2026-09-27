@@ -48,7 +48,7 @@
 ## 1. Decision
 
 The opt-in bundled module `std.string` provides Quirin strings. A source file
-MUST explicitly declare `import std.string;` to use its string type, construct
+MUST explicitly declare `#import std.string;` to use its string type, construct
 a string literal value, query its length, or slice it. These capabilities are
 unavailable in the default language environment.
 
@@ -68,7 +68,7 @@ The existing owned `std.buffer` value remains a distinct custody-bearing type.
 ## 2. Proposed source surface
 
 ```qcore
-import std.string;
+#import std.string;
 ```
 
 The import grants the string type and operations in this amendment for that

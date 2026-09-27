@@ -26,7 +26,7 @@ use qcore_core::task_execution::{
 /// One allocation, two children with disjoint write leases over the payload's
 /// two-byte halves, both live at once, the owner's authority back after both
 /// joins — the task-crossing shape of the wave-29 sequential fixture.
-const DISJOINT_WRITE_LEASES: &str = "import std.concurrency; concurrency checked;
+const DISJOINT_WRITE_LEASES: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -226,7 +226,7 @@ fn a_lease_past_the_payload_extent_refuses() {
 /// `borrow<Buffer>` parameter is a delivered-kind mismatch.
 #[test]
 fn the_judgment_refuses_a_write_lend_of_a_scalar_by_name() {
-    const SCALAR_LEND: &str = "import std.concurrency; concurrency checked;
+    const SCALAR_LEND: &str = "#import std.concurrency; concurrency checked;
 fn taker(value: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -251,7 +251,7 @@ fn main() -> i32 effects { spawn, join, may_block } {
 
 #[test]
 fn a_write_lend_delivered_to_a_read_loan_parameter_is_a_kind_mismatch() {
-    const LEND_TO_BORROW: &str = "import std.concurrency; concurrency checked;
+    const LEND_TO_BORROW: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -293,7 +293,7 @@ fn a_read_share_delivered_to_a_lease_parameter_is_a_kind_mismatch() {
 /// read side bounds its borrowers.
 #[test]
 fn a_third_simultaneous_lease_holder_refuses() {
-    const THREE_LEASES: &str = "import std.concurrency; concurrency checked;
+    const THREE_LEASES: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -342,7 +342,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// wave-29 card made for sequential lends.
 #[test]
 fn sequential_leases_of_one_range_are_admitted_after_the_joins() {
-    const SEQUENTIAL: &str = "import std.concurrency; concurrency checked;
+    const SEQUENTIAL: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -383,7 +383,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// overlaps that footprint.
 #[test]
 fn a_read_share_beside_an_outstanding_lease_refuses() {
-    const MIXED: &str = "import std.concurrency; concurrency checked;
+    const MIXED: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -437,7 +437,7 @@ fn a_lease_is_not_a_result_type_and_not_an_entry_parameter() {
         "task functions support i32, unit and own<Buffer> results",
     );
     assert_refused(
-        "import std.concurrency; concurrency checked;
+        "#import std.concurrency; concurrency checked;
 fn main(half: lend<Buffer>) -> i32 effects { may_block } {
   return 1;
 }",

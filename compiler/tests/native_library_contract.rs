@@ -282,7 +282,7 @@ fn a_slice_that_can_acquire_and_never_discharge_rejects() {
                               ensures normal resource_borrowed(size);\n\
                               ensures normal resource_return_owned(nullable);\n\
                           };\n";
-    let source = "import std.extern;\n\
+    let source = "#import std.extern;\n\
                   \n\
                   error Failure { Failed; }\n\
                   \n\
@@ -401,8 +401,8 @@ fn a_symbol_the_manifest_binds_to_a_contract_may_not_be_waived() {
     // refuses. A gate here would be unreachable, and an unreachable code is a
     // claim a reader cannot check, so this row pins the composition instead of
     // a fourth code.
-    let waiver = "import std.extern;\n\
-                  import std.extern.unsafe;\n\
+    let waiver = "#import std.extern;\n\
+                  #import std.extern.unsafe;\n\
                   \n\
                   unsafe extern fn k_scale(value: i32, factor: i32) -> i32;\n\
                   \n\

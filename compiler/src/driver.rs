@@ -21,3 +21,11 @@ pub fn compile_files(
 #[cfg(test)]
 #[path = "../tests/unit/driver.rs"]
 mod tests;
+
+/// Default-registry compilation with explicit filesystem import loading.
+pub fn compile_files_with_filesystem(
+    files: &[SourceFile],
+    options: &CompileOptions,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    compile_files_with_filesystem_with_registry(files, options, &first_party_registry())
+}

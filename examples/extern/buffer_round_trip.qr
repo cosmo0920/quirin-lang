@@ -1,5 +1,5 @@
-import std.extern;
-import std.logger;
+#import std.extern;
+#import std.logger;
 
 // Acquire a buffer from C, lend it twice, and give it back. This is the whole
 // life of one resource across a declared boundary.

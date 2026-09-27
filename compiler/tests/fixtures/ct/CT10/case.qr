@@ -1,5 +1,5 @@
 // CT10 — adjacent bit-fields in one memory location.
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 
 type Flags {

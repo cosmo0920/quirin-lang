@@ -61,7 +61,7 @@ use qcore_core::task_trace_relation::{
 /// Card `WRITE-LEND-TASKS`'s admitted flagship, verbatim: one allocation, two
 /// children with disjoint write leases over the payload's two-byte halves,
 /// both live at once, the owner's authority back after both joins.
-const DISJOINT_WRITE_LEASES: &str = "import std.concurrency; concurrency checked;
+const DISJOINT_WRITE_LEASES: &str = "#import std.concurrency; concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   return 1;
 }
@@ -96,7 +96,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// The same program with its two write leases replaced by read shares: the
 /// control that makes the refusal above attributable to the lease rather than
 /// to the program's spawn/join shape.
-const DISJOINT_READ_SHARES: &str = "import std.concurrency; concurrency checked;
+const DISJOINT_READ_SHARES: &str = "#import std.concurrency; concurrency checked;
 fn reader(half: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(half);
   return seen;

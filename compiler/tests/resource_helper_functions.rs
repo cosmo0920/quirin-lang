@@ -130,7 +130,7 @@ fn complete_headers_and_token_structural_types_are_required() {
 #[test]
 fn a_parameter_shadowing_a_helper_cannot_be_called_indirectly() {
     let source = r#"
-import std.buffer;
+#import std.buffer;
 fn target(value: borrow<bytes>) -> unit { return; }
 fn caller(target: i32, value: borrow<bytes>) -> unit {
     target();

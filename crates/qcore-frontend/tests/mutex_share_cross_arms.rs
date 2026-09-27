@@ -43,7 +43,7 @@ const JUDGMENT: &str = "the transferability judgment refuses this crossing";
 const NOT_A_PROTECTED_RESOURCE: &str = "is not a protected resource of this module";
 
 fn entry(body: &str) -> String {
-    format!("import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
+    format!("#import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
 }
 
 /// The whole route: lower, then check with the unedited core. Mirrors the

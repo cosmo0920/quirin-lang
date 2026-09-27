@@ -1,5 +1,7 @@
 # HTTP-V1-COMPUTED-LENGTH — a `Content-Length` the program works out, decided exactly as hard (wave 26)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 **Card:** `HTTP-V1-COMPUTED-LENGTH`. **Route:** `source.http.v1`, behind the
 `std.http` bundled module. **Codes:** none allocated — every refusal is a
 condition extension of the existing `Q090`–`Q096` band. **Reserved words:**
@@ -134,7 +136,7 @@ widening is stated in spec §L21 and here rather than taken silently.
 | a name at a value, piece or `len` position bound to the other kind | `Q094` | the band's "a name at a position that is not one", **widened** |
 | a name bound to **nothing at all** | `Q013` | name resolution first — the standing `STD-FMT-DIAGNOSTIC` residual, unchanged |
 | a value name bound twice | `Q012` | name resolution first; the model's guard is kept but unreachable (§10, `HTTP-COMPUTED-REBIND-REACH`) |
-| a composed binding with no `import std.string;` | `Q015` | the existing string gate, which already fires for `concat`/`len` |
+| a composed binding with no `#import std.string;` | `Q015` | the existing string gate, which already fires for `concat`/`len` |
 
 ### 3.1 The import rule, decided by the rule that already existed
 

@@ -14,6 +14,21 @@ use qcore_core::module_imports::{
 pub fn check_source_imports(
     program: &SourceProgram,
 ) -> Result<ModuleImports, Vec<SourceDiagnostic>> {
+    let externs = program
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind == DeclarationKind::ExternFunction)
+        .map(|d| d.value.name.clone())
+        .collect();
+    check_source_imports_in_scope(program, &externs)
+}
+
+/// As above, with the linked extern-name inventory. Only this file's tokens,
+/// declarations and import choices contribute capability uses/permissions.
+pub fn check_source_imports_in_scope(
+    program: &SourceProgram,
+    externs: &std::collections::BTreeSet<String>,
+) -> Result<ModuleImports, Vec<SourceDiagnostic>> {
     // Card `PIPE-OPERATOR`, first: a malformed pipeline and a claimed-but-
     // unlowered logical operator are syntactic facts about this file that do
     // not depend on what it imported. Running the operator gate before the
@@ -41,19 +56,21 @@ pub fn check_source_imports(
             pass: SemanticPass::NameResolution,
             span,
             message: format!(
-                "concurrency requires an explicit `import {CONCURRENCY_MODULE};` in this source file"
+                "concurrency requires an explicit `#import {CONCURRENCY_MODULE};` in this source file"
             ),
         }]);
     }
     if !imports.extern_calls()
-        && let Some(span) = extern_call_span(program)
+        && let Some(span) = crate::source_extern::called_extern_names_in_scope(program, externs)
+            .into_values()
+            .next()
     {
         return Err(vec![SourceDiagnostic {
             code: "Q022",
             pass: SemanticPass::ExternCall,
             span,
             message: format!(
-                "calling a declared extern function requires an explicit `import {EXTERN_MODULE};` in this source file"
+                "calling a declared extern function requires an explicit `#import {EXTERN_MODULE};` in this source file"
             ),
         }]);
     }
@@ -71,7 +88,7 @@ pub fn check_source_imports(
             pass: SemanticPass::UncheckedLinkage,
             span,
             message: format!(
-                "declaring an extern function with no contract requires an explicit `import {UNCHECKED_EXTERN_MODULE};` in this source file"
+                "declaring an extern function with no contract requires an explicit `#import {UNCHECKED_EXTERN_MODULE};` in this source file"
             ),
         }]);
     }
@@ -249,22 +266,8 @@ fn missing_import(span: Span, module: &str, what: &str) -> SourceDiagnostic {
         code: "Q015",
         pass: SemanticPass::NameResolution,
         span,
-        message: format!("{what} requires an explicit `import {module};` in this source file"),
+        message: format!("{what} requires an explicit `#import {module};` in this source file"),
     }
-}
-
-/// The first call in this file whose callee is one of this file's own `extern
-/// fn` declarations, in a statement form `source.extern-call.v1` can express.
-/// Declaring an extern function is not calling one, so a contract module and
-/// every existing declaration-only file are untouched, and resolution stays
-/// file-local: importing another compilation input never grants this file the
-/// vocabulary. One detector serves both this gate and route selection, so a
-/// file can never be routed to the extern profile without having needed the
-/// import, or need the import without being routed there.
-fn extern_call_span(program: &SourceProgram) -> Option<Span> {
-    crate::source_extern::called_extern_names(program)
-        .into_values()
-        .next()
 }
 
 // Inspect structural concurrency forms rather than treating a ghost field named

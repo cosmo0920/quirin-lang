@@ -63,9 +63,9 @@ fn messages(source: &str) -> String {
 /// against the same declarations.
 fn module(effects: &str, body: &[&str]) -> String {
     let mut source = vec![
-        "import std.buffer;".to_owned(),
-        "import std.fmt;".to_owned(),
-        "import std.io;".to_owned(),
+        "#import std.buffer;".to_owned(),
+        "#import std.fmt;".to_owned(),
+        "#import std.io;".to_owned(),
         String::new(),
         format!("fn main() -> unit effects {{ {effects} }} {{"),
     ];
@@ -657,7 +657,7 @@ fn an_unterminated_clause_list_is_a_parse_failure() {
 /// (`LOOP-ATTRIBUTE-FOREIGN-ROUTE-MESSAGE`).
 #[test]
 fn a_route_that_does_not_admit_the_loop_refuses_the_attribute_at_its_own_code() {
-    let standard_io = "import std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io } {\n    [| #unroll, where #bound < 1024 |]\n    for i in 0..3 { print dec i; }\n    return;\n}\n";
+    let standard_io = "#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects { io } {\n    [| #unroll, where #bound < 1024 |]\n    for i in 0..3 { print dec i; }\n    return;\n}\n";
     assert_eq!(codes(standard_io), ["Q030", "Q030"]);
     let sequential = "fn main() -> i32 {\n    [| #unroll, where #bound < 1024 |]\n    for i in 0..3 { }\n    return 0;\n}\n";
     assert!(codes(sequential).contains(&"Q500".to_owned()));

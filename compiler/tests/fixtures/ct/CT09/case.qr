@@ -15,9 +15,9 @@
 // Every field value is a check-time constant, so this program needs no
 // `std.buffer` import at all: a record is a plain value, not a resource.
 
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 type Point { x: i32, y: i32, weight: i32 }
 

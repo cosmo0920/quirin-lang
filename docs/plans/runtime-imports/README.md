@@ -1,6 +1,6 @@
 # Runtime source imports
 
-Queued by the user on 2026-09-27, immediately after the extension rename cards. Runtime source spelling is **`#import`**, superseding the initially suggested `#include`. Contract inclusion keeps its own grammar and authority.
+Completed after the extension rename cards; [implementation and validation](../../reports/runtime-source-imports/README.md). The following requirements and agreed boundary record the accepted card scope. Runtime source spelling is **`#import`**, superseding the initially suggested `#include`. Contract inclusion keeps its own grammar and authority.
 
 The implementation card must support relative `.qr` module paths spelled with or without the extension and `std.*` bundled-module names. Resolve relative paths from the importing file, retain source locations and explicit identities, and preserve file-local standard-module authorization. Define deterministic ordering, duplicate identity handling and cycle refusal. Missing, ambiguous, incompatible-mode or unsupported imports must fail closed. Do not infer an extension from unparsed content or silently load contract/ABI inputs into the runtime route.
 

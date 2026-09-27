@@ -26,12 +26,12 @@ Each capability is gated by its own import and by no other:
 
 | Import | Grants |
 |---|---|
-| `import std.fmt;` | the rendering words `dec` and `hex` |
-| `import std.io;` | `print` — the **stdout** sink |
-| `import std.logger;` | `log <severity>` — the **stderr** sink — and `flush` |
+| `#import std.fmt;` | the rendering words `dec` and `hex` |
+| `#import std.io;` | `print` — the **stdout** sink |
+| `#import std.logger;` | `log <severity>` — the **stderr** sink — and `flush` |
 
 Holding one does not imply the others. A file that prints without
-`import std.io;` refuses at `Q015`, and so does one that logs holding only
+`#import std.io;` refuses at `Q015`, and so does one that logs holding only
 `std.io`. Imports are file-local: importing in another input file grants this
 one nothing. A misspelled module path (`std.log`, `std.stdio`) refuses at
 `Q014` rather than being ignored.

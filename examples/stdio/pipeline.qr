@@ -1,7 +1,7 @@
-import std.extern;
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 // The composed route: one module that both calls declared C and prints.
 //

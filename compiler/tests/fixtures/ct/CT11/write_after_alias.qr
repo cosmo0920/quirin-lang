@@ -2,9 +2,9 @@
 // alias's last read. Admitted — full permission *is* reconstructible, once no
 // alias survives, so the case's refusal is about survival rather than about the
 // alias ever having existed.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

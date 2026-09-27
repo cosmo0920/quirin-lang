@@ -31,7 +31,7 @@ produce. What would be a violation is a `Safe` that stops mentioning it.
 Without the opt-in surface of §2, every byte of behavior is what it is today:
 
 * an extern call whose callee has no admitted contract refuses at `Q023`;
-* an extern call in a file without `import std.extern;` refuses at `Q022`;
+* an extern call in a file without `#import std.extern;` refuses at `Q022`;
 * every existing fixture, contract module and diagnostic cascade is unchanged.
 
 The new surface is **per declaration**. There is no compiler mode, no global
@@ -60,10 +60,10 @@ certificate.
 
 | Level | What the compiler knows | Selection | Trust artifact carried into the certificate | Callable surface | Status |
 |---|---|---|---|---|---|
-| **L3** Manifest-bound contracted | contract slice + exported header + artifact identity + ABI premises | `import std.buffer;` — one name binds all four | artifact identity triple, the ABI premise fields, and each contract | every mode `source.extern-call.v1` calls, pointers included | **designed** (`NATIVE_LIBRARY_LINKAGE_V1.md`) |
+| **L3** Manifest-bound contracted | contract slice + exported header + artifact identity + ABI premises | `#import std.buffer;` — one name binds all four | artifact identity triple, the ABI premise fields, and each contract | every mode `source.extern-call.v1` calls, pointers included | **designed** (`NATIVE_LIBRARY_LINKAGE_V1.md`) |
 | **L2** Declared contract | a C04 contract, from an ad-hoc selection | `CompileOptions::extern_contracts` | `DeclaredContract(name)` per callee, plus `NoExtentTransport`, `LinkageSuppliedByBuilder` | as L3 | **implemented** (`source.extern-call.v1` + `EXTERN-F1`/`-ERR-REL`/`-MODES`) |
 | **L1** Manifest-resident unsafe | artifact identity + ABI premises + header types — **no modes, no effects** | a contract-less entry inside an L3 manifest | artifact identity, ABI premises, and `UncheckedLinkage` naming *which build* was waived | scalars only | **designed** (§4.2 below), follow-on `UNSAFE-LINKAGE-ARTIFACT` |
-| **L0** Standalone unsafe | a declared ABI signature and nothing else | `unsafe extern fn` + `import std.extern.unsafe;` | `UncheckedLinkage { callee, signature }` — and, by its silence about an artifact, the statement that **no build was named** | scalars only | **implemented — this card** |
+| **L0** Standalone unsafe | a declared ABI signature and nothing else | `unsafe extern fn` + `#import std.extern.unsafe;` | `UncheckedLinkage { callee, signature }` — and, by its silence about an artifact, the statement that **no build was named** | scalars only | **implemented — this card** |
 
 Three properties of the table are the point of drawing it.
 
@@ -93,8 +93,8 @@ Two independent gates, both required.
 ### 2.1 The module
 
 ```qcore
-import std.extern;          // calling a declared extern function at all
-import std.extern.unsafe;   // declaring one with no contract
+#import std.extern;          // calling a declared extern function at all
+#import std.extern.unsafe;   // declaring one with no contract
 ```
 
 `std.extern.unsafe` joins the closed bundled-module registry
@@ -331,7 +331,7 @@ existing code changes meaning.
 
 | Code | Refusal |
 |---|---|
-| `Q032` | an `unsafe extern fn` declaration in a file without `import std.extern.unsafe;` |
+| `Q032` | an `unsafe extern fn` declaration in a file without `#import std.extern.unsafe;` |
 | `Q033` | the declared signature is outside the closed unchecked table: a pointer parameter, a pointer result, a `unit` parameter, or a spelling the §C04.1 vocabulary does not contain |
 | `Q034` | a declared input and a visible checked declaration disagree: an inline `contract { … }` block on the unchecked declaration, or a name that also has a declaration in the selected contract environment |
 | `Q035` | the published certificate does not carry an unchecked-linkage premise for a callee its own program declares (publication tripwire) |

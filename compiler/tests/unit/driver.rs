@@ -344,7 +344,7 @@ fn resolved_scope_requires_checked_profile_and_guard_still_requires_lowering() {
         ("thread scope s { }", "Q600"),
         ("let m = 0; with lock m as g { }", "Q500"),
     ] {
-        let source = format!("import std.concurrency; fn main() -> i32 {{ {body} return 0; }}");
+        let source = format!("#import std.concurrency; fn main() -> i32 {{ {body} return 0; }}");
         let errors = compile_files(
             &[SourceFile::new("main.qcore", source)],
             &CompileOptions::default(),

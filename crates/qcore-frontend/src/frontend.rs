@@ -492,8 +492,33 @@ impl From<LexError> for SourceParseError {
     }
 }
 
+/// Structural metadata for a source-bundle loader. This is deliberately not a
+/// SourceProgram: unresolved runtime imports cannot reach semantic consumers.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceImportInventory {
+    pub mode: SourceModuleMode,
+    pub mode_span: Option<Span>,
+    pub runtime_imports: Vec<Located<String>>,
+}
+
+pub fn inspect_source_imports(source: &str) -> Result<SourceImportInventory, SourceParseError> {
+    let (program, runtime_imports) = SourceParser::new(source)?.parse()?;
+    Ok(SourceImportInventory {
+        mode: program.mode,
+        mode_span: program.mode_span,
+        runtime_imports,
+    })
+}
+
 pub fn parse_source_program(source: &str) -> Result<SourceProgram, SourceParseError> {
-    SourceParser::new(source)?.parse()
+    let (program, runtime_imports) = SourceParser::new(source)?.parse()?;
+    if let Some(import) = runtime_imports.first() {
+        return Err(SourceParseError {
+            span: import.span,
+            message: "unresolved runtime #import requires source-bundle resolution".into(),
+        });
+    }
+    Ok(program)
 }
 
 /// Read the module intent with the same header grammar as the full parser.
@@ -589,15 +614,38 @@ impl<'a> SourceParser<'a> {
         Ok((mode, mode_span, cursor))
     }
 
-    fn parse(self) -> Result<SourceProgram, SourceParseError> {
+    fn parse(self) -> Result<(SourceProgram, Vec<Located<String>>), SourceParseError> {
         let mut declarations = Vec::new();
         let mut imports = Vec::new();
+        let mut runtime_imports = Vec::new();
         let mut library_bindings = Vec::new();
         let (mode, mode_span, mut cursor) = self.module_header()?;
         while cursor < self.tokens.len() {
-            if self.word(cursor, "import") {
+            let directive = self.symbol(cursor, Symbol::Hash) && self.word(cursor + 1, "import");
+            if directive || self.word(cursor, "import") {
                 let start = cursor;
-                cursor += 1;
+                cursor += if directive { 2 } else { 1 };
+                if directive
+                    && let Some(TokenKind::StringLiteral(path)) =
+                        self.tokens.get(cursor).map(|token| &token.kind)
+                {
+                    // Runtime paths have no escape language. In particular a backslash
+                    // cannot be interpreted differently by the lexer and host filesystem.
+                    if path.is_empty() || path.chars().any(|ch| ch == '\\' || ch.is_control()) {
+                        return Err(self.error(cursor, "runtime import path must be nonempty and contain no escapes or control characters"));
+                    }
+                    let path = path.clone();
+                    cursor += 1;
+                    if !self.symbol(cursor, Symbol::Semicolon) {
+                        return Err(self.error(cursor, "expected semicolon after runtime import"));
+                    }
+                    cursor += 1;
+                    runtime_imports.push(Located {
+                        span: self.range_span(start, cursor),
+                        value: path,
+                    });
+                    continue;
+                }
                 let mut path = self.identifier(cursor)?.to_owned();
                 cursor += 1;
                 while self.tokens.get(cursor).map(|token| &token.kind)
@@ -671,21 +719,38 @@ impl<'a> SourceParser<'a> {
             declarations.push(declaration);
             cursor = next;
         }
+        for index in 0..self.tokens.len().saturating_sub(1) {
+            if self.symbol(index, Symbol::Hash) && self.word(index + 1, "import") {
+                let span = self.tokens[index].span;
+                if !imports
+                    .iter()
+                    .chain(&runtime_imports)
+                    .any(|import| import.span.start <= span.start && span.end <= import.span.end)
+                {
+                    return Err(
+                        self.error(index, "#import directives are permitted only at top level")
+                    );
+                }
+            }
+        }
         let task_expressions = tasks::parse_inventory(&self, &declarations)?;
         let result_matches = result_match::parse_inventory(&self, &declarations)?;
-        Ok(SourceProgram {
-            imports,
-            library_bindings,
-            task_expressions,
-            result_matches,
-            mode,
-            mode_span,
-            source: self.source.to_owned(),
-            lexical_tokens: self.tokens.clone(),
-            tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
-            pipe_refusals: self.pipe_refusals.clone(),
-            declarations,
-        })
+        Ok((
+            SourceProgram {
+                imports,
+                library_bindings,
+                task_expressions,
+                result_matches,
+                mode,
+                mode_span,
+                source: self.source.to_owned(),
+                lexical_tokens: self.tokens.clone(),
+                tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
+                pipe_refusals: self.pipe_refusals.clone(),
+                declarations,
+            },
+            runtime_imports,
+        ))
     }
 
     fn declaration(
@@ -1855,6 +1920,7 @@ impl<'a> SourceParser<'a> {
             || self.word(index, "concurrency")
             || self.word(index, "verify")
             || self.word(index, "import")
+            || (self.symbol(index, Symbol::Hash) && self.word(index + 1, "import"))
     }
 
     fn is_statement_start(&self, index: usize) -> bool {

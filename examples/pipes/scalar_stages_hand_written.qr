@@ -1,5 +1,5 @@
-import std.extern;
-import std.logger;
+#import std.extern;
+#import std.logger;
 
 // `scalar_stages.qcore` with every pipeline written out as the statements it
 // desugars to. This file exists to be *compared*: a test asserts that the two

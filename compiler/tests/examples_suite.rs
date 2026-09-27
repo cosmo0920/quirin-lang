@@ -333,7 +333,7 @@ fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
     let checked = barrier.checked.as_standard_io().unwrap();
     assert_eq!(checked.certificate.flushes, 1);
     assert!(checked.certificate.renderings.is_empty());
-    assert!(!BARRIER.contains("import std.fmt;"));
+    assert!(!BARRIER.contains("#import std.fmt;"));
 
     // And the composed example is composed: neither half is published alone.
     let pipeline = contracted("stdio/pipeline.qr", PIPELINE);
@@ -574,18 +574,18 @@ fn the_page_and_example_cover_all_six_logger_levels() {
 /// table, checked.
 #[test]
 fn the_import_table_on_the_page_is_the_gate_that_runs() {
-    let without_io = RENDERINGS.replace("import std.io;\n", "");
+    let without_io = RENDERINGS.replace("#import std.io;\n", "");
     assert_eq!(refusal_codes(&without_io, None), ["Q015"]);
-    let without_fmt = RENDERINGS.replace("import std.fmt;\n", "");
+    let without_fmt = RENDERINGS.replace("#import std.fmt;\n", "");
     assert_eq!(refusal_codes(&without_fmt, None), ["Q015"]);
-    let without_logger = SEVERITIES.replace("import std.logger;\n", "");
+    let without_logger = SEVERITIES.replace("#import std.logger;\n", "");
     assert_eq!(refusal_codes(&without_logger, None), ["Q015"]);
     // `flush` is the logger's, not `std.fmt`'s: dropping the barrier's only
     // import refuses, and the barrier has no `std.fmt` import to drop.
-    let bare_barrier = BARRIER.replace("import std.logger;\n", "");
+    let bare_barrier = BARRIER.replace("#import std.logger;\n", "");
     assert_eq!(refusal_codes(&bare_barrier, None), ["Q015"]);
     // A misspelled module is unknown rather than ignored.
-    let misspelled = RENDERINGS.replace("import std.io;", "import std.stdio;");
+    let misspelled = RENDERINGS.replace("#import std.io;", "#import std.stdio;");
     assert_eq!(refusal_codes(&misspelled, None), ["Q014"]);
     // `flush` takes no operand.
     let flush_operand = SEVERITIES.replace("flush;", "flush 1;");
@@ -1811,7 +1811,7 @@ fn the_documented_zero_bound_refusal_is_the_refusal_the_compiler_gives() {
 fn the_loop_refusals_the_page_names_beside_it_hold() {
     let body = |statement: &str| {
         format!(
-            "import std.buffer;\n\
+            "#import std.buffer;\n\
              \n\
              fn main() -> unit effects {{ alloc, mut }} {{\n    \
                  let b = bytes(4);\n    \
@@ -1831,7 +1831,7 @@ fn the_loop_refusals_the_page_names_beside_it_hold() {
     );
     // And the index is body-local, so naming it afterwards is an unknown name
     // rather than anything this route decides — which is what the page says.
-    let after = "import std.buffer;\nimport std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..4 {\n        b[i] = 1;\n    }\n    print dec i;\n    drop b;\n    return;\n}\n";
+    let after = "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..4 {\n        b[i] = 1;\n    }\n    print dec i;\n    drop b;\n    return;\n}\n";
     assert_eq!(refusal_codes(after, None), ["Q013"]);
     // Every code the page's table names is one the page also spells.
     for code in ["Q097", "Q098", "Q099", "Q054", "Q013"] {
@@ -1974,8 +1974,8 @@ fn the_documented_incomplete_construction_is_the_refusal_the_compiler_gives() {
 /// statement the table writes.
 #[test]
 fn the_record_refusals_the_page_names_beside_it_hold() {
-    const DECLARATIONS: &str = "import std.fmt;\n\
-         import std.io;\n\
+    const DECLARATIONS: &str = "#import std.fmt;\n\
+         #import std.io;\n\
          \n\
          type Point { x: i32, y: i32 }\n\
          \n";

@@ -29,8 +29,8 @@ route.
 ## `self_pipe.qr`
 
 ```qcore
-import std.event;
-import std.logger;
+#import std.event;
+#import std.logger;
 
 fn main() -> i32 effects { io } {
     log_level trace;
@@ -81,9 +81,9 @@ it is also why the trace above is identical on all three platform arms.
 ## `wake_payload.qr` — the byte a wake delivered
 
 ```qcore
-import std.event;
-import std.logger;
-import std.fmt;
+#import std.event;
+#import std.logger;
+#import std.fmt;
 
 fn main() -> i32 effects { io } {
     log_level trace;

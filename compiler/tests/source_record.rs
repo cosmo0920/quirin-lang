@@ -64,17 +64,17 @@ fn messages(source: &str) -> String {
 /// test measures the rule it names against the same surroundings.
 fn module(declaration: &str, body: &str) -> String {
     format!(
-        "import std.fmt;\nimport std.io;\nimport std.logger;\n\n{declaration}\n\nfn main() -> unit \
+        "#import std.fmt;\n#import std.io;\n#import std.logger;\n\n{declaration}\n\nfn main() -> unit \
          effects {{ io, alloc, mut }} {{\n{body}    return;\n}}\n"
     )
 }
 
-/// The same, plus `import std.buffer;` — for the tests that hold a buffer
+/// The same, plus `#import std.buffer;` — for the tests that hold a buffer
 /// beside a record. The import is the buffer's and stays the buffer's: a record
 /// needs none, which is itself pinned by every other test here.
 fn buffer_module(declaration: &str, body: &str) -> String {
     format!(
-        "import std.buffer;\nimport std.fmt;\nimport std.io;\nimport std.logger;\n\n{declaration}\n\
+        "#import std.buffer;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n\n{declaration}\n\
          \nfn main() -> unit effects {{ io, alloc, mut }} {{\n{body}    return;\n}}\n"
     )
 }
@@ -148,7 +148,7 @@ fn a_field_name_is_not_a_reserved_word() {
 /// card — so the entry's body does not swallow the declaration that follows it.
 #[test]
 fn a_record_declared_after_the_entry_is_still_a_declaration() {
-    let source = "import std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io } {\n    let \
+    let source = "#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects { io } {\n    let \
                   p = Point { x: 7 };\n    let a = p.x;\n    print dec a;\n    return;\n}\n\ntype \
                   Point { x: i32 }\n";
     let module = compile(source).expect("the declaration is not part of the entry's body");
@@ -718,7 +718,7 @@ fn a_record_only_module_reaches_the_buffer_route() {
 /// by one new spelling.
 #[test]
 fn a_construction_without_a_declaration_keeps_the_route_it_had() {
-    let source = "import std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io } {\n    let p \
+    let source = "#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects { io } {\n    let p \
                   = Point { x: 1 };\n    print dec 1;\n    return;\n}\n";
     assert_eq!(codes(source), ["Q013"]);
 }
@@ -728,7 +728,7 @@ fn a_task_module_declaring_a_record_keeps_its_own_refusal() {
     // A genuine task statement, so the concurrent route actually selects: it is
     // above this card's guard, so the module keeps that route's own refusal and
     // the aggregate is not reached at all.
-    let source = "import std.concurrency;\nconcurrency checked;\n\ntype Point { x: i32 }\n\nfn \
+    let source = "#import std.concurrency;\nconcurrency checked;\n\ntype Point { x: i32 }\n\nfn \
                   main() -> unit {\n    thread scope s { let p = Point { x: 1 }; }\n                      return;\n}\n";
     let codes = codes(source);
     assert!(
@@ -746,7 +746,7 @@ fn a_task_module_declaring_a_record_keeps_its_own_refusal() {
 /// invariant 1 forbids.
 #[test]
 fn a_record_outside_the_entry_refuses_rather_than_going_unchecked() {
-    let source = "import std.fmt;\nimport std.io;\n\ntype Point { x: i32 }\n\nfn helper() -> unit \
+    let source = "#import std.fmt;\n#import std.io;\n\ntype Point { x: i32 }\n\nfn helper() -> unit \
                   {\n    let p = Point { x: 1 };\n}\n\nfn main() -> unit effects { io } {\n    let \
                   q = Point { x: 2 };\n    let a = q.x;\n    print dec a;\n    return;\n}\n";
     let messages = messages(source);
@@ -757,7 +757,7 @@ fn a_record_outside_the_entry_refuses_rather_than_going_unchecked() {
 /// emitting nothing for one.
 #[test]
 fn the_composed_string_route_refuses_a_record_statement() {
-    let source = "import std.buffer;\nimport std.string;\nimport std.fmt;\nimport std.io;\n\ntype \
+    let source = "#import std.buffer;\n#import std.string;\n#import std.fmt;\n#import std.io;\n\ntype \
                   Point { x: i32 }\n\nfn main() -> unit effects { io, alloc, mut } {\n    let b = \
                   bytes(2);\n    b[0] = 104;\n    b[1] = 105;\n    let s = borrow_utf8(b);\n    \
                   let p = Point { x: 1 };\n    print s;\n    drop b;\n    return;\n}\n";
@@ -774,7 +774,7 @@ fn the_composed_string_route_refuses_a_record_statement() {
 /// existing refusal — measured, not assumed (`AGGREGATE-ACROSS-CALL`).
 #[test]
 fn an_extern_module_declaring_a_record_keeps_its_own_refusal() {
-    let source = "import std.extern;\n\nextern fn qcore_probe(value: i32) -> i32\n    contract \
+    let source = "#import std.extern;\n\nextern fn qcore_probe(value: i32) -> i32\n    contract \
                   {\n        requires true;\n    }\n\ntype Point { x: i32 }\n\nfn main() -> unit \
                   {\n    let p = Point { x: 1 };\n    let r = qcore_probe(1);\n    return;\n}\n";
     let codes = codes(source);
@@ -873,7 +873,7 @@ fn a_buffer_program_still_carries_its_prelude() {
 /// program written before this card travels an identical code path.
 #[test]
 fn a_module_without_a_record_carries_no_record_fragment() {
-    let source = "import std.buffer;\nimport std.fmt;\nimport std.io;\n\nfn main() -> unit effects \
+    let source = "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\nfn main() -> unit effects \
                   { io, alloc, mut } {\n    let b = bytes(2);\n    b[0] = 7;\n    let v = \
                   b[0];\n    print dec v;\n    drop b;\n    return;\n}\n";
     let module = compile(source).unwrap();

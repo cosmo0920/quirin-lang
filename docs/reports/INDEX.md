@@ -4,7 +4,7 @@
 
 Generated directory/title lookup, **not a status ledger**. Search an exact
 card id here; read its report for evidence and the acceptance matrix's
-`named_followups` for registered open work. Frozen reports are not rewritten.
+`named_followups` for registered open work. Historical measurements retain their original revision; maintained inputs are attributed in migration reports.
 
 Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
@@ -78,6 +78,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
 
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
+
+| [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
 
 | [contract-inherit](contract-inherit/README.md) | CONTRACT-INHERIT: contract inclusion and contract inheritance |
 
@@ -697,6 +699,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [review-certificate-scope](review-certificate-scope/README.md) | E01-TAIL-CERT-SCOPE — independent Safe-certificate denominator |
 
 | [review-prepared-tu](review-prepared-tu/README.md) | Prepared translation unit sharing (review priority O1) |
+
+| [runtime-source-imports](runtime-source-imports/README.md) | Runtime source imports |
 
 ## S
 

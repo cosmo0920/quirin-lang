@@ -33,7 +33,7 @@ def probe(pid: str, rule: str, body: str) -> None:
     PROBES.append((pid, rule, body))
 
 
-PRELUDE = "import std.buffer;\nimport std.fmt;\nimport std.io;\n\n"
+PRELUDE = "#import std.buffer;\n#import std.fmt;\n#import std.io;\n\n"
 
 
 def program(decls: str, body: str) -> str:
@@ -211,7 +211,7 @@ probe(
 probe(
     "r5-copy-composed-string",
     "a copy bind on the composed string/buffer route",
-    "import std.buffer;\nimport std.string;\nimport std.fmt;\nimport std.io;\n\n"
+    "#import std.buffer;\n#import std.string;\n#import std.fmt;\n#import std.io;\n\n"
     "fn main() -> unit effects { io, alloc, mut } {\n"
     "    let b = bytes(2);\n"
     "    b[0] = 104;\n"
@@ -258,7 +258,7 @@ probe(
 probe(
     "collide-socket-creation",
     "a socket program's `let NAME = tcp;` is untouched",
-    "import std.socket;\nimport std.fmt;\nimport std.io;\n\n"
+    "#import std.socket;\n#import std.fmt;\n#import std.io;\n\n"
     "fn main() -> unit effects { io, alloc } {\n"
     "    let listener = tcp;\n"
     "    bind listener;\n"
@@ -312,7 +312,7 @@ probe(
 probe(
     "b-task-capture",
     "AGGREGATE-TASK-CAPTURE",
-    "import std.concurrency;\n"
+    "#import std.concurrency;\n"
     "concurrency checked;\n\n"
     "type Frame { body: bytes }\n\n"
     "fn worker(buffer: own<Buffer> use one) -> own<Buffer> {\n"
@@ -339,7 +339,7 @@ probe(
 probe(
     "b-task-capture-baseline",
     "AGGREGATE-TASK-CAPTURE (the same task module without the record)",
-    "import std.concurrency;\n"
+    "#import std.concurrency;\n"
     "concurrency checked;\n\n"
     "fn worker(buffer: own<Buffer> use one) -> own<Buffer> {\n"
     "    return move buffer;\n}\n\n"

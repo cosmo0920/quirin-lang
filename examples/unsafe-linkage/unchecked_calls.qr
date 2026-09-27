@@ -1,7 +1,7 @@
-import std.extern;
-import std.extern.unsafe;
-import std.fmt;
-import std.logger;
+#import std.extern;
+#import std.extern.unsafe;
+#import std.fmt;
+#import std.logger;
 
 // Calling C that has no contract, and saying so.
 //

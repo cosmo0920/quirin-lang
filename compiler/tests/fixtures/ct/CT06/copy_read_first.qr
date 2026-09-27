@@ -2,9 +2,9 @@
 // the release moves past that read. Admitted — so the obligation the copy
 // carries is the original's own obligation, bounded by the copy's last read and
 // not by the existence of a second name.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

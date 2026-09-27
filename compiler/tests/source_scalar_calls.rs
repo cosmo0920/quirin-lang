@@ -203,41 +203,41 @@ fn unit_calls_and_empty_annotations_are_explicit() {
 fn print_requires_std_io_and_an_i32_operand() {
     refuse("fn main()->i32{let f=42;print(f);return f;}", "std.io");
     refuse(
-        "import std.io; fn unit()->unit{return;} fn main()->i32{print(unit());return 0;}",
+        "#import std.io; fn unit()->unit{return;} fn main()->i32{print(unit());return 0;}",
         "print requires i32",
     );
     refuse(
-        "import std.io; fn main()->i32{print(missing);return 0;}",
+        "#import std.io; fn main()->i32{print(missing);return 0;}",
         "unknown name",
     );
 }
 #[test]
 fn print_effect_is_inferred_or_declared_and_propagates_to_callers() {
     let inferred =
-        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32{return show(42);}";
+        "#import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32{return show(42);}";
     let observed = observation(inferred);
     assert_eq!(observed.value, Some(42));
     assert_eq!(observed.stdout, vec![42]);
 
     assert_eq!(
         value(
-            "import std.io; fn show(x:i32)->i32 effects {io}{print(x);return x;} fn main()->i32 effects {io}{return show(42);}"
+            "#import std.io; fn show(x:i32)->i32 effects {io}{print(x);return x;} fn main()->i32 effects {io}{return show(42);}"
         ),
         42
     );
     refuse(
-        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32 effects {}{return show(42);}",
+        "#import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32 effects {}{return show(42);}",
         "io effect required",
     );
     refuse(
-        "import std.io; fn show(x:i32)->i32 effects {}{print(x);return x;} fn main()->i32{return show(42);}",
+        "#import std.io; fn show(x:i32)->i32 effects {}{print(x);return x;} fn main()->i32{return show(42);}",
         "io effect required",
     );
 }
 #[test]
 fn print_observation_preserves_argument_and_statement_order() {
     let observed = observation(
-        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
+        "#import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
     );
     assert_eq!(observed.value, Some(42));
     assert_eq!(observed.stdout, vec![20, 22, 42]);
@@ -341,7 +341,7 @@ fn native_calls_match_reference() {
 #[test]
 fn composed_printing_emits_one_main_and_uses_the_shared_io_path() {
     let m = compile(
-        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
+        "#import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
     )
     .unwrap();
     let CheckedSourceModule::ScalarCalls(checked) = &m.checked else {

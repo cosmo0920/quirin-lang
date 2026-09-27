@@ -297,7 +297,7 @@ fn run_native(source: &str, label: &str) -> Vec<String> {
 #[test]
 fn calling_an_extern_function_without_the_import_refuses() {
     for source in with_line_endings(ROUND_TRIP) {
-        let mutated = source.replace("import std.extern;", "");
+        let mutated = source.replace("#import std.extern;", "");
         assert_ne!(mutated, source, "the import must have been removed");
         assert_eq!(codes(&mutated, selection()), ["Q022"]);
     }
@@ -305,7 +305,7 @@ fn calling_an_extern_function_without_the_import_refuses() {
 
 #[test]
 fn a_misspelled_module_refuses_as_an_unknown_module() {
-    let source = ROUND_TRIP.replace("import std.extern;", "import std.externs;");
+    let source = ROUND_TRIP.replace("#import std.extern;", "#import std.externs;");
     assert_eq!(codes(&source, selection()), ["Q014"]);
 }
 
@@ -325,8 +325,8 @@ fn declaring_an_extern_function_without_calling_it_needs_no_import() {
 #[test]
 fn importing_the_module_in_another_file_does_not_grant_this_one_the_call() {
     for source in with_line_endings(ROUND_TRIP) {
-        let granted = SourceFile::new("granted.qcore", "module library;\nimport std.extern;\n");
-        let mutated = source.replace("import std.extern;", "");
+        let granted = SourceFile::new("granted.qcore", "module library;\n#import std.extern;\n");
+        let mutated = source.replace("#import std.extern;", "");
         assert_ne!(
             mutated, source,
             "the caller's import must have been removed"
@@ -461,7 +461,7 @@ fn using_a_consumed_binding_again_refuses() {
 
 #[test]
 fn an_unbranched_owned_return_refuses() {
-    let source = "import std.extern;\n\
+    let source = "#import std.extern;\n\
          error Failure { Failed; }\n\
          extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
          fn main() -> unit effects { io, alloc } {\n    \
@@ -532,7 +532,7 @@ fn an_extern_call_in_a_second_source_function_refuses() {
 fn a_concurrent_module_keeps_its_existing_refusal() {
     // The task route is selected first and refuses the extern call with its own
     // message; this card lifts nothing there.
-    let source = "import std.concurrency;\nimport std.extern;\n\
+    let source = "#import std.concurrency;\n#import std.extern;\n\
          extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
          fn main() -> unit {\n    thread scope s {\n    \
          let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    }\n}\n";
@@ -770,7 +770,7 @@ fn a_nonnull_out_slot_refuses_at_the_bridging_table() {
 
 #[test]
 fn an_out_call_without_the_adapter_refuses() {
-    let source = "import std.extern;\n\
+    let source = "#import std.extern;\n\
          error Failure { Failed; }\n\
          extern fn qcore_extern_open(slot: ptr<mut, ptr<mut, u8>>, size: usize) -> i32;\n\
          fn main() -> unit effects { io, alloc, mut } {\n    \
@@ -1610,11 +1610,11 @@ fn an_unread_scalar_binding_is_not_a_leak() {
 /// launder it than a pipeline can.
 #[test]
 fn an_unchecked_scalar_result_binds_and_keeps_its_waiver() {
-    let discarding = "import std.extern;\nimport std.extern.unsafe;\n\n\
+    let discarding = "#import std.extern;\n#import std.extern.unsafe;\n\n\
                       unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\n\
                       fn main() -> unit effects { io, alloc, mut } {\n    \
                       k_unchecked_add(2, 40);\n    return;\n}\n";
-    let binding = "import std.extern;\nimport std.extern.unsafe;\n\n\
+    let binding = "#import std.extern;\n#import std.extern.unsafe;\n\n\
                    unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\n\
                    fn main() -> unit effects { io, alloc, mut } {\n    \
                    let n = k_unchecked_add(2, 40);\n    return;\n}\n";
@@ -1745,7 +1745,7 @@ fn a_wrong_declared_outcome_exits_70_and_observes_nothing() {
     // A trace with no live acquisition at the moment of the refusal, so the
     // leak checker has nothing to report and the exit status this test reads is
     // the emitted program's own 70 rather than LSan's.
-    let wrong = "import std.extern;\n\
+    let wrong = "#import std.extern;\n\
                  extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;\n\
                  fn main() -> unit effects { io } {\n\
                  \x20   let n = qcore_extern_scale(21, 2) succeeds 41;\n\

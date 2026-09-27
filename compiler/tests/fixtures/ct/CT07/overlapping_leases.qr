@@ -5,7 +5,7 @@
 // a DECIDED disjointness between two write authorities held by two threads, not
 // a route that hands out second leases anywhere. Nothing overlapping ever
 // reaches a sanitizer, because the refusal precedes emission.
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 0, 9);

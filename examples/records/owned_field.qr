@@ -24,9 +24,9 @@
 // field, one byte of each owned field, one byte written through a field, and
 // one byte written through the moved-out binding.
 
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 type Frame { tag: i32, head: bytes, body: bytes }
 

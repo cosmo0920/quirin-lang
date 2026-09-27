@@ -1,0 +1,15 @@
+import QCore.RuntimeImports
+#print axioms QCore.RuntimeImports.snapshot_overrides_disk
+#print axioms QCore.RuntimeImports.absent_snapshot_and_disk_refuses
+#print axioms QCore.RuntimeImports.staging_preserves_retained_source
+#print axioms QCore.RuntimeImports.nonempty_runtime_imports_refuse_standalone
+#print axioms QCore.RuntimeImports.contract_dependency_refuses
+#print axioms QCore.RuntimeImports.explicit_executable_dependency_refuses
+#print axioms QCore.RuntimeImports.admitted_edge_has_decreasing_rank
+#print axioms QCore.RuntimeImports.admitted_graph_checks_every_edge
+#print axioms QCore.RuntimeImports.admitted_path_decreases_rank
+#print axioms QCore.RuntimeImports.admitted_graph_has_no_cycle
+#print axioms QCore.RuntimeImports.admitted_io_requires_own_import
+#print axioms QCore.RuntimeImports.neighbour_cannot_grant_io
+#print axioms QCore.RuntimeImports.admitted_capability_requires_own_import
+#print axioms QCore.RuntimeImports.absent_target_refuses

@@ -48,7 +48,7 @@ fn sequential_source_compiles_with_only_an_explicit_empty_registry() {
 
 #[test]
 fn owned_task_source_uses_the_same_checked_kernel_without_compiler_adapters() {
-    let source = "import std.concurrency; concurrency checked; fn worker(v:i32)->own<Buffer> effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(v)?;return move b;} fn main()->i32 effects {throws<AllocError>,throws<SpawnError>,spawn,join,may_block} {let v=42;thread scope s {let h=spawn s worker(copy v)?;let b=join move h?;let value=qcore_buffer_read(b);drop b;return value;}}";
+    let source = "#import std.concurrency; concurrency checked; fn worker(v:i32)->own<Buffer> effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(v)?;return move b;} fn main()->i32 effects {throws<AllocError>,throws<SpawnError>,spawn,join,may_block} {let v=42;thread scope s {let h=spawn s worker(copy v)?;let b=join move h?;let value=qcore_buffer_read(b);drop b;return value;}}";
     let result = compile_files_with_registry(
         &[SourceFile::new("job.qcore", source)],
         &CompileOptions::default(),

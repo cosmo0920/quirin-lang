@@ -72,7 +72,7 @@ const IMPORTS: [&str; 5] = ["std.http", "std.socket", "std.string", "std.fmt", "
 fn module(imports: &[&str], effects: &str, body: &[&str]) -> String {
     let mut source: Vec<String> = imports
         .iter()
-        .map(|module| format!("import {module};"))
+        .map(|module| format!("#import {module};"))
         .collect();
     source.push(String::new());
     source.push(format!("fn main() -> unit effects {{ {effects} }} {{"));
@@ -579,7 +579,7 @@ fn a_composed_binding_needs_the_string_module() {
         &["header rs \"Content-Length\" \"6\";"],
         Some("body"),
     );
-    let without = source.replace("import std.string;\n", "");
+    let without = source.replace("#import std.string;\n", "");
     assert_eq!(codes(&without), ["Q015"]);
     assert!(messages(&without)[0].contains("std.string"));
     compile(&source).expect("admitted with the module");

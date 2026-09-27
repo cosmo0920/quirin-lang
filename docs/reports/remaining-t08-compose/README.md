@@ -1,5 +1,7 @@
 # T08-COMPOSE — a flat-epoch bound over a real checked task region
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Date: 2026-09-09. Baseline: `695f0e1` (wave-10 consolidation).
 Branch: `claude/t08-compose` (isolated worktree). Wave 11, relaunch of a wave-10
 card stopped for a fleet trim; the prior uncommitted work was gone and this was
@@ -36,7 +38,7 @@ and the rest of the entry is a task region the **unedited**
 `check_task_module` accepts on its own:
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {

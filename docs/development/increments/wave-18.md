@@ -18,7 +18,7 @@ provider surfaces are byte-untouched against the wave-17 tree, so the
 modules, CT 33/50, `qcore-schemas` 14.0.0. Nothing is promoted.
 - Unchecked external linkage (UNSAFE-LINKAGE): `source.extern-call.unsafe.v1`
   lands — an external library with no contract at all links end to end behind
-  `import std.extern.unsafe;` and `unsafe extern fn`, scalars by value in and
+  `#import std.extern.unsafe;` and `unsafe extern fn`, scalars by value in and
   a scalar or unit out, every pointer refused by name (an assumption that
   cannot be stated cannot be carried, so no custody crosses the boundary).
   `ExternAssumption::UncheckedLinkage { callee, signature }` rides the

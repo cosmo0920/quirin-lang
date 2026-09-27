@@ -97,7 +97,7 @@ fn assert_refused(source: &str, code: &str, message: &str) {
 
 /// A worker taking one owned Buffer, and a `main` that allocates one, moves it
 /// in and joins. The accepted control every mutation below starts from.
-const OWNED: &str = "import std.concurrency; concurrency checked;
+const OWNED: &str = "#import std.concurrency; concurrency checked;
 fn worker(payload: own<Buffer> use one) -> own<Buffer> {
   return move payload;
 }
@@ -119,7 +119,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 }";
 
 /// A worker taking one immutable i32 copy.
-const COPIED: &str = "import std.concurrency; concurrency checked;
+const COPIED: &str = "#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
 }
@@ -221,7 +221,7 @@ fn a_mode_the_kind_does_not_admit_is_refused_by_the_judgment() {
 #[test]
 fn a_move_delivered_to_a_loan_parameter_is_refused() {
     // The reader is a well-formed loan worker; only the capture mode is wrong.
-    const MOVE_TO_LOAN: &str = "import std.concurrency; concurrency checked;
+    const MOVE_TO_LOAN: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -267,7 +267,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// read share is still admitted.
 #[test]
 fn ct47s_measured_shapes_a_copy_capture_is_refused_by_the_judgment() {
-    const READER: &str = "import std.concurrency; concurrency checked;
+    const READER: &str = "#import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -320,7 +320,7 @@ fn a_binding_that_is_not_a_value_never_crosses() {
         "capture type does not match worker parameter",
     );
     // A task handle captured into a second creation.
-    let handle_capture = "import std.concurrency; concurrency checked;
+    let handle_capture = "#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
 }
@@ -345,7 +345,7 @@ fn main() -> i32 effects { spawn, throws<SpawnError>, join, may_block } {
     // unreachable from source on this route, which is why it is classified
     // rather than omitted.
     assert_refused(
-        "import std.concurrency; concurrency checked;
+        "#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
 }
@@ -362,7 +362,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, throws<SpawnError>,
         "buffer allocation requires ? or explicit Result match",
     );
     // A bound error value captured on the failure arm.
-    let error_capture = "import std.concurrency; concurrency checked;
+    let error_capture = "#import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
 }
@@ -394,7 +394,7 @@ fn main() -> i32 effects { spawn, throws<SpawnError>, join, may_block } {
 /// per capture rather than per creation.
 #[test]
 fn a_compound_capture_refuses_only_the_bad_component() {
-    const MIXED: &str = "import std.concurrency; concurrency checked;
+    const MIXED: &str = "#import std.concurrency; concurrency checked;
 fn worker(value: i32, payload: own<Buffer> use one) -> own<Buffer> {
   return move payload;
 }
@@ -478,7 +478,7 @@ fn a_guard_can_never_be_named_on_the_task_route() {
 /// transferability decision at all.
 #[test]
 fn a_mutex_protected_payload_crossing_a_task_boundary_has_no_source_form() {
-    let shared_wrapper = "import std.concurrency; concurrency checked;
+    let shared_wrapper = "#import std.concurrency; concurrency checked;
 fn worker(payload: own<Buffer> use one) -> own<Buffer> {
   return move payload;
 }

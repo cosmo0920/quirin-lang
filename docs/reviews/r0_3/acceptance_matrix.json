@@ -6738,11 +6738,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "EXT-02/03 corrected combined gate at ce75a227 (source correction f3fe41c9): 335 Rust units / 348 summaries, zero failures, 11 ignored. All nine commands exit 0; private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/extension-physical-migration-gate-20260927T133450Z. Contract-stage provider final full suite: 129 passed, zero failed, one ignored; all five packages built and verified. Clang recorded in this worktree for this gate. Prior failed attempts and source/lock/header identity attribution are retained in the reports. No corpus verdict movement or safety-coverage claim.",
-  "workspace_tests": 6096,
+  "note": "Combined runtime #import and contract-load-path gate at70d29367; 339 Rust units/352 summaries, 11 ignored, zero failed. All nine commands exit0. Private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/runtime-source-imports-gate-20260927T142437Z. Provider129 and packages5 are carried from the completed EXT-02/03 provider gate; no provider files changed or new provider run claimed. Clang recorded for this run. First failed integrated gate and exact corrections retained. All five pinned audit artifacts byte-identical; no new safety coverage claim.",
+  "workspace_tests": 6122,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 215,
+  "lean_audits": 216,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6909,6 +6909,7 @@
    "AuditReturnExpressionFamilies.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
+   "AuditRuntimeImports.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
@@ -6966,7 +6967,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/extension-physical-migration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/runtime-source-imports/gate.json)"
  },
  "named_followups": [
   {

@@ -1,6 +1,6 @@
-import std.buffer;
-import std.fmt;
-import std.io;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
 
 // CT07's disjointness control: the case program (case.qcore) with one bound
 // of the second lend moved from 4 to 3, so the two ranges share exactly byte 3

@@ -1,5 +1,7 @@
 # CT33-RANKS — a lock-rank source form onto the represented rank refusal
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Wave 10. Card CT33-RANKS: give lock ranks a bounded checked existence in
 `CheckedMutexInvariantV1`, so that CT33's scenario — a lock-order cycle — can
 be written down in QCore source and is refused at check time.
@@ -54,7 +56,7 @@ order a nested section already produces is what the discipline decides.
 Both route-detection sites learned the ranked spelling, because otherwise
 `mutex rank` would have been the one mutex form that escaped them:
 `source_mutex::has_source_mutex` (route selection) and
-`module_imports` (the `import std.concurrency;` requirement). A ranked
+`module_imports` (the `#import std.concurrency;` requirement). A ranked
 declaration with no import refuses at `Q015`, exactly as `mutex guards` does.
 
 ### Reserved-word collision audit
@@ -313,7 +315,7 @@ list edited deliberately.
 Case source measured for the cascade above (as `entry(...)`):
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let x = protected 4;

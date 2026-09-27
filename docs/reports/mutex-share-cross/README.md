@@ -1,5 +1,7 @@
 # MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: wave 32's language head — the composition CT46 needs, where a value
 that is **Send but not Sync** crosses a task boundary **only** through a
 verified mutex protocol. Base: `origin/main` at `1c7d8e45` (the wave-31 close
@@ -57,7 +59,7 @@ acceptance matrix.
 ## 2. The construct
 
 ```qcore
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
   thread scope s {
     let buf = protected 4;                  // the payload: Send, not Sync

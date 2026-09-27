@@ -74,9 +74,9 @@ fn message(source: &str) -> String {
 /// A composed `source.std-io-tasks.v1` module: a worker owns a buffer, the
 /// parent joins it back and says something about it. This is the shape
 /// `examples/threads/owned_buffer.qr` has.
-const COMPOSED: &str = "import std.concurrency;
-import std.logger;
-import std.fmt;
+const COMPOSED: &str = "#import std.concurrency;
+#import std.logger;
+#import std.fmt;
 concurrency checked;
 
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
@@ -111,7 +111,7 @@ fn composed(body: &str) -> String {
 
 /// The same module on the plain task route: no `std.io`, so the body's last
 /// statement must bind `value` itself.
-const TASKS: &str = "import std.concurrency;
+const TASKS: &str = "#import std.concurrency;
 concurrency checked;
 
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
@@ -252,7 +252,7 @@ fn a_buffer_write_is_a_stage_and_the_piped_buffer_is_its_first_argument() {
 
 /// The recovery program of `crates/qcore-frontend/tests/error_payloads.rs`, with
 /// the parent's payload take written as `RECOVER`.
-const PAYLOAD: &str = "import std.concurrency; concurrency checked;
+const PAYLOAD: &str = "#import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -468,7 +468,7 @@ fn a_route_whose_model_has_no_buffer_intrinsic_keeps_its_own_refusal() {
     // `source.mutex.guard.v1` is selected before the task route and models no
     // buffer at all, so an intrinsic stage inside a mutex generation refuses
     // there rather than reaching the route that would have understood it.
-    let source = "import std.concurrency;
+    let source = "#import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let buf = protected 4;

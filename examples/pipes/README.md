@@ -123,9 +123,9 @@ This program is refused:
 
 <!-- refusal: Q037 -->
 ```qcore
-import std.fmt;
-import std.io;
-import std.logger;
+#import std.fmt;
+#import std.io;
+#import std.logger;
 
 fn main() -> unit effects { io } {
     let total = 42;

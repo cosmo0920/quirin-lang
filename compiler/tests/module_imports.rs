@@ -33,12 +33,12 @@ fn source_import_enables_existing_checked_task_lowering() {
 fn an_import_in_another_file_cannot_enable_concurrency() {
     let helper = SourceFile::new(
         "helper.qcore",
-        "module library; import std.concurrency; fn helper() -> i32 { return 0; }",
+        "module library; #import std.concurrency; fn helper() -> i32 { return 0; }",
     );
     let lf = CONTEXT.replace("\r\n", "\n");
     for context in [lf.clone(), lf.replace('\n', "\r\n")] {
         // Remove only the declaration, independent of checkout line endings.
-        let missing = context.replacen("import std.concurrency;", "", 1);
+        let missing = context.replacen("#import std.concurrency;", "", 1);
         assert_ne!(missing, context);
         for files in [
             vec![helper.clone(), SourceFile::new("missing.qcore", &missing)],
@@ -69,8 +69,8 @@ fn sequential_and_entry_free_modules_need_no_concurrency_import() {
         .unwrap();
     }
     for source in [
-        "import std.missing; fn main() -> i32 { return 0; }",
-        "module library; import std.missing; fn helper() -> i32 { return 0; }",
+        "#import std.missing; fn main() -> i32 { return 0; }",
+        "module library; #import std.missing; fn helper() -> i32 { return 0; }",
     ] {
         let errors = compile_files(
             &[SourceFile::new("bad.qcore", source)],

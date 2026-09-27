@@ -1,5 +1,7 @@
 # AGGREGATES-V1 — the first source-level aggregate type (wave 27)
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card brief: *"This is the wave's language head: the first source-level aggregate
 (record/struct) type. Recorded consumers: CT09's gap ('the source language has
 no aggregate type — no struct/field access in source'), the future HTTP/socket
@@ -143,7 +145,7 @@ construct the module writes:
 
 ```
 type Job { spawn: i32 }                 -> Q015: concurrency requires an explicit
-                                                 `import std.concurrency;`
+                                                 `#import std.concurrency;`
 
 let j = Job { spawn: 1 };               -> Q000: expected identifier
                                                  (the task-expression parser,
@@ -536,7 +538,7 @@ outcome is measured rather than widened:
 
 | Route | Outcome | Pinned by |
 |---|---|---|
-| `source.buffer.v1` | **admits** — with or without a buffer, and with no `import std.buffer;` | `a_record_only_module_reaches_the_buffer_route` |
+| `source.buffer.v1` | **admits** — with or without a buffer, and with no `#import std.buffer;` | `a_record_only_module_reaches_the_buffer_route` |
 | composed string/buffer | `Q068` — that route's own "binds an integer literal, a quoted literal, `len(NAME)` or one slice; nothing else" | `the_composed_string_route_refuses_a_record_statement` |
 | scoped tasks | `Q500`/`Q600` — the concurrent route is selected above this card's guard | `a_task_module_declaring_a_record_keeps_its_own_refusal` |
 | `source.extern-call.v1` | that route's own refusal, selected above | `an_extern_module_declaring_a_record_keeps_its_own_refusal` |

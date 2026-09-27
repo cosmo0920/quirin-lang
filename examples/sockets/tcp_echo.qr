@@ -12,9 +12,9 @@
 // numbers are never printed, and the only lines are the two `print` statements
 // at the end. Two concurrent runs of this program therefore write the same
 // bytes.
-import std.socket;
-import std.fmt;
-import std.io;
+#import std.socket;
+#import std.fmt;
+#import std.io;
 
 fn main() -> unit effects { io, alloc } {
     // A listening socket on the loopback interface, at a port the kernel picks.

@@ -1,9 +1,9 @@
 // CT11 attribution control. The identical write, placed before the alias
 // exists. Admitted — so the refusal is keyed to the surviving alias and not to
 // writing a buffer at all.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(2);

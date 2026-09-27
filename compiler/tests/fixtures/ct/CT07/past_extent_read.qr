@@ -11,7 +11,7 @@
 // this rule is removed: one byte past the payload lands inside the buffer
 // struct's own tail padding, where AddressSanitizer is silent — which is why
 // this bound is a checker refusal and not a sanitizer observation.
-import std.concurrency;
+#import std.concurrency;
 concurrency checked;
 fn writer(half: lend<Buffer>) -> i32 {
   let done = qcore_buffer_write(half, 0, 9);

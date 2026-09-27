@@ -6,9 +6,9 @@
 // whole-extent view is taken only afterwards, and its render shows the write
 // landed. So the case's refusal is about the overlap between the write's
 // range and a *live* loan's range, not about the write itself.
-import std.string;
-import std.buffer;
-import std.io;
+#import std.string;
+#import std.buffer;
+#import std.io;
 
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(6);

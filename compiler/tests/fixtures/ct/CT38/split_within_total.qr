@@ -1,4 +1,4 @@
-import std.concurrency;
+#import std.concurrency;
 fn main() -> unit {
     thread scope e epoch {
         bound 8192 effort 1000;

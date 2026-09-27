@@ -1,5 +1,7 @@
 # NATIVE-LIBRARY-HEADER — reading the library's own `.h` — 2026-09-11
 
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+
 Card `NATIVE-LIBRARY-HEADER` of wave 22: the **exported-header level** of the
 linkage spectrum. Wave 19 built a manifest whose entries carry the exported
 header declaration *as the author transcribed it*; wave 20 put a library's
@@ -544,7 +546,7 @@ the agreement of the Rust code with the transcription.
 | `NATIVE-LIBRARY-HEADER-FNPTR` | a manifest spelling for `fnptr`, `f32` and `f64`. Needs `qcore_core::extern_call::AbiType` widened — a change to what may cross a call boundary, not to a manifest grammar, and therefore its own card |
 | `NATIVE-LIBRARY-HEADER-CONDITIONAL` | evaluating the bounded conditional subset an exported header actually uses. `event2/thread.h` is 8/9 conditional-only today |
 | `NATIVE-LIBRARY-HEADER-ONE-READER` | the two readers of §7. Retiring either needs invariant 3 parity first |
-| `NATIVE-LIBRARY-SOURCE-BINDING` | **unchanged from wave 20**: binding a manifest from the source file (`import std.buffer;`) rather than by symbol name across the selection. Still needs a registry name or a new form, and still a constraint-14 census |
+| `NATIVE-LIBRARY-SOURCE-BINDING` | **unchanged from wave 20**: binding a manifest from the source file (`#import std.buffer;`) rather than by symbol name across the selection. Still needs a registry name or a new form, and still a constraint-14 census |
 | `NATIVE-LIBRARY-CERT-REPLAY` | unchanged, and now with a **second** identity to replay against — and one that a recheck can actually verify |
 | `UNSAFE-LINKAGE-ARTIFACT-PROBE`, `NATIVE-LIBRARY-MULTI-HASH`, `NATIVE-LIBRARY-SLICE-SHAPE`, `UNSAFE-LINKAGE-CLI` | unchanged from wave 20 |
 

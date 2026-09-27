@@ -19,6 +19,8 @@
 //! Cycle 20 adds a versioned, fail-closed verifier-provider registry and makes
 //! first-party library verification use the same certificate firewall.
 
+pub use qcore_verification::source_imports;
+
 pub use qcore_core::advanced_control;
 pub use qcore_core::ast;
 pub use qcore_core::c_emit;
@@ -117,7 +119,9 @@ pub use driver::{
     CheckedMutexGuardModule, CheckedSourceModule, CheckedStdIoModule, CompileOptions,
     CompiledModule, ComposedEpochModule, ComposedRegionEvidence, CustodyPayloadProfile,
     EmittedSourceMap, FileDiagnostic, SourceExecutionProfile, SourceFile, SourceLocation,
-    SourceResultProfile, compile_files, compile_files_with_registry, format_diagnostic,
+    SourceResultProfile, compile_files, compile_files_with_filesystem,
+    compile_files_with_filesystem_with_registry, compile_files_with_registry,
+    compile_source_bundle_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,

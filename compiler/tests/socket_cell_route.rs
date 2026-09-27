@@ -163,7 +163,7 @@ fn a_listener_and_an_end_are_admitted_and_the_question_erases_from_emission() {
 #[test]
 fn the_ends_of_two_different_connections_are_admitted() {
     let source = "\
-import std.socket;
+#import std.socket;
 
 fn main() -> unit effects { io, alloc } {
     let listener = tcp;
@@ -298,15 +298,15 @@ fn a_question_in_a_helper_is_refused_as_a_construct_outside_the_entry() {
 #[test]
 fn the_question_needs_the_socket_module() {
     // The question is a socket use, so a module spelling it without
-    // `import std.socket;` takes the import gate every other socket use takes.
+    // `#import std.socket;` takes the import gate every other socket use takes.
     let source = TCP_ECHO
         .replace("\r\n", "\n")
-        .replace("import std.socket;\n", "");
+        .replace("#import std.socket;\n", "");
     let with_question = echo_with(
         AFTER_ACCEPT,
         "    let server = accept listener;\n    disjoint client listener;\n",
     )
-    .replace("import std.socket;\n", "");
+    .replace("#import std.socket;\n", "");
     assert_eq!(codes(&source), codes(&with_question));
     assert!(
         codes(&source).contains(&"Q015".to_owned()),
@@ -344,8 +344,8 @@ fn every_published_socket_example_still_compiles_and_publishes_its_cells() {
 #[test]
 fn a_question_over_a_watched_socket_is_admitted_under_the_loan() {
     let source = "\
-import std.socket;
-import std.event;
+#import std.socket;
+#import std.event;
 
 fn main() -> unit effects { io, alloc } {
     event open;

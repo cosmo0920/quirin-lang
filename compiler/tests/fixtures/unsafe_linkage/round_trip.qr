@@ -1,5 +1,5 @@
-import std.extern;
-import std.extern.unsafe;
+#import std.extern;
+#import std.extern.unsafe;
 
 unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;
 unsafe extern fn k_unchecked_side_effect(tag: u32) -> unit;
