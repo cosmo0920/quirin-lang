@@ -82,7 +82,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // Combined W46 cards plus five W46 routing queries: 54 selected modules,
+    // 224 resource declarations, 118 corpus modules.
     assert_eq!(contracts.source_assumptions().len(), 54);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
@@ -670,11 +671,16 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         flush.counted_users.exits = exits(0);
         old.insert_contract("flb_output_task_flush", flush);
     }
-    // W46-FLUENT-EVENT-CONTRACT-GAPS: scalar/state helpers borrow every
-    // argument and preserve task-user counts. This explicit previous-mode
-    // table must grow with the selected manifest.
+    // W46-FLUENT-EVENT-CONTRACT-GAPS and W46-FLUENT-ROUTING-QUERY-CONTRACTS:
+    // scalar/state helpers borrow every argument and preserve task-user
+    // counts. This explicit previous-mode table grows with the manifest.
     for (name, arity) in [
         ("flb_input_chunk_is_up", 1),
+        ("input_chunk_has_magic_bytes", 2),
+        ("flb_input_chunk_is_mem_overlimit", 1),
+        ("flb_input_chunk_is_storage_overlimit", 1),
+        ("flb_routes_mask_get_slots", 1),
+        ("flb_routes_mask_is_empty", 2),
         ("flb_output_flush_id_get", 1),
         ("flb_task_get_route_status", 2),
         ("flb_task_set_route_status", 3),
@@ -977,7 +983,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // Combined W46 cards plus five W46 routing queries: 54 selected modules,
+    // 224 resource declarations, 118 corpus modules.
     assert_eq!(certificate.contracts.source_assumptions().len(), 54);
     certificate
         .contracts
@@ -1199,7 +1206,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
     // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
     // and manifest-selected.
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // Combined W46 cards plus five W46 routing queries: 54 selected modules,
+    // 224 resource declarations, 118 corpus modules.
     assert_eq!(modules.len(), 118, "corpus module count");
 
     let mut selected = 0;
@@ -1351,10 +1359,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
     // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
     // unchanged.
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // Combined W46 cards plus five W46 routing queries: 54 selected modules,
+    // 224 resource declarations, 118 corpus modules.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (54, 219, 216)
+        (54, 224, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

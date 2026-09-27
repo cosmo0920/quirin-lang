@@ -101,6 +101,8 @@ fn declarations_are_borrowed_scalar_queries() {
             vec![ResourceParameterMode::Borrowed; arity]
         );
         assert_eq!(contract.result, ResourceReturnMode::None);
+        assert!(contract.counted_users.neutral, "{name}");
+        assert!(contract.counted_users.effects.is_empty(), "{name}");
     }
     assert!(
         contracts(false)
