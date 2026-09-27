@@ -332,7 +332,7 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
         ),
         None => None,
     };
-    let mut modules = BTreeMap::new();
+    let mut modules: BTreeMap<String, String> = BTreeMap::new();
     for root in manifest["roots"]
         .as_array()
         .ok_or("corpus index has no roots")?
