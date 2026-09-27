@@ -33,10 +33,7 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "cfl/sds_lifetime.qv",
         include_str!("../contracts/cfl/sds_lifetime.qv"),
     ),
-    (
-        "cfl/time.qv",
-        include_str!("../contracts/cfl/time.qv"),
-    ),
+    ("cfl/time.qv", include_str!("../contracts/cfl/time.qv")),
 ];
 
 /// The source text of one owned module, by logical path.

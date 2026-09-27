@@ -14,8 +14,8 @@ const FILES: &[(&str, &str)] = &[
     ("Cargo.toml", include_str!("../template/Cargo.toml.tmpl")),
     ("src/lib.rs", include_str!("../template/src/lib.rs.tmpl")),
     (
-        "contracts/{{namespace}}/example.qcore",
-        include_str!("../template/example.qcore.tmpl"),
+        "contracts/{{namespace}}/example.qv",
+        include_str!("../template/example.qv.tmpl"),
     ),
     (
         "quirin-plugin.json",

@@ -39,18 +39,9 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "libc/dirent.qv",
         include_str!("../contracts/libc/dirent.qv"),
     ),
-    (
-        "libc/dlfcn.qv",
-        include_str!("../contracts/libc/dlfcn.qv"),
-    ),
-    (
-        "libc/errno.qv",
-        include_str!("../contracts/libc/errno.qv"),
-    ),
-    (
-        "libc/math.qv",
-        include_str!("../contracts/libc/math.qv"),
-    ),
+    ("libc/dlfcn.qv", include_str!("../contracts/libc/dlfcn.qv")),
+    ("libc/errno.qv", include_str!("../contracts/libc/errno.qv")),
+    ("libc/math.qv", include_str!("../contracts/libc/math.qv")),
     (
         "libc/memory.qv",
         include_str!("../contracts/libc/memory.qv"),
@@ -63,18 +54,12 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "libc/pthread_mutex.qv",
         include_str!("../contracts/libc/pthread_mutex.qv"),
     ),
-    (
-        "libc/regex.qv",
-        include_str!("../contracts/libc/regex.qv"),
-    ),
+    ("libc/regex.qv", include_str!("../contracts/libc/regex.qv")),
     (
         "libc/socket.qv",
         include_str!("../contracts/libc/socket.qv"),
     ),
-    (
-        "libc/stdio.qv",
-        include_str!("../contracts/libc/stdio.qv"),
-    ),
+    ("libc/stdio.qv", include_str!("../contracts/libc/stdio.qv")),
     (
         "libc/stdlib.qv",
         include_str!("../contracts/libc/stdlib.qv"),
@@ -91,10 +76,7 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "libc/threads.qv",
         include_str!("../contracts/libc/threads.qv"),
     ),
-    (
-        "libc/time.qv",
-        include_str!("../contracts/libc/time.qv"),
-    ),
+    ("libc/time.qv", include_str!("../contracts/libc/time.qv")),
     (
         "libc/unistd.qv",
         include_str!("../contracts/libc/unistd.qv"),

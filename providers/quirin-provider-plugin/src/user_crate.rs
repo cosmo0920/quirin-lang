@@ -6,7 +6,7 @@
 //! quirin-provider-acme/
 //!   Cargo.toml            [package] name = "quirin-provider-acme", version; [dependencies]
 //!   src/lib.rs            pub const NAMESPACE: &str = "acme";  pub const PUBLISHED: &[&str] = &[…];
-//!   contracts/acme/*.qcore
+//!   contracts/acme/*.qv
 //!   contracts.lock        written by `quirin-audit pin` after review (pinned contracts)
 //!   quirin-plugin.json    checker bindings and explicit overrides (this SDK)
 //! ```
@@ -15,7 +15,7 @@
 //! the one admitted spelling is refused rather than guessed: `Cargo.toml`'s
 //! `[package]` `name` and `version` and its `[dependencies]` keys that name a
 //! contract crate; `src/lib.rs`'s `NAMESPACE` and `PUBLISHED` constants, in
-//! the spelling `providers/contracts.py` reads; every `.qcore` file under
+//! the spelling `providers/contracts.py` reads; every `.qv` or legacy `.qcore` file under
 //! `contracts/` (no symbolic link, no other asset).
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -173,14 +173,14 @@ fn constants(directory: &Path) -> Result<(String, Vec<String>), String> {
 }
 
 fn valid_module_path(module: &str) -> bool {
-    module.ends_with(".qcore")
+    (module.ends_with(".qcore") || module.ends_with(".qv"))
         && relative_without_traversal(module)
         && module.bytes().all(|byte| {
             byte.is_ascii_lowercase() || byte.is_ascii_digit() || b"_/-.".contains(&byte)
         })
 }
 
-/// Every `.qcore` file under `contracts/`, as logical paths.
+/// Every `.qv` or legacy `.qcore` file under `contracts/`, as logical paths.
 fn contract_tree(directory: &Path) -> Result<BTreeMap<String, String>, String> {
     let root = directory.join("contracts");
     let metadata = fs::symlink_metadata(&root)
@@ -210,6 +210,17 @@ fn contract_tree(directory: &Path) -> Result<BTreeMap<String, String>, String> {
                 return Err(refuse(
                     directory,
                     format!("unexpected contract asset `{logical}`"),
+                ));
+            }
+            let alias = if let Some(stem) = logical.strip_suffix(".qv") {
+                format!("{stem}.qcore")
+            } else {
+                format!("{}.qv", logical.strip_suffix(".qcore").unwrap())
+            };
+            if modules.contains_key(&alias) {
+                return Err(refuse(
+                    directory,
+                    format!("contract source aliases `{logical}` and `{alias}` share one stem"),
                 ));
             }
             let text = fs::read_to_string(&path).map_err(|error| refuse(directory, error))?;
