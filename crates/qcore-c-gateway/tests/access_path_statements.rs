@@ -46,6 +46,16 @@ fn sizeof_vla_with_call_is_not_treated_as_unevaluated() {
 }
 
 #[test]
+fn embedded_and_indexed_paths_have_untracked_scope() {
+    let source = "struct I { int value; }; struct S { struct I inner; struct I *items; }; int subject(struct S *p, int i) { int x = p->inner.value + p->items[i].value; return 0; }";
+    let result = run(source);
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("untracked mixed path should decide: {result:?}");
+    };
+    check_legacy_safety_certificate(&certificate).expect("independent rederivation");
+}
+
+#[test]
 fn pointer_store_and_union_still_refuse() {
     for source in [
         "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",

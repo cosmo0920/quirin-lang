@@ -10,20 +10,25 @@ frozen before implementation in [PREDICTION.md](PREDICTION.md). The earlier
 `typed_access_path.rs` reads Clang's typed AST for the exact analyzed source,
 dialect and frontend flags in each gateway unit. It uniquely matches a
 complete statement by internal line and tokens, then lowers scalar paths and
-whole pointer-valued path reads through `.`, `->`, `*` and a single `[]` to
+whole pointer-valued path reads through `.`, `->`, `*` and `[]` to
 the established indirect-access flow transfer. Each tracked root and loaded
 pointer hop keeps the existing null/liveness obligation. A non-pointer store
 retains the custody frame. A pointer read binds a target-free, possibly-null
 borrowed alias and never transfers custody.
 
 Missing or ambiguous AST facts, unmatched source, unions, bitfields,
-casts within a path, volatile/atomic paths, pointer arithmetic, multi-step
-subscripts, pointer stores and call-bearing statements refuse. This card
+casts within a path, volatile/atomic paths, pointer arithmetic, mixed
+paths with a tracked root, pointer stores and call-bearing statements refuse. This card
 does not serve conditions, returns or call arguments (P3). A narrow no-access
 arm admits scalar arithmetic and declarators that Clang proves do not touch
 memory; multi-pointer aliases require every source and destination to be
 statically never-bound to tracked custody. Source-scope and certificate
 re-derivation both pass the same original dialect and frontend flags.
+Mixed embedded-record and indexed paths are admitted only when the root is
+statically never-bound to a tracked identity; every pointer loaded from that
+untracked graph is outside this resource projection. A tracked mixed path
+still refuses because the existing field-link state cannot name its nested
+places. A focused indexed path test checks both arms.
 `sizeof` is admitted as no access only for a childless, non-array AST type:
 Clang represents evaluated VLA bounds as children, and the held-out
 `sizeof(int[(close(fd), n)])` control stays `Unknown`.

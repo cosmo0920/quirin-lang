@@ -573,15 +573,22 @@ impl Reader<'_> {
         } else if !(self.never_bound)(root) {
             return None;
         }
-        if steps.iter().any(|step| step.0 == "[]" && steps.len() != 1)
+        let mixed_path = steps.iter().any(|step| step.0 == "[]" && steps.len() != 1)
             || steps.iter().any(|step| step.0 == "*" && steps.len() != 1)
-            || steps.iter().skip(1).any(|step| step.0 != "->")
-        {
+            || steps.iter().skip(1).any(|step| step.0 != "->");
+        // The existing tracked field-link model names only direct `->`
+        // places. A path through embedded records or indexed objects has
+        // no tracked place representation, so it is admitted only when the
+        // custody closure proves the root can never bind a resource. Then
+        // every loaded pointer is outside this projection's tracked graph.
+        if mixed_path && !(self.never_bound)(root) {
             return None;
         }
         if steps.len() > 1 || first.0 != "." {
             let members = steps.iter().map(|step| step.1.clone()).collect::<Vec<_>>();
-            let links = if members.len() > 1 {
+            let links = if mixed_path {
+                Vec::new()
+            } else if members.len() > 1 {
                 members[..members.len() - 1].to_vec()
             } else {
                 Vec::new()
@@ -743,5 +750,23 @@ mod tests {
         assert!(plan(source, "int x = sizeof(int[(close(fd), n)])").is_none());
         let static_source = "int f(void) { int x = sizeof(int *); return x; }";
         assert!(plan(static_source, "int x = sizeof(int *)").is_some());
+    }
+
+    #[test]
+    fn mixed_embedded_and_indexed_path_needs_untracked_root() {
+        let source = "struct I { int value; }; struct S { struct I inner; struct I *items; }; int f(struct S *p, int i) { int x = p->inner.value + p->items[i].value; return 0; }";
+        let _scope = enter_source(source, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("f").expect("typed function");
+        let tokens = tokenize("int x = p->inner.value + p->items[i].value");
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let plan = index
+            .statement(&texts, 1, |_| true)
+            .expect("untracked path");
+        assert_eq!(plan.accesses, 2);
+        assert!(plan.chains.iter().all(|chain| chain.links.is_empty()));
+        assert!(index.statement(&texts, 1, |name| name != "p").is_none());
     }
 }

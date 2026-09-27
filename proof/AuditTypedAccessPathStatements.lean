@@ -8,6 +8,7 @@ import QCore.TypedAccessPathStatements
 #print axioms QCore.TypedAccessPathStatements.cast_refuses
 #print axioms QCore.TypedAccessPathStatements.call_refuses
 #print axioms QCore.TypedAccessPathStatements.any_unlisted_form_refuses
+#print axioms QCore.TypedAccessPathStatements.mixed_path_with_tracked_root_refuses
 #print axioms QCore.TypedAccessPathStatements.refused_shape_has_no_lowering
 #print axioms QCore.TypedAccessPathStatements.every_hop_discharge_adds_no_diagnostic
 #print axioms QCore.TypedAccessPathStatements.nonpointer_store_preserves_custody

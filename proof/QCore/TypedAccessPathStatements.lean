@@ -24,12 +24,15 @@ structure Shape where
   pointerStore : Bool
   call : Bool
   otherForm : Bool
+  mixedPath : Bool
+  untrackedRoot : Bool
 
 /-- Each admitted fact is positive, and each unlisted form is a refusal. -/
 def admits (p : Shape) : Bool :=
   p.exactType && p.scalarValue && !p.unionField && !p.bitfield &&
   !p.incompleteRecord && !p.castInPath && !p.pointerArithmetic &&
-  !p.volatileAtomic && !p.pointerStore && !p.call && !p.otherForm
+  !p.volatileAtomic && !p.pointerStore && !p.call && !p.otherForm &&
+  (!p.mixedPath || p.untrackedRoot)
 
 structure Statement where
   shape : Shape
@@ -59,6 +62,10 @@ theorem call_refuses (p : Shape) (h : p.call = true) : admits p = false := by
 
 theorem any_unlisted_form_refuses (p : Shape) (h : p.otherForm = true) : admits p = false := by
   simp [admits, h]
+
+theorem mixed_path_with_tracked_root_refuses (p : Shape)
+    (hm : p.mixedPath = true) (hr : p.untrackedRoot = false) : admits p = false := by
+  simp [admits, hm, hr]
 
 theorem refused_shape_has_no_lowering (s : IndirectChainAccess.State) (p : Statement)
     (h : admits p.shape = false) : lower s p = none := by
