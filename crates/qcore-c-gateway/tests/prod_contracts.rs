@@ -895,5 +895,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // `fluent_bit/output_singleplex.qcore`.
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
     // (twelve checked specifications, contract spec C06.3).
-    assert_eq!(contracts.source_assumptions().len(), 50);
+    // 50 -> 51 by W46-LIBC-EVENT-CONTRACT-GAPS: the pinned scalar observation module.
+    assert_eq!(contracts.source_assumptions().len(), 51);
 }
