@@ -858,3 +858,6 @@ pub fn load_library_selections(path: &Path) -> Result<Vec<LibrarySelection>, Str
     }
     Ok(selection.libraries)
 }
+
+/// Read-only binary checkpoint inspector.
+pub mod dump_checkpoint_cli;
