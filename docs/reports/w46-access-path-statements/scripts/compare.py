@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Compare complete corpus artifacts and the frozen P2 forecast.
 
-Usage: compare.py BEFORE AFTER PARITY OUTPUT_DIR. Inputs may be JSON or gzip.
+Usage: compare.py BEFORE AFTER PARITY OUTPUT_DIR [--no-forecast].
+Inputs may be JSON or gzip.
 Every changed function row is retained; no Unknown is removed from counts.
 """
 
@@ -33,6 +34,7 @@ def gzip_writer(path):
 
 def main():
     before_path, after_path, parity_path, out_path = map(pathlib.Path, sys.argv[1:5])
+    no_forecast = "--no-forecast" in sys.argv[5:]
     out_path.mkdir(parents=True, exist_ok=False)
     before, after = read(before_path), read(after_path)
     if len(before["units"]) != len(after["units"]):
@@ -42,6 +44,8 @@ def main():
     before_status = collections.Counter()
     after_status = collections.Counter()
     after_by_name = {}
+    before_by_name = {}
+    changed_keys = set()
     for ordinal, (old_unit, new_unit) in enumerate(zip(before["units"], after["units"])):
         if (old_unit["file"], old_unit["library"]) != (new_unit["file"], new_unit["library"]):
             raise SystemExit(f"unit identity changed at {ordinal}")
@@ -53,6 +57,7 @@ def main():
             old, new = old_rows[function], new_rows[function]
             key = (new_unit["library"], new_unit["file"], function)
             after_by_name[key] = new["status"]
+            before_by_name[key] = old["status"]
             before_status[old["status"]] += 1
             after_status[new["status"]] += 1
             removed = diagnostics(old) - diagnostics(new)
@@ -70,23 +75,27 @@ def main():
                 "added": render_diagnostics(added),
             }
             changed.append(row)
+            changed_keys.add(key)
             if old["status"] != new["status"]:
                 moves.append(row)
-    prediction_path = pathlib.Path(__file__).parents[2] / "w46-access-path-census/artifacts/prediction.json"
-    with prediction_path.open() as stream:
-        stream.readline()  # schema envelope
-        prediction = json.load(stream)
     forecast = []
-    for row in prediction["freed"]["P2"]:
-        if row["needs_cross_unit_summary"]:
-            continue
-        key = (row["library"], row["file"], row["function"])
-        forecast.append({
-            "library": key[0], "file": key[1], "function": key[2],
-            "predicted": row["verdict"], "observed": after_by_name.get(key),
-            "hit": after_by_name.get(key) == row["verdict"],
-            "reason": row["reason"],
-        })
+    if not no_forecast:
+        prediction_path = pathlib.Path(__file__).parents[2] / "w46-access-path-census/artifacts/prediction.json"
+        with prediction_path.open() as stream:
+            stream.readline()  # schema envelope
+            prediction = json.load(stream)
+        for row in prediction["freed"]["P2"]:
+            if row["needs_cross_unit_summary"]:
+                continue
+            key = (row["library"], row["file"], row["function"])
+            forecast.append({
+                "library": key[0], "file": key[1], "function": key[2],
+                "predicted": row["verdict"], "before": before_by_name.get(key),
+                "observed": after_by_name.get(key),
+                "changed": key in changed_keys,
+                "hit": after_by_name.get(key) == row["verdict"] and key in changed_keys,
+                "reason": row["reason"],
+            })
     parity_totals = collections.Counter()
     parity_disagreements = collections.Counter()
     with parity_path.open() as stream, gzip_writer(out_path / "parity-disagreements.jsonl.gz") as output:

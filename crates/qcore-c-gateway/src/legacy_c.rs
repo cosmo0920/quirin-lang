@@ -6391,6 +6391,7 @@ impl Parser<'_> {
             && let Some(element) = self.element_statement(tokens, &instruction)
         {
             self.element_lowerings += 1;
+            self.record_legacy_typed_parity(tokens, "indexed_element", &element);
             return element;
         }
         // Card W43-INDEX-TRAVERSAL: the formal-mutation gate refuses `q++` for

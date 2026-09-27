@@ -33,8 +33,9 @@ places. A focused indexed path test checks both arms.
 Clang represents evaluated VLA bounds as children, and the held-out
 `sizeof(int[(close(fd), n)])` control stays `Unknown`.
 
-The established scalar-member-store, scalar-field-noop, typed scalar,
-chain, sub-object-store and pointer-step shape readers stay first. With
+The established indexed-element, scalar-member-store, scalar-field-noop,
+typed scalar, chain, sub-object-store and pointer-step shape readers stay
+first. With
 `QCORE_TYPED_PATH_PARITY` set to an output JSONL path, each consulted
 statement records both readers' complete plans, any disagreement, and the
 analyzed source identity. The corpus artifact below archives that stream.
