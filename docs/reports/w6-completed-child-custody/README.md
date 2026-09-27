@@ -1,5 +1,8 @@
 # CT14 and CT37: completed children retain custody until join
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `8876cd4`, 2026-09-07. CT14 is newly mapped to real source/native
 conformance, and CT37 now runs a real worker allocation through a completion
 record and parent join. No language, checker, core, native runtime, contract or

@@ -1,5 +1,8 @@
 # Leaf-worker Buffer allocation and CT16 cleanup
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `376f102`, 2026-09-07. `ScopedOwnedTasksV1` now permits nonrecursive,
 task-free leaf workers to allocate actual heap Buffers, return a fresh Buffer,
 or release their local allocations before returning or raising a payload-free

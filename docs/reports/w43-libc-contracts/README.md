@@ -1,5 +1,8 @@
 # W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-LIBC-CONTRACTS, 2026-09-23, on base `9edad50c` (main after
 QUIRIN-PROVIDER-SHARED). After W43-RETURN-EXPRESSION, 315 Unknown functions
 were blocked only by one uncontracted callee. This card measures which callees

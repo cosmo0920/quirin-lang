@@ -1,5 +1,8 @@
 # CT50: a reused address does not revive an old Buffer identity
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `6824aa5`, 2026-09-07. CT50 is now mapped through actual source,
 reference execution and native Linux storage reuse. No parser, checker, core,
 backend or Lean semantics change is needed: the owned-task implementation already

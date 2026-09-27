@@ -1,5 +1,8 @@
 # W44-QUIRIN-AUDIT-PROVIDERS: providers for `quirin-audit`, `quirin-audit current`, contracts only
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W44-QUIRIN-AUDIT-PROVIDERS, 2026-09-25, on base `a2a63ced` ("Record the
 w44-collection-allocation integration and archive the combined baseline").
 Mid-card, the user widened the scope three times:

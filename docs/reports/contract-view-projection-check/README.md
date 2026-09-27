@@ -1,5 +1,8 @@
 # CONTRACT-VIEW-PROJECTION-CHECK: checked relations between the views of one function
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card CONTRACT-VIEW-PROJECTION-CHECK, 2026-09-25, on base `f8b41209` (main after
 the CONTRACT-INHERIT-ADOPTION matrix repair).
 
