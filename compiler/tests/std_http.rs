@@ -82,7 +82,7 @@ fn messages(source: &str) -> Vec<String> {
 fn module(imports: &[&str], effects: &str, body: &[&str]) -> String {
     let mut source: Vec<String> = imports
         .iter()
-        .map(|module| format!("import {module};"))
+        .map(|module| format!("#import {module};"))
         .collect();
     source.push(String::new());
     source.push(format!("fn main() -> unit effects {{ {effects} }} {{"));

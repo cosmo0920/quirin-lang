@@ -256,7 +256,7 @@ fn the_logger_import_alone_does_not_grant_standard_output() {
 #[test]
 fn a_misspelled_module_refuses_as_an_unknown_module() {
     for name in ["std.fmtt", "std.stdio", "std.log"] {
-        let source = LINES.replace("#import std.fmt;", &format!("import {name};"));
+        let source = LINES.replace("#import std.fmt;", &format!("#import {name};"));
         assert_eq!(codes(&source), ["Q014"], "`{name}` must be unknown");
     }
 }

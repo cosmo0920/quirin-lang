@@ -19,6 +19,8 @@
 //! Cycle 20 adds a versioned, fail-closed verifier-provider registry and makes
 //! first-party library verification use the same certificate firewall.
 
+pub use qcore_verification::source_imports;
+
 pub use qcore_core::advanced_control;
 pub use qcore_core::ast;
 pub use qcore_core::c_emit;
@@ -400,5 +402,3 @@ fn main() {
         assert_eq!(normalize_newlines(&once), once);
     }
 }
-
-pub use qcore_verification::source_imports;

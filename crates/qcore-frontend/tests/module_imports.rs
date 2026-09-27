@@ -14,13 +14,13 @@ fn no_module_is_imported_by_default_and_unknown_names_fail_closed() {
     ] {
         assert!(ModuleImports::resolve(["std.concurrency", path]).is_err());
         let source =
-            parse_source_program(&format!("import {path}; fn main() -> i32 {{ return 0; }}"))
+            parse_source_program(&format!("#import {path}; fn main() -> i32 {{ return 0; }}"))
                 .unwrap();
         let errors = elaborate_source(&source).unwrap_err();
         assert_eq!(errors[0].code, "Q014");
         assert_eq!(
             &source.source()[errors[0].span.start..errors[0].span.end],
-            format!("import {path};")
+            format!("#import {path};")
         );
     }
 }

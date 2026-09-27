@@ -80,7 +80,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/quirin-audit-plugin-libevent",
         &["quirin-audit-plugin", "qcore-schemas"],
     ),
-    ("crates/qcorec", &["qcore-compiler"]),
+    ("crates/qcorec", &["qcore-compiler", "qcore-contract"]),
 ];
 
 fn workspace_dependencies(manifest: &str) -> Vec<String> {

@@ -55,7 +55,7 @@ fn codes(source: &str, contracts: Option<BTreeMap<String, String>>) -> Vec<Strin
 }
 
 fn without_import(source: &str, module: &str) -> String {
-    let import = format!("import {module};");
+    let import = format!("#import {module};");
     source
         .lines()
         .filter(|line| *line != import)

@@ -214,3 +214,26 @@ retained contract/source-effect sidecars. [Audit comparison](audit-comparison.js
 records exact artifact digests and both run commands/source identities. The
 inputs reuse the prepared Clang tree; no C revision, assumption pin or coverage
 claim changes. Both runs use four workers; this card makes no throughput claim.
+
+## First integrated gate and corrections
+
+The first complete gate (`private/runtime-source-imports-gate-20260927T141703Z`,
+source implementation `9271b204`, documentation through `14f0e205`) ran every
+Rust unit: 339 units / 352 summaries, **6,114 passed, eight failed, 11 ignored**.
+[Step records](failed-gate-steps.json) retain every command and exit. Five failures
+came from dynamic test-source generators/removal needles still spelling bare
+`import`; those helpers now use `#import`, without weakening their refusal
+assertions. Two remaining bookkeeping categories account for the other failures:
+seven CT shared-fixture digest pins needed deliberate updates for identical edits
+to all their members, and the CLI dependency allow-list needed the existing
+lower-layer `qcore-contract` loader used by its new explicit option. Group
+membership, mapping, declarations and all other dependency restrictions remain
+unchanged. [Correction attribution](integration-corrections.json) records hashes.
+
+The same gate exposed a facade reexport after a test module (Clippy exit 101),
+an aggregate Lean import after module documentation (Lean build exit 1), and
+a stale derived matrix audit count (Python: 365 run, one failure). The reexport
+and Lean import move before those boundaries; no semantic or proof statement
+changes. Matrix regeneration refreshes its derived audit inventory before the
+next Python run. Formatting, both reevaluation probes, submodule initialization
+and Clang recording already passed. A fresh corrected gate is required below.

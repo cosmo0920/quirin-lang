@@ -109,7 +109,7 @@
     "distinct_source_fixture_digests": 48,
     "shared_fixture_groups": [
       {
-        "sha256": "131f635d9579a7da9833a7e51f305a5aa3306b2542808c17558ced982f5e909c",
+        "sha256": "e086c7ab0b5e3ab39e2dc85288312ee08bed1a31d1ab1d261b857541b1a2d58a",
         "relation": "shared_artifact",
         "decision": "disclose",
         "members": [
@@ -161,7 +161,7 @@
         "note": "A one-line #include shim; both resolve to the single shared compiler/tests/fixtures/task_worker_allocations/completion_before_join.h, as W6-COMPLETED-CHILD-CUSTODY records. CT14 and CT37 have distinct programs; they share the native completion-before-join adapter. CT37 is proof-bound, so its side is not edited."
       },
       {
-        "sha256": "c775f7218f3394e7d5ed809fd366587cd330af8b4d68a248048b35a94e208a7b",
+        "sha256": "f4a56678939775ceaf45ea5d742ba06c9ffb8b12042f09d89b351964d3546211",
         "relation": "case_as_control",
         "decision": "disclose",
         "members": [
@@ -177,7 +177,7 @@
         "note": "CT02's own artifact (parent uses a buffer after a successful move capture, refused Q600) is CT14's read_before_join rejection control. The control is a separate file in CT14's own directory, so editing CT02 does not change what CT14's control tests: it silently ends the identity. That identity is now pinned here."
       },
       {
-        "sha256": "7c75577b59733994bac462404ee51173d4376336b5351d1d9e9b6a380d634be6",
+        "sha256": "52829ae3ac9a19dc002b164acd082a1cdded8f5e2b6975f77b3455b03a289810",
         "relation": "case_as_control",
         "decision": "disclose",
         "members": [
@@ -193,7 +193,7 @@
         "note": "CT03's own artifact (complementary read shares, admitted) is CT04's accepted write_after_joins control. REMAINING-WAVE3-CT-INTEGRATION describes it as 'the same write after both joins' and does not say it is CT03's program. CT03 is proof-bound through the F02 trace/digest relation, so neither side is edited."
       },
       {
-        "sha256": "29f2f013edbbde7f68eb8881b2c3776abf5da3dd9c05743e7c11133c13538fa9",
+        "sha256": "7ec45106d52057070e5c8cca50b52f6ec8d5ba753fe690e4a3845bb23721e67c",
         "relation": "shared_with_non_ct_fixture",
         "decision": "disclose",
         "members": [
@@ -209,7 +209,7 @@
         "note": "CT08's artifact is CT07-SLICE-PERMISSIONS' overlapping_write.qcore, which compiler/tests/slice_permissions.rs include_str!s. CT-WIRE-LANE-2 section 2.2 names the source program but not its byte identity. The two files are independent copies; either may diverge silently without this pin."
       },
       {
-        "sha256": "9a793c465809c3dd3fff452aa31f22f185cfc6825f86e9af4cb9f9ff51810f86",
+        "sha256": "6a542b0e248f8f34ab091559e13f6000dc6c7e97163cd289c8abfda6645d0f8b",
         "relation": "shared_with_non_ct_fixture",
         "decision": "disclose",
         "members": [
@@ -225,7 +225,7 @@
         "note": "CT09's artifact is AGGREGATES-V1's point.qcore, which compiler/tests/source_record.rs include_str!s. CT-WIRE-LANE-2 section 2.3 names the source program but not its byte identity."
       },
       {
-        "sha256": "57c3072d319d2d3b8948b5435501c0419ee632c5145312f68524cda30503dc17",
+        "sha256": "f571a18bf7dc887c55cd20a751886a01b3bf3702323b7d6e2b3ea8eda9c4c969",
         "relation": "shared_with_non_ct_fixture",
         "decision": "disclose",
         "members": [
@@ -241,7 +241,7 @@
         "note": "CT10's distinct_units admitted control is CT10-SOURCE-LAYOUT's route fixture, which compiler/tests/bitfield_concurrency.rs include_str!s."
       },
       {
-        "sha256": "d91828fc546b4b10fb57736dba483373216057bc119e622782baefb4bdeaac1c",
+        "sha256": "3113497a5296e9cf402bb2001b0929b962e231ed2281f4dee5a075668fde864f",
         "relation": "shared_with_non_ct_fixture",
         "decision": "disclose",
         "members": [

@@ -625,7 +625,7 @@ fn the_buffer_import_alone_does_not_grant_standard_output() {
 fn a_misspelled_module_refuses_as_an_unknown_module() {
     for name in ["std.buffers", "std.bytes", "std.buf"] {
         let source = source_lines(&[
-            &format!("import {name};"),
+            &format!("#import {name};"),
             "",
             "fn main() -> unit effects { alloc } {",
             "    let b = bytes(4);",
