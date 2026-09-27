@@ -84,7 +84,7 @@ and [gateway rules](agents/gateway.md#constraint-7).
 
 ## Milestones and trust
 
-Audit tooling now uses `quirin-audit pinned` and the shared `quirin-source-analysis` crate; the legacy compiler example was retired after [pinned parity](reports/audit-pinned-replay-cli/README.md), with no coverage movement. Checkpointed current audits seal one binary schema-3 `.qo` per compile configuration; `quirin-dump-checkpoint` inspects validated content, and preparation prints live log paths. The [combined gate](reports/audit-checkpoint-files/integration/README.md) passed 6,059 Rust tests, 365 Python tests and 213 Lean audits. The [extension migration](plans/quirin-extension-migration/README.md), including outdated-name warnings for retained frozen `.qcore` reports, remains planned.
+Audit tooling now uses `quirin-audit pinned` and the shared `quirin-source-analysis` crate; the legacy compiler example was retired after [pinned parity](reports/audit-pinned-replay-cli/README.md), with no coverage movement. Checkpointed current audits seal one binary schema-3 `.qo` per compile configuration; `quirin-dump-checkpoint` inspects validated content, and preparation prints live log paths. The [combined gate](reports/audit-checkpoint-files/integration/README.md) passed 6,059 Rust tests, 365 Python tests and 213 Lean audits. The [extension migration](plans/quirin-extension-migration/README.md) has passing compatibility readers; physical renames, including archived inputs and their runnable references, are undergoing integration validation. Legacy external `.qcore` inputs continue to receive outdated-name warnings.
 
 Cycles 1–17 are complete only at their bounded milestones. Cycle 18 has bounded
 implementation with aggregate acceptance pending. Cycle 19 is in progress;

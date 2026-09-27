@@ -311,7 +311,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [extension-compatibility](extension-compatibility/README.md) | EXT-01 — Source extension compatibility |
 
+| [extension-contract-physical](extension-contract-physical/README.md) | EXT-02 contract source migration |
+
 | [extension-contract-readers](extension-contract-readers/README.md) | Extension contract readers (EXT-01 delegated track) |
+
+| [extension-physical-migration](extension-physical-migration/README.md) | Physical extension migration (EXT-02/03) |
 
 | [extension-provider-readers](extension-provider-readers/README.md) | EXT-01 provider package readers |
 
