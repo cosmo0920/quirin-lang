@@ -447,8 +447,11 @@ impl Reader<'_> {
             "IntegerLiteral" | "FloatingLiteral" | "CharacterLiteral" | "GNUNullExpr" => Some(()),
             "DeclRefExpr" if is_scalar(node) => Some(()),
             "UnaryExprOrTypeTraitExpr"
-                if children(node).is_empty()
-                    || (children(node).len() == 1 && is_scalar(&children(node)[0])) =>
+                if node["name"].as_str() == Some("sizeof")
+                    && children(node).is_empty()
+                    && node["argType"]["qualType"]
+                        .as_str()
+                        .is_some_and(|ty| !ty.contains('[')) =>
             {
                 Some(())
             }
@@ -732,5 +735,13 @@ mod tests {
             .collect::<Vec<_>>();
         assert_eq!(index.statement(&texts, 1, |_| true).unwrap().accesses, 0);
         assert!(index.statement(&texts, 1, |name| name != "a").is_none());
+    }
+
+    #[test]
+    fn sizeof_vla_bound_may_execute_and_refuses() {
+        let source = "int close(int); int f(int n, int fd) { int x = sizeof(int[(close(fd), n)]); return x; }";
+        assert!(plan(source, "int x = sizeof(int[(close(fd), n)])").is_none());
+        let static_source = "int f(void) { int x = sizeof(int *); return x; }";
+        assert!(plan(static_source, "int x = sizeof(int *)").is_some());
     }
 }

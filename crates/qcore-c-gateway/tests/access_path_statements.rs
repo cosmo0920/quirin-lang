@@ -37,6 +37,15 @@ fn untracked_multi_pointer_declaration_is_not_an_access() {
 }
 
 #[test]
+fn sizeof_vla_with_call_is_not_treated_as_unevaluated() {
+    let source = "int close(int); int subject(int n, int fd) { int x = sizeof(int[(close(fd), n)]); return x; }";
+    assert!(matches!(
+        run(source),
+        UnrestrictedLegacyResult::Unknown { .. }
+    ));
+}
+
+#[test]
 fn pointer_store_and_union_still_refuse() {
     for source in [
         "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
