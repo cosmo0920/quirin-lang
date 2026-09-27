@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W46-EXTERNAL-CALLEE-CONTRACTS integration, 2026-09-25. The card (measured against docs/reports/w45-container-root-reach/integration/artifacts) composed onto the combined tree docs/reports/w45-container-root-reach/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 76 added 2 functions 7 units 0); functions moved (combined): [('mk_sched_send_signal', ('Unknown', 'Safe')), ('mk_socket_create', ('Unknown', 'Safe')), ('pack_basic_header_finish', ('Unknown', 'Safe')), ('pack_bool', ('Unknown', 'Safe')), ('pack_bytes', ('Unknown', 'Safe')), ('pack_string', ('Unknown', 'Safe')), ('rd_kafka_thread_cnt', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] seven Unknown -> Safe from the nine new external-callee contracts (pack_basic_header_finish, pack_bool, pack_bytes, pack_string, mk_sched_send_signal, mk_socket_create, rd_kafka_thread_cnt); no corrections Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w46-external-callee-contracts/integration/previous-corpus-row.json.",
+   "note": "W46-CONTRACT-GAP-EXPANSION at eb913c38, 2026-09-27: 36 new declarations, six Unknown-to-Safe projected functions under declared scalar premises, no correction or new leak/violation. Corpus removes 155 leaves and adds 3; unit verdicts and reason codes unchanged. Every diagnostic difference has automated or exact source-reviewed attribution. Provisional Unsafe is not an upstream defect claim. Previous row archived beside this report.",
    "units": 185,
    "safe": 5,
    "provisional_unsafe": 8,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 34,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w46-external-callee-contracts/integration/artifacts/",
-   "source": "docs/reports/w46-external-callee-contracts/integration/integration-confirmation.md; preceding baseline docs/reports/w45-container-root-reach/integration/artifacts",
-   "unknown_alias_diagnostics": 3572,
-   "unsupported_diagnostics": 41239,
+   "baseline": "docs/reports/w46-contract-gap-expansion/artifacts/after/",
+   "source": "docs/reports/w46-contract-gap-expansion/README.md",
+   "unknown_alias_diagnostics": 3573,
+   "unsupported_diagnostics": 41086,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 405,
+    "safe": 411,
     "provisional_unsafe": 9,
-    "unknown": 4420
+    "unknown": 4414
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6736,8 +6736,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W46-METRIC-TRACE-CONTRACT-GAPS at 246d0077, 2026-09-27. Fresh worktree submodule initialized by integrator with scoped local cache exit 0 at d82464a2; repeat sandboxed submodule step exit 128 on read-only .git/worktrees config, retained in report. All completed required checks pass after scoped execution: workspace runner exit 0, 323 units / 335 summaries / 6023 passed / 0 failed / 11 ignored, log private/w46-metric-trace-gate/test-binaries-escalated.log, per-unit summary private/test-binaries/20260927T014746Z-3725053/summary.json; provider cargo test exit 0, 129 passed / 0 failed / 1 ignored in 43 summaries, log private/w46-metric-trace-gate/provider-tests-escalated.log. fmt and clippy each 0; reevaluation examples each 0; 211 Lean audits and 364 script Python tests exit 0; provider Python tests 15 passed exit 0; contracts check, docs index check and both source revision pin checks exit 0; all five packages built and verified exit 0. Clang --version recorded here exit 0. Cargo env: CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w46-contract-gaps/targets/metric-trace, CARGO_PROFILE_DEV_DEBUG=0, CARGO_PROFILE_TEST_DEBUG=0, CARGO_INCREMENTAL=0. Initial sandboxed runner exit 101 (5916 passed / 107 failed / 11 ignored) and provider suite exit 101, with one real stale CMetrics inventory digest corrected before the passing reruns. No verdict promotion claimed; corpus attribution belongs to integration.",
-  "workspace_tests": 6023,
+  "note": "W46-CONTRACT-GAP-EXPANSION merged gate at eb913c38, 2026-09-27. Implementation and inventory bytes are the merged tip; only test comments and integration documentation/evidence were edited during this run. Core runner exit 0: 324 units, 336 summaries, 6029 passed, 0 failed, 11 ignored; private/test-binaries/20260927T022512Z-4165084/summary.json. Provider suite exit 0: 129 passed, 0 failed, 1 ignored in 43 summaries. Lean 212, provider Python 15, both reevaluation examples, core/provider fmt and clippy, contracts check, all five package builds/verifications, docs-index and submodule steps exit 0. Full root Python ran 364 tests, exit 1 with 363 passed and one matrix byte-format failure after hand updating measurements; matrix regeneration repaired it and the exact failing test passed (1/1, exit 0, private/w46-contract-gaps/matrix-format-repair.log). A final full Python discovery after this gate-driven matrix regeneration is recorded in gate/final-checks.json. The original full gate and orchestration exit remain 1; no clean first run is claimed. Exact commands/exits in gate/steps.json, private logs at private/w46-contract-gaps/integration-gate/. Clang was recorded in this merged worktree, not borrowed. Isolated cargo target and debug/incremental settings are recorded in gate/command.json.",
+  "workspace_tests": 6029,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
   "lean_audits": 212,
@@ -6959,9 +6959,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "complete after recorded format repair",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w46-contract-gap-expansion/gate.json)"
  },
  "named_followups": [
   {

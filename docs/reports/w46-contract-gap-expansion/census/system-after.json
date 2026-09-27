@@ -1,0 +1,3465 @@
+{
+  "schema_version": 1,
+  "input": "private/w46-contract-gaps/after/system/resource-diagnostics.json",
+  "input_sha256": "67f6cb2cde065d5d03807d79250aae9384f79e5ed53b2ad948dfe34bba3019d9",
+  "unit_count": 15,
+  "scope": "Exact uncontracted-call diagnostics in requested symbol families; not an exhaustive API inventory or safety coverage.",
+  "families": {
+    "libc": {
+      "callees": 4,
+      "call_leaves": 8,
+      "alone_blocked_functions": 2
+    },
+    "libevent": {
+      "callees": 0,
+      "call_leaves": 0,
+      "alone_blocked_functions": 0
+    },
+    "monkey": {
+      "callees": 4,
+      "call_leaves": 8,
+      "alone_blocked_functions": 0
+    },
+    "cmetrics": {
+      "callees": 3,
+      "call_leaves": 8,
+      "alone_blocked_functions": 0
+    },
+    "ctraces": {
+      "callees": 0,
+      "call_leaves": 0,
+      "alone_blocked_functions": 0
+    },
+    "input_chunk": {
+      "callees": 25,
+      "call_leaves": 85,
+      "alone_blocked_functions": 2
+    },
+    "flushing_events": {
+      "callees": 56,
+      "call_leaves": 218,
+      "alone_blocked_functions": 6
+    }
+  },
+  "callees": [
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_destroy",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18148,
+          "origin": "src/flb_scheduler.c:787"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18188,
+          "origin": "src/flb_scheduler.c:844"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18193,
+          "origin": "src/flb_scheduler.c:851"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_create",
+          "status": "Unknown",
+          "line": 17835,
+          "origin": "src/flb_scheduler.c:319"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_retry_now",
+          "status": "Unknown",
+          "line": 18281,
+          "origin": "src/flb_scheduler.c:969"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_retry_now",
+          "status": "Unknown",
+          "line": 18295,
+          "origin": "src/flb_scheduler.c:990"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_create",
+          "status": "Unknown",
+          "line": 18073,
+          "origin": "src/flb_scheduler.c:676"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_destroy",
+          "status": "Unknown",
+          "line": 18107,
+          "origin": "src/flb_scheduler.c:732"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cleanup",
+          "status": "Unknown",
+          "line": 18248,
+          "origin": "src/flb_scheduler.c:926"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18148,
+          "origin": "src/flb_scheduler.c:787"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18188,
+          "origin": "src/flb_scheduler.c:844"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18193,
+          "origin": "src/flb_scheduler.c:851"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_create",
+          "status": "Unknown",
+          "line": 17835,
+          "origin": "src/flb_scheduler.c:319"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_retry_now",
+          "status": "Unknown",
+          "line": 18281,
+          "origin": "src/flb_scheduler.c:969"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_retry_now",
+          "status": "Unknown",
+          "line": 18295,
+          "origin": "src/flb_scheduler.c:990"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_create",
+          "status": "Unknown",
+          "line": 18073,
+          "origin": "src/flb_scheduler.c:676"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_destroy",
+          "status": "Unknown",
+          "line": 18107,
+          "origin": "src/flb_scheduler.c:732"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cleanup",
+          "status": "Unknown",
+          "line": 18248,
+          "origin": "src/flb_scheduler.c:926"
+        }
+      ],
+      "alone_blocked_functions": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_destroy",
+          "status": "Unknown"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_destroy",
+          "status": "Unknown"
+        }
+      ],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_destroy",
+      "sites": [
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17817,
+          "origin": "src/flb_task.c:739"
+        },
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17872,
+          "origin": "src/flb_task.c:814"
+        },
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17889,
+          "origin": "src/flb_task.c:834"
+        },
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17928,
+          "origin": "src/flb_task.c:887"
+        },
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_retry_reschedule",
+          "status": "Unknown",
+          "line": 17484,
+          "origin": "src/flb_task.c:305"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17817,
+          "origin": "src/flb_task.c:739"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17872,
+          "origin": "src/flb_task.c:814"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17889,
+          "origin": "src/flb_task.c:834"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17928,
+          "origin": "src/flb_task.c:887"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_retry_reschedule",
+          "status": "Unknown",
+          "line": 17484,
+          "origin": "src/flb_task.c:305"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_destroy_tasks",
+          "status": "Unknown",
+          "line": 19025,
+          "origin": "src/flb_engine.c:145"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_destroy_tasks",
+          "status": "Unknown",
+          "line": 19025,
+          "origin": "src/flb_engine.c:145"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17679,
+          "origin": "src/flb_engine_dispatch.c:462"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17679,
+          "origin": "src/flb_engine_dispatch.c:462"
+        }
+      ],
+      "alone_blocked_functions": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_destroy_tasks",
+          "status": "Unknown"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_destroy_tasks",
+          "status": "Unknown"
+        }
+      ],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "input_chunk_append_raw",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20445,
+          "origin": "src/flb_input_chunk.c:3804"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw_local",
+          "status": "Unknown",
+          "line": 20456,
+          "origin": "src/flb_input_chunk.c:3817"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20445,
+          "origin": "src/flb_input_chunk.c:3804"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw_local",
+          "status": "Unknown",
+          "line": 20456,
+          "origin": "src/flb_input_chunk.c:3817"
+        }
+      ],
+      "alone_blocked_functions": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw_local",
+          "status": "Unknown"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw_local",
+          "status": "Unknown"
+        }
+      ],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_coro_destroy",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cleanup",
+          "status": "Unknown",
+          "line": 18263,
+          "origin": "src/flb_scheduler.c:945"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cleanup",
+          "status": "Unknown",
+          "line": 18263,
+          "origin": "src/flb_scheduler.c:945"
+        }
+      ],
+      "alone_blocked_functions": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cleanup",
+          "status": "Unknown"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cleanup",
+          "status": "Unknown"
+        }
+      ],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "libc",
+      "callee": "pthread_once",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_evl_init",
+          "status": "Unknown",
+          "line": 19005,
+          "origin": "src/flb_engine.c:120"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_evl_init",
+          "status": "Unknown",
+          "line": 19005,
+          "origin": "src/flb_engine.c:120"
+        }
+      ],
+      "alone_blocked_functions": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_evl_init",
+          "status": "Unknown"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_evl_init",
+          "status": "Unknown"
+        }
+      ],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_instance_destroy",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_enable_multi_threading",
+          "status": "Unknown",
+          "line": 18546,
+          "origin": "src/flb_output.c:1311"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "status": "Unknown",
+          "line": 18028,
+          "origin": "src/flb_output.c:671"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18720,
+          "origin": "src/flb_output.c:1552"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18816,
+          "origin": "src/flb_output.c:1696"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18855,
+          "origin": "src/flb_output.c:1742"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18869,
+          "origin": "src/flb_output.c:1761"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18877,
+          "origin": "src/flb_output.c:1771"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18885,
+          "origin": "src/flb_output.c:1781"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18891,
+          "origin": "src/flb_output.c:1832"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18895,
+          "origin": "src/flb_output.c:1841"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18901,
+          "origin": "src/flb_output.c:1851"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18913,
+          "origin": "src/flb_output.c:1869"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18918,
+          "origin": "src/flb_output.c:1876"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18925,
+          "origin": "src/flb_output.c:1884"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18932,
+          "origin": "src/flb_output.c:1894"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_net_property_check",
+          "status": "Unknown",
+          "line": 18574,
+          "origin": "src/flb_output.c:1350"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_enable_multi_threading",
+          "status": "Unknown",
+          "line": 18546,
+          "origin": "src/flb_output.c:1311"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "status": "Unknown",
+          "line": 18028,
+          "origin": "src/flb_output.c:671"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18720,
+          "origin": "src/flb_output.c:1552"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18816,
+          "origin": "src/flb_output.c:1696"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18855,
+          "origin": "src/flb_output.c:1742"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18869,
+          "origin": "src/flb_output.c:1761"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18877,
+          "origin": "src/flb_output.c:1771"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18885,
+          "origin": "src/flb_output.c:1781"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18891,
+          "origin": "src/flb_output.c:1832"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18895,
+          "origin": "src/flb_output.c:1841"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18901,
+          "origin": "src/flb_output.c:1851"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18913,
+          "origin": "src/flb_output.c:1869"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18918,
+          "origin": "src/flb_output.c:1876"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18925,
+          "origin": "src/flb_output.c:1884"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18932,
+          "origin": "src/flb_output.c:1894"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_net_property_check",
+          "status": "Unknown",
+          "line": 18574,
+          "origin": "src/flb_output.c:1350"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_request_destroy",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18177,
+          "origin": "src/flb_scheduler.c:829"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18182,
+          "origin": "src/flb_scheduler.c:836"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18019,
+          "origin": "src/flb_scheduler.c:603"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_invalidate",
+          "status": "Unknown",
+          "line": 17864,
+          "origin": "src/flb_scheduler.c:365"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_invalidate",
+          "status": "Unknown",
+          "line": 17871,
+          "origin": "src/flb_scheduler.c:382"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18177,
+          "origin": "src/flb_scheduler.c:829"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_destroy",
+          "status": "Unknown",
+          "line": 18182,
+          "origin": "src/flb_scheduler.c:836"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18019,
+          "origin": "src/flb_scheduler.c:603"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_invalidate",
+          "status": "Unknown",
+          "line": 17864,
+          "origin": "src/flb_scheduler.c:365"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_invalidate",
+          "status": "Unknown",
+          "line": 17871,
+          "origin": "src/flb_scheduler.c:382"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_output_size_subtract",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19769,
+          "origin": "src/flb_input_chunk.c:2747"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy_corrupted",
+          "status": "Unknown",
+          "line": 19707,
+          "origin": "src/flb_input_chunk.c:2661"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_route",
+          "status": "Unknown",
+          "line": 18267,
+          "origin": "src/flb_input_chunk.c:838"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space",
+          "status": "Unknown",
+          "line": 18122,
+          "origin": "src/flb_input_chunk.c:620"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_update_output_instances",
+          "status": "Unknown",
+          "line": 20593,
+          "origin": "src/flb_input_chunk.c:4011"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19769,
+          "origin": "src/flb_input_chunk.c:2747"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy_corrupted",
+          "status": "Unknown",
+          "line": 19707,
+          "origin": "src/flb_input_chunk.c:2661"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_route",
+          "status": "Unknown",
+          "line": 18267,
+          "origin": "src/flb_input_chunk.c:838"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space",
+          "status": "Unknown",
+          "line": 18122,
+          "origin": "src/flb_input_chunk.c:620"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_update_output_instances",
+          "status": "Unknown",
+          "line": 20593,
+          "origin": "src/flb_input_chunk.c:4011"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_release_lock",
+      "sites": [
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17644,
+          "origin": "src/flb_engine_dispatch.c:402"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17648,
+          "origin": "src/flb_engine_dispatch.c:406"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17653,
+          "origin": "src/flb_engine_dispatch.c:413"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17657,
+          "origin": "src/flb_engine_dispatch.c:419"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17666,
+          "origin": "src/flb_engine_dispatch.c:436"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17644,
+          "origin": "src/flb_engine_dispatch.c:402"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17648,
+          "origin": "src/flb_engine_dispatch.c:406"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17653,
+          "origin": "src/flb_engine_dispatch.c:413"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17657,
+          "origin": "src/flb_engine_dispatch.c:419"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17666,
+          "origin": "src/flb_engine_dispatch.c:436"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": [
+        "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore"
+      ]
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_name",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_dlq_if_available",
+          "status": "Unknown",
+          "line": 19330,
+          "origin": "src/flb_engine.c:545"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19385,
+          "origin": "src/flb_engine.c:623"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_dlq_if_available",
+          "status": "Unknown",
+          "line": 19330,
+          "origin": "src/flb_engine.c:545"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19385,
+          "origin": "src/flb_engine.c:623"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "record_retry_failure_metrics",
+          "status": "Unknown",
+          "line": 17436,
+          "origin": "src/flb_engine_dispatch.c:51"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "record_retry_failure_metrics",
+          "status": "Unknown",
+          "line": 17436,
+          "origin": "src/flb_engine_dispatch.c:51"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18725,
+          "origin": "src/flb_output.c:1569"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18725,
+          "origin": "src/flb_output.c:1569"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_retry_clean",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19436,
+          "origin": "src/flb_engine.c:702"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19458,
+          "origin": "src/flb_engine.c:739"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19483,
+          "origin": "src/flb_engine.c:790"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19532,
+          "origin": "src/flb_engine.c:879"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19436,
+          "origin": "src/flb_engine.c:702"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19458,
+          "origin": "src/flb_engine.c:739"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19483,
+          "origin": "src/flb_engine.c:790"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19532,
+          "origin": "src/flb_engine.c:879"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_get_tag",
+      "sites": [
+        {
+          "unit_index": 0,
+          "file": "plugins/in_storage_backlog/sb.c",
+          "function": "sb_append_chunk_to_segregated_backlogs",
+          "status": "Unknown",
+          "line": 18012,
+          "origin": "plugins/in_storage_backlog/sb.c:326"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19781,
+          "origin": "src/flb_input_chunk.c:2770"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18881,
+          "origin": "src/flb_input_chunk.c:1649"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19781,
+          "origin": "src/flb_input_chunk.c:2770"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18881,
+          "origin": "src/flb_input_chunk.c:1649"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17651,
+          "origin": "src/flb_engine_dispatch.c:411"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17651,
+          "origin": "src/flb_engine_dispatch.c:411"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_flush",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19601,
+          "origin": "src/flb_engine.c:986"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_manager",
+          "status": "Unknown",
+          "line": 19585,
+          "origin": "src/flb_engine.c:964"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19950,
+          "origin": "src/flb_engine.c:1555"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19601,
+          "origin": "src/flb_engine.c:986"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_manager",
+          "status": "Unknown",
+          "line": 19585,
+          "origin": "src/flb_engine.c:964"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19950,
+          "origin": "src/flb_engine.c:1555"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_thread_instance_get",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18075,
+          "origin": "src/flb_output.c:734"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_id_get",
+          "status": "Unknown",
+          "line": 17764,
+          "origin": "src/flb_output.c:249"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_prepare_destroy",
+          "status": "Unknown",
+          "line": 17747,
+          "origin": "src/flb_output.c:230"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18075,
+          "origin": "src/flb_output.c:734"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_id_get",
+          "status": "Unknown",
+          "line": 17764,
+          "origin": "src/flb_output.c:249"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_prepare_destroy",
+          "status": "Unknown",
+          "line": 17747,
+          "origin": "src/flb_output.c:230"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_cb_disable",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18029,
+          "origin": "src/flb_scheduler.c:613"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_destroy",
+          "status": "Unknown",
+          "line": 18234,
+          "origin": "src/flb_scheduler.c:907"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_invalidate",
+          "status": "Unknown",
+          "line": 18227,
+          "origin": "src/flb_scheduler.c:896"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18029,
+          "origin": "src/flb_scheduler.c:613"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_destroy",
+          "status": "Unknown",
+          "line": 18234,
+          "origin": "src/flb_scheduler.c:907"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_invalidate",
+          "status": "Unknown",
+          "line": 18227,
+          "origin": "src/flb_scheduler.c:896"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_retry_reschedule",
+      "sites": [
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17474,
+          "origin": "src/flb_engine_dispatch.c:105"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17482,
+          "origin": "src/flb_engine_dispatch.c:124"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17500,
+          "origin": "src/flb_engine_dispatch.c:161"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17474,
+          "origin": "src/flb_engine_dispatch.c:105"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17482,
+          "origin": "src/flb_engine_dispatch.c:124"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17500,
+          "origin": "src/flb_engine_dispatch.c:161"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_update_output_instances",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_flush",
+          "status": "Unknown",
+          "line": 20506,
+          "origin": "src/flb_input_chunk.c:3891"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18985,
+          "origin": "src/flb_input_chunk.c:1777"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20290,
+          "origin": "src/flb_input_chunk.c:3590"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_flush",
+          "status": "Unknown",
+          "line": 20506,
+          "origin": "src/flb_input_chunk.c:3891"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18985,
+          "origin": "src/flb_input_chunk.c:1777"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20290,
+          "origin": "src/flb_input_chunk.c:3590"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "input_chunk_metadata_view",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_get_direct_routes",
+          "status": "Unknown",
+          "line": 19365,
+          "origin": "src/flb_input_chunk.c:2242"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_get_tag",
+          "status": "Unknown",
+          "line": 20561,
+          "origin": "src/flb_input_chunk.c:3962"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_has_direct_routes",
+          "status": "Unknown",
+          "line": 19300,
+          "origin": "src/flb_input_chunk.c:2168"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_get_direct_routes",
+          "status": "Unknown",
+          "line": 19365,
+          "origin": "src/flb_input_chunk.c:2242"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_get_tag",
+          "status": "Unknown",
+          "line": 20561,
+          "origin": "src/flb_input_chunk.c:3962"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_has_direct_routes",
+          "status": "Unknown",
+          "line": 19300,
+          "origin": "src/flb_input_chunk.c:2168"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "cmetrics",
+      "callee": "cmt_histogram_buckets_create_size",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18799,
+          "origin": "src/flb_output.c:1677"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18812,
+          "origin": "src/flb_output.c:1692"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18799,
+          "origin": "src/flb_output.c:1677"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18812,
+          "origin": "src/flb_output.c:1692"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_shutdown",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19889,
+          "origin": "src/flb_engine.c:1440"
+        },
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19955,
+          "origin": "src/flb_engine.c:1561"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19889,
+          "origin": "src/flb_engine.c:1440"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19955,
+          "origin": "src/flb_engine.c:1561"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_flush_destroy",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18083,
+          "origin": "src/flb_output.c:744"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_flush",
+          "status": "Unsafe",
+          "line": 17932,
+          "origin": "src/flb_output.c:526"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18083,
+          "origin": "src/flb_output.c:744"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_flush",
+          "status": "Unsafe",
+          "line": 17932,
+          "origin": "src/flb_output.c:526"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_get_instance",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19380,
+          "origin": "src/flb_engine.c:618"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19380,
+          "origin": "src/flb_engine.c:618"
+        },
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18070,
+          "origin": "src/flb_output.c:728"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_flush_finished",
+          "status": "Unknown",
+          "line": 18070,
+          "origin": "src/flb_output.c:728"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_ctx_get",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 17988,
+          "origin": "src/flb_scheduler.c:556"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_create",
+          "status": "Unknown",
+          "line": 17928,
+          "origin": "src/flb_scheduler.c:474"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 17988,
+          "origin": "src/flb_scheduler.c:556"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_create",
+          "status": "Unknown",
+          "line": 17928,
+          "origin": "src/flb_scheduler.c:474"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_create",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18134,
+          "origin": "src/flb_scheduler.c:768"
+        },
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_create",
+          "status": "Unknown",
+          "line": 18057,
+          "origin": "src/flb_scheduler.c:653"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18134,
+          "origin": "src/flb_scheduler.c:768"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cb_create",
+          "status": "Unknown",
+          "line": 18057,
+          "origin": "src/flb_scheduler.c:653"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_users_release",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19494,
+          "origin": "src/flb_engine.c:818"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19494,
+          "origin": "src/flb_engine.c:818"
+        },
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17495,
+          "origin": "src/flb_engine_dispatch.c:152"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch_retry",
+          "status": "Unknown",
+          "line": 17495,
+          "origin": "src/flb_engine_dispatch.c:152"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_get_direct_routes",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18893,
+          "origin": "src/flb_input_chunk.c:1662"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "Unknown",
+          "line": 18893,
+          "origin": "src/flb_input_chunk.c:1662"
+        },
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17733,
+          "origin": "src/flb_task.c:646"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_create",
+          "status": "Unknown",
+          "line": 17733,
+          "origin": "src/flb_task.c:646"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_release_space",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space_compound",
+          "status": "Unknown",
+          "line": 18483,
+          "origin": "src/flb_input_chunk.c:1120"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space_compound",
+          "status": "Unknown",
+          "line": 18506,
+          "origin": "src/flb_input_chunk.c:1148"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space_compound",
+          "status": "Unknown",
+          "line": 18483,
+          "origin": "src/flb_input_chunk.c:1120"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space_compound",
+          "status": "Unknown",
+          "line": 18506,
+          "origin": "src/flb_input_chunk.c:1148"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_set_limits",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20248,
+          "origin": "src/flb_input_chunk.c:3512"
+        },
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20269,
+          "origin": "src/flb_input_chunk.c:3547"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20248,
+          "origin": "src/flb_input_chunk.c:3512"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20269,
+          "origin": "src/flb_input_chunk.c:3547"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "cmetrics",
+      "callee": "cmt_create",
+      "sites": [
+        {
+          "unit_index": 3,
+          "file": "src/flb_storage.c",
+          "function": "metrics_context_create",
+          "status": "Unknown",
+          "line": 18383,
+          "origin": "src/flb_storage.c:33"
+        },
+        {
+          "unit_index": 4,
+          "file": "src/flb_storage.c",
+          "function": "metrics_context_create",
+          "status": "Unknown",
+          "line": 18383,
+          "origin": "src/flb_storage.c:33"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "cmetrics",
+      "callee": "cmt_initialize",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19791,
+          "origin": "src/flb_engine.c:1283"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19791,
+          "origin": "src/flb_engine.c:1283"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_adaptive_flush_init",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19822,
+          "origin": "src/flb_engine.c:1331"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19822,
+          "origin": "src/flb_engine.c:1331"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_adaptive_flush_update",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19602,
+          "origin": "src/flb_engine.c:987"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19602,
+          "origin": "src/flb_engine.c:987"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_dispatch",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_flush",
+          "status": "Unknown",
+          "line": 19074,
+          "origin": "src/flb_engine.c:209"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_flush",
+          "status": "Unknown",
+          "line": 19074,
+          "origin": "src/flb_engine.c:209"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_evl_init",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19740,
+          "origin": "src/flb_engine.c:1201"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19740,
+          "origin": "src/flb_engine.c:1201"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_evl_set",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19741,
+          "origin": "src/flb_engine.c:1202"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19741,
+          "origin": "src/flb_engine.c:1202"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_exit",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_exit_status",
+          "status": "Unknown",
+          "line": 20081,
+          "origin": "src/flb_engine.c:1752"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_exit_status",
+          "status": "Unknown",
+          "line": 20081,
+          "origin": "src/flb_engine.c:1752"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_failed",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19888,
+          "origin": "src/flb_engine.c:1439"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19888,
+          "origin": "src/flb_engine.c:1439"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_get_chunk_backpressure_percent",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_adaptive_flush_update",
+          "status": "Unknown",
+          "line": 19215,
+          "origin": "src/flb_engine.c:398"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_adaptive_flush_update",
+          "status": "Unknown",
+          "line": 19215,
+          "origin": "src/flb_engine.c:398"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_log_start",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19742,
+          "origin": "src/flb_engine.c:1205"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19742,
+          "origin": "src/flb_engine.c:1205"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_manager",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19610,
+          "origin": "src/flb_engine.c:995"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_handle_event",
+          "status": "Unknown",
+          "line": 19610,
+          "origin": "src/flb_engine.c:995"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_reschedule_retries",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19908,
+          "origin": "src/flb_engine.c:1473"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19908,
+          "origin": "src/flb_engine.c:1473"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_started",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19892,
+          "origin": "src/flb_engine.c:1445"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19892,
+          "origin": "src/flb_engine.c:1445"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_engine_stop_ingestion",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19910,
+          "origin": "src/flb_engine.c:1477"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19910,
+          "origin": "src/flb_engine.c:1477"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_enable_multi_threading",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18936,
+          "origin": "src/flb_output.c:1901"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_init_all",
+          "status": "Unknown",
+          "line": 18936,
+          "origin": "src/flb_output.c:1901"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_exit",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_shutdown",
+          "status": "Unknown",
+          "line": 20033,
+          "origin": "src/flb_engine.c:1684"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_shutdown",
+          "status": "Unknown",
+          "line": 20033,
+          "origin": "src/flb_engine.c:1684"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_flush_finished",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19382,
+          "origin": "src/flb_engine.c:620"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19382,
+          "origin": "src/flb_engine.c:620"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_free_properties",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_instance_destroy",
+          "status": "Unknown",
+          "line": 17996,
+          "origin": "src/flb_output.c:624"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_instance_destroy",
+          "status": "Unknown",
+          "line": 17996,
+          "origin": "src/flb_output.c:624"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_init_all",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19813,
+          "origin": "src/flb_engine.c:1317"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19813,
+          "origin": "src/flb_engine.c:1317"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_pre_run",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19818,
+          "origin": "src/flb_engine.c:1324"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19818,
+          "origin": "src/flb_engine.c:1324"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_task_flush_error",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_flush",
+          "status": "Unsafe",
+          "line": 17917,
+          "origin": "src/flb_output.c:504"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_flush",
+          "status": "Unsafe",
+          "line": 17917,
+          "origin": "src/flb_output.c:504"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_task_queue_enqueue",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_singleplex_enqueue",
+          "status": "Unsafe",
+          "line": 17843,
+          "origin": "src/flb_output.c:374"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_singleplex_enqueue",
+          "status": "Unsafe",
+          "line": 17843,
+          "origin": "src/flb_output.c:374"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_task_queue_flush_one",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_singleplex_flush_next",
+          "status": "Unknown",
+          "line": 17865,
+          "origin": "src/flb_output.c:409"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_singleplex_flush_next",
+          "status": "Unknown",
+          "line": 17865,
+          "origin": "src/flb_output.c:409"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_task_singleplex_flush_next",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_queue_flush_one",
+          "status": "Unknown",
+          "line": 17829,
+          "origin": "src/flb_output.c:343"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_task_queue_flush_one",
+          "status": "Unknown",
+          "line": 17829,
+          "origin": "src/flb_output.c:343"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_thread_pool_destroy",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "status": "Unknown",
+          "line": 18023,
+          "origin": "src/flb_output.c:664"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "status": "Unknown",
+          "line": 18023,
+          "origin": "src/flb_output.c:664"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_output_thread_pool_start",
+      "sites": [
+        {
+          "unit_index": 13,
+          "file": "src/flb_output.c",
+          "function": "flb_output_enable_multi_threading",
+          "status": "Unknown",
+          "line": 18549,
+          "origin": "src/flb_output.c:1314"
+        },
+        {
+          "unit_index": 14,
+          "file": "src/flb_output.c",
+          "function": "flb_output_enable_multi_threading",
+          "status": "Unknown",
+          "line": 18549,
+          "origin": "src/flb_output.c:1314"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_ctx_init",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19800,
+          "origin": "src/flb_engine.c:1296"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19800,
+          "origin": "src/flb_engine.c:1296"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_ctx_set",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19801,
+          "origin": "src/flb_engine.c:1297"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19801,
+          "origin": "src/flb_engine.c:1297"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_destroy",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18158,
+          "origin": "src/flb_scheduler.c:799"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18158,
+          "origin": "src/flb_scheduler.c:799"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_event_handler",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19965,
+          "origin": "src/flb_engine.c:1574"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19965,
+          "origin": "src/flb_engine.c:1574"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_request_invalidate",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_reschedule_retries",
+          "status": "Unknown",
+          "line": 19051,
+          "origin": "src/flb_engine.c:180"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_reschedule_retries",
+          "status": "Unknown",
+          "line": 19051,
+          "origin": "src/flb_engine.c:180"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_retry_now",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_reschedule_retries",
+          "status": "Unknown",
+          "line": 19052,
+          "origin": "src/flb_engine.c:181"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_reschedule_retries",
+          "status": "Unknown",
+          "line": 19052,
+          "origin": "src/flb_engine.c:181"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_cb_create",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cb_create",
+          "status": "Unknown",
+          "line": 18089,
+          "origin": "src/flb_scheduler.c:707"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_coro_cb_create",
+          "status": "Unknown",
+          "line": 18089,
+          "origin": "src/flb_scheduler.c:707"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_cb_destroy",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18031,
+          "origin": "src/flb_scheduler.c:615"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_event_handler",
+          "status": "Unknown",
+          "line": 18031,
+          "origin": "src/flb_scheduler.c:615"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_coro_cleanup",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cleanup",
+          "status": "Unknown",
+          "line": 18251,
+          "origin": "src/flb_scheduler.c:930"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_timer_cleanup",
+          "status": "Unknown",
+          "line": 18251,
+          "origin": "src/flb_scheduler.c:930"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_coro_create",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "timer_cb_coro_trampoline",
+          "status": "Unknown",
+          "line": 17971,
+          "origin": "src/flb_scheduler.c:534"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "timer_cb_coro_trampoline",
+          "status": "Unknown",
+          "line": 17971,
+          "origin": "src/flb_scheduler.c:534"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_sched_timer_invalidate",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_destroy",
+          "status": "Unknown",
+          "line": 17850,
+          "origin": "src/flb_scheduler.c:346"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_request_destroy",
+          "status": "Unknown",
+          "line": 17850,
+          "origin": "src/flb_scheduler.c:346"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_clear_route_retry_context",
+      "sites": [
+        {
+          "unit_index": 5,
+          "file": "src/flb_task.c",
+          "function": "flb_task_retry_clean",
+          "status": "Unknown",
+          "line": 17567,
+          "origin": "src/flb_task.c:434"
+        },
+        {
+          "unit_index": 6,
+          "file": "src/flb_task.c",
+          "function": "flb_task_retry_clean",
+          "status": "Unknown",
+          "line": 17567,
+          "origin": "src/flb_task.c:434"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_retry_create",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19462,
+          "origin": "src/flb_engine.c:746"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "handle_output_event",
+          "status": "Unknown",
+          "line": 19462,
+          "origin": "src/flb_engine.c:746"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "flushing_events",
+      "callee": "flb_task_running_print",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19937,
+          "origin": "src/flb_engine.c:1535"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19937,
+          "origin": "src/flb_engine.c:1535"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_create",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_get",
+          "status": "Unknown",
+          "line": 19872,
+          "origin": "src/flb_input_chunk.c:2894"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_get",
+          "status": "Unknown",
+          "line": 19872,
+          "origin": "src/flb_input_chunk.c:2894"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_down",
+      "sites": [
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17667,
+          "origin": "src/flb_engine_dispatch.c:442"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17667,
+          "origin": "src/flb_engine_dispatch.c:442"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_find_space_new_data",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_place_new_chunk",
+          "status": "Unknown",
+          "line": 18616,
+          "origin": "src/flb_input_chunk.c:1308"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_place_new_chunk",
+          "status": "Unknown",
+          "line": 18616,
+          "origin": "src/flb_input_chunk.c:1308"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_flush",
+      "sites": [
+        {
+          "unit_index": 9,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17642,
+          "origin": "src/flb_engine_dispatch.c:396"
+        },
+        {
+          "unit_index": 10,
+          "file": "src/flb_engine_dispatch.c",
+          "function": "flb_engine_dispatch",
+          "status": "Unknown",
+          "line": 17642,
+          "origin": "src/flb_engine_dispatch.c:396"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_get_projected_write_size",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_get",
+          "status": "Unknown",
+          "line": 19887,
+          "origin": "src/flb_input_chunk.c:2921"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_get",
+          "status": "Unknown",
+          "line": 19887,
+          "origin": "src/flb_input_chunk.c:2921"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_has_overlimit_routes",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_place_new_chunk",
+          "status": "Unknown",
+          "line": 18614,
+          "origin": "src/flb_input_chunk.c:1306"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_place_new_chunk",
+          "status": "Unknown",
+          "line": 18614,
+          "origin": "src/flb_input_chunk.c:1306"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_protect",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20295,
+          "origin": "src/flb_input_chunk.c:3599"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20295,
+          "origin": "src/flb_input_chunk.c:3599"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_release_space_compound",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_find_space_new_data",
+          "status": "Unknown",
+          "line": 18567,
+          "origin": "src/flb_input_chunk.c:1237"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_find_space_new_data",
+          "status": "Unknown",
+          "line": 18567,
+          "origin": "src/flb_input_chunk.c:1237"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_ring_buffer_collector",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 20012,
+          "origin": "src/flb_engine.c:1641"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 20012,
+          "origin": "src/flb_engine.c:1641"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_set_up",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19753,
+          "origin": "src/flb_input_chunk.c:2726"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "Unknown",
+          "line": 19753,
+          "origin": "src/flb_input_chunk.c:2726"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_write",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20216,
+          "origin": "src/flb_input_chunk.c:3455"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20216,
+          "origin": "src/flb_input_chunk.c:3455"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "input_chunk_get",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20159,
+          "origin": "src/flb_input_chunk.c:3358"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "Unknown",
+          "line": 20159,
+          "origin": "src/flb_input_chunk.c:3358"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "input_chunk_has_magic_bytes",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_metadata_view",
+          "status": "Unknown",
+          "line": 17920,
+          "origin": "src/flb_input_chunk.c:336"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "input_chunk_metadata_view",
+          "status": "Unknown",
+          "line": 17920,
+          "origin": "src/flb_input_chunk.c:336"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "input_chunk_output_size_add",
+      "sites": [
+        {
+          "unit_index": 1,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_update_output_instances",
+          "status": "Unknown",
+          "line": 20596,
+          "origin": "src/flb_input_chunk.c:4014"
+        },
+        {
+          "unit_index": 2,
+          "file": "src/flb_input_chunk.c",
+          "function": "flb_input_chunk_update_output_instances",
+          "status": "Unknown",
+          "line": 20596,
+          "origin": "src/flb_input_chunk.c:4014"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "libc",
+      "callee": "exit",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19839,
+          "origin": "src/flb_engine.c:1358"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19839,
+          "origin": "src/flb_engine.c:1358"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "libc",
+      "callee": "getenv",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19869,
+          "origin": "src/flb_engine.c:1410"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19869,
+          "origin": "src/flb_engine.c:1410"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "libc",
+      "callee": "rand",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "random_uniform",
+          "status": "Unknown",
+          "line": 17699,
+          "origin": "src/flb_scheduler.c:107"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "random_uniform",
+          "status": "Unknown",
+          "line": 17699,
+          "origin": "src/flb_scheduler.c:107"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "monkey",
+      "callee": "mk_event_loop_create",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19708,
+          "origin": "src/flb_engine.c:1145"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19708,
+          "origin": "src/flb_engine.c:1145"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "monkey",
+      "callee": "mk_event_timeout_create",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18144,
+          "origin": "src/flb_scheduler.c:783"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "flb_sched_create",
+          "status": "Unknown",
+          "line": 18144,
+          "origin": "src/flb_scheduler.c:783"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "monkey",
+      "callee": "mk_event_wait",
+      "sites": [
+        {
+          "unit_index": 7,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19897,
+          "origin": "src/flb_engine.c:1453"
+        },
+        {
+          "unit_index": 8,
+          "file": "src/flb_engine.c",
+          "function": "flb_engine_start",
+          "status": "Unknown",
+          "line": 19897,
+          "origin": "src/flb_engine.c:1453"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "monkey",
+      "callee": "mk_list_init",
+      "sites": [
+        {
+          "unit_index": 11,
+          "file": "src/flb_scheduler.c",
+          "function": "schedule_request_promote",
+          "status": "Unknown",
+          "line": 17743,
+          "origin": "src/flb_scheduler.c:181"
+        },
+        {
+          "unit_index": 12,
+          "file": "src/flb_scheduler.c",
+          "function": "schedule_request_promote",
+          "status": "Unknown",
+          "line": 17743,
+          "origin": "src/flb_scheduler.c:181"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_get_event_type",
+      "sites": [
+        {
+          "unit_index": 0,
+          "file": "plugins/in_storage_backlog/sb.c",
+          "function": "cb_queue_chunks",
+          "status": "Unknown",
+          "line": 18228,
+          "origin": "plugins/in_storage_backlog/sb.c:662"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    },
+    {
+      "family": "input_chunk",
+      "callee": "flb_input_chunk_map",
+      "sites": [
+        {
+          "unit_index": 0,
+          "file": "plugins/in_storage_backlog/sb.c",
+          "function": "cb_queue_chunks",
+          "status": "Unknown",
+          "line": 18246,
+          "origin": "plugins/in_storage_backlog/sb.c:690"
+        }
+      ],
+      "alone_blocked_functions": [],
+      "existing_declaration_modules": []
+    }
+  ]
+}

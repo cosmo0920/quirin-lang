@@ -1,0 +1,14 @@
+{
+  "corpus": {
+    "automatic_unattributed": 30,
+    "reviewed": 30,
+    "remaining_unattributed": 0,
+    "source_identity_checked": true
+  },
+  "system": {
+    "automatic_unattributed": 2,
+    "reviewed": 2,
+    "remaining_unattributed": 0,
+    "source_identity_checked": true
+  }
+}

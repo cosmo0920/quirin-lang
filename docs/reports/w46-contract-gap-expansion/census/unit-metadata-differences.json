@@ -1,0 +1,853 @@
+{
+  "corpus": [
+    {
+      "unit": 2,
+      "file": "cmt_cat.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 150 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 140 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 3,
+      "file": "cmt_counter.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 28 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 27 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 4,
+      "file": "cmt_decode_msgpack.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 347 unsupported operation(s), 51 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 343 unsupported operation(s), 51 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 5,
+      "file": "cmt_decode_opentelemetry.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 370 unsupported operation(s), 60 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 362 unsupported operation(s), 60 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 8,
+      "file": "cmt_encode_cloudwatch_emf.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 77 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 76 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 9,
+      "file": "cmt_encode_influx.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 69 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 68 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 10,
+      "file": "cmt_encode_msgpack.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 115 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 108 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 11,
+      "file": "cmt_encode_opentelemetry.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 661 unsupported operation(s), 118 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 651 unsupported operation(s), 118 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 13,
+      "file": "cmt_encode_prometheus.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 142 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 140 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 15,
+      "file": "cmt_encode_splunk_hec.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 189 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 187 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 16,
+      "file": "cmt_encode_text.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 141 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 140 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 17,
+      "file": "cmt_exp_histogram.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 49 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 48 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 23,
+      "file": "cmt_map.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 109 unsupported operation(s), 21 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 108 unsupported operation(s), 21 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 24,
+      "file": "cmt_metric.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 80 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 71 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 25,
+      "file": "cmt_metric_histogram.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 24 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 21 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 28,
+      "file": "cmt_summary.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 50 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 44 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 33,
+      "file": "ctr_decode_opentelemetry.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 105 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 102 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 35,
+      "file": "ctr_encode_opentelemetry.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 272 unsupported operation(s), 61 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 267 unsupported operation(s), 61 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 38,
+      "file": "ctr_link.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 20 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 18 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 62,
+      "file": "rdbuf.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 420 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 414 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 75,
+      "file": "rdkafka_broker.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 1602 unsupported operation(s), 40 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 1600 unsupported operation(s), 40 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 78,
+      "file": "rdkafka_cgrp.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 2155 unsupported operation(s), 98 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 2153 unsupported operation(s), 98 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 79,
+      "file": "rdkafka_conf.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 728 unsupported operation(s), 63 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 725 unsupported operation(s), 63 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 88,
+      "file": "rdkafka_lz4.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 75 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 73 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 96,
+      "file": "rdkafka_msgset_reader.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 527 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 526 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 107,
+      "file": "rdkafka_sasl.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 108 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 107 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 108,
+      "file": "rdkafka_sasl_cyrus.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 128 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 127 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 109,
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 372 unsupported operation(s), 46 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 364 unsupported operation(s), 46 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 114,
+      "file": "rdkafka_ssl.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 356 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 355 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 118,
+      "file": "rdkafka_telemetry_decode.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 355 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 354 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 137,
+      "file": "rdvarint.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 30 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 29 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 149,
+      "file": "cio_meta.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 19 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 18 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 155,
+      "file": "flb_input_chunk.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 412 unsupported operation(s), 110 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 410 unsupported operation(s), 110 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 156,
+      "file": "mk_core/mk_event.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 19 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 18 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 160,
+      "file": "mk_core/mk_rconf.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 80 unsupported operation(s), 58 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 75 unsupported operation(s), 58 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 161,
+      "file": "mk_core/mk_string.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 51 unsupported operation(s), 18 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 49 unsupported operation(s), 18 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 165,
+      "file": "mk_server/mk_config.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 105 unsupported operation(s), 39 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 101 unsupported operation(s), 39 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 166,
+      "file": "mk_server/mk_fifo.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 58 unsupported operation(s), 22 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 57 unsupported operation(s), 21 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 170,
+      "file": "mk_server/mk_http_thread.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 46 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 45 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 171,
+      "file": "mk_server/mk_kernel.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 10 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 8 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 172,
+      "file": "mk_server/mk_lib.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 121 unsupported operation(s), 22 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 98 unsupported operation(s), 22 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 175,
+      "file": "mk_server/mk_plugin.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 202 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 201 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    }
+  ],
+  "system": [
+    {
+      "unit": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "65927ae383d5b2315cb95d0e9ae84805a8562e579ee51ec8f16d7faa10eb2a01",
+      "after": "a5e3286912b70981b6a17f95c819774cf076c109d8dfd2bbdeabb89bfaf09c2e"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "df53a709b9f110698bc3281d814f08751e200ace6af3dc0f8f2da7a87284faf4",
+      "after": "9184956013480a9470e1a88c42de94c0f173c684807b0697f42e817c0569c171"
+    },
+    {
+      "unit": 1,
+      "file": "src/flb_input_chunk.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 417 unsupported operation(s), 116 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 413 unsupported operation(s), 116 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "0cb8a1327c660e0fdbba4199396027773b370687d99181dfb56b81fece0c047a",
+      "after": "a821552fdd8755ca30a490d3e0db949a15d3037cc111a96f56cb9475e5e06655"
+    },
+    {
+      "unit": 2,
+      "file": "src/flb_input_chunk.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 417 unsupported operation(s), 116 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 413 unsupported operation(s), 116 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 3,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 3,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 3,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 3,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 3,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "bc573829d3c8baf8d8054caafc906013ba2bc6a69fc056bb6e75b12bda3bf172",
+      "after": "d1752d21498b566b167c8d5a4d29c39fbb66cab386ba21a0db14917ae012dd36"
+    },
+    {
+      "unit": 4,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 4,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 4,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 4,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 4,
+      "file": "src/flb_storage.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "db7174cb4f1a76232e73e8c7ac7bbe874fb778a347f0e77ae6e4a7a7db7ad890",
+      "after": "76dd7431e207c21baba60f4ff52c5773b93568d9c4e607a336bad8e482347ee9"
+    },
+    {
+      "unit": 5,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 5,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 5,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 5,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 5,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "aa512de95a1c0523c8398982fc8d1270188cea16078490735b753805af7b1a53",
+      "after": "077a7870206cb26d25a8d04d4bff6b402c56e6ee3ccd95d3142f17bb62365976"
+    },
+    {
+      "unit": 6,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 6,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 6,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 6,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 6,
+      "file": "src/flb_task.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "53e9054a33790d063d3250f2b437cc0e437984aedc4137b4c71e689d4abbfe23",
+      "after": "46ed31cca50a95b67e62ae98f399e9d8c81c75671e4f7a908f7d641265e79b3e"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "7341dc91ed594c0c91e18b9f786663785f0ac3640ffceaffa9aa962fd339267b",
+      "after": "f95908f859ec5fe1c9bbcae35781ff0808f056252127d64c1739ca29d3a4a99f"
+    },
+    {
+      "unit": 7,
+      "file": "src/flb_engine.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 274 unsupported operation(s), 31 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 272 unsupported operation(s), 31 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "e921319edcbb36e1a79b0d0abdd9b0e650edcb28465c50076e62f6c19d066f6e",
+      "after": "de6cb33c38d719745058bcbdc95aa4d13f913a81b8614a831ad738a3cabcea53"
+    },
+    {
+      "unit": 8,
+      "file": "src/flb_engine.c",
+      "path": "reason",
+      "before": "resource projection unresolved: 274 unsupported operation(s), 31 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 272 unsupported operation(s), 31 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    {
+      "unit": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "111d26da53eba86881c78a5777126ede9048750b82a61a294d7c4f8e545df58c",
+      "after": "d261fb631833b9dfe7d9b7750af6ec41ec292faaba1e196a21d14b8a7347d9a2"
+    },
+    {
+      "unit": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "acc48956abc081e26d2a39ccdb59142354fd85ecb98867314292bf951e424d4c",
+      "after": "e45bb35e37beaeb09e446bd333c779496424efc7f2adc055e92737e4a261b8cd"
+    },
+    {
+      "unit": 11,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 11,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 11,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 11,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 11,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "ff14fda3efbdd7cf22ae4b28a087851df3757a5f765cdc0695d3f016e94ef0ff",
+      "after": "88a794fec96f72351ae3890437dd13bc031acc6c07c01774f0c16eeb63dacef5"
+    },
+    {
+      "unit": 12,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 12,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 12,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 12,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 12,
+      "file": "src/flb_scheduler.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "aa74769232389128cb845eeefdb74c2fe099c50ad693af5744373c8d404ceaf4",
+      "after": "59793b245ad4334cc4b350777fe951f29095d7f67a28789905c056ddbd5217cd"
+    },
+    {
+      "unit": 13,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 13,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 13,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 13,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 13,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "e7986f1599210555a374a9c237385f99147fa09d6942f16d5d89d47d4ba52481",
+      "after": "269090beed44f74b127efe731316d6e9e6acc50f5b6ec52ebd8ef1ebfec904b6"
+    },
+    {
+      "unit": 14,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 14,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.compile_task_identity.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 14,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.dependencies.resource_contract_manifest",
+      "before": "fcf60648feed1468c14697b51726aca3e021fb5d0108dc97f037295354e77811",
+      "after": "12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60"
+    },
+    {
+      "unit": 14,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.dependencies.resource_contract_sources",
+      "before": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684",
+      "after": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3"
+    },
+    {
+      "unit": 14,
+      "file": "src/flb_output.c",
+      "path": "compile_configuration.inventory_sha256",
+      "before": "18dc22625a39a6f460d6e05dc0806d4e20dd746aafc53aaa815d22004f23820c",
+      "after": "fabd07b4b66bf58173fffdc2aaeca2643e5b31c0b320249c1021023abd86e136"
+    }
+  ]
+}

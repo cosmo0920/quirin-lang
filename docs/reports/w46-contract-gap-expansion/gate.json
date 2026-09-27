@@ -1,0 +1,13 @@
+{
+  "note": "W46-CONTRACT-GAP-EXPANSION merged gate at eb913c38, 2026-09-27. Implementation and inventory bytes are the merged tip; only test comments and integration documentation/evidence were edited during this run. Core runner exit 0: 324 units, 336 summaries, 6029 passed, 0 failed, 11 ignored; private/test-binaries/20260927T022512Z-4165084/summary.json. Provider suite exit 0: 129 passed, 0 failed, 1 ignored in 43 summaries. Lean 212, provider Python 15, both reevaluation examples, core/provider fmt and clippy, contracts check, all five package builds/verifications, docs-index and submodule steps exit 0. Full root Python ran 364 tests, exit 1 with 363 passed and one matrix byte-format failure after hand updating measurements; matrix regeneration repaired it and the exact failing test passed (1/1, exit 0, private/w46-contract-gaps/matrix-format-repair.log). A final full Python discovery after this gate-driven matrix regeneration is recorded in gate/final-checks.json. The original full gate and orchestration exit remain 1; no clean first run is claimed. Exact commands/exits in gate/steps.json, private logs at private/w46-contract-gaps/integration-gate/. Clang was recorded in this merged worktree, not borrowed. Isolated cargo target and debug/incremental settings are recorded in gate/command.json.",
+  "workspace_tests": 6029,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 364,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete after recorded format repair",
+  "lean_audits": 212,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

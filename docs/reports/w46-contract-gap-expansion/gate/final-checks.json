@@ -1,0 +1,74 @@
+[
+  {
+    "name": "python-final",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "log": "private/w46-contract-gaps/python-final.log",
+    "start": "2026-09-27T02:35:08.662094+00:00",
+    "end": "2026-09-27T02:35:29.646506+00:00"
+  },
+  {
+    "name": "docs-index-final",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "private/w46-contract-gaps/docs-index-final.log",
+    "start": "2026-09-27T02:35:29.646616+00:00",
+    "end": "2026-09-27T02:35:29.689787+00:00"
+  },
+  {
+    "name": "reconciliation-final-check",
+    "command": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--cards",
+      "w46-contract-gap-expansion",
+      "w46-metric-trace-contract-gaps",
+      "w46-fluent-event-contract-gaps",
+      "w46-libc-event-contract-gaps",
+      "--check",
+      "docs/reports/w46-contract-gap-expansion/reconciliation.json"
+    ],
+    "exit": 0,
+    "log": "private/w46-contract-gaps/reconciliation-final-check.log",
+    "start": "2026-09-27T02:35:29.690046+00:00",
+    "end": "2026-09-27T02:35:30.040757+00:00"
+  },
+  {
+    "name": "attribution-final-check",
+    "command": [
+      "python3",
+      "docs/reports/w46-contract-gap-expansion/scripts/check_attribution.py",
+      "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source"
+    ],
+    "exit": 0,
+    "log": "private/w46-contract-gaps/attribution-final-check.log",
+    "start": "2026-09-27T02:35:30.041035+00:00",
+    "end": "2026-09-27T02:35:30.061351+00:00"
+  },
+  {
+    "name": "diff-final-check",
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "private/w46-contract-gaps/diff-final-check.log",
+    "start": "2026-09-27T02:35:30.061489+00:00",
+    "end": "2026-09-27T02:35:30.070407+00:00"
+  }
+]

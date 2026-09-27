@@ -10,7 +10,7 @@
 //! repository's views are the loader's own (the probe), every one of the
 //! eleven crates selects whole, and all eleven together — which is also the
 //! contracts-only all-loaded default — elaborate exactly the Cycle 19
-//! manifest's 53 modules (50 before card W46-FLUENT-EVENT-CONTRACT-GAPS).
+//! manifest's 54 modules (50 before the combined W46 contract-gap cards).
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -784,7 +784,7 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     assert_eq!(whole.manifest_text(), all.manifest_text());
     assert_eq!(all.record(None)["selection"], "all-loaded");
     let manifest_path = repository.join("cycle19-resource-contracts.json");
-    // The same 51 entries, spelled exactly as the manifest spells them; only
+    // The same 54 entries, spelled exactly as the manifest spells them; only
     // their order differs (load-path crate order, then each sorted view).
     let entries = |text: &str| {
         let value: Value = serde_json::from_str(text).unwrap();

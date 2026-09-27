@@ -1,0 +1,312 @@
+{
+  "wave": 46,
+  "cards": [
+    "w46-contract-gap-expansion",
+    "w46-metric-trace-contract-gaps",
+    "w46-fluent-event-contract-gaps",
+    "w46-libc-event-contract-gaps"
+  ],
+  "no_section": {
+    "w46-contract-gap-expansion": "This is the integrating card itself; it owns the measured status, tracker decisions, source attribution and merged gate. It has no further integrator-addressed requests."
+  },
+  "verdicts": {
+    "w46-metric-trace-contract-gaps#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Both merged audits are measured and every leaf difference attributed; status, matrix and one increment paragraph updated. The previously registered CTraces family naming question was explicitly confirmed and retired, with its original entry archived.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "411 Safe / 9 provisional Unsafe / 4,414 Unknown"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-METRIC-TRACE-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reports/w46-contract-gap-expansion/retired-followups.json",
+          "contains": "discharged by integrator confirmation"
+        }
+      ]
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Shared pins and manifests unioned; measured corpus and system counts recorded, all four proposed follow-ups registered in their proposed words, one increment paragraph added. Refutations and held call sites are exactly preserved; no lifecycle promotion.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**118** modules; **219**"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-FLUENT-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-FLUENT-TLS-RETAINED-RESULT"
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/reports/w46-contract-gap-expansion/artifacts/system-after/refutation-preservation.json",
+          "contains": "\"held_call_sites\": 10"
+        }
+      ]
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#2": {
+      "verdict": "applied",
+      "note": "Shared pins and manifests unioned; measured corpus and system counts recorded, all four proposed follow-ups registered in their proposed words, one increment paragraph added. Refutations and held call sites are exactly preserved; no lifecycle promotion.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**118** modules; **219**"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-FLUENT-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-FLUENT-TLS-RETAINED-RESULT"
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/reports/w46-contract-gap-expansion/artifacts/system-after/refutation-preservation.json",
+          "contains": "\"held_call_sites\": 10"
+        }
+      ]
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#3": {
+      "verdict": "applied",
+      "note": "Shared pins and manifests unioned; measured corpus and system counts recorded, all four proposed follow-ups registered in their proposed words, one increment paragraph added. Refutations and held call sites are exactly preserved; no lifecycle promotion.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**118** modules; **219**"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-FLUENT-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-FLUENT-TLS-RETAINED-RESULT"
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/reports/w46-contract-gap-expansion/artifacts/system-after/refutation-preservation.json",
+          "contains": "\"held_call_sites\": 10"
+        }
+      ]
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#4": {
+      "verdict": "applied",
+      "note": "Shared pins and manifests unioned; measured corpus and system counts recorded, all four proposed follow-ups registered in their proposed words, one increment paragraph added. Refutations and held call sites are exactly preserved; no lifecycle promotion.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**118** modules; **219**"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-FLUENT-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-FLUENT-TLS-RETAINED-RESULT"
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/reports/w46-contract-gap-expansion/artifacts/system-after/refutation-preservation.json",
+          "contains": "\"held_call_sites\": 10"
+        }
+      ]
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Shared pins unioned and provider sync/check passed. Current status and one increment paragraph use merged measurements. Both residual proposals registered in their proposed words. The Resource view rule states equality with the selected manifest and links current status rather than retaining its stale count.",
+      "verify": [
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-LIBC-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-MONKEY-BACKEND-QUERY-ARMS"
+        },
+        {
+          "file": "docs/agents/providers.md",
+          "contains": "STATUS.md"
+        }
+      ]
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#2": {
+      "verdict": "applied",
+      "note": "Shared pins unioned and provider sync/check passed. Current status and one increment paragraph use merged measurements. Both residual proposals registered in their proposed words. The Resource view rule states equality with the selected manifest and links current status rather than retaining its stale count.",
+      "verify": [
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-LIBC-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-MONKEY-BACKEND-QUERY-ARMS"
+        },
+        {
+          "file": "docs/agents/providers.md",
+          "contains": "STATUS.md"
+        }
+      ]
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#3": {
+      "verdict": "applied",
+      "note": "Shared pins unioned and provider sync/check passed. Current status and one increment paragraph use merged measurements. Both residual proposals registered in their proposed words. The Resource view rule states equality with the selected manifest and links current status rather than retaining its stale count.",
+      "verify": [
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-LIBC-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-MONKEY-BACKEND-QUERY-ARMS"
+        },
+        {
+          "file": "docs/agents/providers.md",
+          "contains": "STATUS.md"
+        }
+      ]
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#4": {
+      "verdict": "applied",
+      "note": "Shared pins unioned and provider sync/check passed. Current status and one increment paragraph use merged measurements. Both residual proposals registered in their proposed words. The Resource view rule states equality with the selected manifest and links current status rather than retaining its stale count.",
+      "verify": [
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-LIBC-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-MONKEY-BACKEND-QUERY-ARMS"
+        },
+        {
+          "file": "docs/agents/providers.md",
+          "contains": "STATUS.md"
+        }
+      ]
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#5": {
+      "verdict": "applied",
+      "note": "Shared pins unioned and provider sync/check passed. Current status and one increment paragraph use merged measurements. Both residual proposals registered in their proposed words. The Resource view rule states equality with the selected manifest and links current status rather than retaining its stale count.",
+      "verify": [
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(54, 219, 216)"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-LIBC-EVENT-CONTRACT-GAPS`"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-LIBEVENT-DEBUG-GETTER-CALLBACKS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-MONKEY-BACKEND-QUERY-ARMS"
+        },
+        {
+          "file": "docs/agents/providers.md",
+          "contains": "STATUS.md"
+        }
+      ]
+    }
+  },
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    }
+  }
+}

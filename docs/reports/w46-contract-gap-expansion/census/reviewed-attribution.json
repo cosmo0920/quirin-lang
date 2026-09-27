@@ -1,0 +1,1144 @@
+[
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "107:rdkafka_sasl.c",
+        "rd_kafka_sasl_io_event"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        20806,
+        "rdkafka_sasl.c:175"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "rd_kafka_transport_error_disconnected is a header-local scalar wrapper returning strncmp(errstr, \"Disconnected\", 12) == 0. The new strncmp condition premise enables the existing summary; the header wrapper has no separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+        "sha256": "8e9fab9b6569dae8a47de84952672054416859e0fb7f8fafff827e2d311c97bd",
+        "first_line": 173,
+        "last_line": 180,
+        "text": "                                           errstr_size);\n        if (r == -1) {\n                if (rd_kafka_transport_error_disconnected(errstr)) {\n                        int curr_len = strlen(errstr);\n                        rd_snprintf(errstr + curr_len, errstr_size - curr_len,\n                                    \": check client %s credentials \"\n                                    \"and broker logs\",\n                                    rktrans->rktrans_rkb->rkb_rk->rk_conf.sasl"
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.h",
+        "sha256": "a785c8c1b5bec9eb4a892eab9f41c74d85d0e2e01c17bd834c7bf45a37f611fe",
+        "first_line": 91,
+        "last_line": 95,
+        "text": "static RD_INLINE RD_UNUSED rd_bool_t\nrd_kafka_transport_error_disconnected(const char *errstr) {\n        return strncmp(errstr, \"Disconnected\", 12) == 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "109:rdkafka_sasl_oauthbearer.c",
+        "do_unittest_config_empty_value_should_fail"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        21062,
+        "rdkafka_sasl_oauthbearer.c:1679"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "The RD_UT_ASSERT invocation is attributed to its opening line; the following argument line calls strncmp. The complete condition, not just its opening source line, uses the new premise.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+        "sha256": "caad9c6bacec839e710208bd4f40a0ec7dc42b48185a3808cbf14f25765545c0",
+        "first_line": 1677,
+        "last_line": 1684,
+        "text": "                             sasl_oauthbearer_configs[i]);\n\n                RD_UT_ASSERT(\n                    !strncmp(expected_prefix, errstr, strlen(expected_prefix)),\n                    \"Incorrect error message prefix when empty \"\n                    \"(%s): expected=%s received=%s\",\n                    sasl_oauthbearer_configs[i], expected_prefix, errstr);\n        }"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "109:rdkafka_sasl_oauthbearer.c",
+        "do_unittest_config_value_with_quote_should_fail"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        21087,
+        "rdkafka_sasl_oauthbearer.c:1717"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "The RD_UT_ASSERT invocation is attributed to its opening line; the following argument line calls strncmp. The complete condition, not just its opening source line, uses the new premise.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+        "sha256": "caad9c6bacec839e710208bd4f40a0ec7dc42b48185a3808cbf14f25765545c0",
+        "first_line": 1715,
+        "last_line": 1722,
+        "text": "                             sasl_oauthbearer_configs[i]);\n\n                RD_UT_ASSERT(\n                    !strncmp(expected_prefix, errstr, strlen(expected_prefix)),\n                    \"Incorrect error message prefix with \"\n                    \"embedded quote (%s): expected=%s received=%s\",\n                    sasl_oauthbearer_configs[i], expected_prefix, errstr);\n        }"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "10:cmt_encode_msgpack.c",
+        "pack_metric"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        7153,
+        "cmt_encode_msgpack.c:221"
+      ]
+    },
+    "callees": [
+      "cmt_metric_get_value_type"
+    ],
+    "reason": "The multiline condition begins with map type checks and calls cmt_metric_get_value_type on line 224. The leaf origin is its opening line, 221; the full condition uses that new premise.",
+    "source_evidence": [
+      {
+        "file": "lib/cmetrics/src/cmt_encode_msgpack.c",
+        "sha256": "0a81ec5f84730445bec4cd8d1e7c3bec308bdb3ef2cf40241a332bf1d5b4a050",
+        "first_line": 219,
+        "last_line": 226,
+        "text": "    }\n\n    if (map->type != CMT_HISTOGRAM &&\n        map->type != CMT_EXP_HISTOGRAM &&\n        map->type != CMT_SUMMARY &&\n        cmt_metric_get_value_type(metric) != CMT_METRIC_VALUE_DOUBLE) {\n        s += 2;\n    }"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "114:rdkafka_ssl.c",
+        "rd_kafka_transport_ssl_handshake"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        20585,
+        "rdkafka_ssl.c:728"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "rd_kafka_transport_error_disconnected is a header-local scalar wrapper returning strncmp(errstr, \"Disconnected\", 12) == 0. The new strncmp condition premise enables the existing summary; the header wrapper has no separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+        "sha256": "bafad53316abe13a435b3d10f49aefc8834652bc9c53461c5bf251e8ad722b5f",
+        "first_line": 726,
+        "last_line": 733,
+        "text": "#endif\n                            ;\n                else if (rd_kafka_transport_error_disconnected(errstr)) {\n                        extra = \": connecting to a PLAINTEXT broker listener?\";\n                        /* Disconnects during handshake are most likely\n                         * not due to SSL, but rather at the transport level */\n                        err = RD_KAFKA_RESP_ERR__TRANSPORT;\n                }"
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.h",
+        "sha256": "a785c8c1b5bec9eb4a892eab9f41c74d85d0e2e01c17bd834c7bf45a37f611fe",
+        "first_line": 91,
+        "last_line": 95,
+        "text": "static RD_INLINE RD_UNUSED rd_bool_t\nrd_kafka_transport_error_disconnected(const char *errstr) {\n        return strncmp(errstr, \"Disconnected\", 12) == 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "118:rdkafka_telemetry_decode.c",
+        "rd_kafka_snappy_decompress"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        21618,
+        "rdkafka_telemetry_decode.c:282"
+      ]
+    },
+    "callees": [
+      "memcmp"
+    ],
+    "reason": "The multiline likely condition calls memcmp on its second line. The leaf origin is the first line; its full condition uses the new memcmp premise.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+        "sha256": "f9999552b0e9e23913871254f4b33ccf8e2bda66068fc1e31ee30579ce146fca",
+        "first_line": 280,
+        "last_line": 287,
+        "text": "         *   4: length\n         * ...: snappy-compressed data. */\n        if (likely(inlen > snappy_java_hdrlen + 4 &&\n                   !memcmp(inbuf, snappy_java_magic, 8))) {\n                /* snappy-java framing */\n                char errstr[128];\n\n                inbuf = inbuf + snappy_java_hdrlen;"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "165:mk_server/mk_config.c",
+        "mk_config_listen_parse"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6096,
+        "mk_server/mk_config.c:227"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "The condition calls mk_config_key_have, one of the six measured Unknown-to-Safe bodies; its body is freed by the strcasecmp premise and the existing same-unit summary discharges this caller condition.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_config.c",
+        "sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+        "first_line": 225,
+        "last_line": 232,
+        "text": "    /* Check extra properties of the listener */\n    flags = MK_CAP_HTTP;\n    if (mk_config_key_have(list, \"!http\")) {\n        flags |= ~MK_CAP_HTTP;\n    }\n\n#ifdef MK_HAVE_HTTP2\n    if (mk_config_key_have(list, \"h2\")) {"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_config.c",
+        "sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+        "first_line": 40,
+        "last_line": 60,
+        "text": "static int mk_config_key_have(struct mk_list *list, const char *value)\n{\n    struct mk_list *head;\n    struct mk_string_line *entry;\n\n    mk_list_foreach(head, list) {\n        entry = mk_list_entry(head, struct mk_string_line, _head);\n        if (strcasecmp(entry->val, value) == 0) {\n            return MK_TRUE;\n        }\n    }\n    return MK_FALSE;\n}\n\nvoid mk_config_listeners_free(struct mk_server *server)\n{\n    struct mk_list *tmp;\n    struct mk_list *head;\n    struct mk_config_listener *l;\n\n    mk_list_foreach_safe(head, tmp, &server->listeners) {"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "165:mk_server/mk_config.c",
+        "mk_config_listen_parse"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6099,
+        "mk_server/mk_config.c:241"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "The condition calls mk_config_key_have, one of the six measured Unknown-to-Safe bodies; its body is freed by the strcasecmp premise and the existing same-unit summary discharges this caller condition.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_config.c",
+        "sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+        "first_line": 239,
+        "last_line": 246,
+        "text": "#endif\n\n    if (mk_config_key_have(list, \"tls\")) {\n        flags |= MK_CAP_SOCK_TLS;\n    }\n\n    /* register the new listener */\n    mk_config_listener_add(address, port, flags, server);"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_config.c",
+        "sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+        "first_line": 40,
+        "last_line": 60,
+        "text": "static int mk_config_key_have(struct mk_list *list, const char *value)\n{\n    struct mk_list *head;\n    struct mk_string_line *entry;\n\n    mk_list_foreach(head, list) {\n        entry = mk_list_entry(head, struct mk_string_line, _head);\n        if (strcasecmp(entry->val, value) == 0) {\n            return MK_TRUE;\n        }\n    }\n    return MK_FALSE;\n}\n\nvoid mk_config_listeners_free(struct mk_server *server)\n{\n    struct mk_list *tmp;\n    struct mk_list *head;\n    struct mk_config_listener *l;\n\n    mk_list_foreach_safe(head, tmp, &server->listeners) {"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "166:mk_server/mk_fifo.c",
+        "mk_fifo_worker_create"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unknown_alias",
+        "unresolved resource identity `fw`",
+        5128,
+        "mk_server/mk_fifo.c:47"
+      ]
+    },
+    "callees": [
+      "MK_EVENT_NEW"
+    ],
+    "reason": "MK_EVENT_NEW(&fw->event) at line 45 is now a modeled borrow. Its formerly refused indirect actual no longer invalidates fw before the scalar worker_id store at line 47. The pointer-valued data store at line 48 still refuses and subsequent unknown_alias leaves remain. No leak is removed and the function stays Unknown.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_fifo.c",
+        "sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b",
+        "first_line": 45,
+        "last_line": 52,
+        "text": "    MK_EVENT_NEW(&fw->event);\n\n    fw->worker_id = id;\n    fw->data = data;\n    fw->fifo = ctx;\n\n    fw->buf_data = mk_mem_alloc(MK_FIFO_BUF_SIZE);\n    if (!fw->buf_data) {"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6611,
+        "mk_server/mk_lib.c:312"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 310,
+        "last_line": 317,
+        "text": "    unsigned long len;\n\n    if (config_eq(k, \"Listen\") == 0) {\n        ret = mk_config_listen_parse(v, server);\n        if (ret != 0) {\n            return -1;\n        }\n    }"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6617,
+        "mk_server/mk_lib.c:318"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 316,
+        "last_line": 323,
+        "text": "        }\n    }\n    else if (config_eq(k, \"Workers\") == 0) {\n        num = atoi(v);\n        if (num <= 0) {\n            server->workers = mk_utils_get_system_core_count();\n        }\n        else {"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6626,
+        "mk_server/mk_lib.c:327"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 325,
+        "last_line": 332,
+        "text": "        }\n    }\n    else if (config_eq(k, \"Timeout\") == 0) {\n        num = atoi(v);\n        if (num <= 0) {\n            return -1;\n        }\n        server->timeout = num;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6633,
+        "mk_server/mk_lib.c:334"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 332,
+        "last_line": 339,
+        "text": "        server->timeout = num;\n    }\n    else if (config_eq(k, \"KeepAlive\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {\n            return -1;\n        }\n        server->keep_alive = b;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6640,
+        "mk_server/mk_lib.c:341"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 339,
+        "last_line": 346,
+        "text": "        server->keep_alive = b;\n    }\n    else if (config_eq(k, \"MaxKeepAliveRequest\") == 0) {\n        num = atoi(v);\n        if (num <= 0) {\n            return -1;\n        }\n        server->max_keep_alive_request = num;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6647,
+        "mk_server/mk_lib.c:348"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 346,
+        "last_line": 353,
+        "text": "        server->max_keep_alive_request = num;\n    }\n    else if (config_eq(k, \"KeepAliveTimeout\") == 0) {\n        num = atoi(v);\n        if (num <= 0) {\n            return -1;\n        }\n        server->keep_alive_timeout = num;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6654,
+        "mk_server/mk_lib.c:355"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 353,
+        "last_line": 360,
+        "text": "        server->keep_alive_timeout = num;\n    }\n    else if (config_eq(k, \"UserDir\") == 0) {\n        server->conf_user_pub = mk_string_dup(v);\n    }\n    else if (config_eq(k, \"IndexFile\") == 0) {\n        server->index_files = mk_string_split_line(v);\n        if (!server->index_files) {"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6657,
+        "mk_server/mk_lib.c:358"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 356,
+        "last_line": 363,
+        "text": "        server->conf_user_pub = mk_string_dup(v);\n    }\n    else if (config_eq(k, \"IndexFile\") == 0) {\n        server->index_files = mk_string_split_line(v);\n        if (!server->index_files) {\n            return -1;\n        }\n    }"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6663,
+        "mk_server/mk_lib.c:364"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 362,
+        "last_line": 369,
+        "text": "        }\n    }\n    else if (config_eq(k, \"HideVersion\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {\n            return -1;\n        }\n        server->hideversion = b;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6670,
+        "mk_server/mk_lib.c:371"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 369,
+        "last_line": 376,
+        "text": "        server->hideversion = b;\n    }\n    else if (config_eq(k, \"Resume\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {\n            return -1;\n        }\n        server->resume = b;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6677,
+        "mk_server/mk_lib.c:378"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 376,
+        "last_line": 383,
+        "text": "        server->resume = b;\n    }\n    else if (config_eq(k, \"MaxRequestSize\") == 0) {\n        num = atoi(v);\n        if (num <= 0) {\n            return -1;\n        }\n        server->max_request_size = num;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6684,
+        "mk_server/mk_lib.c:385"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 383,
+        "last_line": 390,
+        "text": "        server->max_request_size = num;\n    }\n    else if (config_eq(k, \"SymLink\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {\n            return -1;\n        }\n        server->symlink = b;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6691,
+        "mk_server/mk_lib.c:392"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 390,
+        "last_line": 397,
+        "text": "        server->symlink = b;\n    }\n    else if (config_eq(k, \"DefaultMimeType\") == 0) {\n        mk_string_build(&server->mimetype_default_str, &len, \"%s\\r\\n\", v);\n    }\n    else if (config_eq(k, \"FDT\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_config_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6694,
+        "mk_server/mk_lib.c:395"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 393,
+        "last_line": 400,
+        "text": "        mk_string_build(&server->mimetype_default_str, &len, \"%s\\r\\n\", v);\n    }\n    else if (config_eq(k, \"FDT\") == 0) {\n        b = bool_val(v);\n        if (b == -1) {\n            return -1;\n        }\n        server->fdt = b;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_vhost_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6767,
+        "mk_server/mk_lib.c:492"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 490,
+        "last_line": 497,
+        "text": "    struct mk_vhost_alias *ha;\n\n    if (config_eq(k, \"Name\") == 0) {\n        ha = mk_mem_alloc(sizeof(struct mk_vhost_alias));\n        if (!ha) {\n            return -1;\n        }\n        ha->name = mk_string_dup(v);"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "172:mk_server/mk_lib.c",
+        "mk_vhost_set_property"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        6776,
+        "mk_server/mk_lib.c:501"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "config_eq is the local macro strcasecmp (line 37); its condition uses the new neutral declaration. This is a macro-origin leaf, not an unrelated condition admission.",
+    "source_evidence": [
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 499,
+        "last_line": 506,
+        "text": "        mk_list_add(&ha->_head, &vh->server_names);\n    }\n    else if (config_eq(k, \"DocumentRoot\") == 0) {\n        vh->documentroot.data = mk_string_dup(v);\n        vh->documentroot.len  = strlen(v);\n    }\n\n    return 0;"
+      },
+      {
+        "file": "lib/monkey/mk_server/mk_lib.c",
+        "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+        "first_line": 37,
+        "last_line": 37,
+        "text": "#define config_eq(a, b) strcasecmp(a, b)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "75:rdkafka_broker.c",
+        "rd_kafka_broker_set_error"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        21157,
+        "rdkafka_broker.c:507"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "rd_kafka_transport_error_disconnected is a header-local scalar wrapper returning strncmp(errstr, \"Disconnected\", 12) == 0. The new strncmp condition premise enables the existing summary; the header wrapper has no separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+        "sha256": "1ed53a44386d60ad3a1ed91ff7f08f53b6ea36de415496222698dbd5137b8b61",
+        "first_line": 505,
+        "last_line": 512,
+        "text": "\n        /* Provide more meaningful error messages in certain cases */\n        if (err == RD_KAFKA_RESP_ERR__TRANSPORT &&\n            rd_kafka_transport_error_disconnected(fmt)) {\n                if (rkb->rkb_state == RD_KAFKA_BROKER_STATE_APIVERSION_QUERY) {\n                        /* A disconnect while requesting ApiVersion typically\n                         * means we're connecting to a SSL-listener as\n                         * PLAINTEXT, but may also be caused by connecting to"
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.h",
+        "sha256": "a785c8c1b5bec9eb4a892eab9f41c74d85d0e2e01c17bd834c7bf45a37f611fe",
+        "first_line": 91,
+        "last_line": 95,
+        "text": "static RD_INLINE RD_UNUSED rd_bool_t\nrd_kafka_transport_error_disconnected(const char *errstr) {\n        return strncmp(errstr, \"Disconnected\", 12) == 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "75:rdkafka_broker.c",
+        "rd_kafka_recv"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        22018,
+        "rdkafka_broker.c:2180"
+      ]
+    },
+    "callees": [
+      "strncmp"
+    ],
+    "reason": "rd_kafka_transport_error_disconnected is a header-local scalar wrapper returning strncmp(errstr, \"Disconnected\", 12) == 0. The new strncmp condition premise enables the existing summary; the header wrapper has no separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+        "sha256": "1ed53a44386d60ad3a1ed91ff7f08f53b6ea36de415496222698dbd5137b8b61",
+        "first_line": 2178,
+        "last_line": 2185,
+        "text": "        err = rkbuf->rkbuf_err;\nerr:\n        if (rd_kafka_transport_error_disconnected(errstr))\n                rd_kafka_broker_conn_closed(rkb, err, errstr);\n        else\n                rd_kafka_broker_fail(rkb, LOG_ERR, err, \"Receive failed: %s\",\n                                     errstr);\n        return -1;"
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.h",
+        "sha256": "a785c8c1b5bec9eb4a892eab9f41c74d85d0e2e01c17bd834c7bf45a37f611fe",
+        "first_line": 91,
+        "last_line": 95,
+        "text": "static RD_INLINE RD_UNUSED rd_bool_t\nrd_kafka_transport_error_disconnected(const char *errstr) {\n        return strncmp(errstr, \"Disconnected\", 12) == 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "79:rdkafka_conf.c",
+        "rd_kafka_anyconf_set_prop"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        24489,
+        "rdkafka_conf.c:2267"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "The pinned POSIX macro rd_strcasecmp expands to strcasecmp; the condition is enabled by the newly declared neutral strcasecmp. The Windows macro is outside this pinned build.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+        "sha256": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba",
+        "first_line": 2265,
+        "last_line": 2272,
+        "text": "\n\n                if (!rd_strcasecmp(value, \"true\") ||\n                    !rd_strcasecmp(value, \"t\") || !strcmp(value, \"1\"))\n                        ival = 1;\n                else if (!rd_strcasecmp(value, \"false\") ||\n                         !rd_strcasecmp(value, \"f\") || !strcmp(value, \"0\"))\n                        ival = 0;"
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdposix.h",
+        "sha256": "612d3ac2fa7dfc0eb914ab7fc6f5c4e39dd5a7b5000ef218ca2fe2012bdf5225",
+        "first_line": 90,
+        "last_line": 90,
+        "text": "#define rd_strcasecmp(A, B)     strcasecmp(A, B)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "79:rdkafka_conf.c",
+        "rd_kafka_anyconf_set_prop"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        24492,
+        "rdkafka_conf.c:2270"
+      ]
+    },
+    "callees": [
+      "strcasecmp"
+    ],
+    "reason": "The pinned POSIX macro rd_strcasecmp expands to strcasecmp; the condition is enabled by the newly declared neutral strcasecmp. The Windows macro is outside this pinned build.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+        "sha256": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba",
+        "first_line": 2268,
+        "last_line": 2275,
+        "text": "                    !rd_strcasecmp(value, \"t\") || !strcmp(value, \"1\"))\n                        ival = 1;\n                else if (!rd_strcasecmp(value, \"false\") ||\n                         !rd_strcasecmp(value, \"f\") || !strcmp(value, \"0\"))\n                        ival = 0;\n                else {\n                        rd_snprintf(errstr, errstr_size,\n                                    \"Expected bool value for \\\"%s\\\": \""
+      },
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdposix.h",
+        "sha256": "612d3ac2fa7dfc0eb914ab7fc6f5c4e39dd5a7b5000ef218ca2fe2012bdf5225",
+        "first_line": 90,
+        "last_line": 90,
+        "text": "#define rd_strcasecmp(A, B)     strcasecmp(A, B)"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "96:rdkafka_msgset_reader.c",
+        "rd_kafka_msgset_reader_decompress"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition",
+        19771,
+        "rdkafka_msgset_reader.c:323"
+      ]
+    },
+    "callees": [
+      "memcmp"
+    ],
+    "reason": "The multiline likely condition calls memcmp on its second line. The leaf origin is the first line; its full condition uses the new memcmp premise.",
+    "source_evidence": [
+      {
+        "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+        "sha256": "ee4277d64af5e4c081517e636e1474514bde9d9f4767c9452a6ae09651d2a334",
+        "first_line": 321,
+        "last_line": 328,
+        "text": "                 *   4: length\n                 * ...: snappy-compressed data. */\n                if (likely(inlen > snappy_java_hdrlen + 4 &&\n                           !memcmp(inbuf, snappy_java_magic, 8))) {\n                        /* snappy-java framing */\n                        char errstr[128];\n\n                        inbuf = inbuf + snappy_java_hdrlen;"
+      }
+    ]
+  },
+  {
+    "scope": "system",
+    "observation": {
+      "count": 1,
+      "function": [
+        "13:src/flb_output.c",
+        "flb_output_task_flush_error"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "call to uncontracted function `flb_task_deactivate_route`",
+        17880,
+        "src/flb_output.c:442"
+      ]
+    },
+    "callees": [
+      "flb_task_set_route_status"
+    ],
+    "reason": "Header-local flb_task_deactivate_route calls only flb_task_set_route_status with the inactive literal; the new borrowed/none and counted-user-neutral premise enables its existing same-unit summary. The header body is not a separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "src/flb_output.c",
+        "sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+        "first_line": 440,
+        "last_line": 447,
+        "text": "                            task->event_chunk->total_events,\n                            task->event_chunk->size);\n    flb_task_deactivate_route(task, out_ins);\n    flb_task_release_lock(task);\n\n    set = FLB_TASK_SET(FLB_ERROR, task->id, out_ins->id);\n    val = FLB_BITS_U64_SET(FLB_ENGINE_TASK, set);\n"
+      },
+      {
+        "file": "include/fluent-bit/flb_task.h",
+        "sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+        "first_line": 385,
+        "last_line": 391,
+        "text": "static FLB_INLINE void flb_task_deactivate_route(\n                        struct flb_task *task,\n                        struct flb_output_instance *o_ins)\n{\n    flb_task_set_route_status(task, o_ins, FLB_TASK_ROUTE_INACTIVE);\n}\n"
+      }
+    ]
+  },
+  {
+    "scope": "system",
+    "observation": {
+      "count": 1,
+      "function": [
+        "14:src/flb_output.c",
+        "flb_output_task_flush_error"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "call to uncontracted function `flb_task_deactivate_route`",
+        17880,
+        "src/flb_output.c:442"
+      ]
+    },
+    "callees": [
+      "flb_task_set_route_status"
+    ],
+    "reason": "Header-local flb_task_deactivate_route calls only flb_task_set_route_status with the inactive literal; the new borrowed/none and counted-user-neutral premise enables its existing same-unit summary. The header body is not a separately projected function row.",
+    "source_evidence": [
+      {
+        "file": "src/flb_output.c",
+        "sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+        "first_line": 440,
+        "last_line": 447,
+        "text": "                            task->event_chunk->total_events,\n                            task->event_chunk->size);\n    flb_task_deactivate_route(task, out_ins);\n    flb_task_release_lock(task);\n\n    set = FLB_TASK_SET(FLB_ERROR, task->id, out_ins->id);\n    val = FLB_BITS_U64_SET(FLB_ENGINE_TASK, set);\n"
+      },
+      {
+        "file": "include/fluent-bit/flb_task.h",
+        "sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+        "first_line": 385,
+        "last_line": 391,
+        "text": "static FLB_INLINE void flb_task_deactivate_route(\n                        struct flb_task *task,\n                        struct flb_output_instance *o_ins)\n{\n    flb_task_set_route_status(task, o_ins, FLB_TASK_ROUTE_INACTIVE);\n}\n"
+      }
+    ]
+  }
+]

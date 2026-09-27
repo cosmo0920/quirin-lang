@@ -1,0 +1,1036 @@
+{
+ "added_at_contracted_sites": [
+  {
+   "category": "unknown_alias",
+   "count": 2,
+   "description": "unresolved resource identity `X`"
+  },
+  {
+   "category": "unsupported",
+   "count": 1,
+   "description": "call has an unmodeled formal address or borrowed expression"
+  }
+ ],
+ "changed_functions": 84,
+ "corrections": [],
+ "function_status_after": {
+  "Safe": 411,
+  "Unknown": 4414,
+  "Unsafe": 9
+ },
+ "function_status_before": {
+  "Safe": 405,
+  "Unknown": 4420,
+  "Unsafe": 9
+ },
+ "new_leak_or_violation_leaves": [],
+ "removed_cascade_from_moved_callee": [
+  {
+   "callee": "bool_val",
+   "caller": "172:mk_server/mk_lib.c::mk_config_set_property",
+   "count": 5
+  },
+  {
+   "callee": "cat_scalar_value",
+   "caller": "2:cmt_cat.c::cmt_cat_copy_map",
+   "count": 2
+  }
+ ],
+ "removed_contracted_leaves": {
+  "MK_EVENT_NEW": 1,
+  "_mk_string_search": 2,
+  "cmt_math_d64_to_uint64": 11,
+  "cmt_math_uint64_to_d64": 4,
+  "cmt_metric_get_start_timestamp": 3,
+  "cmt_metric_get_value": 11,
+  "cmt_metric_has_start_timestamp": 1,
+  "cmt_metric_set_int64": 1,
+  "cmt_metric_set_start_timestamp": 1,
+  "cmt_metric_set_timestamp": 3,
+  "cmt_metric_set_uint64": 1,
+  "cmt_metric_unset_start_timestamp": 5,
+  "ctr_id_get_len": 5,
+  "flb_task_get_route_status": 1,
+  "flb_task_set_route_status": 1,
+  "mk_string_char_search": 4
+ },
+ "removed_contracted_total": 55,
+ "removed_naming_contracted": [
+  {
+   "callee": "cmt_metric_get_int64_value",
+   "count": 1,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  }
+ ],
+ "removed_on_contracted_call_line": [
+  {
+   "callee": "MK_EVENT_NEW",
+   "count": 6,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "cmt_metric_get_uint64_value",
+   "count": 2,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "cmt_metric_get_value",
+   "count": 1,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "cmt_metric_get_value_type",
+   "count": 8,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "cmt_metric_has_start_timestamp",
+   "count": 3,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "cmt_metric_set_int64",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "cmt_metric_set_start_timestamp",
+   "count": 4,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "cmt_metric_set_timestamp",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "cmt_metric_set_uint64",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "ctr_id_get_len",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "ctr_span_set_dropped_attributes_count",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "ctr_span_set_dropped_events_count",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "ctr_span_set_dropped_links_count",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "memcmp",
+   "count": 12,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "strcasecmp",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "strcasecmp",
+   "count": 7,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "strncmp",
+   "count": 8,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  }
+ ],
+ "status_moves": [
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "160:mk_core/mk_rconf.c::mk_rconf_section_get",
+   "moved_by": [
+    "strcasecmp"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "161:mk_core/mk_string.c::mk_string_search",
+   "moved_by": [
+    "_mk_string_search"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "161:mk_core/mk_string.c::mk_string_search_n",
+   "moved_by": [
+    "_mk_string_search"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "165:mk_server/mk_config.c::mk_config_key_have",
+   "moved_by": [
+    "strcasecmp"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "172:mk_server/mk_lib.c::bool_val",
+   "moved_by": [
+    "strcasecmp"
+   ]
+  },
+  {
+   "after": "Safe",
+   "attributed": true,
+   "before": "Unknown",
+   "function": "2:cmt_cat.c::cat_scalar_value",
+   "moved_by": [
+    "cmt_metric_get_value",
+    "cmt_metric_get_value_type",
+    "cmt_metric_has_start_timestamp",
+    "cmt_metric_set_int64",
+    "cmt_metric_set_start_timestamp",
+    "cmt_metric_set_uint64",
+    "cmt_metric_unset_start_timestamp"
+   ]
+  }
+ ],
+ "unattributed": [
+  {
+   "count": 1,
+   "function": [
+    "107:rdkafka_sasl.c",
+    "rd_kafka_sasl_io_event"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    20806,
+    "rdkafka_sasl.c:175"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "109:rdkafka_sasl_oauthbearer.c",
+    "do_unittest_config_empty_value_should_fail"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    21062,
+    "rdkafka_sasl_oauthbearer.c:1679"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "109:rdkafka_sasl_oauthbearer.c",
+    "do_unittest_config_value_with_quote_should_fail"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    21087,
+    "rdkafka_sasl_oauthbearer.c:1717"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "10:cmt_encode_msgpack.c",
+    "pack_metric"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    7153,
+    "cmt_encode_msgpack.c:221"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "114:rdkafka_ssl.c",
+    "rd_kafka_transport_ssl_handshake"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    20585,
+    "rdkafka_ssl.c:728"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "118:rdkafka_telemetry_decode.c",
+    "rd_kafka_snappy_decompress"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    21618,
+    "rdkafka_telemetry_decode.c:282"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "165:mk_server/mk_config.c",
+    "mk_config_listen_parse"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6096,
+    "mk_server/mk_config.c:227"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "165:mk_server/mk_config.c",
+    "mk_config_listen_parse"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6099,
+    "mk_server/mk_config.c:241"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "166:mk_server/mk_fifo.c",
+    "mk_fifo_worker_create"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `fw`",
+    5128,
+    "mk_server/mk_fifo.c:47"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6611,
+    "mk_server/mk_lib.c:312"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6617,
+    "mk_server/mk_lib.c:318"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6626,
+    "mk_server/mk_lib.c:327"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6633,
+    "mk_server/mk_lib.c:334"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6640,
+    "mk_server/mk_lib.c:341"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6647,
+    "mk_server/mk_lib.c:348"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6654,
+    "mk_server/mk_lib.c:355"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6657,
+    "mk_server/mk_lib.c:358"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6663,
+    "mk_server/mk_lib.c:364"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6670,
+    "mk_server/mk_lib.c:371"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6677,
+    "mk_server/mk_lib.c:378"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6684,
+    "mk_server/mk_lib.c:385"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6691,
+    "mk_server/mk_lib.c:392"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_config_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6694,
+    "mk_server/mk_lib.c:395"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_vhost_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6767,
+    "mk_server/mk_lib.c:492"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "172:mk_server/mk_lib.c",
+    "mk_vhost_set_property"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    6776,
+    "mk_server/mk_lib.c:501"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "75:rdkafka_broker.c",
+    "rd_kafka_broker_set_error"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    21157,
+    "rdkafka_broker.c:507"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "75:rdkafka_broker.c",
+    "rd_kafka_recv"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    22018,
+    "rdkafka_broker.c:2180"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "79:rdkafka_conf.c",
+    "rd_kafka_anyconf_set_prop"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    24489,
+    "rdkafka_conf.c:2267"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "79:rdkafka_conf.c",
+    "rd_kafka_anyconf_set_prop"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    24492,
+    "rdkafka_conf.c:2270"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "96:rdkafka_msgset_reader.c",
+    "rd_kafka_msgset_reader_decompress"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    19771,
+    "rdkafka_msgset_reader.c:323"
+   ]
+  }
+ ],
+ "unit_changes": [
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "107:rdkafka_sasl.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "108:rdkafka_sasl_cyrus.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "109:rdkafka_sasl_oauthbearer.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "10:cmt_encode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "114:rdkafka_ssl.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "118:rdkafka_telemetry_decode.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "11:cmt_encode_opentelemetry.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "137:rdvarint.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "13:cmt_encode_prometheus.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "149:cio_meta.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "155:flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "156:mk_core/mk_event.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "15:cmt_encode_splunk_hec.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "160:mk_core/mk_rconf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "161:mk_core/mk_string.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "165:mk_server/mk_config.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "166:mk_server/mk_fifo.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "16:cmt_encode_text.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "170:mk_server/mk_http_thread.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "171:mk_server/mk_kernel.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "172:mk_server/mk_lib.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "unit": "174:mk_server/mk_net.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "175:mk_server/mk_plugin.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "17:cmt_exp_histogram.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "23:cmt_map.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "24:cmt_metric.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "25:cmt_metric_histogram.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "28:cmt_summary.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "2:cmt_cat.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "33:ctr_decode_opentelemetry.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "35:ctr_encode_opentelemetry.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "38:ctr_link.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "3:cmt_counter.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "4:cmt_decode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "5:cmt_decode_opentelemetry.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "62:rdbuf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "75:rdkafka_broker.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "78:rdkafka_cgrp.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "79:rdkafka_conf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "88:rdkafka_lz4.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "8:cmt_encode_cloudwatch_emf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "96:rdkafka_msgset_reader.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "9:cmt_encode_influx.c"
+  }
+ ],
+ "unit_status_after": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ },
+ "unit_status_before": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ }
+}

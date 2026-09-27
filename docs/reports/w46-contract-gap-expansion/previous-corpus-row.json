@@ -1,0 +1,29 @@
+{
+  "note": "W46-EXTERNAL-CALLEE-CONTRACTS integration, 2026-09-25. The card (measured against docs/reports/w45-container-root-reach/integration/artifacts) composed onto the combined tree docs/reports/w45-container-root-reach/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 76 added 2 functions 7 units 0); functions moved (combined): [('mk_sched_send_signal', ('Unknown', 'Safe')), ('mk_socket_create', ('Unknown', 'Safe')), ('pack_basic_header_finish', ('Unknown', 'Safe')), ('pack_bool', ('Unknown', 'Safe')), ('pack_bytes', ('Unknown', 'Safe')), ('pack_string', ('Unknown', 'Safe')), ('rd_kafka_thread_cnt', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] seven Unknown -> Safe from the nine new external-callee contracts (pack_basic_header_finish, pack_bool, pack_bytes, pack_string, mk_sched_send_signal, mk_socket_create, rd_kafka_thread_cnt); no corrections Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w46-external-callee-contracts/integration/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 5,
+  "provisional_unsafe": 8,
+  "unknown": 168,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 34,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w46-external-callee-contracts/integration/artifacts/",
+  "source": "docs/reports/w46-external-callee-contracts/integration/integration-confirmation.md; preceding baseline docs/reports/w45-container-root-reach/integration/artifacts",
+  "unknown_alias_diagnostics": 3572,
+  "unsupported_diagnostics": 41239,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 405,
+    "provisional_unsafe": 9,
+    "unknown": 4420
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 167,
+    "none": 17,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

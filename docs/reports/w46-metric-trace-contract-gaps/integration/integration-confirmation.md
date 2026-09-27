@@ -1,0 +1,5 @@
+# Combined integration measurement
+
+Merged by `542f7d6d22612361095d11a41f46b81c2fd4598c`, measured at `eb913c38`. The [combined report](../../w46-contract-gap-expansion/README.md) owns the actual before/after artifacts and every changed leaf. [This gate](gate.json) records the shared merged-worktree run: 6,029 core tests, 129 provider tests, 212 Lean audits. The initial Python matrix-format failure and repair are retained, and the final regenerated-matrix check is in the combined report's `gate/final-checks.json`. These figures differ from the isolated card's gate; its original attempts remain unchanged.
+
+The combined corpus is 411 Safe / 9 provisional Unsafe / 4,414 Unknown, with no new leak/violation or Safe correction. The system slice's verdicts and both refuted contracts remain unchanged, including all 10 held call sites. Source-pinned declarations remain premises, not proofs of their C bodies. The card's integrator requests and residual proposals are resolved in the combined [reconciliation](../../w46-contract-gap-expansion/reconciliation.json).

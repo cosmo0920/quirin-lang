@@ -1,0 +1,18 @@
+{
+  "before_count": 102,
+  "after_count": 106,
+  "new_candidates": [
+    "W36-CTRACES-FAMILY-FIRST",
+    "W46-FLUENT-EVENT-CONTRACT-GAPS",
+    "W46-LIBC-EVENT-CONTRACT-GAPS",
+    "W46-METRIC-TRACE-CONTRACT-GAPS"
+  ],
+  "no_longer_candidates": [],
+  "decisions": {
+    "W36-CTRACES-FAMILY-FIRST": "Discharged by W46-CONTRACT-GAP-EXPANSION integrator confirmation, not a newly untracked gap; original entry and decision in retired-followups.json.",
+    "W46-FLUENT-EVENT-CONTRACT-GAPS": "Completed implementation-card identifier in the new increment record, not a residual proposal. Its actual residuals are separately registered and reconciled.",
+    "W46-LIBC-EVENT-CONTRACT-GAPS": "Completed implementation-card identifier in the new increment record, not a residual proposal. Its actual residuals are separately registered and reconciled.",
+    "W46-METRIC-TRACE-CONTRACT-GAPS": "Completed implementation-card identifier in the new increment record, not a residual proposal. Its actual residuals are separately registered and reconciled."
+  },
+  "unresolved_new_candidates": []
+}

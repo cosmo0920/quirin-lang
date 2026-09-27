@@ -1,0 +1,216 @@
+{
+ "added_at_contracted_sites": [
+  {
+   "category": "unsupported",
+   "count": 2,
+   "description": "counted users undecided: `X`: `X` calls `X`: the declaration of `X` does not hold against its body here (`X` undecided: `X` calls `X`: call to `X`, which has no contract in force and no body in this unit)"
+  }
+ ],
+ "changed_functions": 16,
+ "corrections": [],
+ "function_status_after": {
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
+ },
+ "function_status_before": {
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
+ },
+ "new_leak_or_violation_leaves": [],
+ "removed_cascade_from_moved_callee": [],
+ "removed_contracted_leaves": {
+  "flb_task_get_route_status": 2,
+  "flb_task_retry_count": 2,
+  "flb_task_running_count": 2,
+  "flb_task_set_route_status": 2,
+  "strnlen": 4
+ },
+ "removed_contracted_total": 12,
+ "removed_naming_contracted": [
+  {
+   "callee": "flb_output_flush_id_get",
+   "count": 2,
+   "description": "counted users undecided: `X`: `X` calls `X`: `X` calls `X`: call to `X`, which has no contract in force and no body in this unit"
+  }
+ ],
+ "removed_on_contracted_call_line": [
+  {
+   "callee": "strcasecmp",
+   "count": 4,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  }
+ ],
+ "status_moves": [],
+ "unattributed": [
+  {
+   "count": 1,
+   "function": [
+    "13:src/flb_output.c",
+    "flb_output_task_flush_error"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "call to uncontracted function `flb_task_deactivate_route`",
+    17880,
+    "src/flb_output.c:442"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "14:src/flb_output.c",
+    "flb_output_task_flush_error"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "call to uncontracted function `flb_task_deactivate_route`",
+    17880,
+    "src/flb_output.c:442"
+   ]
+  }
+ ],
+ "unit_changes": [
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "0:plugins/in_storage_backlog/sb.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "10:src/flb_engine_dispatch.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "11:src/flb_scheduler.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "12:src/flb_scheduler.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts"
+   ],
+   "unit": "13:src/flb_output.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts"
+   ],
+   "unit": "14:src/flb_output.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "1:src/flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "2:src/flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "3:src/flb_storage.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "4:src/flb_storage.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "5:src/flb_task.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "6:src/flb_task.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "7:src/flb_engine.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "8:src/flb_engine.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "9:src/flb_engine_dispatch.c"
+  }
+ ],
+ "unit_status_after": {
+  "Unknown": 13,
+  "Unsafe": 2
+ },
+ "unit_status_before": {
+  "Unknown": 13,
+  "Unsafe": 2
+ }
+}

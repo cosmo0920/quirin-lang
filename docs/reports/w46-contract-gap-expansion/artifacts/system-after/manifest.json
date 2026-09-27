@@ -1,0 +1,38 @@
+{
+  "console.log": {
+    "file": "console.log",
+    "raw_sha256": "5f69413b057b147c6e2f5b2ced4b9dca293c7bb16d427a2950c9d49fcfbae0c4"
+  },
+  "exit": {
+    "file": "exit",
+    "raw_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+    "file": "resource-diagnostics.chunk-contracts.json.gz",
+    "raw_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "resource-diagnostics.contracts.json": {
+    "file": "resource-diagnostics.contracts.json.gz",
+    "raw_sha256": "b3cb7a4f23b0f153834dc8efb3e9f155c65cb1d68de3c5682466e1e4d2b7efd7"
+  },
+  "resource-diagnostics.invocation.json": {
+    "file": "resource-diagnostics.invocation.json.gz",
+    "raw_sha256": "b51d84934def925ddc4f1eda21796e40b9302cb46500c14d103866df67325c39"
+  },
+  "resource-diagnostics.json": {
+    "file": "resource-diagnostics.json.gz",
+    "raw_sha256": "67f6cb2cde065d5d03807d79250aae9384f79e5ed53b2ad948dfe34bba3019d9"
+  },
+  "resource-diagnostics.source-effects.json": {
+    "file": "resource-diagnostics.source-effects.json.gz",
+    "raw_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "run.json": {
+    "file": "run.json.gz",
+    "raw_sha256": "321b23d3b41198f991d6eaa10daca0e67bfeddd72532547393caafa6779c0d38"
+  },
+  "stderr.log": {
+    "file": "stderr.log",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
