@@ -922,6 +922,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w46-access-path-census](w46-access-path-census/README.md) | W46-ACCESS-PATH-CENSUS: every access leaf by its Clang-typed access path, and a per-function prediction |
 
+| [w46-access-path-statements](w46-access-path-statements/README.md) | W46-ACCESS-PATH-STATEMENTS |
+
 | [w46-contract-gap-expansion](w46-contract-gap-expansion/README.md) | W46 contract gap expansion |
 
 | [w46-external-callee-contracts](w46-external-callee-contracts/README.md) | W46-EXTERNAL-CALLEE-CONTRACTS: contracts for the external callees that block the most functions |
