@@ -113,10 +113,11 @@ module contract;
 //
 // ## Read at the same time and DELIBERATELY LEFT UNDECLARED
 //
-// `cmt_metric_set` (`:66`), `cmt_metric_set_int64`, `cmt_metric_set_timestamp`
-// and the rest of the `cmt_metric_*` family are undeclared: `cmt_metric_set` is
-// this card's TARGET rather than its premise, and none of the others is the
-// sole blocker of any projected function. `cmt_atomic_load`/`cmt_atomic_store`
+// At W37, `cmt_metric_set` (`:66`), `cmt_metric_set_int64`,
+// `cmt_metric_set_timestamp` and the rest of the `cmt_metric_*` family were
+// undeclared: `cmt_metric_set` was that card's TARGET rather than its premise.
+// W46-METRIC-TRACE-CONTRACT-GAPS later adds the selected scalar helpers below;
+// `cmt_metric_set` remains undeclared. `cmt_atomic_load`/`cmt_atomic_store`
 // are undeclared because each has five definitions across five backend files
 // (`cmt_atomic_clang.c`, `_gcc.c`, `_generic.c`, `_msvc.c` twice), three of them
 // `inline` with no `static`/`extern` against a plain extern prototype — the
@@ -136,6 +137,93 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(metric);
     ensures normal resource_borrowed(timestamp);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_return_none();
+};
+
+// W46-METRIC-TRACE-CONTRACT-GAPS: custody-neutral scalar access and stores.
+// Both pinned revisions have identical cmt_metric.c, cmt_metric.h and cmt_math.h bytes.
+extern fn cmt_metric_get_value(metric: ptr<mut, u8>) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_get_value_type(metric: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_get_int64_value(metric: ptr<mut, u8>) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_get_uint64_value(metric: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_set_int64(metric: ptr<mut, u8>, timestamp: u64, val: i64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(timestamp);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_set_uint64(metric: ptr<mut, u8>, timestamp: u64, val: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(timestamp);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_set_timestamp(metric: ptr<mut, u8>, timestamp: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(timestamp);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_set_start_timestamp(metric: ptr<mut, u8>, start_timestamp: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(start_timestamp);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_unset_start_timestamp(metric: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_has_start_timestamp(metric: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_metric_get_start_timestamp(metric: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+extern fn cmt_math_d64_to_uint64(val: f64) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(val);
+    ensures normal resource_return_none();
+};
+extern fn cmt_math_uint64_to_d64(val: u64) -> f64
+contract {
+    requires resource_contract_v1;
     ensures normal resource_borrowed(val);
     ensures normal resource_return_none();
 };

@@ -6740,7 +6740,7 @@
   "workspace_tests": 6021,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 210,
+  "lean_audits": 211,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6854,6 +6854,7 @@
    "AuditMemberRelease.lean",
    "AuditMemberReleaseCallee.lean",
    "AuditMemoKey.lean",
+   "AuditMetricTraceContractGaps.lean",
    "AuditMonkeyWaitProjection.lean",
    "AuditMonkeyWaitSourcePolicy.lean",
    "AuditMutexInvariant.lean",
@@ -6959,7 +6960,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w46-external-callee-contracts/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
