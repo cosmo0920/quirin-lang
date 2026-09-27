@@ -38,6 +38,9 @@ The established scalar and chain shape readers stay first. With
 statement records both readers' complete plans, any disagreement, and the
 analyzed source identity. The corpus artifact below archives that stream.
 No shape route is retired before verdict and coverage parity.
+The `QCORE_TYPED_PATH_DISABLE=1` audit control bypasses only the new fallback
+route, letting the same binary reproduce the BEFORE corpus; other values have
+no effect. It is never set in AFTER or the standing gate.
 
 The matching Lean module is `proof/QCore/TypedAccessPathStatements.lean`,
 registered in `proof/AuditTypedAccessPathStatements.lean`. It proves refusal

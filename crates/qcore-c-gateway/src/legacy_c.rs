@@ -6449,7 +6449,8 @@ impl Parser<'_> {
             }
             // W46-ACCESS-PATH-STATEMENTS: only an access refusal reaches the
             // Clang reader. Both established shape readers remain first.
-            if matches!(&instruction, LegacyInstruction::Unknown { description, .. }
+            if !crate::typed_access_path::disabled_for_baseline()
+                && matches!(&instruction, LegacyInstruction::Unknown { description, .. }
                 if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
                 && let Some(typed) = self.typed_path_statement(tokens)
             {

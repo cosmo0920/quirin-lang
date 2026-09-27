@@ -18,10 +18,15 @@ use crate::typed_c_ast::{children, kind, translation_unit_ast};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
+pub(crate) const DISABLE_PATH: &str = "QCORE_TYPED_PATH_DISABLE";
 static PARITY_SINK: Mutex<Option<BufWriter<File>>> = Mutex::new(None);
 
 pub(crate) fn parity_enabled() -> bool {
     std::env::var_os(PARITY_PATH).is_some()
+}
+
+pub(crate) fn disabled_for_baseline() -> bool {
+    std::env::var_os(DISABLE_PATH).as_deref() == Some(std::ffi::OsStr::new("1"))
 }
 
 /// Optional side-by-side record. Verdict artifacts remain the arbiter; this
