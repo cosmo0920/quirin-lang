@@ -12,7 +12,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use serde::de::{IgnoredAny, MapAccess, SeqAccess, Visitor};
+use serde::de::{MapAccess, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
@@ -245,7 +245,7 @@ impl<'de> Deserialize<'de> for RetainedDeclarations {
             // returns no declarations. Preserve that refusal and consume the
             // complete value instead of silently leaving malformed JSON unread.
             fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
-                while map.next_entry::<IgnoredAny, IgnoredAny>()?.is_some() {}
+                while map.next_entry::<String, Value>()?.is_some() {}
                 Ok(RetainedDeclarations::default())
             }
 
@@ -295,14 +295,24 @@ impl<'de> Deserialize<'de> for RetainedRoot {
 
             fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
                 let mut retained = RetainedDeclarations::default();
+                let mut root_kind = Value::Null;
                 while let Some(key) = map.next_key::<String>()? {
                     if key == "inner" {
                         // `Value` keeps the last duplicate object key. Replace
                         // every earlier declaration set, including its facts.
                         retained = map.next_value::<RetainedDeclarations>()?;
+                    } else if key == "kind" {
+                        root_kind = map.next_value::<Value>()?;
                     } else {
-                        map.next_value::<IgnoredAny>()?;
+                        // Keep Value's numeric/depth validation for metadata too.
+                        // These root fields are consumed and immediately dropped.
+                        map.next_value::<Value>()?;
                     }
+                }
+                if root_kind.as_str() != Some("TranslationUnitDecl") {
+                    return Err(serde::de::Error::custom(
+                        "expected Clang TranslationUnitDecl",
+                    ));
                 }
                 Ok(RetainedRoot(retained))
             }
@@ -1196,7 +1206,7 @@ mod tests {
 
     #[test]
     fn streamed_decoder_uses_last_root_inner_and_rejects_incomplete_json() {
-        let duplicate = br#"{"inner":[{"kind":"FunctionDecl","name":"old","inner":[{"kind":"CompoundStmt"}]}],"inner":{"unused":true},"inner":[{"kind":"FunctionDecl","name":"new","inner":[{"kind":"CompoundStmt"}]}]}"#;
+        let duplicate = br#"{"kind":"TranslationUnitDecl","inner":[{"kind":"FunctionDecl","name":"old","inner":[{"kind":"CompoundStmt"}]}],"inner":{"unused":true},"inner":[{"kind":"FunctionDecl","name":"new","inner":[{"kind":"CompoundStmt"}]}]}"#;
         let full: Value = serde_json::from_slice(duplicate).unwrap();
         let original = AstIndex::from_ast(full, "");
         let streamed = AstIndex::from_json(duplicate, "").unwrap();
@@ -1207,7 +1217,11 @@ mod tests {
         assert_eq!(streamed.functions["new"].len(), 1);
         for invalid in [
             br#"{"inner":["#.as_slice(),
-            br#"{"inner":[]} trailing"#.as_slice(),
+            br#"{"kind":"TranslationUnitDecl","inner":[]} trailing"#.as_slice(),
+            br#"{"kind":"RecordDecl","inner":[]}"#.as_slice(),
+            br#"{"inner":[]}"#.as_slice(),
+            br#"{"kind":"TranslationUnitDecl","ignored":1e400,"inner":[]}"#.as_slice(),
+            br#"{"kind":"TranslationUnitDecl","inner":{"ignored":1e400},"inner":[]}"#.as_slice(),
         ] {
             assert!(AstIndex::from_json(invalid, "").is_err());
         }
