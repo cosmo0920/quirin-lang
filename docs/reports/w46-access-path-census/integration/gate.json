@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W46-ACCESS-PATH-CENSUS on merge fa9823d9 (card tip 1cb85a0b merged onto main 37c59235, after 5c9d05a9's contract-gap census baseline; main's two new commits over the card's own base are docs-only w46-contract-gap-expansion records), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 6021 core Rust passed / 0 failed / 11 ignored over 334 summaries; 598 census-feature Rust passed / 0 failed / 0 ignored over 1 summary (cargo test -p qcore-c-gateway --features indirect-census --lib); 129 provider Rust passed / 0 failed / 1 ignored over 43 summaries; 364 root Python tests; 210 Lean audits. fmt, clippy -D warnings (core and the indirect-census feature), both reevaluation examples, and the docs index all exit 0. The corpus arbiter ran the card's default release build and baseline_identity.py against docs/reports/w46-external-callee-contracts/integration/artifacts exits 0 with verdict_bearing_identical true: diagnostics, chunk-contracts and source byte-identical; contracts identical after the recorded checkout-root alias; source-effects differs only in checkout-bound digests, as at the card's own baseline check. Arbiter figures unmoved: functions 405 Safe / 9 provisional Unsafe / 4,420 Unknown; units 5 / 8 / 168 / 4; leak 34; unknown_alias 3,572; unsupported 41,239; summary_conflict 1; Pending 0. This is a measurement card (MOVES=no): the census stream runs behind the indirect-census feature only, and the corpus does not move, so no new baseline is archived here.",
+ "workspace_tests": 6021,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 364,
+ "lean_audits": 210,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
