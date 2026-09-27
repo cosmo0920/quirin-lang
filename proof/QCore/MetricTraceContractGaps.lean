@@ -55,4 +55,21 @@ theorem missing_body_evidence_keeps_premise (arity : Nat) :
               derived := fun _ => none } noCarry 0 = some (neutralContract arity) := by
   exact absence_of_evidence_applies_the_declaration rfl
 
+-- W46-METRIC-AGGREGATE-CONTRACTS: histogram bucket and summary quantile
+-- queries take an index; the other four selected scalar queries take a metric.
+-- This records only the contract vectors, not bounds or source-body semantics.
+def aggregateReadArities : List Nat := [2, 1, 1, 2, 1, 1]
+
+theorem aggregate_read_count_and_arity :
+    aggregateReadArities.length = 6 ∧
+    aggregateReadArities.count 2 = 2 ∧
+    aggregateReadArities.count 1 = 4 := by decide
+
+theorem aggregate_reads_retain_custody (arity : Nat)
+    (_selected : arity ∈ aggregateReadArities) :
+    (neutralContract arity).parameters.map parameterDuty =
+      List.replicate arity .retained ∧
+    resultDuty (neutralContract arity).result = .absent := by
+  simp [neutralContract, List.map_replicate, parameterDuty, resultDuty]
+
 end QCore.MetricTraceContractGaps

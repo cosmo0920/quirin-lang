@@ -387,6 +387,14 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("ctr_span_set_dropped_events_count", 2),
         ("ctr_span_set_dropped_links_count", 2),
         ("ctr_span_set_dropped_attributes_count", 2),
+        // W46-METRIC-AGGREGATE-CONTRACTS: scalar reads of histogram and
+        // summary values. The indexed getters borrow their index too.
+        ("cmt_metric_hist_get_value", 2),
+        ("cmt_metric_hist_get_count_value", 1),
+        ("cmt_metric_hist_get_sum_value", 1),
+        ("cmt_summary_quantile_get_value", 2),
+        ("cmt_summary_get_sum_value", 1),
+        ("cmt_summary_get_count_value", 1),
         // W46-LIBC-EVENT-CONTRACT-GAPS: eleven neutral catalog and pinned
         // observation contracts, including the zero-argument Libevent queries.
         ("memcmp", 3),
@@ -1352,9 +1360,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
     // unchanged.
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // W46-METRIC-AGGREGATE-CONTRACTS adds six v1 declarations in an existing module.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (54, 219, 216)
+        (54, 225, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
