@@ -20,6 +20,12 @@ use crate::typed_c_ast::{children, kind, translation_unit_ast};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
+
+/// Card **W47-ACCESS-PATH-POSITIONS**, step B: the owner-aware enum arm.
+/// With it, a value whose type is `enum TAG` for a declared `EnumDecl`, or a
+/// typedef whose own declaration is directly an `EnumType`, is a scalar.
+/// Every other typedef spelling keeps the positive-builtin refusal.
+pub(crate) const ENUM_ARM: bool = false;
 static PARITY_SINK: Mutex<Option<ParitySink>> = Mutex::new(None);
 
 struct ParitySink {
@@ -98,6 +104,66 @@ pub(crate) fn record_legacy_route(
     }));
 }
 
+/// Card **W47-ACCESS-PATH-POSITIONS**: a condition operand, return or call
+/// actual every existing route refused, with the typed answer (admitted or
+/// not). Rows without a `position` key are P2's statement rows.
+pub(crate) fn record_position(
+    function: &str,
+    line: usize,
+    texts: &[&str],
+    position: &str,
+    new: Option<&StatementPlan>,
+) {
+    if !parity_enabled() {
+        return;
+    }
+    write_parity(serde_json::json!({
+        "function": function,
+        "line": line,
+        "texts": texts,
+        "position": position,
+        "old_route": "old_refusal",
+        "old_admitted": false,
+        "new_admitted": new.is_some(),
+        "new_scalar": new.map(|plan| format!("{:?}", plan.scalar)),
+        "new_chains": new.map(|plan| format!("{:?}", plan.chains)),
+        "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
+        "disagreement": new.is_some(),
+    }));
+}
+
+/// Card **W47-ACCESS-PATH-POSITIONS**: an existing route admitted a
+/// condition operand, return or call actual; its instruction beside the typed
+/// candidate. Distinct vocabularies: no parity claim.
+pub(crate) fn record_position_legacy(
+    function: &str,
+    line: usize,
+    texts: &[&str],
+    position: &str,
+    old_route: &str,
+    old_instruction: &str,
+    new: Option<&StatementPlan>,
+) {
+    if !parity_enabled() {
+        return;
+    }
+    write_parity(serde_json::json!({
+        "function": function,
+        "line": line,
+        "texts": texts,
+        "position": position,
+        "old_route": old_route,
+        "old_admitted": true,
+        "new_admitted": new.is_some(),
+        "old_instruction": old_instruction,
+        "new_scalar": new.map(|plan| format!("{:?}", plan.scalar)),
+        "new_chains": new.map(|plan| format!("{:?}", plan.chains)),
+        "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
+        "disagreement": true,
+        "comparison": "distinct plan vocabularies; no parity claim",
+    }));
+}
+
 fn write_parity(mut value: Value) {
     let Some((source_sha256, dialect, frontend_sha256, frontend_debug)) =
         ANALYSED_SOURCE.with(|cell| {
@@ -155,15 +221,83 @@ pub(crate) struct StatementPlan {
 /// An AST and the exact token rendering handed to Clang. This is created
 /// lazily, only after a statement has reached an access-related refusal.
 pub(crate) struct StatementIndex {
-    source: Arc<String>,
-    function: Value,
-    fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
+    pub(crate) source: Arc<String>,
+    pub(crate) function: Value,
+    pub(crate) fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
+    pub(crate) enums: Arc<EnumFacts>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-struct FieldFacts {
+pub(crate) struct FieldFacts {
     union_owner: bool,
     bitfield: bool,
+}
+
+/// Card **W47-ACCESS-PATH-POSITIONS**, step B: positive enum evidence read
+/// from the unit's own declarations. `typedefs` maps a typedef name to
+/// whether its declaration is directly an `EnumType` (a name declared twice
+/// with different answers maps to `false`); `tags` holds every named
+/// `EnumDecl`.
+#[derive(Clone, Debug, Default)]
+pub(crate) struct EnumFacts {
+    typedefs: BTreeMap<String, bool>,
+    tags: BTreeSet<String>,
+}
+
+impl EnumFacts {
+    fn collect(node: &Value, facts: &mut Self) {
+        match kind(node) {
+            "EnumDecl" => {
+                if let Some(name) = node["name"].as_str() {
+                    facts.tags.insert(name.to_owned());
+                }
+            }
+            "TypedefDecl" => {
+                if let Some(name) = node["name"].as_str() {
+                    let own = node["type"]["qualType"].as_str().unwrap_or("*");
+                    let direct = children(node).first().is_some_and(|inner| {
+                        let inner = if kind(inner) == "ElaboratedType" {
+                            children(inner).first().unwrap_or(inner)
+                        } else {
+                            inner
+                        };
+                        kind(inner) == "EnumType"
+                            && inner["decl"]["kind"].as_str() == Some("EnumDecl")
+                    });
+                    let enum_typedef = direct
+                        && children(node).len() == 1
+                        && !own.contains('*')
+                        && !own.contains('[')
+                        && !own.contains('(');
+                    facts
+                        .typedefs
+                        .entry(name.to_owned())
+                        .and_modify(|old| *old = *old && enum_typedef)
+                        .or_insert(enum_typedef);
+                }
+            }
+            _ => {}
+        }
+        for child in children(node) {
+            Self::collect(child, facts);
+        }
+    }
+
+    /// Whether `node`'s type is positively an enumeration: `enum TAG` for a
+    /// declared tag, or exactly one typedef name whose declaration is an
+    /// `EnumType`. `const` is the only qualifier admitted.
+    pub(crate) fn is_enum(&self, node: &Value) -> bool {
+        let Some(text) = qual(node) else { return false };
+        let words = text
+            .split_whitespace()
+            .filter(|word| *word != "const")
+            .collect::<Vec<_>>();
+        match words.as_slice() {
+            ["enum", tag] => self.tags.contains(*tag),
+            [name] => self.typedefs.get(*name) == Some(&true),
+            _ => false,
+        }
+    }
 }
 
 thread_local! {
@@ -179,6 +313,7 @@ struct SourceContext {
     request: LegacyCertificateRequest,
     ast: OnceCell<Option<Value>>,
     fields: OnceCell<Arc<BTreeMap<String, Option<FieldFacts>>>>,
+    enums: OnceCell<Arc<EnumFacts>>,
 }
 
 /// Keep the exact analysed source in the worker that builds this unit's CFGs.
@@ -209,6 +344,7 @@ pub(crate) fn enter_source(
             request,
             ast: OnceCell::new(),
             fields: OnceCell::new(),
+            enums: OnceCell::new(),
         }))
     }))
 }
@@ -258,10 +394,16 @@ impl StatementIndex {
                 collect_field_facts(ast, &mut fields);
                 Arc::new(fields)
             });
+            let enums = context.enums.get_or_init(|| {
+                let mut enums = EnumFacts::default();
+                EnumFacts::collect(ast, &mut enums);
+                Arc::new(enums)
+            });
             Some(Self {
                 source: Arc::clone(&context.source),
                 function: functions.remove(0).clone(),
                 fields: Arc::clone(fields),
+                enums: Arc::clone(enums),
             })
         })
     }
@@ -287,7 +429,14 @@ impl StatementIndex {
         if matched.next().is_some() {
             return None;
         }
-        let mut reader = Reader {
+        let mut reader = self.reader(&never_bound);
+        reader.statement(node)?;
+        Some(reader.plan)
+    }
+
+    /// A fresh reader over this function's field and enum facts.
+    pub(crate) fn reader<'a>(&'a self, never_bound: &'a dyn Fn(&str) -> bool) -> Reader<'a> {
+        Reader {
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
@@ -295,13 +444,12 @@ impl StatementIndex {
                 borrowed_destination: false,
             },
             fields: &self.fields,
-            never_bound: &never_bound,
-        };
-        reader.statement(node)?;
-        Some(reader.plan)
+            enums: &self.enums,
+            never_bound,
+        }
     }
 
-    fn node_line(&self, node: &Value) -> Option<usize> {
+    pub(crate) fn node_line(&self, node: &Value) -> Option<usize> {
         let offset = offset(&node["range"]["begin"])?;
         Some(
             self.source
@@ -314,7 +462,7 @@ impl StatementIndex {
         )
     }
 
-    fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
+    pub(crate) fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
         let start = offset(&node["range"]["begin"])?;
         let end = offset(&node["range"]["end"])?
             .checked_add(node["range"]["end"]["tokLen"].as_u64()? as usize)?;
@@ -330,7 +478,7 @@ impl StatementIndex {
     }
 }
 
-fn offset(location: &Value) -> Option<usize> {
+pub(crate) fn offset(location: &Value) -> Option<usize> {
     location["offset"]
         .as_u64()
         .or_else(|| location["expansionLoc"]["offset"].as_u64())
@@ -443,14 +591,20 @@ fn is_control(node: &Value) -> bool {
     )
 }
 
-struct Reader<'a> {
-    plan: StatementPlan,
+pub(crate) struct Reader<'a> {
+    pub(crate) plan: StatementPlan,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
-    never_bound: &'a dyn Fn(&str) -> bool,
+    enums: &'a EnumFacts,
+    pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
 }
 
 impl Reader<'_> {
-    fn statement(&mut self, node: &Value) -> Option<()> {
+    /// A proven builtin scalar, or (step B) a positively proven enumeration.
+    pub(crate) fn scalar(&self, node: &Value) -> bool {
+        is_scalar(node) || (ENUM_ARM && self.enums.is_enum(node))
+    }
+
+    pub(crate) fn statement(&mut self, node: &Value) -> Option<()> {
         match kind(node) {
             "BinaryOperator" if node["opcode"].as_str() == Some("=") => {
                 let pair = children(node);
@@ -491,7 +645,7 @@ impl Reader<'_> {
                 }
                 let decl = &declarations[0];
                 let pointer = is_pointer(decl);
-                if !pointer && !is_scalar(decl) {
+                if !pointer && !self.scalar(decl) {
                     return None;
                 }
                 let name = decl["name"].as_str()?.to_owned();
@@ -518,7 +672,7 @@ impl Reader<'_> {
 
     fn store(&mut self, node: &Value) -> Option<()> {
         let node = strip(node)?;
-        if kind(node) == "DeclRefExpr" && is_scalar(node) {
+        if kind(node) == "DeclRefExpr" && self.scalar(node) {
             self.plan.scalar.destination =
                 Some(node["referencedDecl"]["name"].as_str()?.to_owned());
             return Some(());
@@ -526,7 +680,7 @@ impl Reader<'_> {
         self.path(node, true, false)
     }
 
-    fn expression(&mut self, node: &Value) -> Option<()> {
+    pub(crate) fn expression(&mut self, node: &Value) -> Option<()> {
         match kind(node) {
             "ParenExpr" | "ImplicitCastExpr" => {
                 if kind(node) == "ImplicitCastExpr"
@@ -540,12 +694,15 @@ impl Reader<'_> {
                 self.expression(children(node).first()?)
             }
             "CStyleCastExpr"
-                if is_scalar(node) && children(node).first().is_some_and(is_scalar) =>
+                if self.scalar(node)
+                    && children(node)
+                        .first()
+                        .is_some_and(|inner| self.scalar(inner)) =>
             {
                 self.expression(children(node).first()?)
             }
             "IntegerLiteral" | "FloatingLiteral" | "CharacterLiteral" | "GNUNullExpr" => Some(()),
-            "DeclRefExpr" if is_scalar(node) => Some(()),
+            "DeclRefExpr" if self.scalar(node) => Some(()),
             "UnaryExprOrTypeTraitExpr"
                 if node["name"].as_str() == Some("sizeof")
                     && children(node).is_empty()
@@ -585,7 +742,7 @@ impl Reader<'_> {
                 ) =>
             {
                 let pair = children(node);
-                if pair.len() != 2 || !is_scalar(&pair[0]) || !is_scalar(&pair[1]) {
+                if pair.len() != 2 || !self.scalar(&pair[0]) || !self.scalar(&pair[1]) {
                     return None;
                 }
                 self.expression(&pair[0])?;
@@ -599,8 +756,8 @@ impl Reader<'_> {
         }
     }
 
-    fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
-        if !(is_scalar(node) || (pointer_read && !store && is_pointer(node))) {
+    pub(crate) fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
+        if !(self.scalar(node) || (pointer_read && !store && is_pointer(node))) {
             return None;
         }
         let mut steps = Vec::new();
@@ -637,7 +794,7 @@ impl Reader<'_> {
                 }
                 "ArraySubscriptExpr" => {
                     let pair = children(cursor);
-                    if pair.len() != 2 || !is_scalar(&pair[1]) {
+                    if pair.len() != 2 || !self.scalar(&pair[1]) {
                         return None;
                     }
                     self.expression(&pair[1])?;
@@ -710,7 +867,7 @@ impl Reader<'_> {
     }
 }
 
-fn strip(mut node: &Value) -> Option<&Value> {
+pub(crate) fn strip(mut node: &Value) -> Option<&Value> {
     while matches!(kind(node), "ParenExpr" | "ImplicitCastExpr") {
         if kind(node) == "ImplicitCastExpr"
             && !matches!(
@@ -725,13 +882,13 @@ fn strip(mut node: &Value) -> Option<&Value> {
     Some(node)
 }
 
-fn qual(node: &Value) -> Option<&str> {
+pub(crate) fn qual(node: &Value) -> Option<&str> {
     node["type"]["desugaredQualType"]
         .as_str()
         .or_else(|| node["type"]["qualType"].as_str())
 }
 
-fn is_scalar(node: &Value) -> bool {
+pub(crate) fn is_scalar(node: &Value) -> bool {
     // A missing/opaque desugared spelling is not evidence of a scalar. In
     // particular Clang may leave a typedef to an anonymous struct/union as
     // `a_lock_t`; the former negative filter admitted it as an integer.
@@ -751,7 +908,7 @@ fn is_scalar(node: &Value) -> bool {
     base
 }
 
-fn is_pointer(node: &Value) -> bool {
+pub(crate) fn is_pointer(node: &Value) -> bool {
     qual(node).is_some_and(|text| {
         text.trim_end().ends_with('*')
             && !text.contains("union ")

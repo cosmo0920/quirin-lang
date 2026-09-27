@@ -341,11 +341,16 @@ fn an_uncontracted_callee_keeps_the_refusal() {
 
 #[test]
 fn a_chain_keeps_the_refusal() {
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins this deliberately:
+    // the lexical recogniser still refuses the chain, and the typed actual
+    // now admits it with its per-link obligation, which the bound record's
+    // unstored `next` link cannot discharge. The gate refusal is exchanged
+    // for the precise `UnknownAlias` at `r->next`; the status stays Unknown.
     expect(
-        "`x_use(r->next->count)` through a bound record is W44-INDIRECT-CHAIN-ACCESS's shape",
+        "`x_use(r->next->count)` through a bound record keeps its link obligation",
         "void w(void) { struct x_rec *r = x_record(); x_use(r->next->count); x_record_free(r); }",
         "Unknown",
-        &[GATE],
+        &["unknown_alias:r->next"],
     );
 }
 

@@ -51,6 +51,9 @@ pub mod teardown_source;
 pub mod traversal_census;
 mod type_query;
 mod typed_access_path;
+// Card W47-ACCESS-PATH-POSITIONS: the typed reader in condition operands,
+// returns and call actuals.
+mod typed_access_positions;
 pub mod typed_c_ast;
 mod typed_field_access;
 pub mod typed_source;

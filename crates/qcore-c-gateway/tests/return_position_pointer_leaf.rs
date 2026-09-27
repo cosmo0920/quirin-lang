@@ -413,20 +413,40 @@ fn the_adversarial_family_keeps_its_return_refusal() {
     }
     let decided = "void subject(struct z_view *view) { void *p; p = q_alloc(); \
                    if (view->head->next) { q_free(p); return; } q_free(p); }";
-    for refused in [
-        // an explicit dereference
+    // an address-of: an interior address is a derived result, which neither
+    // this route nor the W47 typed return fallback answers.
+    refused_in_return_but_admitted_in_a_condition(
+        "struct z_node **subject(struct z_view *view) { return &view->head; }",
+        decided,
+    );
+    // an explicit dereference: the protected-formal reading counts the
+    // leading `*` as a use of the formal's slot, so `may_bind(view)` holds and
+    // the W47 fallback refuses it too.
+    refused_in_return_but_admitted_in_a_condition(
         "struct z_node *subject(struct z_view *view) { return *view->ring; }",
+        decided,
+    );
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins these deliberately.
+    // They are outside this route's grammar, which is unchanged, but the
+    // Clang-typed return fallback asked after it reads each as one pointer
+    // read whose every root the custody closure proves never bound and
+    // `may_bind` does not name (this route's own base premise), with a
+    // `NoOp` exit: no place escapes, and a bound root still refuses
+    // (`a_bound_base_keeps_the_return_refusal`,
+    // `a_chain_rooted_at_an_acquisition_keeps_the_return_refusal`).
+    for typed in [
         // a subscript
         "struct z_node *subject(struct z_view *view) { return view->ring[0]; }",
-        // an address-of
-        "struct z_node **subject(struct z_view *view) { return &view->head; }",
-        // a `void *` member the reader will not resolve
+        // a `void *` member this route's reader will not resolve
         "void *subject(struct z_view *view) { return view->head->leaf->opaque; }",
-        // a chain past the bound
+        // a chain past this route's bound
         "struct z_node *subject(struct z_view *view) { \
          return view->head->next->next->next->next; }",
     ] {
-        refused_in_return_but_admitted_in_a_condition(refused, decided);
+        let returned = run(typed);
+        assert!(!returned.refuses_return(), "{typed}");
+        assert_eq!(returned.status, AnalysisStatus::Safe, "{typed}");
+        assert!(returned.certified, "{typed}");
     }
     // An uncontracted call. Deliberately re-pinned by card
     // W43-RETURN-EXPRESSION: a whole-call return the statement classifier
