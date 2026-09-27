@@ -44,7 +44,7 @@ fn clang_available() -> bool {
 struct Tree(PathBuf);
 
 impl Tree {
-    /// A fresh tree: `src/queue.c` (the fixture), `contracts/queue.qcore`
+    /// A fresh tree: `src/queue.c` (the fixture), `contracts/queue.qv`
     /// (pinned or flexible) and `manifest.json`.
     fn new(pinned: bool) -> Self {
         let root = std::env::temp_dir().join(format!(
@@ -55,9 +55,9 @@ impl Tree {
         fs::create_dir_all(root.join("src")).unwrap();
         fs::create_dir_all(root.join("contracts")).unwrap();
         fs::write(root.join("src/queue.c"), fixture("queue.c")).unwrap();
-        let contracts = fixture("queue.qcore");
+        let contracts = fixture("queue.qv");
         fs::write(
-            root.join("contracts/queue.qcore"),
+            root.join("contracts/queue.qv"),
             if pinned {
                 contracts.replace(FLEXIBLE_MARKER, "")
             } else {
@@ -67,7 +67,7 @@ impl Tree {
         .unwrap();
         fs::write(
             root.join("manifest.json"),
-            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qcore\"]}\n",
+            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qv\"]}\n",
         )
         .unwrap();
         Self(root)
@@ -312,7 +312,7 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
     );
     assert_eq!(tree.read("restored/r.json"), tree.read("before/r.json"));
     // A changed contract text is out of force until it is pinned again.
-    let path = tree.0.join("contracts/queue.qcore");
+    let path = tree.0.join("contracts/queue.qv");
     let text = fs::read_to_string(&path).unwrap();
     fs::write(
         &path,
@@ -468,7 +468,7 @@ fn qv_directory_discovery_and_lock_evaluation_preserve_checked_contracts() {
     succeeded(&legacy.audit("old/r.json"));
     let current = Tree::new(true);
     fs::rename(
-        current.0.join("contracts/queue.qcore"),
+        current.0.join("contracts/queue.qv"),
         current.0.join("contracts/queue.qv"),
     )
     .unwrap();
@@ -488,11 +488,7 @@ fn qv_directory_discovery_and_lock_evaluation_preserve_checked_contracts() {
         legacy.read("old/r.contracts.json")["contract_revision"]["counts"],
         current.read("new/r.contracts.json")["contract_revision"]["counts"]
     );
-    fs::write(
-        current.0.join("contracts/queue.qcore"),
-        fixture("queue.qcore"),
-    )
-    .unwrap();
+    fs::write(current.0.join("contracts/queue.qv"), fixture("queue.qv")).unwrap();
     assert!(
         !current.pin(&["--check"]).status.success(),
         "two aliases must not be picked by directory order"

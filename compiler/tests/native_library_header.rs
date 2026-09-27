@@ -33,7 +33,7 @@ use qcore_compiler::{
 };
 
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
+const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qv";
 const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qv");
 const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib_header.qcorelib";
 const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib_header.qcorelib");

@@ -41,7 +41,7 @@ fn clang_available() -> bool {
     false
 }
 
-/// A fresh tree: `src/queue.c` (the fixture), `contracts/queue.qcore` with
+/// A fresh tree: `src/queue.c` (the fixture), `contracts/queue.qv` with
 /// every contract pinned (the default), and `manifest.json`.
 struct Tree(PathBuf);
 
@@ -56,13 +56,13 @@ impl Tree {
         fs::create_dir_all(root.join("contracts")).unwrap();
         fs::write(root.join("src/queue.c"), fixture("queue.c")).unwrap();
         fs::write(
-            root.join("contracts/queue.qcore"),
-            fixture("queue.qcore").replace(FLEXIBLE_MARKER, ""),
+            root.join("contracts/queue.qv"),
+            fixture("queue.qv").replace(FLEXIBLE_MARKER, ""),
         )
         .unwrap();
         fs::write(
             root.join("manifest.json"),
-            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qcore\"]}\n",
+            "{\"schema_version\": 1, \"modules\": [\"contracts/queue.qv\"]}\n",
         )
         .unwrap();
         Self(root)
@@ -310,7 +310,7 @@ fn a_pin_holds_at_every_reviewed_revision_and_nowhere_else() {
         [("box_drop".to_owned(), "source-changed".to_owned())]
     );
     // A contract edit voids every identity, whatever revision is audited.
-    let path = tree.0.join("contracts/queue.qcore");
+    let path = tree.0.join("contracts/queue.qv");
     let text = fs::read_to_string(&path).unwrap();
     fs::write(
         &path,
