@@ -2,7 +2,10 @@
 """Bind corpus unit indices to parity source hashes by exact Clang replay.
 
 Usage: replay_corpus_sources.py AFTER_DIAGNOSTICS PARITY_JSONL FRONTEND_CONTEXTS_JSONL
-       COMPILE_DATABASE PINNED_SOURCE_ROOT CHANGED_FUNCTIONS_GZ OUTPUT_JSON
+       COMPILE_DATABASES PINNED_SOURCE_ROOTS CHANGED_FUNCTIONS_GZ OUTPUT_JSON
+
+COMPILE_DATABASES and PINNED_SOURCE_ROOTS are comma-separated absolute paths;
+the corpus includes both Fluent Bit libraries and Monkey units.
 
 The replay uses the archived Rust request's include paths, definitions,
 HistoricalStdin input and parity dialect, then requires the SHA-256 of Clang's
@@ -38,8 +41,8 @@ def request(debug):
 def main():
     if len(sys.argv) != 8:
         raise SystemExit(__doc__)
-    diagnostics, parity, contexts, compile_db, source_root, changes, output = map(pathlib.Path, sys.argv[1:8])
-    source_root = source_root.resolve()
+    diagnostics, parity, contexts, compile_dbs, source_roots, changes, output = map(pathlib.Path, sys.argv[1:8])
+    source_roots = [pathlib.Path(value).resolve() for value in str(source_roots).split(",")]
     units = read(diagnostics)["units"]
     wanted = {json.loads(line)["unit_index"] for line in gzip.open(changes, "rt")}
     with contexts.open() as stream:
@@ -53,13 +56,14 @@ def main():
             parity_by_function[row["function"]].add((row["source_sha256"], row["frontend_sha256"], row["dialect"]))
             parity_pairs.add((row["source_sha256"], row["frontend_sha256"], row["dialect"]))
     entries = collections.defaultdict(set)
-    for entry in read(compile_db):
-        path = pathlib.Path(entry["file"])
-        if not path.is_absolute():
-            path = pathlib.Path(entry["directory"]) / path
-        path = path.resolve()
-        if path.is_relative_to(source_root):
-            entries[path.name].add(path)
+    for database in str(compile_dbs).split(","):
+        for entry in read(pathlib.Path(database)):
+            path = pathlib.Path(entry["file"])
+            if not path.is_absolute():
+                path = pathlib.Path(entry["directory"]) / path
+            path = path.resolve()
+            if any(path.is_relative_to(root) for root in source_roots):
+                entries[path.name].add(path)
     dialects = {"C11": "-std=c11", "Gnu99": "-std=gnu99",
                 "Gnu11": "-std=gnu11", "Gnu17": "-std=gnu17"}
     cache = {}
@@ -104,7 +108,7 @@ def main():
                         "matches": matches, "attempts": attempts})
         print(f"unit {index}: {len(matches)} exact source match(es), {len(attempts)} nonmatches", flush=True)
     result = {"schema": "qcore.w46-access-path-corpus-replay.v1",
-              "source_root": str(source_root), "clang": "/usr/bin/clang",
+              "source_roots": [str(root) for root in source_roots], "clang": "/usr/bin/clang",
               "units": records}
     output.write_text(json.dumps(result, indent=2) + "\n")
     print(f"matched {sum(bool(row['matches']) for row in records)}/{len(records)} changed units")
