@@ -30,7 +30,8 @@ class CanonicalCorpus(unittest.TestCase):
         # fluent_bit/output_singleplex.qcore in quirin-provider-fluent-bit.
         # 113 -> 114: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qcore
         # (checked specifications) in quirin-provider-fluent-bit.
-        self.assertEqual(len(modules), 114)
+        # W46-LIBC-EVENT-CONTRACT-GAPS adds monkey/scalar_observation.qcore.
+        self.assertEqual(len(modules), 115)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 42)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
