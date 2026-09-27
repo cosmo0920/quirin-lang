@@ -1,0 +1,67 @@
+{
+  "schema": "qcore.w46-access-path-statements-archive.v1",
+  "run": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/corpus",
+  "comparison": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/corpus/comparison",
+  "files": {
+    "attribution.json": {
+      "sha256": "d49ac9105397d008280e051c3d3d08f57205cc1a305a336fefb513f849b09d8a",
+      "bytes": 62972
+    },
+    "changed-functions.jsonl.gz": {
+      "sha256": "d34730b5f54e9b0647bb8b81d4c49199c8ec8ae1d9312e16dc91ffae87b99a49",
+      "bytes": 47149
+    },
+    "changed-leaf-attribution.jsonl.gz": {
+      "sha256": "3352dadafcfb5cc5dc8dcc2f309f118f6d502c1228311eed413e3e10bc22069a",
+      "bytes": 76040
+    },
+    "chunk-contracts.json.gz": {
+      "sha256": "62cdfe0316e6571b10c60058470541835cd2c4ebfa0bdd0ba2665e4d89cd6b0c",
+      "bytes": 281902
+    },
+    "comparison.json": {
+      "sha256": "5f31d2254548f5f96c88003f1a94637bbfc16f535576b3b795371b37c9cc5a6f",
+      "bytes": 41116
+    },
+    "console.log.gz": {
+      "sha256": "1582d0f5af38ffc67eadca74c538245492a72e5d17b8a7b96f21f02cb6c6e537",
+      "bytes": 14993
+    },
+    "contracts.json.gz": {
+      "sha256": "5c896bf3fcce26730a4397aa98033c0589ad530d89c641e522182402b11ae5b0",
+      "bytes": 104733
+    },
+    "diagnostics.json.gz": {
+      "sha256": "d060006810edd506f1c2e583275dd75d7023ffd8e3c72949e5215157152e2023",
+      "bytes": 490922
+    },
+    "exit": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "frontend-contexts.jsonl.gz": {
+      "sha256": "a6df8f2264e5a5786d7d151d3902f3f79caf8eef5d9177c407e83e8bb176e6b7",
+      "bytes": 2421
+    },
+    "parity-disagreements.jsonl.gz": {
+      "sha256": "2b532d6a6cd76419483c0f02efb9e846d67f1255dab03011a23b1b87ad9a2f10",
+      "bytes": 350070
+    },
+    "parity.jsonl.gz": {
+      "sha256": "79549cf7514935d3f6a1152e03458736f3d8e01c41d200e3b5ce6b5809c162c2",
+      "bytes": 353234
+    },
+    "run.json": {
+      "sha256": "2f1ea11d6af245823043ba21f1fd38282aabfd34ef009eeeb50ff2070a1c2ddf",
+      "bytes": 1371
+    },
+    "source-effects.json.gz": {
+      "sha256": "96501a104256e8aa604bf1fe43a9a080926bdd529307b8f3b86032105b30b8a0",
+      "bytes": 16832
+    },
+    "source.json.gz": {
+      "sha256": "5846dbfa7e63b3b89d935c829fac328bbc7b2f7473be5e802e6f538072b03792",
+      "bytes": 42109
+    }
+  }
+}

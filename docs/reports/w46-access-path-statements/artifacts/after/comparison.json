@@ -1,0 +1,1417 @@
+{
+  "schema": "qcore.w46-access-path-statements-comparison.v1",
+  "before_status": {
+    "Unknown": 4414,
+    "Safe": 411,
+    "Unsafe": 9
+  },
+  "after_status": {
+    "Unknown": 4374,
+    "Safe": 451,
+    "Unsafe": 9
+  },
+  "before_diagnostic_counts": {
+    "leak": 34,
+    "summary_conflict": 1,
+    "unknown_alias": 3573,
+    "unsupported": 41086
+  },
+  "after_diagnostic_counts": {
+    "leak": 34,
+    "summary_conflict": 1,
+    "unknown_alias": 5584,
+    "unsupported": 38729
+  },
+  "changed_functions": 1097,
+  "verdict_moves": 40,
+  "moves": [
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_exponential_histogram_data_point_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8702,
+          "origin": "cmt_encode_opentelemetry.c:2554",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_histogram_data_point_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8690,
+          "origin": "cmt_encode_opentelemetry.c:2538",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_metric_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8945,
+          "origin": "cmt_encode_opentelemetry.c:2880",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_numerical_data_point_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `data_point_list`",
+          "line": 8675,
+          "origin": "cmt_encode_opentelemetry.c:2519",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8672,
+          "origin": "cmt_encode_opentelemetry.c:2514",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `data_point_list` used by a non-null contract",
+          "line": 8675,
+          "origin": "cmt_encode_opentelemetry.c:2519",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_resource_metrics_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_list`",
+          "line": 8073,
+          "origin": "cmt_encode_opentelemetry.c:1749",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8070,
+          "origin": "cmt_encode_opentelemetry.c:1744",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `metric_list` used by a non-null contract",
+          "line": 8073,
+          "origin": "cmt_encode_opentelemetry.c:1749",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_scope_metrics_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_list`",
+          "line": 8217,
+          "origin": "cmt_encode_opentelemetry.c:1936",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8214,
+          "origin": "cmt_encode_opentelemetry.c:1931",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `metric_list` used by a non-null contract",
+          "line": 8217,
+          "origin": "cmt_encode_opentelemetry.c:1936",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_summary_data_point_list",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `data_point_list`",
+          "line": 8684,
+          "origin": "cmt_encode_opentelemetry.c:2531",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8681,
+          "origin": "cmt_encode_opentelemetry.c:2526",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `data_point_list` used by a non-null contract",
+          "line": 8684,
+          "origin": "cmt_encode_opentelemetry.c:2531",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "otlp_kvpair_list_initialize",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 7592,
+          "origin": "cmt_encode_opentelemetry.c:1084",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 7590,
+          "origin": "cmt_encode_opentelemetry.c:1079",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `result` used by a non-null contract",
+          "line": 7592,
+          "origin": "cmt_encode_opentelemetry.c:1084",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 35,
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "otel_span_set_kind",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8966,
+          "origin": "ctr_encode_opentelemetry.c:639",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8969,
+          "origin": "ctr_encode_opentelemetry.c:642",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8972,
+          "origin": "ctr_encode_opentelemetry.c:645",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8975,
+          "origin": "ctr_encode_opentelemetry.c:648",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8978,
+          "origin": "ctr_encode_opentelemetry.c:651",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 8981,
+          "origin": "ctr_encode_opentelemetry.c:654",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 51,
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_resetDecompressionContext",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 1808,
+          "origin": "lz4frame.c:1276",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 62,
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "function": "rd_slice_widen",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 3883,
+          "origin": "rdbuf.c:1095",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 63,
+      "library": "librdkafka",
+      "file": "rdcrc32.c",
+      "function": "rd_crc32_reflect",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 3136,
+          "origin": "rdcrc32.c:108",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 3139,
+          "origin": "rdcrc32.c:111",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 67,
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_countsIndex",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 4083,
+          "origin": "rdhdrhistogram.c:167",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 4085,
+          "origin": "rdhdrhistogram.c:169",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 69,
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "function": "rd_kafka_Uuid_str",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ret`",
+          "line": 25158,
+          "origin": "rdkafka.c:7240",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 25154,
+          "origin": "rdkafka.c:7230",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 25155,
+          "origin": "rdkafka.c:7231",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `ret` used by a non-null contract",
+          "line": 25158,
+          "origin": "rdkafka.c:7240",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 69,
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "function": "rd_kafka_set_log_level",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21296,
+          "origin": "rdkafka.c:421",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConsumerGroupListing_cmp_group_id",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 25011,
+          "origin": "rdkafka_admin.c:7590",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteGroup_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 22979,
+          "origin": "rdkafka_admin.c:4737",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteTopic_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21423,
+          "origin": "rdkafka_admin.c:2285",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_NewPartitions_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21542,
+          "origin": "rdkafka_admin.c:2494",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_NewTopic_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21204,
+          "origin": "rdkafka_admin.c:1921",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 75,
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_cmp_by_id",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 22515,
+          "origin": "rdkafka_broker.c:3149",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 78,
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_clear_last_err",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 20467,
+          "origin": "rdkafka_cgrp.c:388",
+          "count": 1
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 20468,
+          "origin": "rdkafka_cgrp.c:389",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 90,
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "function": "rd_kafka_metadata_partition_id_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 20229,
+          "origin": "rdkafka_metadata_cache.c:251",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 96,
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_aborted_txn_cmp_by_pid",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 20500,
+          "origin": "rdkafka_msgset_reader.c:1807",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 96,
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_offset_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 20496,
+          "origin": "rdkafka_msgset_reader.c:1798",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 103,
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_yield",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 19682,
+          "origin": "rdkafka_queue.c:38",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 115,
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ConsumerGenerationPair_cmp_generation",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21309,
+          "origin": "rdkafka_sticky_assignor.c:140",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 118,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_decoded_int64",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21752,
+          "origin": "rdkafka_telemetry_decode.c:504",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 118,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_connects",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21971,
+          "origin": "rdkafka_telemetry_decode.c:789",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 118,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_connects2",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 21974,
+          "origin": "rdkafka_telemetry_decode.c:793",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 118,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_coordinator_assigned_partitions",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 22007,
+          "origin": "rdkafka_telemetry_decode.c:831",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 120,
+      "library": "librdkafka",
+      "file": "rdkafka_timer.c",
+      "function": "rd_kafka_timer_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 19577,
+          "origin": "rdkafka_timer.c:57",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 127,
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "mykey_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 3447,
+          "origin": "rdmap.c:278",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 127,
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "person_cmp",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 3490,
+          "origin": "rdmap.c:344",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 135,
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "ut_set_types",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 19665,
+          "origin": "rdunittest_fetcher.c:145",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 139,
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "function": "hash_bytes",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 19910,
+          "origin": "snappy.c:636",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 142,
+      "library": "chunkio",
+      "file": "chunkio.c",
+      "function": "cio_set_log_level",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 2444,
+          "origin": "chunkio.c:327",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 161,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_string.c",
+      "function": "mk_string_copy_substr",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 2442,
+          "origin": "mk_core/mk_string.c:650",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 169,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_http_parser.c",
+      "function": "content_length_parse",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 5578,
+          "origin": "mk_server/mk_http_parser.c:234",
+          "count": 1
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 172,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_lib.c",
+      "function": "mk_http_status",
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 6835,
+          "origin": "mk_server/mk_lib.c:578",
+          "count": 1
+        }
+      ],
+      "added": []
+    }
+  ],
+  "p2_forecast": [
+    {
+      "library": "chunkio",
+      "file": "chunkio.c",
+      "function": "cio_options_init",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": true,
+      "hit": true,
+      "reason": "tracked root `options` not null-tested before line 2261; tracked root `options` not null-tested before line 2262; tracked root `options` not null-tested before line 2263; tracked root `options` not null-tested before line 2264"
+    },
+    {
+      "library": "chunkio",
+      "file": "chunkio.c",
+      "function": "cio_set_log_level",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_exponential_histogram_data_point_list",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_histogram_data_point_list",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_metric_list",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "otel_span_set_kind",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_name",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_storage_overlimit",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_resetDecompressionContext",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "function": "rd_slice_widen",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_countsIndex",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "function": "rd_kafka_set_log_level",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConfigResource_cmp",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": true,
+      "hit": true,
+      "reason": "tracked root `a` not null-tested before line 21852; tracked root `b` not null-tested before line 21852"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConsumerGroupListing_cmp_group_id",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteGroup_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteTopic_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_NewPartitions_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_NewTopic_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_cmp_by_id",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_clear_last_err",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_sw_str_sanitize_inplace",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "function": "rd_kafka_metadata_partition_id_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_msgset_est_record_size",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": true,
+      "hit": true,
+      "reason": "tracked root `mset` not null-tested before line 24339; tracked root `mset` not null-tested before line 24343"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_aborted_txn_cmp_by_pid",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_offset_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_leader_discovery_metadata_init",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": true,
+      "hit": true,
+      "reason": "tracked root `mdi` not null-tested before line 22461; tracked root `mdi` not null-tested before line 22462; tracked root `mdi` not null-tested before line 22463"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_leader_discovery_set_CurrentLeader",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": true,
+      "hit": true,
+      "reason": "tracked root `md` not null-tested before line 22540; tracked root `mdi` not null-tested before line 22539; tracked root `mdi` not null-tested before line 22542; tracked root `mdp` not null-tested before line 22546"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ConsumerGenerationPair_cmp_generation",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testConflictingPreviousAssignments",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "clear_unit_test_data",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_decoded_int64",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_connects",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_connects2",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry_set_coordinator_assigned_partitions",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_timer.c",
+      "function": "rd_kafka_timer_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "mykey_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "person_cmp",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "ut_set_types",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "function": "XXH32_reset",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "function": "XXH64_reset",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_fifo.c",
+      "function": "fifo_drop_msg",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "tracked root `fw` not null-tested before line 5345; tracked root `msg` not null-tested before line 5346"
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_lib.c",
+      "function": "mk_http_status",
+      "predicted": "Safe",
+      "before": "Unknown",
+      "observed": "Safe",
+      "changed": true,
+      "hit": true,
+      "reason": "every pointer hop is untracked, loaded or a null-tested tracked root"
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_scheduler.c",
+      "function": "mk_sched_broadcast_signal",
+      "predicted": "Unknown",
+      "before": "Unknown",
+      "observed": "Unknown",
+      "changed": false,
+      "hit": false,
+      "reason": "tracked root `ctx` not null-tested before line 7001"
+    }
+  ],
+  "p2_hits": 34,
+  "parity_rows": {
+    "sub_object_store": 3145,
+    "old_refusal": 13550,
+    "scalar": 8798,
+    "scalar_member_store": 1577,
+    "sub_object_store_call": 39,
+    "indexed_element": 63,
+    "scalar_field_noop": 236,
+    "index_traversal": 825,
+    "chain": 153
+  },
+  "parity_disagreements": {
+    "sub_object_store": 3145,
+    "old_refusal": 13550,
+    "scalar": 8795,
+    "scalar_member_store": 1577,
+    "sub_object_store_call": 39,
+    "indexed_element": 63,
+    "scalar_field_noop": 236,
+    "index_traversal": 825,
+    "chain": 9
+  },
+  "frontend_contexts": 8
+}

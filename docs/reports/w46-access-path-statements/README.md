@@ -82,12 +82,79 @@ the [archived baseline](../w46-contract-access-expansion/artifacts/baseline/mani
 and [corpus identity check](../w46-contract-access-expansion/census/baseline-corpus-identity.json)
 are owned by the integrator.
 
-The fixed-source corpus AFTER and its complete comparison are pending at the
-four-job arbiter slot. The preliminary binary at `a95be942` completed a
-four-job corpus child with exit 0, but its wrapper was interrupted with 130
-after completion. It lacked the positive field-owner check and is superseded.
-Its 45 `Unknown`→`Safe` moves exposed nine P1 predicted-Safe misses and 16
-unforecast gains, which are investigated against the fixed run below.
+The fixed-source corpus AFTER completed with exit 0 at four jobs from
+`753cde34` (exact command, binary SHA, frontend environment and times in
+[run.json](artifacts/after/run.json)). It retains all 185 units and 4,834
+functions. The 411 Safe / 9 provisional Unsafe / 4,414 Unknown BEFORE becomes
+451 / 9 / 4,374: exactly 40 `Unknown`→`Safe`, with no `Safe` correction or
+new provisional violation. `librdkafka/rdcrc32.c` is the one newly Safe unit;
+unit totals become 6 Safe / 8 provisional Unsafe / 167 Unknown / 4 data-only.
+Among the 167 Unknown units, 166 retain an unsupported leaf and one retains
+an incomplete-summary reason; 18 of the 185 units have no unsupported leaf.
+Unsupported leaves fall 41,086→38,729, unknown-alias rises 3,573→5,584,
+and leak stays 34. The [corpus comparison](artifacts/after/comparison.json)
+names all 40 moving functions and all 1,097 functions with any changed
+diagnostic; the [manifest](artifacts/after/manifest.json) binds the complete
+sorted parity stream, exact frontend request preimages and primary outputs.
+
+Against P1's frozen 45 same-unit candidates, 29 of 38 predicted Safe become
+Safe; nine stay Unknown. All seven predicted Unknown stay Unknown. Thus 36/45
+predicted verdicts match; the comparator's narrower `p2_hits=34` requires a
+changed diagnostic multiset as well, and two of the seven Unknown rows have
+none. Eleven Safe gains were outside P1's candidate set (five cmetrics, four
+librdkafka and two Monkey); every name is in the comparison's `moves` and
+`p2_forecast` records. The three P1 cross-unit candidates were excluded from
+this 45-row prediction and have no gained verdict here.
+
+The nine predicted-Safe misses have source-form causes:
+
+| Function(s) | Observed residual |
+| --- | --- |
+| `flb_input_chunk_get_name`, `flb_input_chunk_is_storage_overlimit` | Initial pointer casts on `ic->chunk` and `i->storage`; casts in paths remain refused. The latter also reads in conditions (P3). |
+| `rd_kafka_sw_str_sanitize_inplace` | `char *s = str, *d = str` cannot prove its multi-alias declarator untracked; pointer increments remain outside this path grammar. |
+| `rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic(s)` | `rd_tmpabuf_add_alloc` arguments carry the access/`sizeof` arithmetic; call arguments are P3. |
+| `ut_testConflictingPreviousAssignments` | Indexed aggregate member pointer stores and call arguments require the P5/P3 rules. |
+| `clear_unit_test_data` | Writes fields of the global `unit_test_data`; the local-root never-bound premise does not apply. |
+| `XXH32_reset`, `XXH64_reset` | Local aggregate `state` has its address handed to `memset`/`memcpy`, so the untracked-root premise cannot be established for its field stores. |
+
+The preliminary `a95be942` binary lacked the positive union field-owner
+check. Its corpus child completed exit 0 (the PTY wrapper was interrupted
+after completion and reported 130), showing 45 apparent Safe gains. Source
+review found five unsound admissions: `LZ4_favorDecompressionSpeed` and
+`LZ4_setCompressionLevel` access the typedef-hidden
+`union LZ4_streamHC_u`'s `internal_donotuse` field; the three
+`calculate_consumer_{commit_latency,rebalance_latency,share_time_between_poll}_max`
+functions write `.int_value` in the typedef-hidden
+`rd_kafka_telemetry_metric_value_t` union. All five are Unknown in the fixed
+run. The preliminary run and system artifacts remain in
+`private/w46-access-path-statements/after/{corpus,system}` only; no claim
+uses them as the AFTER result.
+
+The [corpus leaf attribution](artifacts/after/attribution.json) records every
+changed leaf and its source/parity relationship. Of 2,371 removed unsupported
+leaves, 2,288 coincide with old-refusal/new-admission statement lines; 73
+are now-resolved uncontracted-callee summary leaves, and ten are other
+downstream forms. The 14 added unsupported leaves are independent call,
+return, nullable-contract or indirect-access refusals surfaced in affected
+functions, not newly admitted claims. Of 2,026 added unknown-alias leaves,
+1,930 arise at the newly admitted statement and 92 later in the same
+function when its borrowed or tracked root still lacks a unique identity;
+four are call/condition cascades in functions without a direct statement row.
+Fifteen earlier unknown-alias leaves disappear. The source-reviewed unmatched
+families include `set_span`'s call argument to newly Safe
+`otel_span_set_kind`, `rd_kafka_anyconf_dump`'s condition now reaching an
+unresolved `conf`, and `rd_kafka_lwtopic_new`'s member store now exposing
+unresolved `lrkt`. The residual nested-call diagnostics in `snappy.c`, the
+return expression in `rdkafka_conf.c`, and the remaining indirect accesses
+are still Unknown. [Every changed leaf](artifacts/after/changed-leaf-attribution.jsonl.gz)
+retains its origin, before/after function verdict and any matched analyzed
+source SHA; no changed family was discarded.
+
+The corpus side-by-side stream has 28,386 rows: 13,550 old-refusal/new
+admission, 14,683 established-route rows and 153 chain rows. Only three
+scalar rows and 144 chain rows have identical typed plans; other rows are
+recorded disagreements or distinct-vocabulary comparisons. No established
+route was retired.
 
 The fixed-source `046accf6` system slice completed with exit 0 at four jobs
 from source revision `753cde34` (exact binary SHA, command, flags and times
@@ -134,9 +201,74 @@ normalizing that prefix.
 
 ## Validation
 
-TBD after the standing gate: exact commands, exits, totals and private logs.
+The delegated worktree's Libevent submodule was initialized from the local
+cache before building (exit 0). The focused gateway integration test ran
+seven controls and passed 7/7; the field-owner unit test passed, including a
+typedef-hidden union, a union reached through a struct pointer, and a
+typedef-struct positive control. The VLA `sizeof` side-effect fixture and
+pointer-store refusal fixture stay Unknown. `lake build
+QCore.TypedAccessPathStatements` exited 0, and
+`python3 scripts/check_lean_audits.py` passed all 213 registered audits with
+no project axiom or placeholder. Focused gateway Clippy, `cargo fmt --all --
+--check`, and Python compilation of the measurement scripts exited 0. The
+fixed release build exited 0 before both AFTER audits.
+
+The integrator's central full standing gate began against committed source
+`597ef096` in `private/w46-next-full-gate`. Its first test-runner and Clippy
+compiles found an omitted `borrowed_destination` destructure in
+`compiler/examples/alias_aggregate_probe.rs` (E0027); the example now prints
+that fact when present, committed `fbec0ec7`. The documentation-index check
+also failed stale and was regenerated by `python3 scripts/build_docs_index.py`
+(exit 0), committed `c5e8c182`. These are the only first-gate failures so
+far; the integrator is completing the remaining first run, then rerunning
+the full root test runner, Clippy, fmt and index checks against the repaired
+tip. Their final commands, exits, counts and private log paths will be
+recorded here after completion. No audit binary or semantic gateway source
+changed in these repairs.
+
+The preliminary corpus audit at `a95be942` is a recorded failed soundness
+attempt, not AFTER evidence. Its child exited 0 and the surrounding PTY
+reported 130 after an interrupt at completion. The field-owner repair forced
+the five apparent gains above back to Unknown. A release build initially
+launched without the dedicated target directory was interrupted with 130
+before measurement; the explicit-target rebuild succeeded. Development
+fmt/Clippy/focused-test and Lean proof errors were repaired before the fixed
+measurement and full gate. The complete preliminary and fixed run logs are
+under `private/w46-access-path-statements/{after,final}/{corpus,system}`;
+the fixed run logs are also archived with their manifests.
 
 ## For the integrator
 
-TBD after measurements: precise STATUS/matrix changes, named followups and
-the increment paragraph. The integrator owns those shared files.
+The integrator owns shared STATUS, hand-maintained matrix fields and increment
+history. Update the isolated P2 corpus row to 451 Safe / 9 provisional Unsafe
+/ 4,374 Unknown over 4,834 functions and the unit row to 6 Safe / 8
+provisional Unsafe / 167 Unknown / 4 data-only over 185 units. Record
+unsupported 38,729, unknown-alias 5,584 and leak 34. Update the isolated
+system slice to 56 / 4 / 388 configured rows, or 29 / 2 / 203 unique
+functions, with unsupported 3,081, alias 893, counted-user 4. The combined
+contract-plus-access figures must come from the integrator's combined arbiter,
+not from adding isolated gains. The derived matrix already registers Lean
+audit 213; preserve the carried gate provenance and hand-maintained ledger.
+
+Proposed named followups are `W46-ACCESS-PATH-PARITY` (compare distinct
+legacy/typed plan vocabularies and the scalar/chain disagreements before
+retiring any route), `W46-ACCESS-PATH-TRACKED-MIXED-PLACES` (model tracked
+embedded/indexed places instead of admitting them under a never-bound root),
+and `W46-ACCESS-PATH-POSITIONS` (P3 conditions, returns and call arguments).
+Carry `W43-INDIRECT-POINTER-VALUE-STORE`/the plan's P5 for pointer stores,
+and `W46-UNION-MEMBER-PATH` for unions; do not weaken either refusal. A
+separate residual for multi-pointer alias declarators whose custody cannot
+be proved untracked may be merged with `W43-INDIRECT-UNTYPED-SINGLE-ACCESS`
+followup, rather than credited to P2.
+
+Proposed increment paragraph: “W46-ACCESS-PATH-STATEMENTS introduced a
+Clang-typed, fail-closed statement path reader and matching Lean model while
+retaining every shape route. Exact-unit corpus BEFORE/AFTER moved 40 of
+4,834 functions from Unknown to Safe and `rdcrc32.c` to a Safe unit; the
+system slice moved one unique function to Safe. Positive field-owner facts
+withdrew five typedef-hidden union admissions seen in a preliminary run.
+The P1 frozen prediction matched 36/45 verdicts, with nine Safe misses and
+11 unforecast gains; all diagnostic and parity differences, frontend
+requests, and remaining P3/P5/tracked-place refusals are archived under
+`docs/reports/w46-access-path-statements/`. The full standing gate [insert
+final result and log path].”
