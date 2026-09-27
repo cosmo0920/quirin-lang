@@ -365,14 +365,14 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                 let written = std::fs::read_to_string(&path)
                     .map_err(|error| format!("{}: {error}", path.display()))?;
                 let alias = qcore_frontend::source_extension::contract_module_stem(&logical);
-                if let Some(stem) = alias {
-                    if let Some(other) = modules.keys().find(|key| {
+                if let Some(stem) = alias
+                    && let Some(other) = modules.keys().find(|key| {
                         qcore_frontend::source_extension::contract_module_stem(key) == Some(stem)
-                    }) {
-                        return Err(format!(
-                            "ambiguous contract module aliases `{other}` and `{logical}`"
-                        ));
-                    }
+                    })
+                {
+                    return Err(format!(
+                        "ambiguous contract module aliases `{other}` and `{logical}`"
+                    ));
                 }
                 let text = if qcore_frontend::contract_inclusion::contains_contract_inclusion_syntax(
                     &written,

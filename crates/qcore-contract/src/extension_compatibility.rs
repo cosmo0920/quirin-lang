@@ -11,14 +11,13 @@ pub(crate) fn reject_alias_collisions<'a>(
 ) -> Result<(), String> {
     let mut stems = BTreeMap::new();
     for module in modules {
-        if let Some(stem) = contract_module_stem(module) {
-            if let Some(first) = stems.insert(stem, module) {
-                if first != module {
-                    return Err(format!(
-                        "ambiguous contract module aliases `{first}` and `{module}`"
-                    ));
-                }
-            }
+        if let Some(stem) = contract_module_stem(module)
+            && let Some(first) = stems.insert(stem, module)
+            && first != module
+        {
+            return Err(format!(
+                "ambiguous contract module aliases `{first}` and `{module}`"
+            ));
         }
     }
     Ok(())
