@@ -2,15 +2,16 @@
 
 > **Name.** The language is **Quirin**; its command is `quirin`. The `QCore`
 > spelling is retained for the core component — Rust namespaces, the emitted-C
-> surface, the diagnostics codes, the legacy `.qcore` source extension and this
-> file's name. Current contract sources use `.qv`; `.qcore` remains a warned
-> migration alias.
+> surface, the diagnostics codes, the legacy `.qcore` alias and this file's name —
+> and those component identifiers are unchanged by the branding. Current contract inputs use `.qv`, executable/library inputs use `.qr`, and native ABI manifests use `.qrlib`; legacy names remain warned compatibility aliases.
 
 > Repository integration: 2026-09-07. Normative requirements are adopted from
 > the supplied review; implementation status is reconciled with main in the
 > [acceptance ledger](reviews/r0_3/REVIEW.md). The original archive findings
 > are historical observations, not a claim that later merged repairs are absent.
 > Full revision-0.3 conformance is not claimed.
+
+Historical `.qcore`/`.qc` census counts below describe their original checkpoints. Current files may have `.qv` or `.qr` names while preserving those recorded source bytes and observations.
 
 **Source scope:** supplied archive review, reconciled with the implementation records in the [acceptance ledger](reviews/r0_3/REVIEW.md).  
 **Purpose:** distinguish exact consumer inputs from the broader [design BNF](QCORE_DESIGN_GRAMMAR_r0_3.bnf).
@@ -1717,7 +1718,7 @@ a statement body, so `b[0] = 65;` needs no parser change at all. The acquisition
 is spelled `bytes` and **not** `buffer`: `buffer` was measured at 555
 occurrences across the source-side corpus, in *binding* position in shipped
 fixtures (`let buffer = qcore_buffer_new(1)?;` in
-`examples/threads/shared_readers.qcore`), so reserving it would refuse them and
+`examples/threads/shared_readers.qr`), so reserving it would refuse them and
 this card renamed its own syntax instead — the `work` → `effort` (§G02e)
 precedent. The *module* keeps the name `std.buffer`.
 
@@ -2624,7 +2625,7 @@ the selected declarations for `_mk_event_loop_create`, `_mk_event_wait_2`,
 from `monkey/wrapper_paths.qv` and `monkey/composition.qv`. The consumer
 requires the supported extern signatures, parameter usage/ownership, return
 types and exact `requires`/`ensures normal` clauses, with no body, `unsafe` or
-effects block. The executable `wait_source_policy.qcore` declares those
+effects block. The contract-mode `wait_source_policy.qv` declares those
 expectations over derived declaration facts. Missing, duplicate, added or
 changed selected clauses refuse.
 It checks the named predicates against typed C paths and derives native
@@ -3106,7 +3107,7 @@ Unknown fields reject:
   "schema_version": 1,
   "packages": ["packages/example"],
   "bindings": [
-    {"library": "example", "provider": "example.boolean", "contract": "policy.qcore"}
+    {"library": "example", "provider": "example.boolean", "contract": "policy.qv"}
   ]
 }
 ```
@@ -3130,7 +3131,7 @@ This implementation supports the existing bounded Boolean-field semantic profile
 it is not a general contract solver. See the [execution record](reports/w5-configured-source-contracts/README.md).
 
 A binding may additionally declare `"frame_helpers": [{"source": "reset.c",
-"function": "reset_metadata", "record": "widget", "contract": "reset.qcore"}]`.
+"function": "reset_metadata", "record": "widget", "contract": "reset.qv"}]`.
 Omission means no helper selection. At most 256 helpers are allowed per binding,
 with unique C function names; function/record identifiers are at most 128 ASCII
 bytes. Source paths must be contained relative paths within the selected library
