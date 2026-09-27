@@ -40,7 +40,9 @@ KEYWORDS = {"if", "while", "for", "return", "sizeof", "switch", "defined"}
 
 def libc_declared(repository):
     names = set()
-    for path in (repository / "providers/quirin-provider-libc/contracts/libc").glob("*.qcore"):
+    for path in (repository / "providers/quirin-provider-libc/contracts/libc").glob("*"):
+        if path.suffix not in (".qcore", ".qv"):
+            continue
         text = "\n".join(line.split("//", 1)[0] for line in path.read_text().split("\n"))
         names |= set(re.findall(r"extern\s+fn\s+(\w+)", text))
     return names

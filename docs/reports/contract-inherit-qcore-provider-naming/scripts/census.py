@@ -8,7 +8,7 @@ excepted, is on the load path; the method column is otherwise unchanged).
 Usage: census.py REPOSITORY OUT.json [--before]
 
 Every `extern fn NAME(PARAMS) -> RESULT contract { CLAUSES };` declaration in
-every `.qcore` file under `providers/` is read (comments removed). A
+every `.qv` (or legacy `.qcore`) file under `providers/` is read (comments removed). A
 declaration outside `quirin-provider-libc` *matches* a libc declaration when
 
 * the parameter count is equal and every parameter type and the result type
@@ -124,7 +124,8 @@ def main():
             selected_logical.add(entry.split(":", 1)[1])
         else:
             selected_logical.add(entry.split("/contracts/", 1)[1])
-    files = sorted((repository / "providers").glob("*/contracts/**/*.qcore"))
+    files = sorted(p for p in (repository / "providers").glob("*/contracts/**/*")
+                   if p.suffix in (".qcore", ".qv"))
     parents = []
     candidates = []
     for path in files:

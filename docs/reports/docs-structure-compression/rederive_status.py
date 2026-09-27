@@ -9,6 +9,10 @@ import sys
 ROOT = Path(__file__).resolve().parents[3]
 REPORT = Path(__file__).resolve().parent
 
+if not (ROOT / "contract/qcore").is_dir():
+    raise SystemExit("Historical checkpoint only: contract/qcore no longer exists. "
+                     "Use docs/STATUS.md for current measurements; replay this report at its recorded revision.")
+
 
 def read(path):
     return json.loads((ROOT / path).read_text())

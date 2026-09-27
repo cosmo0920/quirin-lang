@@ -94,7 +94,7 @@ def tree(package):
 def shared_contract_heads(repo):
     heads = {}
     for crate in sorted((repo / "providers").glob("quirin-provider-*")):
-        for path in sorted((crate / "contracts").rglob("*.qcore")):
+        for path in sorted(p for p in (crate / "contracts").rglob("*") if p.suffix in (".qcore", ".qv")):
             heads[path.relative_to(repo).as_posix()] = path.read_bytes()[:96]
     return heads
 

@@ -37,7 +37,7 @@ def main() -> int:
         left = dict(leaves(json.loads(theirs)))
         right = dict(leaves(json.loads(mine)))
         differing = sorted(set(left) ^ set(right) | {p for p in set(left) & set(right) if left[p] != right[p]})
-        modules = sorted({part for path in differing for part in path if part.endswith(".qcore")})
+        modules = sorted({part for path in differing for part in path if part.endswith((".qcore", ".qv"))})
         keys = sorted({path[-1] for path in differing if not path[-1].isdigit()})
         result[label] = {
             "identical_after_root_rewrite": mine == theirs,
