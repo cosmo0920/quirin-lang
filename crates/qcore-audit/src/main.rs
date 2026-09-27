@@ -6,6 +6,7 @@ fn main() -> ExitCode {
     let Some(path) = arguments.next() else {
         eprintln!("usage: quirin-audit CONFIG.json");
         eprintln!("       {}", qcore_audit::current_cli::USAGE);
+        eprintln!("       {}", qcore_audit::pinned_cli::USAGE);
         eprintln!("       {}", qcore_audit::prepare::USAGE);
         eprintln!("       {}", qcore_audit::no_build::USAGE);
         eprintln!("       {}", qcore_audit::contract_pin::USAGE);
@@ -15,6 +16,9 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::subcommand_plugins::USAGE);
         return ExitCode::FAILURE;
     };
+    if path == "pinned" {
+        return qcore_audit::pinned_cli::main(arguments.collect());
+    }
     if path == "checkpoint" {
         // Card W45-AUDIT-CHECKPOINTS: verify, decompose, recompose and compose
         // per-group `.qo` checkpoints.

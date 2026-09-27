@@ -12,6 +12,7 @@ name = "qcore_compiler"
 path = "src/lib.rs"
 
 [dependencies]
+quirin-source-analysis = { path = "../crates/quirin-source-analysis", version = "0.1.0" }
 qcore-verification = { path = "../crates/qcore-verification", version = "0.4.0" }
 qcore-c-gateway = { path = "../crates/qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../crates/qcore-contract", version = "0.1.0" }

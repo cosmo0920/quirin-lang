@@ -157,7 +157,7 @@ fn an_external_plugin_runs_and_its_artifacts_are_recorded() {
 #[test]
 fn a_builtin_name_is_never_run_externally() {
     let directory = scratch("builtin");
-    for name in ["plugin", "prepare", "current"] {
+    for name in ["plugin", "prepare", "current", "pinned"] {
         plugin(&directory, name, "touch \"$0.ran\"");
     }
     let output = run(&directory, &[], "plugin", &["views"]);
@@ -165,7 +165,7 @@ fn a_builtin_name_is_never_run_externally() {
     assert!(stderr(&output).contains("built-in"), "{}", stderr(&output));
     // With the plugin directory on the variable, the built-in runs (and
     // refuses its own missing arguments), never the external executable.
-    for name in ["plugin", "prepare"] {
+    for name in ["plugin", "prepare", "pinned"] {
         let output = Command::new(HOST)
             .arg(name)
             .arg("--no-such-flag")
@@ -176,7 +176,7 @@ fn a_builtin_name_is_never_run_externally() {
         assert_ne!(output.status.code(), Some(0));
         assert!(!stderr(&output).contains("external"), "{}", stderr(&output));
     }
-    for name in ["plugin", "prepare", "current"] {
+    for name in ["plugin", "prepare", "current", "pinned"] {
         assert!(
             !directory
                 .join("plugins")

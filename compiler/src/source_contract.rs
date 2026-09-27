@@ -1,5 +1,6 @@
 //! Native policy inputs for the bounded source importers. Structural decoding
 //! and operational semantics stay in Rust; QCore owns these acceptance rules.
+#[cfg(test)]
 pub(crate) use qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES as RULES;
 
 #[cfg(test)]

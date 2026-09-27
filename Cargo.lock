@@ -112,6 +112,7 @@ dependencies = [
  "qcore-verification",
  "qcore-verifier-host",
  "quirin-audit-plugin",
+ "quirin-source-analysis",
  "serde",
  "serde_json",
  "serde_norway",
@@ -141,6 +142,7 @@ dependencies = [
  "qcore-schemas",
  "qcore-verification",
  "qcore-verifier-host",
+ "quirin-source-analysis",
  "serde",
  "serde_json",
 ]
@@ -228,6 +230,20 @@ version = "0.1.0"
 dependencies = [
  "qcore-schemas",
  "quirin-audit-plugin",
+ "serde_json",
+]
+
+[[package]]
+name = "quirin-source-analysis"
+version = "0.1.0"
+dependencies = [
+ "qcore-c-gateway",
+ "qcore-contract",
+ "qcore-core",
+ "qcore-frontend",
+ "qcore-schemas",
+ "qcore-verification",
+ "serde",
  "serde_json",
 ]
 

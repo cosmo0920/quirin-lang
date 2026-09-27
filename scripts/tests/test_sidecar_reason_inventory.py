@@ -1,8 +1,8 @@
 """The reason inventory of the two adapter-assembled 185-unit sidecars.
 
 Card REASON-CODES-B3. `source-effects.json` and `chunk-contracts.json` are
-assembled by `compiler/examples/support/cycle19_compatibility.rs`, not by
-`qcore-audit`, which is why the REASON-CODES card left them without a
+originally assembled by the compiler compatibility adapter (now
+`crates/qcore-audit/src/pinned_route.rs`), which is why the REASON-CODES card left them without a
 `reason_code` field while `diagnostics.json` gained one; CORPUS-REPIN measured
 that and recorded it as REASON-CODES-B3. The adapter now emits the category the
 importer classified, so the next re-measurement of the pinned corpus will carry

@@ -2,7 +2,7 @@
 //! the pinned Cycle 19 corpus.
 //!
 //! This example selects exactly the units the pinned compatibility route
-//! selects (`cycle19_fluent_bit_libraries_audit --pinned-evidence`), runs the
+//! selects (`quirin-audit pinned`), runs the
 //! production custody derivation over each, and reports how every recursive
 //! strongly connected component was disposed of — including, for a component
 //! the neutral-frame route refused, which of the design's V1–V10 obligations

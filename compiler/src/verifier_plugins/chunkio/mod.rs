@@ -21,7 +21,7 @@ pub mod unmap_wrapper;
 pub mod unsupported_close;
 pub use chunk_source::*;
 
-pub const PINNED_FLUENT_BIT_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+pub use quirin_source_analysis::chunkio::PINNED_FLUENT_BIT_REVISION;
 
 // The per-plugin `manifest()`/`provider()` selection route was removed by P09
 // (`docs/reports/remaining-p09/README.md`). Use
