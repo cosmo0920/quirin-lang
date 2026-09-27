@@ -1,0 +1,320 @@
+{
+  "meaning": "Only selected resource-contract source dependency identities and the derived inventory digest change; all other compile-configuration values equal.",
+  "units": [
+    {
+      "unit_index": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "a5e3286912b70981b6a17f95c819774cf076c109d8dfd2bbdeabb89bfaf09c2e",
+          "after": "6f0f03d765a2599f41f3159c358d71bf533060453adf1e18bf3fee5f4588fb69"
+        }
+      ]
+    },
+    {
+      "unit_index": 1,
+      "file": "src/flb_input_chunk.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "9184956013480a9470e1a88c42de94c0f173c684807b0697f42e817c0569c171",
+          "after": "06534adde8e50a9b101555ad25be6092da7ca09a41e985c862a5daab8aba1550"
+        }
+      ]
+    },
+    {
+      "unit_index": 2,
+      "file": "src/flb_input_chunk.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "a821552fdd8755ca30a490d3e0db949a15d3037cc111a96f56cb9475e5e06655",
+          "after": "9baa6c392c75accf0401479cbd745476420ea738ef4dc596ecb7986bfdcda146"
+        }
+      ]
+    },
+    {
+      "unit_index": 3,
+      "file": "src/flb_storage.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "d1752d21498b566b167c8d5a4d29c39fbb66cab386ba21a0db14917ae012dd36",
+          "after": "61c7f05326103fbdd41f606789f07a1de2d6fc1444190dde7fe1263d7ab4aa22"
+        }
+      ]
+    },
+    {
+      "unit_index": 4,
+      "file": "src/flb_storage.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "76dd7431e207c21baba60f4ff52c5773b93568d9c4e607a336bad8e482347ee9",
+          "after": "403228165a7b4ac11866dbc4fc5ebd471b14f34fb4868c02ccb1afdc925feb84"
+        }
+      ]
+    },
+    {
+      "unit_index": 5,
+      "file": "src/flb_task.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "077a7870206cb26d25a8d04d4bff6b402c56e6ee3ccd95d3142f17bb62365976",
+          "after": "6a394076429940d791d94c88eb0d2772aa1110114a177459f767d84f3c147b69"
+        }
+      ]
+    },
+    {
+      "unit_index": 6,
+      "file": "src/flb_task.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "46ed31cca50a95b67e62ae98f399e9d8c81c75671e4f7a908f7d641265e79b3e",
+          "after": "cc15635b50827f1e049cc00e46a73eac5880cf9410797bc6522e11c7952c96ca"
+        }
+      ]
+    },
+    {
+      "unit_index": 7,
+      "file": "src/flb_engine.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "f95908f859ec5fe1c9bbcae35781ff0808f056252127d64c1739ca29d3a4a99f",
+          "after": "d238ed2bc2b358614292e19d9796a461b2f58139a289289d55697d1ca203facc"
+        }
+      ]
+    },
+    {
+      "unit_index": 8,
+      "file": "src/flb_engine.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "de6cb33c38d719745058bcbdc95aa4d13f913a81b8614a831ad738a3cabcea53",
+          "after": "91666182b1de31c11ea975b67ed5518d0bb3d7b5ccb716d5f26df1d102282ef2"
+        }
+      ]
+    },
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "d261fb631833b9dfe7d9b7750af6ec41ec292faaba1e196a21d14b8a7347d9a2",
+          "after": "f008a0e9a47245fba27c74a1f24a535f0ccb9e265e37b57a6e8fc58399247566"
+        }
+      ]
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "e45bb35e37beaeb09e446bd333c779496424efc7f2adc055e92737e4a261b8cd",
+          "after": "ae2bb8617d5ccba638f0823691b7e7ebfd3ccc8ecf53ba7806849a328bffd837"
+        }
+      ]
+    },
+    {
+      "unit_index": 11,
+      "file": "src/flb_scheduler.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "88a794fec96f72351ae3890437dd13bc031acc6c07c01774f0c16eeb63dacef5",
+          "after": "98e76a5f8dac1c793efce4b96419dc078f8c854653700ad6f0eea27b62e99f8d"
+        }
+      ]
+    },
+    {
+      "unit_index": 12,
+      "file": "src/flb_scheduler.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "59793b245ad4334cc4b350777fe951f29095d7f67a28789905c056ddbd5217cd",
+          "after": "795917f2ec5bafc391c5dc973d0e7cf20af2343bbcd76a913515444aa9874505"
+        }
+      ]
+    },
+    {
+      "unit_index": 13,
+      "file": "src/flb_output.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "269090beed44f74b127efe731316d6e9e6acc50f5b6ec52ebd8ef1ebfec904b6",
+          "after": "06b2fd61786172b2fead6a3712a0a6e97156b6d489e8ae621e653927ab6b5ecc"
+        }
+      ]
+    },
+    {
+      "unit_index": 14,
+      "file": "src/flb_output.c",
+      "changes": [
+        {
+          "path": "/compile_task_identity/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/dependencies/resource_contract_sources",
+          "before": "56078d65f14b0a927f9a5e174535b416acb9e5b19e280a0ca67d8488ef477cf3",
+          "after": "99e63a81e3eba03d77b5a41b93844c7f033793365128508cc4cc7e03f4c778a7"
+        },
+        {
+          "path": "/inventory_sha256",
+          "before": "fabd07b4b66bf58173fffdc2aaeca2643e5b31c0b320249c1021023abd86e136",
+          "after": "bab18d7a528ca442c56731d9e8300509dd290f3bd3849796a5a15ce347826ee9"
+        }
+      ]
+    }
+  ]
+}

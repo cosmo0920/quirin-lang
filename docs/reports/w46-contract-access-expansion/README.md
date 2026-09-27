@@ -59,6 +59,9 @@ Both release builds and audits at `bfa510b7` exit 0. Corpus and system each
 use four workers; the independent statement-card audit also uses four, and
 no standing tests run during these measurements. Commands, binary digests,
 Clang selections and timestamps are in the [archive](artifacts/contracts-only/manifest.json).
+The corpus source and chunk artifacts remain byte-identical. In all 15 system
+compile configurations, only resource-contract source dependencies and their
+derived inventory digests change ([comparison](census/contracts-system-configuration-identity.json)).
 Private logs are `private/w46-next/contracts-only/`.
 
 | Measure | Baseline | Contracts only |
