@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
+
 Current corpus and system-slice figures were measured on 2026-09-27 by
 W46-CONTRACT-ACCESS-EXPANSION at merged `e6e31f49`. Its
 [report](reports/w46-contract-access-expansion/README.md) separates fresh baseline, contract-only,

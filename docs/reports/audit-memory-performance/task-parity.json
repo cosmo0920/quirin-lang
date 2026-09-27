@@ -1,0 +1,102 @@
+{
+  "before": {
+    "run": {
+      "command": [
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/baseline-quirin-audit",
+        "current",
+        "--checkout",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+        "--profile-directory",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/contract/profiles/fluent-bit",
+        "--compile-database",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+        "--selection",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/selection.json",
+        "--contract-manifest",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/cycle19-resource-contracts.json",
+        "--report",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/before-j1/resource-diagnostics.json",
+        "--jobs",
+        "1"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c",
+      "binary_sha256": "eb6c5e16bbce0464468256156e6dabbc118a2f241766002d5479b313a4f29e45",
+      "source_tip": "45237b6185243e13d8c5fce606345d3399b110b4",
+      "jobs": 1,
+      "started_unix": 1790504671.1617756,
+      "exit": 0,
+      "finished_unix": 1790504690.383508
+    },
+    "metrics": {
+      "wall_s": 19.21,
+      "user_s": 19.02,
+      "system_s": 0.61,
+      "max_rss_kib": 377176.0,
+      "exit": 0.0
+    }
+  },
+  "after": {
+    "run": {
+      "command": [
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/target/release/quirin-audit",
+        "current",
+        "--checkout",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+        "--profile-directory",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/contract/profiles/fluent-bit",
+        "--compile-database",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+        "--selection",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/selection.json",
+        "--contract-manifest",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/cycle19-resource-contracts.json",
+        "--report",
+        "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/audit-memory-performance/after-j1/resource-diagnostics.json",
+        "--jobs",
+        "1"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c",
+      "binary_sha256": "1ad1daba370697fc438cc0ebd404ac63d465e26163e0a49f1db9efa687631186",
+      "source_tip": "5fc0175a21fe98c889373513fc68f41678b22672",
+      "jobs": 1,
+      "started_unix": 1790505546.819718,
+      "exit": 0,
+      "finished_unix": 1790505556.1042025
+    },
+    "metrics": {
+      "wall_s": 9.28,
+      "user_s": 9.15,
+      "system_s": 0.48,
+      "max_rss_kib": 299132.0,
+      "exit": 0.0
+    }
+  },
+  "artifacts": [
+    {
+      "name": "resource-diagnostics.json",
+      "before_sha256": "b1436baee3506eb719f1d921d7c7faefbafc7d9d6385cda9414cf2dacb55f67d",
+      "after_sha256": "b1436baee3506eb719f1d921d7c7faefbafc7d9d6385cda9414cf2dacb55f67d",
+      "byte_identical": true
+    },
+    {
+      "name": "resource-diagnostics.contracts.json",
+      "before_sha256": "c4f995cf753e050698bd03ca2b41fe4f1220fe3a4c835f2c93872d5a1c045e85",
+      "after_sha256": "c4f995cf753e050698bd03ca2b41fe4f1220fe3a4c835f2c93872d5a1c045e85",
+      "byte_identical": true
+    },
+    {
+      "name": "resource-diagnostics.chunk-contracts.json",
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_identical": true
+    },
+    {
+      "name": "resource-diagnostics.source-effects.json",
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_identical": true
+    }
+  ],
+  "scope": "Exact bytes of all four verdict-bearing current-route artifacts; invocation metadata and measured console timing are not verdict parity inputs.",
+  "passed": true
+}

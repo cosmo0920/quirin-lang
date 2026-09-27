@@ -25,9 +25,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
 
+| [audit-memory-performance](audit-memory-performance/README.md) | Audit CPU and memory optimization |
+
 | [audit-pinned-replay-cli](audit-pinned-replay-cli/README.md) | Pinned replay CLI relocation |
 
 | [audit-prepare-progress](audit-prepare-progress/README.md) | Audit preparation progress |
+
+| [audit-typed-index](audit-typed-index/README.md) | Typed access statement-index optimization |
 
 ## B
 

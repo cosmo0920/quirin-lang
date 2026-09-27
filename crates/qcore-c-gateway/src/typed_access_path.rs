@@ -183,9 +183,9 @@ struct SourceContext {
     ast: OnceCell<Option<AstIndex>>,
 }
 
-/// Keep only facts later typed-path lookups can use. Clang's complete JSON AST
-/// is still needed while parsing and collecting fields, but need not live for
-/// every CFG built from this translation unit.
+/// Keep only facts later typed-path lookups can use. Decode declarations one
+/// at a time, retaining function bodies and collected field facts for the CFGs
+/// built from this translation unit.
 struct AstIndex {
     functions: BTreeMap<String, Vec<FunctionEntry>>,
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
