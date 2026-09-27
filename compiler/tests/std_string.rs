@@ -15,8 +15,8 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_string::StringStorage;
 
-const SLICES: &str = include_str!("fixtures/std_string/slices.qcore");
-const SILENT: &str = include_str!("fixtures/std_string/silent.qcore");
+const SLICES: &str = include_str!("fixtures/std_string/slices.qr");
+const SILENT: &str = include_str!("fixtures/std_string/silent.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {

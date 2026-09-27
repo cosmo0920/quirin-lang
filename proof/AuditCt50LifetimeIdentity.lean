@@ -6,7 +6,7 @@ import QCore.Ct50LifetimeIdentity
 -- as `an_admitted_rendering_is_the_reference_run` rather than assumed. The
 -- named runner
 -- `compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape`
--- compiles `compiler/tests/fixtures/ct/CT50/case.qcore`, executes the checked
+-- compiles `compiler/tests/fixtures/ct/CT50/case.qr`, executes the checked
 -- task module, derives the admitted causal order, recomputes the digest pin
 -- and runs the transcription of the procedure below on the artifact.
 --

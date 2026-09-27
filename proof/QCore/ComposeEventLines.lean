@@ -277,7 +277,7 @@ theorem a_wake_queues_its_byte (s : State) (d payload : Nat) :
 
 /-- **First in, first out.** With two bytes queued on one endpoint, the first
 ready turn binds the first byte and the second binds the second. Stated on a
-concrete program, so the model and `examples/events/wake_payload.qcore` cannot
+concrete program, so the model and `examples/events/wake_payload.qr` cannot
 drift apart silently. -/
 theorem the_wake_payload_example_binds_seventy_two_then_one_hundred_and_five :
     (run {}

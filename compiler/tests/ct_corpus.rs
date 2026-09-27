@@ -7972,7 +7972,7 @@ fn ct16_retains_sequential_implicit_cleanup_control() {
     let module = compile_files(
         &[SourceFile::new(
             "sequential-worker-error.qcore",
-            include_str!("fixtures/task_worker_allocations/sequential_worker_error.qcore"),
+            include_str!("fixtures/task_worker_allocations/sequential_worker_error.qr"),
         )],
         &CompileOptions {
             entry: Some("worker".into()),
@@ -7999,7 +7999,7 @@ fn ct37_retains_sequential_transferred_payload_control() {
     let module = compile_files(
         &[SourceFile::new(
             "sequential-completion-payload.qcore",
-            include_str!("fixtures/task_worker_allocations/sequential_completion_payload.qcore"),
+            include_str!("fixtures/task_worker_allocations/sequential_completion_payload.qr"),
         )],
         &CompileOptions {
             entry: Some("worker".into()),

@@ -54,8 +54,8 @@ To check, emit and run the QCore counterpart on Linux:
 
 ```sh
 mkdir -p target/thread-examples
-cargo run -p qcorec -- check examples/threads/core_context.qcore
-cargo run -p qcorec -- emit examples/threads/core_context.qcore -o target/thread-examples/core_context.c
+cargo run -p qcorec -- check examples/threads/core_context.qr
+cargo run -p qcorec -- emit examples/threads/core_context.qr -o target/thread-examples/core_context.c
 clang -std=c11 -pthread -Wall -Wextra -Werror target/thread-examples/core_context.c -o target/thread-examples/core_context
 target/thread-examples/core_context
 ```

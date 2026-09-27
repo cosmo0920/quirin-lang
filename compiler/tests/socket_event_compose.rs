@@ -19,7 +19,7 @@ use qcore_core::std_event::Interest;
 use qcore_core::std_io::Stream;
 use qcore_core::typed_errors::Effect;
 
-const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qcore");
+const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qr");
 const EVENTS_README: &str = include_str!("../../examples/events/README.md");
 
 fn compile(

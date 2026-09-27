@@ -26,7 +26,7 @@
 //! boundary refuses to encode and replays them through the ledger model.
 //!
 //! This test binds the theorem to **CT07's own artifact**: it compiles
-//! `compiler/tests/fixtures/ct/CT07/case.qcore` through the real pipeline,
+//! `compiler/tests/fixtures/ct/CT07/case.qr` through the real pipeline,
 //! reads the lease captures out of the checked task IR, executes the checked
 //! module's reference execution, and
 //!
@@ -68,7 +68,7 @@ use qcore_core::task_execution::{
 };
 use qcore_core::task_trace_relation::AdmittedCausalOrder;
 
-const CT07_SOURCE: &str = include_str!("fixtures/ct/CT07/case.qcore");
+const CT07_SOURCE: &str = include_str!("fixtures/ct/CT07/case.qr");
 
 /// `QCore.Ct07LeaseLedger.ct07_ledger_digest`, proved by the Lean kernel on
 /// the `ct07Ledger` term this artifact must reproduce.

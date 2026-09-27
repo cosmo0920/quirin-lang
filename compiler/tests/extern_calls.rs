@@ -14,7 +14,7 @@ use qcore_compiler::{
 };
 
 const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {
@@ -639,9 +639,9 @@ fn an_unreleased_owned_return_refuses_under_the_established_custody_pass() {
 // Card EXTERN-F1: the `resource_out` and `resource_stored` call modes. //
 // ==================================================================== //
 
-const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qcore");
-const STORED: &str = include_str!("fixtures/extern_calls/stored.qcore");
-const STORED_FAILURE: &str = include_str!("fixtures/extern_calls/stored_failure.qcore");
+const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qr");
+const STORED: &str = include_str!("fixtures/extern_calls/stored.qr");
+const STORED_FAILURE: &str = include_str!("fixtures/extern_calls/stored_failure.qr");
 
 /// The out fixture with its acquiring callee swapped for the always-refusing
 /// implementation and the declared control flipped, so the null arm is a real
@@ -1136,9 +1136,9 @@ fn a_store_beneath_a_non_owned_parameter_refuses_at_the_loader() {
 // Card EXTERN-MODES: `resource_released` and `resource_return_reallocated`. //
 // ========================================================================= //
 
-const RELEASED: &str = include_str!("fixtures/extern_calls/released.qcore");
-const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
-const REALLOC_FAILURE: &str = include_str!("fixtures/extern_calls/realloc_failure.qcore");
+const RELEASED: &str = include_str!("fixtures/extern_calls/released.qr");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qr");
+const REALLOC_FAILURE: &str = include_str!("fixtures/extern_calls/realloc_failure.qr");
 
 /// A release is published as a release, not as a consumption. The two have the
 /// same caller-side ledger delta, so nothing about leak accounting moves; what
@@ -1348,7 +1348,7 @@ fn a_removed_parameter_is_still_not_callable() {
 
 // --- Card `PIPE-SCALAR-RESULT`: binding a non-acquiring call's scalar result. ---
 
-const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qr");
 
 /// The admitted form, end to end: a scalar result bound to a local, and that
 /// local read at a declared scalar parameter of a later call. The two halves are

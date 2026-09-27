@@ -3154,7 +3154,7 @@ fn is_reserved_source_word(word: &str) -> bool {
             // above already shields, being followed by `:`), it occurs in
             // *binding* position in shipped fixtures —
             // `let buffer = qcore_buffer_new(1)?;` and `drop buffer;` in
-            // `examples/threads/shared_readers.qcore`. Reserving it would
+            // `examples/threads/shared_readers.qr`. Reserving it would
             // refuse those files, so this card's syntax was renamed rather
             // than the pinned surface edited, exactly as card T08-EPOCH-SRC
             // renamed `work` to `effort` and card `STD-MODULES` spelled a

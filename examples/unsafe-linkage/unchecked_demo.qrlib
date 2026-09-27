@@ -1,4 +1,4 @@
-# The manifest half of `unchecked_calls.qcore`: **which build** was waived.
+# The manifest half of `unchecked_calls.qr`: **which build** was waived.
 #
 # There is no contract here and there never will be — every entry below is
 # explicitly `unchecked`. What a manifest adds is the one thing a bare waiver

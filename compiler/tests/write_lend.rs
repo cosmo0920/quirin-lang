@@ -44,11 +44,11 @@ use qcore_core::typed_errors::EffectRow;
 /// silently hand this card's tests someone else's program — which is exactly
 /// what the wave-37 lane caught here, so the coupling is now named rather than
 /// implicit.
-const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/sequential_write_halves.qcore");
+const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/sequential_write_halves.qr");
 /// The same program with one bound of the second lend moved from 4 to 3, so
 /// the two ranges share exactly byte 3 — this card's control, now also CT07's
 /// disjointness control in the same directory.
-const OVERLAPPING_LENDS: &str = include_str!("fixtures/ct/CT07/overlapping_lends.qcore");
+const OVERLAPPING_LENDS: &str = include_str!("fixtures/ct/CT07/overlapping_lends.qr");
 
 fn options() -> CompileOptions {
     CompileOptions {

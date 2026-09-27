@@ -12,8 +12,8 @@
 mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const LOGGER_ONLY: &str = include_str!("fixtures/std_modules/logger_only.qcore");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const LOGGER_ONLY: &str = include_str!("fixtures/std_modules/logger_only.qr");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {

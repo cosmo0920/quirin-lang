@@ -473,7 +473,7 @@ use crate::std_event_c_emit::observe_event_program;
 use crate::std_io::{Level, Rendering, StdIoEvent, StdIoOperand, Stream};
 
 /// The canonical program with two declared payloads, a binding for each and a
-/// piped line rendering each. This is `examples/events/wake_payload.qcore`.
+/// piped line rendering each. This is `examples/events/wake_payload.qr`.
 fn composed() -> EventSourceProgram {
     entry(vec![
         EventStatement::LogLevel {

@@ -2,7 +2,7 @@
 
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const ROUND_TRIP: &str = include_str!("fixtures/resource_helpers/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/resource_helpers/round_trip.qr");
 
 fn compile(
     source: &str,

@@ -51,9 +51,9 @@ use qcore_core::task_trace_relation::{
     parse_observed_trace,
 };
 
-const CT01_SOURCE: &str = include_str!("fixtures/ct/CT01/case.qcore");
-const CT12_SOURCE: &str = include_str!("fixtures/ct/CT12/case.qcore");
-const CT14_SOURCE: &str = include_str!("fixtures/ct/CT14/case.qcore");
+const CT01_SOURCE: &str = include_str!("fixtures/ct/CT01/case.qr");
+const CT12_SOURCE: &str = include_str!("fixtures/ct/CT12/case.qr");
+const CT14_SOURCE: &str = include_str!("fixtures/ct/CT14/case.qr");
 const CT01_TRACE: &str =
     include_str!("../../crates/qcore-core/tests/fixtures/f02/round_trip.trace");
 

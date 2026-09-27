@@ -5,8 +5,8 @@ without printing it. [printing.qcore](printing.qcore) uses the same scalar-call
 profile and writes the computed value explicitly. Check and emit either file:
 
 ```sh
-cargo run -p qcorec --bin quirin -- check examples/scalar/calls.qcore
-cargo run -p qcorec --bin quirin -- emit -o /tmp/scalar-calls.c examples/scalar/calls.qcore
+cargo run -p qcorec --bin quirin -- check examples/scalar/calls.qr
+cargo run -p qcorec --bin quirin -- emit -o /tmp/scalar-calls.c examples/scalar/calls.qr
 cc -std=c11 /tmp/scalar-calls.c -o /tmp/scalar-calls
 /tmp/scalar-calls
 ```

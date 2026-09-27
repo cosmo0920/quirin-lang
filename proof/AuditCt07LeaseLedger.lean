@@ -7,7 +7,7 @@ import QCore.Ct07LeaseLedger
 -- `ScopedTasks` module's lease set. The named runner
 -- `compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape`
 -- transcribes the reference execution of
--- `compiler/tests/fixtures/ct/CT07/case.qcore` into `Step`s, replays them
+-- `compiler/tests/fixtures/ct/CT07/case.qr` into `Step`s, replays them
 -- with the transcribed `replay`, recomputes the digest pin and checks the
 -- scenario shape on the artifact's own ledger state.
 

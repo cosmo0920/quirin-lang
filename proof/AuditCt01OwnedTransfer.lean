@@ -5,7 +5,7 @@ import QCore.Ct01OwnedTransfer
 -- the workspace test
 -- `compiler/tests/f02_trace_relation.rs::the_declared_trace_fixtures_are_the_reference_runs`
 -- checks it event for event against the real pipeline's execution of
--- `compiler/tests/fixtures/ct/CT01/case.qcore`, and the named runner
+-- `compiler/tests/fixtures/ct/CT01/case.qr`, and the named runner
 -- `compiler/tests/ct01_proof_leg.rs` recomputes the digest pin and runs the
 -- same total decision procedure on the artifact.
 

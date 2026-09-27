@@ -27,14 +27,14 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const WAIVED_ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const WAIVED_ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qr");
 const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
 const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
-const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib.qcorelib";
-const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib.qcorelib");
-const L1_PATH: &str = "fixtures/native_library/unchecked_demo.qcorelib";
-const L1_MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
+const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib.qrlib";
+const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib.qrlib");
+const L1_PATH: &str = "fixtures/native_library/unchecked_demo.qrlib";
+const L1_MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qrlib");
 
 /// The library name the contract-slice manifest declares, and the hash beside
 /// it. Spelled here so a test that asserts the premise names the build fails if
@@ -313,7 +313,7 @@ fn two_manifests_declaring_one_library_name_make_the_binding_ambiguous() {
             "contract fn qcore_extern_release",
             "# contract fn qcore_extern_release",
         );
-    let selection = map(&[(MANIFEST_PATH, MANIFEST), ("twin.qcorelib", &twin)]);
+    let selection = map(&[(MANIFEST_PATH, MANIFEST), ("twin.qrlib", &twin)]);
     assert_eq!(
         codes(&bound(ROUND_TRIP, LIBRARY), slice_selection(), selection),
         ["Q065"]
@@ -473,7 +473,7 @@ fn a_module_that_writes_no_binding_never_loads_the_selection() {
     // compiles with a deliberately unloadable manifest selected, exactly as it
     // did before this card: loading unconditionally would let a broken manifest
     // refuse a module that never mentioned one.
-    let broken = map(&[("broken.qcorelib", "not a manifest at all\n")]);
+    let broken = map(&[("broken.qrlib", "not a manifest at all\n")]);
     let source = "fn main() -> unit effects { } {\n    return;\n}\n";
     compile(source, None, broken).expect("a module that mentions no manifest is unmoved");
 }

@@ -51,7 +51,7 @@ const INSTANCE: &str = include_str!("fixtures/o04/flb_input_instance.h.txt");
 const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
 /// The two additional declared callee premises this card names. Concatenated
 /// onto O04's, which stays byte-unchanged.
-const ARMS_CALLEES: &str = include_str!("fixtures/contracts/o04_arms_callees.qcore");
+const ARMS_CALLEES: &str = include_str!("fixtures/contracts/o04_arms_callees.qr");
 const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/o04_arms_generic.qcore");
 
 const CIO_STREAM: &str = include_str!("fixtures/o04_arms/cio_stream.h.txt");

@@ -6,7 +6,7 @@ import QCore.Ct37CompletionCapsule
 -- the named runner
 -- `compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape`
 -- checks it event for event against the real pipeline's execution of
--- `compiler/tests/fixtures/ct/CT37/case.qcore`, recomputes the digest pin and
+-- `compiler/tests/fixtures/ct/CT37/case.qr`, recomputes the digest pin and
 -- runs the same total decision procedure on the artifact.
 
 -- The reference run is a declared admitted causal order, its projections, and

@@ -11,8 +11,8 @@
 mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const BYTES: &str = include_str!("fixtures/std_buffer/bytes.qcore");
-const SILENT: &str = include_str!("fixtures/std_buffer/silent.qcore");
+const BYTES: &str = include_str!("fixtures/std_buffer/bytes.qr");
+const SILENT: &str = include_str!("fixtures/std_buffer/silent.qr");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {

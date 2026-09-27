@@ -73,7 +73,7 @@
 //! name, which the referenced-names filter already shields because it is
 //! followed by `:` — it occurs in *binding* position in shipped, pinned
 //! fixtures (`let buffer = qcore_buffer_new(1)?;` and `drop buffer;` in
-//! `examples/threads/shared_readers.qcore`). Reserving it would refuse those
+//! `examples/threads/shared_readers.qr`). Reserving it would refuse those
 //! files at `Q013`, so this card's syntax was renamed rather than the pinned
 //! surface edited — the `work` → `effort` and `error` → `fatal` precedent. The
 //! *module* is still `std.buffer`: a module name is a dotted import path, not a

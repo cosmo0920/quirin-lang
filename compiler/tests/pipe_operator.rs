@@ -21,14 +21,14 @@ use qcore_compiler::{
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
-const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qcore");
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qcore");
-const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
-const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qcore");
-const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
-const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qcore");
+const LINES: &str = include_str!("fixtures/std_modules/lines.qr");
+const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qr");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qr");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qr");
+const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qr");
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qr");
+const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qr");
 const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
 
 // Exercise both checkout styles regardless of the host's Git configuration.

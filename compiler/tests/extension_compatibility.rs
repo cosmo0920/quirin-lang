@@ -81,8 +81,8 @@ fn aliases_are_ambiguous_but_runtime_and_contract_inputs_remain_distinct() {
 
 #[test]
 fn renamed_native_manifest_preserves_artifact_premises_and_emission() {
-    let source = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
-    let manifest = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
+    let source = include_str!("fixtures/unsafe_linkage/round_trip.qr");
+    let manifest = include_str!("fixtures/native_library/unchecked_demo.qrlib");
     let run = |paths: &[&str]| {
         compile_files(
             &[SourceFile::new("input.qr", source)],
@@ -115,9 +115,9 @@ fn renamed_native_manifest_preserves_artifact_premises_and_emission() {
 
 #[test]
 fn qrlib_contract_references_require_the_exact_selected_qv_path() {
-    let source = include_str!("fixtures/extern_calls/round_trip.qcore");
+    let source = include_str!("fixtures/extern_calls/round_trip.qr");
     let text = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
-    let manifest = include_str!("fixtures/native_library/buffer_lib.qcorelib");
+    let manifest = include_str!("fixtures/native_library/buffer_lib.qrlib");
     let old = "fixtures/native_library/contracts/buffer_lib.qcore";
     let new = "fixtures/native_library/contracts/buffer_lib.qv";
     let run = |reference: &str| {

@@ -187,7 +187,7 @@ For C that has **no** contract, and no CLI obstacle, see
 
 * **No rendering on this route alone.** `source.extern-call.v1` has no `print`.
   Getting a total onto a stream means composing with `std.io`, which is
-  [../stdio/pipeline.qcore](../stdio/pipeline.qcore).
+  [../stdio/pipeline.qr](../stdio/pipeline.qr).
 * **A borrowed render needs a custody model.** Written on the plain
   `source.std-io.v1` route it refuses at `Q028` — not because that route
   forbids it, but because that route has no identity map at all, so there is

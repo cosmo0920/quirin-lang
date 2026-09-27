@@ -167,7 +167,7 @@ Line 3 is the call trace saying `demo_sum` returned 56; line 4 is `print dec
 total` rendering it. Line 5's `-> 112` and the `[INFO] 112` on stderr are the
 same pair. A call with no `succeeds` clause has no `-> N` field, because there
 is no declared number to compare against — see
-[../pipes/scalar_stages.qcore](../pipes/scalar_stages.qcore) for that shape.
+[../pipes/scalar_stages.qr](../pipes/scalar_stages.qr) for that shape.
 
 The `vN` and `rN` names are model identities, not source names: the hygienic
 temporary between the two pipe stages has no name to print. `v3` is the literal
@@ -176,8 +176,8 @@ temporary between the two pipe stages has no name to print. `v3` is the literal
 ## Building and running
 
 ```sh
-quirin check examples/stdio/renderings.qcore
-quirin emit examples/stdio/renderings.qcore -o /tmp/renderings.c
+quirin check examples/stdio/renderings.qr
+quirin emit examples/stdio/renderings.qr -o /tmp/renderings.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/renderings.c -o /tmp/renderings
 /tmp/renderings
 ```

@@ -1,4 +1,4 @@
-//! Custody model counterpart of examples/threads/core_context.qcore.
+//! Custody model counterpart of examples/threads/core_context.qr.
 //! Run with `cargo run -p qcore-core --example concurrency_prelude`.
 //! This models both creation outcomes; it does not launch operating-system threads.
 use qcore_core::prelude::concurrency::{

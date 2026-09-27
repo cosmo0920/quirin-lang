@@ -26,8 +26,8 @@ use qcore_core::typed_errors::Effect;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
-const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
+const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qr");
+const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qr");
 const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
 
 fn compile(

@@ -143,8 +143,8 @@ to the determinism argument, not to the syntax.
 ## Building and running
 
 ```sh
-quirin check examples/http/exchange.qcore
-quirin emit examples/http/exchange.qcore -o /tmp/exchange.c
+quirin check examples/http/exchange.qr
+quirin emit examples/http/exchange.qr -o /tmp/exchange.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic -g -O0 \
    -fsanitize=address,undefined -fno-omit-frame-pointer /tmp/exchange.c -o /tmp/exchange
 ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 /tmp/exchange

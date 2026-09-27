@@ -13,11 +13,11 @@ use std::process::{Command, Output};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
-const ROUND_TRIP: &str = include_str!("fixtures/ct/CT01/case.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/ct/CT01/case.qr");
 
 #[test]
 fn core_context_example_matches_reference_on_creation_success_and_failure() {
-    let source = include_str!("../../examples/threads/core_context.qcore");
+    let source = include_str!("../../examples/threads/core_context.qr");
     for created in [true, false] {
         let fault = if created {
             ""

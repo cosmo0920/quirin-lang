@@ -91,7 +91,7 @@ default null sink and therefore removes these lines from program output.
 Note what is *not* on those `value` lines: no `-> N`. None of these calls
 declares a `succeeds` outcome, so there is no declared number for the emitted
 program to compare against and none to print. Compare
-[../stdio/pipeline.qcore](../stdio/pipeline.qcore), whose calls do declare one.
+[../stdio/pipeline.qr](../stdio/pipeline.qr), whose calls do declare one.
 
 ## Why chains carry scalars
 
@@ -160,8 +160,8 @@ Two neighbours of the same rule:
 ## Building and running
 
 ```sh
-quirin check examples/pipes/rendered_lines.qcore
-quirin emit examples/pipes/rendered_lines.qcore -o /tmp/rendered_lines.c
+quirin check examples/pipes/rendered_lines.qr
+quirin emit examples/pipes/rendered_lines.qr -o /tmp/rendered_lines.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/rendered_lines.c -o /tmp/rendered_lines
 /tmp/rendered_lines
 ```

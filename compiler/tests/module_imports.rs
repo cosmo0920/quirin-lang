@@ -1,7 +1,7 @@
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_core::prelude::concurrency::task_execution::{TaskExecutionScript, execute_task_module};
 
-const CONTEXT: &str = include_str!("../../examples/threads/core_context.qcore");
+const CONTEXT: &str = include_str!("../../examples/threads/core_context.qr");
 
 #[test]
 fn source_import_enables_existing_checked_task_lowering() {

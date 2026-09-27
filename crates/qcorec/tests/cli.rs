@@ -58,7 +58,7 @@ fn cli_windows_emission_recovers_from_second_creation_failure() {
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let source = root.join("compiler/tests/fixtures/ct/CT01/case.qcore");
+    let source = root.join("compiler/tests/fixtures/ct/CT01/case.qr");
     let directory = std::env::temp_dir().join(format!("qcore-cli-owned-{}", std::process::id()));
     std::fs::create_dir(&directory).unwrap();
     let c = directory.join("module.c");
@@ -333,8 +333,8 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
 fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
     let fixtures =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
-    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
-    let manifest = fixtures.join("native_library/unchecked_demo.qcorelib");
+    let source = fixtures.join("unsafe_linkage/round_trip.qr");
+    let manifest = fixtures.join("native_library/unchecked_demo.qrlib");
 
     // Without the flag: the bare premise, exactly as wave 18 printed it.
     let bare = Command::new(env!("CARGO_BIN_EXE_quirin"))
@@ -385,7 +385,7 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
     // A manifest that does not load refuses the module rather than being
     // ignored, and the CLI reports it as a diagnostic.
     let broken =
-        std::env::temp_dir().join(format!("qcore-manifest-{}.qcorelib", std::process::id()));
+        std::env::temp_dir().join(format!("qcore-manifest-{}.qrlib", std::process::id()));
     std::fs::write(
         &broken,
         std::fs::read_to_string(&manifest)
@@ -424,13 +424,13 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
 fn the_cli_reads_the_exported_header_a_manifest_names() {
     let fixtures =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
-    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
-    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qcorelib"))
+    let source = fixtures.join("unsafe_linkage/round_trip.qr");
+    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qrlib"))
         .expect("the wave-19 fixture manifest is readable");
 
     let directory = std::env::temp_dir().join(format!("qcore-header-cli-{}", std::process::id()));
     std::fs::create_dir_all(directory.join("include")).unwrap();
-    let manifest = directory.join("demo.qcorelib");
+    let manifest = directory.join("demo.qrlib");
     let header = directory.join("include/demo.h");
 
     let declarations = "#ifndef DEMO_H\n\
@@ -524,14 +524,14 @@ fn the_cli_reads_the_include_texts_a_manifest_declares() {
     // they were invoked from.
     let fixtures =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
-    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
-    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qcorelib"))
+    let source = fixtures.join("unsafe_linkage/round_trip.qr");
+    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qrlib"))
         .expect("the wave-19 fixture manifest is readable");
 
     let directory =
         std::env::temp_dir().join(format!("qcore-decoration-cli-{}", std::process::id()));
     std::fs::create_dir_all(directory.join("include")).unwrap();
-    let manifest = directory.join("demo.qcorelib");
+    let manifest = directory.join("demo.qrlib");
     let header = directory.join("include/demo.h");
     let visibility = directory.join("include/demo_visibility.h");
 

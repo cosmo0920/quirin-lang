@@ -27,15 +27,15 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const WAIVED_ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
+const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qr");
+const WAIVED_ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qr");
 const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
 const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
 const SHARED_MODULE: &str = "fixtures/extern_calls/contracts/buffer_api.qcore";
 const SHARED: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
-const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib.qcorelib";
-const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib.qcorelib");
-const L1_MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
+const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib.qrlib";
+const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib.qrlib");
+const L1_MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qrlib");
 
 fn contracts(entries: &[(&str, &str)]) -> Option<BTreeMap<String, String>> {
     Some(
@@ -447,7 +447,7 @@ fn the_q023_default_is_byte_unchanged_in_both_directions() {
         codes(
             ROUND_TRIP,
             None,
-            manifests(&[("l1.qcorelib", L1_MANIFEST.to_owned())])
+            manifests(&[("l1.qrlib", L1_MANIFEST.to_owned())])
         ),
         ["Q023"]
     );
@@ -458,7 +458,7 @@ fn a_manifest_naming_other_symbols_leaves_the_contracted_route_untouched() {
     let bound = compile(
         ROUND_TRIP,
         slice_selection(),
-        manifests(&[("l1.qcorelib", L1_MANIFEST.to_owned())]),
+        manifests(&[("l1.qrlib", L1_MANIFEST.to_owned())]),
     )
     .unwrap();
     let plain = compile(ROUND_TRIP, slice_selection(), None).unwrap();
@@ -480,7 +480,7 @@ fn the_level_one_route_is_unchanged_beside_the_new_one() {
         slice_selection(),
         manifests(&[
             (MANIFEST_PATH, combined),
-            ("l1.qcorelib", L1_MANIFEST.to_owned()),
+            ("l1.qrlib", L1_MANIFEST.to_owned()),
         ]),
     )
     .expect("two manifests binding disjoint symbols compose");

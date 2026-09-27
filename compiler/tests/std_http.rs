@@ -40,8 +40,8 @@ use qcore_core::std_http::{CRLF, HTTP_VERSION};
 use qcore_core::std_io::Stream;
 use qcore_core::typed_errors::Effect;
 
-const EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
-const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qcore");
+const EXCHANGE: &str = include_str!("../../examples/http/exchange.qr");
+const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qr");
 const HTTP_README: &str = include_str!("../../examples/http/README.md");
 
 fn compile(

@@ -67,7 +67,7 @@ fn check(arguments: &[PathBuf]) -> std::process::Output {
 #[test]
 fn bitfield_property_route_prints_its_success_window_boundary() {
     let output = check(&[
-        repository().join("compiler/tests/fixtures/bitfield_concurrency/addressable.qcore")
+        repository().join("compiler/tests/fixtures/bitfield_concurrency/addressable.qr")
     ]);
     assert!(output.status.success(), "{output:?}");
     assert_eq!(
@@ -80,7 +80,7 @@ property-only successful spawn/join window; no scoped-task lifetime proof or C e
 /// The bare waiver listing the page publishes.
 #[test]
 fn the_page_publishes_the_premises_the_driver_prints() {
-    let output = check(&[examples().join("unsafe-linkage/unchecked_calls.qcore")]);
+    let output = check(&[examples().join("unsafe-linkage/unchecked_calls.qr")]);
     assert!(output.status.success(), "{output:?}");
     assert_eq!(
         String::from_utf8_lossy(&output.stdout),
@@ -100,8 +100,8 @@ fn selecting_the_published_manifest_names_the_build_the_waiver_came_from() {
     let output = command
         .arg("check")
         .arg("--native-library")
-        .arg(examples().join("unsafe-linkage/unchecked_demo.qcorelib"))
-        .arg(examples().join("unsafe-linkage/unchecked_calls.qcore"))
+        .arg(examples().join("unsafe-linkage/unchecked_demo.qrlib"))
+        .arg(examples().join("unsafe-linkage/unchecked_calls.qr"))
         .output()
         .unwrap();
     assert!(output.status.success(), "{output:?}");
@@ -129,14 +129,14 @@ fn selecting_the_published_manifest_names_the_build_the_waiver_came_from() {
 #[test]
 fn every_example_the_pages_say_checks_through_the_driver_does() {
     for example in [
-        "stdio/renderings.qcore",
-        "stdio/severities.qcore",
-        "stdio/barrier.qcore",
-        "pipes/rendered_lines.qcore",
-        "branching/conditional_release.qcore",
-        "branching/condition_tier.qcore",
-        "branching/early_return.qcore",
-        "unsafe-linkage/unchecked_calls.qcore",
+        "stdio/renderings.qr",
+        "stdio/severities.qr",
+        "stdio/barrier.qr",
+        "pipes/rendered_lines.qr",
+        "branching/conditional_release.qr",
+        "branching/condition_tier.qr",
+        "branching/early_return.qr",
+        "unsafe-linkage/unchecked_calls.qr",
     ] {
         let output = check(&[examples().join(example)]);
         assert!(
@@ -157,11 +157,11 @@ fn every_example_the_pages_say_checks_through_the_driver_does() {
 #[test]
 fn the_contracted_examples_are_refused_by_the_driver_rather_than_admitted() {
     for example in [
-        "stdio/pipeline.qcore",
-        "pipes/scalar_stages.qcore",
-        "extern/buffer_round_trip.qcore",
-        "extern/scalar_results.qcore",
-        "extern/borrowed_render.qcore",
+        "stdio/pipeline.qr",
+        "pipes/scalar_stages.qr",
+        "extern/buffer_round_trip.qr",
+        "extern/scalar_results.qr",
+        "extern/borrowed_render.qr",
     ] {
         let output = check(&[examples().join(example)]);
         assert!(
@@ -272,7 +272,7 @@ fn the_published_emit_command_produces_a_translation_unit() {
     let generated = directory.join("renderings.c");
     let output = Command::new(DRIVER)
         .arg("emit")
-        .arg(examples().join("stdio/renderings.qcore"))
+        .arg(examples().join("stdio/renderings.qr"))
         .arg("-o")
         .arg(&generated)
         .output()

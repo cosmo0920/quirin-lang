@@ -73,8 +73,8 @@ const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt")
 const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
 const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
 const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
-const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qcore");
-const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qcore");
+const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qr");
+const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qr");
 
 const GENERIC: &str = include_str!("fixtures/contracts/neighbours_generic.qcore");
 

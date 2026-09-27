@@ -186,8 +186,8 @@ OK 1
 ## Building and running
 
 ```sh
-quirin check examples/branching/conditional_release.qcore
-quirin emit examples/branching/conditional_release.qcore -o /tmp/branch.c
+quirin check examples/branching/conditional_release.qr
+quirin emit examples/branching/conditional_release.qr -o /tmp/branch.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/branch.c -o /tmp/branch
 /tmp/branch
 ```

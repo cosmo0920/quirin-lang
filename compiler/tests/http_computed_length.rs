@@ -32,7 +32,7 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_http::{CONTENT_LENGTH, CRLF, HttpCertificate};
 
-const COMPUTED_LENGTH: &str = include_str!("../../examples/http/computed_length.qcore");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/http/computed_length.qr");
 const HTTP_README: &str = include_str!("../../examples/http/README.md");
 
 fn compile(

@@ -62,8 +62,8 @@ collision-free spelling and remain the default.
 ## Building and running
 
 ```sh
-quirin check examples/sockets/tcp_echo.qcore
-quirin emit examples/sockets/tcp_echo.qcore -o /tmp/tcp_echo.c
+quirin check examples/sockets/tcp_echo.qr
+quirin emit examples/sockets/tcp_echo.qr -o /tmp/tcp_echo.c
 cc -std=c11 -Wall -Wextra -Werror -pedantic -g -O0 \
    -fsanitize=address,undefined -fno-omit-frame-pointer /tmp/tcp_echo.c -o /tmp/tcp_echo
 ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 /tmp/tcp_echo
@@ -178,7 +178,7 @@ every row a file that exists — without building either program a second time.
   composition is no longer a gap: card `SOCKET-EVENT-COMPOSE` landed it, a
   module that both dispatches and sockets now reaches *this* route, which models
   both, and the published example is
-  [`../events/socket_server.qcore`](../events/socket_server.qcore) — indexed on
+  [`../events/socket_server.qr`](../events/socket_server.qr) — indexed on
   the events page because that is where a reader comes for "how do I wait on
   readiness".
 * No non-blocking mode and no shutdown.

@@ -1,0 +1,2502 @@
+{
+  "boundary": "Only unambiguous path suffixes with at least two components in current consumers. Remaining basename/virtual/historical references need review.",
+  "changed_files": 87,
+  "changes": [
+    {
+      "after_sha256": "9f499d65e4c860067c317b36b31af61eab15dbd70f7d60fe640d717fbbf702a5",
+      "before_sha256": "8fcf227269a8bf325777272c05e43a06b1454dccbdc25d367d67f9b1e08e0d5c",
+      "path": "compiler/tests/aggregate_owned_field.rs",
+      "replacements": [
+        {
+          "new": "records/owned_field.qr",
+          "occurrences": 1,
+          "old": "records/owned_field.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "160e130052ea4dea48b6668c8c6383fc48bac915a164732027cc66e77b7fddc3",
+      "before_sha256": "c423a79b8e8cb85f4f97d97a7cd49821821be7746bd9a2680ab034467d455e62",
+      "path": "compiler/tests/bitfield_concurrency.rs",
+      "replacements": [
+        {
+          "new": "bitfield_concurrency/distinct_units.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/distinct_units.qcore"
+        },
+        {
+          "new": "bitfield_concurrency/addressable.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/addressable.qcore"
+        },
+        {
+          "new": "bitfield_concurrency/adjacent.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/adjacent.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "94c90fa872c61cfdaf689ab9c291e715d72aec689230f1ba633cbd16d40e6737",
+      "before_sha256": "74f5921f522ca71a5e849fc38efffade90c6a620880a6d3e67a30d5acf68845a",
+      "path": "compiler/tests/bitwise_conditions.rs",
+      "replacements": [
+        {
+          "new": "bitwise/negated_condition_twin.qr",
+          "occurrences": 1,
+          "old": "bitwise/negated_condition_twin.qcore"
+        },
+        {
+          "new": "bitwise/negated_condition.qr",
+          "occurrences": 1,
+          "old": "bitwise/negated_condition.qcore"
+        },
+        {
+          "new": "bitwise/masked_condition.qr",
+          "occurrences": 1,
+          "old": "bitwise/masked_condition.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f0fceddf3b93aad1370ceee475f3ff7c322bebf4035a11d7a72158f2ca14133a",
+      "before_sha256": "26ef66e4362cfc5a46ca07ab55d63070f798b772f63cfe48ec541744639316cc",
+      "path": "compiler/tests/branch_arms.rs",
+      "replacements": [
+        {
+          "new": "branch_arms/call_else_arm.qr",
+          "occurrences": 1,
+          "old": "branch_arms/call_else_arm.qcore"
+        },
+        {
+          "new": "branch_arms/call_then_arm.qr",
+          "occurrences": 1,
+          "old": "branch_arms/call_then_arm.qcore"
+        },
+        {
+          "new": "branch_arms/early_return.qr",
+          "occurrences": 1,
+          "old": "branch_arms/early_return.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "034300bfd37bc77f1c1e4b5c7f139379fb4bc636042564e15039fa7a2fe86195",
+      "before_sha256": "b831d6697b1245b4b242fb16998016087b15a3440fdb9a31b47217e07e3afdb9",
+      "path": "compiler/tests/branch_statement.rs",
+      "replacements": [
+        {
+          "new": "branch/conditional_release.qr",
+          "occurrences": 1,
+          "old": "branch/conditional_release.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        },
+        {
+          "new": "branch/unbranched_twin.qr",
+          "occurrences": 1,
+          "old": "branch/unbranched_twin.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "400d09d4b214790400d3a8f0c9c4954cc6b05ed532a5691f514ea1a720d2eeab",
+      "before_sha256": "0a2b406ec797253a8485407f6765b4384f2722a4eb8d0a787ac3f5a8dfcc19d9",
+      "path": "compiler/tests/compose_event_lines.rs",
+      "replacements": [
+        {
+          "new": "events/wake_payload.qr",
+          "occurrences": 1,
+          "old": "events/wake_payload.qcore"
+        },
+        {
+          "new": "events/self_pipe.qr",
+          "occurrences": 1,
+          "old": "events/self_pipe.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "2f8e462851dee5794481392a5622da3fe9e980d4ca41a8a4bd55b3a74623f30e",
+      "before_sha256": "cd2def881c9859e50c3f3d54d2911e27af5c1401175a7b8845b3bfd76a101e09",
+      "path": "compiler/tests/ct01_proof_leg.rs",
+      "replacements": [
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 2,
+          "old": "CT01/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "e9bf33cad0a012aee6c916420f9401d98372c00427c218b4da2267f7f7d3ad9a",
+      "before_sha256": "35364bdaf9bc44357517852343773856486c6eff405f09708d32b5b45bff30e8",
+      "path": "compiler/tests/ct03_proof_leg.rs",
+      "replacements": [
+        {
+          "new": "ct/CT03/case.qr",
+          "occurrences": 2,
+          "old": "ct/CT03/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "64b451a8eabcfeef4c3440f3d5e78c4d1a5a53285b7b6ff8e5a07a2380cee551",
+      "before_sha256": "d3109db3f5088aa08f0227520d27722b3872346af1371e1c4352ec7b0db4138d",
+      "path": "compiler/tests/ct07_proof_leg.rs",
+      "replacements": [
+        {
+          "new": "CT07/case.qr",
+          "occurrences": 2,
+          "old": "CT07/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "517a379874f806274ce1319167a26a49ad8f98a2010fa8def76ebfa40a88fa19",
+      "before_sha256": "7dbbe9e8a0bb04a8a34cd3dd2dfd2dec2b68b414ab3f8bfd69d2944ccbc24216",
+      "path": "compiler/tests/ct12_ct14_proof_reach.rs",
+      "replacements": [
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        },
+        {
+          "new": "CT12/case.qr",
+          "occurrences": 1,
+          "old": "CT12/case.qcore"
+        },
+        {
+          "new": "CT14/case.qr",
+          "occurrences": 1,
+          "old": "CT14/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "c4a8ac972397804110daa54788ee37c8fd9f79b4f92a966d9bf9a9499bc0e18c",
+      "before_sha256": "8725487d53fe16253c6ace60a773ce6945d759daa48164f72ddb62fadc9d1e99",
+      "path": "compiler/tests/ct37_proof_leg.rs",
+      "replacements": [
+        {
+          "new": "CT37/case.qr",
+          "occurrences": 2,
+          "old": "CT37/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "6fcc32565512c5f868215bd80f0ce2683fcd2931e4160fe50d6fb7549089f941",
+      "before_sha256": "1fd4ff5c24baaf2936736992185dbb80044ccf56bf73c6834f693465e92552bb",
+      "path": "compiler/tests/ct50_proof_leg.rs",
+      "replacements": [
+        {
+          "new": "CT50/case.qr",
+          "occurrences": 2,
+          "old": "CT50/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "82e5fa9042edccf91b4e37eceda4cd917615833f38b8b039dd3c5f71bbef580e",
+      "before_sha256": "ab217d1b175406d083656923fe30e1c6bcc183ea9df871b3f7e783b02c0d1b20",
+      "path": "compiler/tests/ct_corpus.rs",
+      "replacements": [
+        {
+          "new": "task_worker_allocations/sequential_completion_payload.qr",
+          "occurrences": 1,
+          "old": "task_worker_allocations/sequential_completion_payload.qcore"
+        },
+        {
+          "new": "task_worker_allocations/sequential_worker_error.qr",
+          "occurrences": 1,
+          "old": "task_worker_allocations/sequential_worker_error.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "29bfd329aa7d8df89eb2aa41362bade9ffafeedf6e1ed3fc52ef483bf95c2474",
+      "before_sha256": "2e4b720fed845fe1e84b19db89de3140c03598330bf5b8d3ce6c138065b96d8e",
+      "path": "compiler/tests/examples_suite.rs",
+      "replacements": [
+        {
+          "new": "pipes/scalar_stages_hand_written.qr",
+          "occurrences": 2,
+          "old": "pipes/scalar_stages_hand_written.qcore"
+        },
+        {
+          "new": "unsafe-linkage/unchecked_demo.qrlib",
+          "occurrences": 3,
+          "old": "unsafe-linkage/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "unsafe-linkage/unchecked_calls.qr",
+          "occurrences": 4,
+          "old": "unsafe-linkage/unchecked_calls.qcore"
+        },
+        {
+          "new": "branching/conditional_release.qr",
+          "occurrences": 2,
+          "old": "branching/conditional_release.qcore"
+        },
+        {
+          "new": "branching/condition_tier.qr",
+          "occurrences": 2,
+          "old": "branching/condition_tier.qcore"
+        },
+        {
+          "new": "extern/buffer_round_trip.qr",
+          "occurrences": 3,
+          "old": "extern/buffer_round_trip.qcore"
+        },
+        {
+          "new": "strings/computed_length.qr",
+          "occurrences": 4,
+          "old": "strings/computed_length.qcore"
+        },
+        {
+          "new": "branching/early_return.qr",
+          "occurrences": 3,
+          "old": "branching/early_return.qcore"
+        },
+        {
+          "new": "extern/borrowed_render.qr",
+          "occurrences": 4,
+          "old": "extern/borrowed_render.qcore"
+        },
+        {
+          "new": "events/write_interest.qr",
+          "occurrences": 4,
+          "old": "events/write_interest.qcore"
+        },
+        {
+          "new": "extern/scalar_results.qr",
+          "occurrences": 4,
+          "old": "extern/scalar_results.qcore"
+        },
+        {
+          "new": "events/socket_server.qr",
+          "occurrences": 4,
+          "old": "events/socket_server.qcore"
+        },
+        {
+          "new": "pipes/rendered_lines.qr",
+          "occurrences": 4,
+          "old": "pipes/rendered_lines.qcore"
+        },
+        {
+          "new": "records/pixel_writes.qr",
+          "occurrences": 6,
+          "old": "records/pixel_writes.qcore"
+        },
+        {
+          "new": "events/wake_payload.qr",
+          "occurrences": 4,
+          "old": "events/wake_payload.qcore"
+        },
+        {
+          "new": "pipes/scalar_stages.qr",
+          "occurrences": 5,
+          "old": "pipes/scalar_stages.qcore"
+        },
+        {
+          "new": "records/owned_field.qr",
+          "occurrences": 6,
+          "old": "records/owned_field.qcore"
+        },
+        {
+          "new": "strings/looped_fill.qr",
+          "occurrences": 4,
+          "old": "strings/looped_fill.qcore"
+        },
+        {
+          "new": "strings/status_line.qr",
+          "occurrences": 4,
+          "old": "strings/status_line.qcore"
+        },
+        {
+          "new": "loops/buffer_copy.qr",
+          "occurrences": 6,
+          "old": "loops/buffer_copy.qcore"
+        },
+        {
+          "new": "examples/cycle12.qr",
+          "occurrences": 1,
+          "old": "examples/cycle12.qcore"
+        },
+        {
+          "new": "events/self_pipe.qr",
+          "occurrences": 4,
+          "old": "events/self_pipe.qcore"
+        },
+        {
+          "new": "http/raw_request.qr",
+          "occurrences": 4,
+          "old": "http/raw_request.qcore"
+        },
+        {
+          "new": "sockets/tcp_echo.qr",
+          "occurrences": 4,
+          "old": "sockets/tcp_echo.qcore"
+        },
+        {
+          "new": "sockets/udp_echo.qr",
+          "occurrences": 4,
+          "old": "sockets/udp_echo.qcore"
+        },
+        {
+          "new": "stdio/renderings.qr",
+          "occurrences": 6,
+          "old": "stdio/renderings.qcore"
+        },
+        {
+          "new": "stdio/severities.qr",
+          "occurrences": 6,
+          "old": "stdio/severities.qcore"
+        },
+        {
+          "new": "loops/lend_fill.qr",
+          "occurrences": 4,
+          "old": "loops/lend_fill.qcore"
+        },
+        {
+          "new": "stdio/pipeline.qr",
+          "occurrences": 8,
+          "old": "stdio/pipeline.qcore"
+        },
+        {
+          "new": "http/exchange.qr",
+          "occurrences": 4,
+          "old": "http/exchange.qcore"
+        },
+        {
+          "new": "records/point.qr",
+          "occurrences": 6,
+          "old": "records/point.qcore"
+        },
+        {
+          "new": "stdio/barrier.qr",
+          "occurrences": 6,
+          "old": "stdio/barrier.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "16f98f4727f4f78a9ac03f7681650a66291cfb1ec005c08f02b06c439999d84b",
+      "before_sha256": "535d96decf0a47ea88e20d8fd963078a66ba50e455e63f96ed228ee463826d54",
+      "path": "compiler/tests/extension_compatibility.rs",
+      "replacements": [
+        {
+          "new": "native_library/unchecked_demo.qrlib",
+          "occurrences": 1,
+          "old": "native_library/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "native_library/buffer_lib.qrlib",
+          "occurrences": 1,
+          "old": "native_library/buffer_lib.qcorelib"
+        },
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 1,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "bc1fdb9fcb4b8d11dc40c779296d48977175dab347d6f82cd64ef1e21f885c5d",
+      "before_sha256": "944db168088cd7377f4defc161bfff3ce22250ffb691ed9f954900b5d3948723",
+      "path": "compiler/tests/extern_call_deferred_review.rs",
+      "replacements": [
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "43c29736888231ed05451810293ee8bcd2bbc9d525b0c183708f411efb65c76d",
+      "before_sha256": "a281a3269782f8e0f6e8f58f515d9b023ab4f999ee1bce1e80c5c80b5f5f78f9",
+      "path": "compiler/tests/extern_calls.rs",
+      "replacements": [
+        {
+          "new": "extern_calls/realloc_failure.qr",
+          "occurrences": 1,
+          "old": "extern_calls/realloc_failure.qcore"
+        },
+        {
+          "new": "extern_calls/stored_failure.qr",
+          "occurrences": 1,
+          "old": "extern_calls/stored_failure.qcore"
+        },
+        {
+          "new": "extern_calls/scalar_result.qr",
+          "occurrences": 1,
+          "old": "extern_calls/scalar_result.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/out_slot.qr",
+          "occurrences": 1,
+          "old": "extern_calls/out_slot.qcore"
+        },
+        {
+          "new": "extern_calls/released.qr",
+          "occurrences": 1,
+          "old": "extern_calls/released.qcore"
+        },
+        {
+          "new": "extern_calls/realloc.qr",
+          "occurrences": 1,
+          "old": "extern_calls/realloc.qcore"
+        },
+        {
+          "new": "extern_calls/stored.qr",
+          "occurrences": 1,
+          "old": "extern_calls/stored.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "87843ca319432d89867845cc8f4ef1c4bdbfa3eb033a4648de7ea94ed856d661",
+      "before_sha256": "79dd04fc5719248997a8353896a325b3d321dfb42c20c52a3c62e087b8256b0c",
+      "path": "compiler/tests/f02_trace_relation.rs",
+      "replacements": [
+        {
+          "new": "f02/concurrent_round_trip.qr",
+          "occurrences": 1,
+          "old": "f02/concurrent_round_trip.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "8dc60d0badae988f12df12b76ddf38833a61e8a3af45d490d9e9aa45c99c40c8",
+      "before_sha256": "d83e6598e24a0fa9e4c7995eae369fa63b2e286479af81844b86d0d582e30a29",
+      "path": "compiler/tests/http_computed_length.rs",
+      "replacements": [
+        {
+          "new": "http/computed_length.qr",
+          "occurrences": 1,
+          "old": "http/computed_length.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "0537ff4bed8655641957f915555623adf85f3951be3a010b5d44ff15f3f99490",
+      "before_sha256": "2ef1e090f90b32e27ded967fde9dbc65541d7455312a3d9cb643c7aed069c826",
+      "path": "compiler/tests/logical_connectives.rs",
+      "replacements": [
+        {
+          "new": "connectives/short_circuit_or_twin.qr",
+          "occurrences": 1,
+          "old": "connectives/short_circuit_or_twin.qcore"
+        },
+        {
+          "new": "connectives/short_circuit_or.qr",
+          "occurrences": 1,
+          "old": "connectives/short_circuit_or.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "5b1de8387ca798a96f8cd860b978a6a9af8ae4a7b8c80ee549da55be2a19c27e",
+      "before_sha256": "3ac3cd9de7999bea0773b4a56815181d3ca5fff505d6022ddc09cf6a4e1eae90",
+      "path": "compiler/tests/loops_on_composed_routes.rs",
+      "replacements": [
+        {
+          "new": "strings/looped_fill.qr",
+          "occurrences": 1,
+          "old": "strings/looped_fill.qcore"
+        },
+        {
+          "new": "loops/lend_fill.qr",
+          "occurrences": 1,
+          "old": "loops/lend_fill.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "e57ab0a4883086d3322048dc5068835d75527fec9a36b0c3dcef4b38aae5706c",
+      "before_sha256": "8b77f7f297ec2ce565959492e8bea3b1d4301c07b4dae35f0c9fe15f95a8df69",
+      "path": "compiler/tests/module_imports.rs",
+      "replacements": [
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "0a109d4b4527f2b1c8e1ab108e39bee9b731887bed1f84b8d5360b4122643057",
+      "before_sha256": "b87c0b4d72735158485a65f548fe004636b840a9286d1d00291d88f65d2670cb",
+      "path": "compiler/tests/native_library.rs",
+      "replacements": [
+        {
+          "new": "native_library/unchecked_demo.qrlib",
+          "occurrences": 2,
+          "old": "native_library/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 1,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "d83cb19f981d8e58bcb636bd8dfdccd39c189b58e4d53fcb527cb3495d0447d5",
+      "before_sha256": "1e232b7ce2a59f70713c99ca5cae18f914ea31d1d48cf56ba660c2fd9efef826",
+      "path": "compiler/tests/native_library_contract.rs",
+      "replacements": [
+        {
+          "new": "native_library/unchecked_demo.qrlib",
+          "occurrences": 1,
+          "old": "native_library/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "native_library/buffer_lib.qrlib",
+          "occurrences": 2,
+          "old": "native_library/buffer_lib.qcorelib"
+        },
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 1,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "877c2306df62cc32205c56346e115ab4b32e53cd9dcfefe5e68be4b898409f00",
+      "before_sha256": "efe8903c97d0aabf73882de00ffdec910858716f16be1f794394956f0f42bead",
+      "path": "compiler/tests/native_library_header.rs",
+      "replacements": [
+        {
+          "new": "native_library/buffer_lib_header.qrlib",
+          "occurrences": 2,
+          "old": "native_library/buffer_lib_header.qcorelib"
+        },
+        {
+          "new": "native_library/buffer_lib.qrlib",
+          "occurrences": 2,
+          "old": "native_library/buffer_lib.qcorelib"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "b6faf08e61e8ecca04444cfa068710cac4506b03312b31cf0241fe9755d03d47",
+      "before_sha256": "970c9f037608683d0ff0db153b132f5f35db85b76ff24332a688b25d5d46127e",
+      "path": "compiler/tests/native_library_header_decoration.rs",
+      "replacements": [
+        {
+          "new": "native_library/buffer_lib_decorated.qrlib",
+          "occurrences": 2,
+          "old": "native_library/buffer_lib_decorated.qcorelib"
+        },
+        {
+          "new": "native_library/buffer_lib_header.qrlib",
+          "occurrences": 4,
+          "old": "native_library/buffer_lib_header.qcorelib"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "a01fdd477cfd70fe7770009a3e4c0b6f4dd49ec9ebe9ad1936ff5929f15773c3",
+      "before_sha256": "a3853f2950ec6de6eacf2191d0b9dd6972993fe10d17f1e091101aec8896b878",
+      "path": "compiler/tests/native_library_source_binding.rs",
+      "replacements": [
+        {
+          "new": "native_library/unchecked_demo.qrlib",
+          "occurrences": 2,
+          "old": "native_library/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "native_library/buffer_lib.qrlib",
+          "occurrences": 2,
+          "old": "native_library/buffer_lib.qcorelib"
+        },
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 1,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "1f17eba56190390436d7b55bac8e6d59fd6d59e7063543f928e14233989c91a4",
+      "before_sha256": "cfa2011e175d9d7008ef402a3941638ecc4df3ec7f2559c48bf167b80b193a61",
+      "path": "compiler/tests/obs_reordering.rs",
+      "replacements": [
+        {
+          "new": "threads/shared_readers.qr",
+          "occurrences": 1,
+          "old": "threads/shared_readers.qcore"
+        },
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        },
+        {
+          "new": "threads/owned_buffer.qr",
+          "occurrences": 1,
+          "old": "threads/owned_buffer.qcore"
+        },
+        {
+          "new": "threads/two_workers.qr",
+          "occurrences": 2,
+          "old": "threads/two_workers.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "2500e71142ccd5bb10fcf54d05438e1487a1b27b69b782ec507119474bd4146c",
+      "before_sha256": "982b95e632ae090f9d3284280d4f46d2cb315dc43dc0ae1c1ff0ab072d133e93",
+      "path": "compiler/tests/owned_source_tasks.rs",
+      "replacements": [
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "ba3b3be7078d14a14c58e148487822cf1449ca205cada13f696837c3f8329535",
+      "before_sha256": "87d91e326bf41f7c319b6e875facbb3151f807dce165ed6bb50ee5de470d6be4",
+      "path": "compiler/tests/pipe_drop_stage.rs",
+      "replacements": [
+        {
+          "new": "threads/owned_buffer.qr",
+          "occurrences": 3,
+          "old": "threads/owned_buffer.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "292202f29c5fe66fb7d6cb1969e9481ad533ed2dcee661faf1d7d23970e4da6b",
+      "before_sha256": "feaaca77adad07748c4b0d8188e4bd01739fc1be9a9b0f3bad846d2513582c53",
+      "path": "compiler/tests/pipe_intrinsic_stage.rs",
+      "replacements": [
+        {
+          "new": "threads/owned_buffer.qr",
+          "occurrences": 1,
+          "old": "threads/owned_buffer.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f896b8a61c0ad86d09fe29039717a4dae19bf2a9c92fc4f1c594b0810997a7fa",
+      "before_sha256": "45e5431d39ac4f88a70740ad3c706ba083151e72fb5b65b882b77554e988643c",
+      "path": "compiler/tests/pipe_operator.rs",
+      "replacements": [
+        {
+          "new": "extern_calls/scalar_result.qr",
+          "occurrences": 1,
+          "old": "extern_calls/scalar_result.qcore"
+        },
+        {
+          "new": "pipe/scalar_result_piped.qr",
+          "occurrences": 1,
+          "old": "pipe/scalar_result_piped.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        },
+        {
+          "new": "pipe/round_trip_piped.qr",
+          "occurrences": 1,
+          "old": "pipe/round_trip_piped.qcore"
+        },
+        {
+          "new": "extern_calls/realloc.qr",
+          "occurrences": 1,
+          "old": "extern_calls/realloc.qcore"
+        },
+        {
+          "new": "pipe/realloc_piped.qr",
+          "occurrences": 1,
+          "old": "pipe/realloc_piped.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        },
+        {
+          "new": "pipe/lines_piped.qr",
+          "occurrences": 1,
+          "old": "pipe/lines_piped.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "16fe09bf00dc7142632afcc706d79db17c2f57a025028371c4c91ed4c97a9273",
+      "before_sha256": "0b05be2994a04e04c7a88e73714b8ec8acc57e90727649d4f37428e5fe2fb4c9",
+      "path": "compiler/tests/quant_region.rs",
+      "replacements": [
+        {
+          "new": "region/hand_written_twin.qr",
+          "occurrences": 1,
+          "old": "region/hand_written_twin.qcore"
+        },
+        {
+          "new": "region/discharged_pack.qr",
+          "occurrences": 1,
+          "old": "region/discharged_pack.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "404b7cc0277f614f68f9286d94724c61bc39319dc834c3d849bfa994dca3a560",
+      "before_sha256": "d6445e9a9d29e189e94640ec202f4d4981728b7c0ee67c811f314a558843315a",
+      "path": "compiler/tests/resource_helper_functions.rs",
+      "replacements": [
+        {
+          "new": "resource_helpers/round_trip.qr",
+          "occurrences": 1,
+          "old": "resource_helpers/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "343006c1543e54ef1be46089c3d69daf61df0264fbb52a15c660b14f7140e9b7",
+      "before_sha256": "12186029046a1e6251b14f27d9b9b855e7c2dec2983a7a71a78a4e79a2f2937b",
+      "path": "compiler/tests/slice_permissions.rs",
+      "replacements": [
+        {
+          "new": "slice_permissions/overlapping_write.qr",
+          "occurrences": 1,
+          "old": "slice_permissions/overlapping_write.qcore"
+        },
+        {
+          "new": "slice_permissions/disjoint_halves.qr",
+          "occurrences": 1,
+          "old": "slice_permissions/disjoint_halves.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "e2fa794e23cf2192f3720729597e815f532491c9a72b9b45ac12215244d52e88",
+      "before_sha256": "186142f6d4073caadecb090d246582775275cff1fb300b3a517e1266ce126a3a",
+      "path": "compiler/tests/socket_cell_route.rs",
+      "replacements": [
+        {
+          "new": "sockets/tcp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/tcp_echo.qcore"
+        },
+        {
+          "new": "sockets/udp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/udp_echo.qcore"
+        },
+        {
+          "new": "http/exchange.qr",
+          "occurrences": 1,
+          "old": "http/exchange.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "80b1d6c20dba117e692bf7a5daa784c54d1af096b8336f94150516a30bd7ad8f",
+      "before_sha256": "cae0b33a16e83d29348f4b9fab6cd4cda78b31dbe7270e20184f31c07c48a154",
+      "path": "compiler/tests/socket_event_compose.rs",
+      "replacements": [
+        {
+          "new": "events/socket_server.qr",
+          "occurrences": 1,
+          "old": "events/socket_server.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "89c3c439fe8b6578218f1c81ad7d356ba60319c4931ad7b9a848ad2f76702406",
+      "before_sha256": "6fd0435bf7ae6419f3a00e0a1796fd16f13e3c8e4436145e86973bb2cf225903",
+      "path": "compiler/tests/source_loop.rs",
+      "replacements": [
+        {
+          "new": "source_loop/copy.qr",
+          "occurrences": 1,
+          "old": "source_loop/copy.qcore"
+        },
+        {
+          "new": "std_buffer/bytes.qr",
+          "occurrences": 1,
+          "old": "std_buffer/bytes.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "282f51b0a473a4a03ff2f7f132dfc6e9e78a271a181513a70d98cd9d948ca027",
+      "before_sha256": "f14296528a991b4a37f430fce9e61fab6d1bd03d73ec9472f7d25ad9e7d53590",
+      "path": "compiler/tests/source_record.rs",
+      "replacements": [
+        {
+          "new": "source_record/point.qr",
+          "occurrences": 1,
+          "old": "source_record/point.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "5fe94f2366521baac6b0b42b7e7fb2fcd6d0f6b402af0f0035583229f430a4fc",
+      "before_sha256": "c081c12c72731d9aa3cb1d8d3ce41be2d3a52527fbd08a23a491eafbc939d0d1",
+      "path": "compiler/tests/source_scalar_calls.rs",
+      "replacements": [
+        {
+          "new": "scalar/calls.qr",
+          "occurrences": 2,
+          "old": "scalar/calls.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "99a32a778edb9150e73cfd4180214db531ae730b72a27b9e6b2470db78a6c159",
+      "before_sha256": "d6bfa0a4f022baf0c2b6d2c9a70751300039bdf3604fd39881816b86254652d0",
+      "path": "compiler/tests/source_tasks.rs",
+      "replacements": [
+        {
+          "new": "CT13/unjoined_failure.qr",
+          "occurrences": 1,
+          "old": "CT13/unjoined_failure.qcore"
+        },
+        {
+          "new": "CT13/case.qr",
+          "occurrences": 2,
+          "old": "CT13/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "6ae8af1302ef5efa760200ba54bea1f311e9268d6424157c4243593736c142d0",
+      "before_sha256": "265f002a93815cab33cd948fa424772924fc44c235a8e921d566fdb338ec46ea",
+      "path": "compiler/tests/std_buffer.rs",
+      "replacements": [
+        {
+          "new": "std_buffer/silent.qr",
+          "occurrences": 1,
+          "old": "std_buffer/silent.qcore"
+        },
+        {
+          "new": "std_buffer/bytes.qr",
+          "occurrences": 1,
+          "old": "std_buffer/bytes.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "2370213f474bbf05e38825c05804b5bb033eb83926875a8a78cec8720c30b0d8",
+      "before_sha256": "afccdeda4f9c35e598cb2e3ae680635c84437908ff3ea4f68ca15240831c701b",
+      "path": "compiler/tests/std_event.rs",
+      "replacements": [
+        {
+          "new": "events/write_interest.qr",
+          "occurrences": 1,
+          "old": "events/write_interest.qcore"
+        },
+        {
+          "new": "events/self_pipe.qr",
+          "occurrences": 1,
+          "old": "events/self_pipe.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f959926e20ef082b5bc97ac97c729ff132afe03e413c12cd1a986b9924569b01",
+      "before_sha256": "5dab17c5482bcab11b4f05a0508b454dc6101c1720ffb2e525565737d2d8424d",
+      "path": "compiler/tests/std_http.rs",
+      "replacements": [
+        {
+          "new": "http/raw_request.qr",
+          "occurrences": 1,
+          "old": "http/raw_request.qcore"
+        },
+        {
+          "new": "http/exchange.qr",
+          "occurrences": 1,
+          "old": "http/exchange.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "a7868e5f4c6d8c564ba25180e070c6c29ab04fc4885f9128d4aed5299979ceb9",
+      "before_sha256": "48771e2f2f16a7a540914e5ef8df73dfadd857bedb6e93d7de163c73900cc3b8",
+      "path": "compiler/tests/std_io_compose.rs",
+      "replacements": [
+        {
+          "new": "compose/chain_hand_written.qr",
+          "occurrences": 1,
+          "old": "compose/chain_hand_written.qcore"
+        },
+        {
+          "new": "compose/borrowed_render.qr",
+          "occurrences": 1,
+          "old": "compose/borrowed_render.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        },
+        {
+          "new": "compose/chain.qr",
+          "occurrences": 1,
+          "old": "compose/chain.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "c0ed25a2888df85277dd5b78f76b34a78c565b6651ed0195be3c6f92e4e1a9d7",
+      "before_sha256": "8bcc6e62f6bad4c6d3e031335a0f61a9e04a5637188667b33bb77a2842284015",
+      "path": "compiler/tests/std_modules.rs",
+      "replacements": [
+        {
+          "new": "std_modules/logger_only.qr",
+          "occurrences": 1,
+          "old": "std_modules/logger_only.qcore"
+        },
+        {
+          "new": "std_modules/lines.qr",
+          "occurrences": 1,
+          "old": "std_modules/lines.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "aeee5fec717bc331de993db948fcd0ae305db4a48713c6363e70edfe8bfa739a",
+      "before_sha256": "e42a06682a2e6affdf35c0127fbf9b98cbec53d21219b7ae62158a46f80b6274",
+      "path": "compiler/tests/std_socket.rs",
+      "replacements": [
+        {
+          "new": "sockets/tcp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/tcp_echo.qcore"
+        },
+        {
+          "new": "sockets/udp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/udp_echo.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "cf146c953ec7c7ac40b4430419c3b0e2573edb4e2e285a93467ca7cdc4917345",
+      "before_sha256": "1d78c579393941659773176a6ca4a2ff232e3780973f4d23534fd3d6f040e6e9",
+      "path": "compiler/tests/std_socket_inet.rs",
+      "replacements": [
+        {
+          "new": "sockets/inet_v4_echo.qr",
+          "occurrences": 2,
+          "old": "sockets/inet_v4_echo.qcore"
+        },
+        {
+          "new": "sockets/inet_v6_echo.qr",
+          "occurrences": 2,
+          "old": "sockets/inet_v6_echo.qcore"
+        },
+        {
+          "new": "sockets/tcp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/tcp_echo.qcore"
+        },
+        {
+          "new": "sockets/udp_echo.qr",
+          "occurrences": 1,
+          "old": "sockets/udp_echo.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "2711015a0545491224c935d7063dcf16aae30426a787e2461164a2b5cf3a50d5",
+      "before_sha256": "f9e92d6347a5d953b0ccbf5dadeb9ec344847d55e957383abbb4791746c10a01",
+      "path": "compiler/tests/std_string.rs",
+      "replacements": [
+        {
+          "new": "std_string/silent.qr",
+          "occurrences": 1,
+          "old": "std_string/silent.qcore"
+        },
+        {
+          "new": "std_string/slices.qr",
+          "occurrences": 1,
+          "old": "std_string/slices.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "22265ac4e2b2a2c3631102137717e871e40c8862eee1c5f255381137077354d0",
+      "before_sha256": "91e4c92474c4440c52f6dc3dd9364cb47f515bec5bb35440a2517c89370e1a79",
+      "path": "compiler/tests/string_concat.rs",
+      "replacements": [
+        {
+          "new": "strings/computed_length.qr",
+          "occurrences": 1,
+          "old": "strings/computed_length.qcore"
+        },
+        {
+          "new": "std_string/composed.qr",
+          "occurrences": 1,
+          "old": "std_string/composed.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "4eed7a9ee6f9f2afce1752425ecf6f8835f6408c84a665dcad55764203f71f87",
+      "before_sha256": "b3270e7adbfbfff307ed3ba17504ef07c201d472250a8df78e51562d3a76b717",
+      "path": "compiler/tests/string_slice_io.rs",
+      "replacements": [
+        {
+          "new": "strings/status_line.qr",
+          "occurrences": 1,
+          "old": "strings/status_line.qcore"
+        },
+        {
+          "new": "std_string/slices.qr",
+          "occurrences": 2,
+          "old": "std_string/slices.qcore"
+        },
+        {
+          "new": "std_string/text.qr",
+          "occurrences": 1,
+          "old": "std_string/text.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "235b04251da15cd05d6591016b55e39671ef73f97be7768708122127d38eaf6a",
+      "before_sha256": "e905a20c5b36af3cff349f4484f6b86a847a4039c683e37e0a1a97b8865d733b",
+      "path": "compiler/tests/system_trace_examples_windows.rs",
+      "replacements": [
+        {
+          "new": "unsafe-linkage/unchecked_calls.qr",
+          "occurrences": 1,
+          "old": "unsafe-linkage/unchecked_calls.qcore"
+        },
+        {
+          "new": "branching/conditional_release.qr",
+          "occurrences": 1,
+          "old": "branching/conditional_release.qcore"
+        },
+        {
+          "new": "branching/condition_tier.qr",
+          "occurrences": 1,
+          "old": "branching/condition_tier.qcore"
+        },
+        {
+          "new": "extern/buffer_round_trip.qr",
+          "occurrences": 1,
+          "old": "extern/buffer_round_trip.qcore"
+        },
+        {
+          "new": "branching/early_return.qr",
+          "occurrences": 1,
+          "old": "branching/early_return.qcore"
+        },
+        {
+          "new": "extern/borrowed_render.qr",
+          "occurrences": 1,
+          "old": "extern/borrowed_render.qcore"
+        },
+        {
+          "new": "extern/scalar_results.qr",
+          "occurrences": 1,
+          "old": "extern/scalar_results.qcore"
+        },
+        {
+          "new": "pipes/scalar_stages.qr",
+          "occurrences": 1,
+          "old": "pipes/scalar_stages.qcore"
+        },
+        {
+          "new": "threads/two_workers.qr",
+          "occurrences": 1,
+          "old": "threads/two_workers.qcore"
+        },
+        {
+          "new": "stdio/pipeline.qr",
+          "occurrences": 1,
+          "old": "stdio/pipeline.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "a9f07b1f4333fa1e3304684e199049772d467dc2d2cc56a2e1fd053a47a7b042",
+      "before_sha256": "df3b6eb6b66839a3f718eef801320cb42909fec0172191bb38d392e5a79ce437",
+      "path": "compiler/tests/task_route_tsan.rs",
+      "replacements": [
+        {
+          "new": "write_lend_tasks_exercise/disjoint_exercise.qr",
+          "occurrences": 1,
+          "old": "write_lend_tasks_exercise/disjoint_exercise.qcore"
+        },
+        {
+          "new": "threads/shared_readers.qr",
+          "occurrences": 1,
+          "old": "threads/shared_readers.qcore"
+        },
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        },
+        {
+          "new": "threads/owned_buffer.qr",
+          "occurrences": 1,
+          "old": "threads/owned_buffer.qcore"
+        },
+        {
+          "new": "threads/two_workers.qr",
+          "occurrences": 1,
+          "old": "threads/two_workers.qcore"
+        },
+        {
+          "new": "CT07/case.qr",
+          "occurrences": 2,
+          "old": "CT07/case.qcore"
+        },
+        {
+          "new": "CT46/case.qr",
+          "occurrences": 1,
+          "old": "CT46/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "5a827140067a825cce8ced58227f6422fea503665b912a21bc7c793217af62f0",
+      "before_sha256": "a0d7c67c39babd484d9a82a83d93202eeb2de17152a568f6ce3a30c346aca147",
+      "path": "compiler/tests/thread_examples.rs",
+      "replacements": [
+        {
+          "new": "threads/shared_readers.qr",
+          "occurrences": 1,
+          "old": "threads/shared_readers.qcore"
+        },
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        },
+        {
+          "new": "threads/owned_buffer.qr",
+          "occurrences": 1,
+          "old": "threads/owned_buffer.qcore"
+        },
+        {
+          "new": "threads/two_workers.qr",
+          "occurrences": 1,
+          "old": "threads/two_workers.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "9c0801843fef35b019e3e3821a50b052a79b8a137c4f8c687b248bc6e7edc4e5",
+      "before_sha256": "af0dccde75f78b75984a3c5d5f377caf579d8f9424fe0135030a2662e6325619",
+      "path": "compiler/tests/unsafe_linkage.rs",
+      "replacements": [
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 1,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "extern_calls/round_trip.qr",
+          "occurrences": 1,
+          "old": "extern_calls/round_trip.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "d09842631ea34734b047df2908ad6c467fa5449f3216f7ab2574e061f42bbb21",
+      "before_sha256": "1e28b4094ff26fa07f556dba94fa1eada00dff4154cc64a7c58851685f626313",
+      "path": "compiler/tests/windows_threads.rs",
+      "replacements": [
+        {
+          "new": "f02/concurrent_round_trip.qr",
+          "occurrences": 1,
+          "old": "f02/concurrent_round_trip.qcore"
+        },
+        {
+          "new": "ct/CT03/case.qr",
+          "occurrences": 1,
+          "old": "ct/CT03/case.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        },
+        {
+          "new": "CT17/case.qr",
+          "occurrences": 2,
+          "old": "CT17/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "42f7823a3b557c575c017891f18652e8f2d6e092ee6928589aaeb263368bab5d",
+      "before_sha256": "e42f5b29d892a7dec032200957584386379b63b2cd0001bfc997823b7a42f04d",
+      "path": "compiler/tests/write_lend.rs",
+      "replacements": [
+        {
+          "new": "CT07/sequential_write_halves.qr",
+          "occurrences": 1,
+          "old": "CT07/sequential_write_halves.qcore"
+        },
+        {
+          "new": "CT07/overlapping_lends.qr",
+          "occurrences": 1,
+          "old": "CT07/overlapping_lends.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "6029f07be9ed6a6618523727a5346c665c40c6d22373964d62ba6f5d50428088",
+      "before_sha256": "dcdade7fda7816532abd9b92a98820db6ac7dba18427fd9e9577c95f6777e8b6",
+      "path": "compiler/tests/write_lend_tasks_exercise.rs",
+      "replacements": [
+        {
+          "new": "write_lend_tasks_exercise/disjoint_exercise.qr",
+          "occurrences": 1,
+          "old": "write_lend_tasks_exercise/disjoint_exercise.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "dd75d403de4f188139fc3f4a6b49433f24cbe7410be34283e6df525d73a6bca3",
+      "before_sha256": "72e072a2488d1b06f4290020433a5ac7640b12a2352168b0b8875c344dad7ec1",
+      "path": "crates/qcore-c-gateway/tests/hash_contracts.rs",
+      "replacements": [
+        {
+          "new": "contracts/hash_contracts_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/hash_contracts_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b09b10_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b09b10_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "b739940086df1d0fba3732544cc0cb8bdaa3ec5704db3199835143269246febf",
+      "before_sha256": "9dc5c539f4eb2567dd2c3b7010efec32148f2aeb7fd16255a60b7aee5efaaf17",
+      "path": "crates/qcore-c-gateway/tests/neighbours.rs",
+      "replacements": [
+        {
+          "new": "contracts/hash_contracts_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/hash_contracts_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "da92d65858394c85cafb354b242668adf78e03b67da19cc1ffecc2d655f0f547",
+      "before_sha256": "3c19af2a826049ae1cbd54a3c80ae01ef0f7379abd387ac5a8e8cbda985d1a1c",
+      "path": "crates/qcore-c-gateway/tests/o04_arms.rs",
+      "replacements": [
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "0f99ce1804b6639fac0b370eed083d1a2aaff560c7a64a33cf64fc065b08d5bf",
+      "before_sha256": "625ed2bb6624ec08bc3d894227f3cc5a67ec6bbfc739c78cb69c70ced49552e6",
+      "path": "crates/qcore-c-gateway/tests/o04_b08.rs",
+      "replacements": [
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "b0bcbf1ae40818d6476b8c338d6c338fe5ab9d82b7a54112690d6278f5e22d41",
+      "before_sha256": "24e80fd335195d480d9498bb4305eb4a0d03bd8eac09d6c316362a7df5e285ab",
+      "path": "crates/qcore-c-gateway/tests/o04_b09b10.rs",
+      "replacements": [
+        {
+          "new": "contracts/o04_b09b10_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b09b10_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "921dcd8a17de79466b057fe390d17293d1e7de73b8af0e82eb829c1f56c73e65",
+      "before_sha256": "15ac003d488ca9194d942e79b4d6e93c2c7d70604dc10a648d8cb0ad7b7ffe00",
+      "path": "crates/qcore-c-gateway/tests/o04_read_bound.rs",
+      "replacements": [
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "3727cf5dcbf2beff0e3aabd38fe4cfc3e862c85004bd3320075dc37c69d9817e",
+      "before_sha256": "aba75593b12f539a15dba662cb87c163fd30cf2813e879edac84d0cc18b78f41",
+      "path": "crates/qcore-c-gateway/tests/o04_trace.rs",
+      "replacements": [
+        {
+          "new": "contracts/o04_b09b10_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b09b10_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_trace_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_trace_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_arms_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_arms_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "6b761982f0356a75af1fb8fedd38c199cc0268e434effffe55d66f2b012464e3",
+      "before_sha256": "2979e29ef1d12d505a473d76cef4829bac0cb257c767286e504efa268fcb3437",
+      "path": "crates/qcore-c-gateway/tests/prod_contracts.rs",
+      "replacements": [
+        {
+          "new": "contracts/hash_contracts_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/hash_contracts_callees.qcore"
+        },
+        {
+          "new": "contracts/o04_b08_callees.qr",
+          "occurrences": 1,
+          "old": "contracts/o04_b08_callees.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "e0d4489872d2d7460e814746fdd9d3633462ec7d33e38d7190416d5483410f99",
+      "before_sha256": "9ab2e1a48824af7c70a5026f63fe74da24f0cce8d664953109aebab5587016c1",
+      "path": "crates/qcore-core/examples/concurrency_prelude.rs",
+      "replacements": [
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 1,
+          "old": "threads/core_context.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "d474d3206102296a2659d3661771870ae715b5c567e92615bc8f819b7627040c",
+      "before_sha256": "c6c947b8366e6bf30e6b526b4d18ff2866feb14581892645573507870ea1bb65",
+      "path": "crates/qcore-core/tests/unit/std_event.rs",
+      "replacements": [
+        {
+          "new": "events/wake_payload.qr",
+          "occurrences": 1,
+          "old": "events/wake_payload.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "37ba607b81fc2d9778e6f393e3188c6c949478f4d8cf1025661fc7d88ced35e4",
+      "before_sha256": "675dc523b982f25b78d96e1fbdfeae34e1d61cc19552e0e283a93cba455c008f",
+      "path": "crates/qcore-frontend/src/frontend.rs",
+      "replacements": [
+        {
+          "new": "threads/shared_readers.qr",
+          "occurrences": 1,
+          "old": "threads/shared_readers.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f93f88c795db9d0bff39c24d53b8667d1f7a701ef7d9f3d3b6da6d8b08af1b6c",
+      "before_sha256": "6765566f182a5387a80c309b91cb570da79ee0a412ca539f01fc254f73a2e879",
+      "path": "crates/qcore-frontend/src/source_http.rs",
+      "replacements": [
+        {
+          "new": "strings/status_line.qr",
+          "occurrences": 1,
+          "old": "strings/status_line.qcore"
+        },
+        {
+          "new": "std_string/text.qr",
+          "occurrences": 1,
+          "old": "std_string/text.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f1255887eeb8d90f85042bf014fab8c9e7745813183fafbc81a89a2d7e40cb33",
+      "before_sha256": "cdc9ef1c8cd0de7d4f40a015b40bebd695b20243b17a72e019cd4220d84d4007",
+      "path": "crates/qcore-frontend/src/source_record.rs",
+      "replacements": [
+        {
+          "new": "probes/d02_boundary_record.qr",
+          "occurrences": 1,
+          "old": "probes/d02_boundary_record.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "48c6c7998d4700c943885b1582fb52ebcce27b361bd62263b5e733e0edc6a30b",
+      "before_sha256": "5da7d709f3d16ce1d9cc54b44677ec5222d86a595effe5faf25d296c3fc8456f",
+      "path": "crates/qcore-frontend/src/source_std_buffer.rs",
+      "replacements": [
+        {
+          "new": "threads/shared_readers.qr",
+          "occurrences": 1,
+          "old": "threads/shared_readers.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "14563019d049957d55eace9cf44132798b4e8aa7ae56d997826a8c47aa6fbc9a",
+      "before_sha256": "ba8f5693c561741938c0b5ab988572770c56d9a2c5f0007614d830f741cc20bb",
+      "path": "crates/qcore-frontend/tests/owned_tasks.rs",
+      "replacements": [
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "dcdae7929e655b573c122fba6e07cc26a390863130f659f191ce6df3e815ea7c",
+      "before_sha256": "111cb11f3af23c6fe204f8e9986a1c1b1dea886adc3a55d612eebaffc652f86c",
+      "path": "crates/qcorec/tests/cli.rs",
+      "replacements": [
+        {
+          "new": "native_library/unchecked_demo.qrlib",
+          "occurrences": 3,
+          "old": "native_library/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "unsafe_linkage/round_trip.qr",
+          "occurrences": 3,
+          "old": "unsafe_linkage/round_trip.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 1,
+          "old": "CT01/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "936806a95000837043b5188d7c4879fe419235c42254b517eb65836ec6758bcd",
+      "before_sha256": "c9be293b8edec6dae14fa2291b4742dc934d94263cc11762c0d3fbc02ae0412d",
+      "path": "crates/qcorec/tests/examples_cli.rs",
+      "replacements": [
+        {
+          "new": "bitfield_concurrency/addressable.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/addressable.qcore"
+        },
+        {
+          "new": "unsafe-linkage/unchecked_demo.qrlib",
+          "occurrences": 1,
+          "old": "unsafe-linkage/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "unsafe-linkage/unchecked_calls.qr",
+          "occurrences": 3,
+          "old": "unsafe-linkage/unchecked_calls.qcore"
+        },
+        {
+          "new": "branching/conditional_release.qr",
+          "occurrences": 1,
+          "old": "branching/conditional_release.qcore"
+        },
+        {
+          "new": "branching/condition_tier.qr",
+          "occurrences": 1,
+          "old": "branching/condition_tier.qcore"
+        },
+        {
+          "new": "extern/buffer_round_trip.qr",
+          "occurrences": 1,
+          "old": "extern/buffer_round_trip.qcore"
+        },
+        {
+          "new": "branching/early_return.qr",
+          "occurrences": 1,
+          "old": "branching/early_return.qcore"
+        },
+        {
+          "new": "extern/borrowed_render.qr",
+          "occurrences": 1,
+          "old": "extern/borrowed_render.qcore"
+        },
+        {
+          "new": "extern/scalar_results.qr",
+          "occurrences": 1,
+          "old": "extern/scalar_results.qcore"
+        },
+        {
+          "new": "pipes/rendered_lines.qr",
+          "occurrences": 1,
+          "old": "pipes/rendered_lines.qcore"
+        },
+        {
+          "new": "pipes/scalar_stages.qr",
+          "occurrences": 1,
+          "old": "pipes/scalar_stages.qcore"
+        },
+        {
+          "new": "stdio/renderings.qr",
+          "occurrences": 2,
+          "old": "stdio/renderings.qcore"
+        },
+        {
+          "new": "stdio/severities.qr",
+          "occurrences": 1,
+          "old": "stdio/severities.qcore"
+        },
+        {
+          "new": "stdio/pipeline.qr",
+          "occurrences": 1,
+          "old": "stdio/pipeline.qcore"
+        },
+        {
+          "new": "stdio/barrier.qr",
+          "occurrences": 1,
+          "old": "stdio/barrier.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "a26a72803de0cf442eb13fbf5bad1ad5578b58ee3ca5518c37cefe3dc9f95ee9",
+      "before_sha256": "f64c3f68fdc015ed9da2661a42c2b7c91665305605590145795bb98914a63f21",
+      "path": "docs/reevaluation/ct_manifest.json",
+      "replacements": [
+        {
+          "new": "bitfield_concurrency/distinct_units.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/distinct_units.qcore"
+        },
+        {
+          "new": "slice_permissions/overlapping_write.qr",
+          "occurrences": 1,
+          "old": "slice_permissions/overlapping_write.qcore"
+        },
+        {
+          "new": "bitfield_concurrency/addressable.qr",
+          "occurrences": 1,
+          "old": "bitfield_concurrency/addressable.qcore"
+        },
+        {
+          "new": "CT34/growth_then_guarded_access.qr",
+          "occurrences": 4,
+          "old": "CT34/growth_then_guarded_access.qcore"
+        },
+        {
+          "new": "CT04/write_after_joins.qr",
+          "occurrences": 1,
+          "old": "CT04/write_after_joins.qcore"
+        },
+        {
+          "new": "CT14/read_before_join.qr",
+          "occurrences": 1,
+          "old": "CT14/read_before_join.qcore"
+        },
+        {
+          "new": "CT10/distinct_units.qr",
+          "occurrences": 1,
+          "old": "CT10/distinct_units.qcore"
+        },
+        {
+          "new": "source_record/point.qr",
+          "occurrences": 1,
+          "old": "source_record/point.qcore"
+        },
+        {
+          "new": "CT10/addressable.qr",
+          "occurrences": 1,
+          "old": "CT10/addressable.qcore"
+        },
+        {
+          "new": "ct/CT03/case.qr",
+          "occurrences": 11,
+          "old": "ct/CT03/case.qcore"
+        },
+        {
+          "new": "ct/CT04/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT04/case.qcore"
+        },
+        {
+          "new": "ct/CT05/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT05/case.qcore"
+        },
+        {
+          "new": "ct/CT11/case.qr",
+          "occurrences": 3,
+          "old": "ct/CT11/case.qcore"
+        },
+        {
+          "new": "ct/CT24/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT24/case.qcore"
+        },
+        {
+          "new": "ct/CT25/case.qr",
+          "occurrences": 10,
+          "old": "ct/CT25/case.qcore"
+        },
+        {
+          "new": "ct/CT26/case.qr",
+          "occurrences": 9,
+          "old": "ct/CT26/case.qcore"
+        },
+        {
+          "new": "ct/CT27/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT27/case.qcore"
+        },
+        {
+          "new": "ct/CT29/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT29/case.qcore"
+        },
+        {
+          "new": "ct/CT30/case.qr",
+          "occurrences": 5,
+          "old": "ct/CT30/case.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 10,
+          "old": "CT01/case.qcore"
+        },
+        {
+          "new": "CT02/case.qr",
+          "occurrences": 6,
+          "old": "CT02/case.qcore"
+        },
+        {
+          "new": "CT06/case.qr",
+          "occurrences": 3,
+          "old": "CT06/case.qcore"
+        },
+        {
+          "new": "CT07/case.qr",
+          "occurrences": 10,
+          "old": "CT07/case.qcore"
+        },
+        {
+          "new": "CT08/case.qr",
+          "occurrences": 4,
+          "old": "CT08/case.qcore"
+        },
+        {
+          "new": "CT09/case.qr",
+          "occurrences": 9,
+          "old": "CT09/case.qcore"
+        },
+        {
+          "new": "CT10/case.qr",
+          "occurrences": 5,
+          "old": "CT10/case.qcore"
+        },
+        {
+          "new": "CT12/case.qr",
+          "occurrences": 9,
+          "old": "CT12/case.qcore"
+        },
+        {
+          "new": "CT13/case.qr",
+          "occurrences": 8,
+          "old": "CT13/case.qcore"
+        },
+        {
+          "new": "CT14/case.qr",
+          "occurrences": 9,
+          "old": "CT14/case.qcore"
+        },
+        {
+          "new": "CT15/case.qr",
+          "occurrences": 8,
+          "old": "CT15/case.qcore"
+        },
+        {
+          "new": "CT16/case.qr",
+          "occurrences": 8,
+          "old": "CT16/case.qcore"
+        },
+        {
+          "new": "CT17/case.qr",
+          "occurrences": 9,
+          "old": "CT17/case.qcore"
+        },
+        {
+          "new": "CT18/case.qr",
+          "occurrences": 4,
+          "old": "CT18/case.qcore"
+        },
+        {
+          "new": "CT19/case.qr",
+          "occurrences": 5,
+          "old": "CT19/case.qcore"
+        },
+        {
+          "new": "CT20/case.qr",
+          "occurrences": 8,
+          "old": "CT20/case.qcore"
+        },
+        {
+          "new": "CT21/case.qr",
+          "occurrences": 3,
+          "old": "CT21/case.qcore"
+        },
+        {
+          "new": "CT22/case.qr",
+          "occurrences": 10,
+          "old": "CT22/case.qcore"
+        },
+        {
+          "new": "CT23/case.qr",
+          "occurrences": 7,
+          "old": "CT23/case.qcore"
+        },
+        {
+          "new": "CT28/case.qr",
+          "occurrences": 5,
+          "old": "CT28/case.qcore"
+        },
+        {
+          "new": "CT31/case.qr",
+          "occurrences": 5,
+          "old": "CT31/case.qcore"
+        },
+        {
+          "new": "CT32/case.qr",
+          "occurrences": 5,
+          "old": "CT32/case.qcore"
+        },
+        {
+          "new": "CT33/case.qr",
+          "occurrences": 5,
+          "old": "CT33/case.qcore"
+        },
+        {
+          "new": "CT34/case.qr",
+          "occurrences": 5,
+          "old": "CT34/case.qcore"
+        },
+        {
+          "new": "CT35/case.qr",
+          "occurrences": 5,
+          "old": "CT35/case.qcore"
+        },
+        {
+          "new": "CT36/case.qr",
+          "occurrences": 5,
+          "old": "CT36/case.qcore"
+        },
+        {
+          "new": "CT37/case.qr",
+          "occurrences": 9,
+          "old": "CT37/case.qcore"
+        },
+        {
+          "new": "CT38/case.qr",
+          "occurrences": 5,
+          "old": "CT38/case.qcore"
+        },
+        {
+          "new": "CT39/case.qr",
+          "occurrences": 5,
+          "old": "CT39/case.qcore"
+        },
+        {
+          "new": "CT42/case.qr",
+          "occurrences": 4,
+          "old": "CT42/case.qcore"
+        },
+        {
+          "new": "CT44/case.qr",
+          "occurrences": 5,
+          "old": "CT44/case.qcore"
+        },
+        {
+          "new": "CT46/case.qr",
+          "occurrences": 9,
+          "old": "CT46/case.qcore"
+        },
+        {
+          "new": "CT47/case.qr",
+          "occurrences": 5,
+          "old": "CT47/case.qcore"
+        },
+        {
+          "new": "CT48/case.qr",
+          "occurrences": 5,
+          "old": "CT48/case.qcore"
+        },
+        {
+          "new": "CT49/case.qr",
+          "occurrences": 9,
+          "old": "CT49/case.qcore"
+        },
+        {
+          "new": "CT50/case.qr",
+          "occurrences": 9,
+          "old": "CT50/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "8905632ae32b67196e80e49088c28d8c960a2cd221d5ab34ff76e00cd836b32f",
+      "before_sha256": "257c857c735f1eb549a748b12db0ad2be7380735c24b79e8ff7af37756f8be66",
+      "path": "docs/reviews/r0_3/acceptance_matrix.json",
+      "replacements": [
+        {
+          "new": "task_worker_allocations/sequential_completion_payload.qr",
+          "occurrences": 1,
+          "old": "task_worker_allocations/sequential_completion_payload.qcore"
+        },
+        {
+          "new": "task_worker_allocations/sequential_worker_error.qr",
+          "occurrences": 1,
+          "old": "task_worker_allocations/sequential_worker_error.qcore"
+        },
+        {
+          "new": "CT34/growth_then_guarded_access.qr",
+          "occurrences": 4,
+          "old": "CT34/growth_then_guarded_access.qcore"
+        },
+        {
+          "new": "CT34/growth_over_own_footprint.qr",
+          "occurrences": 1,
+          "old": "CT34/growth_over_own_footprint.qcore"
+        },
+        {
+          "new": "CT34/growth_onto_unprotected.qr",
+          "occurrences": 1,
+          "old": "CT34/growth_onto_unprotected.qcore"
+        },
+        {
+          "new": "probes/d02_boundary_record.qr",
+          "occurrences": 1,
+          "old": "probes/d02_boundary_record.qcore"
+        },
+        {
+          "new": "CT36/maximized_allocation.qr",
+          "occurrences": 1,
+          "old": "CT36/maximized_allocation.qcore"
+        },
+        {
+          "new": "CT38/split_within_total.qr",
+          "occurrences": 1,
+          "old": "CT38/split_within_total.qcore"
+        },
+        {
+          "new": "strings/computed_length.qr",
+          "occurrences": 2,
+          "old": "strings/computed_length.qcore"
+        },
+        {
+          "new": "CT27/disjoint_payloads.qr",
+          "occurrences": 1,
+          "old": "CT27/disjoint_payloads.qcore"
+        },
+        {
+          "new": "CT33/ascending_nesting.qr",
+          "occurrences": 1,
+          "old": "CT33/ascending_nesting.qcore"
+        },
+        {
+          "new": "CT36/summed_allocation.qr",
+          "occurrences": 1,
+          "old": "CT36/summed_allocation.qcore"
+        },
+        {
+          "new": "CT28/own_acquisition.qr",
+          "occurrences": 1,
+          "old": "CT28/own_acquisition.qcore"
+        },
+        {
+          "new": "CT39/work_bound_only.qr",
+          "occurrences": 1,
+          "old": "CT39/work_bound_only.qcore"
+        },
+        {
+          "new": "events/socket_server.qr",
+          "occurrences": 2,
+          "old": "events/socket_server.qcore"
+        },
+        {
+          "new": "http/computed_length.qr",
+          "occurrences": 1,
+          "old": "http/computed_length.qcore"
+        },
+        {
+          "new": "CT30/escaped_borrow.qr",
+          "occurrences": 1,
+          "old": "CT30/escaped_borrow.qcore"
+        },
+        {
+          "new": "CT32/joined_outside.qr",
+          "occurrences": 1,
+          "old": "CT32/joined_outside.qcore"
+        },
+        {
+          "new": "CT35/repeated_entry.qr",
+          "occurrences": 1,
+          "old": "CT35/repeated_entry.qcore"
+        },
+        {
+          "new": "CT48/never_asserted.qr",
+          "occurrences": 1,
+          "old": "CT48/never_asserted.qcore"
+        },
+        {
+          "new": "strings/status_line.qr",
+          "occurrences": 2,
+          "old": "strings/status_line.qcore"
+        },
+        {
+          "new": "CT28/child_unlocks.qr",
+          "occurrences": 1,
+          "old": "CT28/child_unlocks.qcore"
+        },
+        {
+          "new": "loops/buffer_copy.qr",
+          "occurrences": 1,
+          "old": "loops/buffer_copy.qcore"
+        },
+        {
+          "new": "ct/CT29/restored.qr",
+          "occurrences": 1,
+          "old": "ct/CT29/restored.qcore"
+        },
+        {
+          "new": "ct/CT30/released.qr",
+          "occurrences": 1,
+          "old": "ct/CT30/released.qcore"
+        },
+        {
+          "new": "CT48/reasserted.qr",
+          "occurrences": 1,
+          "old": "CT48/reasserted.qcore"
+        },
+        {
+          "new": "CT31/performed.qr",
+          "occurrences": 1,
+          "old": "CT31/performed.qcore"
+        },
+        {
+          "new": "CT35/two_cells.qr",
+          "occurrences": 1,
+          "old": "CT35/two_cells.qcore"
+        },
+        {
+          "new": "CT33/unranked.qr",
+          "occurrences": 1,
+          "old": "CT33/unranked.qcore"
+        },
+        {
+          "new": "ct/CT03/case.qr",
+          "occurrences": 9,
+          "old": "ct/CT03/case.qcore"
+        },
+        {
+          "new": "ct/CT04/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT04/case.qcore"
+        },
+        {
+          "new": "ct/CT05/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT05/case.qcore"
+        },
+        {
+          "new": "ct/CT11/case.qr",
+          "occurrences": 2,
+          "old": "ct/CT11/case.qcore"
+        },
+        {
+          "new": "ct/CT24/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT24/case.qcore"
+        },
+        {
+          "new": "ct/CT25/case.qr",
+          "occurrences": 9,
+          "old": "ct/CT25/case.qcore"
+        },
+        {
+          "new": "ct/CT26/case.qr",
+          "occurrences": 8,
+          "old": "ct/CT26/case.qcore"
+        },
+        {
+          "new": "ct/CT27/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT27/case.qcore"
+        },
+        {
+          "new": "ct/CT29/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT29/case.qcore"
+        },
+        {
+          "new": "ct/CT30/case.qr",
+          "occurrences": 4,
+          "old": "ct/CT30/case.qcore"
+        },
+        {
+          "new": "CT01/case.qr",
+          "occurrences": 10,
+          "old": "CT01/case.qcore"
+        },
+        {
+          "new": "CT02/case.qr",
+          "occurrences": 4,
+          "old": "CT02/case.qcore"
+        },
+        {
+          "new": "CT06/case.qr",
+          "occurrences": 2,
+          "old": "CT06/case.qcore"
+        },
+        {
+          "new": "CT07/case.qr",
+          "occurrences": 11,
+          "old": "CT07/case.qcore"
+        },
+        {
+          "new": "CT08/case.qr",
+          "occurrences": 2,
+          "old": "CT08/case.qcore"
+        },
+        {
+          "new": "CT09/case.qr",
+          "occurrences": 7,
+          "old": "CT09/case.qcore"
+        },
+        {
+          "new": "CT10/case.qr",
+          "occurrences": 4,
+          "old": "CT10/case.qcore"
+        },
+        {
+          "new": "CT12/case.qr",
+          "occurrences": 7,
+          "old": "CT12/case.qcore"
+        },
+        {
+          "new": "CT13/case.qr",
+          "occurrences": 7,
+          "old": "CT13/case.qcore"
+        },
+        {
+          "new": "CT14/case.qr",
+          "occurrences": 7,
+          "old": "CT14/case.qcore"
+        },
+        {
+          "new": "CT15/case.qr",
+          "occurrences": 7,
+          "old": "CT15/case.qcore"
+        },
+        {
+          "new": "CT16/case.qr",
+          "occurrences": 8,
+          "old": "CT16/case.qcore"
+        },
+        {
+          "new": "CT17/case.qr",
+          "occurrences": 9,
+          "old": "CT17/case.qcore"
+        },
+        {
+          "new": "CT18/case.qr",
+          "occurrences": 3,
+          "old": "CT18/case.qcore"
+        },
+        {
+          "new": "CT19/case.qr",
+          "occurrences": 4,
+          "old": "CT19/case.qcore"
+        },
+        {
+          "new": "CT20/case.qr",
+          "occurrences": 7,
+          "old": "CT20/case.qcore"
+        },
+        {
+          "new": "CT21/case.qr",
+          "occurrences": 2,
+          "old": "CT21/case.qcore"
+        },
+        {
+          "new": "CT22/case.qr",
+          "occurrences": 9,
+          "old": "CT22/case.qcore"
+        },
+        {
+          "new": "CT23/case.qr",
+          "occurrences": 6,
+          "old": "CT23/case.qcore"
+        },
+        {
+          "new": "CT28/case.qr",
+          "occurrences": 4,
+          "old": "CT28/case.qcore"
+        },
+        {
+          "new": "CT31/case.qr",
+          "occurrences": 4,
+          "old": "CT31/case.qcore"
+        },
+        {
+          "new": "CT32/case.qr",
+          "occurrences": 4,
+          "old": "CT32/case.qcore"
+        },
+        {
+          "new": "CT33/case.qr",
+          "occurrences": 4,
+          "old": "CT33/case.qcore"
+        },
+        {
+          "new": "CT34/case.qr",
+          "occurrences": 4,
+          "old": "CT34/case.qcore"
+        },
+        {
+          "new": "CT35/case.qr",
+          "occurrences": 4,
+          "old": "CT35/case.qcore"
+        },
+        {
+          "new": "CT36/case.qr",
+          "occurrences": 4,
+          "old": "CT36/case.qcore"
+        },
+        {
+          "new": "CT37/case.qr",
+          "occurrences": 9,
+          "old": "CT37/case.qcore"
+        },
+        {
+          "new": "CT38/case.qr",
+          "occurrences": 4,
+          "old": "CT38/case.qcore"
+        },
+        {
+          "new": "CT39/case.qr",
+          "occurrences": 4,
+          "old": "CT39/case.qcore"
+        },
+        {
+          "new": "CT42/case.qr",
+          "occurrences": 3,
+          "old": "CT42/case.qcore"
+        },
+        {
+          "new": "CT44/case.qr",
+          "occurrences": 4,
+          "old": "CT44/case.qcore"
+        },
+        {
+          "new": "CT46/case.qr",
+          "occurrences": 8,
+          "old": "CT46/case.qcore"
+        },
+        {
+          "new": "CT47/case.qr",
+          "occurrences": 4,
+          "old": "CT47/case.qcore"
+        },
+        {
+          "new": "CT48/case.qr",
+          "occurrences": 4,
+          "old": "CT48/case.qcore"
+        },
+        {
+          "new": "CT49/case.qr",
+          "occurrences": 8,
+          "old": "CT49/case.qcore"
+        },
+        {
+          "new": "CT50/case.qr",
+          "occurrences": 8,
+          "old": "CT50/case.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "5365a2cddc3c83111098ad0665ffc4247e1f20922057c71c96abc5361ea3eb83",
+      "before_sha256": "98c74fb855ce8b5b23e1a28c2567a787afdbfec308eb911ce6d46b7317b8a98d",
+      "path": "examples/branching/README.md",
+      "replacements": [
+        {
+          "new": "branching/conditional_release.qr",
+          "occurrences": 2,
+          "old": "branching/conditional_release.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "1a0f4f1ea1313b9b74755e9329c5009998ca4b78573c7b6f3ba2a185923bc2df",
+      "before_sha256": "d45a5ef636a9f44c0b92d74949a5e4ba2c78e4a0debc303793d408b14965a415",
+      "path": "examples/extern/README.md",
+      "replacements": [
+        {
+          "new": "stdio/pipeline.qr",
+          "occurrences": 2,
+          "old": "stdio/pipeline.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "ca8fdaa31ebfdec512a7772f54bc0fa1b4b344999c2ec1b26785336b4670baef",
+      "before_sha256": "06de72d3bc2caf6dd576558fc65d779bcc3fbbd60ca2d12fe66c7b4c63adf969",
+      "path": "examples/http/README.md",
+      "replacements": [
+        {
+          "new": "http/exchange.qr",
+          "occurrences": 2,
+          "old": "http/exchange.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "0e6a5412180c6307a737f7282435ccc16ad81cdbe811553e5e23570582742e54",
+      "before_sha256": "10304d95651ba56e5ee5e3852981354a636587942772075fec47ecd63ec7e890",
+      "path": "examples/pipes/README.md",
+      "replacements": [
+        {
+          "new": "pipes/rendered_lines.qr",
+          "occurrences": 2,
+          "old": "pipes/rendered_lines.qcore"
+        },
+        {
+          "new": "stdio/pipeline.qr",
+          "occurrences": 2,
+          "old": "stdio/pipeline.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "bc508b37147d79aa2bb220af1aa05270e590656cb5a7cadee237c5aacf4fbd83",
+      "before_sha256": "5e9e0aa5f2b0c3d8da2b2ec08bf6170bc74a31a5518b00937aa07ec9c6d25d0b",
+      "path": "examples/scalar/README.md",
+      "replacements": [
+        {
+          "new": "scalar/calls.qr",
+          "occurrences": 2,
+          "old": "scalar/calls.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "f423e0697ba1adb5bd3ad0020d80bf35e00ba60bae148851942d6c69b46c114c",
+      "before_sha256": "93ec4de9c5fe7968a2b6f4f1e8bb94472e65fc18b916c84064459ce5376825ad",
+      "path": "examples/sockets/README.md",
+      "replacements": [
+        {
+          "new": "events/socket_server.qr",
+          "occurrences": 2,
+          "old": "events/socket_server.qcore"
+        },
+        {
+          "new": "sockets/tcp_echo.qr",
+          "occurrences": 2,
+          "old": "sockets/tcp_echo.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "3065d17d3efb77edee4a6fc7c6f92a1455783e739b487585358551d5b0972885",
+      "before_sha256": "6ef1ac326be85e653e985ad5b79fbbcb868549576f5ac3ed4d1f22804b736f30",
+      "path": "examples/stdio/README.md",
+      "replacements": [
+        {
+          "new": "pipes/scalar_stages.qr",
+          "occurrences": 2,
+          "old": "pipes/scalar_stages.qcore"
+        },
+        {
+          "new": "stdio/renderings.qr",
+          "occurrences": 2,
+          "old": "stdio/renderings.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "0f0c933eee5690151bb6797a269e972b0dcb3848e00757113fea6dc89b4b4246",
+      "before_sha256": "f610a8b0aef3b037d143308892dc42b107cc4e7ed2934cfd754f1bd117ec22ad",
+      "path": "examples/threads/README.md",
+      "replacements": [
+        {
+          "new": "threads/core_context.qr",
+          "occurrences": 2,
+          "old": "threads/core_context.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "b20fdf1e486a9a03b2f0f74ce9e039edc154f3512a4627d56916f5be85b27572",
+      "before_sha256": "bbaa1e45132528ddcbe29251a983f2f259e9e5e180959f7eaa000a7da3636af5",
+      "path": "examples/unsafe-linkage/README.md",
+      "replacements": [
+        {
+          "new": "unsafe-linkage/unchecked_demo.qrlib",
+          "occurrences": 1,
+          "old": "unsafe-linkage/unchecked_demo.qcorelib"
+        },
+        {
+          "new": "unsafe-linkage/unchecked_calls.qr",
+          "occurrences": 3,
+          "old": "unsafe-linkage/unchecked_calls.qcore"
+        }
+      ]
+    },
+    {
+      "after_sha256": "a746ec7436941cb6ea81f67af2abcd8e54d104a7e4618b8133337956a0838218",
+      "before_sha256": "efa0a8eea271ffdddb85b7c2becbd6fa0b3806748763eec8ebe098e7dad7c03c",
+      "path": "scripts/tests/test_ct_stage_summary.py",
+      "replacements": [
+        {
+          "new": "CT50/case.qr",
+          "occurrences": 1,
+          "old": "CT50/case.qcore"
+        }
+      ]
+    }
+  ],
+  "mode": "applied",
+  "replacement_occurrences": 992
+}
