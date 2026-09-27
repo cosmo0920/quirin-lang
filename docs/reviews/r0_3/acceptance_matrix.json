@@ -6736,8 +6736,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W46-EXTERNAL-CALLEE-CONTRACTS on merge 80133806 (onto main 25453cb7, after W45-SR5-SOUNDNESS and every wave-45 card), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 6021 core Rust passed / 0 failed / 11 ignored over 336 summaries; 129 provider Rust passed / 0 / 1 over 43 summaries; 210 Lean audits; 364 root Python tests after regenerating this section (08-python exit 0 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-container-root-reach/integration/artifacts exits 0 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 6021,
+  "note": "W46-METRIC-TRACE-CONTRACT-GAPS at 246d0077, 2026-09-27. Fresh worktree submodule initialized by integrator with scoped local cache exit 0 at d82464a2; repeat sandboxed submodule step exit 128 on read-only .git/worktrees config, retained in report. All completed required checks pass after scoped execution: workspace runner exit 0, 323 units / 335 summaries / 6023 passed / 0 failed / 11 ignored, log private/w46-metric-trace-gate/test-binaries-escalated.log, per-unit summary private/test-binaries/20260927T014746Z-3725053/summary.json; provider cargo test exit 0, 129 passed / 0 failed / 1 ignored in 43 summaries, log private/w46-metric-trace-gate/provider-tests-escalated.log. fmt and clippy each 0; reevaluation examples each 0; 211 Lean audits and 364 script Python tests exit 0; provider Python tests 15 passed exit 0; contracts check, docs index check and both source revision pin checks exit 0; all five packages built and verified exit 0. Clang --version recorded here exit 0. Cargo env: CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w46-contract-gaps/targets/metric-trace, CARGO_PROFILE_DEV_DEBUG=0, CARGO_PROFILE_TEST_DEBUG=0, CARGO_INCREMENTAL=0. Initial sandboxed runner exit 101 (5916 passed / 107 failed / 11 ignored) and provider suite exit 101, with one real stale CMetrics inventory digest corrected before the passing reruns. No verdict promotion claimed; corpus attribution belongs to integration.",
+  "workspace_tests": 6023,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
   "lean_audits": 211,
@@ -6960,7 +6960,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w46-metric-trace-contract-gaps/gate.json)"
  },
  "named_followups": [
   {

@@ -158,3 +158,22 @@ after 36 pass / 1 fail in 18 summaries: the failing package-conformance row
 requires a Linux confined profile unavailable in this sandbox. Provider fmt
 and Clippy checks each exited 0. The nonzero suites are retained as attempts;
 their unsandboxed reruns and final counts follow after scoped execution.
+
+The scoped reruns completed at tip `246d0077`. `python3
+scripts/run_test_binaries.py` exited **0**: **323 units, 335 summaries, 6,023
+passed, 0 failed, 11 ignored**. Its private log is
+`private/w46-metric-trace-gate/test-binaries-escalated.log`, with per-unit
+summary in `private/test-binaries/20260927T014746Z-3725053/summary.json`.
+The formerly unclassified CT child passed in this full rerun; the earlier
+nonzero result remains part of the retained sandbox attempt, not an unresolved
+card failure. `cargo test --manifest-path providers/Cargo.toml --workspace
+--locked --offline` exited **0**: **129 passed, 0 failed, 1 ignored in 43
+summaries**, at `private/w46-metric-trace-gate/provider-tests-escalated.log`.
+The five packages each verified at exit 0 and `providers/tests` passed 15/15.
+The corrected digest and formatted test source are included in the rerun.
+
+The checked Clang banner and its exit are in `gate/clang-version.txt` and
+`gate/clang-version.exit`, measured in this worktree. [gate.json](gate.json)
+records the completed card gate and its private evidence paths. The matrix's
+derived audit count and supplied gate measurements were regenerated from that
+file; its hand-maintained follow-ups were carried unchanged for the integrator.
