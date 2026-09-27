@@ -25,3 +25,5 @@ The current language, contract and implemented-grammar specifications now show `
 ## Archived runnable command operands
 
 A final bounded sweep updated 30 runnable command lines across 21 archived report READMEs. The edits change only exact, parser-inventory-mapped source operands in current-checkout compiler, provider, census and replay commands: runtime inputs now use `.qr`, and contract or measurement inputs use `.qv`. The sweep leaves measured output, diagnostic path quotations, old result tables, generic legacy-alias examples and commands that explicitly replay an older Git base unchanged. No historical measurement was rerun or reattributed.
+
+Integration correction: comment-only `.qcorelib` → `.qrlib` edits in two pinned C headers also require their manifest `header_hash` fields and mutation-test needles to change. The integrator attributes both exact SHA-256 changes in [integration-corrections.json](integration-corrections.json); no C declaration changes. Local CT control basenames and the socket tracked-source census were likewise reconciled after the first combined gate. The final attribution file includes those manifest bytes.

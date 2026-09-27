@@ -1521,7 +1521,7 @@
       "old": "compiler/tests/fixtures/native_library/buffer_lib.qcorelib"
     },
     {
-      "after_sha256": "6e942e81ba948f834203ca79241a0a6cd00ad16352050c214719b4557c2407df",
+      "after_sha256": "a59b5818fca09edac39b13fdcb7bced4d6ac90bb07320e950d5f8f7bc6b08733",
       "before_sha256": "ac42b26ee59f00f8f6e3d4ed527c4ce7c7d680a557f6f61c47b874fdb0e97665",
       "byte_equal": false,
       "kind": "abi_manifest",
@@ -1529,7 +1529,7 @@
       "old": "compiler/tests/fixtures/native_library/buffer_lib_decorated.qcorelib"
     },
     {
-      "after_sha256": "01b5ed98c488c6f373ea3fa85d103ceeea0c47cf3daf8ca44246b7109f814536",
+      "after_sha256": "da6eed623b5785691ce2a03426a4be0a411fa71d9a9443ae8d772bbf102e1668",
       "before_sha256": "26f064a72d8af180d1e791d4d60f7c761b311661ac03d675449fb3372f360640",
       "byte_equal": false,
       "kind": "abi_manifest",
@@ -3412,5 +3412,5 @@
   "base": "0d2917cdbb58e7a366b1ccce67fbaa99eb456a20",
   "failures": [],
   "note": "ABI byte changes are attributed here but require reviewed reference diff and manifest parser/consumer parity.",
-  "tip": "f042d6416d508c5bbba8956be8c10a4cfd842bb7"
+  "tip": "f3fe41c9a1ea81590930211924a01128420addcc"
 }
