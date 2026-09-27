@@ -77,11 +77,14 @@ def main():
             )
         },
         "start": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "state": "running",
     }
+    (out / "run.json").write_text(json.dumps(record, indent=2) + "\n")
     with (out / "console.log").open("wb") as log:
         result = subprocess.run(command, cwd=ROOT, env=environment, stdout=log, stderr=log)
     record["exit"] = result.returncode
     record["end"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    record["state"] = "completed"
     (out / "run.json").write_text(json.dumps(record, indent=2) + "\n")
     (out / "exit").write_text(str(result.returncode) + "\n")
     print(json.dumps(record, indent=2))
