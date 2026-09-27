@@ -22,7 +22,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qv");
 
 /// The C declarations the fixture contracts describe. `d_copy` spells
 /// `restrict` after each `*`, as glibc's `memcpy` does, so every body below

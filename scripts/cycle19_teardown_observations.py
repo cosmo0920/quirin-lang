@@ -71,7 +71,7 @@ def main():
         observation["values"].update(compiled_source_and_build_recorded=1, exclusive_instrumented_execution=1)
     observations_path = output / "observations.jsonl"
     observations_path.write_text("".join(json.dumps(row) + "\n" for row in observations))
-    contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qcore"
+    contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qv"
     checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example", "check_contract_observations", "--", str(contract), str(observations_path)], cwd=REPO, capture_output=True)
     (output / "contract_result.json").write_text(checked.stdout)
     metadata["trace_checker_sha256"] = sha(REPO / "scripts/check_teardown_trace.py")

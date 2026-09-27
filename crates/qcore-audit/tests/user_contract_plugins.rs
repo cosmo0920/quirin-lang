@@ -119,7 +119,7 @@ impl Tree {
             }],
             "overrides": overrides,
             "checkers": if checkers {
-                json!([{"crate": "quirin-provider-acme", "module": "acme/pool.qcore",
+                json!([{"crate": "quirin-provider-acme", "module": "acme/pool.qv",
                         "functions": ["acme_pool_get", "acme_pool_put"],
                         "package": "quirin-provider-acme/checkers/pool-check"}])
             } else {
@@ -568,7 +568,7 @@ fn a_user_contract_colliding_with_a_shipped_one_is_refused_unless_overridden() {
     )
     .unwrap();
     let collision = "user contract `malloc` in `quirin-provider-acme:acme/alloc.qcore` collides \
-                     with the shipped contract in `quirin-provider-libc:libc/memory.qcore`";
+                     with the shipped contract in `quirin-provider-libc:libc/memory.qv`";
     // Even the view refuses to form while the collision stands.
     let refused = tree.write_load_path(false, &[]);
     assert!(!refused.status.success());
@@ -583,7 +583,7 @@ fn a_user_contract_colliding_with_a_shipped_one_is_refused_unless_overridden() {
     assert_eq!(applied.as_array().unwrap().len(), 1, "{applied}");
     assert_eq!(applied[0]["function"], "malloc");
     assert_eq!(applied[0]["shipped_crate"], "quirin-provider-libc");
-    assert_eq!(applied[0]["shipped_module"], "libc/memory.qcore");
+    assert_eq!(applied[0]["shipped_module"], "libc/memory.qv");
     // Without the override the audit refuses, whatever the view says.
     let text = fs::read_to_string(tree.load_path()).unwrap();
     let mut without: Value = serde_json::from_str(&text).unwrap();

@@ -14,10 +14,10 @@ use std::process::Command;
 
 const CHILD_ROOT: &str = "QCORE_SOURCE_EFFECT_HELPER_TARGET_CHILD";
 const RULES: &str = include_str!(
-    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 const CONTRACT: &str =
-    include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore");
+    include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv");
 const HELPER: &str = "struct cio_chunk { int lock; int error_n; }; void cio_error_reset(struct cio_chunk *p) { p->error_n = 0; }";
 const SOURCE: &str = "struct cio_chunk { int lock; int error_n; }; void cio_error_reset(struct cio_chunk *); int cio_chunk_unlock(struct cio_chunk *p) { cio_error_reset(p); if (p->lock == 0) { return -1; } p->lock = 0; return 0; }";
 

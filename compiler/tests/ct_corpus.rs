@@ -5386,7 +5386,7 @@ fn check_legacy_contracts(
     );
     for contract in contracts {
         assert!(
-            contract.ends_with(".qcore"),
+            contract.ends_with(".qv") || contract.ends_with(".qcore"),
             "{case_id}: `{contract}` is not a contract source"
         );
         // Contract sources are deliberately *not* asserted unique: the whole

@@ -2,7 +2,7 @@ use super::*;
 use crate::frontend::parse_source_program;
 
 const CHILD: &str = "module contract;\n\
-#include \"fixture-libc:libc/string.qcore\";\n\
+#include \"fixture-libc:libc/string.qv\";\n\
 #include \"fixture-libc:libc/heap.qcore\";\n\
 extern fn copy(d: ptr<mut, u8>, s: ptr<const, u8>, n: usize) -> ptr<mut, u8>\n\
 contract inherit libc::memcpy;\n\
@@ -13,13 +13,13 @@ fn reads_directives_and_inherit_sites_with_their_spans() {
     let syntax = scan_contract_inclusion(CHILD).unwrap();
     assert_eq!(syntax.includes.len(), 2);
     assert_eq!(syntax.includes[0].crate_name, "fixture-libc");
-    assert_eq!(syntax.includes[0].module, "libc/string.qcore");
+    assert_eq!(syntax.includes[0].module, "libc/string.qv");
     assert_eq!(
         syntax.includes[1].target(),
         "fixture-libc:libc/heap.qcore".to_owned()
     );
     let first = &CHILD[syntax.includes[0].span.start..syntax.includes[0].span.end];
-    assert_eq!(first, "#include \"fixture-libc:libc/string.qcore\";");
+    assert_eq!(first, "#include \"fixture-libc:libc/string.qv\";");
     let parents: Vec<_> = syntax.inherits.iter().map(|s| s.parent.as_str()).collect();
     assert_eq!(parents, ["memcpy", "free"]);
     let site = &syntax.inherits[0];
@@ -113,26 +113,26 @@ fn include_targets_admit_only_crate_qualified_relative_module_paths() {
             .map_err(|error| error.kind)
     };
     assert_eq!(
-        target("quirin-provider-libc:libc/memory.qcore"),
-        Ok("quirin-provider-libc:libc/memory.qcore".to_owned())
+        target("quirin-provider-libc:libc/memory.qv"),
+        Ok("quirin-provider-libc:libc/memory.qv".to_owned())
     );
     assert_eq!(
         target("a_b:x/y_z-1.qcore"),
         Ok("a_b:x/y_z-1.qcore".to_owned())
     );
     for bad in [
-        "libc/memory.qcore",
-        "quirin-provider-libc:/libc/memory.qcore",
-        "quirin-provider-libc:../libc/memory.qcore",
+        "libc/memory.qv",
+        "quirin-provider-libc:/libc/memory.qv",
+        "quirin-provider-libc:../libc/memory.qv",
         "quirin-provider-libc:libc/../memory.qcore",
-        "quirin-provider-libc:./libc/memory.qcore",
+        "quirin-provider-libc:./libc/memory.qv",
         "quirin-provider-libc:libc//memory.qcore",
         "quirin-provider-libc:libc\\\\memory.qcore",
         "quirin-provider-libc:libc/memory",
         "quirin-provider-libc:libc/Memory.qcore",
-        "Quirin:libc/memory.qcore",
-        "-libc:libc/memory.qcore",
-        ":libc/memory.qcore",
+        "Quirin:libc/memory.qv",
+        "-libc:libc/memory.qv",
+        ":libc/memory.qv",
         "a:b:c.qcore",
         "a:.qcore",
     ] {

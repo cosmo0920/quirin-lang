@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "cmt_destroy",
-      "module": "cmetrics/context_lifetime.qcore",
+      "module": "cmetrics/context_lifetime.qv",
       "contract_sha256": "78afe929cbda4c4e30f9b70d537943e41cba9ee4ddf2e99231968df25a6cd54d",
       "identities": [
         {
@@ -39,7 +39,7 @@
     },
     {
       "function": "cmt_math_d64_to_uint64",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "012e9bdec13ae5165ea01426561c123960063e08798207093ce54d1447d20c3b",
       "identities": [
         {
@@ -66,7 +66,7 @@
     },
     {
       "function": "cmt_math_uint64_to_d64",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "0df776642f2edf29a4e9baa48b03d48d29e35e4c57bdce0ddcc5d1761f36e0ec",
       "identities": [
         {
@@ -93,7 +93,7 @@
     },
     {
       "function": "cmt_metric_get_int64_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "a92629732ebb19b17f90571cefb8cb3ce381e4fb61121b7a9308f1165814685c",
       "identities": [
         {
@@ -125,7 +125,7 @@
     },
     {
       "function": "cmt_metric_get_start_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "19b610efee0b480ed550c10257f9cda63cccb3378657029c7752f3bc5a9a38c0",
       "identities": [
         {
@@ -157,7 +157,7 @@
     },
     {
       "function": "cmt_metric_get_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "c16d9afe2bf781c995ce956cd79a5b7d08ec678c93e9cec602e4c876095175a8",
       "identities": [
         {
@@ -189,7 +189,7 @@
     },
     {
       "function": "cmt_metric_get_uint64_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "f619636f4a6453b7136a8d865c531cfef3da5a583a7109d54d1fcecdc07a84ef",
       "identities": [
         {
@@ -221,7 +221,7 @@
     },
     {
       "function": "cmt_metric_get_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "d2d47f887bdc50251b42dc2fe74c402aa1feb6d554c26afeb34d53d554584b3d",
       "identities": [
         {
@@ -253,7 +253,7 @@
     },
     {
       "function": "cmt_metric_get_value_type",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "127a8627ccdf887e73a6252dbc33204d3761074bdcdc7b3007017c28ce337b80",
       "identities": [
         {
@@ -285,7 +285,7 @@
     },
     {
       "function": "cmt_metric_has_start_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "4d42c6ee1f1e9659cdecfc65610c1b02393c756bb63d593e37af625af96ccb8a",
       "identities": [
         {
@@ -317,7 +317,7 @@
     },
     {
       "function": "cmt_metric_hist_get_count_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "5d87eec9b7af60a6492ef442f1e9a99213a3498ede130fdcd3dbe84dbc1f1cf7",
       "identities": [
         {
@@ -349,7 +349,7 @@
     },
     {
       "function": "cmt_metric_hist_get_sum_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "093dc62f98c7985fc8f6779ecd88cd025c32648242d7c41f32db0941e484cd21",
       "identities": [
         {
@@ -381,7 +381,7 @@
     },
     {
       "function": "cmt_metric_hist_get_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "d3cb55bd1329d5d191678ef44f61d53d59096e40c993d34cb6b215f4905b535d",
       "identities": [
         {
@@ -413,7 +413,7 @@
     },
     {
       "function": "cmt_metric_set_double",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "c133101889e7af1a6b0438cc116ddf630172fa377ab39f792321557fa835eb93",
       "identities": [
         {
@@ -445,7 +445,7 @@
     },
     {
       "function": "cmt_metric_set_int64",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "1da9ebd338f903938fd9f17f9e5ca29453ef1d992507169672b52d2522853939",
       "identities": [
         {
@@ -477,7 +477,7 @@
     },
     {
       "function": "cmt_metric_set_start_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "082c50091404853c2759574d2d009ea3b1b2f8cb664c36b86a8fe667339c9205",
       "identities": [
         {
@@ -509,7 +509,7 @@
     },
     {
       "function": "cmt_metric_set_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "bc8310d399b6ff9ca6182f91915ddcd3e5972ee4c858fdd7d0f38e6967c5277f",
       "identities": [
         {
@@ -541,7 +541,7 @@
     },
     {
       "function": "cmt_metric_set_uint64",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "3d30c3453a93b281a482fd7d83ffc0278da2dce9e7905f43580fbe2fc39e06b5",
       "identities": [
         {
@@ -573,7 +573,7 @@
     },
     {
       "function": "cmt_metric_unset_start_timestamp",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "60641d2dbfafd0979a39c93373c93e1cffc27b84a01ccd44d3093479e38bf6ec",
       "identities": [
         {
@@ -605,7 +605,7 @@
     },
     {
       "function": "cmt_mpack_consume_uint_tag",
-      "module": "cmetrics/mpack_utils.qcore",
+      "module": "cmetrics/mpack_utils.qv",
       "contract_sha256": "c8e103f43550166d1d15955cf35847a7c97db1c937990c4aca234e59a18ebbed",
       "identities": [
         {
@@ -637,7 +637,7 @@
     },
     {
       "function": "cmt_summary_get_count_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "f2863da0a79d44e02e623da446430aec487168e04006ef73ea6180e348e30d44",
       "identities": [
         {
@@ -669,7 +669,7 @@
     },
     {
       "function": "cmt_summary_get_sum_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "85cc509d2da362a6d70f599ecff5569f15c2a4c077db02de4476b420f2aca318",
       "identities": [
         {
@@ -701,7 +701,7 @@
     },
     {
       "function": "cmt_summary_quantile_get_value",
-      "module": "cmetrics/metric_values.qcore",
+      "module": "cmetrics/metric_values.qv",
       "contract_sha256": "7f806f831c775dabcb42423192ea62022a12a2cc01e8ad7a6a2fc4fcf6e63f45",
       "identities": [
         {

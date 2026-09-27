@@ -1,5 +1,5 @@
 module contract;
-#include "quirin-provider-libc:libc/memory.qcore";
+#include "quirin-provider-libc:libc/memory.qv";
 
 // Trusted resource-projection assumptions, vocabulary version 1.
 // These preserve the Cycle 19 audit table; they do not verify the C bodies.

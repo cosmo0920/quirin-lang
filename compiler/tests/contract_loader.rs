@@ -34,53 +34,53 @@ extern fn alloc() -> ptr<mut, u8> contract {
 fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
-    // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qcore`,
-    // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`); 12 -> 14 by
-    // card CONSTRUCTOR-RESIDUALS (`libc/errno.qcore`,
-    // `monkey/intrusive_list.qcore`); 14 -> 15 by card
-    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`; that card
-    // deliberately did not land `msgpack/packer.qcore`, measured payoff zero);
+    // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qv`,
+    // `fluent_bit/time.qv`, `chunkio/chunk_residency.qv`); 12 -> 14 by
+    // card CONSTRUCTOR-RESIDUALS (`libc/errno.qv`,
+    // `monkey/intrusive_list.qv`); 14 -> 15 by card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qv`; that card
+    // deliberately did not land `msgpack/packer.qv`, measured payoff zero);
     // 15 -> 16 by card ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired the
     // blocker that measurement rested on and landed it; 16 -> 17 by card
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
-    // (`fluent_bit/input_chunk_destroy.qcore`), which decides the leak leaf
+    // (`fluent_bit/input_chunk_destroy.qv`), which decides the leak leaf
     // that card's corpus movement opened; 17 -> 18 by card AOM-DESTROY-SIBLINGS
-    // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`), which decides one
+    // (`fluent_bit/input_chunk_destroy_direct_routes.qv`), which decides one
     // of the two siblings that card deliberately left undeclared; 18 -> 19 by
-    // card W29-CORPUS-CONTRACTS (`fluent_bit/input_chunk_sizes.qcore`), whose
+    // card W29-CORPUS-CONTRACTS (`fluent_bit/input_chunk_sizes.qv`), whose
     // two borrowed/none size queries decide thirteen uncontracted-call leaves;
-    // 19 -> 21 by card W31-CORPUS-CONTRACTS-2 (`chunkio/chunk_sizes.qcore` and
-    // `fluent_bit/input_chunk_total_size.qcore`), the two size-sibling
+    // 19 -> 21 by card W31-CORPUS-CONTRACTS-2 (`chunkio/chunk_sizes.qv` and
+    // `fluent_bit/input_chunk_total_size.qv`), the two size-sibling
     // declarations that card's predecessor named and declined, each landed on
     // its own pinned-body reading.
 
     // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
     // function-cover yield over the 193 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
-    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
-    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    // `cfl/sds_lifetime.qv`, `cmetrics/context_lifetime.qv`,
+    // `ctraces/context_lifetime.qv`, `librdkafka/cjson.qv`,
+    // `librdkafka/kafka_mem.qv` and `monkey/logging.qv`.
 
     // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
     // by function-cover yield over the 163 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
-    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
-    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
-    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // `cfl/time.qv`, `cmetrics/metric_values.qv`,
+    // `cmetrics/mpack_utils.qv`, `mpack/writer.qv` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qv`
+    // and `librdkafka/topic_partition.qv`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qv`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
-    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
-    // `fluent_bit/output_singleplex.qcore`.
-    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qv`).
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qv`.
+    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qv` and
+    // `fluent_bit/output_singleplex.qv`.
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qv`
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
@@ -582,7 +582,7 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ResourceFunctionContract::new([P::Borrowed], R::None),
     );
     // Card W45-FB-BACKLOG-CUSTODY: the twelve checked specifications of
-    // `fluent_bit/storage_backlog.qcore`; ten borrow every argument and return
+    // `fluent_bit/storage_backlog.qv`; ten borrow every argument and return
     // no custody (the canonical form below drops their trailing `Borrowed`s).
     old.insert_contract(
         "sb_allocate_chunk",
@@ -837,7 +837,7 @@ fn duplicate_functions_and_inputs_are_rejected_even_when_identical() {
     let file = manifest()
         .parent()
         .unwrap()
-        .join("providers/quirin-provider-libc/contracts/libc/memory.qcore");
+        .join("providers/quirin-provider-libc/contracts/libc/memory.qv");
     assert!(
         load_resource_contract_files(&[file.clone(), file])
             .unwrap_err()
@@ -966,30 +966,30 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
     // function-cover yield over the 193 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
-    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
-    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    // `cfl/sds_lifetime.qv`, `cmetrics/context_lifetime.qv`,
+    // `ctraces/context_lifetime.qv`, `librdkafka/cjson.qv`,
+    // `librdkafka/kafka_mem.qv` and `monkey/logging.qv`.
 
     // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
     // by function-cover yield over the 163 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
-    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
-    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
-    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // `cfl/time.qv`, `cmetrics/metric_values.qv`,
+    // `cmetrics/mpack_utils.qv`, `mpack/writer.qv` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qv`
+    // and `librdkafka/topic_partition.qv`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qv`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
-    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qcore` and
-    // `fluent_bit/output_singleplex.qcore`.
-    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qcore`
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qv`).
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qv`.
+    // 47 -> 49 by card W45-FB-RETRY-LIFETIME: `fluent_bit/task_users.qv` and
+    // `fluent_bit/output_singleplex.qv`.
+    // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qv`
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
@@ -1141,39 +1141,39 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Includes the runtime-only reopen-failure and integrity observation
     // modules; neither carries the v1 marker, so both are rejected here.
     // 60 -> 61: card HASH-CONTRACTS adds
-    // `fluent_bit/hash_table_publication.qcore`, which carries the v1 marker.
-    // 61 -> 64: card PROD-CONTRACTS adds `fluent_bit/input_chunk_name.qcore`,
-    // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, all three
+    // `fluent_bit/hash_table_publication.qv`, which carries the v1 marker.
+    // 61 -> 64: card PROD-CONTRACTS adds `fluent_bit/input_chunk_name.qv`,
+    // `fluent_bit/logging.qv` and `fluent_bit/routes_mask.qv`, all three
     // entirely v1 and all three manifest-selected.
-    // 64 -> 67: card NEIGHBOURS adds `fluent_bit/input_chunk_helpers.qcore`,
-    // `fluent_bit/time.qcore` and `chunkio/chunk_residency.qcore`, all three
+    // 64 -> 67: card NEIGHBOURS adds `fluent_bit/input_chunk_helpers.qv`,
+    // `fluent_bit/time.qv` and `chunkio/chunk_residency.qv`, all three
     // entirely v1 and all three manifest-selected.
-    // 67 -> 69: card CONSTRUCTOR-RESIDUALS adds `libc/errno.qcore` and
-    // `monkey/intrusive_list.qcore`, both entirely v1 and both
+    // 67 -> 69: card CONSTRUCTOR-RESIDUALS adds `libc/errno.qv` and
+    // `monkey/intrusive_list.qv`, both entirely v1 and both
     // manifest-selected.
     // 69 -> 70: card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds
-    // `libc/pthread_mutex.qcore`, entirely v1 and manifest-selected.
-    // 70 -> 71: card ABI-TYPEDEF-ADDRESS-OF-MEMBER adds `msgpack/packer.qcore`,
+    // `libc/pthread_mutex.qv`, entirely v1 and manifest-selected.
+    // 70 -> 71: card ABI-TYPEDEF-ADDRESS-OF-MEMBER adds `msgpack/packer.qv`,
     // entirely v1 and manifest-selected — the declaration the previous card
     // wrote and measured at payoff zero, landed once the blocker that
     // measurement rested on was repaired.
     // 71 -> 72: card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED adds
-    // `fluent_bit/input_chunk_destroy.qcore`, entirely v1 and
+    // `fluent_bit/input_chunk_destroy.qv`, entirely v1 and
     // manifest-selected — the declaration that decides the leak leaf the
     // previous card's corpus movement opened.
     // 72 -> 73: card AOM-DESTROY-SIBLINGS adds
-    // `fluent_bit/input_chunk_destroy_direct_routes.qcore`, entirely v1 and
+    // `fluent_bit/input_chunk_destroy_direct_routes.qv`, entirely v1 and
     // manifest-selected — one of the two siblings that card deliberately left
     // undeclared, read on its own terms and landed with a `nullable` release
     // where its neighbour carries `nonnull`. The other sibling,
     // `flb_input_chunk_destroy_corrupted`, was read too and deliberately NOT
     // landed at measured payoff zero.
     // 73 -> 74: card W29-CORPUS-CONTRACTS adds
-    // `fluent_bit/input_chunk_sizes.qcore`, entirely v1 and manifest-selected
+    // `fluent_bit/input_chunk_sizes.qv`, entirely v1 and manifest-selected
     // — two read-only size queries declared borrowed/none against their
     // pinned bodies.
-    // 74 -> 76: card W31-CORPUS-CONTRACTS-2 adds `chunkio/chunk_sizes.qcore`
-    // and `fluent_bit/input_chunk_total_size.qcore`, both entirely v1 and
+    // 74 -> 76: card W31-CORPUS-CONTRACTS-2 adds `chunkio/chunk_sizes.qv`
+    // and `fluent_bit/input_chunk_total_size.qv`, both entirely v1 and
     // both manifest-selected — the two size-sibling read-only queries the
     // previous arbiter named and declined, each declared borrowed/none
     // against its own pinned body.
@@ -1181,17 +1181,17 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
     // function-cover yield over the 193 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
-    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
-    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    // `cfl/sds_lifetime.qv`, `cmetrics/context_lifetime.qv`,
+    // `ctraces/context_lifetime.qv`, `librdkafka/cjson.qv`,
+    // `librdkafka/kafka_mem.qv` and `monkey/logging.qv`.
 
     // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
     // by function-cover yield over the 163 baseline functions blocked only by
     // uncontracted-call leaves, each read against its own pinned body:
-    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
-    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
-    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
-    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // `cfl/time.qv`, `cmetrics/metric_values.qv`,
+    // `cmetrics/mpack_utils.qv`, `mpack/writer.qv` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qv`
+    // and `librdkafka/topic_partition.qv`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
     // 93 -> 96: Cycle 18 aggregate/platform/task policies belong to the typed interpreter.
@@ -1199,20 +1199,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `providers/quirin-provider-libc`, all entirely v1 and all
     // manifest-selected.
     // 107 -> 108: card CONTRACT-INHERIT-ADOPTION adds
-    // `fluent_bit/resource_string.qcore`, entirely v1 (two inherited
+    // `fluent_bit/resource_string.qv`, entirely v1 (two inherited
     // declarations) and manifest-selected.
-    // 108 -> 109: card W43-LIBC-RESTRICT-PROTOTYPES adds `libc/regex.qcore`,
+    // 108 -> 109: card W43-LIBC-RESTRICT-PROTOTYPES adds `libc/regex.qv`,
     // entirely v1 and manifest-selected.
-    // 109 -> 110: card W43-DESCRIPTOR-RESOURCE-TRACKING adds `libc/dirent.qcore`,
+    // 109 -> 110: card W43-DESCRIPTOR-RESOURCE-TRACKING adds `libc/dirent.qv`,
     // entirely v1 (a kinded pair) and manifest-selected.
     // 110 -> 111: card W43-DESCRIPTOR-NATIVE-CHECK adds
-    // `library/descriptor_native_observation.qcore`, a native observation
+    // `library/descriptor_native_observation.qv`, a native observation
     // policy (ten parameterless rules), not resource-v1 and not selected.
-    // 111 -> 113: card W45-FB-RETRY-LIFETIME adds `fluent_bit/task_users.qcore`
-    // and `fluent_bit/output_singleplex.qcore`, entirely v1 and
+    // 111 -> 113: card W45-FB-RETRY-LIFETIME adds `fluent_bit/task_users.qv`
+    // and `fluent_bit/output_singleplex.qv`, entirely v1 and
     // manifest-selected.
     // 113 -> 114: card W45-FB-BACKLOG-CUSTODY adds
-    // `fluent_bit/storage_backlog.qcore`, entirely v1 (checked specifications)
+    // `fluent_bit/storage_backlog.qv`, entirely v1 (checked specifications)
     // and manifest-selected.
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
@@ -1272,49 +1272,49 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 20 -> 25 by card PROD-CONTRACTS; 9 -> 12 and 25 -> 31 by card NEIGHBOURS
     // (two input-chunk helpers, one clock reading, three ChunkIO residency
     // helpers); 12 -> 14 and 31 -> 34 by card CONSTRUCTOR-RESIDUALS
-    // (`libc/errno.qcore`'s `__errno_location`,
-    // `monkey/intrusive_list.qcore`'s `mk_list_add`, and `flb_errno_print`
-    // added to the existing `fluent_bit/logging.qcore`); 14 -> 15 and 34 -> 36
-    // by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`'s
+    // (`libc/errno.qv`'s `__errno_location`,
+    // `monkey/intrusive_list.qv`'s `mk_list_add`, and `flb_errno_print`
+    // added to the existing `fluent_bit/logging.qv`); 14 -> 15 and 34 -> 36
+    // by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qv`'s
     // two mutex entry points); 15 -> 16 and 36 -> 37 by card
-    // ABI-TYPEDEF-ADDRESS-OF-MEMBER (`msgpack/packer.qcore`'s
+    // ABI-TYPEDEF-ADDRESS-OF-MEMBER (`msgpack/packer.qv`'s
     // `msgpack_packer_init`, the declaration the previous card wrote and
     // measured at payoff zero, landed once the blocker it named was repaired);
     // 16 -> 17 and 37 -> 38 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
-    // (`fluent_bit/input_chunk_destroy.qcore`'s `flb_input_chunk_destroy`, the
+    // (`fluent_bit/input_chunk_destroy.qv`'s `flb_input_chunk_destroy`, the
     // release the previous card's newly-bound summary exposed as uncontracted).
     // 17 -> 18 and 38 -> 39 by card AOM-DESTROY-SIBLINGS
-    // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`'s
+    // (`fluent_bit/input_chunk_destroy_direct_routes.qv`'s
     // `flb_input_chunk_destroy_direct_routes`, the sibling release the previous
     // card deliberately left undeclared, read on its own terms).
     // 18 -> 19 and 39 -> 41 by card W29-CORPUS-CONTRACTS
-    // (`fluent_bit/input_chunk_sizes.qcore`'s `flb_input_chunk_get_size` and
+    // (`fluent_bit/input_chunk_sizes.qv`'s `flb_input_chunk_get_size` and
     // `flb_input_chunk_get_real_size`, two read-only size queries declared
     // borrowed/none against their pinned bodies).
     // 19 -> 21 and 41 -> 43 by card W31-CORPUS-CONTRACTS-2
-    // (`chunkio/chunk_sizes.qcore`'s `cio_chunk_get_content_size` and
-    // `fluent_bit/input_chunk_total_size.qcore`'s
+    // (`chunkio/chunk_sizes.qv`'s `cio_chunk_get_content_size` and
+    // `fluent_bit/input_chunk_total_size.qv`'s
     // `flb_input_chunk_total_size`, the two size-sibling read-only queries
     // W29's named non-declarations pointed at, declared borrowed/none against
     // their own pinned bodies).
     // 21 -> 27 and 43 -> 49 by card W36-CORPUS-CONTRACTS-3, six declarations
     // chosen by function-cover yield and each read against its own pinned body:
-    // `cfl/sds_lifetime.qcore`'s `cfl_sds_destroy`,
-    // `cmetrics/context_lifetime.qcore`'s `cmt_destroy`,
-    // `ctraces/context_lifetime.qcore`'s `ctr_destroy`,
-    // `librdkafka/cjson.qcore`'s `cJSON_Delete`,
-    // `librdkafka/kafka_mem.qcore`'s `rd_kafka_mem_free` and
-    // `monkey/logging.qcore`'s `mk_print` — five releases and one variadic
+    // `cfl/sds_lifetime.qv`'s `cfl_sds_destroy`,
+    // `cmetrics/context_lifetime.qv`'s `cmt_destroy`,
+    // `ctraces/context_lifetime.qv`'s `ctr_destroy`,
+    // `librdkafka/cjson.qv`'s `cJSON_Delete`,
+    // `librdkafka/kafka_mem.qv`'s `rd_kafka_mem_free` and
+    // `monkey/logging.qv`'s `mk_print` — five releases and one variadic
     // custody-neutral diagnostic sink.
     // 27 -> 33 and 49 -> 59 by card W37-CORPUS-CONTRACTS-4, six modules and
     // ten declarations chosen by function-cover yield and each read against its
-    // own pinned body: `cfl/time.qcore`'s `cfl_time_now`,
-    // `cmetrics/metric_values.qcore`'s `cmt_metric_get_timestamp` and
-    // `cmt_metric_set_double`, `cmetrics/mpack_utils.qcore`'s
-    // `cmt_mpack_consume_uint_tag`, `mpack/writer.qcore`'s `mpack_write_cstr`,
+    // own pinned body: `cfl/time.qv`'s `cfl_time_now`,
+    // `cmetrics/metric_values.qv`'s `cmt_metric_get_timestamp` and
+    // `cmt_metric_set_double`, `cmetrics/mpack_utils.qv`'s
+    // `cmt_mpack_consume_uint_tag`, `mpack/writer.qv`'s `mpack_write_cstr`,
     // `mpack_write_str`, `mpack_write_i64` and `mpack_write_double`,
-    // `librdkafka/lz4_stream.qcore`'s `LZ4_resetStream` and
-    // `librdkafka/topic_partition.qcore`'s
+    // `librdkafka/lz4_stream.qv`'s `LZ4_resetStream` and
+    // `librdkafka/topic_partition.qv`'s
     // `rd_kafka_topic_partition_list_sort` — ten custody-NEUTRAL declarations,
     // no release among them, which is the opposite balance to W36's five
     // releases and is a fact about what the post-W36 cover frontier still held.
@@ -1329,43 +1329,43 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `PR_SET_NAME` premise. The rejected count is unchanged: every added
     // module is entirely v1.
     // 114 -> 127 by card W43-LIBC-RESULT-ALIAS: thirteen derived-result
-    // declarations added to the already-selected `libc/string.qcore` (eleven)
-    // and `libc/time.qcore` (two), so the selection stays at 44 modules and the
+    // declarations added to the already-selected `libc/string.qv` (eleven)
+    // and `libc/time.qv` (two), so the selection stays at 44 modules and the
     // rejected count is unchanged.
     // 127 -> 128 by card CONTRACT-INHERIT-ADOPTION: `strndup` appended to
-    // `libc/string.qcore`. Its conversion of `flb_malloc`, `flb_calloc` and
+    // `libc/string.qv`. Its conversion of `flb_malloc`, `flb_calloc` and
     // `flb_free` to `contract inherit` moves nothing here: these counts are
     // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
-    // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
+    // `fluent_bit/resource_string.qv` (`flb_strdup`, `flb_strndup`).
     // 207 -> 206 rejected by card CONTRACT-VIEW-PROJECTION-CHECK: the
     // duplicate `source_identity` typed policy left
-    // `monkey/timeout_teardown.qcore` (its owner is
-    // `monkey/wait_source_policy.qcore`); the v1 selection is unchanged.
+    // `monkey/timeout_teardown.qv` (its owner is
+    // `monkey/wait_source_policy.qv`); the v1 selection is unchanged.
     // 45 -> 46 and 130 -> 140 by card W43-LIBC-RESTRICT-PROTOTYPES: ten
-    // neutral declarations, two in the new `libc/regex.qcore` and eight
+    // neutral declarations, two in the new `libc/regex.qv` and eight
     // appended to already-selected libc modules.
     // 140 -> 144 by card W43-LIBC-PRINTF-FAMILY: `printf`, `fprintf`,
     // `snprintf` and `sprintf` appended to the already-selected
-    // `libc/stdio.qcore`, so the selection and the rejected count are unchanged.
+    // `libc/stdio.qv`, so the selection and the rejected count are unchanged.
     // 46 -> 47 and 144 -> 152 by card W43-DESCRIPTOR-RESOURCE-TRACKING: eight
     // declarations, six appended to already-selected modules (`open`, `close`,
     // `socket`, `fopen`, `fclose`, `fileno`) and two in the new
-    // `libc/dirent.qcore`. Rejected unchanged.
+    // `libc/dirent.qv`. Rejected unchanged.
     // 206 -> 216 rejected by card W43-DESCRIPTOR-NATIVE-CHECK: the ten rules
-    // of `library/descriptor_native_observation.qcore` belong to the native
+    // of `library/descriptor_native_observation.qv` belong to the native
     // descriptor replay and are deliberately rejected by resource-v1.
     // 152 -> 155 by card W44-LIBC-RESIDUALS: `vsnprintf` and `vprintf`
-    // appended to `libc/stdio.qcore` and `strerror` to `libc/errno.qcore`, all
+    // appended to `libc/stdio.qv` and `strerror` to `libc/errno.qv`, all
     // already selected. Selection and rejected unchanged.
     // 47 -> 49 and 155 -> 162 by card W45-FB-RETRY-LIFETIME: two new
     // `fluent_bit/` modules (six declarations) and `mk_list_del` appended to
-    // the already-selected `monkey/intrusive_list.qcore`. Rejected unchanged.
+    // the already-selected `monkey/intrusive_list.qv`. Rejected unchanged.
     // 49 -> 50 and 162 -> 174 by card W45-FB-BACKLOG-CUSTODY: the twelve
-    // checked specifications of `fluent_bit/storage_backlog.qcore`.
+    // checked specifications of `fluent_bit/storage_backlog.qv`.
     // 174 -> 183 by card W46-EXTERNAL-CALLEE-CONTRACTS: nine neutral
-    // declarations appended to already-selected modules (`libc/unistd.qcore`,
-    // `monkey/logging.qcore`, `librdkafka/memory.qcore`,
-    // `cfl/sds_lifetime.qcore`, `mpack/writer.qcore`). Selection and rejected
+    // declarations appended to already-selected modules (`libc/unistd.qv`,
+    // `monkey/logging.qv`, `librdkafka/memory.qv`,
+    // `cfl/sds_lifetime.qv`, `mpack/writer.qv`). Selection and rejected
     // unchanged.
     // The two new W46 cards add six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
@@ -1384,7 +1384,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // The marker is a selector, not a bypass: attaching it to a lifecycle
     // declaration still rejects, because the rest of that declaration is
     // owned by the language front end.
-    let lifecycle = std::fs::read_to_string(&modules["chunkio/chunk_destructor.qcore"]).unwrap();
+    let lifecycle = std::fs::read_to_string(&modules["chunkio/chunk_destructor.qv"]).unwrap();
     let marked = lifecycle.replace(
         "requires chunk_is_live;",
         "requires resource_contract_v1; requires chunk_is_live;",

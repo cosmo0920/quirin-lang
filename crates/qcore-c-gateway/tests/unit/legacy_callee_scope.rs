@@ -107,7 +107,7 @@ use qcore_schemas::contract::ResourceContracts;
 
 const Q_BASE: (&str, &str) = (
     "q_base.qcore",
-    include_str!("../fixtures/contracts/q_base.qcore"),
+    include_str!("../fixtures/contracts/q_base.qv"),
 );
 
 fn contracts() -> ResourceContracts {

@@ -27,7 +27,7 @@ use qcore_compiler::{
 const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
 const MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
 const MANIFEST_PATH: &str = "fixtures/native_library/unchecked_demo.qcorelib";
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 const CONTRACTED_ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 
 fn selection(manifests: &[(&str, String)]) -> Option<BTreeMap<String, String>> {

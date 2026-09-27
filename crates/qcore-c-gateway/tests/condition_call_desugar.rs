@@ -31,11 +31,11 @@ fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
         (
             "q_base.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_base.qv").to_owned(),
         ),
         (
             "r_return_call.qcore".to_owned(),
-            include_str!("fixtures/contracts/r_return_call.qcore").to_owned(),
+            include_str!("fixtures/contracts/r_return_call.qv").to_owned(),
         ),
     ]))
     .unwrap()
@@ -459,7 +459,7 @@ long k_read(int fd, void *buffer, unsigned long size);";
 fn descriptor_contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
         "descriptor_generic.qcore".to_owned(),
-        include_str!("fixtures/contracts/descriptor_generic.qcore").to_owned(),
+        include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
     )]))
     .unwrap()
 }
@@ -505,7 +505,7 @@ unsigned long d_len(const char *s); char *d_chr(const char *s, int c);";
 fn derived_contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
         "derived_result_generic.qcore".to_owned(),
-        include_str!("fixtures/contracts/derived_result_generic.qcore").to_owned(),
+        include_str!("fixtures/contracts/derived_result_generic.qv").to_owned(),
     )]))
     .unwrap()
 }

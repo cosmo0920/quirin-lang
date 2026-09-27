@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "LZ4_resetStream",
-      "module": "librdkafka/lz4_stream.qcore",
+      "module": "librdkafka/lz4_stream.qv",
       "contract_sha256": "618af4638277c40687443e889926c6eddd468dcd1716ab5a78195f6fff436ab5",
       "identities": [
         {
@@ -39,7 +39,7 @@
     },
     {
       "function": "cJSON_Delete",
-      "module": "librdkafka/cjson.qcore",
+      "module": "librdkafka/cjson.qv",
       "contract_sha256": "cd3e9720bef46e4be1e28404b0a0ee3f05c869897661d28f8727aa4f31f46858",
       "identities": [
         {
@@ -71,7 +71,7 @@
     },
     {
       "function": "rd_atomic32_get",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "979f962b74a71d79acff900e1f77465979ddb042cfe49876fbb5ef6480821cb0",
       "identities": [
         {
@@ -98,7 +98,7 @@
     },
     {
       "function": "rd_calloc",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "d1aaf76a5219a10c9de2dbefea47348efa821ef76441046dac5312e91aed7d50",
       "identities": [
         {
@@ -125,7 +125,7 @@
     },
     {
       "function": "rd_free",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "11dabb4546a4dd124048cbe5bba773f852adb9494b6ac1cb69517f49dc216fa1",
       "identities": [
         {
@@ -152,7 +152,7 @@
     },
     {
       "function": "rd_kafka_mem_free",
-      "module": "librdkafka/kafka_mem.qcore",
+      "module": "librdkafka/kafka_mem.qv",
       "contract_sha256": "49cc2f1d8dd9f93652f0f8d6af31fea7d7ae5a2347a72e45c16f043f114a5cf0",
       "identities": [
         {
@@ -189,7 +189,7 @@
     },
     {
       "function": "rd_kafka_topic_partition_list_sort",
-      "module": "librdkafka/topic_partition.qcore",
+      "module": "librdkafka/topic_partition.qv",
       "contract_sha256": "0bf7a9382e8325fbe99c9f059d1fc335859d093e24f51bd2e042ee582c7541a2",
       "identities": [
         {
@@ -221,7 +221,7 @@
     },
     {
       "function": "rd_malloc",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "9771b5de2fc9b345449b5ee225694f3aadb0adacca02a6cbed08a4ac0644e30d",
       "identities": [
         {
@@ -248,7 +248,7 @@
     },
     {
       "function": "rd_realloc",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "1ae9901888c72f5bb4a99c3a8746b8e0628d1168a2ef13806a19bf4b57cb8b0e",
       "identities": [
         {
@@ -275,7 +275,7 @@
     },
     {
       "function": "rd_strdup",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "881f127f35086ef04f4b1abbe1272c40d9b7e2427131dd7c0df2490e8d29fa5c",
       "identities": [
         {
@@ -302,7 +302,7 @@
     },
     {
       "function": "rd_strndup",
-      "module": "librdkafka/memory.qcore",
+      "module": "librdkafka/memory.qv",
       "contract_sha256": "61900673fcd346ca034ae7269ad55a4b5c64a87326c1f2ba60094a8e8022d670",
       "identities": [
         {

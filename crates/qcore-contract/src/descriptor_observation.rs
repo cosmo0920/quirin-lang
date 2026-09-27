@@ -5,7 +5,7 @@
 //! `descriptor_observer.c` harness. This module recomputes every identity's
 //! generation, custody owner and liveness independently of the observer's
 //! stamps, requires the two to agree, and evaluates the policy clauses in
-//! `library/descriptor_native_observation.qcore` through the shared
+//! `library/descriptor_native_observation.qv` through the shared
 //! [`check_contract_facts`] interpreter. A false policy clause is a recorded
 //! **violation** of the named property; malformed, reordered, foreign-process
 //! or incomplete records are a hard error (the run is not evidence).
@@ -1360,7 +1360,7 @@ fn split_used(ops: &[Operand]) -> (&[Operand], &[Operand]) {
 }
 
 /// Replay one run's JSONL records under `policy` (the text of
-/// `library/descriptor_native_observation.qcore`). Returns the accepted
+/// `library/descriptor_native_observation.qv`). Returns the accepted
 /// report, including every recorded violation; errors mean the records are
 /// not evidence (malformed, foreign, reordered, incomplete or inconsistent).
 pub fn check_descriptor_observations(

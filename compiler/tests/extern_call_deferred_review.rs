@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 
 fn compile_with(

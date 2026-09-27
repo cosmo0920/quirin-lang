@@ -598,7 +598,7 @@ mod tests {
                 "--provider",
                 "quirin-provider-libc",
                 "--provider",
-                "quirin-provider-cfl:cfl/time.qcore",
+                "quirin-provider-cfl:cfl/time.qv",
                 "--contracts-only",
                 "--jobs",
                 "3",
@@ -613,7 +613,7 @@ mod tests {
             settings.providers,
             Some(args(&[
                 "quirin-provider-libc",
-                "quirin-provider-cfl:cfl/time.qcore"
+                "quirin-provider-cfl:cfl/time.qv"
             ]))
         );
         assert_eq!(settings.mode, Some(EvidenceMode::ContractsOnly));

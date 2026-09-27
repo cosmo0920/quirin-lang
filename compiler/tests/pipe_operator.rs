@@ -29,7 +29,7 @@ const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
 const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qcore");
 const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
 const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qcore");
-const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {

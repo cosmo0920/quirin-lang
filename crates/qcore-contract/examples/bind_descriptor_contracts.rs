@@ -4,7 +4,7 @@
 //!
 //! The modules are loaded together with the resource-v1 loader (their logical
 //! name is the file path's last two components, for example
-//! `libc/unistd.qcore`). Prints one JSON binding report. Exit 0 means the
+//! `libc/unistd.qv`). Prints one JSON binding report. Exit 0 means the
 //! records were bound (contradictions are part of the report); exit 1 means
 //! the records or a contract shape were rejected. Never a static certificate.
 use qcore_contract::contract_loader::load_resource_contract_sources;

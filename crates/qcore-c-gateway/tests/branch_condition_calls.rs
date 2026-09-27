@@ -17,7 +17,7 @@ fn contracts() -> ResourceContracts {
     load_resource_contract_sources(
         &[(
             "q_base.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_base.qv").to_owned(),
         )]
         .into_iter()
         .collect(),
@@ -30,7 +30,7 @@ fn probe_contracts() -> ResourceContracts {
         &[
             (
                 "q_base.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_base.qv").to_owned(),
             ),
             (
                 "probe.qcore".to_owned(),

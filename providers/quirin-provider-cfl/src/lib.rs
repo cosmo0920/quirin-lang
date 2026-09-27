@@ -19,23 +19,23 @@ pub const PUBLISHED: &[&str] = &[];
 
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
-/// is the name `contract/corpus.json` resolves (for example `cfl/arena_lifetime.qcore`).
+/// is the name `contract/corpus.json` resolves (for example `cfl/arena_lifetime.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
-        "cfl/arena_lifetime.qcore",
-        include_str!("../contracts/cfl/arena_lifetime.qcore"),
+        "cfl/arena_lifetime.qv",
+        include_str!("../contracts/cfl/arena_lifetime.qv"),
     ),
     (
-        "cfl/intrusive_list.qcore",
-        include_str!("../contracts/cfl/intrusive_list.qcore"),
+        "cfl/intrusive_list.qv",
+        include_str!("../contracts/cfl/intrusive_list.qv"),
     ),
     (
-        "cfl/sds_lifetime.qcore",
-        include_str!("../contracts/cfl/sds_lifetime.qcore"),
+        "cfl/sds_lifetime.qv",
+        include_str!("../contracts/cfl/sds_lifetime.qv"),
     ),
     (
-        "cfl/time.qcore",
-        include_str!("../contracts/cfl/time.qcore"),
+        "cfl/time.qv",
+        include_str!("../contracts/cfl/time.qv"),
     ),
 ];
 

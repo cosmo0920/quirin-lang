@@ -196,7 +196,7 @@ That is fail-closed and correct, and a selection flag is the named follow-on
 `UNSAFE-LINKAGE-CLI` rather than a default. Until it lands, the composed route
 is reachable through the library API — `compile_files` with
 `CompileOptions::extern_contracts` — which is how the test suite compiles this
-example, against [../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qv).
+example, against [../extern/contracts/buffer_api.qv](../extern/contracts/buffer_api.qv).
 The callees' C is [../extern/buffer_api.c](../extern/buffer_api.c); link it
 beside the emitted translation unit.
 

@@ -1,5 +1,5 @@
 module contract;
-#include "quirin-provider-libc:libc/string.qcore";
+#include "quirin-provider-libc:libc/string.qv";
 
 // Trusted resource-projection assumptions, vocabulary version 1.
 //

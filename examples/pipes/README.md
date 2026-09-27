@@ -169,7 +169,7 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/rendered_lines.c -o /tmp/render
 `scalar_stages.qcore` and its twin call declared extern functions, and the CLI
 selects no extern contract environment (`Q023`; named follow-on
 `UNSAFE-LINKAGE-CLI`). They are compiled through the library API against
-[../extern/contracts/buffer_api.qcore](../extern/contracts/buffer_api.qv) and
+[../extern/contracts/buffer_api.qv](../extern/contracts/buffer_api.qv) and
 linked against [../extern/buffer_api.c](../extern/buffer_api.c), which is what
 the test suite does.
 

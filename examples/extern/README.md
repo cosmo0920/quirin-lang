@@ -12,7 +12,7 @@ Supporting files, shared with [../stdio/](../stdio/) and [../pipes/](../pipes/):
 
 | File | What it is |
 |---|---|
-| [contracts/buffer_api.qcore](contracts/buffer_api.qv) | The **declared** model of the C API |
+| [contracts/buffer_api.qv](contracts/buffer_api.qv) | The **declared** model of the C API |
 | [buffer_api.c](buffer_api.c) | The C itself — unverified, and linked beside the emitted unit |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs),
@@ -27,7 +27,7 @@ cargo test -p qcore-compiler --test examples_suite
 
 ## The contract is a declaration, not a proof
 
-Loading `contracts/buffer_api.qcore` asserts nothing about `buffer_api.c`. It is
+Loading `contracts/buffer_api.qv` asserts nothing about `buffer_api.c`. It is
 a `ContractTrust::Declared` assumption (contract spec §C06): the checker reads
 the clauses as **given**, records `DeclaredContract("demo_sum")` and one such
 premise per admitted callee in the certificate, and the driver prints those

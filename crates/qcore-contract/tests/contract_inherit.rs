@@ -80,7 +80,7 @@ fn fixture_crates() -> Vec<PublishedContractCrate> {
             LIBC,
             &[],
             read_crate_modules(LIBC),
-            &["libc/string.qcore", "libc/heap.qcore"],
+            &["libc/string.qv", "libc/heap.qcore"],
         ),
         krate(CFL, &[], read_crate_modules(CFL), &["cfl/table.qcore"]),
         krate(
@@ -201,17 +201,17 @@ fn evidence_carries_each_chain_with_crate_version_module_and_digest() {
         [
             format!("{CFL}:cfl/table.qcore"),
             format!("{LIBC}:libc/heap.qcore"),
-            format!("{LIBC}:libc/string.qcore"),
+            format!("{LIBC}:libc/string.qv"),
         ]
     );
     let memcpy = &evidence.inherited["flb_memcpy"];
     assert_eq!(memcpy.len(), 1);
     assert_eq!(memcpy[0].declaration, "memcpy");
     assert_eq!(memcpy[0].module.crate_name, LIBC);
-    assert_eq!(memcpy[0].module.module, "libc/string.qcore");
+    assert_eq!(memcpy[0].module.module, "libc/string.qv");
     assert_eq!(
         memcpy[0].module.sha256,
-        sha256_hex(libc["libc/string.qcore"].as_bytes())
+        sha256_hex(libc["libc/string.qv"].as_bytes())
     );
     // The own-module chain: flb_sds_destroy -> flb_free -> libc::free.
     let chain: Vec<_> = evidence.inherited["flb_sds_destroy"]
@@ -251,10 +251,7 @@ fn a_chain_crosses_three_crates_through_direct_dependencies_only() {
 fn selecting_the_parent_module_beside_the_child_is_still_one_function_each() {
     let both = load(
         &fixture_load_path(),
-        &[
-            (FLB, "fluent_bit/wrappers.qcore"),
-            (LIBC, "libc/string.qcore"),
-        ],
+        &[(FLB, "fluent_bit/wrappers.qcore"), (LIBC, "libc/string.qv")],
     )
     .unwrap();
     assert!(both.contract("memcpy").is_some());
@@ -280,7 +277,7 @@ fn a_change_to_the_parent_text_changes_the_childs_contract_identity() {
     // the parent's identity does, and so does the environment's.
     crates[0]
         .modules
-        .get_mut("libc/string.qcore")
+        .get_mut("libc/string.qv")
         .unwrap()
         .push_str("// edited\n");
     let after = load(
@@ -461,7 +458,7 @@ fn child(includes: &[&str], body: &str) -> String {
     text
 }
 
-const STRING: &str = "quirin-provider-libc:libc/string.qcore";
+const STRING: &str = "quirin-provider-libc:libc/string.qv";
 const HEAP: &str = "quirin-provider-libc:libc/heap.qcore";
 const COPY: &str = "extern fn c(a: ptr<mut, u8>, b: ptr<const, u8>, n: usize) -> ptr<mut, u8>";
 
@@ -531,9 +528,9 @@ fn qi002_extension_clauses_are_refused() {
 #[test]
 fn qi003_malformed_targets_are_refused() {
     for target in [
-        "libc/string.qcore",
-        "quirin-provider-libc:../libc/string.qcore",
-        "quirin-provider-libc:/libc/string.qcore",
+        "libc/string.qv",
+        "quirin-provider-libc:../libc/string.qv",
+        "quirin-provider-libc:/libc/string.qv",
     ] {
         assert_code(
             with_child(
@@ -570,7 +567,7 @@ fn qi004_an_undeclared_or_absent_crate_is_refused() {
     assert_code(
         with_child(
             &child(
-                &["quirin-provider-mpack:mpack/writer.qcore"],
+                &["quirin-provider-mpack:mpack/writer.qv"],
                 "extern fn f() -> unit contract inherit mpack::g;\n",
             ),
             &[],
@@ -716,7 +713,7 @@ fn qi008_an_unknown_parent_is_refused() {
 
 #[test]
 fn qi009_two_published_modules_of_one_crate_declaring_the_parent_are_ambiguous() {
-    let duplicate = read_crate_modules(LIBC)["libc/string.qcore"].clone();
+    let duplicate = read_crate_modules(LIBC)["libc/string.qv"].clone();
     let error = assert_code(
         with_child(
             &child(

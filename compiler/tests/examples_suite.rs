@@ -54,7 +54,7 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 
 // --- The published sources. ---
 
-const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qv");
 const BUFFER_API_C: &str = include_str!("../../examples/extern/buffer_api.c");
 const UNCHECKED_API_C: &str = include_str!("../../examples/unsafe-linkage/unchecked_api.c");
 
@@ -95,7 +95,7 @@ const UNSAFE_README: &str = include_str!("../../examples/unsafe-linkage/README.m
 /// against, selected under the path the READMEs name.
 fn contracts() -> Option<BTreeMap<String, String>> {
     Some(BTreeMap::from([(
-        "examples/extern/contracts/buffer_api.qcore".to_owned(),
+        "examples/extern/contracts/buffer_api.qv".to_owned(),
         CONTRACTS.to_owned(),
     )]))
 }

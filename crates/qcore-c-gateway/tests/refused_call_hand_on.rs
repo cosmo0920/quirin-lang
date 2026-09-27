@@ -38,11 +38,11 @@ fn contracts() -> ResourceContracts {
         &[
             (
                 "q_base.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_base.qv").to_owned(),
             ),
             (
                 "q_nullable.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_nullable.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_nullable.qv").to_owned(),
             ),
             ("list.qcore".to_owned(), LIST.to_owned()),
         ]

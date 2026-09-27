@@ -36,7 +36,7 @@ package = load("provider_package_load_path", HERE / "package.py")
 PARENT = ("module contract;\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n"
           "    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n"
           "    ensures normal resource_return_none();\n};\n")
-CHILD = ('module contract;\n#include "quirin-provider-libc:libc/memory.qcore";\n'
+CHILD = ('module contract;\n#include "quirin-provider-libc:libc/memory.qv";\n'
          "extern fn wrap_free(p: ptr<mut, u8>) -> unit contract inherit libc::free;\n")
 
 
@@ -73,7 +73,7 @@ class Tree:
 
     def __init__(self, root):
         self.root = Path(root) / "providers"
-        self.crate("quirin-provider-libc", "libc", ["libc/memory.qcore"], {"libc/memory.qcore": PARENT})
+        self.crate("quirin-provider-libc", "libc", ["libc/memory.qv"], {"libc/memory.qv": PARENT})
         self.crate("quirin-provider-app", "app", [], {"app/wrap.qcore": CHILD})
         self.crate("qcore-provider-exe", "exe", [], {"exe/wrap.qcore": CHILD}, binary=True)
         (self.root / "conformance/src").mkdir(parents=True)
@@ -110,8 +110,8 @@ class Tree:
 
 class LoadPathManifest(unittest.TestCase):
     def test_exact_owner_selector_admits_new_spelling_without_broadening_owner(self):
-        selector = ("fluent_bit/busy_state.qcore",)
-        self.assertTrue(contracts.owned("fluent_bit/busy_state.qcore", selector))
+        selector = ("fluent_bit/busy_state.qv",)
+        self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
         self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
         self.assertFalse(contracts.owned("fluent_bit/busy_state_extra.qv", selector))
 
@@ -128,13 +128,13 @@ class LoadPathManifest(unittest.TestCase):
             self.assertEqual(app["dependencies"], ["quirin-provider-libc"])
             self.assertEqual(app["namespace"], "app")
             self.assertEqual(libc["published"],
-                             {"libc/memory.qcore": hashlib.sha256(PARENT.encode()).hexdigest()})
+                             {"libc/memory.qv": hashlib.sha256(PARENT.encode()).hexdigest()})
             self.assertEqual(libc["contracts"], "quirin-provider-libc/contracts")
 
     def test_qv_published_module_and_include_pin_keep_exact_paths(self):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
-            (tree.root / "quirin-provider-libc/contracts/libc/memory.qcore").unlink()
+            (tree.root / "quirin-provider-libc/contracts/libc/memory.qv").unlink()
             (tree.root / "quirin-provider-app/contracts/app/wrap.qcore").unlink()
             tree.crate("quirin-provider-libc", "libc", ["libc/memory.qv"],
                        {"libc/memory.qv": PARENT})
@@ -203,9 +203,9 @@ class LoadPathManifest(unittest.TestCase):
 
     def test_recorded_constants_are_checked(self):
         cases = [
-            ("other", ["libc/memory.qcore"], "not the derived"),
+            ("other", ["libc/memory.qv"], "not the derived"),
             ("libc", ["libc/absent.qcore"], "does not own"),
-            ("libc", ["libc/memory.qcore", "libc/memory.qcore"], "sorted and unique"),
+            ("libc", ["libc/memory.qv", "libc/memory.qv"], "sorted and unique"),
         ]
         for namespace, published, message in cases:
             with self.subTest(message=message), tempfile.TemporaryDirectory() as temporary:
@@ -226,7 +226,7 @@ class LoadPathManifest(unittest.TestCase):
             contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
                                          views=loader_like)
             contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
-            (tree.root / "quirin-provider-libc/contracts/libc/memory.qcore").write_text(
+            (tree.root / "quirin-provider-libc/contracts/libc/memory.qv").write_text(
                 PARENT.replace("nullable", "nonnull"))
             with self.assertRaisesRegex(ValueError, "stale"):
                 contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
@@ -244,7 +244,7 @@ class LoadPathManifest(unittest.TestCase):
             views = {c["name"]: c["resource_view"] for c in written["crates"]}
             self.assertEqual(views, {"qcore-provider-exe": ["exe/wrap.qcore"],
                                      "quirin-provider-app": ["app/wrap.qcore"],
-                                     "quirin-provider-libc": ["libc/memory.qcore"]})
+                                     "quirin-provider-libc": ["libc/memory.qv"]})
             load_path_file = tree.root / "contract-load-path.json"
             self.assertEqual(json.loads(load_path_file.read_text()), written)
             contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
@@ -312,7 +312,7 @@ class LoadPathManifest(unittest.TestCase):
                                                      views=loader_like)
             provider = {"app/wrap.qcore": tree.root / "quirin-provider-app/contracts/app/wrap.qcore"}
             pins = contracts.include_pins(provider, load_path, tree.root)
-            key = "quirin-provider-libc:libc/memory.qcore"
+            key = "quirin-provider-libc:libc/memory.qv"
             self.assertEqual(list(pins), [key])
             self.assertEqual(pins[key]["sha256"], hashlib.sha256(PARENT.encode()).hexdigest())
             built = Path(temporary) / "qcore.example"
@@ -325,7 +325,7 @@ class LoadPathManifest(unittest.TestCase):
             found = package.installed_contract_files(built)
             self.assertEqual(package.verify_contract_includes(built, inventory, found), 1)
             # A parent that changed after pinning is refused at build time.
-            (tree.root / "quirin-provider-libc/contracts/libc/memory.qcore").write_text("changed")
+            (tree.root / "quirin-provider-libc/contracts/libc/memory.qv").write_text("changed")
             with self.assertRaisesRegex(ValueError, "changed since it was pinned"):
                 package.install_includes(Path(temporary) / "again", inventory, tree.root)
 

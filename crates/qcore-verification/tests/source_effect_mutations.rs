@@ -35,7 +35,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 const RULES: &str = include_str!(
-    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 
 /// Two functions of the declared ChunkIO Boolean model in one translation unit.

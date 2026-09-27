@@ -8,13 +8,13 @@ consuming checker; each registered pair is checked. This file proves, over the
 unbounded integers, the entailments the Rust check decides by enumeration, and
 models the three other relation checks:
 
-1. **Projection.** `fluent_bit/memory.qcore`'s native-evaluated allocator
+1. **Projection.** `fluent_bit/memory.qv`'s native-evaluated allocator
    clauses entail the resource-v1 view's custody (`resource_return_owned
    (nullable)` for `flb_malloc`/`flb_calloc`, `resource_released(ptr,
    nullable)` for `flb_free`) under the bridge's stated premises; the ChunkIO
    lifecycle contracts entail `resource_released(chunk, nonnull)`. Each
    entailment fails for the mutated contract the Rust negative controls use.
-   The memory-backend premise of `chunkio/memory_close.qcore` is a coverage
+   The memory-backend premise of `chunkio/memory_close.qv` is a coverage
    restriction: outside it the view is **not** implied (the registered finding
    `CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`), proved here.
 2. **Renamed equivalence.** The generic frame evaluator (`error_frame.qcore`)
@@ -159,7 +159,7 @@ theorem the_mutated_free_contract_does_not_entail_the_view :
 
 /-! ### ChunkIO close → resource v1 -/
 
-/-- The lifecycle-mechanism propositions `chunkio/memory_close.qcore` states
+/-- The lifecycle-mechanism propositions `chunkio/memory_close.qv` states
 over, with its coverage premise. -/
 structure CloseAtoms where
   nullableOwnedChunk : Bool
@@ -206,7 +206,7 @@ theorem outside_the_memory_backend_the_view_is_not_implied :
   ⟨⟨true, false, true, false, false⟩, fun _ h => absurd h (by decide),
     ⟨rfl, rfl⟩, rfl⟩
 
-/-- `chunkio/chunk_destructor.qcore`'s six named `ensures normal`
+/-- `chunkio/chunk_destructor.qv`'s six named `ensures normal`
 propositions (its `quant` clause is outside the fragment and not used). -/
 structure DestructorAtoms where
   selectedBackendIsClosed : Bool
@@ -315,7 +315,7 @@ def monkeyNominals : List (String × String) :=
   [("mk_event_loop", "EventLoop"), ("mk_event_ctx", "EventContext")]
 
 /-- The four Monkey wrapper signatures recorded in
-`monkey/wait_source_policy.qcore` agree with `monkey/wrapper_paths.qcore`. -/
+`monkey/wait_source_policy.qv` agree with `monkey/wrapper_paths.qv`. -/
 theorem the_monkey_wrapper_signatures_agree :
     signatureAgrees monkeyNominals [.scalar "i32"] (.pointer false none)
       [.scalar "i32"] (.pointer false "EventContext") = true ∧

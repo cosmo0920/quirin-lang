@@ -3,7 +3,7 @@
 //!
 //! * The real load path (`providers/contract-load-path.json`, generated from
 //!   Cargo metadata) reads and validates, and says what the crates record.
-//! * The adopted inheritance is **parity**: `fluent_bit/resource_memory.qcore`
+//! * The adopted inheritance is **parity**: `fluent_bit/resource_memory.qv`
 //!   elaborates, declaration by declaration and token by token, to the
 //!   contracts it carried when they were written by hand
 //!   (`fixtures/contract_inherit_adoption/resource_memory_hand_written.qcore`,
@@ -33,7 +33,7 @@ mod contract_corpus;
 
 const FLB: &str = "quirin-provider-fluent-bit";
 const LIBC: &str = "quirin-provider-libc";
-const RESOURCE_MEMORY: &str = "fluent_bit/resource_memory.qcore";
+const RESOURCE_MEMORY: &str = "fluent_bit/resource_memory.qv";
 
 fn repository() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -45,7 +45,7 @@ fn repository() -> PathBuf {
 fn hand_written() -> String {
     fs::read_to_string(
         Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("tests/fixtures/contract_inherit_adoption/resource_memory_hand_written.qcore"),
+            .join("tests/fixtures/contract_inherit_adoption/resource_memory_hand_written.qv"),
     )
     .unwrap()
     .replace("\r\n", "\n")
@@ -90,7 +90,7 @@ fn the_real_load_path_reads_and_records_what_the_crates_declare() {
     assert!(libc.dependencies.is_empty());
     assert_eq!(
         libc.published.iter().collect::<Vec<_>>(),
-        ["libc/memory.qcore", "libc/string.qcore"]
+        ["libc/memory.qv", "libc/string.qv"]
     );
     // Every root the corpus index names for a load-path crate maps back to it.
     for (name, root) in &manifest.contract_roots {
@@ -163,7 +163,7 @@ fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
     // Provenance: three chains of one link each, into the published libc
     // module, whose digest is its pin in the load-path manifest.
     let libc_memory = fs::read_to_string(
-        repository().join("providers/quirin-provider-libc/contracts/libc/memory.qcore"),
+        repository().join("providers/quirin-provider-libc/contracts/libc/memory.qv"),
     )
     .unwrap();
     let chains: Vec<_> = evidence
@@ -172,7 +172,7 @@ fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
         .map(|(child, chain)| {
             assert_eq!(chain.len(), 1, "{child}");
             assert_eq!(chain[0].module.crate_name, LIBC);
-            assert_eq!(chain[0].module.module, "libc/memory.qcore");
+            assert_eq!(chain[0].module.module, "libc/memory.qv");
             assert_eq!(chain[0].module.sha256, sha256_hex(libc_memory.as_bytes()));
             (child.clone(), chain[0].declaration.clone())
         })
@@ -187,23 +187,23 @@ fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
     );
     assert_eq!(
         evidence.included.keys().collect::<Vec<_>>(),
-        ["quirin-provider-libc:libc/memory.qcore"]
+        ["quirin-provider-libc:libc/memory.qv"]
     );
 }
 
-/// `fluent_bit/resource_string.qcore` (user-directed): `flb_strdup` and
+/// `fluent_bit/resource_string.qv` (user-directed): `flb_strdup` and
 /// `flb_strndup` elaborate to exactly the written-out `strdup`/`strndup`
 /// statements under their own parameter names, with one-link chains into the
-/// published `libc/string.qcore`.
+/// published `libc/string.qv`.
 #[test]
 fn string_wrappers_elaborate_to_the_libc_statements() {
     let manifest = real_load_path();
     let elaborated =
-        elaborate_contract_module(&manifest.load_path, FLB, "fluent_bit/resource_string.qcore")
+        elaborate_contract_module(&manifest.load_path, FLB, "fluent_bit/resource_string.qv")
             .unwrap();
     let written_out = fs::read_to_string(
         Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("tests/fixtures/contract_inherit_adoption/resource_string_written_out.qcore"),
+            .join("tests/fixtures/contract_inherit_adoption/resource_string_written_out.qv"),
     )
     .unwrap()
     .replace("\r\n", "\n");
@@ -220,7 +220,7 @@ fn string_wrappers_elaborate_to_the_libc_statements() {
         .iter()
         .map(|(child, chain)| {
             assert_eq!(chain.len(), 1);
-            assert_eq!(chain[0].module.module, "libc/string.qcore");
+            assert_eq!(chain[0].module.module, "libc/string.qv");
             (child.as_str(), chain[0].declaration.as_str())
         })
         .collect();
@@ -239,14 +239,14 @@ fn the_resource_manifest_selects_the_adopted_module_with_equal_meaning() {
     let contracts = load_resource_contract_manifest(&manifest).unwrap();
     let key = format!("{FLB}:{RESOURCE_MEMORY}");
     assert!(contracts.source_assumptions().contains_key(&key));
-    let strings = format!("{FLB}:fluent_bit/resource_string.qcore");
+    let strings = format!("{FLB}:fluent_bit/resource_string.qv");
     // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING adds the two converted
     // provider modules (`contract_inherit_qcore_provider.rs`).
     assert_eq!(
         contracts.inclusion_evidence().keys().collect::<Vec<_>>(),
         [
-            &"qcore-provider-libevent:monkey/memory.qcore".to_owned(),
-            &"qcore-provider-librdkafka:librdkafka/memory.qcore".to_owned(),
+            &"qcore-provider-libevent:monkey/memory.qv".to_owned(),
+            &"qcore-provider-librdkafka:librdkafka/memory.qv".to_owned(),
             &key,
             &strings
         ]

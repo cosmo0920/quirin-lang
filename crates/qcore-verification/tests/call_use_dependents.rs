@@ -17,14 +17,13 @@ use fixture::*;
 use qcore_schemas::call_use_summary::PrerequisiteIdentity;
 
 const OUTCOMES_CONTRACT: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );
 const DELETE_OUTCOMES_CONTRACT: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv"
 );
-const MEMORY_BACKEND_CONTRACT: &str = include_str!(
-    "../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore"
-);
+const MEMORY_BACKEND_CONTRACT: &str =
+    include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv");
 
 /// A dependent capability may carry only the prerequisite's *identity*: the
 /// core re-derives the prerequisite task from its own import and re-runs the

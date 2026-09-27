@@ -10,7 +10,7 @@ use qcore_verification::call_use_contract::{CallResultUsePolicy, check_call_resu
 use serde::Serialize;
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv"
 );
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct FileAttemptEvidence {
@@ -61,7 +61,7 @@ pub fn check_file_attempt_sources(
         .collect()
 }
 pub const DELETE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv"
 );
 
 pub fn check_file_delete_source(

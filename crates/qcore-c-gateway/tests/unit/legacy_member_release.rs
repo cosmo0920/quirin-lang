@@ -12,11 +12,11 @@ fn contracts() -> ResourceContracts {
     let sources = [
         (
             "q_base.qcore".to_owned(),
-            include_str!("../fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("../fixtures/contracts/q_base.qv").to_owned(),
         ),
         (
             "q_nullable.qcore".to_owned(),
-            include_str!("../fixtures/contracts/q_nullable.qcore").to_owned(),
+            include_str!("../fixtures/contracts/q_nullable.qv").to_owned(),
         ),
         ("q_peek.qcore".to_owned(), Q_PEEK.to_owned()),
     ]

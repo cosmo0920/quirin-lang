@@ -37,16 +37,16 @@ use std::path::PathBuf;
 /// The two pinned cleanup-outcome contracts, and the attempt contracts their
 /// prerequisite is evaluated under.
 pub const OUTCOMES_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );
 pub const DELETE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv"
 );
 pub const ATTEMPT_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv"
 );
 pub const DELETE_ATTEMPT_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv"
 );
 
 /// The two native cleanup bodies the in-process `file_outcomes` route reads.

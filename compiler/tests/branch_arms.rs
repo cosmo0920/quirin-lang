@@ -35,7 +35,7 @@ const CALL_THEN_ARM: &str = include_str!("fixtures/branch_arms/call_then_arm.qco
 const CALL_ELSE_ARM: &str = include_str!("fixtures/branch_arms/call_else_arm.qcore");
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn compile_with(
     source: &str,

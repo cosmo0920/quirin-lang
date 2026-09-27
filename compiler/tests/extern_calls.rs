@@ -13,7 +13,7 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, extern_call,
 };
 
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 
 // Exercise both checkout styles regardless of the host's Git configuration.

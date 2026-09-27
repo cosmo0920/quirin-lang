@@ -21,7 +21,7 @@
 //!
 //! These families are not approximated into custody modes. A resource
 //! projection of a lifecycle module is written as its own v1 module (as
-//! `fluent_bit/resource_memory.qcore` projects `fluent_bit/memory.qcore`);
+//! `fluent_bit/resource_memory.qv` projects `fluent_bit/memory.qv`);
 //! it is never inferred by dropping predicates this loader cannot check.
 //!
 //! # Version 1 vocabulary

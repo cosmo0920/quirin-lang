@@ -9,17 +9,17 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 use qcore_schemas::contract::{ResourceParameterMode, ResourceReturnMode};
 
 const OBSERVATION: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qcore"
+    "../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv"
 );
 const MEMORY: &str =
-    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qcore");
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
 const STRING: &str =
-    include_str!("../../../providers/quirin-provider-libc/contracts/libc/string.qcore");
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/string.qv");
 
 #[test]
 fn reusable_libc_catalog_declares_only_neutral_queries() {
     let loaded = load_resource_contract_sources(&BTreeMap::from([(
-        "libc/string.qcore".to_owned(),
+        "libc/string.qv".to_owned(),
         STRING.to_owned(),
     )]))
     .expect("production libc string module loads");
@@ -47,7 +47,7 @@ fn libc_scalar_contracts_match_the_host_declared_abi() {
         return;
     }
     let contracts = load_resource_contract_sources(&BTreeMap::from([(
-        "libc/string.qcore".to_owned(),
+        "libc/string.qv".to_owned(),
         STRING.to_owned(),
     )]))
     .expect("production libc string module loads");
@@ -81,10 +81,10 @@ fn libc_scalar_contracts_match_the_host_declared_abi() {
 }
 
 fn contracts(with_observation: bool) -> ResourceContracts {
-    let mut modules = BTreeMap::from([("libc/memory.qcore".to_owned(), MEMORY.to_owned())]);
+    let mut modules = BTreeMap::from([("libc/memory.qv".to_owned(), MEMORY.to_owned())]);
     if with_observation {
         modules.insert(
-            "monkey/scalar_observation.qcore".to_owned(),
+            "monkey/scalar_observation.qv".to_owned(),
             OBSERVATION.to_owned(),
         );
     }

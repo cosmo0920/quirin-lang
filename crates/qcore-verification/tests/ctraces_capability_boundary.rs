@@ -27,10 +27,10 @@ use serde_json::json;
 const EXCERPT: &str = include_str!("../../../docs/reports/remaining-p06/ctraces_span_excerpt.c");
 const REVISION: &str = "9f0fa5730fba1761ebaf14bcd31220a3a9be9d6e";
 const RULES: &str = include_str!(
-    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 const DESIGNED_CONTRACT: &str =
-    include_str!("../../../docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore");
+    include_str!("../../../docs/reports/remaining-p06/ctraces_span_dropped_counts.qv");
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 

@@ -8,7 +8,7 @@ use serde::Serialize;
 use std::collections::BTreeSet;
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qv"
 );
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

@@ -2,7 +2,7 @@
 //!
 //! ```text
 //! module contract;
-//! #include "quirin-provider-libc:libc/string.qcore";
+//! #include "quirin-provider-libc:libc/string.qv";
 //!
 //! extern fn flb_memcpy(dst: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
 //! contract inherit libc::memcpy;

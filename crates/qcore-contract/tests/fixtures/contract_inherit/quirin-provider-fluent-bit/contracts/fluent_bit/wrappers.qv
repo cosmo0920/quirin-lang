@@ -1,7 +1,7 @@
 module contract;
-#include "quirin-provider-libc:libc/string.qcore";
-#include "quirin-provider-libc:libc/heap.qcore";
-#include "quirin-provider-cfl:cfl/table.qcore";
+#include "quirin-provider-libc:libc/string.qv";
+#include "quirin-provider-libc:libc/heap.qv";
+#include "quirin-provider-cfl:cfl/table.qv";
 
 // Fixture for card CONTRACT-INHERIT: wrappers that behave exactly like the
 // libc and cfl functions they wrap. Parameter names deliberately differ from

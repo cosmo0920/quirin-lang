@@ -16,7 +16,7 @@ const CALL_RELEASE: &str = "void subject(void) { void *p = q_alloc(); release(p,
 fn contracts(extra: Option<&str>) -> ResourceContracts {
     let mut sources = vec![(
         "q_base.qcore".to_owned(),
-        include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+        include_str!("fixtures/contracts/q_base.qv").to_owned(),
     )];
     if let Some(extra) = extra {
         sources.push(("declared.qcore".to_owned(), extra.to_owned()));

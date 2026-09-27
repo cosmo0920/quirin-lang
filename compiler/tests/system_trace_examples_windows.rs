@@ -11,7 +11,7 @@ use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
-const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("../../examples/extern/contracts/buffer_api.qv");
 const BUFFER_API_C: &str = include_str!("../../examples/extern/buffer_api.c");
 
 fn compile(name: &str, source: &str, with_contracts: bool) -> CompiledModule {
@@ -21,7 +21,7 @@ fn compile(name: &str, source: &str, with_contracts: bool) -> CompiledModule {
             entry: None,
             extern_contracts: with_contracts.then(|| {
                 BTreeMap::from([(
-                    "examples/extern/contracts/buffer_api.qcore".to_owned(),
+                    "examples/extern/contracts/buffer_api.qv".to_owned(),
                     CONTRACTS.to_owned(),
                 )])
             }),

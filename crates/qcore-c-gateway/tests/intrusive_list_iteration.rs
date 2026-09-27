@@ -51,7 +51,7 @@ fn contracts(extra: &str) -> ResourceContracts {
     let mut sources = vec![
         (
             "q_base.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_base.qv").to_owned(),
         ),
         ("list_fixture.qcore".to_owned(), FIXTURE.to_owned()),
     ];

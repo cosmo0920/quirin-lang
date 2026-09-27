@@ -19,7 +19,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/descriptor_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/descriptor_generic.qv");
 
 /// The C declarations the fixture contracts describe.
 const DECLARATIONS: &str = "\

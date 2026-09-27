@@ -1,5 +1,5 @@
 module contract;
-#include "quirin-provider-fluent-bit:fluent_bit/wrappers.qcore";
+#include "quirin-provider-fluent-bit:fluent_bit/wrappers.qv";
 
 // Fixture for card CONTRACT-INHERIT: a chain across three crates,
 // app_copy -> fluent_bit::flb_memcpy -> libc::memcpy. The app crate declares

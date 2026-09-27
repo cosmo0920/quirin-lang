@@ -2,26 +2,26 @@
   "schema_version": 1,
   "plugin_id": "qcore.librdkafka",
   "contracts": {
-    "contracts/librdkafka/cjson.qcore": "a1bb9f911acd361afe55144cce2703a9f3d480601fcaf83ad62995c9b4d69f63",
-    "contracts/librdkafka/kafka_mem.qcore": "5e5915e3557c5f31039e28070ac2ce96b335ac30968c93d754174fba6c091f66",
-    "contracts/librdkafka/lz4_stream.qcore": "6eb30b3db17f6cdbd37949122fa12fd0099ede2b098e2a02159083625a0047dc",
-    "contracts/librdkafka/memory.qcore": "d0840a069b939f3aefc250207bef4178424841f8aa6ec705bc9d7315d18b0886",
-    "contracts/librdkafka/queue_destructor.qcore": "a386d1e9b1ef68bc22d6ad5cd84fd4255e4bcf1665c6c4ef98e8efb4e893a005",
-    "contracts/librdkafka/refcount.qcore": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb",
-    "contracts/librdkafka/topic_partition.qcore": "b9fdbfe9e5d34b5a196e125a61f3b4f9e1baeb1702323eed9e2fd4cfebebd43d",
-    "contracts/librdkafka/typed_queue.qcore": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"
+    "contracts/librdkafka/cjson.qv": "a1bb9f911acd361afe55144cce2703a9f3d480601fcaf83ad62995c9b4d69f63",
+    "contracts/librdkafka/kafka_mem.qv": "5e5915e3557c5f31039e28070ac2ce96b335ac30968c93d754174fba6c091f66",
+    "contracts/librdkafka/lz4_stream.qv": "6eb30b3db17f6cdbd37949122fa12fd0099ede2b098e2a02159083625a0047dc",
+    "contracts/librdkafka/memory.qv": "2944c3e92acabcebbaad731ffa84fea4e6c5fb4cd6c72971037cbd2b13740b39",
+    "contracts/librdkafka/queue_destructor.qv": "a386d1e9b1ef68bc22d6ad5cd84fd4255e4bcf1665c6c4ef98e8efb4e893a005",
+    "contracts/librdkafka/refcount.qv": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb",
+    "contracts/librdkafka/topic_partition.qv": "b9fdbfe9e5d34b5a196e125a61f3b4f9e1baeb1702323eed9e2fd4cfebebd43d",
+    "contracts/librdkafka/typed_queue.qv": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"
   },
   "includes": {
-    "quirin-provider-libc:libc/memory.qcore": {
+    "quirin-provider-libc:libc/memory.qv": {
       "crate": "quirin-provider-libc",
       "version": "0.1.0",
-      "module": "libc/memory.qcore",
+      "module": "libc/memory.qv",
       "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
     },
-    "quirin-provider-libc:libc/string.qcore": {
+    "quirin-provider-libc:libc/string.qv": {
       "crate": "quirin-provider-libc",
       "version": "0.1.0",
-      "module": "libc/string.qcore",
+      "module": "libc/string.qv",
       "sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
     }
   }

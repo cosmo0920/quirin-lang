@@ -49,7 +49,7 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
         &["cmetrics"],
         &[],
         include_str!(
-            "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+            "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
         ),
     )
     .unwrap();
@@ -58,7 +58,7 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
         panic!("missing unit import")
     };
     let contract = std::fs::read_to_string(
-        output.join("qcore.cmetrics/contracts/cmetrics/counter_reset.qcore"),
+        output.join("qcore.cmetrics/contracts/cmetrics/counter_reset.qv"),
     )
     .unwrap();
     let target = TargetProfile {

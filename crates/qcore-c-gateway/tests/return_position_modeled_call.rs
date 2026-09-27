@@ -67,15 +67,15 @@ fn contracts() -> ResourceContracts {
         &[
             (
                 "q_base.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_base.qv").to_owned(),
             ),
             (
                 "q_realloc.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_realloc.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_realloc.qv").to_owned(),
             ),
             (
                 "r_return_call.qcore".to_owned(),
-                include_str!("fixtures/contracts/r_return_call.qcore").to_owned(),
+                include_str!("fixtures/contracts/r_return_call.qv").to_owned(),
             ),
         ]
         .into_iter()

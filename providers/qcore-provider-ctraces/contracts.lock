@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "ctr_destroy",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "33af425ba8175b57e4e8b2a4c685411a00b4bc82b5a0a77f89a5726ad6c06e34",
       "identities": [
         {
@@ -56,7 +56,7 @@
     },
     {
       "function": "ctr_id_cmp",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "cba1456accd587415e039cb6697ba4b7a69fb5d1fdab1f0ffafd3ff4836ba040",
       "identities": [
         {
@@ -88,7 +88,7 @@
     },
     {
       "function": "ctr_id_get_len",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "36eace2e545a5f71b8acf816c670fbb56803aff549f7b08b49dd3c057aab56fd",
       "identities": [
         {
@@ -120,7 +120,7 @@
     },
     {
       "function": "ctr_span_set_dropped_attributes_count",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "a3f2c14fd97029d53b6fbd7e218f31ecad0c0ee15733cb6ec8871f231bdf3938",
       "identities": [
         {
@@ -152,7 +152,7 @@
     },
     {
       "function": "ctr_span_set_dropped_events_count",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "abcae789ab925f00873638865297e351d9dd73a319bcf9570204cc48cf598633",
       "identities": [
         {
@@ -184,7 +184,7 @@
     },
     {
       "function": "ctr_span_set_dropped_links_count",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "758f24350b9cd5d24a95a1892eda951328dcb19e5f51eb99ac819f350484e052",
       "identities": [
         {
@@ -216,7 +216,7 @@
     },
     {
       "function": "ctr_span_set_flags",
-      "module": "ctraces/context_lifetime.qcore",
+      "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "b2289d72f57c7b8ea801ca78dcc0a31ef7df22087e4988a626e47620e1b665c5",
       "identities": [
         {

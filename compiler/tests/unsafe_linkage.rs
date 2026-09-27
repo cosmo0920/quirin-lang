@@ -21,7 +21,7 @@ use qcore_compiler::{
 };
 
 const ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn selection() -> Option<BTreeMap<String, String>> {
     Some(BTreeMap::from([(

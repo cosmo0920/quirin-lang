@@ -20,7 +20,7 @@
 //! route. No general call vocabulary is opened here.
 //!
 //! The wrapper's closed callee table is a **caller assertion** on this route:
-//! `providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore` declares no callee vocabulary,
+//! `providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv` declares no callee vocabulary,
 //! so unlike the cleanup route's contract-derived table this one cannot be read
 //! off a declaration. It buys no authority — the trusted core runs its own
 //! composition over its own import and its own contracts regardless — and

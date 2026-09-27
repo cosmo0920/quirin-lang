@@ -32,20 +32,20 @@ mod text;
 use text::normalize_newlines;
 
 const UNISTD: &str =
-    include_str!("../../../providers/quirin-provider-libc/contracts/libc/unistd.qcore");
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/unistd.qv");
 const LIBC_MEMORY: &str =
-    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qcore");
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
 const MPACK_WRITER: &str =
-    include_str!("../../../providers/quirin-provider-mpack/contracts/mpack/writer.qcore");
+    include_str!("../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv");
 const CFL_SDS: &str =
-    include_str!("../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qcore");
+    include_str!("../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv");
 const MONKEY_LOGGING: &str =
-    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/logging.qcore");
-/// `librdkafka/memory.qcore` includes libc parents, which this standalone
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv");
+/// `librdkafka/memory.qv` includes libc parents, which this standalone
 /// loader does not resolve; the card's declaration is its final section, which
 /// is taken byte for byte from the section marker to the end of the module.
 const RDKAFKA_MEMORY: &str =
-    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore");
+    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv");
 const RDKAFKA_SECTION: &str = "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `rd_atomic32_get`";
 
 const DECLARATIONS: &str = "\
@@ -79,27 +79,24 @@ fn rdkafka_section() -> String {
     let text = normalize_newlines(RDKAFKA_MEMORY);
     let start = text
         .find(RDKAFKA_SECTION)
-        .expect("the card's section is in librdkafka/memory.qcore");
+        .expect("the card's section is in librdkafka/memory.qv");
     format!("module contract;\n{}", &text[start..])
 }
 
 fn production() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
-        ("libc/unistd.qcore".to_owned(), normalize_newlines(UNISTD)),
+        ("libc/unistd.qv".to_owned(), normalize_newlines(UNISTD)),
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
         (
-            "libc/memory.qcore".to_owned(),
-            normalize_newlines(LIBC_MEMORY),
-        ),
-        (
-            "mpack/writer.qcore".to_owned(),
+            "mpack/writer.qv".to_owned(),
             normalize_newlines(MPACK_WRITER),
         ),
         (
-            "cfl/sds_lifetime.qcore".to_owned(),
+            "cfl/sds_lifetime.qv".to_owned(),
             normalize_newlines(CFL_SDS),
         ),
         (
-            "monkey/logging.qcore".to_owned(),
+            "monkey/logging.qv".to_owned(),
             normalize_newlines(MONKEY_LOGGING),
         ),
         ("librdkafka/w46_atomic.qcore".to_owned(), rdkafka_section()),
@@ -117,23 +114,20 @@ fn without_card() -> ResourceContracts {
     };
     load_resource_contract_sources(&BTreeMap::from([
         (
-            "libc/unistd.qcore".to_owned(),
+            "libc/unistd.qv".to_owned(),
             cut(UNISTD, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
         (
-            "libc/memory.qcore".to_owned(),
-            normalize_newlines(LIBC_MEMORY),
-        ),
-        (
-            "mpack/writer.qcore".to_owned(),
+            "mpack/writer.qv".to_owned(),
             cut(MPACK_WRITER, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
         (
-            "cfl/sds_lifetime.qcore".to_owned(),
+            "cfl/sds_lifetime.qv".to_owned(),
             cut(CFL_SDS, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
         (
-            "monkey/logging.qcore".to_owned(),
+            "monkey/logging.qv".to_owned(),
             cut(MONKEY_LOGGING, "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS"),
         ),
     ]))

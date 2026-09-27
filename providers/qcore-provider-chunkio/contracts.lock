@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "cio_chunk_close",
-      "module": "chunkio/resource_open_close.qcore",
+      "module": "chunkio/resource_open_close.qv",
       "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
       "identities": [
         {
@@ -39,7 +39,7 @@
     },
     {
       "function": "cio_chunk_down",
-      "module": "chunkio/chunk_residency.qcore",
+      "module": "chunkio/chunk_residency.qv",
       "contract_sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9",
       "identities": [
         {
@@ -71,7 +71,7 @@
     },
     {
       "function": "cio_chunk_get_content_size",
-      "module": "chunkio/chunk_sizes.qcore",
+      "module": "chunkio/chunk_sizes.qv",
       "contract_sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9",
       "identities": [
         {
@@ -103,7 +103,7 @@
     },
     {
       "function": "cio_chunk_is_up",
-      "module": "chunkio/chunk_residency.qcore",
+      "module": "chunkio/chunk_residency.qv",
       "contract_sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6",
       "identities": [
         {
@@ -135,7 +135,7 @@
     },
     {
       "function": "cio_chunk_open",
-      "module": "chunkio/resource_open_close.qcore",
+      "module": "chunkio/resource_open_close.qv",
       "contract_sha256": "a0d15039f2e8e7ad37c1c26fed6f61e8b9ab4264845ae0ba3b9a2f2ee6f849a6",
       "identities": [
         {
@@ -167,7 +167,7 @@
     },
     {
       "function": "cio_chunk_up_force",
-      "module": "chunkio/chunk_residency.qcore",
+      "module": "chunkio/chunk_residency.qv",
       "contract_sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8",
       "identities": [
         {

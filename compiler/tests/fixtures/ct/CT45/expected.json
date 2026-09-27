@@ -8,7 +8,7 @@
   "stages_executed": ["parse", "legacy_c_twin"],
   "notes": "CT45's construct is a C construct: a destructor whose body is outside the translation unit and which is documented to reach file-scope state. No QCore syntax expresses it, so the case's artifact is the C twin in case.c, analyzed through the real unrestricted-C gateway. The scenario expects `Require access contract or report unknown`, and both halves are measured: without a declared contract for q_destroy the unit is Unknown, and with one — over the very same case.c bytes — it checks. The declared contract is a trusted premise about an absent body, not a fact established about it.",
   "legacy_c_twin": {
-    "contracts": ["contracts.qcore"],
+    "contracts": ["contracts.qv"],
     "attributed_to": "the uncontracted destructor q_destroy, whose effect on p and on the file-scope registry is undeclared",
     "verdict": "unknown",
     "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
@@ -21,7 +21,7 @@
     "controls": [
       {
         "source": null,
-        "contracts": ["contracts.qcore", "destructor_contract.qcore"],
+        "contracts": ["contracts.qv", "destructor_contract.qv"],
         "expectation": "safe",
         "reason": null,
         "function_status": {
@@ -32,7 +32,7 @@
       },
       {
         "source": "known_destructor.c",
-        "contracts": ["contracts.qcore"],
+        "contracts": ["contracts.qv"],
         "expectation": "safe",
         "reason": null,
         "function_status": {

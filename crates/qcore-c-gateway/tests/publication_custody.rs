@@ -36,11 +36,11 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/c02p_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/c02p_generic.qv");
 /// Card `CTWIN-RESIDUALS` needs a declared **`Out`** position, which the `b_*`
 /// surface has none of; BORROW-RESIDUALS' `y_*` surface supplies one and is
 /// equally synthetic and equally unrelated to any library.
-const OUT_CONTRACTS: &str = include_str!("fixtures/contracts/borrow_residuals.qcore");
+const OUT_CONTRACTS: &str = include_str!("fixtures/contracts/borrow_residuals.qv");
 
 /// C02-P's declarations, verbatim, so every generic gateway family shares one
 /// surface.
