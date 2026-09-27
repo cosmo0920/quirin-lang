@@ -1,0 +1,201 @@
+{
+  "schema": "qcore.w46-access-path-statements-attribution.v1",
+  "changed_leaf_rows": 410,
+  "weighted_counts": [
+    {
+      "side": "added",
+      "category": "unknown_alias",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 148
+    },
+    {
+      "side": "added",
+      "category": "unknown_alias",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 36
+    },
+    {
+      "side": "removed",
+      "category": "unknown_alias",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "removed",
+      "category": "unsupported",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 220
+    },
+    {
+      "side": "removed",
+      "category": "unsupported",
+      "relationship": "no_new_statement_in_function",
+      "count": 2
+    }
+  ],
+  "families": [
+    {
+      "side": "added",
+      "description": "unresolved resource identity `config`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `config`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 14
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `evc`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 12
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `event`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 38
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `i_ins`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ic`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `in`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ins`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `ins`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `instance`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `meta`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 12
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `otf`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `out`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `p`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `plugin`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 4
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `req`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `retry`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 6
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `route_path`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `route`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 20
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `router`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `task`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 8
+    },
+    {
+      "side": "added",
+      "description": "unresolved resource identity `timer`",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 20
+    },
+    {
+      "side": "removed",
+      "description": "call to uncontracted function `flb_engine_get_chunk_backpressure_percent`",
+      "relationship": "no_new_statement_in_function",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "indirect memory access is outside the resource projection",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 150
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `label_length`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "unresolved resource identity `plugin_length`",
+      "relationship": "same_function_downstream_or_summary",
+      "count": 2
+    },
+    {
+      "side": "removed",
+      "description": "unsupported assignment expression",
+      "relationship": "newly_admitted_statement_same_line",
+      "count": 70
+    }
+  ],
+  "attribution_sha256": "7b6652f0402c79e0a199b26ed6ccec2d1c6b8a6740bae8682158ad79419bcba5"
+}

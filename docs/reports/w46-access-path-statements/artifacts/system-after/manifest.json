@@ -1,0 +1,67 @@
+{
+  "schema": "qcore.w46-access-path-statements-archive.v1",
+  "run": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/system",
+  "comparison": "/tmp/qcore-w46-access-statements/private/w46-access-path-statements/final/system/comparison",
+  "files": {
+    "attribution.json": {
+      "sha256": "7a5132ffd9c9f8d24586862c5c49fac182d07e87c6099ba62035fc62e2bd0729",
+      "bytes": 5754
+    },
+    "changed-functions.jsonl.gz": {
+      "sha256": "bb9df34d4edfdcad058b0399f471fc4d6e7f148f64d9f6dcda6ee678cb383575",
+      "bytes": 3028
+    },
+    "changed-leaf-attribution.jsonl.gz": {
+      "sha256": "7b6652f0402c79e0a199b26ed6ccec2d1c6b8a6740bae8682158ad79419bcba5",
+      "bytes": 4670
+    },
+    "chunk-contracts.json.gz": {
+      "sha256": "35bff1c1ee61d45f1352827f0ed0dc9d51ac41a1af54a1519725fa402111fc30",
+      "bytes": 281
+    },
+    "comparison.json": {
+      "sha256": "135b32602d7b1dce557f2c4b3295369d453acda020d16664125765f83b593970",
+      "bytes": 2407
+    },
+    "console.log.gz": {
+      "sha256": "d31abce5a1b624959d45fe15e3148cc0e37bcc508c99dbba20e3ed18335068aa",
+      "bytes": 1577
+    },
+    "contracts.json.gz": {
+      "sha256": "aa214c38d603963a82050d4ff7c9cb61ae0316467756a16d83ec5ef5a2f62ba7",
+      "bytes": 105476
+    },
+    "diagnostics.json.gz": {
+      "sha256": "54aa1f85e15477b863e4e244a613b0ca8865104fdbd93cb13ac6be9fa36de4bd",
+      "bytes": 109593
+    },
+    "exit": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "frontend-contexts.jsonl.gz": {
+      "sha256": "0ba18504a87cfca382470ac9c828a1d99945956fbd7a9988d683815fb8f253c7",
+      "bytes": 3530
+    },
+    "invocation.json.gz": {
+      "sha256": "06ce96c99d31937459b5c80c5393f5abe755ecb5ab92d5dc4dd8724846d19558",
+      "bytes": 1604
+    },
+    "parity-disagreements.jsonl.gz": {
+      "sha256": "cad386a409fe6d1194be843d6fea9664727e513a07992d5605264e381311a650",
+      "bytes": 61259
+    },
+    "parity.jsonl.gz": {
+      "sha256": "9a702f9e5ff1bdea27024e154b07ba9a5a3666346c4da4ccf0924fe8fd6627a6",
+      "bytes": 63631
+    },
+    "run.json": {
+      "sha256": "a22c3a35e938967b0ac7ad341651941ebd6969184467190cf60e36e4f9b6a1f9",
+      "bytes": 1492
+    },
+    "source-effects.json.gz": {
+      "sha256": "07f88d7cb6ef3d181afbf849941b743ec63585c9c158043af6315d298a82e4bf",
+      "bytes": 280
+    }
+  }
+}
