@@ -15,16 +15,16 @@ SPEC.loader.exec_module(provider_package)
 
 
 class ContractBundleVerification(unittest.TestCase):
-    def bundle(self, root):
+    def bundle(self, root, extension=".qcore", source="resource type Example;\n"):
         package = Path(root) / "qcore.example"
-        asset = package / "contracts/example/policy.qcore"
+        asset = package / f"contracts/example/policy{extension}"
         asset.parent.mkdir(parents=True)
-        asset.write_text("resource type Example;\n")
+        asset.write_text(source)
         inventory = {
             "schema_version": 1,
             "plugin_id": "qcore.example",
             "contracts": {
-                "contracts/example/policy.qcore": hashlib.sha256(
+                f"contracts/example/policy{extension}": hashlib.sha256(
                     asset.read_bytes()
                 ).hexdigest()
             },
@@ -96,6 +96,8 @@ class ContractBundleVerification(unittest.TestCase):
                 )
 
     def test_contract_paths_are_canonical_and_contained(self):
+        self.assertEqual(provider_package.contract_path("contracts/example/a.qv").as_posix(),
+                         "contracts/example/a.qv")
         for path in (
             "/contracts/example/a.qcore",
             "contracts/../a.qcore",
@@ -106,6 +108,80 @@ class ContractBundleVerification(unittest.TestCase):
         ):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 provider_package.contract_path(path)
+
+    def test_qv_include_is_scanned_and_dual_stems_are_refused(self):
+        self.assertEqual(provider_package.contract_include_targets(
+            '#include "quirin-provider-libc:libc/memory.qv";\n', "child.qv"),
+            ["quirin-provider-libc:libc/memory.qv"])
+        with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
+            provider_package.reject_dual_stems(
+                ["contracts/example/policy.qcore", "contracts/example/policy.qv"])
+        with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
+            provider_package.reject_dual_stems(
+                ["includes/libc/example/policy.qcore", "includes/libc/example/policy.qv"])
+
+    def test_declared_dual_stem_bundle_is_refused_even_with_valid_hashes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package, asset, _ = self.bundle(temporary)
+            sibling = asset.with_suffix(".qv")
+            sibling.write_bytes(asset.read_bytes())
+            inventory = json.loads((package / "contracts.json").read_text())
+            inventory["contracts"]["contracts/example/policy.qv"] = hashlib.sha256(
+                sibling.read_bytes()).hexdigest()
+            payload = (json.dumps(inventory, indent=2) + "\n").encode()
+            (package / "contracts.json").write_bytes(payload)
+            executable = (provider_package.CONTRACTS_BEGIN + payload
+                          + provider_package.CONTRACTS_END)
+            with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
+                provider_package.verify_contracts(package, executable, "qcore.example")
+
+    def test_qv_requires_parser_detected_contract_mode(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package, _, executable = self.bundle(
+                temporary, ".qv", "module contract;\nresource type Example;\n")
+            self.assertEqual(provider_package.verify_contracts(
+                package, executable, "qcore.example")["contracts"], 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            package, _, executable = self.bundle(
+                temporary, ".qv", "module executable;\nfn main() -> unit;\n")
+            with self.assertRaisesRegex(ValueError, ".qv requires contract mode"):
+                provider_package.verify_contracts(package, executable, "qcore.example")
+
+    def test_legacy_warning_reports_parser_mode_and_recommendation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package, _, executable = self.bundle(
+                temporary, ".qcore", "module contract;\nresource type Example;\n")
+            from contextlib import redirect_stderr
+            from io import StringIO
+            warning = StringIO()
+            with redirect_stderr(warning):
+                provider_package.verify_contracts(
+                    package, executable, "qcore.example", warn_legacy=True)
+            self.assertIn("contracts/example/policy.qcore", warning.getvalue())
+            self.assertIn("(contract mode); use .qv", warning.getvalue())
+
+    def test_parser_probe_round_trips_special_path_characters(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            asset = Path(temporary) / 'é "quoted"\\name\npolicy.qv'
+            asset.write_text("module contract;\nresource type Example;\n")
+            provider_package.validate_source_modes({"contracts/example/policy.qv": asset})
+
+    def test_malformed_header_refuses_qv_but_keeps_legacy_visible(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package, _, executable = self.bundle(
+                temporary, ".qv", "module other;\nresource type Example;\n")
+            with self.assertRaisesRegex(ValueError, ".qv requires contract mode"):
+                provider_package.verify_contracts(package, executable, "qcore.example")
+        with tempfile.TemporaryDirectory() as temporary:
+            package, _, executable = self.bundle(
+                temporary, ".qcore", "module other;\nresource type Example;\n")
+            from contextlib import redirect_stderr
+            from io import StringIO
+            warning = StringIO()
+            with redirect_stderr(warning):
+                self.assertEqual(provider_package.verify_contracts(
+                    package, executable, "qcore.example", warn_legacy=True)["contracts"], 1)
+            self.assertIn("(unknown mode); use .qv", warning.getvalue())
 
     def test_archive_is_recursive_and_deterministic(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -75,7 +75,7 @@ def contract_path(name):
     path = PurePosixPath(name)
     if (path.is_absolute() or not path.parts or path.parts[0] != "contracts"
             or any(part in ("", ".", "..") for part in path.parts)
-            or path.suffix != ".qcore" or path.as_posix() != name or "\\" in name):
+            or path.suffix not in (".qcore", ".qv") or path.as_posix() != name or "\\" in name):
         raise ValueError(f"invalid contract inventory path: {name!r}")
     return path
 
@@ -101,13 +101,58 @@ def installed_contract_files(package, tree="contracts"):
     return found
 
 
+def reject_dual_stems(paths):
+    """Refuse two extension spellings for one exact logical module path."""
+    stems = {}
+    for name in sorted(paths):
+        path = PurePosixPath(name)
+        stem = path.with_suffix("").as_posix()
+        if stem in stems:
+            raise ValueError(f"ambiguous contract asset stem: {stems[stem]} and {name}")
+        stems[stem] = name
+
+
+def validate_source_modes(sources, warn_legacy=False):
+    """Use the frontend's header parser for new contracts and legacy warnings.
+
+    `sources` maps exact recorded names to their on-disk files. The probe
+    classifies header intent only; package and loader verification still own
+    all declaration checks. Never infer mode from suffix or source regexes.
+    """
+    selected = {name: Path(path).resolve() for name, path in sources.items()
+                if name.endswith(".qv") or (warn_legacy and name.endswith(".qcore"))}
+    if not selected:
+        return
+    command = ["cargo", "run", "--quiet", "--offline", "--locked",
+               "--manifest-path", str(REPO / "Cargo.toml"), "-p", "qcore-frontend",
+               "--example", "source_extension_modes", "--",
+               *(str(path) for path in selected.values())]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode:
+        raise ValueError(f"source mode probe failed (exit {result.returncode}): "
+                         f"{result.stderr.strip()}")
+    rows = json.loads(result.stdout)
+    if (not isinstance(rows, list) or len(rows) != len(selected)
+            or [row.get("path") for row in rows] != [str(path) for path in selected.values()]):
+        raise ValueError("source mode probe returned missing, extra or reordered paths")
+    for (name, path), row in zip(selected.items(), rows):
+        mode = row.get("mode")
+        if name.endswith(".qv") and mode != "contract":
+            detail = row.get("error") or f"{mode} source mode"
+            raise ValueError(f"{path}: .qv requires contract mode: {detail}")
+        if name.endswith(".qcore"):
+            recommended = ".qv" if mode in ("contract", None) else ".qr"
+            print(f"warning[legacy-source-extension]: {path}: outdated extension "
+                  f"({mode or 'unknown'} mode); use {recommended}", file=sys.stderr)
+
+
 # Card CONTRACT-INHERIT. A contract module may name another crate's published
 # module with `#include "crate:module";`. The grammar is the Rust scanner's
 # (`qcore_frontend::contract_inclusion`): a lowercase crate name, `:`, and a
-# relative `[a-z0-9_/-]+.qcore` module path with nonempty segments.
+# relative `[a-z0-9_/-]+.(qcore|qv)` module path with nonempty segments.
 INCLUDE_LINE = re.compile(r"^[ \t]*#[ \t]*include\b")
 INCLUDE_DIRECTIVE = re.compile(
-    r'^[ \t]*#include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_-]+(?:/[a-z0-9_-]+)*\.qcore)"[ \t]*;[ \t]*$')
+    r'^[ \t]*#include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_-]+(?:/[a-z0-9_-]+)*\.(?:qcore|qv))"[ \t]*;[ \t]*$')
 INCLUDE_PIN_FIELDS = {"crate", "version", "module", "sha256"}
 
 
@@ -175,6 +220,8 @@ def verify_contract_includes(package, inventory, found):
         if not is_sha256_hex(pin["sha256"]):
             raise ValueError(f"invalid SHA-256 for include pin {key!r}")
         expected_files[f"includes/{crate}/{module}"] = key
+    reject_dual_stems(expected_files)
+    reject_dual_stems(installed)
     if set(installed) != set(expected_files):
         missing = sorted(set(expected_files) - set(installed))
         extra = sorted(set(installed) - set(expected_files))
@@ -226,7 +273,7 @@ def install_includes(package, inventory, root=ROOT):
     return len(pins)
 
 
-def verify_contracts(package, executable_bytes, plugin_id):
+def verify_contracts(package, executable_bytes, plugin_id, warn_legacy=False):
     embedded = embedded_contracts(executable_bytes)
     inventory_path = package / "contracts.json"
     installed = inventory_path.exists() or inventory_path.is_symlink()
@@ -258,7 +305,9 @@ def verify_contracts(package, executable_bytes, plugin_id):
         normalized[path.as_posix()] = expected
     if len(normalized) != len(declared):
         raise ValueError("contract inventory contains colliding paths")
+    reject_dual_stems(normalized)
     found = installed_contract_files(package)
+    reject_dual_stems(found)
     if set(found) != set(normalized):
         missing = sorted(set(normalized) - set(found))
         extra = sorted(set(found) - set(normalized))
@@ -268,6 +317,11 @@ def verify_contracts(package, executable_bytes, plugin_id):
         if actual != expected:
             raise ValueError(f"contract asset digest mismatch: {name}")
     includes = verify_contract_includes(package, inventory, found)
+    source_paths = {name: package / name for name in found}
+    if includes is not None:
+        source_paths.update({name: package / name
+                             for name in installed_contract_files(package, "includes")})
+    validate_source_modes(source_paths, warn_legacy=warn_legacy)
     result = {"payload_sha256": hashlib.sha256(payload).hexdigest(), "contracts": len(normalized)}
     if includes is not None:
         result["includes"] = includes
@@ -294,7 +348,8 @@ def verify(package):
                 f"installed manifest field `{field}` diverges from the executable's "
                 f"embedded template: {package}"
             )
-    contracts = verify_contracts(package, executable_bytes, manifest["plugin_id"])
+    contracts = verify_contracts(package, executable_bytes, manifest["plugin_id"],
+                                 warn_legacy=True)
     checked = subprocess.run([str(executable.resolve()), "--verify-package"],
                              cwd=package, check=True, capture_output=True, text=True, timeout=10, env={})
     if json.loads(checked.stdout) != manifest:
