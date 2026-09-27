@@ -1,0 +1,119 @@
+{
+  "corpus": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-gap-expansion/scripts/summarize.py",
+        "private/w46-next/combined/corpus/resource-diagnostics.json",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus-summary.json"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-corpus-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-access-path-statements/scripts/compare.py",
+        "private/w46-next/contracts-only/corpus/resource-diagnostics.json",
+        "private/w46-next/combined/corpus/resource-diagnostics.json",
+        "private/w46-next/combined/corpus/parity.jsonl",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-corpus-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-access-expansion/scripts/replay_corpus_sources.py",
+        "private/w46-next/combined/corpus/resource-diagnostics.json",
+        "private/w46-next/combined/corpus/parity.jsonl",
+        "private/w46-next/combined/corpus/parity.jsonl.contexts.jsonl",
+        "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json,build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+        "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source,build/cycle19/c-gateway-wave-pin/monkey/monkey-source",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus/changed-functions.jsonl.gz",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus/source-replay.json"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-corpus-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-access-expansion/scripts/attribute_final.py",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus/changed-functions.jsonl.gz",
+        "private/w46-next/combined/corpus/parity.jsonl",
+        "private/w46-next/combined/corpus/resource-diagnostics.json",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus/final-attribution",
+        "docs/reports/w46-contract-access-expansion/census/combined-corpus/source-replay.json"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-corpus-3.log"
+    }
+  ],
+  "finish": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-access-expansion/scripts/archive.py",
+        "private/w46-next/combined",
+        "docs/reports/w46-contract-access-expansion/artifacts/combined"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-finish-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-gap-expansion/scripts/summarize.py",
+        "private/w46-next/combined/system/resource-diagnostics.json",
+        "docs/reports/w46-contract-access-expansion/census/combined-system-summary.json"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-finish-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-access-path-statements/scripts/compare.py",
+        "private/w46-next/contracts-only/system/resource-diagnostics.json",
+        "private/w46-next/combined/system/resource-diagnostics.json",
+        "private/w46-next/combined/system/parity.jsonl",
+        "docs/reports/w46-contract-access-expansion/census/combined-system",
+        "--no-forecast"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-finish-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-access-expansion/scripts/attribute_final.py",
+        "docs/reports/w46-contract-access-expansion/census/combined-system/changed-functions.jsonl.gz",
+        "private/w46-next/combined/system/parity.jsonl",
+        "private/w46-next/combined/system/resource-diagnostics.json",
+        "docs/reports/w46-contract-access-expansion/census/combined-system/final-attribution"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-finish-3.log"
+    },
+    {
+      "command": [
+        "python3",
+        "private/w46-next/combined_identity.py"
+      ],
+      "exit": 0,
+      "log": "private/w46-next/combined/postprocess-finish-4.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w45-sub-object-stores/scripts/blocker_census.py",
+        "private/w46-next/combined/corpus/resource-diagnostics.json"
+      ],
+      "exit": 0,
+      "log": "docs/reports/w46-contract-access-expansion/census/blockers-combined.txt"
+    }
+  ],
+  "note": "Evidence processing commands, separate from the primary audits and standing gate. Corpus source replay has 124 exact single matches; all Clang commands exit 0, with 23 recorded nonmatching source/context candidates. Input-identity reporting was refined to distinguish absent corpus configuration records; it was rerun read-only with exit 0 at private/w46-next/combined/input-identity-refined.log."
+}

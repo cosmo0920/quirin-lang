@@ -1,0 +1,13 @@
+{
+  "note": "Integration gate for w46-access-path-statements, merged e6e31f492954e765768ed3f8373fb8f9cffa32ba, measured combined tip 329ccd052845ea5aa740ec2f63553e02cda43b66. This one shared merged run includes eleven added contracts and the corrected typed statement reader, so its totals differ from the isolated card. Clang recording borrowed from docs/reports/w46-contract-access-expansion/gate/clang-version.txt, measured in the merged worktree. W46-CONTRACT-ACCESS-EXPANSION fresh merged gate at 329ccd052845ea5aa740ec2f63553e02cda43b66; all recorded steps exit 0. Core runner: 327 units, 339 summaries; 6051 passed, 0 failed, 11 ignored; private summary private/test-binaries/20260927T061741Z-879946/summary.json. Provider suite: 129 passed, 0 failed, 1 ignored in 43 summaries. Lean 213 audits; root Python 364; provider Python 15. Both reevaluation examples, core/provider fmt and clippy, submodule, contracts check, all five package builds and verifications, documentation index and Clang recording passed. Clang was measured in this merged worktree, not borrowed. Exact commands, environments, times and exits are in gate/steps.json and gate/command.json; private logs at private/w46-next/integration-gate/. Final full Python after gate-driven matrix regeneration is recorded in gate/final-checks.json. Isolated card failures and repairs remain in their own reports; this is one fresh merged run.",
+  "workspace_tests": 6051,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 364,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 213,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

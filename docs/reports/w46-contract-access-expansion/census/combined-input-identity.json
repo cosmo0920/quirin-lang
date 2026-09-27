@@ -30,7 +30,9 @@
     }
   ],
   "corpus_units": {
-    "compile_configuration_identical": true,
+    "recorded_compile_configuration_fields_equal": true,
+    "compile_configuration_records_present": 0,
+    "meaning": "Only recorded fields are compared; absent corpus configuration fields are not evidence of frontend identity. Corpus AFTER source identity is separately bound by exact replay.",
     "exclusions_identical": true,
     "unit_moves": [
       {
@@ -65,7 +67,9 @@
     }
   ],
   "system_units": {
-    "compile_configuration_identical": true,
+    "recorded_compile_configuration_fields_equal": true,
+    "compile_configuration_records_present": 15,
+    "meaning": "Only recorded fields are compared; absent corpus configuration fields are not evidence of frontend identity. Corpus AFTER source identity is separately bound by exact replay.",
     "exclusions_identical": true,
     "unit_moves": []
   }

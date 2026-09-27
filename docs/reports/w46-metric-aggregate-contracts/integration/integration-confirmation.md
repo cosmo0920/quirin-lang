@@ -1,0 +1,5 @@
+# Combined integration measurement
+
+Merged by `4d73ef1653a9bb4a2cb38cc8157b285a7d9eaf7d`, measured at `329ccd052845ea5aa740ec2f63553e02cda43b66`. The [combined report](../../w46-contract-access-expansion/README.md) owns the final before/after artifacts and diagnostic attribution. This is one shared merged-worktree gate: **6,051 core tests, 129 provider tests, 213 Lean audits**, every step exit 0. Exact counts, commands and private log paths are in [gate.json](gate.json). Earlier card failures and superseded measurements remain unchanged. The final full regenerated-matrix Python check is in the combined report's `gate/final-checks.json`.
+
+The final typed-statement comparison uses the contract-only tree as BEFORE and the corrected combined tree as AFTER. The older isolated statement artifacts are explicitly superseded after positive scalar-type repair. No old analysis route is retired; source-pinned contract declarations remain premises, not proofs of their C bodies. Integrator requests are resolved in the combined [reconciliation](../../w46-contract-access-expansion/reconciliation.json).

@@ -253,6 +253,37 @@ work. Complete old/new plans and frontend-context preimages remain archived.
 Structurally different vocabularies are unresolved replacement parity; **no
 legacy route is removed**.
 
+The final corpus parity archive has **25,432 rows**: 10,593 old-refusal/new
+admissions, 14,686 other established-route rows, and 153 chain rows. Three
+scalar rows and 144 chain rows have identical plans. The system has **6,298
+rows**: 1,648 old-refusal/new admissions, 4,450 other established-route rows
+and 200 chain rows, of which 120 have identical plans. Eight corpus and
+15 system frontend-context preimages pass their SHA checks. None of these
+counts establishes semantic equivalence between different plan vocabularies.
+
+Final source attribution uses exact preprocessed-source hashes: all **124
+changed corpus units** have exactly one match from the archived frontend
+request replayed against their configured pinned source. All Clang replay
+commands exit 0; 23 other source/context candidates do not match and remain
+recorded. System hashes are already bound by each compile-task identity.
+Function-name witnesses alone were rejected after an LZ4 inline-header
+collision; Monkey is bound to its separate configured checkout rather than
+a byte-identical bundled copy. The final tool preserves unit indices and
+leaves no ambiguous source binding. [Processing commands](census/processing-steps.json)
+and [source replay](census/combined-corpus/source-replay.json) distinguish
+this evidence processing from the primary audits and the standing gate.
+
+The [final statement review](../w46-access-path-statements/integration/FINAL_REVIEW.md)
+classifies all **196 nondirect corpus leaves** and **42 nondirect system leaves**,
+with source/unit/frontend identities and a mechanism for every group. Direct
+rows remain in the complete per-leaf archives. The review covers all 36 corpus
+Safe gains and the two system configuration gains. The four additional misses
+relative to the superseded statement checkpoint are enum-valued paths:
+`otel_span_set_kind`, `LZ4F_resetDecompressionContext`,
+`rd_kafka_cgrp_clear_last_err` and `ut_set_types`. They fail the corrected
+positive builtin-scalar test; an owner-aware enum evidence arm is retained in
+`W43-INDIRECT-UNTYPED-SINGLE-ACCESS`, preserving union/unknown-aggregate refusal.
+
 ## Tracking and reconciliation
 
 Four follow-ups are registered and three existing entries amended, **518 → 522**,
@@ -264,3 +295,21 @@ inclusive historical cards, without rewriting frozen reports. Residual scans
 retain historical/unregistered mentions as candidates, not newly discovered
 defects. Documentation compaction ten is due around waves 47–48 and stability
 review six after wave 47; neither firing is due in this wave-46 continuation.
+
+## Standing and provider gate
+
+The [fresh merged gate](gate.json) at `329ccd05` has **6,051 core Rust tests passed,
+0 failed, 11 ignored**, over 327 units / 339 summaries; **129 provider tests passed,
+0 failed, 1 ignored**, over 43 summaries; **213 Lean audits, 364 root Python tests,
+15 provider Python tests**. Every step exits 0, including submodule setup,
+core/provider fmt and clippy, both reevaluation examples, contract inventory,
+all five package builds and verifications, docs index and Clang recording.
+Exact commands, times and exits are in [steps](gate/steps.json); build environment
+in [command](gate/command.json). Clang was recorded here, not borrowed.
+Private logs: `private/w46-next/integration-gate/`; runner summary:
+`private/test-binaries/20260927T061741Z-879946/summary.json`. The final full Python suite after matrix regeneration,
+index, reconciliation and diff checks are in [final checks](gate/final-checks.json).
+The three new cards' `integration/gate.json` files identify their merge SHA and
+explicitly borrow this Clang recording. They describe one shared run, not
+three additional tests. Their original failures and superseded audits remain
+in their reports. No native observation campaign or foreign-host result is claimed.

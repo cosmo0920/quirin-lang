@@ -1,0 +1,212 @@
+{
+  "wave": 46,
+  "cards": [
+    "w46-access-path-statements",
+    "w46-contract-access-expansion",
+    "w46-contract-gap-expansion",
+    "w46-fluent-event-contract-gaps",
+    "w46-fluent-routing-query-contracts",
+    "w46-libc-event-contract-gaps",
+    "w46-metric-aggregate-contracts",
+    "w46-metric-trace-contract-gaps"
+  ],
+  "note": "Inclusive --since 207cebe4 includes the prior close. Its applied decisions remain historical; current measurements and new card decisions are recorded separately. Three new implementation cards and this integration are reconciled; maintenance compaction ten is due around waves 47\u201348 and stability review six after wave 47, so neither is due at this continuation. No tracking entry is retired: 518 to 522, four added and three amended. Private residual scan preserves historical/unregistered names as candidates, not new defects.",
+  "no_section": {
+    "w46-contract-gap-expansion": "Prior integrating report has no integrator-addressed section; its own reconciliation is frozen evidence.",
+    "w46-contract-access-expansion": "This integrating report owns merged measurements, tracking, validation, and sweep; no further integrator-addressed section."
+  },
+  "verdicts": {
+    "w46-fluent-event-contract-gaps#for-the-integrator#1": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#2": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#3": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-fluent-event-contract-gaps#for-the-integrator#4": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#1": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#2": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#3": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#4": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-libc-event-contract-gaps#for-the-integrator#5": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-metric-trace-contract-gaps#for-the-integrator#1": {
+      "verdict": "noted",
+      "note": "Inclusive base includes this already-integrated card. Its decisions are recorded in docs/reports/w46-contract-gap-expansion/reconciliation.json; its residuals and increments remain. Current count-bearing claims are superseded only by the new measured integration; frozen verification strings are not edited."
+    },
+    "w46-fluent-routing-query-contracts#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Registered the proposed extent/nested-validity/concurrency residual and retained the earlier report-only mask extent non-claim; no existing residual was retired.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-ROUTING-QUERY-EXTENTS"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/followups.json",
+          "contains": "PROD-CONTRACTS-MASK-EXTENT"
+        }
+      ]
+    },
+    "w46-metric-aggregate-contracts#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Measured fresh baseline, contract-only and corrected combined corpus/system scopes. Preserved original gate failures, published every changed diagnostic, updated current status/matrix and the single card increment from integration evidence.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W46-CONTRACT-ACCESS-EXPANSION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-CONTRACT-ACCESS-EXPANSION"
+        },
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-METRIC-AGGREGATE-CONTRACTS`"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/artifacts/combined/manifest.json",
+          "contains": "corpus/resource-diagnostics.json"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/census/contracts-corpus-summary.json",
+          "contains": "411"
+        }
+      ]
+    },
+    "w46-access-path-statements#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Used contract-only to corrected combined measurements for final status; the isolated 753cde34 corpus/system row remains explicitly superseded. Preserved all hand-maintained followups and remeasured the shared merged gate.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W46-CONTRACT-ACCESS-EXPANSION"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/README.md",
+          "contains": "superseded checkpoint"
+        },
+        {
+          "file": "docs/reports/w46-access-path-statements/integration/gate.json",
+          "contains": "e6e31f49"
+        }
+      ]
+    },
+    "w46-access-path-statements#for-the-integrator#2": {
+      "verdict": "applied",
+      "note": "Registered all three proposed residuals with their proposed boundaries. Kept pointer-store and union trackers; amended the existing untyped-access tracker to retain unresolved multi-pointer declarator custody. No route retired. The final source review also amends that same tracker with the proposed positive, owner-aware enum classification/replay arm; no new ID or relaxed refusal.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-ACCESS-PATH-PARITY"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-ACCESS-PATH-TRACKED-MIXED-PLACES"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-ACCESS-PATH-POSITIONS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W43-INDIRECT-POINTER-VALUE-STORE"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W46-UNION-MEMBER-PATH"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/tracking-amendments.json",
+          "contains": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "positive, owner-aware enum classification/replay arm"
+        }
+      ]
+    },
+    "w46-access-path-statements#for-the-integrator#3": {
+      "verdict": "applied",
+      "note": "Added exactly one statement-card increment recording the corrected combined result and superseded defects, with the final merged gate linked rather than inserting the historical row as current.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-46.md",
+          "contains": "**`W46-ACCESS-PATH-STATEMENTS`"
+        },
+        {
+          "file": "docs/reports/w46-contract-access-expansion/gate.json",
+          "contains": "workspace_tests"
+        }
+      ]
+    }
+  },
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "ground": "Carried from the historical wave-40 close registry without adjudication by this contract integration. Its historical measurements are not current claims; newer status/report evidence remains authoritative. This card neither implements nor retires this separate decision."
+    }
+  }
+}

@@ -95,15 +95,15 @@ separately.
 
 ## Latest validated gate
 
-The latest merged gate is [W46-CONTRACT-GAP-EXPANSION](reports/w46-contract-gap-expansion/gate.json)
-at `eb913c38`: **6,029 core Rust passed, 0 failed, 11 ignored over 324 units /
-336 summaries; 129 provider Rust passed, 0 failed, 1 ignored over 43 summaries;
-212 Lean audits; 364 root Python tests; 15 provider Python tests**. Core and
-provider fmt/clippy, both reevaluation examples, submodule, contracts check,
-and all five package builds/verifications passed. The initial root Python
-run had one matrix byte-format failure; regeneration and its focused repair
-passed, with the final full regenerated-matrix check recorded in the report.
-Clang 21.1.8 was measured in this worktree. The initial failed exit is retained.
+The latest merged gate is [W46-CONTRACT-ACCESS-EXPANSION](reports/w46-contract-access-expansion/gate.json)
+at `329ccd05`: **6,051 core Rust passed, 0 failed, 11 ignored over 327 units /
+339 summaries; 129 provider Rust passed, 0 failed, 1 ignored over 43 summaries;
+213 Lean audits; 364 root Python tests; 15 provider Python tests**. All steps
+exit 0, including both reevaluation examples, core/provider fmt and clippy,
+submodule, contract inventory, five package builds/verifications and docs index.
+Clang 21.1.8 was measured in this worktree. Earlier isolated failures and their
+repairs remain disclosed; the final full regenerated-matrix Python check is
+recorded in the report.
 
 The five provider crates own **73** canonical contract modules; **45** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

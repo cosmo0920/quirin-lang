@@ -1,0 +1,17 @@
+{
+  "before": 109,
+  "after": 108,
+  "removed_candidates": [
+    "PROD-CONTRACTS-MASK-EXTENT",
+    "W46-ROUTING-QUERY-EXTENTS"
+  ],
+  "added_candidates": [
+    "W36-CTRACES-FAMILY-FIRST"
+  ],
+  "note": "Read-only residual-shaped-name scan includes historical reports and rules. These are unregistered-name candidates, not newly discovered defects. No tracking entry was retired. The after scan includes the newly merged statement card.",
+  "interpretation": {
+    "W46-ROUTING-QUERY-EXTENTS": "Now registered as one of four new followups.",
+    "PROD-CONTRACTS-MASK-EXTENT": "Still a report-only non-claim, not a retired matrix ID. The new routing entry explicitly carries this name in its why text, so the scanner no longer lists it separately.",
+    "W36-CTRACES-FAMILY-FIRST": "Historical naming decision already confirmed and retired by W46-CONTRACT-GAP-EXPANSION; inclusion of historical reports exposes the old name, not a new open contract gap."
+  }
+}

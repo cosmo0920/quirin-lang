@@ -1,0 +1,276 @@
+{
+  "revision": "329ccd052845ea5aa740ec2f63553e02cda43b66",
+  "logs": "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-gate",
+  "steps": [
+    {
+      "name": "submodule",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:17:41.084952+00:00",
+      "end": "2026-09-27T06:17:41.107960+00:00"
+    },
+    {
+      "name": "tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:17:41.108054+00:00",
+      "end": "2026-09-27T06:21:01.067129+00:00"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:01.067313+00:00",
+      "end": "2026-09-27T06:21:03.252252+00:00"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:03.252395+00:00",
+      "end": "2026-09-27T06:21:13.503405+00:00"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:13.503691+00:00",
+      "end": "2026-09-27T06:21:13.567265+00:00"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:13.567381+00:00",
+      "end": "2026-09-27T06:21:13.922024+00:00"
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:13.922356+00:00",
+      "end": "2026-09-27T06:21:22.341550+00:00"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:22.341715+00:00",
+      "end": "2026-09-27T06:21:45.390162+00:00"
+    },
+    {
+      "name": "docs-index",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:45.390506+00:00",
+      "end": "2026-09-27T06:21:45.434799+00:00"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:21:45.434939+00:00",
+      "end": "2026-09-27T06:25:05.320364+00:00"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:05.320508+00:00",
+      "end": "2026-09-27T06:25:07.714134+00:00"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:07.714269+00:00",
+      "end": "2026-09-27T06:25:13.723553+00:00"
+    },
+    {
+      "name": "provider-contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:13.723697+00:00",
+      "end": "2026-09-27T06:25:14.817907+00:00"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:14.818049+00:00",
+      "end": "2026-09-27T06:25:26.410714+00:00"
+    },
+    {
+      "name": "package-verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.410867+00:00",
+      "end": "2026-09-27T06:25:26.473278+00:00"
+    },
+    {
+      "name": "package-verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.473581+00:00",
+      "end": "2026-09-27T06:25:26.533033+00:00"
+    },
+    {
+      "name": "package-verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.533320+00:00",
+      "end": "2026-09-27T06:25:26.598934+00:00"
+    },
+    {
+      "name": "package-verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.599084+00:00",
+      "end": "2026-09-27T06:25:26.668005+00:00"
+    },
+    {
+      "name": "package-verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/integration-packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.668154+00:00",
+      "end": "2026-09-27T06:25:26.727638+00:00"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:26.727791+00:00",
+      "end": "2026-09-27T06:25:27.653411+00:00"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T06:25:27.653562+00:00",
+      "end": "2026-09-27T06:25:27.666354+00:00"
+    }
+  ]
+}
