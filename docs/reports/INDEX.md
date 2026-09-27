@@ -952,6 +952,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w46-metric-trace-contract-gaps](w46-metric-trace-contract-gaps/README.md) | W46-METRIC-TRACE-CONTRACT-GAPS |
 
+| [w47-access-path-positions](w47-access-path-positions/README.md) | W47-ACCESS-PATH-POSITIONS |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

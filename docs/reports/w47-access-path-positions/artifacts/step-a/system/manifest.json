@@ -1,0 +1,14 @@
+{
+ "resource-diagnostics.json": {
+  "file": "resource-diagnostics.json.gz",
+  "gzip_sha256": "1e2aeac113a159ba92c73d129a4011b5528ba3c5d17301c82c2049b20dddb91c",
+  "raw_bytes": 1600978,
+  "raw_sha256": "eced6c753c7e3262bc6249905714cb1c854ab047216e8a583fe6086741516c28"
+ },
+ "run.json": {
+  "file": "run.json.gz",
+  "gzip_sha256": "58c3ea55db43ff9d6d280a15ee03e7220d5d3c28c1151611f7d9ed076d75dddf",
+  "raw_bytes": 1313,
+  "raw_sha256": "35193abceb5cafb64ff749af9e11ed607dc6c44d6c1938e4e093dd4193a90ef5"
+ }
+}

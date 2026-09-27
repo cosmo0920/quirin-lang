@@ -1,0 +1,32 @@
+{
+ "any-condition": {
+  "leaves": 6353,
+  "sole": 57,
+  "unknown_functions": 1795
+ },
+ "branch-condition": {
+  "leaves": 5613,
+  "sole": 42,
+  "unknown_functions": 1655
+ },
+ "indirect-access": {
+  "leaves": 14990,
+  "sole": 468,
+  "unknown_functions": 3136
+ },
+ "return-expression": {
+  "leaves": 284,
+  "sole": 71,
+  "unknown_functions": 230
+ },
+ "uncontracted": {
+  "leaves": 8880,
+  "sole": 441,
+  "unknown_functions": 2577
+ },
+ "unit_reason_codes": {
+  "incomplete-obligation-coverage": 1,
+  "none": 18,
+  "unsupported-syntax": 166
+ }
+}

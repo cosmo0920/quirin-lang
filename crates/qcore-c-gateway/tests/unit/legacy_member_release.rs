@@ -447,16 +447,36 @@ fn a_member_null_test_is_a_typed_read_of_its_base() {
 
 #[test]
 fn a_member_null_test_reads_only_single_pointer_members() {
-    for condition in ["n->next->buf", "n->buf && n->n", "n->buf == n->next"] {
+    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins this deliberately.
+    // This rule still reads only a single pointer member. Two shapes it leaves
+    // are now read by the typed condition fallback asked after it (a pointer
+    // chain's truthiness, a comparison of two pointer reads), each keeping the
+    // per-hop obligation of the untracked formal `n`. `n->buf && n->n` keeps
+    // the refusal: both operands are older routes' reads, and a call-free
+    // condition is desugared only when an operand needs the typed reader. A
+    // cast, which no route reads, still refuses.
+    let summary = analyze("void subject(struct node *n) { if (n->buf && n->n) return; }\n");
+    assert!(
+        has(&summary, "subject", "branch condition"),
+        "{:?}",
+        summary.functions["subject"].diagnostics
+    );
+    for condition in ["n->next->buf", "n->buf == n->next"] {
         let summary = analyze(&format!(
             "void subject(struct node *n) {{ if ({condition}) return; }}\n"
         ));
         assert!(
-            has(&summary, "subject", "branch condition"),
+            !has(&summary, "subject", "branch condition"),
             "{condition}: {:?}",
             summary.functions["subject"].diagnostics
         );
     }
+    let summary = analyze("void subject(struct node *n) { if ((char *) n->buf) return; }\n");
+    assert!(
+        has(&summary, "subject", "branch condition"),
+        "{:?}",
+        summary.functions["subject"].diagnostics
+    );
 }
 
 #[test]

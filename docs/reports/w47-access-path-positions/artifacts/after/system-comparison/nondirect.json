@@ -1,0 +1,414 @@
+{
+ "groups": {
+  "callee-now-safe": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`",
+    "family": "unsupported:UNC",
+    "file": "plugins/in_storage_backlog/sb.c",
+    "function": "sb_get_releasable_output_queue_space",
+    "library": "fluent-bit-system",
+    "line": 18135,
+    "origin": "plugins/in_storage_backlog/sb.c:503"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`",
+    "family": "unsupported:UNC",
+    "file": "plugins/in_storage_backlog/sb.c",
+    "function": "sb_release_output_queue_space",
+    "library": "fluent-bit-system",
+    "line": 18164,
+    "origin": "plugins/in_storage_backlog/sb.c:542"
+   },
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "call to uncontracted function `flb_engine_exit`",
+    "family": "unsupported:UNC",
+    "file": "src/flb_engine.c",
+    "function": "flb_engine_exit_status",
+    "library": "fluent-bit-system",
+    "line": 20081,
+    "origin": "src/flb_engine.c:1752"
+   },
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "call to uncontracted function `flb_engine_exit`",
+    "family": "unsupported:UNC",
+    "file": "src/flb_engine.c",
+    "function": "flb_engine_exit_status",
+    "library": "fluent-bit-system",
+    "line": 20081,
+    "origin": "src/flb_engine.c:1752"
+   }
+  ],
+  "cascade-condition": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_drop_task_route",
+    "library": "fluent-bit-system",
+    "line": 18301,
+    "origin": "src/flb_input_chunk.c:883"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_drop_task_route",
+    "library": "fluent-bit-system",
+    "line": 18301,
+    "origin": "src/flb_input_chunk.c:883"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_engine.c",
+    "function": "handle_output_event",
+    "library": "fluent-bit-system",
+    "line": 19387,
+    "origin": "src/flb_engine.c:625"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_engine.c",
+    "function": "handle_output_event",
+    "library": "fluent-bit-system",
+    "line": 19387,
+    "origin": "src/flb_engine.c:625"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17438,
+    "origin": "src/flb_engine_dispatch.c:54"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17438,
+    "origin": "src/flb_engine_dispatch.c:54"
+   },
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_check",
+    "library": "fluent-bit-system",
+    "line": 18961,
+    "origin": "src/flb_output.c:1936"
+   },
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "family": "unsupported:COND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_check",
+    "library": "fluent-bit-system",
+    "line": 18961,
+    "origin": "src/flb_output.c:1936"
+   }
+  ],
+  "exchanged-refusal": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_drop_task_route",
+    "library": "fluent-bit-system",
+    "line": 18301,
+    "origin": "src/flb_input_chunk.c:883"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_drop_task_route",
+    "library": "fluent-bit-system",
+    "line": 18301,
+    "origin": "src/flb_input_chunk.c:883"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_engine.c",
+    "function": "handle_output_event",
+    "library": "fluent-bit-system",
+    "line": 19387,
+    "origin": "src/flb_engine.c:625"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_engine.c",
+    "function": "handle_output_event",
+    "library": "fluent-bit-system",
+    "line": 19387,
+    "origin": "src/flb_engine.c:625"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17438,
+    "origin": "src/flb_engine_dispatch.c:54"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "added",
+    "description": "arguments do not match resource contract for `flb_task_get_route_data`",
+    "family": "unsupported:OTHER",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17438,
+    "origin": "src/flb_engine_dispatch.c:54"
+   }
+  ],
+  "reviewed:alias-no-longer-needed (flb_engine_exit now Safe, so W4 no longer binds config)": [
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `config`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine.c",
+    "function": "flb_engine_exit_status",
+    "library": "fluent-bit-system",
+    "line": 20080,
+    "origin": "src/flb_engine.c:1751"
+   },
+   {
+    "after": "Safe",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `config`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine.c",
+    "function": "flb_engine_exit_status",
+    "library": "fluent-bit-system",
+    "line": 20080,
+    "origin": "src/flb_engine.c:1751"
+   }
+  ],
+  "reviewed:alias-no-longer-poisoned (the call-bearing condition at :54 now plans instead of refusing)": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `task`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17442,
+    "origin": "src/flb_engine_dispatch.c:58"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `task`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17443,
+    "origin": "src/flb_engine_dispatch.c:59"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `task`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17442,
+    "origin": "src/flb_engine_dispatch.c:58"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "unresolved resource identity `task`",
+    "family": "unknown_alias",
+    "file": "src/flb_engine_dispatch.c",
+    "function": "record_retry_failure_metrics",
+    "library": "fluent-bit-system",
+    "line": 17443,
+    "origin": "src/flb_engine_dispatch.c:59"
+   }
+  ],
+  "reviewed:callee-now-modelled (flb_task_set_route_data's header-inline summary now validates)": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_flush_error",
+    "library": "fluent-bit-system",
+    "line": 17877,
+    "origin": "src/flb_output.c:439"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_flush_error",
+    "library": "fluent-bit-system",
+    "line": 17877,
+    "origin": "src/flb_output.c:439"
+   }
+  ],
+  "reviewed:callee-now-modelled (mk_list_is_empty's summary now validates)": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_singleplex_flush_next",
+    "library": "fluent-bit-system",
+    "line": 17857,
+    "origin": "src/flb_output.c:398"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_singleplex_flush_next",
+    "library": "fluent-bit-system",
+    "line": 17863,
+    "origin": "src/flb_output.c:407"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_singleplex_flush_next",
+    "library": "fluent-bit-system",
+    "line": 17857,
+    "origin": "src/flb_output.c:398"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_singleplex_flush_next",
+    "library": "fluent-bit-system",
+    "line": 17863,
+    "origin": "src/flb_output.c:407"
+   }
+  ],
+  "reviewed:callee-now-modelled (mk_list_is_empty's summary now validates; &queue->pending admitted)": [
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_queue_flush_one",
+    "library": "fluent-bit-system",
+    "line": 17813,
+    "origin": "src/flb_output.c:318"
+   },
+   {
+    "after": "Unknown",
+    "before": "Unknown",
+    "change": "removed",
+    "description": "indirect memory access is outside the resource projection",
+    "family": "unsupported:IND",
+    "file": "src/flb_output.c",
+    "function": "flb_output_task_queue_flush_one",
+    "library": "fluent-bit-system",
+    "line": 17813,
+    "origin": "src/flb_output.c:318"
+   }
+  ]
+ },
+ "summary": {
+  "callee-now-safe": 4,
+  "cascade-condition": 8,
+  "exchanged-refusal": 6,
+  "reviewed:alias-no-longer-needed (flb_engine_exit now Safe, so W4 no longer binds config)": 2,
+  "reviewed:alias-no-longer-poisoned (the call-bearing condition at :54 now plans instead of refusing)": 4,
+  "reviewed:callee-now-modelled (flb_task_set_route_data's header-inline summary now validates)": 2,
+  "reviewed:callee-now-modelled (mk_list_is_empty's summary now validates)": 4,
+  "reviewed:callee-now-modelled (mk_list_is_empty's summary now validates; &queue->pending admitted)": 2
+ }
+}

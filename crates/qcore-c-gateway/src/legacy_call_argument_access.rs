@@ -141,6 +141,9 @@ pub(super) struct ArgumentRead {
     /// (`B[I]`, `*B`, `B->F`, `S.F` over a pointer member), rather than a
     /// scalar.
     pub(super) pointer_valued: bool,
+    /// Card W47-ACCESS-PATH-POSITIONS: the per-link obligations of a typed
+    /// actual's paths (rule 10k). Empty for every lexically recognised actual.
+    pub(super) chains: Vec<crate::indirect_chain_access::AccessChain>,
 }
 
 impl ArgumentRead {
@@ -478,6 +481,7 @@ pub(super) fn recognise(
             bases: plan.bases,
             record_bases: plan.record_bases,
             pointer_valued: false,
+            chains: Vec::new(),
         });
     }
     // `sizeof (T) * n`: the lexical gate reads a `*` after `)` as a possible
@@ -652,6 +656,7 @@ impl Parser<'_> {
         super::member_release::rewrite_released_positions(&mut probe.result, &probe.used);
         let mut bases = Vec::<String>::new();
         let mut record_bases = Vec::<String>::new();
+        let mut chains = Vec::<crate::indirect_chain_access::AccessChain>::new();
         let mut names = Vec::<String>::new();
         let mut pointer_bases = Vec::<String>::new();
         let mut pointer_places = Vec::<String>::new();
@@ -666,6 +671,11 @@ impl Parser<'_> {
             }
             for base in &entry.read.record_bases {
                 push(&mut record_bases, base);
+            }
+            for chain in &entry.read.chains {
+                if !chains.contains(chain) {
+                    chains.push(chain.clone());
+                }
             }
             let texts = entry.texts.iter().map(String::as_str).collect::<Vec<_>>();
             for (index, text) in texts.iter().enumerate() {
@@ -692,7 +702,7 @@ impl Parser<'_> {
             }
         }
         let mut sequence = Vec::new();
-        if !bases.is_empty() {
+        if !bases.is_empty() || !chains.is_empty() {
             sequence.push(LegacyInstruction::IndirectScalarAccess {
                 alias_reads: record_bases
                     .iter()
@@ -701,11 +711,12 @@ impl Parser<'_> {
                 bases,
                 destination: None,
                 frame: None,
-                // W44-INDIRECT-CHAIN-ACCESS composition: this recogniser
-                // refuses every member chain (and `typed_scalar_value` uses
-                // the unextended walker), so no admitted actual carries a
-                // chain whose link obligations would be dropped here.
-                chains: Vec::new(),
+                // W44-INDIRECT-CHAIN-ACCESS composition: the lexical
+                // recogniser refuses every member chain (and
+                // `typed_scalar_value` uses the unextended walker); only a
+                // W47 typed actual carries chains, each kept here with its
+                // per-link obligation.
+                chains,
                 borrowed_destination: false,
             });
         }
@@ -760,10 +771,12 @@ impl Parser<'_> {
     fn candidate_arguments(
         &self,
         texts: &[&str],
+        lines: &[usize],
     ) -> Option<(String, Vec<AdmittedArgument>, Vec<ArgumentFacts>)> {
         let (call_index, callee) = find_call(texts)?;
         let contract = self.contracts.contract(callee);
         let spans = call_argument_spans(texts, call_index)?;
+        let arity = spans.len();
         let variadic_tail = self.variadic_tails.contains(callee);
         let mut admitted = Vec::new();
         let mut facts = Vec::new();
@@ -774,12 +787,40 @@ impl Parser<'_> {
                 Position::of(contract, variadic_tail, index)
             });
             let answer = access.then(|| {
-                recognise(
+                let lexical = recognise(
                     argument,
                     &self.typed_model,
                     &self.typed_types,
                     &self.collection_types,
-                )
+                );
+                if let Ok(read) = &lexical
+                    && position.admits()
+                {
+                    // Card W47-ACCESS-PATH-POSITIONS: parity only.
+                    self.record_typed_argument_legacy(
+                        callee,
+                        index,
+                        arity,
+                        argument,
+                        lines[start],
+                        read,
+                    );
+                }
+                // Card W47-ACCESS-PATH-POSITIONS (rule 10k): the typed actual,
+                // asked only where the lexical recogniser refused and the
+                // position admits a read.
+                match lexical {
+                    Err(refusal) if position.admits() => self
+                        .typed_call_argument(callee, index, arity, argument, lines[start])
+                        .map(|typed| ArgumentRead {
+                            bases: typed.plan.scalar.bases,
+                            record_bases: typed.plan.scalar.record_bases,
+                            pointer_valued: typed.pointer_valued,
+                            chains: typed.plan.chains,
+                        })
+                        .ok_or(refusal),
+                    other => other,
+                }
             });
             // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a
             // nullable release is admitted too (`member_release`, rule 1).
@@ -836,7 +877,8 @@ impl Parser<'_> {
                 &self.descriptor_names,
             )
             .is_some();
-        let (callee, admitted, facts) = self.candidate_arguments(&texts)?;
+        let lines = tokens.iter().map(|token| token.line).collect::<Vec<_>>();
+        let (callee, admitted, facts) = self.candidate_arguments(&texts, &lines)?;
         if descriptor || admitted.is_empty() {
             #[cfg(feature = "indirect-census")]
             self.census_call_arguments(tokens, &callee, &facts, descriptor, None, &[]);
