@@ -13,9 +13,9 @@ Status: user-directed plan, not implemented. Decision recorded 2026-09-27 agains
 
 ## Inventory at the planning base
 
-`git ls-files` records **616 `.qcore` files**: compiler223, contract1, crates46, docs182, examples41, providers123. Of these, **182 are under frozen `docs/reports/`**, and434 are elsewhere. There are **5 `.qcorelib` files** (four compiler fixtures, one example), and no tracked `.qo`, `.qv`, `.qr`, `.qrlib` or `.qc` files. Virtual `.qc` source names occur in tests and are separate from tracked files. These are filename counts, not contract coverage.
+`git ls-files` records **616 `.qcore` files**: compiler 223, contract 1, crates 46, docs 182, examples 41, providers 123. Of these, **182 are under frozen `docs/reports/`**, and 434 are elsewhere. There are **5 `.qcorelib` files** (four compiler fixtures, one example), and no tracked `.qo`, `.qv`, `.qr`, `.qrlib` or `.qc` files. Virtual `.qc` source names occur in tests and are separate from tracked files. These are filename counts, not contract coverage.
 
-A lexical scan finds195 `module contract;` candidates and421 requiring classification; these include archived inputs and are **not** an approved rename list. The implementation card must obtain module mode from the real parser, identify intentional malformed fixtures, distinguish library inputs from contract-mode inputs, and publish a per-file old/new mapping. Re-inventory at that card's base; the repository is changing concurrently.
+A lexical scan finds 195 `module contract;` candidates and 421 requiring classification; these include archived inputs and are **not** an approved rename list. The implementation card must obtain module mode from the real parser, identify intentional malformed fixtures, distinguish library inputs from contract-mode inputs, and publish a per-file old/new mapping. Re-inventory at that card's base; the repository is changing concurrently.
 
 Known consumers requiring coordinated work:
 
@@ -50,9 +50,11 @@ Acceptance: reference programs emit identical C and retain diagnostics/verdicts 
 
 ### EXT-04 — Defaults, deprecation and retirement
 
-Make generated/current examples prefer the new extensions; publish the compatibility window and exact legacy behavior. Remove legacy reader support only after the reference census, package consumers and downstream migration evidence show it can be retired. Historical archives and replay inputs retain old names and a documented compatibility tool/version when necessary.
+Make generated/current examples prefer the new extensions; publish the compatibility window and exact legacy behavior. Remove legacy reader support only after the reference census, package consumers and downstream migration evidence show it can be retired. Historical archives and replay inputs retain old names and a documented compatibility tool/version when necessary. **User requirement: legacy `.qcore` inputs in frozen reports remain usable but are marked outdated and produce a visible warning when loaded.** Attach the naming status to the report index or new companion metadata outside the frozen files, linking to this migration policy and the replacement suffix appropriate to the module mode. The label is about outdated source naming; it does not rewrite the historical evidence or silently invalidate its checkpoint claims.
 
-Acceptance: no active loader/package/test depends unintentionally on a legacy suffix; alias-collision and wrong-mode refusal controls pass; pinned parity evidence is archived before any legacy route is deleted. No retirement date is implied by this plan.
+The compatibility reader emits a stable legacy-extension warning with input path, detected mode and recommended suffix on stderr, and records the warning in its machine-readable diagnostics when that interface exists. A historical input remains supported during the declared compatibility window; warning emission must not change its safety verdict or allow a wrong-mode dispatch. Do not allocate a diagnostic code without the repository namespace procedure. Add tests for warning emission on archived and other legacy inputs, no extension warning for current suffixes, and preservation of the frozen file bytes.
+
+Acceptance: no active loader/package/test depends unintentionally on a legacy suffix; outdated naming metadata and legacy warning tests pass; alias-collision and wrong-mode refusal controls pass; pinned parity evidence is archived before any legacy route is deleted. No retirement date is implied by this plan.
 
 ## Resume and evidence requirements
 
