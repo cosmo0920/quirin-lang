@@ -121,7 +121,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             field(&new_path),
             decision,
             archive,
-            field(&detail)
+            field(if detail.is_empty() { "-" } else { &detail })
         );
     }
     Ok(())
