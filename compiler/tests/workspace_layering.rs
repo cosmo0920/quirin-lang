@@ -35,8 +35,20 @@ const ALLOWED: &[(&str, &[&str])] = &[
         ],
     ),
     (
+        "crates/quirin-source-analysis",
+        &[
+            "qcore-c-gateway",
+            "qcore-contract",
+            "qcore-core",
+            "qcore-frontend",
+            "qcore-schemas",
+            "qcore-verification",
+        ],
+    ),
+    (
         "compiler",
         &[
+            "quirin-source-analysis",
             "qcore-audit", // examples-only dev dependency, not the compiler library
             "qcore-c-gateway",
             "qcore-contract",
@@ -50,6 +62,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "crates/qcore-audit",
         &[
+            "quirin-source-analysis",
             "qcore-c-gateway",
             "qcore-contract",
             "qcore-schemas",

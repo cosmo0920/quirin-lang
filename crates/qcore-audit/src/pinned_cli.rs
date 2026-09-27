@@ -43,17 +43,16 @@ pub fn main(arguments: Vec<OsString>) -> ExitCode {
         }
     }
     let positional = arguments.collect::<Vec<_>>();
-    if !literal_paths {
-        if let Some(argument) = positional
+    if !literal_paths
+        && let Some(argument) = positional
             .iter()
             .find(|argument| argument.to_string_lossy().starts_with('-'))
-        {
-            eprintln!(
-                "unknown pinned option: {}\n{USAGE}",
-                argument.to_string_lossy()
-            );
-            return ExitCode::FAILURE;
-        }
+    {
+        eprintln!(
+            "unknown pinned option: {}\n{USAGE}",
+            argument.to_string_lossy()
+        );
+        return ExitCode::FAILURE;
     }
     let mut arguments = positional.into_iter();
     let jobs = match crate::parallel::resolve_jobs(jobs.as_deref()) {

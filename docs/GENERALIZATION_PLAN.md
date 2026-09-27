@@ -149,6 +149,9 @@ crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier 
   obligation derivation, witness replay, scope dispatch, typed source-contract replay.
   No provider dependency.
   Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
+crates/quirin-source-analysis # Source adapters above verification and the C gateway:
+  pinned ChunkIO and Libevent source analysis shared by compiler and audit;
+  no compiler, audit or provider implementation dependency.
 crates/qcore-audit            # L3: orchestration-as-configuration (W5):
   compile-db ingest, pin verification, per-unit iteration, report emission,
   sealed-import source-contract selection through explicit verified registries.
