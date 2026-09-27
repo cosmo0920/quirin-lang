@@ -26,6 +26,76 @@ completeness claim or predicted safety coverage. The remaining four Fluent
 Bit query declarations have focused caller controls even though this
 particular baseline does not name them in diagnostics.
 
+## Contract integration
+
+| Card | New declarations | Branch tip | Main merge |
+|---|---:|---|---|
+| [Metric aggregate getters](../w46-metric-aggregate-contracts/README.md) | 6 | `4767d3b1` | `4d73ef16` |
+| [Fluent routing queries](../w46-fluent-routing-query-contracts/README.md) | 5 | `65d717b4` | `bfa510b7` |
+
+The [tracked declaration diff](census/added-contracts.json) records all eleven
+names. Merge conflicts in the two corpus test files were resolved by taking
+both sets of entries and deliberately changing the declaration pin to 230
+(219 + 6 + 5). Modules remain 118, selected modules 54, rejected legacy
+declarations 216. There are 125 pinned declarations and 105 flexible libc
+premises. Inventory synchronization and checking both exited 0 after merge.
+The metric active-profile digest is the complete SHA-256 of its manifest.
+The contracts add no analyzer admission rule.
+
+The metric card's first full gate had three Rust failures: two stale count/list
+expectations and one truncated manifest digest. Those card errors were repaired;
+the affected suites passed 10/10 and 12/12. The routing card's first full gate
+had one Rust failure from `plugin-spawn: Text file busy (os error 26)` and a
+stale documentation index. The exact plugin test passed 1/1 in isolation under
+its captured Cargo environment, and the regenerated index passed. The original
+fixture is preserved in `private/w46-next/routing-environment-original-fixture/`;
+the retry command and logs are in `private/w46-next/routing-environment-isolated/`.
+All original nonzero exits remain recorded in the individual reports. These
+targeted repairs do not stand in for the final merged gate.
+
+## Contract-only measurements
+
+Both release builds and audits at `bfa510b7` exit 0. Corpus and system each
+use four workers; the independent statement-card audit also uses four, and
+no standing tests run during these measurements. Commands, binary digests,
+Clang selections and timestamps are in the [archive](artifacts/contracts-only/manifest.json).
+Private logs are `private/w46-next/contracts-only/`.
+
+| Measure | Baseline | Contracts only |
+|---|---:|---:|
+| Corpus functions: Safe / provisional Unsafe / Unknown | 411 / 9 / 4,414 | unchanged |
+| Corpus units: Safe / provisional Unsafe / Unknown / data-only | 5 / 8 / 168 / 4 | unchanged |
+| Corpus unsupported / unknown_alias / leak | 41,086 / 3,573 / 34 | 41,045 / 3,575 / 34 |
+| Corpus uncontracted leaves on Unknown functions | 9,022 | 8,998 |
+| System configuration rows: Safe / provisional Unsafe / Unknown | 54 / 4 / 390 | unchanged |
+| System unique projected functions: Safe / provisional Unsafe / Unknown | 28 / 2 / 204 | unchanged; 3 excluded |
+| System unsupported / unknown_alias / counted_user | 3,303 / 713 / 4 | 3,291 / 712 / 4 |
+| System uncontracted leaves on Unknown functions | 717 | 715 |
+
+Corpus changes affect 22 functions: 42 leaves removed, three added. The system
+changes affect 12 function/configuration rows: 15 leaves removed, two added.
+Neither scope has a new leak/violation or a Safe correction. The new refusals
+are an embedded formal expression in `pack_histogram_metric`, unresolved
+`summary` in `pack_summary_metric`, and unresolved `in` in
+`flb_input_chunk_set_limits` (also in both system configurations). Declaring
+a query does not discharge those caller obligations.
+
+The preceding expansion's `scripts/attribute.py`, given this card's added-name
+inventory and the exact source root, exits 1 in each scope because its
+automatic matcher leaves two corpus and three system differences unclassified.
+They are all source-reviewed in
+[reviewed-contract-attribution.json](census/reviewed-contract-attribution.json):
+two multiline `snprintf` calls whose new histogram getter is below the
+diagnostic's first line, and three downstream `ctx` identity refusals in
+`cb_sb_init` removed when the mask-slot query no longer invalidates aliases.
+The [identity checker](scripts/check_contract_attribution.py) exits 0 for each
+scope with exact review coverage and verified source excerpts. It checks
+record identity, not the semantic correctness of the written review. The
+automatic results and summaries are in `census/contracts-{corpus,system}-*.json`.
+The [refutation comparison](census/contracts-refutation-preservation.json)
+is exactly equal as a JSON value: two declarations, three held
+functions and ten held sites. No lifecycle result is promoted.
+
 ## Worktree sweep
 
 The user requested outdated worktrees be swept while the cards run. Seven

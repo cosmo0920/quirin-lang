@@ -1,0 +1,152 @@
+[
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "16:cmt_encode_text.c",
+        "append_histogram_metric_value"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "indirect memory access is outside the resource projection",
+        5800,
+        "cmt_encode_text.c:309"
+      ]
+    },
+    "callees": [
+      "cmt_metric_hist_get_value"
+    ],
+    "reason": "The removed refusal is located at the first line of a multiline snprintf compound assignment. The final argument on the following lines is the newly declared cmt_metric_hist_get_value(metric, index). Existing nested-call/printf handling can now model this complete scalar formatting call, so its enclosing indirect-access refusal disappears. The single-line automatic source matcher cannot see that final argument. Function and unit remain Unknown; no ownership or extent claim is added.",
+    "source_evidence": [
+      {
+        "file": "lib/cmetrics/src/cmt_encode_text.c",
+        "sha256": "ebeecbaba96b55ffb28f1eaf129fd4876ff9781f7b02a51bc4b9f061e4771111",
+        "first_line": 309,
+        "last_line": 314,
+        "text": "        entry_buffer_length += snprintf(&entry_buffer[entry_buffer_index],\n                                        sizeof(entry_buffer) - 1 -\n                                        entry_buffer_index,\n                                        bucket_value_format_string,\n                                        cmt_metric_hist_get_value(metric,\n                                                                  index));"
+      }
+    ]
+  },
+  {
+    "scope": "corpus",
+    "observation": {
+      "count": 1,
+      "function": [
+        "9:cmt_encode_influx.c",
+        "append_histogram_metric_value"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unsupported",
+        "indirect memory access is outside the resource projection",
+        5658,
+        "cmt_encode_influx.c:80"
+      ]
+    },
+    "callees": [
+      "cmt_metric_hist_get_value"
+    ],
+    "reason": "The removed refusal is located at the first line of a multiline snprintf compound assignment. The final argument on the following lines is the newly declared cmt_metric_hist_get_value(metric, index). Existing nested-call/printf handling can now model this complete scalar formatting call, so its enclosing indirect-access refusal disappears. The single-line automatic source matcher cannot see that final argument. Function and unit remain Unknown; no ownership or extent claim is added.",
+    "source_evidence": [
+      {
+        "file": "lib/cmetrics/src/cmt_encode_influx.c",
+        "sha256": "9ceaad83a23e3b4f5aedf05a12ecd4569515c8fa41bfbc62a68486139edd9542",
+        "first_line": 80,
+        "last_line": 85,
+        "text": "        entry_buffer_length += snprintf(&entry_buffer[entry_buffer_index],\n                                        sizeof(entry_buffer) - 1 -\n                                        entry_buffer_index,\n                                        \"=%\" PRIu64 \",\",\n                                        cmt_metric_hist_get_value(metric,\n                                                                  index));"
+      }
+    ]
+  },
+  {
+    "scope": "system",
+    "observation": {
+      "count": 1,
+      "function": [
+        "0:plugins/in_storage_backlog/sb.c",
+        "cb_sb_init"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unknown_alias",
+        "unresolved resource identity `ctx`",
+        18280,
+        "plugins/in_storage_backlog/sb.c:744"
+      ]
+    },
+    "callees": [
+      "flb_routes_mask_get_slots"
+    ],
+    "reason": "The new callback-free borrowed query at sb.c:743 removes the preceding opaque-call refusal and its conservative alias invalidation. The allocated ctx remains known across the immediately following dummy_routes_mask allocation, its null guard and failure-path free at lines744/747/749. Their three unresolved-ctx leaves therefore disappear. The later ctx->cio store remains unsupported and subsequent ctx refusals remain. cb_sb_init stays Unknown, with no new leak or lifecycle promotion.",
+    "source_evidence": [
+      {
+        "file": "plugins/in_storage_backlog/sb.c",
+        "sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+        "first_line": 735,
+        "last_line": 758,
+        "text": "\n    ctx = flb_calloc(1, sizeof(struct flb_sb));\n\n    if (!ctx) {\n        flb_errno();\n        return -1;\n    }\n\n    slots = flb_routes_mask_get_slots(config->router);\n    ctx->dummy_routes_mask = flb_calloc(slots,\n                                        sizeof(flb_route_mask_element));\n\n    if (ctx->dummy_routes_mask == NULL) {\n        flb_errno();\n        flb_free(ctx);\n\n        flb_error(\"[storage backlog] could not allocate route mask elements\");\n\n        return -1;\n    }\n\n    ctx->cio = data;\n    ctx->ins = in;\n    ctx->mem_limit = flb_utils_size_to_bytes(config->storage_bl_mem_limit);"
+      }
+    ]
+  },
+  {
+    "scope": "system",
+    "observation": {
+      "count": 1,
+      "function": [
+        "0:plugins/in_storage_backlog/sb.c",
+        "cb_sb_init"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unknown_alias",
+        "unresolved resource identity `ctx`",
+        18282,
+        "plugins/in_storage_backlog/sb.c:747"
+      ]
+    },
+    "callees": [
+      "flb_routes_mask_get_slots"
+    ],
+    "reason": "The new callback-free borrowed query at sb.c:743 removes the preceding opaque-call refusal and its conservative alias invalidation. The allocated ctx remains known across the immediately following dummy_routes_mask allocation, its null guard and failure-path free at lines744/747/749. Their three unresolved-ctx leaves therefore disappear. The later ctx->cio store remains unsupported and subsequent ctx refusals remain. cb_sb_init stays Unknown, with no new leak or lifecycle promotion.",
+    "source_evidence": [
+      {
+        "file": "plugins/in_storage_backlog/sb.c",
+        "sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+        "first_line": 735,
+        "last_line": 758,
+        "text": "\n    ctx = flb_calloc(1, sizeof(struct flb_sb));\n\n    if (!ctx) {\n        flb_errno();\n        return -1;\n    }\n\n    slots = flb_routes_mask_get_slots(config->router);\n    ctx->dummy_routes_mask = flb_calloc(slots,\n                                        sizeof(flb_route_mask_element));\n\n    if (ctx->dummy_routes_mask == NULL) {\n        flb_errno();\n        flb_free(ctx);\n\n        flb_error(\"[storage backlog] could not allocate route mask elements\");\n\n        return -1;\n    }\n\n    ctx->cio = data;\n    ctx->ins = in;\n    ctx->mem_limit = flb_utils_size_to_bytes(config->storage_bl_mem_limit);"
+      }
+    ]
+  },
+  {
+    "scope": "system",
+    "observation": {
+      "count": 1,
+      "function": [
+        "0:plugins/in_storage_backlog/sb.c",
+        "cb_sb_init"
+      ],
+      "kind": "removed leaf",
+      "leaf": [
+        "unknown_alias",
+        "unresolved resource identity `ctx`",
+        18284,
+        "plugins/in_storage_backlog/sb.c:749"
+      ]
+    },
+    "callees": [
+      "flb_routes_mask_get_slots"
+    ],
+    "reason": "The new callback-free borrowed query at sb.c:743 removes the preceding opaque-call refusal and its conservative alias invalidation. The allocated ctx remains known across the immediately following dummy_routes_mask allocation, its null guard and failure-path free at lines744/747/749. Their three unresolved-ctx leaves therefore disappear. The later ctx->cio store remains unsupported and subsequent ctx refusals remain. cb_sb_init stays Unknown, with no new leak or lifecycle promotion.",
+    "source_evidence": [
+      {
+        "file": "plugins/in_storage_backlog/sb.c",
+        "sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+        "first_line": 735,
+        "last_line": 758,
+        "text": "\n    ctx = flb_calloc(1, sizeof(struct flb_sb));\n\n    if (!ctx) {\n        flb_errno();\n        return -1;\n    }\n\n    slots = flb_routes_mask_get_slots(config->router);\n    ctx->dummy_routes_mask = flb_calloc(slots,\n                                        sizeof(flb_route_mask_element));\n\n    if (ctx->dummy_routes_mask == NULL) {\n        flb_errno();\n        flb_free(ctx);\n\n        flb_error(\"[storage backlog] could not allocate route mask elements\");\n\n        return -1;\n    }\n\n    ctx->cio = data;\n    ctx->ins = in;\n    ctx->mem_limit = flb_utils_size_to_bytes(config->storage_bl_mem_limit);"
+      }
+    ]
+  }
+]

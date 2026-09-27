@@ -1,0 +1,222 @@
+{
+ "added_at_contracted_sites": [
+  {
+   "category": "unknown_alias",
+   "count": 2,
+   "description": "unresolved resource identity `X`"
+  },
+  {
+   "category": "unsupported",
+   "count": 1,
+   "description": "resource call with a formal embedded in an unmodeled expression"
+  }
+ ],
+ "changed_functions": 22,
+ "corrections": [],
+ "function_status_after": {
+  "Safe": 411,
+  "Unknown": 4414,
+  "Unsafe": 9
+ },
+ "function_status_before": {
+  "Safe": 411,
+  "Unknown": 4414,
+  "Unsafe": 9
+ },
+ "new_leak_or_violation_leaves": [],
+ "removed_cascade_from_moved_callee": [],
+ "removed_contracted_leaves": {
+  "cmt_metric_hist_get_count_value": 4,
+  "cmt_metric_hist_get_sum_value": 6,
+  "cmt_metric_hist_get_value": 3,
+  "cmt_summary_get_count_value": 3,
+  "cmt_summary_get_sum_value": 4,
+  "cmt_summary_quantile_get_value": 3,
+  "input_chunk_has_magic_bytes": 1
+ },
+ "removed_contracted_total": 24,
+ "removed_naming_contracted": [
+  {
+   "callee": "cmt_metric_hist_get_count_value",
+   "count": 2,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  },
+  {
+   "callee": "cmt_metric_hist_get_sum_value",
+   "count": 3,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  },
+  {
+   "callee": "cmt_summary_get_count_value",
+   "count": 2,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  },
+  {
+   "callee": "cmt_summary_get_sum_value",
+   "count": 2,
+   "description": "nested call `X` inside a modeled call is outside the resource projection"
+  }
+ ],
+ "removed_on_contracted_call_line": [
+  {
+   "callee": "cmt_metric_hist_get_value",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "cmt_summary_quantile_get_value",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "flb_input_chunk_is_storage_overlimit",
+   "count": 2,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "flb_routes_mask_is_empty",
+   "count": 1,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "input_chunk_has_magic_bytes",
+   "count": 1,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  }
+ ],
+ "status_moves": [],
+ "unattributed": [
+  {
+   "count": 1,
+   "function": [
+    "16:cmt_encode_text.c",
+    "append_histogram_metric_value"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    5800,
+    "cmt_encode_text.c:309"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "9:cmt_encode_influx.c",
+    "append_histogram_metric_value"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    5658,
+    "cmt_encode_influx.c:80"
+   ]
+  }
+ ],
+ "unit_changes": [
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "10:cmt_encode_msgpack.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "13:cmt_encode_prometheus.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "14:cmt_encode_prometheus_remote_write.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "155:flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "15:cmt_encode_splunk_hec.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "16:cmt_encode_text.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "25:cmt_metric_histogram.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "28:cmt_summary.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "8:cmt_encode_cloudwatch_emf.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "9:cmt_encode_influx.c"
+  }
+ ],
+ "unit_status_after": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ },
+ "unit_status_before": {
+  "Safe": 5,
+  "Unknown": 168,
+  "Unsafe": 8,
+  "data_only": 4
+ }
+}

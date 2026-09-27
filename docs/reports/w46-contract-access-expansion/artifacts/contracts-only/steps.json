@@ -1,0 +1,63 @@
+{
+  "revision": "bfa510b738c5ec57e5e45b45fdc7f312eb282e4b",
+  "stage": "contracts-only",
+  "steps": [
+    {
+      "name": "build-corpus",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "cycle19_fluent_bit_libraries_audit"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T04:15:17.149793+00:00",
+      "end": "2026-09-27T04:15:39.749524+00:00"
+    },
+    {
+      "name": "build-system",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T04:15:39.749678+00:00",
+      "end": "2026-09-27T04:15:40.177423+00:00"
+    },
+    {
+      "name": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/w43-return-expression/scripts/run_audit.py",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/contracts-only/corpus",
+        "bfa510b738c5ec57e5e45b45fdc7f312eb282e4b",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T04:15:40.177565+00:00",
+      "end": "2026-09-27T04:20:01.670681+00:00"
+    },
+    {
+      "name": "system",
+      "command": [
+        "python3",
+        "docs/reports/w46-contract-gap-expansion/scripts/run_system.py",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w46-next/contracts-only/system",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "start": "2026-09-27T04:20:01.670866+00:00",
+      "end": "2026-09-27T04:21:00.696325+00:00"
+    }
+  ]
+}

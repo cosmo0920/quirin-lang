@@ -1,0 +1,231 @@
+{
+ "added_at_contracted_sites": [
+  {
+   "category": "unknown_alias",
+   "count": 2,
+   "description": "unresolved resource identity `X`"
+  }
+ ],
+ "changed_functions": 12,
+ "corrections": [],
+ "function_status_after": {
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
+ },
+ "function_status_before": {
+  "Safe": 54,
+  "Unknown": 390,
+  "Unsafe": 4
+ },
+ "new_leak_or_violation_leaves": [],
+ "removed_cascade_from_moved_callee": [],
+ "removed_contracted_leaves": {
+  "input_chunk_has_magic_bytes": 2
+ },
+ "removed_contracted_total": 2,
+ "removed_naming_contracted": [],
+ "removed_on_contracted_call_line": [
+  {
+   "callee": "flb_input_chunk_is_storage_overlimit",
+   "count": 4,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  },
+  {
+   "callee": "flb_routes_mask_get_slots",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "flb_routes_mask_is_empty",
+   "count": 2,
+   "description": "indirect memory access is outside the resource projection"
+  },
+  {
+   "callee": "input_chunk_has_magic_bytes",
+   "count": 2,
+   "description": "unmodeled call, aggregate or indirect access in branch condition"
+  }
+ ],
+ "status_moves": [],
+ "unattributed": [
+  {
+   "count": 1,
+   "function": [
+    "0:plugins/in_storage_backlog/sb.c",
+    "cb_sb_init"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ctx`",
+    18280,
+    "plugins/in_storage_backlog/sb.c:744"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "0:plugins/in_storage_backlog/sb.c",
+    "cb_sb_init"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ctx`",
+    18282,
+    "plugins/in_storage_backlog/sb.c:747"
+   ]
+  },
+  {
+   "count": 1,
+   "function": [
+    "0:plugins/in_storage_backlog/sb.c",
+    "cb_sb_init"
+   ],
+   "kind": "removed leaf",
+   "leaf": [
+    "unknown_alias",
+    "unresolved resource identity `ctx`",
+    18284,
+    "plugins/in_storage_backlog/sb.c:749"
+   ]
+  }
+ ],
+ "unit_changes": [
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "0:plugins/in_storage_backlog/sb.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "10:src/flb_engine_dispatch.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "11:src/flb_scheduler.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "12:src/flb_scheduler.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "13:src/flb_output.c"
+  },
+  {
+   "after_status": "Unsafe",
+   "before_status": "Unsafe",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "14:src/flb_output.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "1:src/flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration",
+    "diagnostic_counts",
+    "reason"
+   ],
+   "unit": "2:src/flb_input_chunk.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "3:src/flb_storage.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "4:src/flb_storage.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "5:src/flb_task.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "6:src/flb_task.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "7:src/flb_engine.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "8:src/flb_engine.c"
+  },
+  {
+   "after_status": "Unknown",
+   "before_status": "Unknown",
+   "fields": [
+    "compile_configuration"
+   ],
+   "unit": "9:src/flb_engine_dispatch.c"
+  }
+ ],
+ "unit_status_after": {
+  "Unknown": 13,
+  "Unsafe": 2
+ },
+ "unit_status_before": {
+  "Unknown": 13,
+  "Unsafe": 2
+ }
+}

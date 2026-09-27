@@ -1,0 +1,9 @@
+[
+  {
+    "id": "W46-ROUTING-QUERY-EXTENTS",
+    "title": "Fluent Bit scalar query contracts do not establish readable extents, nested pointer validity or routing concurrency",
+    "why": "Readable buffer extents in input_chunk_has_magic_bytes and flb_routes_mask_is_empty, nested pointer validity in the overlimit predicates, and routing concurrency remain outside the resource-v1 declarations. The five scalar declarations establish only their reviewed resource effects. Preserve PROD-CONTRACTS-MASK-EXTENT in the remaining-prod-contracts report; this addition does not discharge that non-claim. DISCHARGE: source-bound extent, nested-validity or concurrency obligations and their model correspondence, with held-out negative controls and measured audit effects; no promotion from the borrowed premise alone.",
+    "source": "docs/reports/w46-fluent-routing-query-contracts/README.md",
+    "recorded_by": "W46-CONTRACT-ACCESS-EXPANSION"
+  }
+]

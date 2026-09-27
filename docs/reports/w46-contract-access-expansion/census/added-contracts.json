@@ -1,0 +1,13 @@
+{
+  "cmt_metric_hist_get_count_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "cmt_metric_hist_get_sum_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "cmt_metric_hist_get_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "cmt_summary_get_count_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "cmt_summary_get_sum_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "cmt_summary_quantile_get_value": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+  "flb_input_chunk_is_mem_overlimit": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qcore",
+  "flb_input_chunk_is_storage_overlimit": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qcore",
+  "flb_routes_mask_get_slots": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore",
+  "flb_routes_mask_is_empty": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore",
+  "input_chunk_has_magic_bytes": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qcore"
+}
