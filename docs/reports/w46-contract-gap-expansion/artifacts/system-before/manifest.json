@@ -1,0 +1,26 @@
+{
+  "resource-diagnostics.json": {
+    "file": "resource-diagnostics.json.gz",
+    "raw_sha256": "c37a5367f95a49ce0cebba9390ff422eeeff52b197cdb5ce68caf7786ec875c4"
+  },
+  "resource-diagnostics.contracts.json": {
+    "file": "resource-diagnostics.contracts.json.gz",
+    "raw_sha256": "1a60c46b6a545d25cde3e839ba73d60b86deb815fad6e9bfe1d175bc75f29ad9"
+  },
+  "resource-diagnostics.invocation.json": {
+    "file": "resource-diagnostics.invocation.json.gz",
+    "raw_sha256": "8d2b96f440f09ff73b2793741a6a66b96d1ca4d102422dbcb04b229b59ddb819"
+  },
+  "console.log": {
+    "file": "console.log",
+    "raw_sha256": "92c59635942105187fbcd5de108145333c8f9a30a7eb6f24feb41ce986e30ad7"
+  },
+  "stderr.log": {
+    "file": "stderr.log",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exit": {
+    "file": "exit",
+    "raw_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  }
+}

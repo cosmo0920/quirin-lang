@@ -1,0 +1,232 @@
+{
+  "baseline": "docs/reports/w46-external-callee-contracts/artifacts/slice/after.json.gz",
+  "run": "private/w46-contract-gaps/baseline/system/resource-diagnostics.json",
+  "function_and_unit_records_identical_excluding_compile_configuration": true,
+  "differences": [
+    {
+      "path": "/units/0/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/0/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/0/compile_configuration/inventory_sha256",
+      "before": "5d5d1decf6a820cf7f3528b1ac18f2bad1faef0cc5109fe0616ef31c980e62ef",
+      "after": "65927ae383d5b2315cb95d0e9ae84805a8562e579ee51ec8f16d7faa10eb2a01"
+    },
+    {
+      "path": "/units/1/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/1/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/1/compile_configuration/inventory_sha256",
+      "before": "542aa4fa3dce65ec0930d903ff9641a7972fb368e34aed1761e618d90d054af3",
+      "after": "df53a709b9f110698bc3281d814f08751e200ace6af3dc0f8f2da7a87284faf4"
+    },
+    {
+      "path": "/units/2/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/2/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/2/compile_configuration/inventory_sha256",
+      "before": "4426bff2bd1fbefc279a76967b80548f5dd1e151b4025abcf2fc099da957458e",
+      "after": "0cb8a1327c660e0fdbba4199396027773b370687d99181dfb56b81fece0c047a"
+    },
+    {
+      "path": "/units/3/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/3/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/3/compile_configuration/inventory_sha256",
+      "before": "27f59bea6ae5aa9b16fd975d93a1a2ca4e62699930c790d672c46300a610c215",
+      "after": "bc573829d3c8baf8d8054caafc906013ba2bc6a69fc056bb6e75b12bda3bf172"
+    },
+    {
+      "path": "/units/4/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/4/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/4/compile_configuration/inventory_sha256",
+      "before": "ff9841c0925388172de49cc37f7489139a19a1c34e582258744878e639ab7006",
+      "after": "db7174cb4f1a76232e73e8c7ac7bbe874fb778a347f0e77ae6e4a7a7db7ad890"
+    },
+    {
+      "path": "/units/5/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/5/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/5/compile_configuration/inventory_sha256",
+      "before": "0d7c6daf8791e808e697e400774eac2ce72cd6813bba7f8b3b548bc5a0aa8767",
+      "after": "aa512de95a1c0523c8398982fc8d1270188cea16078490735b753805af7b1a53"
+    },
+    {
+      "path": "/units/6/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/6/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/6/compile_configuration/inventory_sha256",
+      "before": "2af0e40dd5f7b0a229a237f74a68a8b09ca4f37fe2de4bfd99bae6159e8d645e",
+      "after": "53e9054a33790d063d3250f2b437cc0e437984aedc4137b4c71e689d4abbfe23"
+    },
+    {
+      "path": "/units/7/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/7/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/7/compile_configuration/inventory_sha256",
+      "before": "e966237d379a693183cc55567561328a551b84a34918b3bb645e9621d48bbdf5",
+      "after": "7341dc91ed594c0c91e18b9f786663785f0ac3640ffceaffa9aa962fd339267b"
+    },
+    {
+      "path": "/units/8/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/8/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/8/compile_configuration/inventory_sha256",
+      "before": "4e8e502efb30be9af4dbd69d558d438496b19ff1df564cf137b554416c2f9255",
+      "after": "e921319edcbb36e1a79b0d0abdd9b0e650edcb28465c50076e62f6c19d066f6e"
+    },
+    {
+      "path": "/units/9/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/9/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/9/compile_configuration/inventory_sha256",
+      "before": "d7910c52a777c3f5dac416aee13acda57c4abc52337a4ad32764a482ed94d085",
+      "after": "111d26da53eba86881c78a5777126ede9048750b82a61a294d7c4f8e545df58c"
+    },
+    {
+      "path": "/units/10/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/10/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/10/compile_configuration/inventory_sha256",
+      "before": "67ad73cb5dcde9aff19040938733f5a25b97eb4853b32398ffc9015a47021f28",
+      "after": "acc48956abc081e26d2a39ccdb59142354fd85ecb98867314292bf951e424d4c"
+    },
+    {
+      "path": "/units/11/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/11/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/11/compile_configuration/inventory_sha256",
+      "before": "b4532535933b37090e59d167c9690b0f02234646bfeeff62d5d8b18d11ab3cb8",
+      "after": "ff14fda3efbdd7cf22ae4b28a087851df3757a5f765cdc0695d3f016e94ef0ff"
+    },
+    {
+      "path": "/units/12/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/12/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/12/compile_configuration/inventory_sha256",
+      "before": "9079deee429fdd7d349ff6a46c5cb848db2cad756f6e0df975a7f07998b3706b",
+      "after": "aa74769232389128cb845eeefdb74c2fe099c50ad693af5744373c8d404ceaf4"
+    },
+    {
+      "path": "/units/13/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/13/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/13/compile_configuration/inventory_sha256",
+      "before": "ae2e2dae2db1862d82c8ce4e2ce10998b86e028fa757de6144720a321ecb85cf",
+      "after": "e7986f1599210555a374a9c237385f99147fa09d6942f16d5d89d47d4ba52481"
+    },
+    {
+      "path": "/units/14/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/14/compile_configuration/dependencies/resource_contract_sources",
+      "before": "9d18cf68595f5806fda8d874ef6dd5558bd96afad0eb50200f0780c04586a5ea",
+      "after": "d2626f2e22137a587b950894d44c75972fdb9625b7c4e4a477544c3cc3282684"
+    },
+    {
+      "path": "/units/14/compile_configuration/inventory_sha256",
+      "before": "758092ea312bf2baf88827010b4bc94220eb2e9e30f731b661017a2f8fc997a1",
+      "after": "18dc22625a39a6f460d6e05dc0806d4e20dd746aafc53aaa815d22004f23820c"
+    }
+  ]
+}
