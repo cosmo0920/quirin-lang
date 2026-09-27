@@ -399,8 +399,8 @@ fn candidate_index(
     statements(&children(function)[body_index], &mut path, &mut candidates);
     let mut by_line: BTreeMap<usize, Vec<Vec<usize>>> = BTreeMap::new();
     for path in candidates {
-        // The paths above are made by this exact traversal. If a malformed AST
-        // somehow invalidates one, dropping it only narrows admission.
+        // These paths come from the unchanged tree's own child traversal.
+        // The line filter retains the old out-of-range/missing-offset refusal.
         if let Some(node) = node_at_path(function, &path)
             && let Some(line) = node_line(node, source_len, line_starts)
         {
