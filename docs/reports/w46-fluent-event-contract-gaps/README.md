@@ -55,8 +55,10 @@ reallocate member storage. `flb_input_chunk_release_lock` already has its
 busy-state contract. Flush create/destroy/finished/dispatch can retain or
 release flush/task resources and invoke callbacks. No borrowed/neutral
 declaration was added for these lifecycle operations. Existing
-`output_singleplex.qcore` and `task_users.qcore` remain unchanged, including
-the OR-1/OR-7 Unknown boundary. None of the named residuals is called a
+`output_singleplex.qcore` and `task_users.qcore` remain unchanged. The
+OR-1/OR-7 declarations are refuted by their defining bodies (provisional
+Unsafe), while callers that depend on them stay Unknown; both observations
+must be preserved. None of the named residuals is called a
 validated upstream defect.
 
 ## Evidence and validation

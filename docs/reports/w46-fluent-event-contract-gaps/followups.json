@@ -17,6 +17,6 @@
   {
     "id": "W46-FLUENT-FLUSH-LIFECYCLE-BOUNDARY",
     "title": "Flush create, destroy, finished and dispatch effects remain unmodeled",
-    "why": "The functions can retain or release flush/task resources and run callbacks; this card's ID helper contract does not imply lifecycle safety. Preserve OR-1/OR-7 Unknown until exact resource and counted-user effects have body-grounded contracts, Rust controls and matching Lean parity."
+    "why": "Flush create/destroy/finished/dispatch can retain or release flush/task resources and run callbacks; this card's ID helper contract does not state their effects or imply lifecycle safety. Preserve the existing OR-1/OR-7 defining-body refutations (provisional Unsafe) and their Unknown callers. Discharge this residual only by stating and checking the still-unstated lifecycle effects with Rust controls and matching Lean parity; adding those contracts does not require overturning valid refutations."
   }
 ]
