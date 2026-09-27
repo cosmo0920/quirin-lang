@@ -11,6 +11,7 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
+from source_effect_provenance import compare_source_effects
 
 ARTIFACTS = (
     'resource-diagnostics.json',
@@ -69,8 +70,10 @@ def compare_contracts(old_bytes, new_bytes, new_root):
             unexpected_raw_keys.append({'module': name, 'before': old_raw, 'after': new_raw})
         elif new_raw != old_raw:
             expected_raw_key_changes.append(name)
+    rewritten = old_bytes.replace(ARCHIVE_ROOT.encode(), new_root.encode())
     return {
         'raw_byte_identical': old_bytes == new_bytes,
+        'expected_root_rewrite_byte_identical': rewritten == new_bytes,
         'archive_sha256': digest(old_bytes),
         'migrated_sha256': digest(new_bytes),
         'metadata_equal': old == new,
@@ -83,7 +86,7 @@ def compare_contracts(old_bytes, new_bytes, new_root):
         'expected_checkout_prefix_key_changes': len(expected_raw_key_changes),
         'unexpected_raw_key_changes': unexpected_raw_keys,
         'normalized_module_names_accounted': len(names),
-        'passes': old == new and not (added or removed or changed_text or unexpected_raw_keys),
+        'passes': rewritten == new_bytes and not (added or removed or changed_text or unexpected_raw_keys),
     }
 
 
@@ -101,12 +104,16 @@ def main():
     root = str(args.measured.resolve().parents[3])
     result = {'archive': str(args.archive), 'measured': str(args.measured),
               'measured_exit': run['exit'], 'artifacts': {}}
+    archive_run = json.loads(gzip.decompress((args.archive / 'run.json.gz').read_bytes()))
     passed = True
     for name in ARTIFACTS:
         before = gzip.decompress((args.archive / (name + '.gz')).read_bytes())
         after = (args.measured / name).read_bytes()
         if name == 'resource-diagnostics.contracts.json':
             entry = compare_contracts(before, after, root)
+        elif name == 'resource-diagnostics.source-effects.json':
+            entry = compare_source_effects(before, after, ARCHIVE_ROOT, root,
+                                           str(Path(archive_run['command'][2]) / 'build/compile_commands.json'))
         else:
             entry = {'archive_sha256': digest(before), 'migrated_sha256': digest(after),
                      'byte_identical': before == after, 'passes': before == after}
@@ -118,7 +125,6 @@ def main():
                 entry['unit_verdicts_after'] = dict(sorted(collections.Counter(x['status'] for x in right['units']).items()))
         result['artifacts'][name] = entry
         passed &= entry['passes']
-    archive_run = json.loads(gzip.decompress((args.archive / 'run.json.gz').read_bytes()))
     old_path = str(Path(archive_run['command'][-1]).parent)
     new_path = str(Path(run['command'][-1]).parent)
     old_log = gzip.decompress((args.archive / 'audit.log.gz').read_bytes())

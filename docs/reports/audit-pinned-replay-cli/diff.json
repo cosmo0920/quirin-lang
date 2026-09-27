@@ -1,0 +1,1393 @@
+{
+  "archived": "private/audit-pinned-replay-cli/predecessor-archive",
+  "artifacts": {
+    "chunk-contracts": {
+      "archived_present": true,
+      "backend_teardown": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 21,
+          "before": 21,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "envelope": {},
+      "measured_present": true,
+      "results": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 96,
+          "before": 96,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "status_after": {
+        "checked": 3,
+        "unknown": 93
+      },
+      "status_before": {
+        "checked": 3,
+        "unknown": 93
+      }
+    },
+    "contracts": {
+      "archived_present": true,
+      "audit_selection": {
+        "fields": {},
+        "libraries": {
+          "added": [],
+          "changed": [],
+          "counts": {
+            "added": 0,
+            "after": 5,
+            "before": 5,
+            "changed": 0,
+            "removed": 0
+          },
+          "removed": []
+        },
+        "parsed": true
+      },
+      "keys": {
+        "contract_revision": {
+          "after": "{'assumptions': {'flexible_trusted': [], 'standing': [{'contracts': 105, 'functions': ['__errno_location', 'access', 'atoi', 'calloc', 'ceil', 'close', 'closedir', 'cnd_timedwait', 'cnd_wait', 'dlerror', 'dlsym', 'fabs', 'fclose', 'fcntl', 'fflush', 'fileno', 'floor', 'fopen', 'fprintf', 'free', 'fstat', 'gai_strerror', 'getegid', 'geteuid', 'getpagesize', 'getpeername', 'getsockopt', 'gettimeofda",
+          "before": "{'assumptions': {'flexible_trusted': [], 'standing': [{'contracts': 105, 'functions': ['__errno_location', 'access', 'atoi', 'calloc', 'ceil', 'close', 'closedir', 'cnd_timedwait', 'cnd_wait', 'dlerror', 'dlsym', 'fabs', 'fclose', 'fcntl', 'fflush', 'fileno', 'floor', 'fopen', 'fprintf', 'free', 'fstat', 'gai_strerror', 'getegid', 'geteuid', 'getpagesize', 'getpeername', 'getsockopt', 'gettimeofda"
+        }
+      },
+      "manifest": {
+        "fields": {},
+        "modules": {
+          "added": [],
+          "changed": [],
+          "counts": {
+            "added": 0,
+            "after": 54,
+            "before": 54,
+            "changed": 0,
+            "removed": 0
+          },
+          "removed": []
+        },
+        "parsed": true
+      },
+      "measured_present": true,
+      "sources": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 54,
+          "before": 54,
+          "changed": 0,
+          "removed": 0
+        },
+        "keying": "module path below contract/",
+        "removed": []
+      }
+    },
+    "diagnostics": {
+      "archived_present": true,
+      "envelope": {},
+      "measured_present": true,
+      "reason_code_after": {
+        "None": 18,
+        "incomplete-obligation-coverage": 1,
+        "unsupported-syntax": 166
+      },
+      "reason_code_before": {
+        "None": 18,
+        "incomplete-obligation-coverage": 1,
+        "unsupported-syntax": 166
+      },
+      "status_after": {
+        "Safe": 6,
+        "Unknown": 167,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "status_before": {
+        "Safe": 6,
+        "Unknown": 167,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "units": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 185,
+          "before": 185,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      }
+    },
+    "source": {
+      "archived_present": true,
+      "callbacks": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 3,
+          "before": 3,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "envelope": {},
+      "measured_present": true,
+      "wrappers": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 15,
+          "before": 15,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      }
+    },
+    "source-effects": {
+      "archived_present": true,
+      "envelope": {},
+      "measured_present": true,
+      "results": {
+        "added": [],
+        "changed": [
+          {
+            "fields": {
+              "bounds": {
+                "after": {
+                  "resource_contracts:da6e36a42066c3583754d43c": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                },
+                "before": {
+                  "resource_contracts:9ac7a1c2b131769a60cdd201": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                }
+              },
+              "evidence": {
+                "after": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:da6e36a42066c3583754d43c"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:9ac7a1c2b131769a60cdd201"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                }
+              },
+              "import_identity": {
+                "after": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+                  "dialect": "gnu17",
+                  "helpers": {
+                    "cio_error_reset": {
+                      "compiler": {
+                        "program": "/usr/bin/clang",
+                        "target": "x86_64-pc-linux-gnu",
+                        "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                      },
+                      "configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+                      "dialect": "gnu17",
+                      "helpers": {},
+                      "model_library": null,
+                      "preprocessed_source_digest": "5125bcac86055d74aa2fc0fdb111b5754c0a8f378d81cf8ced331695fcc52599",
+                      "profile_digest": null,
+                      "raw_source_digest": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+                      "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                    }
+                  },
+                  "model_library": "chunkio",
+                  "preprocessed_source_digest": "e0ba745b55e4f1ab612df3c99b048a111589a9154bdc18666f816aeb6d58621a",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                },
+                "before": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+                  "dialect": "gnu17",
+                  "helpers": {
+                    "cio_error_reset": {
+                      "compiler": {
+                        "program": "/usr/bin/clang",
+                        "target": "x86_64-pc-linux-gnu",
+                        "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                      },
+                      "configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+                      "dialect": "gnu17",
+                      "helpers": {},
+                      "model_library": null,
+                      "preprocessed_source_digest": "5125bcac86055d74aa2fc0fdb111b5754c0a8f378d81cf8ced331695fcc52599",
+                      "profile_digest": null,
+                      "raw_source_digest": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+                      "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                    }
+                  },
+                  "model_library": "chunkio",
+                  "preprocessed_source_digest": "e0ba745b55e4f1ab612df3c99b048a111589a9154bdc18666f816aeb6d58621a",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              },
+              "task": {
+                "after": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+                    "qcore:boolean-field-import:v1": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "qcore:boolean-field-source-input:v2": "1581a2dc18e2b188c3fc536e3da3546d6aba6907e23d6282a398f38ef3af6410"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:da6e36a42066c3583754d43c",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "cio_chunk_is_locked"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "cio_chunk_is_locked",
+                        "translation_unit": "chunkio/cio_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "chunkio",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+                    "qcore:boolean-field-import:v1": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "qcore:boolean-field-source-input:v2": "1581a2dc18e2b188c3fc536e3da3546d6aba6907e23d6282a398f38ef3af6410"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:9ac7a1c2b131769a60cdd201",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "cio_chunk_is_locked"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "cio_chunk_is_locked",
+                        "translation_unit": "chunkio/cio_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "chunkio",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                }
+              },
+              "witness": {
+                "after": {
+                  "summary": {
+                    "dependencies": {},
+                    "field": "Locked",
+                    "function": "cio_chunk_is_locked",
+                    "paths": [
+                      {
+                        "branches": [],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": false,
+                        "return_value": 0,
+                        "writes": []
+                      },
+                      {
+                        "branches": [],
+                        "final_value": true,
+                        "frame_writes": [],
+                        "initial_value": true,
+                        "return_value": 1,
+                        "writes": []
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "989d5fdc8d55581d91adba7d896ce8f16c14bae1ce3dea891a4912020810942d",
+                  "witness_kind": "boolean_field_contract"
+                },
+                "before": {
+                  "summary": {
+                    "dependencies": {},
+                    "field": "Locked",
+                    "function": "cio_chunk_is_locked",
+                    "paths": [
+                      {
+                        "branches": [],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": false,
+                        "return_value": 0,
+                        "writes": []
+                      },
+                      {
+                        "branches": [],
+                        "final_value": true,
+                        "frame_writes": [],
+                        "initial_value": true,
+                        "return_value": 1,
+                        "writes": []
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "56400dc431c94efda814eb823b3096a9e9040f59886a8fe03e0215caaa58023d",
+                  "witness_kind": "boolean_field_contract"
+                }
+              }
+            },
+            "key": [
+              "chunkio",
+              "cio_chunk.c",
+              "cio_chunk_is_locked"
+            ]
+          },
+          {
+            "fields": {
+              "bounds": {
+                "after": {
+                  "resource_contracts:8c99b56bd26e2c8938d2ef22": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                },
+                "before": {
+                  "resource_contracts:631562afdf6ef72f5370e971": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                }
+              },
+              "evidence": {
+                "after": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:8c99b56bd26e2c8938d2ef22"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:631562afdf6ef72f5370e971"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                }
+              },
+              "import_identity": {
+                "after": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+                  "dialect": "gnu17",
+                  "helpers": {
+                    "cio_error_reset": {
+                      "compiler": {
+                        "program": "/usr/bin/clang",
+                        "target": "x86_64-pc-linux-gnu",
+                        "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                      },
+                      "configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+                      "dialect": "gnu17",
+                      "helpers": {},
+                      "model_library": null,
+                      "preprocessed_source_digest": "5125bcac86055d74aa2fc0fdb111b5754c0a8f378d81cf8ced331695fcc52599",
+                      "profile_digest": null,
+                      "raw_source_digest": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+                      "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                    }
+                  },
+                  "model_library": "chunkio",
+                  "preprocessed_source_digest": "e0ba745b55e4f1ab612df3c99b048a111589a9154bdc18666f816aeb6d58621a",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                },
+                "before": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+                  "dialect": "gnu17",
+                  "helpers": {
+                    "cio_error_reset": {
+                      "compiler": {
+                        "program": "/usr/bin/clang",
+                        "target": "x86_64-pc-linux-gnu",
+                        "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                      },
+                      "configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+                      "dialect": "gnu17",
+                      "helpers": {},
+                      "model_library": null,
+                      "preprocessed_source_digest": "5125bcac86055d74aa2fc0fdb111b5754c0a8f378d81cf8ced331695fcc52599",
+                      "profile_digest": null,
+                      "raw_source_digest": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+                      "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                    }
+                  },
+                  "model_library": "chunkio",
+                  "preprocessed_source_digest": "e0ba745b55e4f1ab612df3c99b048a111589a9154bdc18666f816aeb6d58621a",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              },
+              "task": {
+                "after": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+                    "qcore:boolean-field-import:v1": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "qcore:boolean-field-source-input:v2": "96737c8928a357e8c7aca2cb94fb704e96899f0714c4107a19b04280d50aa5ad"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:8c99b56bd26e2c8938d2ef22",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "cio_chunk_unlock"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "cio_chunk_unlock",
+                        "translation_unit": "chunkio/cio_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "chunkio",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "eb65cb43e0e29f5a08d76ad3576cc8ff5583944e139cf69c79096208fc34df91",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+                    "qcore:boolean-field-import:v1": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "qcore:boolean-field-source-input:v2": "96737c8928a357e8c7aca2cb94fb704e96899f0714c4107a19b04280d50aa5ad"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:631562afdf6ef72f5370e971",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "cio_chunk_unlock"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "cio_chunk_unlock",
+                        "translation_unit": "chunkio/cio_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "chunkio",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c",
+                    "source_digest": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+                    "translation_unit": "chunkio/cio_chunk.c"
+                  }
+                }
+              },
+              "witness": {
+                "after": {
+                  "summary": {
+                    "dependencies": {
+                      "cio_error_reset": "typedef long int ptrdiff_t;\ntypedef long unsigned int size_t;\ntypedef int wchar_t;\ntypedef struct {\n  long long __clang_max_align_nonce1\n      __attribute__((__aligned__(__alignof__(long long))));\n  long double __clang_max_align_nonce2\n      __attribute__((__aligned__(__alignof__(long double))));\n} max_align_t;\ntypedef _Complex float __cfloat128 __attribute__ ((__mode__ (__TC__)));\ntypedef __float128 _Float128;\ntypedef float _Float32;\ntypedef double _Float64;\ntypedef double _Float32x;\ntypedef long double _Float64x;\ntypedef struct\n  {\n    int quot;\n    int rem;\n  } div_t;\ntypedef struct\n  {\n    long int quot;\n    long int rem;\n  } ldiv_t;\n__extension__ typedef struct\n  {\n    long long int quot;\n    long long int rem;\n  } lldiv_t;\nextern size_t __ctype_get_mb_cur_max (void) __attribute__ ((__nothrow__ )) ;\nextern double atof (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern int atoi (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern long int atol (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\n__extension__ extern long long int atoll (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern double strtod (const char *__restrict __nptr,\n        char **__restrict __endptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern float strtof (const char *__restrict __nptr,\n       char **__restrict __endptr) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long double strtold (const char *__restrict __nptr,\n       char **__restrict __endptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int strtol (const char *__restrict __nptr,\n   char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern unsigned long int strtoul (const char *__restrict __nptr,\n      char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern long long int strtoq (const char *__restrict __nptr,\n        char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern unsigned long long int strtouq (const char *__restrict __nptr,\n           char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern long long int strtoll (const char *__restrict __nptr,\n         char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern unsigned long long int strtoull (const char *__restrict __nptr,\n     char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern char *l64a (long int __n) __attribute__ ((__nothrow__ )) ;\nextern long int a64l (const char *__s)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\ntypedef unsigned char __u_char;\ntypedef unsigned short int __u_short;\ntypedef unsigned int __u_int;\ntypedef unsigned long int __u_long;\ntypedef signed char __int8_t;\ntypedef unsigned char __uint8_t;\ntypedef signed short int __int16_t;\ntypedef unsigned short int __uint16_t;\ntypedef signed int __int32_t;\ntypedef unsigned int __uint32_t;\ntypedef signed long int __int64_t;\ntypedef unsigned long int __uint64_t;\ntypedef __int8_t __int_least8_t;\ntypedef __uint8_t __uint_least8_t;\ntypedef __int16_t __int_least16_t;\ntypedef __uint16_t __uint_least16_t;\ntypedef __int32_t __int_least32_t;\ntypedef __uint32_t __uint_least32_t;\ntypedef __int64_t __int_least64_t;\ntypedef __uint64_t __uint_least64_t;\ntypedef long int __quad_t;\ntypedef unsigned long int __u_quad_t;\ntypedef long int __intmax_t;\ntypedef unsigned long int __uintmax_t;\ntypedef unsigned long int __dev_t;\ntypedef unsigned int __uid_t;\ntypedef unsigned int __gid_t;\ntypedef unsigned long int __ino_t;\ntypedef unsigned long int __ino64_t;\ntypedef unsigned int __mode_t;\ntypedef unsigned long int __nlink_t;\ntypedef long int __off_t;\ntypedef long int __off64_t;\ntypedef int __pid_t;\ntypedef struct { int __val[2]; } __fsid_t;\ntypedef long int __clock_t;\ntypedef unsigned long int __rlim_t;\ntypedef unsigned long int __rlim64_t;\ntypedef unsigned int __id_t;\ntypedef long int __time_t;\ntypedef unsigned int __useconds_t;\ntypedef long int __suseconds_t;\ntypedef long int __suseconds64_t;\ntypedef int __daddr_t;\ntypedef int __key_t;\ntypedef int __clockid_t;\ntypedef void * __timer_t;\ntypedef long int __blksize_t;\ntypedef long int __blkcnt_t;\ntypedef long int __blkcnt64_t;\ntypedef unsigned long int __fsblkcnt_t;\ntypedef unsigned long int __fsblkcnt64_t;\ntypedef unsigned long int __fsfilcnt_t;\ntypedef unsigned long int __fsfilcnt64_t;\ntypedef long int __fsword_t;\ntypedef long int __ssize_t;\ntypedef long int __syscall_slong_t;\ntypedef unsigned long int __syscall_ulong_t;\ntypedef __off64_t __loff_t;\ntypedef char *__caddr_t;\ntypedef long int __intptr_t;\ntypedef unsigned int __socklen_t;\ntypedef int __sig_atomic_t;\ntypedef __u_char u_char;\ntypedef __u_short u_short;\ntypedef __u_int u_int;\ntypedef __u_long u_long;\ntypedef __quad_t quad_t;\ntypedef __u_quad_t u_quad_t;\ntypedef __fsid_t fsid_t;\ntypedef __loff_t loff_t;\ntypedef __ino_t ino_t;\ntypedef __dev_t dev_t;\ntypedef __gid_t gid_t;\ntypedef __mode_t mode_t;\ntypedef __nlink_t nlink_t;\ntypedef __uid_t uid_t;\ntypedef __off_t off_t;\ntypedef __pid_t pid_t;\ntypedef __id_t id_t;\ntypedef __ssize_t ssize_t;\ntypedef __daddr_t daddr_t;\ntypedef __caddr_t caddr_t;\ntypedef __key_t key_t;\ntypedef __clock_t clock_t;\n\ntypedef __clockid_t clockid_t;\ntypedef __time_t time_t;\ntypedef __timer_t timer_t;\ntypedef unsigned long int ulong;\ntypedef unsigned short int ushort;\ntypedef unsigned int uint;\ntypedef __int8_t int8_t;\ntypedef __int16_t int16_t;\ntypedef __int32_t int32_t;\ntypedef __int64_t int64_t;\ntypedef __uint8_t u_int8_t;\ntypedef __uint16_t u_int16_t;\ntypedef __uint32_t u_int32_t;\ntypedef __uint64_t u_int64_t;\ntypedef int register_t __attribute__ ((__mode__ (__word__)));\nstatic __inline __uint16_t\n__bswap_16 (__uint16_t __bsx)\n{\n  return ((__uint16_t) ((((__bsx) >> 8) & 0xff) | (((__bsx) & 0xff) << 8)));\n}\nstatic __inline __uint32_t\n__bswap_32 (__uint32_t __bsx)\n{\n  return ((((__bsx) & 0xff000000u) >> 24) | (((__bsx) & 0x00ff0000u) >> 8) | (((__bsx) & 0x0000ff00u) << 8) | (((__bsx) & 0x000000ffu) << 24));\n}\n__extension__ static __inline __uint64_t\n__bswap_64 (__uint64_t __bsx)\n{\n  return ((((__bsx) & 0xff00000000000000ull) >> 56) | (((__bsx) & 0x00ff000000000000ull) >> 40) | (((__bsx) & 0x0000ff0000000000ull) >> 24) | (((__bsx) & 0x000000ff00000000ull) >> 8) | (((__bsx) & 0x00000000ff000000ull) << 8) | (((__bsx) & 0x0000000000ff0000ull) << 24) | (((__bsx) & 0x000000000000ff00ull) << 40) | (((__bsx) & 0x00000000000000ffull) << 56));\n}\nstatic __inline __uint16_t\n__uint16_identity (__uint16_t __x)\n{\n  return __x;\n}\nstatic __inline __uint32_t\n__uint32_identity (__uint32_t __x)\n{\n  return __x;\n}\nstatic __inline __uint64_t\n__uint64_identity (__uint64_t __x)\n{\n  return __x;\n}\ntypedef struct\n{\n  unsigned long int __val[(1024 / (8 * sizeof (unsigned long int)))];\n} __sigset_t;\ntypedef __sigset_t sigset_t;\nstruct timeval\n{\n  __time_t tv_sec;\n  __suseconds_t tv_usec;\n};\n\nstruct timespec\n{\n  __time_t tv_sec;\n  __syscall_slong_t tv_nsec;\n};\ntypedef __suseconds_t suseconds_t;\ntypedef long int __fd_mask;\ntypedef struct\n  {\n    __fd_mask __fds_bits[1024 / (8 * (int) sizeof (__fd_mask))];\n  } fd_set;\ntypedef __fd_mask fd_mask;\nextern int select (int __nfds, fd_set *__restrict __readfds,\n     fd_set *__restrict __writefds,\n     fd_set *__restrict __exceptfds,\n     struct timeval *__restrict __timeout);\nextern int pselect (int __nfds, fd_set *__restrict __readfds,\n      fd_set *__restrict __writefds,\n      fd_set *__restrict __exceptfds,\n      const struct timespec *__restrict __timeout,\n      const __sigset_t *__restrict __sigmask);\ntypedef __blksize_t blksize_t;\ntypedef __blkcnt_t blkcnt_t;\ntypedef __fsblkcnt_t fsblkcnt_t;\ntypedef __fsfilcnt_t fsfilcnt_t;\n\ntypedef union\n{\n  __extension__ unsigned long long int __value64;\n  struct\n  {\n    unsigned int __low;\n    unsigned int __high;\n  } __value32;\n} __atomic_wide_counter;\ntypedef struct __pthread_internal_list\n{\n  struct __pthread_internal_list *__prev;\n  struct __pthread_internal_list *__next;\n} __pthread_list_t;\ntypedef struct __pthread_internal_slist\n{\n  struct __pthread_internal_slist *__next;\n} __pthread_slist_t;\nstruct __pthread_mutex_s\n{\n  int __lock;\n  unsigned int __count;\n  int __owner;\n  unsigned int __nusers;\n  int __kind;\n  short __spins;\n  short __unused;\n  __pthread_list_t __list;\n};\nstruct __pthread_rwlock_arch_t\n{\n  unsigned int __readers;\n  unsigned int __writers;\n  unsigned int __wrphase_futex;\n  unsigned int __writers_futex;\n  unsigned int __pad3;\n  unsigned int __pad4;\n  int __cur_writer;\n  int __shared;\n  unsigned long int __pad1;\n  unsigned long int __pad2;\n  unsigned int __flags;\n};\nstruct __pthread_cond_s\n{\n  __atomic_wide_counter __wseq;\n  __atomic_wide_counter __g1_start;\n  unsigned int __g_size[2] ;\n  unsigned int __g1_orig_size;\n  unsigned int __wrefs;\n  unsigned int __g_signals[2];\n  unsigned int __unused_initialized_1;\n  unsigned int __unused_initialized_2;\n};\ntypedef unsigned int __tss_t;\ntypedef unsigned long int __thrd_t;\ntypedef struct\n{\n  int __data ;\n} __once_flag;\ntypedef unsigned long int pthread_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_mutexattr_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_condattr_t;\ntypedef unsigned int pthread_key_t;\ntypedef int pthread_once_t;\nunion pthread_attr_t\n{\n  char __size[56];\n  long int __align;\n};\ntypedef union pthread_attr_t pthread_attr_t;\ntypedef union\n{\n  struct __pthread_mutex_s __data;\n  char __size[40];\n  long int __align;\n} pthread_mutex_t;\ntypedef union\n{\n  struct __pthread_cond_s __data;\n  char __size[48];\n  __extension__ long long int __align;\n} pthread_cond_t;\ntypedef union\n{\n  struct __pthread_rwlock_arch_t __data;\n  char __size[56];\n  long int __align;\n} pthread_rwlock_t;\ntypedef union\n{\n  char __size[8];\n  long int __align;\n} pthread_rwlockattr_t;\ntypedef volatile int pthread_spinlock_t;\ntypedef union\n{\n  char __size[32];\n  long int __align;\n} pthread_barrier_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_barrierattr_t;\nextern long int random (void) __attribute__ ((__nothrow__ ));\nextern void srandom (unsigned int __seed) __attribute__ ((__nothrow__ ));\nextern char *initstate (unsigned int __seed, char *__statebuf,\n   size_t __statelen) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern char *setstate (char *__statebuf) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct random_data\n  {\n    int32_t *fptr;\n    int32_t *rptr;\n    int32_t *state;\n    int rand_type;\n    int rand_deg;\n    int rand_sep;\n    int32_t *end_ptr;\n  };\nextern int random_r (struct random_data *__restrict __buf,\n       int32_t *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int srandom_r (unsigned int __seed, struct random_data *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int initstate_r (unsigned int __seed, char *__restrict __statebuf,\n   size_t __statelen,\n   struct random_data *__restrict __buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4)));\nextern int setstate_r (char *__restrict __statebuf,\n         struct random_data *__restrict __buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int rand (void) __attribute__ ((__nothrow__ ));\nextern void srand (unsigned int __seed) __attribute__ ((__nothrow__ ));\nextern int rand_r (unsigned int *__seed) __attribute__ ((__nothrow__ ));\nextern double drand48 (void) __attribute__ ((__nothrow__ ));\nextern double erand48 (unsigned short int __xsubi[3]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int lrand48 (void) __attribute__ ((__nothrow__ ));\nextern long int nrand48 (unsigned short int __xsubi[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int mrand48 (void) __attribute__ ((__nothrow__ ));\nextern long int jrand48 (unsigned short int __xsubi[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void srand48 (long int __seedval) __attribute__ ((__nothrow__ ));\nextern unsigned short int *seed48 (unsigned short int __seed16v[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void lcong48 (unsigned short int __param[7]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct drand48_data\n  {\n    unsigned short int __x[3];\n    unsigned short int __old_x[3];\n    unsigned short int __c;\n    unsigned short int __init;\n    __extension__ unsigned long long int __a;\n  };\nextern int drand48_r (struct drand48_data *__restrict __buffer,\n        double *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int erand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        double *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int lrand48_r (struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int nrand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int mrand48_r (struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int jrand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int srand48_r (long int __seedval, struct drand48_data *__buffer)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int seed48_r (unsigned short int __seed16v[3],\n       struct drand48_data *__buffer) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int lcong48_r (unsigned short int __param[7],\n        struct drand48_data *__buffer)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern __uint32_t arc4random (void)\n     __attribute__ ((__nothrow__ )) ;\nextern void arc4random_buf (void *__buf, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern __uint32_t arc4random_uniform (__uint32_t __upper_bound)\n     __attribute__ ((__nothrow__ )) ;\nextern void *malloc (size_t __size) __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__))\n                                         ;\nextern void *calloc (size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__)) ;\nextern void *realloc (void *__ptr, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__warn_unused_result__)) ;\nextern void free (void *__ptr) __attribute__ ((__nothrow__ ));\nextern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__warn_unused_result__))\n                       ;\nextern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) ;\nextern void *alloca (size_t __size) __attribute__ ((__nothrow__ ));\nextern void *valloc (size_t __size) __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__))\n                                         ;\nextern int posix_memalign (void **__memptr, size_t __alignment, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern void *aligned_alloc (size_t __alignment, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__)) __attribute__ ((__alloc_align__ (1)))\n                                         ;\nextern void abort (void) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__)) __attribute__ ((__cold__));\nextern int atexit (void (*__func) (void)) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int at_quick_exit (void (*__func) (void)) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int on_exit (void (*__func) (int __status, void *__arg), void *__arg)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern void quick_exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern void _Exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern char *getenv (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int putenv (char *__string) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int setenv (const char *__name, const char *__value, int __replace)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int unsetenv (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int clearenv (void) __attribute__ ((__nothrow__ ));\nextern char *mktemp (char *__template) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int mkstemp (char *__template) __attribute__ ((__nonnull__ (1))) ;\nextern int mkstemps (char *__template, int __suffixlen) __attribute__ ((__nonnull__ (1))) ;\nextern char *mkdtemp (char *__template) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int system (const char *__command) ;\nextern char *realpath (const char *__restrict __name,\n         char *__restrict __resolved) __attribute__ ((__nothrow__ )) ;\ntypedef int (*__compar_fn_t) (const void *, const void *);\nextern void *bsearch (const void *__key, const void *__base,\n        size_t __nmemb, size_t __size, __compar_fn_t __compar)\n     __attribute__ ((__nonnull__ (1, 2, 5))) ;\nextern void qsort (void *__base, size_t __nmemb, size_t __size,\n     __compar_fn_t __compar) __attribute__ ((__nonnull__ (1, 4)));\nextern int abs (int __x) __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern long int labs (long int __x) __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\n__extension__ extern long long int llabs (long long int __x)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern div_t div (int __numer, int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern ldiv_t ldiv (long int __numer, long int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\n__extension__ extern lldiv_t lldiv (long long int __numer,\n        long long int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern char *ecvt (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *fcvt (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *gcvt (double __value, int __ndigit, char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3))) ;\nextern char *qecvt (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *qfcvt (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *qgcvt (long double __value, int __ndigit, char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3))) ;\nextern int ecvt_r (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign, char *__restrict __buf,\n     size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int fcvt_r (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign, char *__restrict __buf,\n     size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int qecvt_r (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int qfcvt_r (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int mblen (const char *__s, size_t __n) __attribute__ ((__nothrow__ ));\nextern int mbtowc (wchar_t *__restrict __pwc,\n     const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ ));\nextern int wctomb (char *__s, wchar_t __wchar) __attribute__ ((__nothrow__ ));\nextern size_t mbstowcs (wchar_t *__restrict __pwcs,\n   const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ ))\n                                      ;\nextern size_t wcstombs (char *__restrict __s,\n   const wchar_t *__restrict __pwcs, size_t __n)\n     __attribute__ ((__nothrow__ ))\n                                    ;\nextern int rpmatch (const char *__response) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int getsubopt (char **__restrict __optionp,\n        char *const *__restrict __tokens,\n        char **__restrict __valuep)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2, 3))) ;\nextern int getloadavg (double __loadavg[], int __nelem)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct mk_list\n{\n    struct mk_list *prev, *next;\n};\nstatic inline void mk_list_init(struct mk_list *list)\n{\n    list->next = list;\n    list->prev = list;\n}\nstatic inline void __mk_list_add(struct mk_list *_new, struct mk_list *prev,\n                                 struct mk_list *next)\n{\n    next->prev = _new;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n}\nstatic inline void mk_list_add(struct mk_list *_new, struct mk_list *head)\n{\n    __mk_list_add(_new, head->prev, head);\n}\nstatic inline void mk_list_add_after(struct mk_list *_new,\n                                     struct mk_list *prev,\n                                     struct mk_list *head)\n{\n    struct mk_list *next;\n    if (head->prev == head->next || head->prev == prev) {\n        mk_list_add(_new, head);\n        return;\n    }\n    next = prev->next;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n    next->prev = _new;\n}\nstatic inline int mk_list_is_empty(struct mk_list *head)\n{\n    if (head->next == head) return 0;\n    else return -1;\n}\nstatic inline void mk_list_add_before(struct mk_list *_new,\n                                      struct mk_list *next,\n                                      struct mk_list *head)\n{\n    struct mk_list *prev;\n    if (_new == ((void*)0) || next == ((void*)0) || head == ((void*)0)) {\n        return;\n    }\n    if (mk_list_is_empty(head) == 0 ||\n        next == head) {\n        mk_list_add(_new, head);\n        return;\n    }\n    prev = next->prev;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n    next->prev = _new;\n}\nstatic inline void mk_list_append(struct mk_list *_new, struct mk_list *head)\n{\n    if (mk_list_is_empty(head) == 0) {\n        __mk_list_add(_new, head->prev, head);\n    }\n    else {\n        mk_list_add_after(_new,\n                          head->prev,\n                          head);\n    }\n}\nstatic inline void mk_list_prepend(struct mk_list *_new, struct mk_list *head)\n{\n    if (mk_list_is_empty(head) == 0) {\n        __mk_list_add(_new, head->prev, head);\n    }\n    else {\n        mk_list_add_before(_new,\n                           head->next,\n                           head);\n    }\n}\nstatic inline void __mk_list_del(struct mk_list *prev, struct mk_list *next)\n{\n    prev->next = next;\n    next->prev = prev;\n}\nstatic inline void mk_list_del(struct mk_list *entry)\n{\n    __mk_list_del(entry->prev, entry->next);\n    entry->prev = ((void*)0);\n    entry->next = ((void*)0);\n}\nstatic inline int mk_list_is_set(struct mk_list *head)\n{\n    if (head->next && head->prev) {\n        return 0;\n    }\n    return -1;\n}\nstatic inline int mk_list_size(struct mk_list *head)\n{\n    int ret = 0;\n    struct mk_list *it;\n    for (it = head->next; it != head; it = it->next, ret++);\n    return ret;\n}\nstatic inline void mk_list_entry_init(struct mk_list *list)\n{\n    list->next = ((void*)0);\n    list->prev = ((void*)0);\n}\nstatic inline int mk_list_entry_is_orphan(struct mk_list *head)\n{\n    if (head->next != ((void*)0) &&\n        head->prev != ((void*)0)) {\n        return 0;\n    }\n    return !0;\n}\nstatic inline int mk_list_entry_orphan(struct mk_list *head)\n{\n    if (head->next && head->prev) {\n        return 0;\n    }\n    return -1;\n}\nstatic inline void mk_list_cat(struct mk_list *list, struct mk_list *head)\n{\n    struct mk_list *last;\n    last = head->prev;\n    last->next = list->next;\n    list->next->prev = last;\n    list->prev->next = head;\n    head->prev = list->prev;\n}\nstruct cio_ctx;\nstruct cio_options {\n    int initialized;\n    int flags;\n    char *root_path;\n    int log_level;\n    int (*log_cb)(struct cio_ctx *, int, const char *, int, char *);\n    char *user;\n    char *group;\n    char *chmod;\n    int realloc_size_hint;\n};\nstruct cio_ctx {\n    int page_size;\n    int realloc_size_hint;\n    struct cio_options options;\n    void *processed_user;\n    void *processed_group;\n    size_t total_chunks;\n    size_t total_chunks_up;\n    size_t max_chunks_up;\n    struct mk_list streams;\n    int last_chunk_error;\n};\nstruct cio_stream {\n    int type;\n    char *name;\n    struct mk_list _head;\n    struct mk_list chunks;\n    struct mk_list chunks_up;\n    struct mk_list chunks_down;\n    void *parent;\n};\nstruct cio_stream *cio_stream_create(struct cio_ctx *ctx, const char *name,\n                                     int type);\nstruct cio_stream *cio_stream_get(struct cio_ctx *ctx, const char *name);\nint cio_stream_delete(struct cio_stream *st);\nvoid cio_stream_destroy(struct cio_stream *st);\nvoid cio_stream_destroy_all(struct cio_ctx *ctx);\nsize_t cio_stream_size_chunks_up(struct cio_stream *st);\n\ntypedef __uint8_t uint8_t;\ntypedef __uint16_t uint16_t;\ntypedef __uint32_t uint32_t;\ntypedef __uint64_t uint64_t;\ntypedef __int_least8_t int_least8_t;\ntypedef __int_least16_t int_least16_t;\ntypedef __int_least32_t int_least32_t;\ntypedef __int_least64_t int_least64_t;\ntypedef __uint_least8_t uint_least8_t;\ntypedef __uint_least16_t uint_least16_t;\ntypedef __uint_least32_t uint_least32_t;\ntypedef __uint_least64_t uint_least64_t;\ntypedef signed char int_fast8_t;\ntypedef long int int_fast16_t;\ntypedef long int int_fast32_t;\ntypedef long int int_fast64_t;\ntypedef unsigned char uint_fast8_t;\ntypedef unsigned long int uint_fast16_t;\ntypedef unsigned long int uint_fast32_t;\ntypedef unsigned long int uint_fast64_t;\ntypedef long int intptr_t;\ntypedef unsigned long int uintptr_t;\ntypedef __intmax_t intmax_t;\ntypedef __uintmax_t uintmax_t;\ntypedef int __gwchar_t;\ntypedef struct\n  {\n    long int quot;\n    long int rem;\n  } imaxdiv_t;\nextern intmax_t imaxabs (intmax_t __n) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern imaxdiv_t imaxdiv (intmax_t __numer, intmax_t __denom)\n      __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern intmax_t strtoimax (const char *__restrict __nptr,\n      char **__restrict __endptr, int __base) __attribute__ ((__nothrow__ ));\nextern uintmax_t strtoumax (const char *__restrict __nptr,\n       char ** __restrict __endptr, int __base) __attribute__ ((__nothrow__ ));\nextern intmax_t wcstoimax (const __gwchar_t *__restrict __nptr,\n      __gwchar_t **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ ));\nextern uintmax_t wcstoumax (const __gwchar_t *__restrict __nptr,\n       __gwchar_t ** __restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ ));\n\ntypedef __useconds_t useconds_t;\ntypedef __socklen_t socklen_t;\nextern int access (const char *__name, int __type) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int faccessat (int __fd, const char *__file, int __type, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2))) ;\nextern __off_t lseek (int __fd, __off_t __offset, int __whence) __attribute__ ((__nothrow__ ));\nextern int close (int __fd);\nextern void closefrom (int __lowfd) __attribute__ ((__nothrow__ ));\nextern ssize_t read (int __fd, void *__buf, size_t __nbytes)\n                                                  ;\nextern ssize_t write (int __fd, const void *__buf, size_t __n)\n                                         ;\nextern ssize_t pread (int __fd, void *__buf, size_t __nbytes,\n        __off_t __offset)\n                                                  ;\nextern ssize_t pwrite (int __fd, const void *__buf, size_t __n,\n         __off_t __offset)\n                                         ;\nextern int pipe (int __pipedes[2]) __attribute__ ((__nothrow__ )) ;\nextern unsigned int alarm (unsigned int __seconds) __attribute__ ((__nothrow__ ));\nextern unsigned int sleep (unsigned int __seconds);\nextern __useconds_t ualarm (__useconds_t __value, __useconds_t __interval)\n     __attribute__ ((__nothrow__ ));\nextern int usleep (__useconds_t __useconds);\nextern int pause (void);\nextern int chown (const char *__file, __uid_t __owner, __gid_t __group)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchown (int __fd, __uid_t __owner, __gid_t __group) __attribute__ ((__nothrow__ )) ;\nextern int lchown (const char *__file, __uid_t __owner, __gid_t __group)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchownat (int __fd, const char *__file, __uid_t __owner,\n       __gid_t __group, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2))) ;\nextern int chdir (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchdir (int __fd) __attribute__ ((__nothrow__ )) ;\nextern char *getcwd (char *__buf, size_t __size) __attribute__ ((__nothrow__ )) ;\nextern char *getwd (char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) __attribute__ ((__deprecated__))\n                                       ;\nextern int dup (int __fd) __attribute__ ((__nothrow__ )) ;\nextern int dup2 (int __fd, int __fd2) __attribute__ ((__nothrow__ ));\nextern char **__environ;\nextern int execve (const char *__path, char *const __argv[],\n     char *const __envp[]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int fexecve (int __fd, char *const __argv[], char *const __envp[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int execv (const char *__path, char *const __argv[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execle (const char *__path, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execl (const char *__path, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execvp (const char *__file, char *const __argv[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execlp (const char *__file, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int nice (int __inc) __attribute__ ((__nothrow__ )) ;\nextern void _exit (int __status) __attribute__ ((__noreturn__));\nenum\n  {\n    _PC_LINK_MAX,\n    _PC_MAX_CANON,\n    _PC_MAX_INPUT,\n    _PC_NAME_MAX,\n    _PC_PATH_MAX,\n    _PC_PIPE_BUF,\n    _PC_CHOWN_RESTRICTED,\n    _PC_NO_TRUNC,\n    _PC_VDISABLE,\n    _PC_SYNC_IO,\n    _PC_ASYNC_IO,\n    _PC_PRIO_IO,\n    _PC_SOCK_MAXBUF,\n    _PC_FILESIZEBITS,\n    _PC_REC_INCR_XFER_SIZE,\n    _PC_REC_MAX_XFER_SIZE,\n    _PC_REC_MIN_XFER_SIZE,\n    _PC_REC_XFER_ALIGN,\n    _PC_ALLOC_SIZE_MIN,\n    _PC_SYMLINK_MAX,\n    _PC_2_SYMLINKS\n  };\nenum\n  {\n    _SC_ARG_MAX,\n    _SC_CHILD_MAX,\n    _SC_CLK_TCK,\n    _SC_NGROUPS_MAX,\n    _SC_OPEN_MAX,\n    _SC_STREAM_MAX,\n    _SC_TZNAME_MAX,\n    _SC_JOB_CONTROL,\n    _SC_SAVED_IDS,\n    _SC_REALTIME_SIGNALS,\n    _SC_PRIORITY_SCHEDULING,\n    _SC_TIMERS,\n    _SC_ASYNCHRONOUS_IO,\n    _SC_PRIORITIZED_IO,\n    _SC_SYNCHRONIZED_IO,\n    _SC_FSYNC,\n    _SC_MAPPED_FILES,\n    _SC_MEMLOCK,\n    _SC_MEMLOCK_RANGE,\n    _SC_MEMORY_PROTECTION,\n    _SC_MESSAGE_PASSING,\n    _SC_SEMAPHORES,\n    _SC_SHARED_MEMORY_OBJECTS,\n    _SC_AIO_LISTIO_MAX,\n    _SC_AIO_MAX,\n    _SC_AIO_PRIO_DELTA_MAX,\n    _SC_DELAYTIMER_MAX,\n    _SC_MQ_OPEN_MAX,\n    _SC_MQ_PRIO_MAX,\n    _SC_VERSION,\n    _SC_PAGESIZE,\n    _SC_RTSIG_MAX,\n    _SC_SEM_NSEMS_MAX,\n    _SC_SEM_VALUE_MAX,\n    _SC_SIGQUEUE_MAX,\n    _SC_TIMER_MAX,\n    _SC_BC_BASE_MAX,\n    _SC_BC_DIM_MAX,\n    _SC_BC_SCALE_MAX,\n    _SC_BC_STRING_MAX,\n    _SC_COLL_WEIGHTS_MAX,\n    _SC_EQUIV_CLASS_MAX,\n    _SC_EXPR_NEST_MAX,\n    _SC_LINE_MAX,\n    _SC_RE_DUP_MAX,\n    _SC_CHARCLASS_NAME_MAX,\n    _SC_2_VERSION,\n    _SC_2_C_BIND,\n    _SC_2_C_DEV,\n    _SC_2_FORT_DEV,\n    _SC_2_FORT_RUN,\n    _SC_2_SW_DEV,\n    _SC_2_LOCALEDEF,\n    _SC_PII,\n    _SC_PII_XTI,\n    _SC_PII_SOCKET,\n    _SC_PII_INTERNET,\n    _SC_PII_OSI,\n    _SC_POLL,\n    _SC_SELECT,\n    _SC_UIO_MAXIOV,\n    _SC_IOV_MAX = _SC_UIO_MAXIOV,\n    _SC_PII_INTERNET_STREAM,\n    _SC_PII_INTERNET_DGRAM,\n    _SC_PII_OSI_COTS,\n    _SC_PII_OSI_CLTS,\n    _SC_PII_OSI_M,\n    _SC_T_IOV_MAX,\n    _SC_THREADS,\n    _SC_THREAD_SAFE_FUNCTIONS,\n    _SC_GETGR_R_SIZE_MAX,\n    _SC_GETPW_R_SIZE_MAX,\n    _SC_LOGIN_NAME_MAX,\n    _SC_TTY_NAME_MAX,\n    _SC_THREAD_DESTRUCTOR_ITERATIONS,\n    _SC_THREAD_KEYS_MAX,\n    _SC_THREAD_STACK_MIN,\n    _SC_THREAD_THREADS_MAX,\n    _SC_THREAD_ATTR_STACKADDR,\n    _SC_THREAD_ATTR_STACKSIZE,\n    _SC_THREAD_PRIORITY_SCHEDULING,\n    _SC_THREAD_PRIO_INHERIT,\n    _SC_THREAD_PRIO_PROTECT,\n    _SC_THREAD_PROCESS_SHARED,\n    _SC_NPROCESSORS_CONF,\n    _SC_NPROCESSORS_ONLN,\n    _SC_PHYS_PAGES,\n    _SC_AVPHYS_PAGES,\n    _SC_ATEXIT_MAX,\n    _SC_PASS_MAX,\n    _SC_XOPEN_VERSION,\n    _SC_XOPEN_XCU_VERSION,\n    _SC_XOPEN_UNIX,\n    _SC_XOPEN_CRYPT,\n    _SC_XOPEN_ENH_I18N,\n    _SC_XOPEN_SHM,\n    _SC_2_CHAR_TERM,\n    _SC_2_C_VERSION,\n    _SC_2_UPE,\n    _SC_XOPEN_XPG2,\n    _SC_XOPEN_XPG3,\n    _SC_XOPEN_XPG4,\n    _SC_CHAR_BIT,\n    _SC_CHAR_MAX,\n    _SC_CHAR_MIN,\n    _SC_INT_MAX,\n    _SC_INT_MIN,\n    _SC_LONG_BIT,\n    _SC_WORD_BIT,\n    _SC_MB_LEN_MAX,\n    _SC_NZERO,\n    _SC_SSIZE_MAX,\n    _SC_SCHAR_MAX,\n    _SC_SCHAR_MIN,\n    _SC_SHRT_MAX,\n    _SC_SHRT_MIN,\n    _SC_UCHAR_MAX,\n    _SC_UINT_MAX,\n    _SC_ULONG_MAX,\n    _SC_USHRT_MAX,\n    _SC_NL_ARGMAX,\n    _SC_NL_LANGMAX,\n    _SC_NL_MSGMAX,\n    _SC_NL_NMAX,\n    _SC_NL_SETMAX,\n    _SC_NL_TEXTMAX,\n    _SC_XBS5_ILP32_OFF32,\n    _SC_XBS5_ILP32_OFFBIG,\n    _SC_XBS5_LP64_OFF64,\n    _SC_XBS5_LPBIG_OFFBIG,\n    _SC_XOPEN_LEGACY,\n    _SC_XOPEN_REALTIME,\n    _SC_XOPEN_REALTIME_THREADS,\n    _SC_ADVISORY_INFO,\n    _SC_BARRIERS,\n    _SC_BASE,\n    _SC_C_LANG_SUPPORT,\n    _SC_C_LANG_SUPPORT_R,\n    _SC_CLOCK_SELECTION,\n    _SC_CPUTIME,\n    _SC_THREAD_CPUTIME,\n    _SC_DEVICE_IO,\n    _SC_DEVICE_SPECIFIC,\n    _SC_DEVICE_SPECIFIC_R,\n    _SC_FD_MGMT,\n    _SC_FIFO,\n    _SC_PIPE,\n    _SC_FILE_ATTRIBUTES,\n    _SC_FILE_LOCKING,\n    _SC_FILE_SYSTEM,\n    _SC_MONOTONIC_CLOCK,\n    _SC_MULTI_PROCESS,\n    _SC_SINGLE_PROCESS,\n    _SC_NETWORKING,\n    _SC_READER_WRITER_LOCKS,\n    _SC_SPIN_LOCKS,\n    _SC_REGEXP,\n    _SC_REGEX_VERSION,\n    _SC_SHELL,\n    _SC_SIGNALS,\n    _SC_SPAWN,\n    _SC_SPORADIC_SERVER,\n    _SC_THREAD_SPORADIC_SERVER,\n    _SC_SYSTEM_DATABASE,\n    _SC_SYSTEM_DATABASE_R,\n    _SC_TIMEOUTS,\n    _SC_TYPED_MEMORY_OBJECTS,\n    _SC_USER_GROUPS,\n    _SC_USER_GROUPS_R,\n    _SC_2_PBS,\n    _SC_2_PBS_ACCOUNTING,\n    _SC_2_PBS_LOCATE,\n    _SC_2_PBS_MESSAGE,\n    _SC_2_PBS_TRACK,\n    _SC_SYMLOOP_MAX,\n    _SC_STREAMS,\n    _SC_2_PBS_CHECKPOINT,\n    _SC_V6_ILP32_OFF32,\n    _SC_V6_ILP32_OFFBIG,\n    _SC_V6_LP64_OFF64,\n    _SC_V6_LPBIG_OFFBIG,\n    _SC_HOST_NAME_MAX,\n    _SC_TRACE,\n    _SC_TRACE_EVENT_FILTER,\n    _SC_TRACE_INHERIT,\n    _SC_TRACE_LOG,\n    _SC_LEVEL1_ICACHE_SIZE,\n    _SC_LEVEL1_ICACHE_ASSOC,\n    _SC_LEVEL1_ICACHE_LINESIZE,\n    _SC_LEVEL1_DCACHE_SIZE,\n    _SC_LEVEL1_DCACHE_ASSOC,\n    _SC_LEVEL1_DCACHE_LINESIZE,\n    _SC_LEVEL2_CACHE_SIZE,\n    _SC_LEVEL2_CACHE_ASSOC,\n    _SC_LEVEL2_CACHE_LINESIZE,\n    _SC_LEVEL3_CACHE_SIZE,\n    _SC_LEVEL3_CACHE_ASSOC,\n    _SC_LEVEL3_CACHE_LINESIZE,\n    _SC_LEVEL4_CACHE_SIZE,\n    _SC_LEVEL4_CACHE_ASSOC,\n    _SC_LEVEL4_CACHE_LINESIZE,\n    _SC_IPV6 = _SC_LEVEL1_ICACHE_SIZE + 50,\n    _SC_RAW_SOCKETS,\n    _SC_V7_ILP32_OFF32,\n    _SC_V7_ILP32_OFFBIG,\n    _SC_V7_LP64_OFF64,\n    _SC_V7_LPBIG_OFFBIG,\n    _SC_SS_REPL_MAX,\n    _SC_TRACE_EVENT_NAME_MAX,\n    _SC_TRACE_NAME_MAX,\n    _SC_TRACE_SYS_MAX,\n    _SC_TRACE_USER_EVENT_MAX,\n    _SC_XOPEN_STREAMS,\n    _SC_THREAD_ROBUST_PRIO_INHERIT,\n    _SC_THREAD_ROBUST_PRIO_PROTECT,\n    _SC_MINSIGSTKSZ,\n    _SC_SIGSTKSZ\n  };\nenum\n  {\n    _CS_PATH,\n    _CS_V6_WIDTH_RESTRICTED_ENVS,\n    _CS_GNU_LIBC_VERSION,\n    _CS_GNU_LIBPTHREAD_VERSION,\n    _CS_V5_WIDTH_RESTRICTED_ENVS,\n    _CS_V7_WIDTH_RESTRICTED_ENVS,\n    _CS_LFS_CFLAGS = 1000,\n    _CS_LFS_LDFLAGS,\n    _CS_LFS_LIBS,\n    _CS_LFS_LINTFLAGS,\n    _CS_LFS64_CFLAGS,\n    _CS_LFS64_LDFLAGS,\n    _CS_LFS64_LIBS,\n    _CS_LFS64_LINTFLAGS,\n    _CS_XBS5_ILP32_OFF32_CFLAGS = 1100,\n    _CS_XBS5_ILP32_OFF32_LDFLAGS,\n    _CS_XBS5_ILP32_OFF32_LIBS,\n    _CS_XBS5_ILP32_OFF32_LINTFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_CFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_LDFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_LIBS,\n    _CS_XBS5_ILP32_OFFBIG_LINTFLAGS,\n    _CS_XBS5_LP64_OFF64_CFLAGS,\n    _CS_XBS5_LP64_OFF64_LDFLAGS,\n    _CS_XBS5_LP64_OFF64_LIBS,\n    _CS_XBS5_LP64_OFF64_LINTFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_CFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_LDFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_LIBS,\n    _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_CFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_LDFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_LIBS,\n    _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LIBS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_CFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_LDFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_LIBS,\n    _CS_POSIX_V6_LP64_OFF64_LINTFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LIBS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_CFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_LDFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_LIBS,\n    _CS_POSIX_V7_ILP32_OFF32_LINTFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_CFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LDFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LIBS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_CFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_LDFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_LIBS,\n    _CS_POSIX_V7_LP64_OFF64_LINTFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_CFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LDFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LIBS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_V6_ENV,\n    _CS_V7_ENV\n  };\nextern long int pathconf (const char *__path, int __name)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int fpathconf (int __fd, int __name) __attribute__ ((__nothrow__ ));\nextern long int sysconf (int __name) __attribute__ ((__nothrow__ ));\nextern size_t confstr (int __name, char *__buf, size_t __len) __attribute__ ((__nothrow__ ))\n                                                  ;\nextern __pid_t getpid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getppid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getpgrp (void) __attribute__ ((__nothrow__ ));\nextern __pid_t __getpgid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern __pid_t getpgid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern int setpgid (__pid_t __pid, __pid_t __pgid) __attribute__ ((__nothrow__ ));\nextern int setpgrp (void) __attribute__ ((__nothrow__ ));\nextern __pid_t setsid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getsid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern __uid_t getuid (void) __attribute__ ((__nothrow__ ));\nextern __uid_t geteuid (void) __attribute__ ((__nothrow__ ));\nextern __gid_t getgid (void) __attribute__ ((__nothrow__ ));\nextern __gid_t getegid (void) __attribute__ ((__nothrow__ ));\nextern int getgroups (int __size, __gid_t __list[]) __attribute__ ((__nothrow__ ))\n                                                  ;\nextern int setuid (__uid_t __uid) __attribute__ ((__nothrow__ )) ;\nextern int setreuid (__uid_t __ruid, __uid_t __euid) __attribute__ ((__nothrow__ )) ;\nextern int seteuid (__uid_t __uid) __attribute__ ((__nothrow__ )) ;\nextern int setgid (__gid_t __gid) __attribute__ ((__nothrow__ )) ;\nextern int setregid (__gid_t __rgid, __gid_t __egid) __attribute__ ((__nothrow__ )) ;\nextern int setegid (__gid_t __gid) __attribute__ ((__nothrow__ )) ;\nextern __pid_t fork (void) __attribute__ ((__nothrow__));\nextern __pid_t vfork (void) __attribute__ ((__nothrow__ ));\nextern char *ttyname (int __fd) __attribute__ ((__nothrow__ ));\nextern int ttyname_r (int __fd, char *__buf, size_t __buflen)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)))\n                                                   ;\nextern int isatty (int __fd) __attribute__ ((__nothrow__ ));\nextern int ttyslot (void) __attribute__ ((__nothrow__ ));\nextern int link (const char *__from, const char *__to)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2))) ;\nextern int linkat (int __fromfd, const char *__from, int __tofd,\n     const char *__to, int __flags)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4))) ;\nextern int symlink (const char *__from, const char *__to)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2))) ;\nextern ssize_t readlink (const char *__restrict __path,\n    char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)))\n                                                   ;\nextern int symlinkat (const char *__from, int __tofd,\n        const char *__to) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 3))) ;\nextern ssize_t readlinkat (int __fd, const char *__restrict __path,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 3)))\n                                                   ;\nextern int unlink (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int unlinkat (int __fd, const char *__name, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int rmdir (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern __pid_t tcgetpgrp (int __fd) __attribute__ ((__nothrow__ ));\nextern int tcsetpgrp (int __fd, __pid_t __pgrp_id) __attribute__ ((__nothrow__ ));\nextern char *getlogin (void);\nextern int getlogin_r (char *__name, size_t __name_len) __attribute__ ((__nonnull__ (1)))\n                                                  ;\nextern int setlogin (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern char *optarg;\nextern int optind;\nextern int opterr;\nextern int optopt;\nextern int getopt (int ___argc, char *const *___argv, const char *__shortopts)\n       __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 3)));\nextern int gethostname (char *__name, size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)))\n                                                  ;\nextern int sethostname (const char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int sethostid (long int __id) __attribute__ ((__nothrow__ )) ;\nextern int getdomainname (char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)))\n                                                   ;\nextern int setdomainname (const char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int vhangup (void) __attribute__ ((__nothrow__ ));\nextern int revoke (const char *__file) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int profil (unsigned short int *__sample_buffer, size_t __size,\n     size_t __offset, unsigned int __scale)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int acct (const char *__name) __attribute__ ((__nothrow__ ));\nextern char *getusershell (void) __attribute__ ((__nothrow__ ));\nextern void endusershell (void) __attribute__ ((__nothrow__ ));\nextern void setusershell (void) __attribute__ ((__nothrow__ ));\nextern int daemon (int __nochdir, int __noclose) __attribute__ ((__nothrow__ )) ;\nextern int chroot (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern char *getpass (const char *__prompt) __attribute__ ((__nonnull__ (1)));\nextern int fsync (int __fd);\nextern long int gethostid (void);\nextern void sync (void) __attribute__ ((__nothrow__ ));\nextern int getpagesize (void) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern int getdtablesize (void) __attribute__ ((__nothrow__ ));\nextern int truncate (const char *__file, __off_t __length)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int ftruncate (int __fd, __off_t __length) __attribute__ ((__nothrow__ )) ;\nextern int brk (void *__addr) __attribute__ ((__nothrow__ )) ;\nextern void *sbrk (intptr_t __delta) __attribute__ ((__nothrow__ ));\nextern long int syscall (long int __sysno, ...) __attribute__ ((__nothrow__ ));\nextern int lockf (int __fd, int __cmd, __off_t __len) ;\nextern int fdatasync (int __fildes);\nextern char *crypt (const char *__key, const char *__salt)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nint getentropy (void *__buffer, size_t __length)\n                                          ;\nextern char *dirname (char *__path) __attribute__ ((__nothrow__ ));\nextern char *__xpg_basename (char *__path) __attribute__ ((__nothrow__ ));\nstruct dirent\n  {\n    __ino_t d_ino;\n    __off_t d_off;\n    unsigned short int d_reclen;\n    unsigned char d_type;\n    char d_name[256];\n  };\nenum\n  {\n    DT_UNKNOWN = 0,\n    DT_FIFO = 1,\n    DT_CHR = 2,\n    DT_DIR = 4,\n    DT_BLK = 6,\n    DT_REG = 8,\n    DT_LNK = 10,\n    DT_SOCK = 12,\n    DT_WHT = 14\n  };\ntypedef struct __dirstream DIR;\nextern int closedir (DIR *__dirp) __attribute__ ((__nonnull__ (1)));\nextern DIR *opendir (const char *__name) __attribute__ ((__nonnull__ (1)))\n __attribute__ ((__malloc__)) ;\nextern DIR *fdopendir (int __fd)\n __attribute__ ((__malloc__)) ;\nextern struct dirent *readdir (DIR *__dirp) __attribute__ ((__nonnull__ (1)));\nextern int readdir_r (DIR *__restrict __dirp,\n        struct dirent *__restrict __entry,\n        struct dirent **__restrict __result)\n     __attribute__ ((__nonnull__ (1, 2, 3))) __attribute__ ((__deprecated__));\nextern void rewinddir (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void seekdir (DIR *__dirp, long int __pos) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int telldir (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int dirfd (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int scandir (const char *__restrict __dir,\n      struct dirent ***__restrict __namelist,\n      int (*__selector) (const struct dirent *),\n      int (*__cmp) (const struct dirent **,\n      const struct dirent **))\n     __attribute__ ((__nonnull__ (1, 2)));\nextern int alphasort (const struct dirent **__e1,\n        const struct dirent **__e2)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));\nextern __ssize_t getdirentries (int __fd, char *__restrict __buf,\n    size_t __nbytes,\n    __off_t *__restrict __basep)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4)));\nstruct iovec\n  {\n    void *iov_base;\n    size_t iov_len;\n  };\n\nenum __socket_type\n{\n  SOCK_STREAM = 1,\n  SOCK_DGRAM = 2,\n  SOCK_RAW = 3,\n  SOCK_RDM = 4,\n  SOCK_SEQPACKET = 5,\n  SOCK_DCCP = 6,\n  SOCK_PACKET = 10,\n  SOCK_CLOEXEC = 02000000,\n  SOCK_NONBLOCK = 00004000\n};\ntypedef unsigned short int sa_family_t;\nstruct __attribute__ ((__may_alias__)) sockaddr\n  {\n    sa_family_t sa_family;\n    char sa_data[14];\n  };\nstruct __attribute__ ((__may_alias__)) sockaddr_storage\n  {\n    sa_family_t ss_family;\n    char __ss_padding[(128 - (sizeof (unsigned short int)) - sizeof (unsigned long int))];\n    unsigned long int __ss_align;\n  };\nenum\n  {\n    MSG_OOB = 0x01,\n    MSG_PEEK = 0x02,\n    MSG_DONTROUTE = 0x04,\n    MSG_CTRUNC = 0x08,\n    MSG_PROXY = 0x10,\n    MSG_TRUNC = 0x20,\n    MSG_DONTWAIT = 0x40,\n    MSG_EOR = 0x80,\n    MSG_WAITALL = 0x100,\n    MSG_FIN = 0x200,\n    MSG_SYN = 0x400,\n    MSG_CONFIRM = 0x800,\n    MSG_RST = 0x1000,\n    MSG_ERRQUEUE = 0x2000,\n    MSG_NOSIGNAL = 0x4000,\n    MSG_MORE = 0x8000,\n    MSG_WAITFORONE = 0x10000,\n    MSG_BATCH = 0x40000,\n    MSG_SOCK_DEVMEM = 0x2000000,\n    MSG_ZEROCOPY = 0x4000000,\n    MSG_FASTOPEN = 0x20000000,\n    MSG_CMSG_CLOEXEC = 0x40000000\n  };\nstruct msghdr\n  {\n    void *msg_name;\n    socklen_t msg_namelen;\n    struct iovec *msg_iov;\n    size_t msg_iovlen;\n    void *msg_control;\n    size_t msg_controllen;\n    int msg_flags;\n  };\nstruct cmsghdr\n  {\n    size_t cmsg_len;\n    int cmsg_level;\n    int cmsg_type;\n    __extension__ unsigned char __cmsg_data [];\n  };\nextern struct cmsghdr *__cmsg_nxthdr (struct msghdr *__mhdr,\n          struct cmsghdr *__cmsg) __attribute__ ((__nothrow__ ));\nenum\n  {\n    SCM_RIGHTS = 0x01\n  };\ntypedef struct {\n unsigned long fds_bits[1024 / (8 * sizeof(long))];\n} __kernel_fd_set;\ntypedef void (*__kernel_sighandler_t)(int);\ntypedef int __kernel_key_t;\ntypedef int __kernel_mqd_t;\ntypedef unsigned short __kernel_old_uid_t;\ntypedef unsigned short __kernel_old_gid_t;\ntypedef unsigned long __kernel_old_dev_t;\ntypedef long __kernel_long_t;\ntypedef unsigned long __kernel_ulong_t;\ntypedef __kernel_ulong_t __kernel_ino_t;\ntypedef unsigned int __kernel_mode_t;\ntypedef int __kernel_pid_t;\ntypedef int __kernel_ipc_pid_t;\ntypedef unsigned int __kernel_uid_t;\ntypedef unsigned int __kernel_gid_t;\ntypedef __kernel_long_t __kernel_suseconds_t;\ntypedef int __kernel_daddr_t;\ntypedef unsigned int __kernel_uid32_t;\ntypedef unsigned int __kernel_gid32_t;\ntypedef __kernel_ulong_t __kernel_size_t;\ntypedef __kernel_long_t __kernel_ssize_t;\ntypedef __kernel_long_t __kernel_ptrdiff_t;\ntypedef struct {\n int val[2];\n} __kernel_fsid_t;\ntypedef __kernel_long_t __kernel_off_t;\ntypedef long long __kernel_loff_t;\ntypedef unsigned long long __kernel_uoff_t;\ntypedef __kernel_long_t __kernel_old_time_t;\ntypedef __kernel_long_t __kernel_time_t;\ntypedef long long __kernel_time64_t;\ntypedef __kernel_long_t __kernel_clock_t;\ntypedef int __kernel_timer_t;\ntypedef int __kernel_clockid_t;\ntypedef char * __kernel_caddr_t;\ntypedef unsigned short __kernel_uid16_t;\ntypedef unsigned short __kernel_gid16_t;\nstruct linger\n  {\n    int l_onoff;\n    int l_linger;\n  };\nstruct osockaddr\n{\n  unsigned short int sa_family;\n  unsigned char sa_data[14];\n};\nenum\n{\n  SHUT_RD = 0,\n  SHUT_WR,\n  SHUT_RDWR\n};\nextern int socket (int __domain, int __type, int __protocol) __attribute__ ((__nothrow__ ));\nextern int socketpair (int __domain, int __type, int __protocol,\n         int __fds[2]) __attribute__ ((__nothrow__ ));\nextern int bind (int __fd, const struct sockaddr * __addr, socklen_t __len)\n     __attribute__ ((__nothrow__ ));\nextern int getsockname (int __fd, struct sockaddr *__restrict __addr,\n   socklen_t *__restrict __len) __attribute__ ((__nothrow__ ));\nextern int connect (int __fd, const struct sockaddr * __addr, socklen_t __len);\nextern int getpeername (int __fd, struct sockaddr *__restrict __addr,\n   socklen_t *__restrict __len) __attribute__ ((__nothrow__ ));\nextern ssize_t send (int __fd, const void *__buf, size_t __n, int __flags);\nextern ssize_t recv (int __fd, void *__buf, size_t __n, int __flags);\nextern ssize_t sendto (int __fd, const void *__buf, size_t __n,\n         int __flags, const struct sockaddr * __addr,\n         socklen_t __addr_len);\nextern ssize_t recvfrom (int __fd, void *__restrict __buf, size_t __n,\n    int __flags, struct sockaddr *__restrict __addr,\n    socklen_t *__restrict __addr_len);\nextern ssize_t sendmsg (int __fd, const struct msghdr *__message,\n   int __flags);\nextern ssize_t recvmsg (int __fd, struct msghdr *__message, int __flags);\nextern int getsockopt (int __fd, int __level, int __optname,\n         void *__restrict __optval,\n         socklen_t *__restrict __optlen) __attribute__ ((__nothrow__ ));\nextern int setsockopt (int __fd, int __level, int __optname,\n         const void *__optval, socklen_t __optlen) __attribute__ ((__nothrow__ ));\nextern int listen (int __fd, int __n) __attribute__ ((__nothrow__ ));\nextern int accept (int __fd, struct sockaddr *__restrict __addr,\n     socklen_t *__restrict __addr_len);\nextern int shutdown (int __fd, int __how) __attribute__ ((__nothrow__ ));\nextern int sockatmark (int __fd) __attribute__ ((__nothrow__ ));\nextern int isfdtype (int __fd, int __fdtype) __attribute__ ((__nothrow__ ));\ntypedef uint32_t in_addr_t;\nstruct in_addr\n  {\n    in_addr_t s_addr;\n  };\nstruct ip_opts\n  {\n    struct in_addr ip_dst;\n    char ip_opts[40];\n  };\nstruct in_pktinfo\n  {\n    int ipi_ifindex;\n    struct in_addr ipi_spec_dst;\n    struct in_addr ipi_addr;\n  };\nenum\n  {\n    IPPROTO_IP = 0,\n    IPPROTO_ICMP = 1,\n    IPPROTO_IGMP = 2,\n    IPPROTO_IPIP = 4,\n    IPPROTO_TCP = 6,\n    IPPROTO_EGP = 8,\n    IPPROTO_PUP = 12,\n    IPPROTO_UDP = 17,\n    IPPROTO_IDP = 22,\n    IPPROTO_TP = 29,\n    IPPROTO_DCCP = 33,\n    IPPROTO_IPV6 = 41,\n    IPPROTO_RSVP = 46,\n    IPPROTO_GRE = 47,\n    IPPROTO_ESP = 50,\n    IPPROTO_AH = 51,\n    IPPROTO_MTP = 92,\n    IPPROTO_BEETPH = 94,\n    IPPROTO_ENCAP = 98,\n    IPPROTO_PIM = 103,\n    IPPROTO_COMP = 108,\n    IPPROTO_L2TP = 115,\n    IPPROTO_SCTP = 132,\n    IPPROTO_UDPLITE = 136,\n    IPPROTO_MPLS = 137,\n    IPPROTO_ETHERNET = 143,\n    IPPROTO_RAW = 255,\n    IPPROTO_SMC = 256,\n    IPPROTO_MPTCP = 262,\n    IPPROTO_MAX\n  };\nenum\n  {\n    IPPROTO_HOPOPTS = 0,\n    IPPROTO_ROUTING = 43,\n    IPPROTO_FRAGMENT = 44,\n    IPPROTO_ICMPV6 = 58,\n    IPPROTO_NONE = 59,\n    IPPROTO_DSTOPTS = 60,\n    IPPROTO_MH = 135\n  };\ntypedef uint16_t in_port_t;\nenum\n  {\n    IPPORT_ECHO = 7,\n    IPPORT_DISCARD = 9,\n    IPPORT_SYSTAT = 11,\n    IPPORT_DAYTIME = 13,\n    IPPORT_NETSTAT = 15,\n    IPPORT_FTP = 21,\n    IPPORT_TELNET = 23,\n    IPPORT_SMTP = 25,\n    IPPORT_TIMESERVER = 37,\n    IPPORT_NAMESERVER = 42,\n    IPPORT_WHOIS = 43,\n    IPPORT_MTP = 57,\n    IPPORT_TFTP = 69,\n    IPPORT_RJE = 77,\n    IPPORT_FINGER = 79,\n    IPPORT_TTYLINK = 87,\n    IPPORT_SUPDUP = 95,\n    IPPORT_EXECSERVER = 512,\n    IPPORT_LOGINSERVER = 513,\n    IPPORT_CMDSERVER = 514,\n    IPPORT_EFSSERVER = 520,\n    IPPORT_BIFFUDP = 512,\n    IPPORT_WHOSERVER = 513,\n    IPPORT_ROUTESERVER = 520,\n    IPPORT_RESERVED = 1024,\n    IPPORT_USERRESERVED = 5000\n  };\nstruct in6_addr\n  {\n    union\n      {\n uint8_t __u6_addr8[16];\n uint16_t __u6_addr16[8];\n uint32_t __u6_addr32[4];\n      } __in6_u;\n  };\nextern const struct in6_addr in6addr_any;\nextern const struct in6_addr in6addr_loopback;\nstruct __attribute__ ((__may_alias__)) sockaddr_in\n  {\n    sa_family_t sin_family;\n    in_port_t sin_port;\n    struct in_addr sin_addr;\n    unsigned char sin_zero[sizeof (struct sockaddr)\n      - (sizeof (unsigned short int))\n      - sizeof (in_port_t)\n      - sizeof (struct in_addr)];\n  };\nstruct __attribute__ ((__may_alias__)) sockaddr_in6\n  {\n    sa_family_t sin6_family;\n    in_port_t sin6_port;\n    uint32_t sin6_flowinfo;\n    struct in6_addr sin6_addr;\n    uint32_t sin6_scope_id;\n  };\nstruct ip_mreq\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_interface;\n  };\nstruct ip_mreqn\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_address;\n    int imr_ifindex;\n  };\nstruct ip_mreq_source\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_interface;\n    struct in_addr imr_sourceaddr;\n  };\nstruct ipv6_mreq\n  {\n    struct in6_addr ipv6mr_multiaddr;\n    unsigned int ipv6mr_interface;\n  };\nstruct group_req\n  {\n    uint32_t gr_interface;\n    struct sockaddr_storage gr_group;\n  };\nstruct group_source_req\n  {\n    uint32_t gsr_interface;\n    struct sockaddr_storage gsr_group;\n    struct sockaddr_storage gsr_source;\n  };\nstruct ip_msfilter\n  {\n    struct in_addr imsf_multiaddr;\n    struct in_addr imsf_interface;\n    uint32_t imsf_fmode;\n    uint32_t imsf_numsrc;\n    struct in_addr imsf_slist[1];\n  };\nstruct group_filter\n  {\n    uint32_t gf_interface;\n    struct sockaddr_storage gf_group;\n    uint32_t gf_fmode;\n    uint32_t gf_numsrc;\n    struct sockaddr_storage gf_slist[1];\n};\nextern uint32_t ntohl (uint32_t __netlong) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint16_t ntohs (uint16_t __netshort)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint32_t htonl (uint32_t __hostlong)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint16_t htons (uint16_t __hostshort)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern int bindresvport (int __sockfd, struct sockaddr_in *__sock_in) __attribute__ ((__nothrow__ ));\nextern int bindresvport6 (int __sockfd, struct sockaddr_in6 *__sock_in)\n     __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_addr (const char *__cp) __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_lnaof (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern struct in_addr inet_makeaddr (in_addr_t __net, in_addr_t __host)\n     __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_netof (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_network (const char *__cp) __attribute__ ((__nothrow__ ));\nextern char *inet_ntoa (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern int inet_pton (int __af, const char *__restrict __cp,\n        void *__restrict __buf) __attribute__ ((__nothrow__ ));\nextern const char *inet_ntop (int __af, const void *__restrict __cp,\n         char *__restrict __buf, socklen_t __len)\n     __attribute__ ((__nothrow__ ));\nextern int inet_aton (const char *__cp, struct in_addr *__inp) __attribute__ ((__nothrow__ ));\nextern char *inet_neta (in_addr_t __net, char *__buf, size_t __len) __attribute__ ((__nothrow__ ))\n  __attribute__ ((__deprecated__ (\"Use inet_ntop instead\")));\nextern char *inet_net_ntop (int __af, const void *__cp, int __bits,\n       char *__buf, size_t __len) __attribute__ ((__nothrow__ ));\nextern int inet_net_pton (int __af, const char *__cp,\n     void *__buf, size_t __len) __attribute__ ((__nothrow__ ));\nextern unsigned int inet_nsap_addr (const char *__cp,\n        unsigned char *__buf, int __len) __attribute__ ((__nothrow__ ));\nextern char *inet_nsap_ntoa (int __len, const unsigned char *__cp,\n        char *__buf) __attribute__ ((__nothrow__ ));\n\nstruct cio_chunk {\n    int lock;\n    char *name;\n    void *backend;\n    int tx_active;\n    uint32_t tx_crc;\n    off_t tx_content_length;\n    struct cio_ctx *ctx;\n    struct cio_stream *st;\n    int error_n;\n    struct mk_list _state_head;\n    struct mk_list _head;\n};\nstruct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st,\n                                 const char *name, int flags, size_t size,\n                                 int *err);\nvoid cio_chunk_close(struct cio_chunk *ch, int delete);\nint cio_chunk_delete(struct cio_ctx *ctx, struct cio_stream *st, const char *name);\nint cio_chunk_write(struct cio_chunk *ch, const void *buf, size_t count);\nint cio_chunk_write_at(struct cio_chunk *ch, off_t offset,\n                       const void *buf, size_t count);\nint cio_chunk_sync(struct cio_chunk *ch);\nint cio_chunk_get_content(struct cio_chunk *ch, char **buf, size_t *size);\nint cio_chunk_get_content_copy(struct cio_chunk *ch,\n                               void **out_buf, size_t *out_size);\nssize_t cio_chunk_get_content_size(struct cio_chunk *ch);\nssize_t cio_chunk_get_real_size(struct cio_chunk *ch);\nsize_t cio_chunk_get_content_end_pos(struct cio_chunk *ch);\nvoid cio_chunk_close_stream(struct cio_stream *st);\nchar *cio_chunk_hash(struct cio_chunk *ch);\nint cio_chunk_lock(struct cio_chunk *ch);\nint cio_chunk_unlock(struct cio_chunk *ch);\nint cio_chunk_is_locked(struct cio_chunk *ch);\nint cio_chunk_tx_begin(struct cio_chunk *ch);\nint cio_chunk_tx_commit(struct cio_chunk *ch);\nint cio_chunk_tx_rollback(struct cio_chunk *ch);\nint cio_chunk_is_up(struct cio_chunk *ch);\nint cio_chunk_is_file(struct cio_chunk *ch);\nint cio_chunk_up(struct cio_chunk *ch);\nint cio_chunk_up_force(struct cio_chunk *ch);\nint cio_chunk_down(struct cio_chunk *ch);\nchar *cio_version();\nsize_t cio_chunk_counter_total_add(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_sub(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_up_add(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_up_sub(struct cio_ctx *ctx);\n\nvoid cio_options_init(struct cio_options *options);\nstruct cio_ctx *cio_create(struct cio_options *options);\nvoid cio_destroy(struct cio_ctx *ctx);\nint cio_load(struct cio_ctx *ctx, char *chunk_extension);\nint cio_qsort(struct cio_ctx *ctx, int (*compar)(const void *, const void *));\nvoid cio_set_log_callback(struct cio_ctx *ctx, void (*log_cb));\nint cio_set_log_level(struct cio_ctx *ctx, int level);\nint cio_set_max_chunks_up(struct cio_ctx *ctx, int n);\nint cio_set_realloc_size_hint(struct cio_ctx *ctx, size_t realloc_size_hint);\nvoid cio_enable_file_trimming(struct cio_ctx *ctx);\nvoid cio_disable_file_trimming(struct cio_ctx *ctx);\nint cio_meta_write(struct cio_chunk *ch, char *buf, size_t size);\nint cio_meta_cmp(struct cio_chunk *ch, char *meta_buf, int meta_len);\nint cio_meta_read(struct cio_chunk *ch, char **meta_buf, int *meta_len);\nint cio_meta_size(struct cio_chunk *ch);\nchar *cio_error_get_str(struct cio_chunk *ch);\nint cio_error_get(struct cio_chunk *ch);\nvoid cio_error_set(struct cio_chunk *ch, int status);\nvoid cio_error_reset(struct cio_chunk *ch);\n\nchar *cio_error_get_str(struct cio_chunk *ch)\n{\n    int err = cio_error_get(ch);\n    switch (err) {\n        case -10:\n            return \"bad checksum\";\n        case -11:\n            return \"bad layout or invalid header\";\n        case -12:\n            return \"permission error\";\n        default:\n            return \"no error has been specified\";\n    }\n}\nint cio_error_get(struct cio_chunk *ch)\n{\n    return ch->error_n;\n}\nvoid cio_error_set(struct cio_chunk *ch, int status)\n{\n    ch->error_n = status;\n    if (ch->ctx != ((void*)0)) {\n        ch->ctx->last_chunk_error = status;\n    }\n}\nvoid cio_error_reset(struct cio_chunk *ch)\n{\n    ch->error_n = 0;\n}\n"
+                    },
+                    "field": "Locked",
+                    "function": "cio_chunk_unlock",
+                    "paths": [
+                      {
+                        "branches": [
+                          true
+                        ],
+                        "final_value": false,
+                        "frame_writes": [
+                          [
+                            "error_n",
+                            0
+                          ]
+                        ],
+                        "initial_value": false,
+                        "return_value": -1,
+                        "writes": []
+                      },
+                      {
+                        "branches": [
+                          false
+                        ],
+                        "final_value": false,
+                        "frame_writes": [
+                          [
+                            "error_n",
+                            0
+                          ]
+                        ],
+                        "initial_value": true,
+                        "return_value": 0,
+                        "writes": [
+                          false
+                        ]
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "85d3b219c6b52082d74903b10fd0d5e4178db1b81ee65fb87fa0dd2914c324d2",
+                  "witness_kind": "boolean_field_contract"
+                },
+                "before": {
+                  "summary": {
+                    "dependencies": {
+                      "cio_error_reset": "typedef long int ptrdiff_t;\ntypedef long unsigned int size_t;\ntypedef int wchar_t;\ntypedef struct {\n  long long __clang_max_align_nonce1\n      __attribute__((__aligned__(__alignof__(long long))));\n  long double __clang_max_align_nonce2\n      __attribute__((__aligned__(__alignof__(long double))));\n} max_align_t;\ntypedef _Complex float __cfloat128 __attribute__ ((__mode__ (__TC__)));\ntypedef __float128 _Float128;\ntypedef float _Float32;\ntypedef double _Float64;\ntypedef double _Float32x;\ntypedef long double _Float64x;\ntypedef struct\n  {\n    int quot;\n    int rem;\n  } div_t;\ntypedef struct\n  {\n    long int quot;\n    long int rem;\n  } ldiv_t;\n__extension__ typedef struct\n  {\n    long long int quot;\n    long long int rem;\n  } lldiv_t;\nextern size_t __ctype_get_mb_cur_max (void) __attribute__ ((__nothrow__ )) ;\nextern double atof (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern int atoi (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern long int atol (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\n__extension__ extern long long int atoll (const char *__nptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\nextern double strtod (const char *__restrict __nptr,\n        char **__restrict __endptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern float strtof (const char *__restrict __nptr,\n       char **__restrict __endptr) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long double strtold (const char *__restrict __nptr,\n       char **__restrict __endptr)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int strtol (const char *__restrict __nptr,\n   char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern unsigned long int strtoul (const char *__restrict __nptr,\n      char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern long long int strtoq (const char *__restrict __nptr,\n        char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern unsigned long long int strtouq (const char *__restrict __nptr,\n           char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern long long int strtoll (const char *__restrict __nptr,\n         char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\n__extension__\nextern unsigned long long int strtoull (const char *__restrict __nptr,\n     char **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern char *l64a (long int __n) __attribute__ ((__nothrow__ )) ;\nextern long int a64l (const char *__s)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;\ntypedef unsigned char __u_char;\ntypedef unsigned short int __u_short;\ntypedef unsigned int __u_int;\ntypedef unsigned long int __u_long;\ntypedef signed char __int8_t;\ntypedef unsigned char __uint8_t;\ntypedef signed short int __int16_t;\ntypedef unsigned short int __uint16_t;\ntypedef signed int __int32_t;\ntypedef unsigned int __uint32_t;\ntypedef signed long int __int64_t;\ntypedef unsigned long int __uint64_t;\ntypedef __int8_t __int_least8_t;\ntypedef __uint8_t __uint_least8_t;\ntypedef __int16_t __int_least16_t;\ntypedef __uint16_t __uint_least16_t;\ntypedef __int32_t __int_least32_t;\ntypedef __uint32_t __uint_least32_t;\ntypedef __int64_t __int_least64_t;\ntypedef __uint64_t __uint_least64_t;\ntypedef long int __quad_t;\ntypedef unsigned long int __u_quad_t;\ntypedef long int __intmax_t;\ntypedef unsigned long int __uintmax_t;\ntypedef unsigned long int __dev_t;\ntypedef unsigned int __uid_t;\ntypedef unsigned int __gid_t;\ntypedef unsigned long int __ino_t;\ntypedef unsigned long int __ino64_t;\ntypedef unsigned int __mode_t;\ntypedef unsigned long int __nlink_t;\ntypedef long int __off_t;\ntypedef long int __off64_t;\ntypedef int __pid_t;\ntypedef struct { int __val[2]; } __fsid_t;\ntypedef long int __clock_t;\ntypedef unsigned long int __rlim_t;\ntypedef unsigned long int __rlim64_t;\ntypedef unsigned int __id_t;\ntypedef long int __time_t;\ntypedef unsigned int __useconds_t;\ntypedef long int __suseconds_t;\ntypedef long int __suseconds64_t;\ntypedef int __daddr_t;\ntypedef int __key_t;\ntypedef int __clockid_t;\ntypedef void * __timer_t;\ntypedef long int __blksize_t;\ntypedef long int __blkcnt_t;\ntypedef long int __blkcnt64_t;\ntypedef unsigned long int __fsblkcnt_t;\ntypedef unsigned long int __fsblkcnt64_t;\ntypedef unsigned long int __fsfilcnt_t;\ntypedef unsigned long int __fsfilcnt64_t;\ntypedef long int __fsword_t;\ntypedef long int __ssize_t;\ntypedef long int __syscall_slong_t;\ntypedef unsigned long int __syscall_ulong_t;\ntypedef __off64_t __loff_t;\ntypedef char *__caddr_t;\ntypedef long int __intptr_t;\ntypedef unsigned int __socklen_t;\ntypedef int __sig_atomic_t;\ntypedef __u_char u_char;\ntypedef __u_short u_short;\ntypedef __u_int u_int;\ntypedef __u_long u_long;\ntypedef __quad_t quad_t;\ntypedef __u_quad_t u_quad_t;\ntypedef __fsid_t fsid_t;\ntypedef __loff_t loff_t;\ntypedef __ino_t ino_t;\ntypedef __dev_t dev_t;\ntypedef __gid_t gid_t;\ntypedef __mode_t mode_t;\ntypedef __nlink_t nlink_t;\ntypedef __uid_t uid_t;\ntypedef __off_t off_t;\ntypedef __pid_t pid_t;\ntypedef __id_t id_t;\ntypedef __ssize_t ssize_t;\ntypedef __daddr_t daddr_t;\ntypedef __caddr_t caddr_t;\ntypedef __key_t key_t;\ntypedef __clock_t clock_t;\n\ntypedef __clockid_t clockid_t;\ntypedef __time_t time_t;\ntypedef __timer_t timer_t;\ntypedef unsigned long int ulong;\ntypedef unsigned short int ushort;\ntypedef unsigned int uint;\ntypedef __int8_t int8_t;\ntypedef __int16_t int16_t;\ntypedef __int32_t int32_t;\ntypedef __int64_t int64_t;\ntypedef __uint8_t u_int8_t;\ntypedef __uint16_t u_int16_t;\ntypedef __uint32_t u_int32_t;\ntypedef __uint64_t u_int64_t;\ntypedef int register_t __attribute__ ((__mode__ (__word__)));\nstatic __inline __uint16_t\n__bswap_16 (__uint16_t __bsx)\n{\n  return ((__uint16_t) ((((__bsx) >> 8) & 0xff) | (((__bsx) & 0xff) << 8)));\n}\nstatic __inline __uint32_t\n__bswap_32 (__uint32_t __bsx)\n{\n  return ((((__bsx) & 0xff000000u) >> 24) | (((__bsx) & 0x00ff0000u) >> 8) | (((__bsx) & 0x0000ff00u) << 8) | (((__bsx) & 0x000000ffu) << 24));\n}\n__extension__ static __inline __uint64_t\n__bswap_64 (__uint64_t __bsx)\n{\n  return ((((__bsx) & 0xff00000000000000ull) >> 56) | (((__bsx) & 0x00ff000000000000ull) >> 40) | (((__bsx) & 0x0000ff0000000000ull) >> 24) | (((__bsx) & 0x000000ff00000000ull) >> 8) | (((__bsx) & 0x00000000ff000000ull) << 8) | (((__bsx) & 0x0000000000ff0000ull) << 24) | (((__bsx) & 0x000000000000ff00ull) << 40) | (((__bsx) & 0x00000000000000ffull) << 56));\n}\nstatic __inline __uint16_t\n__uint16_identity (__uint16_t __x)\n{\n  return __x;\n}\nstatic __inline __uint32_t\n__uint32_identity (__uint32_t __x)\n{\n  return __x;\n}\nstatic __inline __uint64_t\n__uint64_identity (__uint64_t __x)\n{\n  return __x;\n}\ntypedef struct\n{\n  unsigned long int __val[(1024 / (8 * sizeof (unsigned long int)))];\n} __sigset_t;\ntypedef __sigset_t sigset_t;\nstruct timeval\n{\n  __time_t tv_sec;\n  __suseconds_t tv_usec;\n};\n\nstruct timespec\n{\n  __time_t tv_sec;\n  __syscall_slong_t tv_nsec;\n};\ntypedef __suseconds_t suseconds_t;\ntypedef long int __fd_mask;\ntypedef struct\n  {\n    __fd_mask __fds_bits[1024 / (8 * (int) sizeof (__fd_mask))];\n  } fd_set;\ntypedef __fd_mask fd_mask;\nextern int select (int __nfds, fd_set *__restrict __readfds,\n     fd_set *__restrict __writefds,\n     fd_set *__restrict __exceptfds,\n     struct timeval *__restrict __timeout);\nextern int pselect (int __nfds, fd_set *__restrict __readfds,\n      fd_set *__restrict __writefds,\n      fd_set *__restrict __exceptfds,\n      const struct timespec *__restrict __timeout,\n      const __sigset_t *__restrict __sigmask);\ntypedef __blksize_t blksize_t;\ntypedef __blkcnt_t blkcnt_t;\ntypedef __fsblkcnt_t fsblkcnt_t;\ntypedef __fsfilcnt_t fsfilcnt_t;\n\ntypedef union\n{\n  __extension__ unsigned long long int __value64;\n  struct\n  {\n    unsigned int __low;\n    unsigned int __high;\n  } __value32;\n} __atomic_wide_counter;\ntypedef struct __pthread_internal_list\n{\n  struct __pthread_internal_list *__prev;\n  struct __pthread_internal_list *__next;\n} __pthread_list_t;\ntypedef struct __pthread_internal_slist\n{\n  struct __pthread_internal_slist *__next;\n} __pthread_slist_t;\nstruct __pthread_mutex_s\n{\n  int __lock;\n  unsigned int __count;\n  int __owner;\n  unsigned int __nusers;\n  int __kind;\n  short __spins;\n  short __unused;\n  __pthread_list_t __list;\n};\nstruct __pthread_rwlock_arch_t\n{\n  unsigned int __readers;\n  unsigned int __writers;\n  unsigned int __wrphase_futex;\n  unsigned int __writers_futex;\n  unsigned int __pad3;\n  unsigned int __pad4;\n  int __cur_writer;\n  int __shared;\n  unsigned long int __pad1;\n  unsigned long int __pad2;\n  unsigned int __flags;\n};\nstruct __pthread_cond_s\n{\n  __atomic_wide_counter __wseq;\n  __atomic_wide_counter __g1_start;\n  unsigned int __g_size[2] ;\n  unsigned int __g1_orig_size;\n  unsigned int __wrefs;\n  unsigned int __g_signals[2];\n  unsigned int __unused_initialized_1;\n  unsigned int __unused_initialized_2;\n};\ntypedef unsigned int __tss_t;\ntypedef unsigned long int __thrd_t;\ntypedef struct\n{\n  int __data ;\n} __once_flag;\ntypedef unsigned long int pthread_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_mutexattr_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_condattr_t;\ntypedef unsigned int pthread_key_t;\ntypedef int pthread_once_t;\nunion pthread_attr_t\n{\n  char __size[56];\n  long int __align;\n};\ntypedef union pthread_attr_t pthread_attr_t;\ntypedef union\n{\n  struct __pthread_mutex_s __data;\n  char __size[40];\n  long int __align;\n} pthread_mutex_t;\ntypedef union\n{\n  struct __pthread_cond_s __data;\n  char __size[48];\n  __extension__ long long int __align;\n} pthread_cond_t;\ntypedef union\n{\n  struct __pthread_rwlock_arch_t __data;\n  char __size[56];\n  long int __align;\n} pthread_rwlock_t;\ntypedef union\n{\n  char __size[8];\n  long int __align;\n} pthread_rwlockattr_t;\ntypedef volatile int pthread_spinlock_t;\ntypedef union\n{\n  char __size[32];\n  long int __align;\n} pthread_barrier_t;\ntypedef union\n{\n  char __size[4];\n  int __align;\n} pthread_barrierattr_t;\nextern long int random (void) __attribute__ ((__nothrow__ ));\nextern void srandom (unsigned int __seed) __attribute__ ((__nothrow__ ));\nextern char *initstate (unsigned int __seed, char *__statebuf,\n   size_t __statelen) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern char *setstate (char *__statebuf) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct random_data\n  {\n    int32_t *fptr;\n    int32_t *rptr;\n    int32_t *state;\n    int rand_type;\n    int rand_deg;\n    int rand_sep;\n    int32_t *end_ptr;\n  };\nextern int random_r (struct random_data *__restrict __buf,\n       int32_t *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int srandom_r (unsigned int __seed, struct random_data *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int initstate_r (unsigned int __seed, char *__restrict __statebuf,\n   size_t __statelen,\n   struct random_data *__restrict __buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4)));\nextern int setstate_r (char *__restrict __statebuf,\n         struct random_data *__restrict __buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int rand (void) __attribute__ ((__nothrow__ ));\nextern void srand (unsigned int __seed) __attribute__ ((__nothrow__ ));\nextern int rand_r (unsigned int *__seed) __attribute__ ((__nothrow__ ));\nextern double drand48 (void) __attribute__ ((__nothrow__ ));\nextern double erand48 (unsigned short int __xsubi[3]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int lrand48 (void) __attribute__ ((__nothrow__ ));\nextern long int nrand48 (unsigned short int __xsubi[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int mrand48 (void) __attribute__ ((__nothrow__ ));\nextern long int jrand48 (unsigned short int __xsubi[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void srand48 (long int __seedval) __attribute__ ((__nothrow__ ));\nextern unsigned short int *seed48 (unsigned short int __seed16v[3])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void lcong48 (unsigned short int __param[7]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct drand48_data\n  {\n    unsigned short int __x[3];\n    unsigned short int __old_x[3];\n    unsigned short int __c;\n    unsigned short int __init;\n    __extension__ unsigned long long int __a;\n  };\nextern int drand48_r (struct drand48_data *__restrict __buffer,\n        double *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int erand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        double *__restrict __result) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int lrand48_r (struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int nrand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int mrand48_r (struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int jrand48_r (unsigned short int __xsubi[3],\n        struct drand48_data *__restrict __buffer,\n        long int *__restrict __result)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int srand48_r (long int __seedval, struct drand48_data *__buffer)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int seed48_r (unsigned short int __seed16v[3],\n       struct drand48_data *__buffer) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int lcong48_r (unsigned short int __param[7],\n        struct drand48_data *__buffer)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern __uint32_t arc4random (void)\n     __attribute__ ((__nothrow__ )) ;\nextern void arc4random_buf (void *__buf, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern __uint32_t arc4random_uniform (__uint32_t __upper_bound)\n     __attribute__ ((__nothrow__ )) ;\nextern void *malloc (size_t __size) __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__))\n                                         ;\nextern void *calloc (size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__)) ;\nextern void *realloc (void *__ptr, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__warn_unused_result__)) ;\nextern void free (void *__ptr) __attribute__ ((__nothrow__ ));\nextern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__warn_unused_result__))\n                       ;\nextern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)\n     __attribute__ ((__nothrow__ )) ;\nextern void *alloca (size_t __size) __attribute__ ((__nothrow__ ));\nextern void *valloc (size_t __size) __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__))\n                                         ;\nextern int posix_memalign (void **__memptr, size_t __alignment, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern void *aligned_alloc (size_t __alignment, size_t __size)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__malloc__)) __attribute__ ((__alloc_align__ (1)))\n                                         ;\nextern void abort (void) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__)) __attribute__ ((__cold__));\nextern int atexit (void (*__func) (void)) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int at_quick_exit (void (*__func) (void)) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int on_exit (void (*__func) (int __status, void *__arg), void *__arg)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern void quick_exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern void _Exit (int __status) __attribute__ ((__nothrow__ )) __attribute__ ((__noreturn__));\nextern char *getenv (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int putenv (char *__string) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int setenv (const char *__name, const char *__value, int __replace)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int unsetenv (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int clearenv (void) __attribute__ ((__nothrow__ ));\nextern char *mktemp (char *__template) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int mkstemp (char *__template) __attribute__ ((__nonnull__ (1))) ;\nextern int mkstemps (char *__template, int __suffixlen) __attribute__ ((__nonnull__ (1))) ;\nextern char *mkdtemp (char *__template) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int system (const char *__command) ;\nextern char *realpath (const char *__restrict __name,\n         char *__restrict __resolved) __attribute__ ((__nothrow__ )) ;\ntypedef int (*__compar_fn_t) (const void *, const void *);\nextern void *bsearch (const void *__key, const void *__base,\n        size_t __nmemb, size_t __size, __compar_fn_t __compar)\n     __attribute__ ((__nonnull__ (1, 2, 5))) ;\nextern void qsort (void *__base, size_t __nmemb, size_t __size,\n     __compar_fn_t __compar) __attribute__ ((__nonnull__ (1, 4)));\nextern int abs (int __x) __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern long int labs (long int __x) __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\n__extension__ extern long long int llabs (long long int __x)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern div_t div (int __numer, int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern ldiv_t ldiv (long int __numer, long int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\n__extension__ extern lldiv_t lldiv (long long int __numer,\n        long long int __denom)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__)) ;\nextern char *ecvt (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *fcvt (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *gcvt (double __value, int __ndigit, char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3))) ;\nextern char *qecvt (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *qfcvt (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4))) ;\nextern char *qgcvt (long double __value, int __ndigit, char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3))) ;\nextern int ecvt_r (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign, char *__restrict __buf,\n     size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int fcvt_r (double __value, int __ndigit, int *__restrict __decpt,\n     int *__restrict __sign, char *__restrict __buf,\n     size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int qecvt_r (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int qfcvt_r (long double __value, int __ndigit,\n      int *__restrict __decpt, int *__restrict __sign,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (3, 4, 5)));\nextern int mblen (const char *__s, size_t __n) __attribute__ ((__nothrow__ ));\nextern int mbtowc (wchar_t *__restrict __pwc,\n     const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ ));\nextern int wctomb (char *__s, wchar_t __wchar) __attribute__ ((__nothrow__ ));\nextern size_t mbstowcs (wchar_t *__restrict __pwcs,\n   const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ ))\n                                      ;\nextern size_t wcstombs (char *__restrict __s,\n   const wchar_t *__restrict __pwcs, size_t __n)\n     __attribute__ ((__nothrow__ ))\n                                    ;\nextern int rpmatch (const char *__response) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int getsubopt (char **__restrict __optionp,\n        char *const *__restrict __tokens,\n        char **__restrict __valuep)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2, 3))) ;\nextern int getloadavg (double __loadavg[], int __nelem)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nstruct mk_list\n{\n    struct mk_list *prev, *next;\n};\nstatic inline void mk_list_init(struct mk_list *list)\n{\n    list->next = list;\n    list->prev = list;\n}\nstatic inline void __mk_list_add(struct mk_list *_new, struct mk_list *prev,\n                                 struct mk_list *next)\n{\n    next->prev = _new;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n}\nstatic inline void mk_list_add(struct mk_list *_new, struct mk_list *head)\n{\n    __mk_list_add(_new, head->prev, head);\n}\nstatic inline void mk_list_add_after(struct mk_list *_new,\n                                     struct mk_list *prev,\n                                     struct mk_list *head)\n{\n    struct mk_list *next;\n    if (head->prev == head->next || head->prev == prev) {\n        mk_list_add(_new, head);\n        return;\n    }\n    next = prev->next;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n    next->prev = _new;\n}\nstatic inline int mk_list_is_empty(struct mk_list *head)\n{\n    if (head->next == head) return 0;\n    else return -1;\n}\nstatic inline void mk_list_add_before(struct mk_list *_new,\n                                      struct mk_list *next,\n                                      struct mk_list *head)\n{\n    struct mk_list *prev;\n    if (_new == ((void*)0) || next == ((void*)0) || head == ((void*)0)) {\n        return;\n    }\n    if (mk_list_is_empty(head) == 0 ||\n        next == head) {\n        mk_list_add(_new, head);\n        return;\n    }\n    prev = next->prev;\n    _new->next = next;\n    _new->prev = prev;\n    prev->next = _new;\n    next->prev = _new;\n}\nstatic inline void mk_list_append(struct mk_list *_new, struct mk_list *head)\n{\n    if (mk_list_is_empty(head) == 0) {\n        __mk_list_add(_new, head->prev, head);\n    }\n    else {\n        mk_list_add_after(_new,\n                          head->prev,\n                          head);\n    }\n}\nstatic inline void mk_list_prepend(struct mk_list *_new, struct mk_list *head)\n{\n    if (mk_list_is_empty(head) == 0) {\n        __mk_list_add(_new, head->prev, head);\n    }\n    else {\n        mk_list_add_before(_new,\n                           head->next,\n                           head);\n    }\n}\nstatic inline void __mk_list_del(struct mk_list *prev, struct mk_list *next)\n{\n    prev->next = next;\n    next->prev = prev;\n}\nstatic inline void mk_list_del(struct mk_list *entry)\n{\n    __mk_list_del(entry->prev, entry->next);\n    entry->prev = ((void*)0);\n    entry->next = ((void*)0);\n}\nstatic inline int mk_list_is_set(struct mk_list *head)\n{\n    if (head->next && head->prev) {\n        return 0;\n    }\n    return -1;\n}\nstatic inline int mk_list_size(struct mk_list *head)\n{\n    int ret = 0;\n    struct mk_list *it;\n    for (it = head->next; it != head; it = it->next, ret++);\n    return ret;\n}\nstatic inline void mk_list_entry_init(struct mk_list *list)\n{\n    list->next = ((void*)0);\n    list->prev = ((void*)0);\n}\nstatic inline int mk_list_entry_is_orphan(struct mk_list *head)\n{\n    if (head->next != ((void*)0) &&\n        head->prev != ((void*)0)) {\n        return 0;\n    }\n    return !0;\n}\nstatic inline int mk_list_entry_orphan(struct mk_list *head)\n{\n    if (head->next && head->prev) {\n        return 0;\n    }\n    return -1;\n}\nstatic inline void mk_list_cat(struct mk_list *list, struct mk_list *head)\n{\n    struct mk_list *last;\n    last = head->prev;\n    last->next = list->next;\n    list->next->prev = last;\n    list->prev->next = head;\n    head->prev = list->prev;\n}\nstruct cio_ctx;\nstruct cio_options {\n    int initialized;\n    int flags;\n    char *root_path;\n    int log_level;\n    int (*log_cb)(struct cio_ctx *, int, const char *, int, char *);\n    char *user;\n    char *group;\n    char *chmod;\n    int realloc_size_hint;\n};\nstruct cio_ctx {\n    int page_size;\n    int realloc_size_hint;\n    struct cio_options options;\n    void *processed_user;\n    void *processed_group;\n    size_t total_chunks;\n    size_t total_chunks_up;\n    size_t max_chunks_up;\n    struct mk_list streams;\n    int last_chunk_error;\n};\nstruct cio_stream {\n    int type;\n    char *name;\n    struct mk_list _head;\n    struct mk_list chunks;\n    struct mk_list chunks_up;\n    struct mk_list chunks_down;\n    void *parent;\n};\nstruct cio_stream *cio_stream_create(struct cio_ctx *ctx, const char *name,\n                                     int type);\nstruct cio_stream *cio_stream_get(struct cio_ctx *ctx, const char *name);\nint cio_stream_delete(struct cio_stream *st);\nvoid cio_stream_destroy(struct cio_stream *st);\nvoid cio_stream_destroy_all(struct cio_ctx *ctx);\nsize_t cio_stream_size_chunks_up(struct cio_stream *st);\n\ntypedef __uint8_t uint8_t;\ntypedef __uint16_t uint16_t;\ntypedef __uint32_t uint32_t;\ntypedef __uint64_t uint64_t;\ntypedef __int_least8_t int_least8_t;\ntypedef __int_least16_t int_least16_t;\ntypedef __int_least32_t int_least32_t;\ntypedef __int_least64_t int_least64_t;\ntypedef __uint_least8_t uint_least8_t;\ntypedef __uint_least16_t uint_least16_t;\ntypedef __uint_least32_t uint_least32_t;\ntypedef __uint_least64_t uint_least64_t;\ntypedef signed char int_fast8_t;\ntypedef long int int_fast16_t;\ntypedef long int int_fast32_t;\ntypedef long int int_fast64_t;\ntypedef unsigned char uint_fast8_t;\ntypedef unsigned long int uint_fast16_t;\ntypedef unsigned long int uint_fast32_t;\ntypedef unsigned long int uint_fast64_t;\ntypedef long int intptr_t;\ntypedef unsigned long int uintptr_t;\ntypedef __intmax_t intmax_t;\ntypedef __uintmax_t uintmax_t;\ntypedef int __gwchar_t;\ntypedef struct\n  {\n    long int quot;\n    long int rem;\n  } imaxdiv_t;\nextern intmax_t imaxabs (intmax_t __n) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern imaxdiv_t imaxdiv (intmax_t __numer, intmax_t __denom)\n      __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern intmax_t strtoimax (const char *__restrict __nptr,\n      char **__restrict __endptr, int __base) __attribute__ ((__nothrow__ ));\nextern uintmax_t strtoumax (const char *__restrict __nptr,\n       char ** __restrict __endptr, int __base) __attribute__ ((__nothrow__ ));\nextern intmax_t wcstoimax (const __gwchar_t *__restrict __nptr,\n      __gwchar_t **__restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ ));\nextern uintmax_t wcstoumax (const __gwchar_t *__restrict __nptr,\n       __gwchar_t ** __restrict __endptr, int __base)\n     __attribute__ ((__nothrow__ ));\n\ntypedef __useconds_t useconds_t;\ntypedef __socklen_t socklen_t;\nextern int access (const char *__name, int __type) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int faccessat (int __fd, const char *__file, int __type, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2))) ;\nextern __off_t lseek (int __fd, __off_t __offset, int __whence) __attribute__ ((__nothrow__ ));\nextern int close (int __fd);\nextern void closefrom (int __lowfd) __attribute__ ((__nothrow__ ));\nextern ssize_t read (int __fd, void *__buf, size_t __nbytes)\n                                                  ;\nextern ssize_t write (int __fd, const void *__buf, size_t __n)\n                                         ;\nextern ssize_t pread (int __fd, void *__buf, size_t __nbytes,\n        __off_t __offset)\n                                                  ;\nextern ssize_t pwrite (int __fd, const void *__buf, size_t __n,\n         __off_t __offset)\n                                         ;\nextern int pipe (int __pipedes[2]) __attribute__ ((__nothrow__ )) ;\nextern unsigned int alarm (unsigned int __seconds) __attribute__ ((__nothrow__ ));\nextern unsigned int sleep (unsigned int __seconds);\nextern __useconds_t ualarm (__useconds_t __value, __useconds_t __interval)\n     __attribute__ ((__nothrow__ ));\nextern int usleep (__useconds_t __useconds);\nextern int pause (void);\nextern int chown (const char *__file, __uid_t __owner, __gid_t __group)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchown (int __fd, __uid_t __owner, __gid_t __group) __attribute__ ((__nothrow__ )) ;\nextern int lchown (const char *__file, __uid_t __owner, __gid_t __group)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchownat (int __fd, const char *__file, __uid_t __owner,\n       __gid_t __group, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2))) ;\nextern int chdir (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int fchdir (int __fd) __attribute__ ((__nothrow__ )) ;\nextern char *getcwd (char *__buf, size_t __size) __attribute__ ((__nothrow__ )) ;\nextern char *getwd (char *__buf)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) __attribute__ ((__deprecated__))\n                                       ;\nextern int dup (int __fd) __attribute__ ((__nothrow__ )) ;\nextern int dup2 (int __fd, int __fd2) __attribute__ ((__nothrow__ ));\nextern char **__environ;\nextern int execve (const char *__path, char *const __argv[],\n     char *const __envp[]) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int fexecve (int __fd, char *const __argv[], char *const __envp[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int execv (const char *__path, char *const __argv[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execle (const char *__path, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execl (const char *__path, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execvp (const char *__file, char *const __argv[])\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int execlp (const char *__file, const char *__arg, ...)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nextern int nice (int __inc) __attribute__ ((__nothrow__ )) ;\nextern void _exit (int __status) __attribute__ ((__noreturn__));\nenum\n  {\n    _PC_LINK_MAX,\n    _PC_MAX_CANON,\n    _PC_MAX_INPUT,\n    _PC_NAME_MAX,\n    _PC_PATH_MAX,\n    _PC_PIPE_BUF,\n    _PC_CHOWN_RESTRICTED,\n    _PC_NO_TRUNC,\n    _PC_VDISABLE,\n    _PC_SYNC_IO,\n    _PC_ASYNC_IO,\n    _PC_PRIO_IO,\n    _PC_SOCK_MAXBUF,\n    _PC_FILESIZEBITS,\n    _PC_REC_INCR_XFER_SIZE,\n    _PC_REC_MAX_XFER_SIZE,\n    _PC_REC_MIN_XFER_SIZE,\n    _PC_REC_XFER_ALIGN,\n    _PC_ALLOC_SIZE_MIN,\n    _PC_SYMLINK_MAX,\n    _PC_2_SYMLINKS\n  };\nenum\n  {\n    _SC_ARG_MAX,\n    _SC_CHILD_MAX,\n    _SC_CLK_TCK,\n    _SC_NGROUPS_MAX,\n    _SC_OPEN_MAX,\n    _SC_STREAM_MAX,\n    _SC_TZNAME_MAX,\n    _SC_JOB_CONTROL,\n    _SC_SAVED_IDS,\n    _SC_REALTIME_SIGNALS,\n    _SC_PRIORITY_SCHEDULING,\n    _SC_TIMERS,\n    _SC_ASYNCHRONOUS_IO,\n    _SC_PRIORITIZED_IO,\n    _SC_SYNCHRONIZED_IO,\n    _SC_FSYNC,\n    _SC_MAPPED_FILES,\n    _SC_MEMLOCK,\n    _SC_MEMLOCK_RANGE,\n    _SC_MEMORY_PROTECTION,\n    _SC_MESSAGE_PASSING,\n    _SC_SEMAPHORES,\n    _SC_SHARED_MEMORY_OBJECTS,\n    _SC_AIO_LISTIO_MAX,\n    _SC_AIO_MAX,\n    _SC_AIO_PRIO_DELTA_MAX,\n    _SC_DELAYTIMER_MAX,\n    _SC_MQ_OPEN_MAX,\n    _SC_MQ_PRIO_MAX,\n    _SC_VERSION,\n    _SC_PAGESIZE,\n    _SC_RTSIG_MAX,\n    _SC_SEM_NSEMS_MAX,\n    _SC_SEM_VALUE_MAX,\n    _SC_SIGQUEUE_MAX,\n    _SC_TIMER_MAX,\n    _SC_BC_BASE_MAX,\n    _SC_BC_DIM_MAX,\n    _SC_BC_SCALE_MAX,\n    _SC_BC_STRING_MAX,\n    _SC_COLL_WEIGHTS_MAX,\n    _SC_EQUIV_CLASS_MAX,\n    _SC_EXPR_NEST_MAX,\n    _SC_LINE_MAX,\n    _SC_RE_DUP_MAX,\n    _SC_CHARCLASS_NAME_MAX,\n    _SC_2_VERSION,\n    _SC_2_C_BIND,\n    _SC_2_C_DEV,\n    _SC_2_FORT_DEV,\n    _SC_2_FORT_RUN,\n    _SC_2_SW_DEV,\n    _SC_2_LOCALEDEF,\n    _SC_PII,\n    _SC_PII_XTI,\n    _SC_PII_SOCKET,\n    _SC_PII_INTERNET,\n    _SC_PII_OSI,\n    _SC_POLL,\n    _SC_SELECT,\n    _SC_UIO_MAXIOV,\n    _SC_IOV_MAX = _SC_UIO_MAXIOV,\n    _SC_PII_INTERNET_STREAM,\n    _SC_PII_INTERNET_DGRAM,\n    _SC_PII_OSI_COTS,\n    _SC_PII_OSI_CLTS,\n    _SC_PII_OSI_M,\n    _SC_T_IOV_MAX,\n    _SC_THREADS,\n    _SC_THREAD_SAFE_FUNCTIONS,\n    _SC_GETGR_R_SIZE_MAX,\n    _SC_GETPW_R_SIZE_MAX,\n    _SC_LOGIN_NAME_MAX,\n    _SC_TTY_NAME_MAX,\n    _SC_THREAD_DESTRUCTOR_ITERATIONS,\n    _SC_THREAD_KEYS_MAX,\n    _SC_THREAD_STACK_MIN,\n    _SC_THREAD_THREADS_MAX,\n    _SC_THREAD_ATTR_STACKADDR,\n    _SC_THREAD_ATTR_STACKSIZE,\n    _SC_THREAD_PRIORITY_SCHEDULING,\n    _SC_THREAD_PRIO_INHERIT,\n    _SC_THREAD_PRIO_PROTECT,\n    _SC_THREAD_PROCESS_SHARED,\n    _SC_NPROCESSORS_CONF,\n    _SC_NPROCESSORS_ONLN,\n    _SC_PHYS_PAGES,\n    _SC_AVPHYS_PAGES,\n    _SC_ATEXIT_MAX,\n    _SC_PASS_MAX,\n    _SC_XOPEN_VERSION,\n    _SC_XOPEN_XCU_VERSION,\n    _SC_XOPEN_UNIX,\n    _SC_XOPEN_CRYPT,\n    _SC_XOPEN_ENH_I18N,\n    _SC_XOPEN_SHM,\n    _SC_2_CHAR_TERM,\n    _SC_2_C_VERSION,\n    _SC_2_UPE,\n    _SC_XOPEN_XPG2,\n    _SC_XOPEN_XPG3,\n    _SC_XOPEN_XPG4,\n    _SC_CHAR_BIT,\n    _SC_CHAR_MAX,\n    _SC_CHAR_MIN,\n    _SC_INT_MAX,\n    _SC_INT_MIN,\n    _SC_LONG_BIT,\n    _SC_WORD_BIT,\n    _SC_MB_LEN_MAX,\n    _SC_NZERO,\n    _SC_SSIZE_MAX,\n    _SC_SCHAR_MAX,\n    _SC_SCHAR_MIN,\n    _SC_SHRT_MAX,\n    _SC_SHRT_MIN,\n    _SC_UCHAR_MAX,\n    _SC_UINT_MAX,\n    _SC_ULONG_MAX,\n    _SC_USHRT_MAX,\n    _SC_NL_ARGMAX,\n    _SC_NL_LANGMAX,\n    _SC_NL_MSGMAX,\n    _SC_NL_NMAX,\n    _SC_NL_SETMAX,\n    _SC_NL_TEXTMAX,\n    _SC_XBS5_ILP32_OFF32,\n    _SC_XBS5_ILP32_OFFBIG,\n    _SC_XBS5_LP64_OFF64,\n    _SC_XBS5_LPBIG_OFFBIG,\n    _SC_XOPEN_LEGACY,\n    _SC_XOPEN_REALTIME,\n    _SC_XOPEN_REALTIME_THREADS,\n    _SC_ADVISORY_INFO,\n    _SC_BARRIERS,\n    _SC_BASE,\n    _SC_C_LANG_SUPPORT,\n    _SC_C_LANG_SUPPORT_R,\n    _SC_CLOCK_SELECTION,\n    _SC_CPUTIME,\n    _SC_THREAD_CPUTIME,\n    _SC_DEVICE_IO,\n    _SC_DEVICE_SPECIFIC,\n    _SC_DEVICE_SPECIFIC_R,\n    _SC_FD_MGMT,\n    _SC_FIFO,\n    _SC_PIPE,\n    _SC_FILE_ATTRIBUTES,\n    _SC_FILE_LOCKING,\n    _SC_FILE_SYSTEM,\n    _SC_MONOTONIC_CLOCK,\n    _SC_MULTI_PROCESS,\n    _SC_SINGLE_PROCESS,\n    _SC_NETWORKING,\n    _SC_READER_WRITER_LOCKS,\n    _SC_SPIN_LOCKS,\n    _SC_REGEXP,\n    _SC_REGEX_VERSION,\n    _SC_SHELL,\n    _SC_SIGNALS,\n    _SC_SPAWN,\n    _SC_SPORADIC_SERVER,\n    _SC_THREAD_SPORADIC_SERVER,\n    _SC_SYSTEM_DATABASE,\n    _SC_SYSTEM_DATABASE_R,\n    _SC_TIMEOUTS,\n    _SC_TYPED_MEMORY_OBJECTS,\n    _SC_USER_GROUPS,\n    _SC_USER_GROUPS_R,\n    _SC_2_PBS,\n    _SC_2_PBS_ACCOUNTING,\n    _SC_2_PBS_LOCATE,\n    _SC_2_PBS_MESSAGE,\n    _SC_2_PBS_TRACK,\n    _SC_SYMLOOP_MAX,\n    _SC_STREAMS,\n    _SC_2_PBS_CHECKPOINT,\n    _SC_V6_ILP32_OFF32,\n    _SC_V6_ILP32_OFFBIG,\n    _SC_V6_LP64_OFF64,\n    _SC_V6_LPBIG_OFFBIG,\n    _SC_HOST_NAME_MAX,\n    _SC_TRACE,\n    _SC_TRACE_EVENT_FILTER,\n    _SC_TRACE_INHERIT,\n    _SC_TRACE_LOG,\n    _SC_LEVEL1_ICACHE_SIZE,\n    _SC_LEVEL1_ICACHE_ASSOC,\n    _SC_LEVEL1_ICACHE_LINESIZE,\n    _SC_LEVEL1_DCACHE_SIZE,\n    _SC_LEVEL1_DCACHE_ASSOC,\n    _SC_LEVEL1_DCACHE_LINESIZE,\n    _SC_LEVEL2_CACHE_SIZE,\n    _SC_LEVEL2_CACHE_ASSOC,\n    _SC_LEVEL2_CACHE_LINESIZE,\n    _SC_LEVEL3_CACHE_SIZE,\n    _SC_LEVEL3_CACHE_ASSOC,\n    _SC_LEVEL3_CACHE_LINESIZE,\n    _SC_LEVEL4_CACHE_SIZE,\n    _SC_LEVEL4_CACHE_ASSOC,\n    _SC_LEVEL4_CACHE_LINESIZE,\n    _SC_IPV6 = _SC_LEVEL1_ICACHE_SIZE + 50,\n    _SC_RAW_SOCKETS,\n    _SC_V7_ILP32_OFF32,\n    _SC_V7_ILP32_OFFBIG,\n    _SC_V7_LP64_OFF64,\n    _SC_V7_LPBIG_OFFBIG,\n    _SC_SS_REPL_MAX,\n    _SC_TRACE_EVENT_NAME_MAX,\n    _SC_TRACE_NAME_MAX,\n    _SC_TRACE_SYS_MAX,\n    _SC_TRACE_USER_EVENT_MAX,\n    _SC_XOPEN_STREAMS,\n    _SC_THREAD_ROBUST_PRIO_INHERIT,\n    _SC_THREAD_ROBUST_PRIO_PROTECT,\n    _SC_MINSIGSTKSZ,\n    _SC_SIGSTKSZ\n  };\nenum\n  {\n    _CS_PATH,\n    _CS_V6_WIDTH_RESTRICTED_ENVS,\n    _CS_GNU_LIBC_VERSION,\n    _CS_GNU_LIBPTHREAD_VERSION,\n    _CS_V5_WIDTH_RESTRICTED_ENVS,\n    _CS_V7_WIDTH_RESTRICTED_ENVS,\n    _CS_LFS_CFLAGS = 1000,\n    _CS_LFS_LDFLAGS,\n    _CS_LFS_LIBS,\n    _CS_LFS_LINTFLAGS,\n    _CS_LFS64_CFLAGS,\n    _CS_LFS64_LDFLAGS,\n    _CS_LFS64_LIBS,\n    _CS_LFS64_LINTFLAGS,\n    _CS_XBS5_ILP32_OFF32_CFLAGS = 1100,\n    _CS_XBS5_ILP32_OFF32_LDFLAGS,\n    _CS_XBS5_ILP32_OFF32_LIBS,\n    _CS_XBS5_ILP32_OFF32_LINTFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_CFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_LDFLAGS,\n    _CS_XBS5_ILP32_OFFBIG_LIBS,\n    _CS_XBS5_ILP32_OFFBIG_LINTFLAGS,\n    _CS_XBS5_LP64_OFF64_CFLAGS,\n    _CS_XBS5_LP64_OFF64_LDFLAGS,\n    _CS_XBS5_LP64_OFF64_LIBS,\n    _CS_XBS5_LP64_OFF64_LINTFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_CFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_LDFLAGS,\n    _CS_XBS5_LPBIG_OFFBIG_LIBS,\n    _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_CFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_LDFLAGS,\n    _CS_POSIX_V6_ILP32_OFF32_LIBS,\n    _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LIBS,\n    _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_CFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_LDFLAGS,\n    _CS_POSIX_V6_LP64_OFF64_LIBS,\n    _CS_POSIX_V6_LP64_OFF64_LINTFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LIBS,\n    _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_CFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_LDFLAGS,\n    _CS_POSIX_V7_ILP32_OFF32_LIBS,\n    _CS_POSIX_V7_ILP32_OFF32_LINTFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_CFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LDFLAGS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LIBS,\n    _CS_POSIX_V7_ILP32_OFFBIG_LINTFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_CFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_LDFLAGS,\n    _CS_POSIX_V7_LP64_OFF64_LIBS,\n    _CS_POSIX_V7_LP64_OFF64_LINTFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_CFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LDFLAGS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LIBS,\n    _CS_POSIX_V7_LPBIG_OFFBIG_LINTFLAGS,\n    _CS_V6_ENV,\n    _CS_V7_ENV\n  };\nextern long int pathconf (const char *__path, int __name)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int fpathconf (int __fd, int __name) __attribute__ ((__nothrow__ ));\nextern long int sysconf (int __name) __attribute__ ((__nothrow__ ));\nextern size_t confstr (int __name, char *__buf, size_t __len) __attribute__ ((__nothrow__ ))\n                                                  ;\nextern __pid_t getpid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getppid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getpgrp (void) __attribute__ ((__nothrow__ ));\nextern __pid_t __getpgid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern __pid_t getpgid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern int setpgid (__pid_t __pid, __pid_t __pgid) __attribute__ ((__nothrow__ ));\nextern int setpgrp (void) __attribute__ ((__nothrow__ ));\nextern __pid_t setsid (void) __attribute__ ((__nothrow__ ));\nextern __pid_t getsid (__pid_t __pid) __attribute__ ((__nothrow__ ));\nextern __uid_t getuid (void) __attribute__ ((__nothrow__ ));\nextern __uid_t geteuid (void) __attribute__ ((__nothrow__ ));\nextern __gid_t getgid (void) __attribute__ ((__nothrow__ ));\nextern __gid_t getegid (void) __attribute__ ((__nothrow__ ));\nextern int getgroups (int __size, __gid_t __list[]) __attribute__ ((__nothrow__ ))\n                                                  ;\nextern int setuid (__uid_t __uid) __attribute__ ((__nothrow__ )) ;\nextern int setreuid (__uid_t __ruid, __uid_t __euid) __attribute__ ((__nothrow__ )) ;\nextern int seteuid (__uid_t __uid) __attribute__ ((__nothrow__ )) ;\nextern int setgid (__gid_t __gid) __attribute__ ((__nothrow__ )) ;\nextern int setregid (__gid_t __rgid, __gid_t __egid) __attribute__ ((__nothrow__ )) ;\nextern int setegid (__gid_t __gid) __attribute__ ((__nothrow__ )) ;\nextern __pid_t fork (void) __attribute__ ((__nothrow__));\nextern __pid_t vfork (void) __attribute__ ((__nothrow__ ));\nextern char *ttyname (int __fd) __attribute__ ((__nothrow__ ));\nextern int ttyname_r (int __fd, char *__buf, size_t __buflen)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)))\n                                                   ;\nextern int isatty (int __fd) __attribute__ ((__nothrow__ ));\nextern int ttyslot (void) __attribute__ ((__nothrow__ ));\nextern int link (const char *__from, const char *__to)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2))) ;\nextern int linkat (int __fromfd, const char *__from, int __tofd,\n     const char *__to, int __flags)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4))) ;\nextern int symlink (const char *__from, const char *__to)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2))) ;\nextern ssize_t readlink (const char *__restrict __path,\n    char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)))\n                                                   ;\nextern int symlinkat (const char *__from, int __tofd,\n        const char *__to) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 3))) ;\nextern ssize_t readlinkat (int __fd, const char *__restrict __path,\n      char *__restrict __buf, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 3)))\n                                                   ;\nextern int unlink (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int unlinkat (int __fd, const char *__name, int __flag)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2)));\nextern int rmdir (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern __pid_t tcgetpgrp (int __fd) __attribute__ ((__nothrow__ ));\nextern int tcsetpgrp (int __fd, __pid_t __pgrp_id) __attribute__ ((__nothrow__ ));\nextern char *getlogin (void);\nextern int getlogin_r (char *__name, size_t __name_len) __attribute__ ((__nonnull__ (1)))\n                                                  ;\nextern int setlogin (const char *__name) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern char *optarg;\nextern int optind;\nextern int opterr;\nextern int optopt;\nextern int getopt (int ___argc, char *const *___argv, const char *__shortopts)\n       __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 3)));\nextern int gethostname (char *__name, size_t __len) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)))\n                                                  ;\nextern int sethostname (const char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int sethostid (long int __id) __attribute__ ((__nothrow__ )) ;\nextern int getdomainname (char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)))\n                                                   ;\nextern int setdomainname (const char *__name, size_t __len)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int vhangup (void) __attribute__ ((__nothrow__ ));\nextern int revoke (const char *__file) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int profil (unsigned short int *__sample_buffer, size_t __size,\n     size_t __offset, unsigned int __scale)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int acct (const char *__name) __attribute__ ((__nothrow__ ));\nextern char *getusershell (void) __attribute__ ((__nothrow__ ));\nextern void endusershell (void) __attribute__ ((__nothrow__ ));\nextern void setusershell (void) __attribute__ ((__nothrow__ ));\nextern int daemon (int __nochdir, int __noclose) __attribute__ ((__nothrow__ )) ;\nextern int chroot (const char *__path) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern char *getpass (const char *__prompt) __attribute__ ((__nonnull__ (1)));\nextern int fsync (int __fd);\nextern long int gethostid (void);\nextern void sync (void) __attribute__ ((__nothrow__ ));\nextern int getpagesize (void) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern int getdtablesize (void) __attribute__ ((__nothrow__ ));\nextern int truncate (const char *__file, __off_t __length)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1))) ;\nextern int ftruncate (int __fd, __off_t __length) __attribute__ ((__nothrow__ )) ;\nextern int brk (void *__addr) __attribute__ ((__nothrow__ )) ;\nextern void *sbrk (intptr_t __delta) __attribute__ ((__nothrow__ ));\nextern long int syscall (long int __sysno, ...) __attribute__ ((__nothrow__ ));\nextern int lockf (int __fd, int __cmd, __off_t __len) ;\nextern int fdatasync (int __fildes);\nextern char *crypt (const char *__key, const char *__salt)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1, 2)));\nint getentropy (void *__buffer, size_t __length)\n                                          ;\nextern char *dirname (char *__path) __attribute__ ((__nothrow__ ));\nextern char *__xpg_basename (char *__path) __attribute__ ((__nothrow__ ));\nstruct dirent\n  {\n    __ino_t d_ino;\n    __off_t d_off;\n    unsigned short int d_reclen;\n    unsigned char d_type;\n    char d_name[256];\n  };\nenum\n  {\n    DT_UNKNOWN = 0,\n    DT_FIFO = 1,\n    DT_CHR = 2,\n    DT_DIR = 4,\n    DT_BLK = 6,\n    DT_REG = 8,\n    DT_LNK = 10,\n    DT_SOCK = 12,\n    DT_WHT = 14\n  };\ntypedef struct __dirstream DIR;\nextern int closedir (DIR *__dirp) __attribute__ ((__nonnull__ (1)));\nextern DIR *opendir (const char *__name) __attribute__ ((__nonnull__ (1)))\n __attribute__ ((__malloc__)) ;\nextern DIR *fdopendir (int __fd)\n __attribute__ ((__malloc__)) ;\nextern struct dirent *readdir (DIR *__dirp) __attribute__ ((__nonnull__ (1)));\nextern int readdir_r (DIR *__restrict __dirp,\n        struct dirent *__restrict __entry,\n        struct dirent **__restrict __result)\n     __attribute__ ((__nonnull__ (1, 2, 3))) __attribute__ ((__deprecated__));\nextern void rewinddir (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern void seekdir (DIR *__dirp, long int __pos) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern long int telldir (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int dirfd (DIR *__dirp) __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (1)));\nextern int scandir (const char *__restrict __dir,\n      struct dirent ***__restrict __namelist,\n      int (*__selector) (const struct dirent *),\n      int (*__cmp) (const struct dirent **,\n      const struct dirent **))\n     __attribute__ ((__nonnull__ (1, 2)));\nextern int alphasort (const struct dirent **__e1,\n        const struct dirent **__e2)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));\nextern __ssize_t getdirentries (int __fd, char *__restrict __buf,\n    size_t __nbytes,\n    __off_t *__restrict __basep)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__nonnull__ (2, 4)));\nstruct iovec\n  {\n    void *iov_base;\n    size_t iov_len;\n  };\n\nenum __socket_type\n{\n  SOCK_STREAM = 1,\n  SOCK_DGRAM = 2,\n  SOCK_RAW = 3,\n  SOCK_RDM = 4,\n  SOCK_SEQPACKET = 5,\n  SOCK_DCCP = 6,\n  SOCK_PACKET = 10,\n  SOCK_CLOEXEC = 02000000,\n  SOCK_NONBLOCK = 00004000\n};\ntypedef unsigned short int sa_family_t;\nstruct __attribute__ ((__may_alias__)) sockaddr\n  {\n    sa_family_t sa_family;\n    char sa_data[14];\n  };\nstruct __attribute__ ((__may_alias__)) sockaddr_storage\n  {\n    sa_family_t ss_family;\n    char __ss_padding[(128 - (sizeof (unsigned short int)) - sizeof (unsigned long int))];\n    unsigned long int __ss_align;\n  };\nenum\n  {\n    MSG_OOB = 0x01,\n    MSG_PEEK = 0x02,\n    MSG_DONTROUTE = 0x04,\n    MSG_CTRUNC = 0x08,\n    MSG_PROXY = 0x10,\n    MSG_TRUNC = 0x20,\n    MSG_DONTWAIT = 0x40,\n    MSG_EOR = 0x80,\n    MSG_WAITALL = 0x100,\n    MSG_FIN = 0x200,\n    MSG_SYN = 0x400,\n    MSG_CONFIRM = 0x800,\n    MSG_RST = 0x1000,\n    MSG_ERRQUEUE = 0x2000,\n    MSG_NOSIGNAL = 0x4000,\n    MSG_MORE = 0x8000,\n    MSG_WAITFORONE = 0x10000,\n    MSG_BATCH = 0x40000,\n    MSG_SOCK_DEVMEM = 0x2000000,\n    MSG_ZEROCOPY = 0x4000000,\n    MSG_FASTOPEN = 0x20000000,\n    MSG_CMSG_CLOEXEC = 0x40000000\n  };\nstruct msghdr\n  {\n    void *msg_name;\n    socklen_t msg_namelen;\n    struct iovec *msg_iov;\n    size_t msg_iovlen;\n    void *msg_control;\n    size_t msg_controllen;\n    int msg_flags;\n  };\nstruct cmsghdr\n  {\n    size_t cmsg_len;\n    int cmsg_level;\n    int cmsg_type;\n    __extension__ unsigned char __cmsg_data [];\n  };\nextern struct cmsghdr *__cmsg_nxthdr (struct msghdr *__mhdr,\n          struct cmsghdr *__cmsg) __attribute__ ((__nothrow__ ));\nenum\n  {\n    SCM_RIGHTS = 0x01\n  };\ntypedef struct {\n unsigned long fds_bits[1024 / (8 * sizeof(long))];\n} __kernel_fd_set;\ntypedef void (*__kernel_sighandler_t)(int);\ntypedef int __kernel_key_t;\ntypedef int __kernel_mqd_t;\ntypedef unsigned short __kernel_old_uid_t;\ntypedef unsigned short __kernel_old_gid_t;\ntypedef unsigned long __kernel_old_dev_t;\ntypedef long __kernel_long_t;\ntypedef unsigned long __kernel_ulong_t;\ntypedef __kernel_ulong_t __kernel_ino_t;\ntypedef unsigned int __kernel_mode_t;\ntypedef int __kernel_pid_t;\ntypedef int __kernel_ipc_pid_t;\ntypedef unsigned int __kernel_uid_t;\ntypedef unsigned int __kernel_gid_t;\ntypedef __kernel_long_t __kernel_suseconds_t;\ntypedef int __kernel_daddr_t;\ntypedef unsigned int __kernel_uid32_t;\ntypedef unsigned int __kernel_gid32_t;\ntypedef __kernel_ulong_t __kernel_size_t;\ntypedef __kernel_long_t __kernel_ssize_t;\ntypedef __kernel_long_t __kernel_ptrdiff_t;\ntypedef struct {\n int val[2];\n} __kernel_fsid_t;\ntypedef __kernel_long_t __kernel_off_t;\ntypedef long long __kernel_loff_t;\ntypedef unsigned long long __kernel_uoff_t;\ntypedef __kernel_long_t __kernel_old_time_t;\ntypedef __kernel_long_t __kernel_time_t;\ntypedef long long __kernel_time64_t;\ntypedef __kernel_long_t __kernel_clock_t;\ntypedef int __kernel_timer_t;\ntypedef int __kernel_clockid_t;\ntypedef char * __kernel_caddr_t;\ntypedef unsigned short __kernel_uid16_t;\ntypedef unsigned short __kernel_gid16_t;\nstruct linger\n  {\n    int l_onoff;\n    int l_linger;\n  };\nstruct osockaddr\n{\n  unsigned short int sa_family;\n  unsigned char sa_data[14];\n};\nenum\n{\n  SHUT_RD = 0,\n  SHUT_WR,\n  SHUT_RDWR\n};\nextern int socket (int __domain, int __type, int __protocol) __attribute__ ((__nothrow__ ));\nextern int socketpair (int __domain, int __type, int __protocol,\n         int __fds[2]) __attribute__ ((__nothrow__ ));\nextern int bind (int __fd, const struct sockaddr * __addr, socklen_t __len)\n     __attribute__ ((__nothrow__ ));\nextern int getsockname (int __fd, struct sockaddr *__restrict __addr,\n   socklen_t *__restrict __len) __attribute__ ((__nothrow__ ));\nextern int connect (int __fd, const struct sockaddr * __addr, socklen_t __len);\nextern int getpeername (int __fd, struct sockaddr *__restrict __addr,\n   socklen_t *__restrict __len) __attribute__ ((__nothrow__ ));\nextern ssize_t send (int __fd, const void *__buf, size_t __n, int __flags);\nextern ssize_t recv (int __fd, void *__buf, size_t __n, int __flags);\nextern ssize_t sendto (int __fd, const void *__buf, size_t __n,\n         int __flags, const struct sockaddr * __addr,\n         socklen_t __addr_len);\nextern ssize_t recvfrom (int __fd, void *__restrict __buf, size_t __n,\n    int __flags, struct sockaddr *__restrict __addr,\n    socklen_t *__restrict __addr_len);\nextern ssize_t sendmsg (int __fd, const struct msghdr *__message,\n   int __flags);\nextern ssize_t recvmsg (int __fd, struct msghdr *__message, int __flags);\nextern int getsockopt (int __fd, int __level, int __optname,\n         void *__restrict __optval,\n         socklen_t *__restrict __optlen) __attribute__ ((__nothrow__ ));\nextern int setsockopt (int __fd, int __level, int __optname,\n         const void *__optval, socklen_t __optlen) __attribute__ ((__nothrow__ ));\nextern int listen (int __fd, int __n) __attribute__ ((__nothrow__ ));\nextern int accept (int __fd, struct sockaddr *__restrict __addr,\n     socklen_t *__restrict __addr_len);\nextern int shutdown (int __fd, int __how) __attribute__ ((__nothrow__ ));\nextern int sockatmark (int __fd) __attribute__ ((__nothrow__ ));\nextern int isfdtype (int __fd, int __fdtype) __attribute__ ((__nothrow__ ));\ntypedef uint32_t in_addr_t;\nstruct in_addr\n  {\n    in_addr_t s_addr;\n  };\nstruct ip_opts\n  {\n    struct in_addr ip_dst;\n    char ip_opts[40];\n  };\nstruct in_pktinfo\n  {\n    int ipi_ifindex;\n    struct in_addr ipi_spec_dst;\n    struct in_addr ipi_addr;\n  };\nenum\n  {\n    IPPROTO_IP = 0,\n    IPPROTO_ICMP = 1,\n    IPPROTO_IGMP = 2,\n    IPPROTO_IPIP = 4,\n    IPPROTO_TCP = 6,\n    IPPROTO_EGP = 8,\n    IPPROTO_PUP = 12,\n    IPPROTO_UDP = 17,\n    IPPROTO_IDP = 22,\n    IPPROTO_TP = 29,\n    IPPROTO_DCCP = 33,\n    IPPROTO_IPV6 = 41,\n    IPPROTO_RSVP = 46,\n    IPPROTO_GRE = 47,\n    IPPROTO_ESP = 50,\n    IPPROTO_AH = 51,\n    IPPROTO_MTP = 92,\n    IPPROTO_BEETPH = 94,\n    IPPROTO_ENCAP = 98,\n    IPPROTO_PIM = 103,\n    IPPROTO_COMP = 108,\n    IPPROTO_L2TP = 115,\n    IPPROTO_SCTP = 132,\n    IPPROTO_UDPLITE = 136,\n    IPPROTO_MPLS = 137,\n    IPPROTO_ETHERNET = 143,\n    IPPROTO_RAW = 255,\n    IPPROTO_SMC = 256,\n    IPPROTO_MPTCP = 262,\n    IPPROTO_MAX\n  };\nenum\n  {\n    IPPROTO_HOPOPTS = 0,\n    IPPROTO_ROUTING = 43,\n    IPPROTO_FRAGMENT = 44,\n    IPPROTO_ICMPV6 = 58,\n    IPPROTO_NONE = 59,\n    IPPROTO_DSTOPTS = 60,\n    IPPROTO_MH = 135\n  };\ntypedef uint16_t in_port_t;\nenum\n  {\n    IPPORT_ECHO = 7,\n    IPPORT_DISCARD = 9,\n    IPPORT_SYSTAT = 11,\n    IPPORT_DAYTIME = 13,\n    IPPORT_NETSTAT = 15,\n    IPPORT_FTP = 21,\n    IPPORT_TELNET = 23,\n    IPPORT_SMTP = 25,\n    IPPORT_TIMESERVER = 37,\n    IPPORT_NAMESERVER = 42,\n    IPPORT_WHOIS = 43,\n    IPPORT_MTP = 57,\n    IPPORT_TFTP = 69,\n    IPPORT_RJE = 77,\n    IPPORT_FINGER = 79,\n    IPPORT_TTYLINK = 87,\n    IPPORT_SUPDUP = 95,\n    IPPORT_EXECSERVER = 512,\n    IPPORT_LOGINSERVER = 513,\n    IPPORT_CMDSERVER = 514,\n    IPPORT_EFSSERVER = 520,\n    IPPORT_BIFFUDP = 512,\n    IPPORT_WHOSERVER = 513,\n    IPPORT_ROUTESERVER = 520,\n    IPPORT_RESERVED = 1024,\n    IPPORT_USERRESERVED = 5000\n  };\nstruct in6_addr\n  {\n    union\n      {\n uint8_t __u6_addr8[16];\n uint16_t __u6_addr16[8];\n uint32_t __u6_addr32[4];\n      } __in6_u;\n  };\nextern const struct in6_addr in6addr_any;\nextern const struct in6_addr in6addr_loopback;\nstruct __attribute__ ((__may_alias__)) sockaddr_in\n  {\n    sa_family_t sin_family;\n    in_port_t sin_port;\n    struct in_addr sin_addr;\n    unsigned char sin_zero[sizeof (struct sockaddr)\n      - (sizeof (unsigned short int))\n      - sizeof (in_port_t)\n      - sizeof (struct in_addr)];\n  };\nstruct __attribute__ ((__may_alias__)) sockaddr_in6\n  {\n    sa_family_t sin6_family;\n    in_port_t sin6_port;\n    uint32_t sin6_flowinfo;\n    struct in6_addr sin6_addr;\n    uint32_t sin6_scope_id;\n  };\nstruct ip_mreq\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_interface;\n  };\nstruct ip_mreqn\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_address;\n    int imr_ifindex;\n  };\nstruct ip_mreq_source\n  {\n    struct in_addr imr_multiaddr;\n    struct in_addr imr_interface;\n    struct in_addr imr_sourceaddr;\n  };\nstruct ipv6_mreq\n  {\n    struct in6_addr ipv6mr_multiaddr;\n    unsigned int ipv6mr_interface;\n  };\nstruct group_req\n  {\n    uint32_t gr_interface;\n    struct sockaddr_storage gr_group;\n  };\nstruct group_source_req\n  {\n    uint32_t gsr_interface;\n    struct sockaddr_storage gsr_group;\n    struct sockaddr_storage gsr_source;\n  };\nstruct ip_msfilter\n  {\n    struct in_addr imsf_multiaddr;\n    struct in_addr imsf_interface;\n    uint32_t imsf_fmode;\n    uint32_t imsf_numsrc;\n    struct in_addr imsf_slist[1];\n  };\nstruct group_filter\n  {\n    uint32_t gf_interface;\n    struct sockaddr_storage gf_group;\n    uint32_t gf_fmode;\n    uint32_t gf_numsrc;\n    struct sockaddr_storage gf_slist[1];\n};\nextern uint32_t ntohl (uint32_t __netlong) __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint16_t ntohs (uint16_t __netshort)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint32_t htonl (uint32_t __hostlong)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern uint16_t htons (uint16_t __hostshort)\n     __attribute__ ((__nothrow__ )) __attribute__ ((__const__));\nextern int bindresvport (int __sockfd, struct sockaddr_in *__sock_in) __attribute__ ((__nothrow__ ));\nextern int bindresvport6 (int __sockfd, struct sockaddr_in6 *__sock_in)\n     __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_addr (const char *__cp) __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_lnaof (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern struct in_addr inet_makeaddr (in_addr_t __net, in_addr_t __host)\n     __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_netof (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern in_addr_t inet_network (const char *__cp) __attribute__ ((__nothrow__ ));\nextern char *inet_ntoa (struct in_addr __in) __attribute__ ((__nothrow__ ));\nextern int inet_pton (int __af, const char *__restrict __cp,\n        void *__restrict __buf) __attribute__ ((__nothrow__ ));\nextern const char *inet_ntop (int __af, const void *__restrict __cp,\n         char *__restrict __buf, socklen_t __len)\n     __attribute__ ((__nothrow__ ));\nextern int inet_aton (const char *__cp, struct in_addr *__inp) __attribute__ ((__nothrow__ ));\nextern char *inet_neta (in_addr_t __net, char *__buf, size_t __len) __attribute__ ((__nothrow__ ))\n  __attribute__ ((__deprecated__ (\"Use inet_ntop instead\")));\nextern char *inet_net_ntop (int __af, const void *__cp, int __bits,\n       char *__buf, size_t __len) __attribute__ ((__nothrow__ ));\nextern int inet_net_pton (int __af, const char *__cp,\n     void *__buf, size_t __len) __attribute__ ((__nothrow__ ));\nextern unsigned int inet_nsap_addr (const char *__cp,\n        unsigned char *__buf, int __len) __attribute__ ((__nothrow__ ));\nextern char *inet_nsap_ntoa (int __len, const unsigned char *__cp,\n        char *__buf) __attribute__ ((__nothrow__ ));\n\nstruct cio_chunk {\n    int lock;\n    char *name;\n    void *backend;\n    int tx_active;\n    uint32_t tx_crc;\n    off_t tx_content_length;\n    struct cio_ctx *ctx;\n    struct cio_stream *st;\n    int error_n;\n    struct mk_list _state_head;\n    struct mk_list _head;\n};\nstruct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st,\n                                 const char *name, int flags, size_t size,\n                                 int *err);\nvoid cio_chunk_close(struct cio_chunk *ch, int delete);\nint cio_chunk_delete(struct cio_ctx *ctx, struct cio_stream *st, const char *name);\nint cio_chunk_write(struct cio_chunk *ch, const void *buf, size_t count);\nint cio_chunk_write_at(struct cio_chunk *ch, off_t offset,\n                       const void *buf, size_t count);\nint cio_chunk_sync(struct cio_chunk *ch);\nint cio_chunk_get_content(struct cio_chunk *ch, char **buf, size_t *size);\nint cio_chunk_get_content_copy(struct cio_chunk *ch,\n                               void **out_buf, size_t *out_size);\nssize_t cio_chunk_get_content_size(struct cio_chunk *ch);\nssize_t cio_chunk_get_real_size(struct cio_chunk *ch);\nsize_t cio_chunk_get_content_end_pos(struct cio_chunk *ch);\nvoid cio_chunk_close_stream(struct cio_stream *st);\nchar *cio_chunk_hash(struct cio_chunk *ch);\nint cio_chunk_lock(struct cio_chunk *ch);\nint cio_chunk_unlock(struct cio_chunk *ch);\nint cio_chunk_is_locked(struct cio_chunk *ch);\nint cio_chunk_tx_begin(struct cio_chunk *ch);\nint cio_chunk_tx_commit(struct cio_chunk *ch);\nint cio_chunk_tx_rollback(struct cio_chunk *ch);\nint cio_chunk_is_up(struct cio_chunk *ch);\nint cio_chunk_is_file(struct cio_chunk *ch);\nint cio_chunk_up(struct cio_chunk *ch);\nint cio_chunk_up_force(struct cio_chunk *ch);\nint cio_chunk_down(struct cio_chunk *ch);\nchar *cio_version();\nsize_t cio_chunk_counter_total_add(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_sub(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_up_add(struct cio_ctx *ctx);\nsize_t cio_chunk_counter_total_up_sub(struct cio_ctx *ctx);\n\nvoid cio_options_init(struct cio_options *options);\nstruct cio_ctx *cio_create(struct cio_options *options);\nvoid cio_destroy(struct cio_ctx *ctx);\nint cio_load(struct cio_ctx *ctx, char *chunk_extension);\nint cio_qsort(struct cio_ctx *ctx, int (*compar)(const void *, const void *));\nvoid cio_set_log_callback(struct cio_ctx *ctx, void (*log_cb));\nint cio_set_log_level(struct cio_ctx *ctx, int level);\nint cio_set_max_chunks_up(struct cio_ctx *ctx, int n);\nint cio_set_realloc_size_hint(struct cio_ctx *ctx, size_t realloc_size_hint);\nvoid cio_enable_file_trimming(struct cio_ctx *ctx);\nvoid cio_disable_file_trimming(struct cio_ctx *ctx);\nint cio_meta_write(struct cio_chunk *ch, char *buf, size_t size);\nint cio_meta_cmp(struct cio_chunk *ch, char *meta_buf, int meta_len);\nint cio_meta_read(struct cio_chunk *ch, char **meta_buf, int *meta_len);\nint cio_meta_size(struct cio_chunk *ch);\nchar *cio_error_get_str(struct cio_chunk *ch);\nint cio_error_get(struct cio_chunk *ch);\nvoid cio_error_set(struct cio_chunk *ch, int status);\nvoid cio_error_reset(struct cio_chunk *ch);\n\nchar *cio_error_get_str(struct cio_chunk *ch)\n{\n    int err = cio_error_get(ch);\n    switch (err) {\n        case -10:\n            return \"bad checksum\";\n        case -11:\n            return \"bad layout or invalid header\";\n        case -12:\n            return \"permission error\";\n        default:\n            return \"no error has been specified\";\n    }\n}\nint cio_error_get(struct cio_chunk *ch)\n{\n    return ch->error_n;\n}\nvoid cio_error_set(struct cio_chunk *ch, int status)\n{\n    ch->error_n = status;\n    if (ch->ctx != ((void*)0)) {\n        ch->ctx->last_chunk_error = status;\n    }\n}\nvoid cio_error_reset(struct cio_chunk *ch)\n{\n    ch->error_n = 0;\n}\n"
+                    },
+                    "field": "Locked",
+                    "function": "cio_chunk_unlock",
+                    "paths": [
+                      {
+                        "branches": [
+                          true
+                        ],
+                        "final_value": false,
+                        "frame_writes": [
+                          [
+                            "error_n",
+                            0
+                          ]
+                        ],
+                        "initial_value": false,
+                        "return_value": -1,
+                        "writes": []
+                      },
+                      {
+                        "branches": [
+                          false
+                        ],
+                        "final_value": false,
+                        "frame_writes": [
+                          [
+                            "error_n",
+                            0
+                          ]
+                        ],
+                        "initial_value": true,
+                        "return_value": 0,
+                        "writes": [
+                          false
+                        ]
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "b562fed2878dbbe3dcb6913b525fddfd7f23a335e6829785cd68061760dc13af",
+                  "witness_kind": "boolean_field_contract"
+                }
+              }
+            },
+            "key": [
+              "chunkio",
+              "cio_chunk.c",
+              "cio_chunk_unlock"
+            ]
+          },
+          {
+            "fields": {
+              "bounds": {
+                "after": {
+                  "resource_contracts:a6148ea17bdb0b1a5ee4a5b4": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                },
+                "before": {
+                  "resource_contracts:a2427b13a16ecb35496f0159": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  }
+                }
+              },
+              "evidence": {
+                "after": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:a6148ea17bdb0b1a5ee4a5b4"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "45c2c1973dbf56a1675e34e353f33d346ae4f356f57a5bfe01b3d77b9e3f0e21",
+                    "source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                    "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions_used": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "capability": "resource_contracts",
+                  "claims": [],
+                  "coverage": [
+                    "resource_contracts:a2427b13a16ecb35496f0159"
+                  ],
+                  "evidence_version": 2,
+                  "reproducibility": {
+                    "deterministic": true,
+                    "package_digest": "a40710f1322b4d019fa895056376ebb9299bf0954a67a0b84b9f4a258589e36f",
+                    "provider_version": "0.13.0"
+                  },
+                  "unit": {
+                    "build_digest": "902adea87cb33ffcbec59bdc47847facc55086ce2879f3dc052d2fe56f359025",
+                    "source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                    "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                  }
+                }
+              },
+              "import_identity": {
+                "after": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "d029fc50217845a0ab6bd7e19eb6a006a6886b404332ba8c996f9a186072655a",
+                  "dialect": "gnu17",
+                  "helpers": {},
+                  "model_library": "fluent_bit",
+                  "preprocessed_source_digest": "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                },
+                "before": {
+                  "compiler": {
+                    "program": "/usr/bin/clang",
+                    "target": "x86_64-pc-linux-gnu",
+                    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+                  },
+                  "configuration_digest": "be42bfa3a6f342c8682a047d730dff8f7e6646404e80068e3b7a0ea894223717",
+                  "dialect": "gnu17",
+                  "helpers": {},
+                  "model_library": "fluent_bit",
+                  "preprocessed_source_digest": "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981",
+                  "profile_digest": "130fcfd77a211078b92b35bd730f30aff7e797dfeaf84e2099e9eb8207d42b62",
+                  "raw_source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                  "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+                  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              },
+              "task": {
+                "after": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57",
+                    "qcore:boolean-field-import:v1": "45c2c1973dbf56a1675e34e353f33d346ae4f356f57a5bfe01b3d77b9e3f0e21",
+                    "qcore:boolean-field-source-input:v2": "a142fc9a5611028abda6e46c72f614815c5e13a393e98061866024ab332a7899"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:a6148ea17bdb0b1a5ee4a5b4",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "flb_input_chunk_release_lock"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "flb_input_chunk_release_lock",
+                        "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "fluent_bit",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "45c2c1973dbf56a1675e34e353f33d346ae4f356f57a5bfe01b3d77b9e3f0e21",
+                    "source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                    "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                  }
+                },
+                "before": {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "busy_is_boolean": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "lock_is_boolean": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 4
+                    },
+                    "schedules_explored": null
+                  },
+                  "contract_sources": {
+                    "qcore:boolean-field-contract:v1": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57",
+                    "qcore:boolean-field-import:v1": "902adea87cb33ffcbec59bdc47847facc55086ce2879f3dc052d2fe56f359025",
+                    "qcore:boolean-field-source-input:v2": "a142fc9a5611028abda6e46c72f614815c5e13a393e98061866024ab332a7899"
+                  },
+                  "derivation_incomplete": [],
+                  "evidence_version": 2,
+                  "obligations": [
+                    {
+                      "assumptions": {
+                        "borrowed_parameter_is_exclusive": true,
+                        "borrowed_parameter_is_live": true,
+                        "busy_is_boolean": true,
+                        "clang_typed_import_is_trusted": true,
+                        "declared_source_revision_is_outer_audit_assumption": true,
+                        "field_mapping_profile_is_declared_trusted": true,
+                        "lock_is_boolean": true,
+                        "source_projection_policy_is_declared_trusted": true
+                      },
+                      "bounds": {
+                        "max_operations": null,
+                        "observed_runs_only": false,
+                        "path_exploration": {
+                          "kind": "bounded_paths",
+                          "paths": 4
+                        },
+                        "schedules_explored": null
+                      },
+                      "capability": "resource_contracts",
+                      "evidence_version": 2,
+                      "obligation_id": "resource_contracts:a2427b13a16ecb35496f0159",
+                      "property": "boolean_field_contract",
+                      "scope": {
+                        "scope": "functions",
+                        "symbols": [
+                          "flb_input_chunk_release_lock"
+                        ]
+                      },
+                      "subject": {
+                        "subject": "function",
+                        "symbol": "flb_input_chunk_release_lock",
+                        "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                      }
+                    }
+                  ],
+                  "semantic_profile": "qcore.c_boolean_field_contract.v2",
+                  "target": {
+                    "backend": "native",
+                    "dialect": "gnu17",
+                    "library": "fluent_bit",
+                    "platform": "linux",
+                    "profile": "qcore.c_boolean_field_contract.v2",
+                    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_version": 1,
+                  "unit": {
+                    "build_digest": "902adea87cb33ffcbec59bdc47847facc55086ce2879f3dc052d2fe56f359025",
+                    "source_digest": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+                    "translation_unit": "fluent-bit-chunk/flb_input_chunk.c"
+                  }
+                }
+              },
+              "witness": {
+                "after": {
+                  "summary": {
+                    "dependencies": {},
+                    "field": "Busy",
+                    "function": "flb_input_chunk_release_lock",
+                    "paths": [
+                      {
+                        "branches": [
+                          true
+                        ],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": false,
+                        "return_value": -1,
+                        "writes": []
+                      },
+                      {
+                        "branches": [
+                          false
+                        ],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": true,
+                        "return_value": 0,
+                        "writes": [
+                          false
+                        ]
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "3729ae3c9b557cb871e6fbb737d62467331e5d3f81c4364c99652c95cd13916b",
+                  "witness_kind": "boolean_field_contract"
+                },
+                "before": {
+                  "summary": {
+                    "dependencies": {},
+                    "field": "Busy",
+                    "function": "flb_input_chunk_release_lock",
+                    "paths": [
+                      {
+                        "branches": [
+                          true
+                        ],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": false,
+                        "return_value": -1,
+                        "writes": []
+                      },
+                      {
+                        "branches": [
+                          false
+                        ],
+                        "final_value": false,
+                        "frame_writes": [],
+                        "initial_value": true,
+                        "return_value": 0,
+                        "writes": [
+                          false
+                        ]
+                      }
+                    ],
+                    "profile_assumptions": {
+                      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+                      "schema_version": "1",
+                      "source_set": "fluent-bit",
+                      "trust": "declared source-set assumptions, not verified upstream behavior"
+                    },
+                    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                  },
+                  "task_digest": "47d618eccf056697f0dd34199de25a177e8fa181ae60a0ad8cc38aef76dfe0f6",
+                  "witness_kind": "boolean_field_contract"
+                }
+              }
+            },
+            "key": [
+              "fluent-bit-chunk",
+              "flb_input_chunk.c",
+              "flb_input_chunk_release_lock"
+            ]
+          }
+        ],
+        "counts": {
+          "added": 0,
+          "after": 96,
+          "before": 96,
+          "changed": 3,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "status_after": {
+        "checked_function_contract": 3,
+        "unknown": 93
+      },
+      "status_before": {
+        "checked_function_contract": 3,
+        "unknown": 93
+      }
+    }
+  },
+  "card": "CORPUS-REPIN",
+  "measured": "private/audit-pinned-replay-cli/new/replay-jobs4",
+  "schema_version": 2
+}

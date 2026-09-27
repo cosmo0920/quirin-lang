@@ -1,0 +1,127 @@
+{
+  "archive": "docs/reports/w46-contract-access-expansion/artifacts/combined/corpus",
+  "artifacts": {
+    "monkey-source.json": {
+      "archive_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "byte_identical": true,
+      "migrated_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "passes": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "archive_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "byte_identical": true,
+      "migrated_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "passes": true
+    },
+    "resource-diagnostics.contracts.json": {
+      "added_modules": [],
+      "archive_sha256": "8c5572e8ff4f3b47fa7d199cfa0b16641dd0b2840ac4e2e168f7d1180fd6b6b5",
+      "changed_module_texts": [],
+      "expected_checkout_prefix_key_changes": 50,
+      "expected_root_rewrite_byte_identical": true,
+      "metadata_changed_fields": [
+        "contract_revision"
+      ],
+      "metadata_equal": false,
+      "migrated_sha256": "3d09f53ca61951e040f93771419f4b178860b5536a82771da2f19d443fc8b6b8",
+      "module_count_after": 54,
+      "module_count_before": 54,
+      "normalized_module_names_accounted": 54,
+      "passes": true,
+      "raw_byte_identical": false,
+      "removed_modules": [],
+      "unexpected_raw_key_changes": []
+    },
+    "resource-diagnostics.json": {
+      "archive_sha256": "c4fa03e9a9e1a0c8f2bb2f2310a9a8800daf82a9f825124fe66f28637b4d4c80",
+      "byte_identical": true,
+      "migrated_sha256": "c4fa03e9a9e1a0c8f2bb2f2310a9a8800daf82a9f825124fe66f28637b4d4c80",
+      "passes": true,
+      "unit_count_after": 185,
+      "unit_count_before": 185,
+      "unit_verdicts_after": {
+        "Safe": 6,
+        "Unknown": 167,
+        "Unsafe": 8,
+        "data_only": 4
+      },
+      "unit_verdicts_before": {
+        "Safe": 6,
+        "Unknown": 167,
+        "Unsafe": 8,
+        "data_only": 4
+      }
+    },
+    "resource-diagnostics.source-effects.json": {
+      "archive_sha256": "39ff15812af2eab7b28beea8188ed091c01fef9bf165fe707f35231283a132ba",
+      "changed_functions": [
+        "cio_chunk_is_locked",
+        "cio_chunk_unlock",
+        "flb_input_chunk_release_lock"
+      ],
+      "cwd_only_identity_cascades": [
+        {
+          "archived_configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+          "assumptions_equal": true,
+          "definitions": 21,
+          "evidence_version_equal": true,
+          "function": "cio_chunk_is_locked",
+          "include_paths": 37,
+          "index": 16,
+          "migrated_configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+          "passes": true,
+          "semantic_profile_after": "qcore.c_boolean_field_contract.v2",
+          "semantic_profile_before": "qcore.c_boolean_field_contract.v2",
+          "status_after": "checked_function_contract",
+          "status_before": "checked_function_contract"
+        },
+        {
+          "archived_configuration_digest": "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80",
+          "assumptions_equal": true,
+          "definitions": 21,
+          "evidence_version_equal": true,
+          "function": "cio_chunk_unlock",
+          "include_paths": 37,
+          "index": 24,
+          "migrated_configuration_digest": "b017bae88ad41a22d7daffa260ec71e42e7faca7e4a2fe65b65ac50b61f4a504",
+          "passes": true,
+          "semantic_profile_after": "qcore.c_boolean_field_contract.v2",
+          "semantic_profile_before": "qcore.c_boolean_field_contract.v2",
+          "status_after": "checked_function_contract",
+          "status_before": "checked_function_contract"
+        },
+        {
+          "archived_configuration_digest": "be42bfa3a6f342c8682a047d730dff8f7e6646404e80068e3b7a0ea894223717",
+          "assumptions_equal": true,
+          "definitions": 63,
+          "evidence_version_equal": true,
+          "function": "flb_input_chunk_release_lock",
+          "include_paths": 52,
+          "index": 63,
+          "migrated_configuration_digest": "d029fc50217845a0ab6bd7e19eb6a006a6886b404332ba8c996f9a186072655a",
+          "passes": true,
+          "semantic_profile_after": "qcore.c_boolean_field_contract.v2",
+          "semantic_profile_before": "qcore.c_boolean_field_contract.v2",
+          "status_after": "checked_function_contract",
+          "status_before": "checked_function_contract"
+        }
+      ],
+      "migrated_sha256": "0d343f5cae6e905f99a286627025ad44153be444e3fb448d4aef0dceeef87079",
+      "passes": true,
+      "raw_byte_identical": false,
+      "result_count_after": 96,
+      "result_count_before": 96
+    }
+  },
+  "audit_log": {
+    "archive_sha256": "262764f8746670a78dbd46d45a681fa337c2e1681578b52724c70b6bd752529b",
+    "identical_after_report_path_only": true,
+    "line_count_after": 1218,
+    "line_count_before": 1218,
+    "migrated_sha256": "f5d2d31c906801d54456a2b2856c95b35135e45f71e6427d342af2dda7d18418",
+    "raw_byte_identical": false
+  },
+  "measured": "private/audit-pinned-replay-cli/new/replay-jobs4",
+  "measured_exit": 0,
+  "passes": true
+}
