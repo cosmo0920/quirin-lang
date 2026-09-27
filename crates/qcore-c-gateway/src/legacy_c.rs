@@ -6447,15 +6447,6 @@ impl Parser<'_> {
                 }
                 return self.chain_access_instruction(chained, true);
             }
-            // W46-ACCESS-PATH-STATEMENTS: only an access refusal reaches the
-            // Clang reader. Both established shape readers remain first.
-            if !crate::typed_access_path::disabled_for_baseline()
-                && matches!(&instruction, LegacyInstruction::Unknown { description, .. }
-                if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
-                && let Some(typed) = self.typed_path_statement(tokens)
-            {
-                return typed;
-            }
             // Card W45-SUB-OBJECT-STORES: a sub-object store through a
             // resolved, typed base, after both typed access routes declined.
             if let Some(store) = self.sub_object_store_statement(tokens, &instruction) {
@@ -6478,6 +6469,15 @@ impl Parser<'_> {
                     source: step.source,
                     offset: step.offset,
                 };
+            }
+            // W46-ACCESS-PATH-STATEMENTS: only a residual access refusal
+            // reaches Clang. Every established admitting shape route above
+            // remains authoritative until its pinned parity is measured.
+            if matches!(&instruction, LegacyInstruction::Unknown { description, .. }
+                if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
+                && let Some(typed) = self.typed_path_statement(tokens)
+            {
+                return typed;
             }
             return instruction;
         };
