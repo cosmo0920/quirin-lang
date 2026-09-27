@@ -1,0 +1,267 @@
+## Leaves by family and scope (leaf counts; a group is every leaf of one family at one line)
+COND P3       7983
+COND refused  699
+IND  P2       4423
+IND  P3       8479
+IND  refused  4140
+RET  P3       170
+RET  refused  134
+total leaves joined: {'IND': 17042, 'COND': 8682, 'RET': 304}
+no typed access (lexical reading of a non-access): {'COND': 1340, 'IND': 462, 'RET': 43}
+
+## Leaves by family and position of their paths
+IND  call-argument                            8635
+IND  statement                                6323
+COND condition                                4295
+COND call-argument                            2087
+IND  call-argument+statement                  1622
+COND none                                     1340
+COND call-argument+condition                  960
+IND  none                                     462
+RET  return                                   232
+RET  none                                     43
+RET  call-argument+return                     17
+RET  call-argument                            12
+
+## Paths: 69611, expressible 63698; steps 107510, typed 107510
+root kinds: {'formal': 47291, 'local': 21655, 'global': 385, 'call-result': 243, 'other': 37}
+step ops: {'->': 76089, '.': 24929, '[]': 4534, '*': 1958}
+value/access: {'scalar/read': 22245, 'address/address': 18227, 'pointer/read': 17971, 'scalar/store': 6755, 'pointer/store': 2886, 'pointer/null-store': 604, 'function_pointer/read': 323, 'aggregate/read': 313, 'function_pointer/store': 160, 'aggregate/store': 109, 'function_pointer/null-store': 10, 'scalar/increment': 7, 'pointer/increment': 1}
+
+## Refusal causes (leaves carrying the cause; functions whose only P3 blocker it is)
+pointer-valued-store           2553 leaves    44 sole-blocked functions
+union                          1641 leaves    53 sole-blocked functions
+aggregate-value                 335 leaves    18 sole-blocked functions
+call                            240 leaves    17 sole-blocked functions
+indirect-call                   185 leaves    17 sole-blocked functions
+statement-expression            128 leaves     0 sole-blocked functions
+cast                            110 leaves     3 sole-blocked functions
+static-local                     87 leaves     1 sole-blocked functions
+pointer-arithmetic               33 leaves     1 sole-blocked functions
+pointer-step                     22 leaves     0 sole-blocked functions
+root:StringLiteral               17 leaves     0 sole-blocked functions
+root:BinaryOperator               6 leaves     0 sole-blocked functions
+root:IntegerLiteral               5 leaves     0 sole-blocked functions
+root:MaterializeTemporaryExpr      2 leaves     0 sole-blocked functions
+address-of-base                   2 leaves     0 sole-blocked functions
+pointer-field-step                1 leaves     0 sole-blocked functions
+volatile-atomic                   1 leaves     0 sole-blocked functions
+
+## Prediction summary
+P2/same-unit: freed 45 {'Safe': 38, 'Unknown': 7} rounds [(0, 45, 38), (1, 0, 0)]
+    chunkio      {'Unknown': 1, 'Safe': 1}
+    cmetrics     {'Safe': 3}
+    ctraces      {'Safe': 1}
+    fluent-bit-chunk {'Safe': 2}
+    librdkafka   {'Safe': 30, 'Unknown': 4}
+    monkey-libevent {'Unknown': 2, 'Safe': 1}
+P2/cross-unit: freed 48 {'Safe': 41, 'Unknown': 7} rounds [(0, 48, 41), (1, 0, 0)]
+    chunkio      {'Unknown': 1, 'Safe': 2}
+    cmetrics     {'Safe': 4}
+    ctraces      {'Safe': 1}
+    fluent-bit-chunk {'Safe': 2}
+    librdkafka   {'Safe': 31, 'Unknown': 4}
+    monkey-libevent {'Unknown': 2, 'Safe': 1}
+P2/cross-unit-ceiling: freed 48 {'Safe': 48} rounds [(0, 48, 48), (1, 0, 0)]
+    chunkio      {'Safe': 3}
+    cmetrics     {'Safe': 4}
+    ctraces      {'Safe': 1}
+    fluent-bit-chunk {'Safe': 2}
+    librdkafka   {'Safe': 35}
+    monkey-libevent {'Safe': 3}
+P3/same-unit: freed 220 {'Unknown': 137, 'Safe': 83} rounds [(0, 219, 83), (1, 1, 0)]
+    chunkio      {'Unknown': 4, 'Safe': 1}
+    cmetrics     {'Unknown': 5, 'Safe': 5}
+    ctraces      {'Safe': 2, 'Unknown': 1}
+    fluent-bit-chunk {'Safe': 2}
+    librdkafka   {'Safe': 70, 'Unknown': 114}
+    monkey-libevent {'Unknown': 13, 'Safe': 3}
+P3/cross-unit: freed 228 {'Safe': 86, 'Unknown': 142} rounds [(0, 227, 86), (1, 1, 0)]
+    chunkio      {'Unknown': 5, 'Safe': 2}
+    cmetrics     {'Safe': 6, 'Unknown': 5}
+    ctraces      {'Safe': 2, 'Unknown': 1}
+    fluent-bit-chunk {'Safe': 2, 'Unknown': 1}
+    librdkafka   {'Safe': 71, 'Unknown': 117}
+    monkey-libevent {'Unknown': 13, 'Safe': 3}
+P3/cross-unit-ceiling: freed 242 {'Safe': 242} rounds [(0, 227, 227), (1, 15, 15), (2, 0, 0)]
+    chunkio      {'Safe': 7}
+    cmetrics     {'Safe': 18}
+    ctraces      {'Safe': 3}
+    fluent-bit-chunk {'Safe': 3}
+    librdkafka   {'Safe': 195}
+    monkey-libevent {'Safe': 16}
+
+## Upper-bound population (blocked only by IND/COND/RET): 893
+  freed:Unknown                                                136
+  residual call: cross-unit                                    111
+  residual call: same-unit                                     110
+  refused path (pointer-valued-store)                          107
+  freed:Safe                                                   83
+  refused path (union)                                         64
+  refused path (several causes)                                41
+  residual call: external                                      34
+  refused path (aggregate-value)                               26
+  return:no-access                                             23
+  refused path (call)                                          20
+  refused path (indirect-call)                                 20
+  custody-position                                             18
+  residual call: cross-unit+indirect                           17
+  condition:assignment-destination                             11
+  residual call: same-unit-unreported-refused                  9
+  residual call: cross-unit+indirect+same-unit-unreported-refused 8
+  refused path (cast)                                          6
+  residual call: indirect                                      6
+  residual call: cross-unit+same-unit                          6
+  condition:type-operator                                      6
+  residual call: cross-unit+indirect+same-unit                 5
+  residual call: cross-unit+external                           4
+  residual call: cross-unit+external+indirect                  4
+  residual call: cross-unit+same-unit-unreported-refused       3
+  condition:call-other                                         2
+  residual call: indirect+same-unit+same-unit-unreported-refused 2
+  residual call: external+same-unit                            2
+  refused path (pointer-arithmetic)                            1
+  residual call: external+indirect                             1
+  condition:recursive-local-callee                             1
+  condition:increment-or-decrement                             1
+  residual call: indirect+same-unit-unreported-refused         1
+  residual call: cross-unit+external+same-unit                 1
+  residual call: cross-unit+same-unit+same-unit-unreported-refused 1
+  refused path (static-local)                                  1
+  residual call: cross-unit+external+indirect+same-unit        1
+
+## Reasons of non-Safe predictions (P3, same-unit)
+    236  tracked root X not null-tested before line N
+     33  tracked root X not null-tested before line N (may_bind unobserved: fail-closed)
+
+## P2 path forms in greedy order of Safe-predicted functions freed (root:steps:access)
+  (no typed access)                                    +  18  cumulative 18
+  formal:->:store                                      +   5  cumulative 23
+  formal:->:read                                       +   4  cumulative 27
+  formal:->.:store                                     +   3  cumulative 30
+  formal:->..:store                                    +   2  cumulative 32
+  local:.:store                                        +   2  cumulative 34
+  formal:->->.:store                                   +   1  cumulative 35
+  global:.:store                                       +   1  cumulative 36
+  global:.[a]:store                                    +   1  cumulative 37
+  formal:->[]:store                                    +   0  cumulative 37
+  formal:[]:read                                       +   1  cumulative 38
+
+## P3 path forms in greedy order of Safe-predicted functions freed (root:steps:access@position)
+  (no typed access)                                    +  18  cumulative 18
+  formal:->:read@return                                +   6  cumulative 24
+  formal:->:read@condition                             +   5  cumulative 29
+  formal:->:read@statement                             +   5  cumulative 34
+  formal:->:store@statement                            +   6  cumulative 40
+  formal:->.:read@return                               +   4  cumulative 44
+  formal:->[a]:read@return                             +   4  cumulative 48
+  formal:->.:store@statement                           +   3  cumulative 51
+  global:[a]:read@return                               +   3  cumulative 54
+  formal:->..:store@statement                          +   2  cumulative 56
+  formal:->:address@return                             +   2  cumulative 58
+  formal:->[].:read@condition                          +   2  cumulative 60
+  formal:->[].:store@statement                         +   2  cumulative 62
+  local:.:store@statement                              +   2  cumulative 64
+  formal:->->..:read@return                            +   1  cumulative 65
+  formal:->->.:store@statement                         +   1  cumulative 66
+  formal:->->:address@return                           +   1  cumulative 67
+  formal:->->:read@return                              +   1  cumulative 68
+  formal:->.->:read@return                             +   1  cumulative 69
+  formal:->..:read@return                              +   1  cumulative 70
+  formal:->.:read@statement                            +   1  cumulative 71
+  formal:->:store@return                               +   1  cumulative 72
+  formal:->[]:read@condition                           +   1  cumulative 73
+  global:.:read@return                                 +   1  cumulative 74
+  global:.:store@statement                             +   1  cumulative 75
+  global:.[a]:store@statement                          +   1  cumulative 76
+  global:[a]:read@call-argument                        +   1  cumulative 77
+  formal:->->[]->:read@condition                       +   0  cumulative 77
+  formal:->->[]->:read@statement                       +   1  cumulative 78
+  formal:->..:read@condition                           +   0  cumulative 78
+  local:->:address@call-argument                       +   1  cumulative 79
+  formal:->[]:store@statement                          +   0  cumulative 79
+  formal:[]:read@statement                             +   1  cumulative 80
+  formal:.:read@condition                              +   0  cumulative 80
+  formal:.[]:read@call-argument                        +   1  cumulative 81
+  formal:[]:read@condition                             +   0  cumulative 81
+  formal:[]:read@return                                +   1  cumulative 82
+  formal:[a]:read@condition                            +   0  cumulative 82
+  formal:[a]:read@statement                            +   1  cumulative 83
+
+## Closure
+  P2/same-unit: rounds [{'round': 0, 'freed': 45, 'safe': 38}, {'round': 1, 'freed': 0, 'safe': 0}]
+  P2/cross-unit: rounds [{'round': 0, 'freed': 48, 'safe': 41}, {'round': 1, 'freed': 0, 'safe': 0}]
+  P2/cross-unit-ceiling: rounds [{'round': 0, 'freed': 48, 'safe': 48}, {'round': 1, 'freed': 0, 'safe': 0}]
+  P3/same-unit: rounds [{'round': 0, 'freed': 219, 'safe': 83}, {'round': 1, 'freed': 1, 'safe': 0}]
+  P3/cross-unit: rounds [{'round': 0, 'freed': 227, 'safe': 86}, {'round': 1, 'freed': 1, 'safe': 0}]
+  P3/cross-unit-ceiling: rounds [{'round': 0, 'freed': 227, 'safe': 227}, {'round': 1, 'freed': 15, 'safe': 15}, {'round': 2, 'freed': 0, 'safe': 0}]
+  P3 call-blocked functions (every leaf removed, a call unserved after the same-unit closure):
+    in-corpus only                                               870
+    external only                                                78
+    mixed or indirect: cross-unit+indirect+same-unit             57
+    mixed or indirect: external+same-unit                        47
+    mixed or indirect: cross-unit+indirect                       25
+    mixed or indirect: cross-unit+indirect+same-unit-unreported-refused 17
+    mixed or indirect: cross-unit+indirect+same-unit+same-unit-unreported-refused 15
+    mixed or indirect: external+same-unit-unreported-refused     14
+    mixed or indirect: cross-unit+external                       9
+    mixed or indirect: cross-unit+external+indirect              9
+    mixed or indirect: external+same-unit+same-unit-unreported-refused 7
+    mixed or indirect: cross-unit+external+same-unit             6
+    mixed or indirect: indirect                                  6
+    mixed or indirect: indirect+same-unit+same-unit-unreported-refused 5
+    mixed or indirect: cross-unit+external+indirect+same-unit    4
+    mixed or indirect: indirect+same-unit                        3
+    mixed or indirect: external+indirect+same-unit-unreported-refused 1
+    mixed or indirect: external+indirect                         1
+    mixed or indirect: external+indirect+same-unit               1
+    mixed or indirect: cross-unit+external+indirect+same-unit+same-unit-unreported-refused 1
+    mixed or indirect: indirect+same-unit-unreported-refused     1
+    mixed or indirect: cross-unit+external+same-unit-unreported-refused 1
+  external callees, by functions they unblock alone (then by functions naming them):
+    strcasecmp                               alone   5  named by   5
+    cfl_sds_cat_safe                         alone   4  named by   4
+    flb_routes_mask_get_bit                  alone   3  named by   3
+    strncmp                                  alone   3  named by   3
+    call_once                                alone   2  named by   2
+    cfl_arena_calloc                         alone   2  named by   2
+    cfl_kvlist_count                         alone   2  named by   2
+    pthread_getspecific                      alone   2  named by   2
+    pthread_key_create                       alone   2  named by   2
+    ERR_clear_error                          alone   1  named by   1
+    __atomic_compare_exchange                alone   1  named by   1
+    __atomic_load_n                          alone   1  named by   1
+    __atomic_store_n                         alone   1  named by   1
+    __builtin_ctz                            alone   1  named by   1
+    __builtin_ctzll                          alone   1  named by   1
+    __builtin_nanf                           alone   1  named by   1
+    abort                                    alone   1  named by   1
+    bind                                     alone   1  named by   1
+    bsearch                                  alone   1  named by   1
+    cfl_kvlist_fetch                         alone   1  named by   1
+    cfl_kvlist_insert_array                  alone   1  named by   1
+    cfl_kvlist_insert_bool                   alone   1  named by   1
+    cfl_kvlist_insert_double                 alone   1  named by   1
+    cfl_kvlist_insert_int64                  alone   1  named by   1
+    cfl_kvlist_insert_kvlist                 alone   1  named by   1
+  in-corpus callees, by functions they unblock alone, with what blocks the callee itself (P3):
+    cJSON_New_Item                       same-unit  Unknown   10   callee: refused:indirect-call 1
+    LZ4_decompress_generic               same-unit  Unknown    9   callee: unknown_alias 10, other 2
+    cmt_atomic_load                      cross-unit Unknown    8   callee: calls 1
+    cmt_opts_compare                     same-unit  Unknown    6   callee: freed:Unknown 1
+    cmt_atomic_store                     cross-unit Unknown    6   callee: calls 1
+    cmt_mpack_unpack_array               cross-unit Unknown    5   callee: unknown_alias 1
+    ctr_mpack_unpack_array               cross-unit Unknown    5   callee: unknown_alias 1
+    rd_kafka_timer_start0                cross-unit Unknown    5   callee: refused:pointer-valued-store 2
+    create_map_label                     same-unit  Unknown    4   callee: unknown_alias 2, other 2, refused:pointer-valued-store 2, refused:call 2
+    sds_cat_safe                         same-unit  Unknown    4   callee: calls 1
+    LZ4_compress_HC                      same-unit  Unknown    4   callee: unknown_alias 1
+    LZ4_compress_HC_extStateHC           same-unit  Unknown    4   callee: calls 2
+    rd_kafka_confval_set_type            cross-unit Unknown    4   callee: refused:union 13, refused:pointer-valued-store 3, other 1, refused:cast 1
+    rd_kafka_admin_result_ret_groups     same-unit  Unknown    4   callee: refused:union 3, other 1
+    rd_kafka_interceptor_method_add      same-unit  Unknown    4   callee: other 1
+    format_metric                        same-unit  Unknown    3   callee: other 9, unknown_alias 5, refused:pointer-valued-store 4
+    add                                  same-unit  Unknown    3   callee: calls 3
+    add_item_to_object                   same-unit  Unknown    3   callee: unknown_alias 1, refused:indirect-call 1, refused:pointer-valued-store 1
+    LZ4_decompress_unsafe_generic        same-unit  Unknown    3   callee: unknown_alias 4, other 2
+    rd_clock                             same-unit-unreported-refused -          3   callee: not an Unknown function of the corpus

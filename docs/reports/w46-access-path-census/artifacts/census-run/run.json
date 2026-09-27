@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a31872259c7e9850d/target/census/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/resource-diagnostics.json"
+  ],
+  "source_commit": "8322cd0e",
+  "binary_sha256": "265ee45f97fe198b2ab589cc7cda22470e5d21f78c7d9407a88935dcfea76309",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_ACCESS_PATH_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/access-path-units",
+    "QCORE_RETURN_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/return-census.jsonl",
+    "QCORE_INDIRECT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/indirect-census.jsonl",
+    "QCORE_STATEMENT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/statement-census.jsonl",
+    "QCORE_TRAVERSAL_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/traversal-census.jsonl",
+    "QCORE_CHAIN_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/chain-census.jsonl",
+    "QCORE_CONDITION_CALL_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/condition-call-census.jsonl",
+    "QCORE_CALL_ARGUMENT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/private/w46/access-census/census-run-2/call-argument-census.jsonl"
+  },
+  "start": "2026-09-27T00:17:09.952047+00:00",
+  "exit": 0,
+  "end": "2026-09-27T00:29:01.492870+00:00"
+}

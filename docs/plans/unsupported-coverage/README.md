@@ -93,7 +93,7 @@ bound: a modeled access can still fail its obligations.
 | Order | Card | Kind | Effort | Prerequisite | Intended decision |
 |---|---|---|---|---|---|
 | P0 | W45-SR5-SOUNDNESS | Soundness repair | High (done, `85a35431`) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
-| P1 | ACCESS-PATH-CENSUS | Measurement | Medium | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
+| P1 | ACCESS-PATH-CENSUS | Measurement | Medium (done: [W46-ACCESS-PATH-CENSUS](../../reports/w46-access-path-census/README.md), prediction frozen: P2 38 Safe / 7 Unknown, P3 83 Safe / 137 Unknown) | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
 | P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High | P1 | One typed access-path layer for statements, run beside the shape routes until parity, then retire them |
 | P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High | P2 | The same layer in conditions, returns and call arguments |
 | P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
@@ -111,6 +111,11 @@ brief must carry P1's function lists and predictions.
 Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CALLEE-CONTRACTS) at High.
 
 ### P1: ACCESS-PATH-CENSUS
+- **Status:** measured by W46-ACCESS-PATH-CENSUS on base `9bce3986`. Its
+  [PREDICTION.md](../../reports/w46-access-path-census/PREDICTION.md) carries the
+  function lists P2 and P3 are measured against, and its report recommends one
+  typed layer for statements, returns and call-free conditions first, with call
+  arguments second.
 - **Reuse the census route.** Reuse the existing census machinery (the
   `indirect-census` feature and the census-sink guard) rather than a new scanner.
   Classify each leaf from Clang's typed AST: the root (local, formal, global,

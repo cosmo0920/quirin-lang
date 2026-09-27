@@ -27,3 +27,5 @@ step report python3 "$here/report.py" "$work/census" "$work/predict" "$run" "$ba
 step registered bash "$here/registered_classes.sh" "$run" "$work/classes"
 step classes python3 "$here/classes.py" "$work/classes" "$run" "$work/census" "$work/classes.json" "$work/classes.txt"
 step publish python3 "$here/publish.py" "$work/census" "$work/predict" "$work/census.json" "$work/classes.json" "$report"
+cp "$work/report.txt" "$report/artifacts/report.txt"
+cp "$work/classes.txt" "$report/artifacts/classes.txt"

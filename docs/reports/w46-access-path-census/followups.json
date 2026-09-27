@@ -1,0 +1,16 @@
+[
+  {
+    "id": "W46-LEXICAL-GATE-NON-ACCESS",
+    "title": "The lexical access gate refuses 1,845 access-family leaves that carry no typed access at all; the 462 IND ones alone free 18 P2-Safe functions",
+    "why": "MEASURED by card W46-ACCESS-PATH-CENSUS on the w46-external-callee-contracts baseline: Clang's typed AST of the analysed text (the typed_c_ast::translation_unit_ast transport) finds no `.f`, `->f`, `*` or `[i]` access in 462 `indirect memory access` leaves, 1,340 condition leaves and 43 return leaves. The IND ones are the gate reading a declarator `*` (`const T *a = _a, *b = _b;`), a `sizeof(*p)` operand, a multiplication, a cast `(char **)&end` or an array declarator `uint8_t buf[78];` as an access. The condition and return ones are refused for a call, an assignment or a type operator, not an access. The IND leaves are the only access blockers of 18 functions the frozen prediction calls Safe under P2 (docs/reports/w46-access-path-census/PREDICTION.md, the `(no typed access)` step). DISCHARGE: P2 takes the typed answer (no path, no access) in place of the lexical gate's detection and hands the statement back to the ordinary classifier, measured against the frozen prediction; or a recorded decision that the lexical reading stays.",
+    "source": "docs/reports/w46-access-path-census/README.md",
+    "recorded_by": "W46-ACCESS-PATH-CENSUS"
+  },
+  {
+    "id": "W46-UNION-MEMBER-PATH",
+    "title": "Access paths through a union member stay refused under the typed model: 1,641 leaves, 53 Unknown functions blocked by that alone",
+    "why": "MEASURED by card W46-ACCESS-PATH-CENSUS: 1,641 IND, COND and RET leaves have an access path with a step selecting a union member (librdkafka's `rko->rko_u.*`, the OpenTelemetry protobuf `oneof` members, `rd_kafka_vu_t.u.*`), and for 53 Unknown functions it is the only refusal the P3 scope leaves (every other leaf expressible, every call served). The typed layer of plan P2/P3 keeps them refused: which member is live is not the object's declared type. DISCHARGE: a card that states the live member (a tag test dominating the access, or a contract) and admits exactly that, with Lean parity and a measured re-pin; or a recorded decision that union paths stay refused.",
+    "source": "docs/reports/w46-access-path-census/README.md",
+    "recorded_by": "W46-ACCESS-PATH-CENSUS"
+  }
+]
