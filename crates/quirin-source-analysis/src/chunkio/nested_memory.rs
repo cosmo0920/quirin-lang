@@ -11,7 +11,7 @@ use serde::Serialize;
 use std::collections::BTreeSet;
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qv"
 );
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

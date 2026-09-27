@@ -12,7 +12,7 @@ pub const FUNCTION: &str = "cio_chunk_counter_total_sub";
 /// is the fixture the existing in-process counter tests import.
 pub const SOURCE: &str = "typedef unsigned long qcore_test_size_t; struct cio_ctx { qcore_test_size_t total_chunks; qcore_test_size_t other; }; qcore_test_size_t cio_chunk_counter_total_sub(struct cio_ctx *ctx) { ctx->total_chunks--; return ctx->total_chunks; }";
 pub const CONTRACT: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv");
 pub const ROOT_C_TYPE: &str = "struct cio_ctx *";
 pub const ROOT_QCORE_TYPE: &str = "ChunkContext";
 

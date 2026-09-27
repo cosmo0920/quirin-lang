@@ -26,7 +26,7 @@ use qcore_verification::filesystem_chunk_close_composition::{
 use qcore_verification::memory_close_composition::MemoryCloseDependencies;
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv"
 );
 
 /// The derivation recipe this route appends to the unit under analysis.

@@ -28,7 +28,7 @@ const CONDITIONAL_RELEASE: &str = include_str!("fixtures/branch/conditional_rele
 const UNBRANCHED_TWIN: &str = include_str!("fixtures/branch/unbranched_twin.qcore");
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
-const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 
 fn compile_with(
     source: &str,

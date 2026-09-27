@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
 const POLICY: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore"
+    "../../../providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv"
 );
 const REQUIRED_PROFILES: [&str; 7] = [
     "linux_epoll_asan_profile",

@@ -407,7 +407,7 @@ fn a_tracked_descriptor_stored_through_a_chain_is_refused_by_name() {
     }
     let contracts = load_resource_contract_sources(&BTreeMap::from([(
         "descriptor_generic.qcore".to_owned(),
-        include_str!("fixtures/contracts/descriptor_generic.qcore").to_owned(),
+        include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
     )]))
     .expect("the descriptor fixture loads");
     let declarations = "int k_open(const char *path); int k_close(int fd); \

@@ -29,7 +29,7 @@ pub use wait_failure_paths::{
 };
 
 const WAIT_SOURCE_POLICY: &str = include_str!(
-    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore"
+    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv"
 );
 const SOURCE_IDENTITY_POLICY: &str = "source_identity";
 const PROJECTION_IDENTITY_POLICY: &str = "wait_projection_identity";
@@ -261,15 +261,15 @@ impl MonkeyWaitContracts {
         Ok(Self {
             contract_digests: BTreeMap::from([
                 (
-                    "monkey/wrapper_paths.qcore".into(),
+                    "monkey/wrapper_paths.qv".into(),
                     sha256_hex(wrapper_contract.as_bytes()),
                 ),
                 (
-                    "monkey/composition.qcore".into(),
+                    "monkey/composition.qv".into(),
                     sha256_hex(composition_contract.as_bytes()),
                 ),
                 (
-                    "monkey/wait_source_policy.qcore".into(),
+                    "monkey/wait_source_policy.qv".into(),
                     sha256_hex(source_policy.as_bytes()),
                 ),
             ]),
@@ -718,10 +718,10 @@ mod tests {
     const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
     const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
     const WRAPPER_CONTRACT: &str = include_str!(
-        "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"
+        "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv"
     );
     const COMPOSITION_CONTRACT: &str = include_str!(
-        "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
+        "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qv"
     );
 
     fn wrapper_source() -> String {

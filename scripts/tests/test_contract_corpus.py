@@ -22,13 +22,13 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root, tracked(root))
-        # 108 -> 109: W43-LIBC-RESTRICT-PROTOTYPES adds libc/regex.qcore.
-        # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qcore.
+        # 108 -> 109: W43-LIBC-RESTRICT-PROTOTYPES adds libc/regex.qv.
+        # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qv.
         # 110 -> 111: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
-        # library/descriptor_native_observation.qcore in quirin-provider-shared.
-        # 111 -> 113: W45-FB-RETRY-LIFETIME adds fluent_bit/task_users.qcore and
-        # fluent_bit/output_singleplex.qcore in quirin-provider-fluent-bit.
-        # 113 -> 114: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qcore
+        # library/descriptor_native_observation.qv in quirin-provider-shared.
+        # 111 -> 113: W45-FB-RETRY-LIFETIME adds fluent_bit/task_users.qv and
+        # fluent_bit/output_singleplex.qv in quirin-provider-fluent-bit.
+        # 113 -> 114: W45-FB-BACKLOG-CUSTODY's fluent_bit/storage_backlog.qv
         # (checked specifications) in quirin-provider-fluent-bit.
         # 114 -> 118: the W46 contract cards add three Fluent Bit modules
         # and one provider-owned Monkey/Libevent module.
@@ -97,12 +97,12 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         references, violations = contract_corpus.libc_inheritance(root, tracked(root))
         self.assertEqual(violations, [])
-        memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore"
-        string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore"
+        memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv"
+        string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv"
         # Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the Monkey and
         # librdkafka allocator wrappers, owned by the executable crates.
-        monkey = "providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        rdkafka = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore"
+        monkey = "providers/qcore-provider-libevent/contracts/monkey/memory.qv"
+        rdkafka = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv"
         self.assertEqual(references, [
             (monkey, "mk_mem_alloc", "libc::malloc"),
             (monkey, "mk_mem_alloc_z", "libc::malloc"),

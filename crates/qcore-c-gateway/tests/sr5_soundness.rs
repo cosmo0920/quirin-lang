@@ -24,11 +24,11 @@ fn load(extra: &[(&str, &str)]) -> ResourceContracts {
     let mut sources = BTreeMap::from([
         (
             "q_base.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_base.qv").to_owned(),
         ),
         (
             "q_nullable.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_nullable.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_nullable.qv").to_owned(),
         ),
     ]);
     for (name, text) in extra {

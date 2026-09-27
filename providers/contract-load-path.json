@@ -10,56 +10,56 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "chunkio/chunk_destructor.qcore",
-        "chunkio/chunk_residency.qcore",
-        "chunkio/chunk_sizes.qcore",
-        "chunkio/constructor_failure_observation.qcore",
-        "chunkio/context_destructor.qcore",
-        "chunkio/counters.qcore",
-        "chunkio/error_frame.qcore",
-        "chunkio/error_state.qcore",
-        "chunkio/file_close.qcore",
-        "chunkio/file_close_delete.qcore",
-        "chunkio/filesystem_attempts.qcore",
-        "chunkio/filesystem_chunk_close.qcore",
-        "chunkio/filesystem_constructor_failure_observation.qcore",
-        "chunkio/filesystem_delete.qcore",
-        "chunkio/filesystem_delete_attempt.qcore",
-        "chunkio/filesystem_delete_observation.qcore",
-        "chunkio/filesystem_descriptor_failure_observation.qcore",
-        "chunkio/filesystem_existing_observation.qcore",
-        "chunkio/filesystem_integrity_observation.qcore",
-        "chunkio/filesystem_observation.qcore",
-        "chunkio/filesystem_os_constructor_observation.qcore",
-        "chunkio/filesystem_os_observation.qcore",
-        "chunkio/filesystem_outcomes.qcore",
-        "chunkio/filesystem_reopen_failure_observation.qcore",
-        "chunkio/filesystem_sync_failure_observation.qcore",
-        "chunkio/filesystem_teardown_observation.qcore",
-        "chunkio/filesystem_transition_observation.qcore",
-        "chunkio/filesystem_unmap_failure_observation.qcore",
-        "chunkio/import_composition.qcore",
-        "chunkio/list_unlink.qcore",
-        "chunkio/lock_state.qcore",
-        "chunkio/memory_backend.qcore",
-        "chunkio/memory_close.qcore",
-        "chunkio/nested_cleanup.qcore",
-        "chunkio/nested_memory_teardown.qcore",
-        "chunkio/parent_teardown.qcore",
-        "chunkio/resource_open_close.qcore",
-        "chunkio/stream_destructor.qcore",
-        "chunkio/teardown_observation.qcore",
-        "chunkio/teardown_traversal.qcore",
-        "chunkio/unmap_wrapper.qcore",
-        "chunkio/unsupported_close.qcore",
-        "chunkio/unsupported_constructor_observation.qcore",
-        "fluent_bit/busy_state.qcore"
+        "chunkio/chunk_destructor.qv",
+        "chunkio/chunk_residency.qv",
+        "chunkio/chunk_sizes.qv",
+        "chunkio/constructor_failure_observation.qv",
+        "chunkio/context_destructor.qv",
+        "chunkio/counters.qv",
+        "chunkio/error_frame.qv",
+        "chunkio/error_state.qv",
+        "chunkio/file_close.qv",
+        "chunkio/file_close_delete.qv",
+        "chunkio/filesystem_attempts.qv",
+        "chunkio/filesystem_chunk_close.qv",
+        "chunkio/filesystem_constructor_failure_observation.qv",
+        "chunkio/filesystem_delete.qv",
+        "chunkio/filesystem_delete_attempt.qv",
+        "chunkio/filesystem_delete_observation.qv",
+        "chunkio/filesystem_descriptor_failure_observation.qv",
+        "chunkio/filesystem_existing_observation.qv",
+        "chunkio/filesystem_integrity_observation.qv",
+        "chunkio/filesystem_observation.qv",
+        "chunkio/filesystem_os_constructor_observation.qv",
+        "chunkio/filesystem_os_observation.qv",
+        "chunkio/filesystem_outcomes.qv",
+        "chunkio/filesystem_reopen_failure_observation.qv",
+        "chunkio/filesystem_sync_failure_observation.qv",
+        "chunkio/filesystem_teardown_observation.qv",
+        "chunkio/filesystem_transition_observation.qv",
+        "chunkio/filesystem_unmap_failure_observation.qv",
+        "chunkio/import_composition.qv",
+        "chunkio/list_unlink.qv",
+        "chunkio/lock_state.qv",
+        "chunkio/memory_backend.qv",
+        "chunkio/memory_close.qv",
+        "chunkio/nested_cleanup.qv",
+        "chunkio/nested_memory_teardown.qv",
+        "chunkio/parent_teardown.qv",
+        "chunkio/resource_open_close.qv",
+        "chunkio/stream_destructor.qv",
+        "chunkio/teardown_observation.qv",
+        "chunkio/teardown_traversal.qv",
+        "chunkio/unmap_wrapper.qv",
+        "chunkio/unsupported_close.qv",
+        "chunkio/unsupported_constructor_observation.qv",
+        "fluent_bit/busy_state.qv"
       ],
       "published": {},
       "resource_view": [
-        "chunkio/chunk_residency.qcore",
-        "chunkio/chunk_sizes.qcore",
-        "chunkio/resource_open_close.qcore"
+        "chunkio/chunk_residency.qv",
+        "chunkio/chunk_sizes.qv",
+        "chunkio/resource_open_close.qv"
       ]
     },
     {
@@ -71,16 +71,16 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "cmetrics/context_lifetime.qcore",
-        "cmetrics/counter_reset.qcore",
-        "cmetrics/metric_values.qcore",
-        "cmetrics/mpack_utils.qcore"
+        "cmetrics/context_lifetime.qv",
+        "cmetrics/counter_reset.qv",
+        "cmetrics/metric_values.qv",
+        "cmetrics/mpack_utils.qv"
       ],
       "published": {},
       "resource_view": [
-        "cmetrics/context_lifetime.qcore",
-        "cmetrics/metric_values.qcore",
-        "cmetrics/mpack_utils.qcore"
+        "cmetrics/context_lifetime.qv",
+        "cmetrics/metric_values.qv",
+        "cmetrics/mpack_utils.qv"
       ]
     },
     {
@@ -92,11 +92,11 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "ctraces/context_lifetime.qcore"
+        "ctraces/context_lifetime.qv"
       ],
       "published": {},
       "resource_view": [
-        "ctraces/context_lifetime.qcore"
+        "ctraces/context_lifetime.qv"
       ]
     },
     {
@@ -109,29 +109,29 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "monkey/callback_binding.qcore",
-        "monkey/callback_task_handoff.qcore",
-        "monkey/composition.qcore",
-        "monkey/cycle18_composition.qcore",
-        "monkey/descriptor_observation.qcore",
-        "monkey/event_payload.qcore",
-        "monkey/intrusive_list.qcore",
-        "monkey/logging.qcore",
-        "monkey/memory.qcore",
-        "monkey/native_platform_matrix.qcore",
-        "monkey/scalar_observation.qcore",
-        "monkey/timeout_teardown.qcore",
-        "monkey/wait_failure_policy.qcore",
-        "monkey/wait_identity_policy.qcore",
-        "monkey/wait_source_policy.qcore",
-        "monkey/wrapper_paths.qcore"
+        "monkey/callback_binding.qv",
+        "monkey/callback_task_handoff.qv",
+        "monkey/composition.qv",
+        "monkey/cycle18_composition.qv",
+        "monkey/descriptor_observation.qv",
+        "monkey/event_payload.qv",
+        "monkey/intrusive_list.qv",
+        "monkey/logging.qv",
+        "monkey/memory.qv",
+        "monkey/native_platform_matrix.qv",
+        "monkey/scalar_observation.qv",
+        "monkey/timeout_teardown.qv",
+        "monkey/wait_failure_policy.qv",
+        "monkey/wait_identity_policy.qv",
+        "monkey/wait_source_policy.qv",
+        "monkey/wrapper_paths.qv"
       ],
       "published": {},
       "resource_view": [
-        "monkey/intrusive_list.qcore",
-        "monkey/logging.qcore",
-        "monkey/memory.qcore",
-        "monkey/scalar_observation.qcore"
+        "monkey/intrusive_list.qv",
+        "monkey/logging.qv",
+        "monkey/memory.qv",
+        "monkey/scalar_observation.qv"
       ]
     },
     {
@@ -144,22 +144,22 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "librdkafka/cjson.qcore",
-        "librdkafka/kafka_mem.qcore",
-        "librdkafka/lz4_stream.qcore",
-        "librdkafka/memory.qcore",
-        "librdkafka/queue_destructor.qcore",
-        "librdkafka/refcount.qcore",
-        "librdkafka/topic_partition.qcore",
-        "librdkafka/typed_queue.qcore"
+        "librdkafka/cjson.qv",
+        "librdkafka/kafka_mem.qv",
+        "librdkafka/lz4_stream.qv",
+        "librdkafka/memory.qv",
+        "librdkafka/queue_destructor.qv",
+        "librdkafka/refcount.qv",
+        "librdkafka/topic_partition.qv",
+        "librdkafka/typed_queue.qv"
       ],
       "published": {},
       "resource_view": [
-        "librdkafka/cjson.qcore",
-        "librdkafka/kafka_mem.qcore",
-        "librdkafka/lz4_stream.qcore",
-        "librdkafka/memory.qcore",
-        "librdkafka/topic_partition.qcore"
+        "librdkafka/cjson.qv",
+        "librdkafka/kafka_mem.qv",
+        "librdkafka/lz4_stream.qv",
+        "librdkafka/memory.qv",
+        "librdkafka/topic_partition.qv"
       ]
     },
     {
@@ -169,15 +169,15 @@
       "contracts": "quirin-provider-cfl/contracts",
       "dependencies": [],
       "modules": [
-        "cfl/arena_lifetime.qcore",
-        "cfl/intrusive_list.qcore",
-        "cfl/sds_lifetime.qcore",
-        "cfl/time.qcore"
+        "cfl/arena_lifetime.qv",
+        "cfl/intrusive_list.qv",
+        "cfl/sds_lifetime.qv",
+        "cfl/time.qv"
       ],
       "published": {},
       "resource_view": [
-        "cfl/sds_lifetime.qcore",
-        "cfl/time.qcore"
+        "cfl/sds_lifetime.qv",
+        "cfl/time.qv"
       ]
     },
     {
@@ -189,46 +189,46 @@
         "quirin-provider-libc"
       ],
       "modules": [
-        "fluent_bit/hash_table_publication.qcore",
-        "fluent_bit/input_chunk_destroy.qcore",
-        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
-        "fluent_bit/input_chunk_helpers.qcore",
-        "fluent_bit/input_chunk_is_up.qcore",
-        "fluent_bit/input_chunk_name.qcore",
-        "fluent_bit/input_chunk_sizes.qcore",
-        "fluent_bit/input_chunk_total_size.qcore",
-        "fluent_bit/logging.qcore",
-        "fluent_bit/memory.qcore",
-        "fluent_bit/output_flush_id.qcore",
-        "fluent_bit/output_singleplex.qcore",
-        "fluent_bit/resource_memory.qcore",
-        "fluent_bit/resource_string.qcore",
-        "fluent_bit/routes_mask.qcore",
-        "fluent_bit/storage_backlog.qcore",
-        "fluent_bit/task_route_queries.qcore",
-        "fluent_bit/task_users.qcore",
-        "fluent_bit/time.qcore"
+        "fluent_bit/hash_table_publication.qv",
+        "fluent_bit/input_chunk_destroy.qv",
+        "fluent_bit/input_chunk_destroy_direct_routes.qv",
+        "fluent_bit/input_chunk_helpers.qv",
+        "fluent_bit/input_chunk_is_up.qv",
+        "fluent_bit/input_chunk_name.qv",
+        "fluent_bit/input_chunk_sizes.qv",
+        "fluent_bit/input_chunk_total_size.qv",
+        "fluent_bit/logging.qv",
+        "fluent_bit/memory.qv",
+        "fluent_bit/output_flush_id.qv",
+        "fluent_bit/output_singleplex.qv",
+        "fluent_bit/resource_memory.qv",
+        "fluent_bit/resource_string.qv",
+        "fluent_bit/routes_mask.qv",
+        "fluent_bit/storage_backlog.qv",
+        "fluent_bit/task_route_queries.qv",
+        "fluent_bit/task_users.qv",
+        "fluent_bit/time.qv"
       ],
       "published": {},
       "resource_view": [
-        "fluent_bit/hash_table_publication.qcore",
-        "fluent_bit/input_chunk_destroy.qcore",
-        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
-        "fluent_bit/input_chunk_helpers.qcore",
-        "fluent_bit/input_chunk_is_up.qcore",
-        "fluent_bit/input_chunk_name.qcore",
-        "fluent_bit/input_chunk_sizes.qcore",
-        "fluent_bit/input_chunk_total_size.qcore",
-        "fluent_bit/logging.qcore",
-        "fluent_bit/output_flush_id.qcore",
-        "fluent_bit/output_singleplex.qcore",
-        "fluent_bit/resource_memory.qcore",
-        "fluent_bit/resource_string.qcore",
-        "fluent_bit/routes_mask.qcore",
-        "fluent_bit/storage_backlog.qcore",
-        "fluent_bit/task_route_queries.qcore",
-        "fluent_bit/task_users.qcore",
-        "fluent_bit/time.qcore"
+        "fluent_bit/hash_table_publication.qv",
+        "fluent_bit/input_chunk_destroy.qv",
+        "fluent_bit/input_chunk_destroy_direct_routes.qv",
+        "fluent_bit/input_chunk_helpers.qv",
+        "fluent_bit/input_chunk_is_up.qv",
+        "fluent_bit/input_chunk_name.qv",
+        "fluent_bit/input_chunk_sizes.qv",
+        "fluent_bit/input_chunk_total_size.qv",
+        "fluent_bit/logging.qv",
+        "fluent_bit/output_flush_id.qv",
+        "fluent_bit/output_singleplex.qv",
+        "fluent_bit/resource_memory.qv",
+        "fluent_bit/resource_string.qv",
+        "fluent_bit/routes_mask.qv",
+        "fluent_bit/storage_backlog.qv",
+        "fluent_bit/task_route_queries.qv",
+        "fluent_bit/task_users.qv",
+        "fluent_bit/time.qv"
       ]
     },
     {
@@ -238,44 +238,44 @@
       "contracts": "quirin-provider-libc/contracts",
       "dependencies": [],
       "modules": [
-        "libc/dirent.qcore",
-        "libc/dlfcn.qcore",
-        "libc/errno.qcore",
-        "libc/math.qcore",
-        "libc/memory.qcore",
-        "libc/process.qcore",
-        "libc/pthread_mutex.qcore",
-        "libc/regex.qcore",
-        "libc/socket.qcore",
-        "libc/stdio.qcore",
-        "libc/stdlib.qcore",
-        "libc/string.qcore",
-        "libc/sys_stat.qcore",
-        "libc/threads.qcore",
-        "libc/time.qcore",
-        "libc/unistd.qcore"
+        "libc/dirent.qv",
+        "libc/dlfcn.qv",
+        "libc/errno.qv",
+        "libc/math.qv",
+        "libc/memory.qv",
+        "libc/process.qv",
+        "libc/pthread_mutex.qv",
+        "libc/regex.qv",
+        "libc/socket.qv",
+        "libc/stdio.qv",
+        "libc/stdlib.qv",
+        "libc/string.qv",
+        "libc/sys_stat.qv",
+        "libc/threads.qv",
+        "libc/time.qv",
+        "libc/unistd.qv"
       ],
       "published": {
-        "libc/memory.qcore": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
-        "libc/string.qcore": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
+        "libc/memory.qv": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+        "libc/string.qv": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
       },
       "resource_view": [
-        "libc/dirent.qcore",
-        "libc/dlfcn.qcore",
-        "libc/errno.qcore",
-        "libc/math.qcore",
-        "libc/memory.qcore",
-        "libc/process.qcore",
-        "libc/pthread_mutex.qcore",
-        "libc/regex.qcore",
-        "libc/socket.qcore",
-        "libc/stdio.qcore",
-        "libc/stdlib.qcore",
-        "libc/string.qcore",
-        "libc/sys_stat.qcore",
-        "libc/threads.qcore",
-        "libc/time.qcore",
-        "libc/unistd.qcore"
+        "libc/dirent.qv",
+        "libc/dlfcn.qv",
+        "libc/errno.qv",
+        "libc/math.qv",
+        "libc/memory.qv",
+        "libc/process.qv",
+        "libc/pthread_mutex.qv",
+        "libc/regex.qv",
+        "libc/socket.qv",
+        "libc/stdio.qv",
+        "libc/stdlib.qv",
+        "libc/string.qv",
+        "libc/sys_stat.qv",
+        "libc/threads.qv",
+        "libc/time.qv",
+        "libc/unistd.qv"
       ]
     },
     {
@@ -285,11 +285,11 @@
       "contracts": "quirin-provider-mpack/contracts",
       "dependencies": [],
       "modules": [
-        "mpack/writer.qcore"
+        "mpack/writer.qv"
       ],
       "published": {},
       "resource_view": [
-        "mpack/writer.qcore"
+        "mpack/writer.qv"
       ]
     },
     {
@@ -299,11 +299,11 @@
       "contracts": "quirin-provider-msgpack/contracts",
       "dependencies": [],
       "modules": [
-        "msgpack/packer.qcore"
+        "msgpack/packer.qv"
       ],
       "published": {},
       "resource_view": [
-        "msgpack/packer.qcore"
+        "msgpack/packer.qv"
       ]
     },
     {
@@ -319,10 +319,10 @@
         "quirin-provider-msgpack"
       ],
       "modules": [
-        "language/quantified_indices.qcore",
-        "library/custody_evidence.qcore",
-        "library/descriptor_native_observation.qcore",
-        "library/source_projection.qcore"
+        "language/quantified_indices.qv",
+        "library/custody_evidence.qv",
+        "library/descriptor_native_observation.qv",
+        "library/source_projection.qv"
       ],
       "published": {},
       "resource_view": []

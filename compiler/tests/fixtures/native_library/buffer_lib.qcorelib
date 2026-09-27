@@ -21,7 +21,7 @@ unwinding abort;
 allocator_custody closed;
 thread_posture single_caller;
 
-contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qv;

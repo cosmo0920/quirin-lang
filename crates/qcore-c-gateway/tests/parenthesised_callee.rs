@@ -40,15 +40,15 @@ fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
         (
             "q_base.qcore".to_owned(),
-            include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            include_str!("fixtures/contracts/q_base.qv").to_owned(),
         ),
         (
             "r_return_call.qcore".to_owned(),
-            include_str!("fixtures/contracts/r_return_call.qcore").to_owned(),
+            include_str!("fixtures/contracts/r_return_call.qv").to_owned(),
         ),
         (
             "descriptor_generic.qcore".to_owned(),
-            include_str!("fixtures/contracts/descriptor_generic.qcore").to_owned(),
+            include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
         ),
     ]))
     .expect("the fixture contracts load")

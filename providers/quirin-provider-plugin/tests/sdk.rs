@@ -52,7 +52,7 @@ fn the_example_crate_reads_and_generates_its_user_load_path() {
     assert_eq!(krate.namespace, "acme");
     assert_eq!(
         krate.modules.keys().collect::<Vec<_>>(),
-        ["acme/pool.qcore"]
+        ["acme/pool.qv"]
     );
     assert_eq!(krate.manifest.checkers.len(), 1);
     let manifest =
@@ -62,7 +62,7 @@ fn the_example_crate_reads_and_generates_its_user_load_path() {
     assert_eq!(manifest["extends"], "../providers/contract-load-path.json");
     let record = &manifest["crates"][0];
     assert_eq!(record["contracts"], "quirin-provider-acme/contracts");
-    assert_eq!(record["modules"], serde_json::json!(["acme/pool.qcore"]));
+    assert_eq!(record["modules"], serde_json::json!(["acme/pool.qv"]));
     assert!(
         record.get("resource_view").is_none(),
         "the loader decides views"
@@ -92,7 +92,7 @@ fn a_crate_outside_the_load_path_directory_or_malformed_is_refused() {
         ("src/lib.rs", ("\"acme\";", "\"other\";"), "derived"),
         (
             "quirin-plugin.json",
-            ("acme/pool.qcore", "acme/absent.qcore"),
+            ("acme/pool.qv", "acme/absent.qcore"),
             "does not own",
         ),
         (
@@ -184,7 +184,7 @@ fn the_example_checker_packages_verifies_and_answers_a_claim() {
         unit: UnitIdentity {
             source_digest: "a".repeat(64),
             build_digest: "b".repeat(64),
-            translation_unit: "quirin-provider-acme:acme/pool.qcore".into(),
+            translation_unit: "quirin-provider-acme:acme/pool.qv".into(),
         },
         facts: Vec::new(),
         assumptions: Default::default(),
@@ -195,7 +195,7 @@ fn the_example_checker_packages_verifies_and_answers_a_claim() {
             property: qcore_schemas::obligation::ObligationProperty::ParameterModeRespected,
             subject: qcore_schemas::obligation::ObligationSubject::Function {
                 symbol: "acme_pool_get".into(),
-                translation_unit: "quirin-provider-acme:acme/pool.qcore".into(),
+                translation_unit: "quirin-provider-acme:acme/pool.qv".into(),
             },
             scope: qcore_schemas::obligation::ObligationScope::WholeUnit,
             bounds: qcore_schemas::obligation::TaskBounds::single_path(),

@@ -7,20 +7,20 @@
     {
       "library": "chunkio",
       "provider": "qcore.chunkio",
-      "contract": "../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore",
+      "contract": "../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv",
       "frame_helpers": [
         {
           "source": "cio_error.c",
           "function": "cio_error_reset",
           "record": "cio_chunk",
-          "contract": "../../../providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore"
+          "contract": "../../../providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv"
         }
       ]
     },
     {
       "library": "fluent_bit",
       "provider": "qcore.chunkio",
-      "contract": "../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore"
+      "contract": "../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv"
     }
   ]
 }

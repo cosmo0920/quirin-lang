@@ -35,7 +35,7 @@ void drain(struct queue *q);
 
 /// `drain` is declared with a custody duty its body does not keep in any
 /// sense W4 could state (it releases what the queue held), next to the list
-/// clauses of `monkey/intrusive_list.qcore`.
+/// clauses of `monkey/intrusive_list.qv`.
 const CONTRACTS: &str = "module contract;
 extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
 contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
@@ -55,7 +55,7 @@ fn contracts() -> ResourceContracts {
         &[
             (
                 "q_base.qcore".to_owned(),
-                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+                include_str!("fixtures/contracts/q_base.qv").to_owned(),
             ),
             ("list.qcore".to_owned(), CONTRACTS.to_owned()),
         ]

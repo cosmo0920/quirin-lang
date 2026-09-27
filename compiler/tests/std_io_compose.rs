@@ -23,7 +23,7 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
-const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 const CHAIN: &str = include_str!("fixtures/compose/chain.qcore");
 const HAND_WRITTEN: &str = include_str!("fixtures/compose/chain_hand_written.qcore");
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");

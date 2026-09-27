@@ -7,32 +7,32 @@ use qcore_compiler::{
 
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     (
-        "cfl/arena_lifetime.qcore",
+        "cfl/arena_lifetime.qv",
         "cfl_arena_create_with_options",
         5,
     ),
-    ("cfl/arena_lifetime.qcore", "cfl_arena_destroy", 5),
-    ("cfl/intrusive_list.qcore", "cfl_list_add", 4),
-    ("cfl/intrusive_list.qcore", "cfl_list_del", 5),
+    ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
+    ("cfl/intrusive_list.qv", "cfl_list_add", 4),
+    ("cfl/intrusive_list.qv", "cfl_list_del", 5),
     // Card W36-CORPUS-CONTRACTS-3: the CFL dynamic string's release, the
     // highest function-cover callee in the baseline (8 projected functions name
     // it and nothing else). Read from `lib/cfl/src/cfl_sds.c:249-275`;
     // `nullable` because the body's first statement is `if (!s) { return; }`.
-    ("cfl/sds_lifetime.qcore", "cfl_sds_destroy", 3),
+    ("cfl/sds_lifetime.qv", "cfl_sds_destroy", 3),
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: the length query
     // (`lib/cfl/src/cfl_sds.c:193-200`): marker, borrowed string, `none`.
-    ("cfl/sds_lifetime.qcore", "cfl_sds_len", 3),
+    ("cfl/sds_lifetime.qv", "cfl_sds_len", 3),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
     // `flb_time_now` shape, whose C header is unprototyped `()` in exactly
     // the same way, which is what settles the arity gate by precedent.
     // Read from `lib/cfl/src/cfl_time.c:31-60`.
-    ("cfl/time.qcore", "cfl_time_now", 2),
-    ("chunkio/chunk_destructor.qcore", "cio_chunk_close", 10),
-    ("chunkio/chunk_destructor.qcore", "cio_chunk_delete", 5),
+    ("cfl/time.qv", "cfl_time_now", 2),
+    ("chunkio/chunk_destructor.qv", "cio_chunk_close", 10),
+    ("chunkio/chunk_destructor.qv", "cio_chunk_delete", 5),
     // Card NEIGHBOURS: the corpus moves 64 -> 67 modules with this file,
-    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`, and
+    // `fluent_bit/input_chunk_helpers.qv` and `fluent_bit/time.qv`, and
     // the resource-v1 declaration count 25 -> 31. Deliberate; see
     // `docs/reports/remaining-neighbours/README.md`. All three residency
     // helpers borrow the chunk and return no custody, which is the only v1
@@ -40,69 +40,69 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // to have: neither `cio_chunk_up_force` nor `cio_chunk_down` frees the
     // chunk or its backend, so the caller's obligation to `cio_chunk_close` is
     // unchanged across both.
-    ("chunkio/chunk_residency.qcore", "cio_chunk_is_up", 3),
-    ("chunkio/chunk_residency.qcore", "cio_chunk_up_force", 3),
-    ("chunkio/chunk_residency.qcore", "cio_chunk_down", 3),
+    ("chunkio/chunk_residency.qv", "cio_chunk_is_up", 3),
+    ("chunkio/chunk_residency.qv", "cio_chunk_up_force", 3),
+    ("chunkio/chunk_residency.qv", "cio_chunk_down", 3),
     // Card W31-CORPUS-CONTRACTS-2: the corpus moves 74 -> 76 modules with this
-    // file and `fluent_bit/input_chunk_total_size.qcore`, and the resource-v1
+    // file and `fluent_bit/input_chunk_total_size.qv`, and the resource-v1
     // declaration count 41 -> 43. Deliberate; see
     // `docs/reports/w31-corpus-contracts-2/README.md`. The body
     // (`lib/chunkio/src/cio_chunk.c:315-334` at the pinned checkout) is a pure
     // size query — an error-field reset and backend length-field reads — so
     // `resource_borrowed(ch)` and `resource_return_none()` are the only
-    // faithful modes, the same reading `fluent_bit/input_chunk_sizes.qcore`
+    // faithful modes, the same reading `fluent_bit/input_chunk_sizes.qv`
     // recorded for its wrapper. This lands the ChunkIO-side module card
     // W29-CORPUS-CONTRACTS' `W29-CONTENT-SIZE-UNDECLARED` asked for.
-    ("chunkio/chunk_sizes.qcore", "cio_chunk_get_content_size", 3),
+    ("chunkio/chunk_sizes.qv", "cio_chunk_get_content_size", 3),
     (
-        "chunkio/constructor_failure_observation.qcore",
+        "chunkio/constructor_failure_observation.qv",
         "native_constructor_failure_observation",
         11,
     ),
-    ("chunkio/context_destructor.qcore", "cio_destroy", 7),
-    ("chunkio/counters.qcore", "cio_chunk_counter_total_add", 10),
-    ("chunkio/counters.qcore", "cio_chunk_counter_total_sub", 10),
+    ("chunkio/context_destructor.qv", "cio_destroy", 7),
+    ("chunkio/counters.qv", "cio_chunk_counter_total_add", 10),
+    ("chunkio/counters.qv", "cio_chunk_counter_total_sub", 10),
     (
-        "chunkio/counters.qcore",
+        "chunkio/counters.qv",
         "cio_chunk_counter_total_up_add",
         10,
     ),
     (
-        "chunkio/counters.qcore",
+        "chunkio/counters.qv",
         "cio_chunk_counter_total_up_sub",
         10,
     ),
-    ("chunkio/error_frame.qcore", "cio_error_reset", 5),
-    ("chunkio/error_state.qcore", "cio_error_reset", 5),
-    ("chunkio/file_close.qcore", "file_close_no_delete", 17),
-    ("chunkio/file_close_delete.qcore", "file_close_delete", 13),
+    ("chunkio/error_frame.qv", "cio_error_reset", 5),
+    ("chunkio/error_state.qv", "cio_error_reset", 5),
+    ("chunkio/file_close.qv", "file_close_no_delete", 17),
+    ("chunkio/file_close_delete.qv", "file_close_delete", 13),
     (
-        "chunkio/filesystem_attempts.qcore",
+        "chunkio/filesystem_attempts.qv",
         "file_close_result_use",
         6,
     ),
     (
-        "chunkio/filesystem_attempts.qcore",
+        "chunkio/filesystem_attempts.qv",
         "file_unmap_result_use",
         3,
     ),
     (
-        "chunkio/filesystem_attempts.qcore",
+        "chunkio/filesystem_attempts.qv",
         "native_close_result_use",
         3,
     ),
     (
-        "chunkio/filesystem_attempts.qcore",
+        "chunkio/filesystem_attempts.qv",
         "native_unmap_result_use",
         3,
     ),
     (
-        "chunkio/filesystem_chunk_close.qcore",
+        "chunkio/filesystem_chunk_close.qv",
         "filesystem_chunk_close",
         22,
     ),
     (
-        "chunkio/filesystem_constructor_failure_observation.qcore",
+        "chunkio/filesystem_constructor_failure_observation.qv",
         "native_file_constructor_failure_observation",
         16,
     ),
@@ -115,47 +115,47 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // indexed field entries carrying C type and reset value, one indexed path
     // argument, and the two diagnostic helpers. No `ensures` clause moved.
     (
-        "chunkio/filesystem_delete.qcore",
+        "chunkio/filesystem_delete.qv",
         "native_delete_outcomes",
         25,
     ),
     (
-        "chunkio/filesystem_delete_attempt.qcore",
+        "chunkio/filesystem_delete_attempt.qv",
         "native_delete_result_use",
         3,
     ),
     (
-        "chunkio/filesystem_delete_observation.qcore",
+        "chunkio/filesystem_delete_observation.qv",
         "native_delete_observation",
         12,
     ),
     (
-        "chunkio/filesystem_descriptor_failure_observation.qcore",
+        "chunkio/filesystem_descriptor_failure_observation.qv",
         "native_file_descriptor_failure_observation",
         20,
     ),
     (
-        "chunkio/filesystem_existing_observation.qcore",
+        "chunkio/filesystem_existing_observation.qv",
         "native_file_existing_observation",
         17,
     ),
     (
-        "chunkio/filesystem_integrity_observation.qcore",
+        "chunkio/filesystem_integrity_observation.qv",
         "native_file_integrity_observation",
         21,
     ),
     (
-        "chunkio/filesystem_observation.qcore",
+        "chunkio/filesystem_observation.qv",
         "native_cleanup_observation",
         14,
     ),
     (
-        "chunkio/filesystem_os_constructor_observation.qcore",
+        "chunkio/filesystem_os_constructor_observation.qv",
         "native_file_os_constructor_observation",
         17,
     ),
     (
-        "chunkio/filesystem_os_observation.qcore",
+        "chunkio/filesystem_os_observation.qv",
         "native_os_cleanup_observation",
         13,
     ),
@@ -166,76 +166,76 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `munmap` arguments. Neither declares a mapping field: that clause exists
     // only for the guarded-delete policy, and declaring one here is refused.
     (
-        "chunkio/filesystem_outcomes.qcore",
+        "chunkio/filesystem_outcomes.qv",
         "native_close_outcomes",
         26,
     ),
     (
-        "chunkio/filesystem_outcomes.qcore",
+        "chunkio/filesystem_outcomes.qv",
         "native_unmap_outcomes",
         29,
     ),
     (
-        "chunkio/filesystem_reopen_failure_observation.qcore",
+        "chunkio/filesystem_reopen_failure_observation.qv",
         "native_file_reopen_failure_observation",
         28,
     ),
     (
-        "chunkio/filesystem_sync_failure_observation.qcore",
+        "chunkio/filesystem_sync_failure_observation.qv",
         "native_file_sync_failure_observation",
         18,
     ),
     (
-        "chunkio/filesystem_teardown_observation.qcore",
+        "chunkio/filesystem_teardown_observation.qv",
         "native_file_teardown_observation",
         16,
     ),
     (
-        "chunkio/filesystem_transition_observation.qcore",
+        "chunkio/filesystem_transition_observation.qv",
         "native_file_transition_observation",
         16,
     ),
     (
-        "chunkio/filesystem_unmap_failure_observation.qcore",
+        "chunkio/filesystem_unmap_failure_observation.qv",
         "native_file_unmap_failure_observation",
         19,
     ),
     (
-        "chunkio/import_composition.qcore",
+        "chunkio/import_composition.qv",
         "check_imported_chunk_program",
         7,
     ),
-    ("chunkio/list_unlink.qcore", "__mk_list_del", 6),
-    ("chunkio/list_unlink.qcore", "mk_list_del", 12),
-    ("chunkio/lock_state.qcore", "cio_chunk_is_locked", 7),
-    ("chunkio/lock_state.qcore", "cio_chunk_unlock", 8),
-    ("chunkio/memory_backend.qcore", "cio_memfs_close", 22),
-    ("chunkio/memory_close.qcore", "cio_chunk_close", 19),
-    ("chunkio/nested_cleanup.qcore", "nested_cleanup", 12),
+    ("chunkio/list_unlink.qv", "__mk_list_del", 6),
+    ("chunkio/list_unlink.qv", "mk_list_del", 12),
+    ("chunkio/lock_state.qv", "cio_chunk_is_locked", 7),
+    ("chunkio/lock_state.qv", "cio_chunk_unlock", 8),
+    ("chunkio/memory_backend.qv", "cio_memfs_close", 22),
+    ("chunkio/memory_close.qv", "cio_chunk_close", 19),
+    ("chunkio/nested_cleanup.qv", "nested_cleanup", 12),
     (
-        "chunkio/nested_memory_teardown.qcore",
+        "chunkio/nested_memory_teardown.qv",
         "nested_memory_teardown",
         10,
     ),
-    ("chunkio/parent_teardown.qcore", "parent_teardown", 11),
-    ("chunkio/resource_open_close.qcore", "cio_chunk_open", 8),
-    ("chunkio/resource_open_close.qcore", "cio_chunk_close", 4),
-    ("chunkio/stream_destructor.qcore", "cio_stream_destroy", 6),
-    ("chunkio/stream_destructor.qcore", "cio_stream_delete", 5),
+    ("chunkio/parent_teardown.qv", "parent_teardown", 11),
+    ("chunkio/resource_open_close.qv", "cio_chunk_open", 8),
+    ("chunkio/resource_open_close.qv", "cio_chunk_close", 4),
+    ("chunkio/stream_destructor.qv", "cio_stream_destroy", 6),
+    ("chunkio/stream_destructor.qv", "cio_stream_delete", 5),
     (
-        "chunkio/teardown_observation.qcore",
+        "chunkio/teardown_observation.qv",
         "native_teardown_observation",
         11,
     ),
-    ("chunkio/teardown_traversal.qcore", "teardown_traversal", 11),
-    ("chunkio/unmap_wrapper.qcore", "unmap_file_outcomes", 17),
+    ("chunkio/teardown_traversal.qv", "teardown_traversal", 11),
+    ("chunkio/unmap_wrapper.qv", "unmap_file_outcomes", 17),
     (
-        "chunkio/unsupported_close.qcore",
+        "chunkio/unsupported_close.qv",
         "unsupported_chunk_close",
         12,
     ),
     (
-        "chunkio/unsupported_constructor_observation.qcore",
+        "chunkio/unsupported_constructor_observation.qv",
         "native_unsupported_constructor",
         11,
     ),
@@ -243,8 +243,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `lib/cmetrics/src/cmetrics.c:92-146`. `nonnull` — measured, not
     // defaulted: the body has no leading null guard and its first executable
     // statement reads `cmt->counters`.
-    ("cmetrics/context_lifetime.qcore", "cmt_destroy", 3),
-    ("cmetrics/counter_reset.qcore", "cmt_counter_allow_reset", 4),
+    ("cmetrics/context_lifetime.qv", "cmt_destroy", 3),
+    ("cmetrics/counter_reset.qv", "cmt_counter_allow_reset", 4),
     // Card W37-CORPUS-CONTRACTS-4: two CMetrics metric-value accessors, each
     // the sole blocker of one projected function (`check_staled_timestamp` and
     // `cmt_metric_set`). Both are custody-NEUTRAL — the metric is read through
@@ -254,86 +254,86 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // body that releases nothing cannot contradict. Read from
     // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_get_timestamp",
         3,
     ),
-    ("cmetrics/metric_values.qcore", "cmt_metric_set_double", 5),
+    ("cmetrics/metric_values.qv", "cmt_metric_set_double", 5),
     // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
     // bit-pattern conversions; every argument remains borrowed.
-    ("cmetrics/metric_values.qcore", "cmt_metric_get_value", 3),
+    ("cmetrics/metric_values.qv", "cmt_metric_get_value", 3),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_get_value_type",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_get_int64_value",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_get_uint64_value",
         3,
     ),
-    ("cmetrics/metric_values.qcore", "cmt_metric_set_int64", 5),
-    ("cmetrics/metric_values.qcore", "cmt_metric_set_uint64", 5),
+    ("cmetrics/metric_values.qv", "cmt_metric_set_int64", 5),
+    ("cmetrics/metric_values.qv", "cmt_metric_set_uint64", 5),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_set_timestamp",
         4,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_set_start_timestamp",
         4,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_unset_start_timestamp",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_has_start_timestamp",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_get_start_timestamp",
         3,
     ),
-    ("cmetrics/metric_values.qcore", "cmt_math_d64_to_uint64", 3),
-    ("cmetrics/metric_values.qcore", "cmt_math_uint64_to_d64", 3),
+    ("cmetrics/metric_values.qv", "cmt_math_d64_to_uint64", 3),
+    ("cmetrics/metric_values.qv", "cmt_math_uint64_to_d64", 3),
     // W46-METRIC-AGGREGATE-CONTRACTS: six scalar aggregate reads.
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_hist_get_value",
         4,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_hist_get_count_value",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_metric_hist_get_sum_value",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_summary_quantile_get_value",
         4,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_summary_get_sum_value",
         3,
     ),
     (
-        "cmetrics/metric_values.qcore",
+        "cmetrics/metric_values.qv",
         "cmt_summary_get_count_value",
         3,
     ),
@@ -346,34 +346,34 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // paths a borrowed declaration cannot delete (constraint 4). Read from
     // `lib/cmetrics/src/cmt_mpack_utils.c:88-113`.
     (
-        "cmetrics/mpack_utils.qcore",
+        "cmetrics/mpack_utils.qv",
         "cmt_mpack_consume_uint_tag",
         4,
     ),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
-    ("ctraces/context_lifetime.qcore", "ctr_destroy", 3),
-    ("ctraces/context_lifetime.qcore", "ctr_id_cmp", 4),
-    ("ctraces/context_lifetime.qcore", "ctr_id_get_len", 3),
-    ("ctraces/context_lifetime.qcore", "ctr_span_set_flags", 4),
+    ("ctraces/context_lifetime.qv", "ctr_destroy", 3),
+    ("ctraces/context_lifetime.qv", "ctr_id_cmp", 4),
+    ("ctraces/context_lifetime.qv", "ctr_id_get_len", 3),
+    ("ctraces/context_lifetime.qv", "ctr_span_set_flags", 4),
     (
-        "ctraces/context_lifetime.qcore",
+        "ctraces/context_lifetime.qv",
         "ctr_span_set_dropped_events_count",
         4,
     ),
     (
-        "ctraces/context_lifetime.qcore",
+        "ctraces/context_lifetime.qv",
         "ctr_span_set_dropped_links_count",
         4,
     ),
     (
-        "ctraces/context_lifetime.qcore",
+        "ctraces/context_lifetime.qv",
         "ctr_span_set_dropped_attributes_count",
         4,
     ),
     (
-        "fluent_bit/busy_state.qcore",
+        "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",
         7,
     ),
@@ -387,7 +387,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // premise's refusal set are unchanged and measured so
     // (`docs/reports/remaining-hash-clause/README.md`).
     (
-        "fluent_bit/hash_table_publication.qcore",
+        "fluent_bit/hash_table_publication.qv",
         "flb_hash_table_add",
         8,
     ),
@@ -402,7 +402,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // so the declared contract wins over any W4-inferred summary and a
     // disagreement is a `SummaryConflict` diagnostic, never a silent override.
     (
-        "fluent_bit/input_chunk_destroy.qcore",
+        "fluent_bit/input_chunk_destroy.qv",
         "flb_input_chunk_destroy",
         4,
     ),
@@ -417,9 +417,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // deliberately NOT landed — measured payoff zero, because its single
     // in-corpus call site is refused as an indirect memory access before the
     // call rule is reached — which is the disposition card
-    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF gave `msgpack/packer.qcore`.
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF gave `msgpack/packer.qv`.
     (
-        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
+        "fluent_bit/input_chunk_destroy_direct_routes.qv",
         "flb_input_chunk_destroy_direct_routes",
         4,
     ),
@@ -428,43 +428,43 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // always wins over a W4-inferred summary, and a disagreement is reported as
     // a `SummaryConflict` diagnostic rather than silently resolved.
     (
-        "fluent_bit/input_chunk_helpers.qcore",
+        "fluent_bit/input_chunk_helpers.qv",
         "generate_chunk_name",
         5,
     ),
     (
-        "fluent_bit/input_chunk_helpers.qcore",
+        "fluent_bit/input_chunk_helpers.qv",
         "input_chunk_write_header",
         6,
     ),
     (
-        "fluent_bit/input_chunk_is_up.qcore",
+        "fluent_bit/input_chunk_is_up.qv",
         "flb_input_chunk_is_up",
         4,
     ),
     // W46-FLUENT-ROUTING-QUERY-CONTRACTS: five source-pinned, custody-neutral
     // scalar queries. The existing routes-mask size declaration is retained.
     (
-        "fluent_bit/input_chunk_is_up.qcore",
+        "fluent_bit/input_chunk_is_up.qv",
         "input_chunk_has_magic_bytes",
         5,
     ),
     (
-        "fluent_bit/input_chunk_is_up.qcore",
+        "fluent_bit/input_chunk_is_up.qv",
         "flb_input_chunk_is_mem_overlimit",
         4,
     ),
     (
-        "fluent_bit/input_chunk_is_up.qcore",
+        "fluent_bit/input_chunk_is_up.qv",
         "flb_input_chunk_is_storage_overlimit",
         4,
     ),
     // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
-    // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
+    // `fluent_bit/logging.qv` and `fluent_bit/routes_mask.qv`, and the
     // resource-v1 declaration count 20 -> 25. Deliberate; see
     // `docs/reports/remaining-prod-contracts/README.md`.
     (
-        "fluent_bit/input_chunk_name.qcore",
+        "fluent_bit/input_chunk_name.qv",
         "flb_input_chunk_get_name",
         3,
     ),
@@ -480,12 +480,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // unit, so the declared contract wins over any W4-inferred summary and a
     // disagreement is a `SummaryConflict` diagnostic, never a silent override.
     (
-        "fluent_bit/input_chunk_sizes.qcore",
+        "fluent_bit/input_chunk_sizes.qv",
         "flb_input_chunk_get_size",
         3,
     ),
     (
-        "fluent_bit/input_chunk_sizes.qcore",
+        "fluent_bit/input_chunk_sizes.qv",
         "flb_input_chunk_get_real_size",
         3,
     ),
@@ -498,67 +498,67 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // W29-SIZE-SIBLINGS-UNDECLARED also named stay undeclared. `size_t`
     // spells `usize` under the LP64 declared-ABI projection.
     (
-        "fluent_bit/input_chunk_total_size.qcore",
+        "fluent_bit/input_chunk_total_size.qv",
         "flb_input_chunk_total_size",
         3,
     ),
-    ("fluent_bit/logging.qcore", "flb_log_check", 3),
+    ("fluent_bit/logging.qv", "flb_log_check", 3),
     // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
-    // `libc/errno.qcore`, and this module gains one declaration. Deliberate;
+    // `libc/errno.qv`, and this module gains one declaration. Deliberate;
     // see `docs/reports/remaining-constructor-residuals/README.md`. Five
     // clauses: the marker, three borrowed scalars/pointers, and the scalar
     // result. No variadic tail — the C declaration is not variadic.
-    ("fluent_bit/logging.qcore", "flb_errno_print", 5),
-    ("fluent_bit/logging.qcore", "flb_log_print", 7),
-    ("fluent_bit/memory.qcore", "flb_malloc", 6),
-    ("fluent_bit/memory.qcore", "flb_calloc", 7),
-    ("fluent_bit/memory.qcore", "flb_realloc", 9),
-    ("fluent_bit/memory.qcore", "flb_realloc_z", 12),
-    ("fluent_bit/memory.qcore", "flb_free", 5),
+    ("fluent_bit/logging.qv", "flb_errno_print", 5),
+    ("fluent_bit/logging.qv", "flb_log_print", 7),
+    ("fluent_bit/memory.qv", "flb_malloc", 6),
+    ("fluent_bit/memory.qv", "flb_calloc", 7),
+    ("fluent_bit/memory.qv", "flb_realloc", 9),
+    ("fluent_bit/memory.qv", "flb_realloc_z", 12),
+    ("fluent_bit/memory.qv", "flb_free", 5),
     (
-        "fluent_bit/output_flush_id.qcore",
+        "fluent_bit/output_flush_id.qv",
         "flb_output_flush_id_get",
         4,
     ),
     // Card W45-FB-RETRY-LIFETIME: OR-1 and OR-7 as checked declarations —
     // the marker, one mode per parameter, two exit clauses, the result.
     (
-        "fluent_bit/output_singleplex.qcore",
+        "fluent_bit/output_singleplex.qv",
         "flb_output_task_singleplex_enqueue",
         9,
     ),
     (
-        "fluent_bit/output_singleplex.qcore",
+        "fluent_bit/output_singleplex.qv",
         "flb_output_task_flush",
         7,
     ),
-    ("fluent_bit/resource_memory.qcore", "flb_malloc", 3),
-    ("fluent_bit/resource_memory.qcore", "flb_calloc", 4),
-    ("fluent_bit/resource_memory.qcore", "flb_free", 3),
-    ("fluent_bit/resource_memory.qcore", "flb_sds_create_len", 4),
-    ("fluent_bit/resource_memory.qcore", "flb_sds_destroy", 3),
+    ("fluent_bit/resource_memory.qv", "flb_malloc", 3),
+    ("fluent_bit/resource_memory.qv", "flb_calloc", 4),
+    ("fluent_bit/resource_memory.qv", "flb_free", 3),
+    ("fluent_bit/resource_memory.qv", "flb_sds_create_len", 4),
+    ("fluent_bit/resource_memory.qv", "flb_sds_destroy", 3),
     // Card CONTRACT-INHERIT-ADOPTION: user-directed declared assumptions,
     // each inheriting `libc::strdup` / `libc::strndup`; elaborated counts.
-    ("fluent_bit/resource_string.qcore", "flb_strdup", 3),
-    ("fluent_bit/resource_string.qcore", "flb_strndup", 4),
+    ("fluent_bit/resource_string.qv", "flb_strdup", 3),
+    ("fluent_bit/resource_string.qv", "flb_strndup", 4),
     // Card PROD-CONTRACTS, continued.
     (
-        "fluent_bit/routes_mask.qcore",
+        "fluent_bit/routes_mask.qv",
         "flb_routes_mask_set_by_tag",
         6,
     ),
     (
-        "fluent_bit/routes_mask.qcore",
+        "fluent_bit/routes_mask.qv",
         "flb_routes_mask_get_size",
         3,
     ),
     (
-        "fluent_bit/routes_mask.qcore",
+        "fluent_bit/routes_mask.qv",
         "flb_routes_mask_get_slots",
         4,
     ),
     (
-        "fluent_bit/routes_mask.qcore",
+        "fluent_bit/routes_mask.qv",
         "flb_routes_mask_is_empty",
         5,
     ),
@@ -570,42 +570,42 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // unit that defines its body and whose body establishes it; the corpus
     // units define none of these, so no corpus call site applies them.
     // Deliberate; see `docs/reports/w45-fb-backlog-custody/README.md`.
-    ("fluent_bit/storage_backlog.qcore", "sb_allocate_chunk", 6),
-    ("fluent_bit/storage_backlog.qcore", "sb_destroy_chunk", 4),
-    ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlog", 5),
+    ("fluent_bit/storage_backlog.qv", "sb_allocate_chunk", 6),
+    ("fluent_bit/storage_backlog.qv", "sb_destroy_chunk", 4),
+    ("fluent_bit/storage_backlog.qv", "sb_destroy_backlog", 5),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_allocate_backlogs",
         4,
     ),
-    ("fluent_bit/storage_backlog.qcore", "sb_destroy_backlogs", 4),
+    ("fluent_bit/storage_backlog.qv", "sb_destroy_backlogs", 4),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_remove_chunk_from_segregated_backlog",
         6,
     ),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_remove_chunk_from_segregated_backlogs",
         5,
     ),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_append_chunk_to_segregated_backlog",
         7,
     ),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_append_chunk_to_segregated_backlogs",
         6,
     ),
-    ("fluent_bit/storage_backlog.qcore", "sb_segregate_chunks", 4),
+    ("fluent_bit/storage_backlog.qv", "sb_segregate_chunks", 4),
     (
-        "fluent_bit/storage_backlog.qcore",
+        "fluent_bit/storage_backlog.qv",
         "sb_release_output_queue_space",
         5,
     ),
-    ("fluent_bit/storage_backlog.qcore", "cb_queue_chunks", 6),
+    ("fluent_bit/storage_backlog.qv", "cb_queue_chunks", 6),
     // Card NEIGHBOURS, continued. The FIRST production declaration whose C
     // result is floating-point: `double flb_time_now()` is declared `-> f64`
     // rather than projected onto an integer it does not have, which is why the
@@ -614,36 +614,36 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W45-FB-RETRY-LIFETIME: the counter operations (the drop carries a
     // literal premise) and two neutral callees.
     (
-        "fluent_bit/task_route_queries.qcore",
+        "fluent_bit/task_route_queries.qv",
         "flb_task_get_route_status",
         5,
     ),
     (
-        "fluent_bit/task_route_queries.qcore",
+        "fluent_bit/task_route_queries.qv",
         "flb_task_set_route_status",
         6,
     ),
     (
-        "fluent_bit/task_route_queries.qcore",
+        "fluent_bit/task_route_queries.qv",
         "flb_task_retry_count",
         5,
     ),
     (
-        "fluent_bit/task_route_queries.qcore",
+        "fluent_bit/task_route_queries.qv",
         "flb_task_running_count",
         4,
     ),
-    ("fluent_bit/task_users.qcore", "flb_task_users_inc", 4),
-    ("fluent_bit/task_users.qcore", "flb_task_users_dec", 6),
-    ("fluent_bit/task_users.qcore", "flb_task_retry_destroy", 4),
+    ("fluent_bit/task_users.qv", "flb_task_users_inc", 4),
+    ("fluent_bit/task_users.qv", "flb_task_users_dec", 6),
+    ("fluent_bit/task_users.qv", "flb_task_retry_destroy", 4),
     (
-        "fluent_bit/task_users.qcore",
+        "fluent_bit/task_users.qv",
         "flb_output_thread_pool_flush",
         6,
     ),
-    ("fluent_bit/time.qcore", "flb_time_now", 2),
+    ("fluent_bit/time.qv", "flb_time_now", 2),
     (
-        "language/quantified_indices.qcore",
+        "language/quantified_indices.qv",
         "preserve_five_chunk_credits",
         2,
     ),
@@ -655,193 +655,193 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`return_owned(nullable)`, 3) and `prctl` (literal premise on its
     // option plus a variadic tail, 5). Deliberate; see
     // `docs/reports/w43-libc-contracts/README.md`.
-    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the new `libc/dirent.qcore`, a
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the new `libc/dirent.qv`, a
     // directory-stream pair. `opendir`: the marker, one borrowed path, the
     // owned result and its `directory` kind (4); `closedir`: the marker, the
     // released stream, its kind and `none` (4). Deliberate; see
     // `docs/reports/w43-descriptor-resource-tracking/README.md`.
-    ("libc/dirent.qcore", "opendir", 5),
-    ("libc/dirent.qcore", "closedir", 5),
-    ("libc/dlfcn.qcore", "dlerror", 3),
+    ("libc/dirent.qv", "opendir", 5),
+    ("libc/dirent.qv", "closedir", 5),
+    ("libc/dlfcn.qv", "dlerror", 3),
     // Card W43-LIBC-RESTRICT-PROTOTYPES: ten `__restrict` prototypes, each
     // the neutral element (the marker, one borrowed clause per parameter,
     // `none`), in `dlfcn`, `socket`, `sys_stat`, `threads`, `time` and the new
-    // `libc/regex.qcore`. Deliberate; see
+    // `libc/regex.qv`. Deliberate; see
     // `docs/reports/w43-libc-restrict-prototypes/README.md`.
-    ("libc/dlfcn.qcore", "dlsym", 5),
+    ("libc/dlfcn.qv", "dlsym", 5),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
-    // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
-    ("libc/errno.qcore", "__errno_location", 3),
+    // same shape as `fluent_bit/time.qv`'s `flb_time_now`.
+    ("libc/errno.qv", "__errno_location", 3),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).
-    ("libc/errno.qcore", "strerror", 4),
-    ("libc/math.qcore", "ceil", 4),
-    ("libc/math.qcore", "floor", 4),
-    ("libc/math.qcore", "fabs", 4),
-    ("libc/math.qcore", "pow", 5),
-    ("libc/memory.qcore", "malloc", 4),
-    ("libc/memory.qcore", "calloc", 5),
-    ("libc/memory.qcore", "free", 4),
-    ("libc/process.qcore", "prctl", 6),
+    ("libc/errno.qv", "strerror", 4),
+    ("libc/math.qv", "ceil", 4),
+    ("libc/math.qv", "floor", 4),
+    ("libc/math.qv", "fabs", 4),
+    ("libc/math.qv", "pow", 5),
+    ("libc/memory.qv", "malloc", 4),
+    ("libc/memory.qv", "calloc", 5),
+    ("libc/memory.qv", "free", 4),
+    ("libc/process.qv", "prctl", 6),
     // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. Three clauses each: the marker,
     // the borrowed mutex pointer and the `int` result. `pthread_mutex_t` is a
     // union the typedef DEFINES, which card LOADER-ABI's reader would not read;
     // this card's widening reads it, and neither function takes custody of the
     // object, so `resource_borrowed` is the whole custody statement.
-    ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 4),
-    ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 4),
-    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qcore`: neutral (2 + 1 per parameter).
-    ("libc/regex.qcore", "regexec", 8),
-    ("libc/regex.qcore", "regerror", 7),
-    ("libc/socket.qcore", "setsockopt", 8),
-    ("libc/socket.qcore", "send", 7),
-    ("libc/socket.qcore", "recv", 7),
-    ("libc/socket.qcore", "listen", 5),
-    ("libc/socket.qcore", "sendfile", 7),
-    ("libc/socket.qcore", "htonl", 4),
-    ("libc/socket.qcore", "ntohl", 4),
-    ("libc/socket.qcore", "gai_strerror", 4),
+    ("libc/pthread_mutex.qv", "pthread_mutex_lock", 4),
+    ("libc/pthread_mutex.qv", "pthread_mutex_unlock", 4),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qv`: neutral (2 + 1 per parameter).
+    ("libc/regex.qv", "regexec", 8),
+    ("libc/regex.qv", "regerror", 7),
+    ("libc/socket.qv", "setsockopt", 8),
+    ("libc/socket.qv", "send", 7),
+    ("libc/socket.qv", "recv", 7),
+    ("libc/socket.qv", "listen", 5),
+    ("libc/socket.qv", "sendfile", 7),
+    ("libc/socket.qv", "htonl", 4),
+    ("libc/socket.qv", "ntohl", 4),
+    ("libc/socket.qv", "gai_strerror", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/socket.qcore", "getsockopt", 8),
-    ("libc/socket.qcore", "getpeername", 6),
+    ("libc/socket.qv", "getsockopt", 8),
+    ("libc/socket.qv", "getpeername", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: `socket`, appended. The marker,
     // three borrowed scalars, the `sentinel` owned result and its `descriptor`
     // kind (6).
-    ("libc/socket.qcore", "socket", 7),
-    ("libc/stdio.qcore", "perror", 4),
-    ("libc/stdio.qcore", "fflush", 4),
-    ("libc/stdio.qcore", "remove", 4),
+    ("libc/socket.qv", "socket", 7),
+    ("libc/stdio.qv", "perror", 4),
+    ("libc/stdio.qv", "fflush", 4),
+    ("libc/stdio.qv", "remove", 4),
     // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family, each a
     // trusted assumption read from the prototype the pinned units declare. The
     // marker, one borrowed clause per declared parameter, the variadic data
     // tail and the scalar result: 3 + parameters clauses each. Deliberate; see
     // `docs/reports/w43-libc-printf-family/README.md`.
-    ("libc/stdio.qcore", "printf", 5),
-    ("libc/stdio.qcore", "fprintf", 6),
-    ("libc/stdio.qcore", "snprintf", 7),
-    ("libc/stdio.qcore", "sprintf", 6),
+    ("libc/stdio.qv", "printf", 5),
+    ("libc/stdio.qv", "fprintf", 6),
+    ("libc/stdio.qv", "snprintf", 7),
+    ("libc/stdio.qv", "sprintf", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the stream pair and `fileno`,
     // appended. `fopen`: marker, two borrowed, owned result, `stream` kind (5);
     // `fclose`: marker, released stream, kind, `none` (4); `fileno`: the
     // neutral element over one parameter (3).
-    ("libc/stdio.qcore", "fopen", 6),
-    ("libc/stdio.qcore", "fclose", 5),
-    ("libc/stdio.qcore", "fileno", 4),
+    ("libc/stdio.qv", "fopen", 6),
+    ("libc/stdio.qv", "fclose", 5),
+    ("libc/stdio.qv", "fileno", 4),
     // Card W44-LIBC-RESIDUALS: the two called `va_list` members, appended.
     // The marker, one borrowed clause per parameter (the `va_list` included)
     // and `none`: `vsnprintf` 6, `vprintf` 4.
-    ("libc/stdio.qcore", "vsnprintf", 7),
-    ("libc/stdio.qcore", "vprintf", 5),
-    ("libc/stdlib.qcore", "atoi", 4),
-    ("libc/stdlib.qcore", "srand", 4),
-    ("libc/stdlib.qcore", "rand_r", 4),
-    ("libc/stdlib.qcore", "system", 4),
-    ("libc/string.qcore", "strcmp", 5),
-    ("libc/string.qcore", "strlen", 4),
+    ("libc/stdio.qv", "vsnprintf", 7),
+    ("libc/stdio.qv", "vprintf", 5),
+    ("libc/stdlib.qv", "atoi", 4),
+    ("libc/stdlib.qv", "srand", 4),
+    ("libc/stdlib.qv", "rand_r", 4),
+    ("libc/stdlib.qv", "system", 4),
+    ("libc/string.qv", "strcmp", 5),
+    ("libc/string.qv", "strlen", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: scalar byte/string reads. These are
     // reusable library declarations; the current corpus has no uncontracted
     // leaves for these four names.
-    ("libc/string.qcore", "memcmp", 6),
-    ("libc/string.qcore", "strncmp", 6),
-    ("libc/string.qcore", "strnlen", 5),
-    ("libc/string.qcore", "strcasecmp", 5),
-    ("libc/string.qcore", "strdup", 4),
-    ("libc/string.qcore", "strerror_r", 6),
+    ("libc/string.qv", "memcmp", 6),
+    ("libc/string.qv", "strncmp", 6),
+    ("libc/string.qv", "strnlen", 5),
+    ("libc/string.qv", "strcasecmp", 5),
+    ("libc/string.qv", "strdup", 4),
+    ("libc/string.qv", "strerror_r", 6),
     // Card W43-LIBC-RESULT-ALIAS: thirteen derived-result declarations, each a
     // trusted assumption read from the prototype the pinned units declare. The
     // shape is the neutral one with a derived result in place of `none`: the
     // marker, one borrowed clause per parameter and the result mode. Five exact
     // aliases (`resource_return_alias(dest, nonnull)`) and six interior
     // pointers (`resource_return_interior(s, nullable)`) here, two exact
-    // aliases in `libc/time.qcore`. Deliberate; see
+    // aliases in `libc/time.qv`. Deliberate; see
     // `docs/reports/w43-libc-result-alias/README.md`.
-    ("libc/string.qcore", "strcpy", 5),
-    ("libc/string.qcore", "strncpy", 6),
-    ("libc/string.qcore", "memcpy", 6),
-    ("libc/string.qcore", "memmove", 6),
-    ("libc/string.qcore", "memset", 6),
-    ("libc/string.qcore", "strchr", 5),
-    ("libc/string.qcore", "strrchr", 5),
-    ("libc/string.qcore", "strstr", 5),
-    ("libc/string.qcore", "strcasestr", 5),
-    ("libc/string.qcore", "memchr", 6),
-    ("libc/string.qcore", "memrchr", 6),
+    ("libc/string.qv", "strcpy", 5),
+    ("libc/string.qv", "strncpy", 6),
+    ("libc/string.qv", "memcpy", 6),
+    ("libc/string.qv", "memmove", 6),
+    ("libc/string.qv", "memset", 6),
+    ("libc/string.qv", "strchr", 5),
+    ("libc/string.qv", "strrchr", 5),
+    ("libc/string.qv", "strstr", 5),
+    ("libc/string.qv", "strcasestr", 5),
+    ("libc/string.qv", "memchr", 6),
+    ("libc/string.qv", "memrchr", 6),
     // Card CONTRACT-INHERIT-ADOPTION: `strndup`, user-directed; `strdup`'s
     // custody statement plus a borrowed size (2 + 1 per parameter + owned).
-    ("libc/string.qcore", "strndup", 5),
-    ("libc/sys_stat.qcore", "fstat", 5),
-    ("libc/sys_stat.qcore", "mkdir", 5),
-    ("libc/sys_stat.qcore", "umask", 4),
+    ("libc/string.qv", "strndup", 5),
+    ("libc/sys_stat.qv", "fstat", 5),
+    ("libc/sys_stat.qv", "mkdir", 5),
+    ("libc/sys_stat.qv", "umask", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/sys_stat.qcore", "stat", 5),
-    ("libc/threads.qcore", "mtx_lock", 4),
-    ("libc/threads.qcore", "mtx_unlock", 4),
-    ("libc/threads.qcore", "cnd_wait", 5),
-    ("libc/threads.qcore", "pthread_rwlock_rdlock", 4),
-    ("libc/threads.qcore", "pthread_rwlock_wrlock", 4),
-    ("libc/threads.qcore", "pthread_rwlock_unlock", 4),
-    ("libc/threads.qcore", "pthread_self", 3),
-    ("libc/threads.qcore", "pthread_kill", 5),
-    ("libc/threads.qcore", "pthread_setcancelstate", 5),
-    ("libc/threads.qcore", "pthread_setcanceltype", 5),
-    ("libc/threads.qcore", "pthread_attr_setdetachstate", 5),
-    ("libc/threads.qcore", "sigemptyset", 4),
-    ("libc/threads.qcore", "sigfillset", 4),
-    ("libc/threads.qcore", "sigaddset", 5),
+    ("libc/sys_stat.qv", "stat", 5),
+    ("libc/threads.qv", "mtx_lock", 4),
+    ("libc/threads.qv", "mtx_unlock", 4),
+    ("libc/threads.qv", "cnd_wait", 5),
+    ("libc/threads.qv", "pthread_rwlock_rdlock", 4),
+    ("libc/threads.qv", "pthread_rwlock_wrlock", 4),
+    ("libc/threads.qv", "pthread_rwlock_unlock", 4),
+    ("libc/threads.qv", "pthread_self", 3),
+    ("libc/threads.qv", "pthread_kill", 5),
+    ("libc/threads.qv", "pthread_setcancelstate", 5),
+    ("libc/threads.qv", "pthread_setcanceltype", 5),
+    ("libc/threads.qv", "pthread_attr_setdetachstate", 5),
+    ("libc/threads.qv", "sigemptyset", 4),
+    ("libc/threads.qv", "sigfillset", 4),
+    ("libc/threads.qv", "sigaddset", 5),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/threads.qcore", "cnd_timedwait", 6),
-    ("libc/threads.qcore", "pthread_sigmask", 6),
-    ("libc/time.qcore", "time", 4),
-    ("libc/time.qcore", "timegm", 4),
-    ("libc/time.qcore", "gmtime_r", 5),
-    ("libc/time.qcore", "localtime_r", 5),
+    ("libc/threads.qv", "cnd_timedwait", 6),
+    ("libc/threads.qv", "pthread_sigmask", 6),
+    ("libc/time.qv", "time", 4),
+    ("libc/time.qv", "timegm", 4),
+    ("libc/time.qv", "gmtime_r", 5),
+    ("libc/time.qv", "localtime_r", 5),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
-    ("libc/time.qcore", "strftime", 7),
-    ("libc/time.qcore", "gettimeofday", 5),
-    ("libc/unistd.qcore", "sleep", 4),
-    ("libc/unistd.qcore", "usleep", 4),
-    ("libc/unistd.qcore", "sysconf", 4),
-    ("libc/unistd.qcore", "getpagesize", 3),
-    ("libc/unistd.qcore", "geteuid", 3),
-    ("libc/unistd.qcore", "getegid", 3),
-    ("libc/unistd.qcore", "setsid", 3),
-    ("libc/unistd.qcore", "access", 5),
-    ("libc/unistd.qcore", "unlink", 4),
-    ("libc/unistd.qcore", "read", 6),
-    ("libc/unistd.qcore", "write", 6),
+    ("libc/time.qv", "strftime", 7),
+    ("libc/time.qv", "gettimeofday", 5),
+    ("libc/unistd.qv", "sleep", 4),
+    ("libc/unistd.qv", "usleep", 4),
+    ("libc/unistd.qv", "sysconf", 4),
+    ("libc/unistd.qv", "getpagesize", 3),
+    ("libc/unistd.qv", "geteuid", 3),
+    ("libc/unistd.qv", "getegid", 3),
+    ("libc/unistd.qv", "setsid", 3),
+    ("libc/unistd.qv", "access", 5),
+    ("libc/unistd.qv", "unlink", 4),
+    ("libc/unistd.qv", "read", 6),
+    ("libc/unistd.qv", "write", 6),
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the descriptor pair, appended.
     // `open`: marker, two borrowed, the variadic data tail, the `sentinel`
     // owned result and its `descriptor` kind (6); `close`: marker, the `valid`
     // released descriptor, its kind and `none` (4).
-    ("libc/unistd.qcore", "open", 7),
-    ("libc/unistd.qcore", "close", 5),
+    ("libc/unistd.qv", "open", 7),
+    ("libc/unistd.qv", "close", 5),
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: `fcntl` at `F_SETFD` only: marker,
     // flexible, the premise `cmd == 2`, two borrowed parameters, the data
     // tail and `none` (7).
-    ("libc/unistd.qcore", "fcntl", 7),
+    ("libc/unistd.qv", "fcntl", 7),
     (
-        "library/custody_evidence.qcore",
+        "library/custody_evidence.qv",
         "publish_library_resource",
         6,
     ),
     (
-        "library/custody_evidence.qcore",
+        "library/custody_evidence.qv",
         "handoff_library_resource",
         6,
     ),
     (
-        "library/custody_evidence.qcore",
+        "library/custody_evidence.qv",
         "reclaim_library_resource",
         6,
     ),
     (
-        "library/custody_evidence.qcore",
+        "library/custody_evidence.qv",
         "check_imported_library_custody",
         7,
     ),
     (
-        "library/custody_evidence.qcore",
+        "library/custody_evidence.qv",
         "release_library_resource",
         3,
     ),
@@ -849,105 +849,105 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // native descriptor replay (`qcore_contract::descriptor_observation`)
     // evaluates on recorded executions, one parameterless rule per property.
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_generation_fresh",
         3,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_counted_reference",
         3,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_sentinel_validity",
         5,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_release_at_most_once",
         1,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_release_matches_kind",
         2,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_no_use_after_release",
         1,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_operand_identity_valid",
         1,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_relation_holds",
         1,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_mapping_extent",
         1,
     ),
     (
-        "library/descriptor_native_observation.qcore",
+        "library/descriptor_native_observation.qv",
         "descriptor_leak_set_well_defined",
         3,
     ),
-    ("library/source_projection.qcore", "source_enum_value", 2),
-    ("library/source_projection.qcore", "source_scan_effects", 3),
-    ("library/source_projection.qcore", "source_scan_initial", 2),
-    ("library/source_projection.qcore", "source_type_match", 1),
-    ("library/source_projection.qcore", "source_symbol", 1),
-    ("library/source_projection.qcore", "source_loop_index", 1),
-    ("library/source_projection.qcore", "source_scan_region", 1),
-    ("library/source_projection.qcore", "frame_write", 2),
-    ("library/source_projection.qcore", "frame_declaration", 2),
-    ("library/source_projection.qcore", "frame_dependency", 2),
+    ("library/source_projection.qv", "source_enum_value", 2),
+    ("library/source_projection.qv", "source_scan_effects", 3),
+    ("library/source_projection.qv", "source_scan_initial", 2),
+    ("library/source_projection.qv", "source_type_match", 1),
+    ("library/source_projection.qv", "source_symbol", 1),
+    ("library/source_projection.qv", "source_loop_index", 1),
+    ("library/source_projection.qv", "source_scan_region", 1),
+    ("library/source_projection.qv", "frame_write", 2),
+    ("library/source_projection.qv", "frame_declaration", 2),
+    ("library/source_projection.qv", "frame_dependency", 2),
     // Card W36-CORPUS-CONTRACTS-3: cJSON is vendored INSIDE librdkafka
     // (`lib/librdkafka-2.15.0/src/cJSON.c`), which is why this module sits in
     // the librdkafka family. Read from `:253-276`; `nullable` because the loop
     // condition `while (item != NULL)` precedes every dereference, and the
     // three call sites do reach the null path.
-    ("librdkafka/cjson.qcore", "cJSON_Delete", 3),
+    ("librdkafka/cjson.qv", "cJSON_Delete", 3),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
-    // to `librdkafka/memory.qcore`, so that module's pin stays untouched. Read
+    // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
     // nowhere, `ptr` is forwarded to the already-declared `rd_free`.
-    ("librdkafka/kafka_mem.qcore", "rd_kafka_mem_free", 4),
+    ("librdkafka/kafka_mem.qv", "rd_kafka_mem_free", 4),
     // Card W37-CORPUS-CONTRACTS-4: the deprecated in-place LZ4 stream reset,
     // sole blocker of `LZ4_resetStreamState`. ZEROING IS NOT RELEASING — the
     // body is one `MEM_INIT` (memset) through the parameter, and the freeing
     // neighbour `LZ4_freeStream` is a different name already decided through
     // `kafka_mem.qcore` above. Read from
     // `lib/librdkafka-2.15.0/src/lz4.c:1524-1528`.
-    ("librdkafka/lz4_stream.qcore", "LZ4_resetStream", 3),
-    ("librdkafka/memory.qcore", "rd_malloc", 3),
-    ("librdkafka/memory.qcore", "rd_calloc", 4),
-    ("librdkafka/memory.qcore", "rd_strdup", 3),
-    ("librdkafka/memory.qcore", "rd_strndup", 4),
-    ("librdkafka/memory.qcore", "rd_free", 3),
-    ("librdkafka/memory.qcore", "rd_realloc", 4),
+    ("librdkafka/lz4_stream.qv", "LZ4_resetStream", 3),
+    ("librdkafka/memory.qv", "rd_malloc", 3),
+    ("librdkafka/memory.qv", "rd_calloc", 4),
+    ("librdkafka/memory.qv", "rd_strdup", 3),
+    ("librdkafka/memory.qv", "rd_strndup", 4),
+    ("librdkafka/memory.qv", "rd_free", 3),
+    ("librdkafka/memory.qv", "rd_realloc", 4),
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: the atomic counter read
     // (`src/rdatomic.h:100-112`): marker, borrowed counter, `none`.
-    ("librdkafka/memory.qcore", "rd_atomic32_get", 3),
+    ("librdkafka/memory.qv", "rd_atomic32_get", 3),
     (
-        "librdkafka/queue_destructor.qcore",
+        "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",
         6,
     ),
-    ("librdkafka/refcount.qcore", "rd_refcnt_add0", 4),
-    ("librdkafka/refcount.qcore", "rd_refcnt_sub0", 4),
-    ("librdkafka/refcount.qcore", "rd_refcnt_destroy_final", 3),
+    ("librdkafka/refcount.qv", "rd_refcnt_add0", 4),
+    ("librdkafka/refcount.qv", "rd_refcnt_sub0", 4),
+    ("librdkafka/refcount.qv", "rd_refcnt_destroy_final", 3),
     // Card W37-CORPUS-CONTRACTS-4: the in-place ordering of a topic-partition
     // list — this card's HIGHEST function-cover yield at two projected
     // functions (`..._sort_by_topic` and `..._sort_by_topic_id`). Sorting
     // permutes an array the caller still owns whole, so all three formals are
-    // borrowed; `cmp` is `fnptr`, the spelling `msgpack/packer.qcore` already
+    // borrowed; `cmp` is `fnptr`, the spelling `msgpack/packer.qv` already
     // uses for `msgpack_packer_init`'s callback. Read from
     // `lib/librdkafka-2.15.0/src/rdkafka_partition.c:3664-3674`. Its
     // higher-yield unit-mate `rd_kafka_topic_partition_destroy0` was read and
@@ -955,359 +955,359 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // unit that calls it, and a CONDITIONAL release (`if (do_free)`) whose
     // other five sites in that unit pass 0.
     (
-        "librdkafka/topic_partition.qcore",
+        "librdkafka/topic_partition.qv",
         "rd_kafka_topic_partition_list_sort",
         5,
     ),
-    ("librdkafka/typed_queue.qcore", "rd_kafka_q_enq0", 5),
-    ("librdkafka/typed_queue.qcore", "rd_kafka_q_deq0", 5),
-    ("monkey/callback_binding.qcore", "binding_scope", 8),
-    ("monkey/callback_binding.qcore", "binding_memory", 3),
-    ("monkey/callback_binding.qcore", "binding_execution", 3),
-    ("monkey/callback_binding.qcore", "binding_select_path", 1),
-    ("monkey/callback_binding.qcore", "binding_send", 4),
-    ("monkey/callback_binding.qcore", "binding_errno_location", 2),
-    ("monkey/callback_binding.qcore", "binding_perror", 1),
+    ("librdkafka/typed_queue.qv", "rd_kafka_q_enq0", 5),
+    ("librdkafka/typed_queue.qv", "rd_kafka_q_deq0", 5),
+    ("monkey/callback_binding.qv", "binding_scope", 8),
+    ("monkey/callback_binding.qv", "binding_memory", 3),
+    ("monkey/callback_binding.qv", "binding_execution", 3),
+    ("monkey/callback_binding.qv", "binding_select_path", 1),
+    ("monkey/callback_binding.qv", "binding_send", 4),
+    ("monkey/callback_binding.qv", "binding_errno_location", 2),
+    ("monkey/callback_binding.qv", "binding_perror", 1),
     (
-        "monkey/callback_binding.qcore",
+        "monkey/callback_binding.qv",
         "binding_evutil_closesocket",
         1,
     ),
-    ("monkey/callback_binding.qcore", "binding_event_del", 1),
-    ("monkey/callback_binding.qcore", "binding_event_free", 1),
-    ("monkey/callback_binding.qcore", "binding_mk_mem_free", 3),
-    ("monkey/callback_binding.qcore", "binding_symbol", 2),
-    ("monkey/callback_binding.qcore", "binding_call_arguments", 2),
-    ("monkey/callback_binding.qcore", "binding_call_interval", 3),
-    ("monkey/callback_binding.qcore", "binding_runtime_effect", 2),
+    ("monkey/callback_binding.qv", "binding_event_del", 1),
+    ("monkey/callback_binding.qv", "binding_event_free", 1),
+    ("monkey/callback_binding.qv", "binding_mk_mem_free", 3),
+    ("monkey/callback_binding.qv", "binding_symbol", 2),
+    ("monkey/callback_binding.qv", "binding_call_arguments", 2),
+    ("monkey/callback_binding.qv", "binding_call_interval", 3),
+    ("monkey/callback_binding.qv", "binding_runtime_effect", 2),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "selected_callbacks",
         4,
     ),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "selected_callback_identity",
         6,
     ),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "effect_errno_location",
         3,
     ),
-    ("monkey/callback_task_handoff.qcore", "effect_event_del", 3),
-    ("monkey/callback_task_handoff.qcore", "effect_event_free", 3),
+    ("monkey/callback_task_handoff.qv", "effect_event_del", 3),
+    ("monkey/callback_task_handoff.qv", "effect_event_free", 3),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "effect_evutil_closesocket",
         3,
     ),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "effect_mk_mem_free",
         3,
     ),
-    ("monkey/callback_task_handoff.qcore", "effect_perror", 3),
-    ("monkey/callback_task_handoff.qcore", "effect_send", 3),
+    ("monkey/callback_task_handoff.qv", "effect_perror", 3),
+    ("monkey/callback_task_handoff.qv", "effect_send", 3),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "bounded_no_task_observation",
         7,
     ),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "taskful_fixture_source",
         16,
     ),
     (
-        "monkey/callback_task_handoff.qcore",
+        "monkey/callback_task_handoff.qv",
         "taskful_fixture_primitives",
         12,
     ),
-    ("monkey/composition.qcore", "evutil_socketpair", 3),
-    ("monkey/composition.qcore", "evutil_socket_geterror", 2),
+    ("monkey/composition.qv", "evutil_socketpair", 3),
+    ("monkey/composition.qv", "evutil_socket_geterror", 2),
     // Deliberate pin update (card O03-U5): the superseded
     // `descriptor_custody_is_preserved` error clause asserted a live, reusable
     // descriptor for an operation that is `close(2)` on the audited build, and
     // is replaced by four clauses stating the unresolved endpoint, the reuse
     // and retry prohibitions and the platform error channel, plus one `any`
     // clause separating durability. 4 -> 8.
-    ("monkey/composition.qcore", "evutil_closesocket", 8),
-    ("monkey/composition.qcore", "cb_event", 3),
-    ("monkey/composition.qcore", "cb_timeout", 4),
-    ("monkey/composition.qcore", "cb_wait_2_timeout", 2),
-    ("monkey/composition.qcore", "check_monkey_composition", 13),
+    ("monkey/composition.qv", "evutil_closesocket", 8),
+    ("monkey/composition.qv", "cb_event", 3),
+    ("monkey/composition.qv", "cb_timeout", 4),
+    ("monkey/composition.qv", "cb_wait_2_timeout", 2),
+    ("monkey/composition.qv", "check_monkey_composition", 13),
     // Deliberate Cycle 18 executable policy pins.
-    ("monkey/cycle18_composition.qcore", "callback_inventory", 18),
+    ("monkey/cycle18_composition.qv", "callback_inventory", 18),
     (
-        "monkey/cycle18_composition.qcore",
+        "monkey/cycle18_composition.qv",
         "context_identity_join",
         6,
     ),
     (
-        "monkey/cycle18_composition.qcore",
+        "monkey/cycle18_composition.qv",
         "wait_failure_source_join",
         2,
     ),
-    ("monkey/cycle18_composition.qcore", "evidence_join", 41),
-    ("monkey/cycle18_composition.qcore", "caller_size_bound", 8),
+    ("monkey/cycle18_composition.qv", "evidence_join", 41),
+    ("monkey/cycle18_composition.qv", "caller_size_bound", 8),
     (
-        "monkey/cycle18_composition.qcore",
+        "monkey/cycle18_composition.qv",
         "aggregate_acceptance",
         11,
     ),
     (
-        "monkey/descriptor_observation.qcore",
+        "monkey/descriptor_observation.qv",
         "observation_socketpair",
         4,
     ),
     (
-        "monkey/descriptor_observation.qcore",
+        "monkey/descriptor_observation.qv",
         "observation_acquire",
         4,
     ),
-    ("monkey/descriptor_observation.qcore", "observation_use", 1),
+    ("monkey/descriptor_observation.qv", "observation_use", 1),
     (
-        "monkey/descriptor_observation.qcore",
+        "monkey/descriptor_observation.qv",
         "observation_close",
         2,
     ),
     (
-        "monkey/descriptor_observation.qcore",
+        "monkey/descriptor_observation.qv",
         "observation_complete",
         8,
     ),
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
     (
-        "monkey/event_payload.qcore",
+        "monkey/event_payload.qv",
         "cb_event_source_projection",
         12,
     ),
     (
-        "monkey/event_payload.qcore",
+        "monkey/event_payload.qv",
         "contextual_payload_boundary",
         1,
     ),
-    ("monkey/event_payload.qcore", "contextual_authority", 13),
-    ("monkey/event_payload.qcore", "native_allocation", 8),
+    ("monkey/event_payload.qv", "contextual_authority", 13),
+    ("monkey/event_payload.qv", "native_allocation", 8),
     (
-        "monkey/event_payload.qcore",
+        "monkey/event_payload.qv",
         "contextual_payload_access",
         13,
     ),
     // Card W45-FB-RETRY-LIFETIME: `resource_published` / `resource_unpublished`.
-    ("monkey/intrusive_list.qcore", "mk_list_add", 5),
-    ("monkey/intrusive_list.qcore", "mk_list_del", 4),
+    ("monkey/intrusive_list.qv", "mk_list_add", 5),
+    ("monkey/intrusive_list.qv", "mk_list_del", 4),
     // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
-    // `fluent_bit/logging.qcore` shape one library over — five clauses because
+    // `fluent_bit/logging.qv` shape one library over — five clauses because
     // of `resource_variadic_data_tail()`. Read from
     // `lib/monkey/mk_core/mk_utils.c:200-264`: the tail is consumed by
     // `vprintf` into `stdout` and no pointer to it outlives the call.
-    ("monkey/logging.qcore", "mk_print", 5),
+    ("monkey/logging.qv", "mk_print", 5),
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: the errno reporter
     // (`mk_core/mk_utils.h:84-96`): marker, three borrowed, `none`.
-    ("monkey/logging.qcore", "mk_utils_libc_error", 5),
-    ("monkey/memory.qcore", "mk_mem_alloc", 3),
-    ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
-    ("monkey/memory.qcore", "mk_mem_free", 3),
+    ("monkey/logging.qv", "mk_utils_libc_error", 5),
+    ("monkey/memory.qv", "mk_mem_alloc", 3),
+    ("monkey/memory.qv", "mk_mem_alloc_z", 3),
+    ("monkey/memory.qv", "mk_mem_free", 3),
     // Deliberate Cycle 18 executable policy pins.
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "native_platform_source_identity",
         3,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "linux_epoll_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "linux_poll_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "linux_select_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "macos_kqueue_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "windows_win32_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "windows_iocp_asan_profile",
         7,
     ),
     (
-        "monkey/native_platform_matrix.qcore",
+        "monkey/native_platform_matrix.qv",
         "linux_epoll_tsan_profile",
         7,
     ),
-    ("monkey/native_platform_matrix.qcore", "observed_row", 14),
-    ("monkey/native_platform_matrix.qcore", "unknown_row", 4),
+    ("monkey/native_platform_matrix.qv", "observed_row", 14),
+    ("monkey/native_platform_matrix.qv", "unknown_row", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: pinned, scalar-only observations.
-    ("monkey/scalar_observation.qcore", "_mk_string_search", 6),
+    ("monkey/scalar_observation.qv", "_mk_string_search", 6),
     (
-        "monkey/scalar_observation.qcore",
+        "monkey/scalar_observation.qv",
         "mk_string_char_search",
         5,
     ),
     (
-        "monkey/scalar_observation.qcore",
+        "monkey/scalar_observation.qv",
         "mk_string_char_search_r",
         5,
     ),
-    ("monkey/scalar_observation.qcore", "MK_EVENT_NEW", 3),
+    ("monkey/scalar_observation.qv", "MK_EVENT_NEW", 3),
     (
-        "monkey/scalar_observation.qcore",
+        "monkey/scalar_observation.qv",
         "event_base_get_features",
         3,
     ),
     (
-        "monkey/scalar_observation.qcore",
+        "monkey/scalar_observation.qv",
         "event_get_struct_event_size",
         2,
     ),
     (
-        "monkey/scalar_observation.qcore",
+        "monkey/scalar_observation.qv",
         "event_get_version_number",
         2,
     ),
     // Card CONTRACT-VIEW-PROJECTION-CHECK removed this module's
     // `source_identity` (4 clauses), a textual duplicate of
-    // `monkey/wait_source_policy.qcore`'s, which is now its single owner.
-    ("monkey/timeout_teardown.qcore", "cb_timeout_source", 7),
+    // `monkey/wait_source_policy.qv`'s, which is now its single owner.
+    ("monkey/timeout_teardown.qv", "cb_timeout_source", 7),
     (
-        "monkey/timeout_teardown.qcore",
+        "monkey/timeout_teardown.qv",
         "cb_timeout_teardown_path",
         1,
     ),
-    ("monkey/timeout_teardown.qcore", "libevent_self_teardown", 5),
-    ("monkey/timeout_teardown.qcore", "teardown_obligations", 21),
-    ("monkey/wait_failure_policy.qcore", "loop_init_failure", 6),
+    ("monkey/timeout_teardown.qv", "libevent_self_teardown", 5),
+    ("monkey/timeout_teardown.qv", "teardown_obligations", 21),
+    ("monkey/wait_failure_policy.qv", "loop_init_failure", 6),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "context_allocation_failure",
         7,
     ),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "base_creation_failure",
         8,
     ),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "fired_allocation_failure",
         10,
     ),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "timer_creation_failure",
         9,
     ),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "timer_registration_failure",
         10,
     ),
     (
-        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_failure_policy.qv",
         "success_observation",
         10,
     ),
-    ("monkey/wait_failure_policy.qcore", "loop_size_bounds", 6),
+    ("monkey/wait_failure_policy.qv", "loop_size_bounds", 6),
     (
-        "monkey/wait_identity_policy.qcore",
+        "monkey/wait_identity_policy.qv",
         "wait_identity_context",
         23,
     ),
     (
-        "monkey/wait_identity_policy.qcore",
+        "monkey/wait_identity_policy.qv",
         "wait_identity_entry",
         1,
     ),
     (
-        "monkey/wait_identity_policy.qcore",
+        "monkey/wait_identity_policy.qv",
         "wait_observed_profile",
         5,
     ),
-    ("monkey/wait_source_policy.qcore", "source_identity", 4),
+    ("monkey/wait_source_policy.qv", "source_identity", 4),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "wait_projection_identity",
         4,
     ),
-    ("monkey/wait_source_policy.qcore", "cb_wait_2_timeout", 9),
+    ("monkey/wait_source_policy.qv", "cb_wait_2_timeout", 9),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "contract_cb_wait_2_timeout",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "_mk_event_loop_create",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "contract__mk_event_loop_create",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "_mk_event_wait_with_flags",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "contract__mk_event_wait_with_flags",
         9,
     ),
-    ("monkey/wait_source_policy.qcore", "_mk_event_wait_2", 9),
+    ("monkey/wait_source_policy.qv", "_mk_event_wait_2", 9),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "contract__mk_event_wait_2",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "_mk_event_loop_destroy",
         9,
     ),
     (
-        "monkey/wait_source_policy.qcore",
+        "monkey/wait_source_policy.qv",
         "contract__mk_event_loop_destroy",
         9,
     ),
-    ("monkey/wait_source_policy.qcore", "artifact_set", 4),
+    ("monkey/wait_source_policy.qv", "artifact_set", 4),
     (
-        "monkey/wrapper_paths.qcore",
+        "monkey/wrapper_paths.qv",
         "mk_event_libevent_socketpair",
         3,
     ),
-    ("monkey/wrapper_paths.qcore", "_mk_event_init", 3),
-    ("monkey/wrapper_paths.qcore", "_mk_event_loop_create", 5),
-    ("monkey/wrapper_paths.qcore", "_mk_event_loop_destroy", 4),
-    ("monkey/wrapper_paths.qcore", "_mk_event_update", 5),
-    ("monkey/wrapper_paths.qcore", "_mk_event_add", 7),
-    ("monkey/wrapper_paths.qcore", "_mk_event_del", 7),
-    ("monkey/wrapper_paths.qcore", "_mk_event_timeout_create", 7),
-    ("monkey/wrapper_paths.qcore", "_mk_event_timeout_destroy", 4),
-    ("monkey/wrapper_paths.qcore", "_mk_event_channel_create", 5),
-    ("monkey/wrapper_paths.qcore", "_mk_event_channel_destroy", 4),
-    ("monkey/wrapper_paths.qcore", "_mk_event_inject", 6),
-    ("monkey/wrapper_paths.qcore", "_mk_event_wait_with_flags", 4),
-    ("monkey/wrapper_paths.qcore", "_mk_event_wait_2", 5),
-    ("monkey/wrapper_paths.qcore", "_mk_event_backend", 3),
+    ("monkey/wrapper_paths.qv", "_mk_event_init", 3),
+    ("monkey/wrapper_paths.qv", "_mk_event_loop_create", 5),
+    ("monkey/wrapper_paths.qv", "_mk_event_loop_destroy", 4),
+    ("monkey/wrapper_paths.qv", "_mk_event_update", 5),
+    ("monkey/wrapper_paths.qv", "_mk_event_add", 7),
+    ("monkey/wrapper_paths.qv", "_mk_event_del", 7),
+    ("monkey/wrapper_paths.qv", "_mk_event_timeout_create", 7),
+    ("monkey/wrapper_paths.qv", "_mk_event_timeout_destroy", 4),
+    ("monkey/wrapper_paths.qv", "_mk_event_channel_create", 5),
+    ("monkey/wrapper_paths.qv", "_mk_event_channel_destroy", 4),
+    ("monkey/wrapper_paths.qv", "_mk_event_inject", 6),
+    ("monkey/wrapper_paths.qv", "_mk_event_wait_with_flags", 4),
+    ("monkey/wrapper_paths.qv", "_mk_event_wait_2", 5),
+    ("monkey/wrapper_paths.qv", "_mk_event_backend", 3),
     // Card W37-CORPUS-CONTRACTS-4: the corpus's first `mpack` family, and it is
     // NOT the `msgpack/` directly above — `msgpack_packer_init` belongs to
     // msgpack-c, `mpack_write_*` to mpack, two different libraries vendored
@@ -1329,17 +1329,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `:1968` (str), `:1774` (i64) and `:1816` (double). All custody-neutral:
     // the writer is written through and never released, the byte sources are
     // read and never retained, the scalars pass by value, every result `void`.
-    ("mpack/writer.qcore", "mpack_write_cstr", 4),
-    ("mpack/writer.qcore", "mpack_write_str", 5),
-    ("mpack/writer.qcore", "mpack_write_i64", 4),
-    ("mpack/writer.qcore", "mpack_write_double", 4),
+    ("mpack/writer.qv", "mpack_write_cstr", 4),
+    ("mpack/writer.qv", "mpack_write_str", 5),
+    ("mpack/writer.qv", "mpack_write_i64", 4),
+    ("mpack/writer.qv", "mpack_write_double", 4),
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: five more writer primitives, each
     // the marker, its borrowed parameters and `none`.
-    ("mpack/writer.qcore", "mpack_finish_map", 3),
-    ("mpack/writer.qcore", "mpack_finish_array", 3),
-    ("mpack/writer.qcore", "mpack_write_true", 3),
-    ("mpack/writer.qcore", "mpack_write_false", 3),
-    ("mpack/writer.qcore", "mpack_write_bin", 5),
+    ("mpack/writer.qv", "mpack_finish_map", 3),
+    ("mpack/writer.qv", "mpack_finish_array", 3),
+    ("mpack/writer.qv", "mpack_write_true", 3),
+    ("mpack/writer.qv", "mpack_write_false", 3),
+    ("mpack/writer.qv", "mpack_write_bin", 5),
     // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. Five clauses: the marker, three
     // borrowed parameters and the `unit` result. The third parameter is the
     // corpus's first `fnptr`, on which `resource_borrowed` is both the only
@@ -1348,7 +1348,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF wrote this declaration and deliberately
     // did not land it at measured payoff zero; this card repaired the blocker
     // it named and measured the payoff, so it lands.
-    ("msgpack/packer.qcore", "msgpack_packer_init", 5),
+    ("msgpack/packer.qv", "msgpack_packer_init", 5),
 ];
 
 #[path = "support/contract_corpus.rs"]
@@ -1358,47 +1358,47 @@ mod contract_corpus;
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let sources = contract_corpus::sources();
     // 60 -> 61 by card HASH-CONTRACTS' deliberate addition of
-    // `fluent_bit/hash_table_publication.qcore`; 61 -> 64 by card
+    // `fluent_bit/hash_table_publication.qv`; 61 -> 64 by card
     // PROD-CONTRACTS' deliberate addition of
-    // `fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore` and
-    // `fluent_bit/routes_mask.qcore`; 64 -> 67 by card NEIGHBOURS' deliberate
-    // addition of `chunkio/chunk_residency.qcore`,
-    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`;
+    // `fluent_bit/input_chunk_name.qv`, `fluent_bit/logging.qv` and
+    // `fluent_bit/routes_mask.qv`; 64 -> 67 by card NEIGHBOURS' deliberate
+    // addition of `chunkio/chunk_residency.qv`,
+    // `fluent_bit/input_chunk_helpers.qv` and `fluent_bit/time.qv`;
     // 67 -> 69 by card CONSTRUCTOR-RESIDUALS' deliberate addition of
-    // `libc/errno.qcore` and `monkey/intrusive_list.qcore`; 69 -> 70 by card
+    // `libc/errno.qv` and `monkey/intrusive_list.qv`; 69 -> 70 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition of
-    // `libc/pthread_mutex.qcore`. That card read `msgpack/packer.qcore`
+    // `libc/pthread_mutex.qv`. That card read `msgpack/packer.qv`
     // against its body too and deliberately did NOT land it: measured payoff
     // zero, because the address-of-a-member actual refuses every one of its
     // call sites before any contract is consulted. 70 -> 71 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired exactly that blocker and
     // then measured the declaration's payoff on the production constructor, so
-    // `msgpack/packer.qcore` lands under the unchanged PROD-CONTRACTS rule.
+    // `msgpack/packer.qv` lands under the unchanged PROD-CONTRACTS rule.
     // 71 -> 72 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate
-    // addition of `fluent_bit/input_chunk_destroy.qcore`, the declaration that
+    // addition of `fluent_bit/input_chunk_destroy.qv`, the declaration that
     // decides the leak leaf the previous card opened, landed on the same rule
     // after its payoff was measured. 72 -> 73 by card AOM-DESTROY-SIBLINGS'
     // deliberate addition of
-    // `fluent_bit/input_chunk_destroy_direct_routes.qcore`, which decides one
+    // `fluent_bit/input_chunk_destroy_direct_routes.qv`, which decides one
     // of the two siblings that card left undeclared and declines the other at
     // measured payoff zero. 73 -> 74 by card W29-CORPUS-CONTRACTS' deliberate
-    // addition of `fluent_bit/input_chunk_sizes.qcore`, whose two read-only
+    // addition of `fluent_bit/input_chunk_sizes.qv`, whose two read-only
     // size queries decide the thirteen standing uncontracted-call refusals
     // that named them inside the unit that defines them. 74 -> 76 by card
     // W31-CORPUS-CONTRACTS-2's deliberate addition of
-    // `chunkio/chunk_sizes.qcore` and
-    // `fluent_bit/input_chunk_total_size.qcore`, the two size-sibling
+    // `chunkio/chunk_sizes.qv` and
+    // `fluent_bit/input_chunk_total_size.qv`, the two size-sibling
     // declarations W29's named non-declarations pointed at, each read against
     // its own pinned body. 76 -> 82 by card W36-CORPUS-CONTRACTS-3's
     // deliberate addition of six release/custody-neutral declarations, chosen
     // by FUNCTION-COVER yield over the 193 baseline functions whose only
     // refusals are `call to uncontracted function` leaves:
-    // `cfl/sds_lifetime.qcore` (`cfl_sds_destroy`, 8 such functions),
-    // `librdkafka/kafka_mem.qcore` (`rd_kafka_mem_free`, 4),
-    // `cmetrics/context_lifetime.qcore` (`cmt_destroy`, 3),
-    // `librdkafka/cjson.qcore` (`cJSON_Delete`, 3),
-    // `monkey/logging.qcore` (`mk_print`, 3, this card's one variadic) and
-    // `ctraces/context_lifetime.qcore` (`ctr_destroy`, 2) — the last opening
+    // `cfl/sds_lifetime.qv` (`cfl_sds_destroy`, 8 such functions),
+    // `librdkafka/kafka_mem.qv` (`rd_kafka_mem_free`, 4),
+    // `cmetrics/context_lifetime.qv` (`cmt_destroy`, 3),
+    // `librdkafka/cjson.qv` (`cJSON_Delete`, 3),
+    // `monkey/logging.qv` (`mk_print`, 3, this card's one variadic) and
+    // `ctraces/context_lifetime.qv` (`ctr_destroy`, 2) — the last opening
     // the corpus's first `ctraces` family. Each was read against its own pinned
     // body before it was declared; the card also read `add`, `memcpy` and
     // `memset` and deliberately did NOT land them, with the readings published
@@ -1406,13 +1406,13 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 82 -> 88 by card W37-CORPUS-CONTRACTS-4's deliberate addition of six
     // custody-NEUTRAL modules, chosen by FUNCTION-COVER yield over the 163
     // baseline functions whose only refusals are `call to uncontracted
-    // function` leaves: `librdkafka/topic_partition.qcore`
+    // function` leaves: `librdkafka/topic_partition.qv`
     // (`rd_kafka_topic_partition_list_sort`, 2 such functions),
-    // `mpack/writer.qcore` (four writer primitives, 1 function each, and the
+    // `mpack/writer.qv` (four writer primitives, 1 function each, and the
     // corpus's first `mpack` family — distinct from the existing `msgpack/`,
-    // which is a different library), `cmetrics/metric_values.qcore` (2),
-    // `cmetrics/mpack_utils.qcore` (1), `cfl/time.qcore` (1) and
-    // `librdkafka/lz4_stream.qcore` (1). Not one is a release: after W36
+    // which is a different library), `cmetrics/metric_values.qv` (2),
+    // `cmetrics/mpack_utils.qv` (1), `cfl/time.qv` (1) and
+    // `librdkafka/lz4_stream.qv` (1). Not one is a release: after W36
     // harvested the release-shaped callees the remaining cover frontier is
     // dominated by unit-internal `static` helpers a name-keyed declaration may
     // not address at all, so the card also READ and deliberately did NOT land
@@ -1431,23 +1431,23 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // lifecycle and `__restrict`-withdrawn prototypes; every reading is in
     // `docs/reports/w43-libc-contracts/README.md`.
     // 107 -> 108 by card CONTRACT-INHERIT-ADOPTION's
-    // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`
-    // inheriting libc). Its conversion of `fluent_bit/resource_memory.qcore`
+    // `fluent_bit/resource_string.qv` (`flb_strdup`, `flb_strndup`
+    // inheriting libc). Its conversion of `fluent_bit/resource_memory.qv`
     // to `contract inherit` changes no module count.
-    // 108 -> 109 by card W43-LIBC-RESTRICT-PROTOTYPES' `libc/regex.qcore`
+    // 108 -> 109 by card W43-LIBC-RESTRICT-PROTOTYPES' `libc/regex.qv`
     // (`regexec`, `regerror`); its eight other declarations are appended to
     // existing libc modules.
-    // 109 -> 110 by card W43-DESCRIPTOR-RESOURCE-TRACKING's `libc/dirent.qcore`.
+    // 109 -> 110 by card W43-DESCRIPTOR-RESOURCE-TRACKING's `libc/dirent.qv`.
     // 110 -> 111 by card W43-DESCRIPTOR-NATIVE-CHECK's
-    // `library/descriptor_native_observation.qcore` in
+    // `library/descriptor_native_observation.qv` in
     // `providers/quirin-provider-shared`: an observation policy (ten
     // parameterless rules), not a libc API contract.
     // Card W44-LIBC-RESIDUALS adds no module: its `strerror`, `vsnprintf` and
     // `vprintf` are appended to existing libc modules.
-    // 111 -> 113 by card W45-FB-RETRY-LIFETIME's `fluent_bit/task_users.qcore`
-    // and `fluent_bit/output_singleplex.qcore`.
+    // 111 -> 113 by card W45-FB-RETRY-LIFETIME's `fluent_bit/task_users.qv`
+    // and `fluent_bit/output_singleplex.qv`.
     // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
-    // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
+    // `fluent_bit/storage_backlog.qv`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
@@ -1596,7 +1596,7 @@ fn contract_surface_is_pinned_as_structured_clauses() {
 #[test]
 fn the_closesocket_error_arm_states_an_unresolved_endpoint() {
     let path = contract_corpus::sources()
-        .remove("monkey/composition.qcore")
+        .remove("monkey/composition.qv")
         .unwrap();
     let source = fs::read_to_string(&path).expect("contract source is readable");
     let parsed = parse_source_program(&source).expect("contract source parses");
@@ -1671,25 +1671,25 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
     // contracts they replace, clause for clause
     // (`compiler/tests/contract_inherit_adoption.rs`).
     (
-        "fluent_bit/resource_memory.qcore",
+        "fluent_bit/resource_memory.qv",
         "flb_malloc",
         "libc::malloc",
     ),
     (
-        "fluent_bit/resource_memory.qcore",
+        "fluent_bit/resource_memory.qv",
         "flb_calloc",
         "libc::calloc",
     ),
-    ("fluent_bit/resource_memory.qcore", "flb_free", "libc::free"),
+    ("fluent_bit/resource_memory.qv", "flb_free", "libc::free"),
     // `include/fluent-bit/flb_str.h`: user-directed declared assumptions over
     // `static inline` bodies the analyzer could read (the report says so).
     (
-        "fluent_bit/resource_string.qcore",
+        "fluent_bit/resource_string.qv",
         "flb_strdup",
         "libc::strdup",
     ),
     (
-        "fluent_bit/resource_string.qcore",
+        "fluent_bit/resource_string.qv",
         "flb_strndup",
         "libc::strndup",
     ),
@@ -1699,15 +1699,15 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
     // elaboration equals the hand-written contract it replaces, clause for
     // clause (`compiler/tests/contract_inherit_qcore_provider.rs`), so the
     // elaborated clause pins in `EXPECTED_CONTRACTS` are unchanged.
-    ("librdkafka/memory.qcore", "rd_malloc", "libc::malloc"),
-    ("librdkafka/memory.qcore", "rd_calloc", "libc::calloc"),
-    ("librdkafka/memory.qcore", "rd_strdup", "libc::strdup"),
-    ("librdkafka/memory.qcore", "rd_strndup", "libc::strndup"),
-    ("librdkafka/memory.qcore", "rd_free", "libc::free"),
-    ("monkey/memory.qcore", "mk_mem_alloc", "libc::malloc"),
+    ("librdkafka/memory.qv", "rd_malloc", "libc::malloc"),
+    ("librdkafka/memory.qv", "rd_calloc", "libc::calloc"),
+    ("librdkafka/memory.qv", "rd_strdup", "libc::strdup"),
+    ("librdkafka/memory.qv", "rd_strndup", "libc::strndup"),
+    ("librdkafka/memory.qv", "rd_free", "libc::free"),
+    ("monkey/memory.qv", "mk_mem_alloc", "libc::malloc"),
     // `calloc(1, size)` in the body; `malloc` by signature (one parameter).
-    ("monkey/memory.qcore", "mk_mem_alloc_z", "libc::malloc"),
-    ("monkey/memory.qcore", "mk_mem_free", "libc::free"),
+    ("monkey/memory.qv", "mk_mem_alloc_z", "libc::malloc"),
+    ("monkey/memory.qv", "mk_mem_free", "libc::free"),
 ];
 
 #[test]

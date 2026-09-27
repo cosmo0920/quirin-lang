@@ -11,10 +11,10 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const METRIC: &str = include_str!(
-    "../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore"
+    "../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv"
 );
 const TRACE: &str = include_str!(
-    "../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qcore"
+    "../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv"
 );
 const FIXTURE: &str = "module contract;\n\
 extern fn w_open() -> ptr<mut, u8> contract {\n\

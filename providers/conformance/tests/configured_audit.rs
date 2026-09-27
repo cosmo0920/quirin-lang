@@ -12,9 +12,9 @@ use qcore_schemas::{PluginManifest, sha256_hex};
 use serde_json::{Value, json};
 
 const SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample.c");
-const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qcore");
+const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qv");
 const PROFILE: &str = include_str!("fixtures/configured_boolean_source/sample-set/profile.json");
-const RULES: &str = include_str!("fixtures/configured_boolean_source/source_projection.qcore");
+const RULES: &str = include_str!("fixtures/configured_boolean_source/source_projection.qv");
 const HELPER: &str = include_str!("fixtures/configured_boolean_source/sample_reset.c");
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
@@ -78,7 +78,7 @@ impl Fixture {
         write_json(&root.join("profile/profile.json"), &profile);
         fs::write(
             root.join("alloc.qcore"),
-            include_str!("../../../crates/qcore-audit/tests/fixtures/alloc_acquire.qcore"),
+            include_str!("../../../crates/qcore-audit/tests/fixtures/alloc_acquire.qv"),
         )
         .unwrap();
         write_json(
@@ -88,7 +88,7 @@ impl Fixture {
         fs::write(
             root.join("policy.qcore"),
             if helper {
-                include_str!("fixtures/configured_boolean_source/sample_with_helper.qcore")
+                include_str!("fixtures/configured_boolean_source/sample_with_helper.qv")
             } else {
                 POLICY
             },
@@ -97,7 +97,7 @@ impl Fixture {
         fs::write(root.join("rules.qcore"), RULES).unwrap();
         fs::write(
             root.join("frame.qcore"),
-            include_str!("fixtures/configured_boolean_source/sample_reset.qcore"),
+            include_str!("fixtures/configured_boolean_source/sample_reset.qv"),
         )
         .unwrap();
         let mut binding = json!({"library":"sample_widgets","provider":"qcore.sample_audit","contract":"policy.qcore"});

@@ -196,7 +196,7 @@ fn bracket_alias_elaborates_identically_to_the_angle_form() {
 
 #[test]
 fn bracket_alias_parses_in_parameter_and_return_position_with_contract_clauses() {
-    // The bracket twin of providers/quirin-provider-shared/contracts/language/quantified_indices.qcore,
+    // The bracket twin of providers/quirin-provider-shared/contracts/language/quantified_indices.qv,
     // exercised inline so the pinned corpus fixture stays untouched.
     let text = "module contract;\n\
         quant axis chunks : credit<Count<Chunk>>;\n\

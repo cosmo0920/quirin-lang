@@ -48,7 +48,7 @@ and SHA-256 values. The ownership map is `providers/contracts.py`.
 
 | Crate | Owned contract families |
 |---|---|
-| `qcore-provider-chunkio` | `chunkio/` and `fluent_bit/busy_state.qcore` |
+| `qcore-provider-chunkio` | `chunkio/` and `fluent_bit/busy_state.qv` |
 | `qcore-provider-cmetrics` | `cmetrics/` |
 | `qcore-provider-ctraces` | `ctraces/` |
 | `qcore-provider-libevent` | `monkey/` |
@@ -162,7 +162,7 @@ The existing core `plugins verify`/registry gate continues to check executable
 and plugin-manifest identity. Contract-bundle checking is the additional
 `package.py verify` gate; consumers still select contract paths explicitly and
 retain their existing policy/trust checks. For example, the CMetrics policy is
-available at `<package>/contracts/cmetrics/counter_reset.qcore`. Legacy packages
+available at `<package>/contracts/cmetrics/counter_reset.qv`. Legacy packages
 without a contract bundle remain supported.
 
 ## Invocation and installation

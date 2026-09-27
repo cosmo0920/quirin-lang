@@ -44,20 +44,20 @@ pub const PUBLISHED: &[&str] = &[];
 /// text)`, sorted by logical path relative to `contracts/`.
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
-        "language/quantified_indices.qcore",
-        include_str!("../contracts/language/quantified_indices.qcore"),
+        "language/quantified_indices.qv",
+        include_str!("../contracts/language/quantified_indices.qv"),
     ),
     (
-        "library/custody_evidence.qcore",
-        include_str!("../contracts/library/custody_evidence.qcore"),
+        "library/custody_evidence.qv",
+        include_str!("../contracts/library/custody_evidence.qv"),
     ),
     (
-        "library/descriptor_native_observation.qcore",
-        include_str!("../contracts/library/descriptor_native_observation.qcore"),
+        "library/descriptor_native_observation.qv",
+        include_str!("../contracts/library/descriptor_native_observation.qv"),
     ),
     (
-        "library/source_projection.qcore",
-        include_str!("../contracts/library/source_projection.qcore"),
+        "library/source_projection.qv",
+        include_str!("../contracts/library/source_projection.qv"),
     ),
 ];
 
@@ -265,8 +265,8 @@ mod tests {
             }
         }
         assert_eq!(
-            shared_contract("libc/memory.qcore"),
-            libc::contract("libc/memory.qcore")
+            shared_contract("libc/memory.qv"),
+            libc::contract("libc/memory.qv")
         );
         assert_eq!(shared_contract("absent.qcore"), None);
     }

@@ -6,8 +6,8 @@
 //! * The real load path now carries the five `qcore-provider-*` crates, each
 //!   with the namespace derived from its package name (`librdkafka`,
 //!   `libevent`, ...), and exactly two new contract-use edges to libc.
-//! * **Parity**, per conversion: `librdkafka/memory.qcore` and
-//!   `monkey/memory.qcore` elaborate, declaration by declaration and token by
+//! * **Parity**, per conversion: `librdkafka/memory.qv` and
+//!   `monkey/memory.qv` elaborate, declaration by declaration and token by
 //!   token, to the files as they stood at `2d0b77e1`
 //!   (`fixtures/contract_inherit_qcore_provider/*_hand_written.qcore`); the
 //!   loaded records, ABI projections, premises and tails are equal; and the
@@ -85,24 +85,24 @@ type Chain = (&'static str, &'static str, &'static str);
 const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
     (
         LIBRDKAFKA,
-        "librdkafka/memory.qcore",
+        "librdkafka/memory.qv",
         "librdkafka_memory_hand_written.qcore",
         &[
-            ("rd_calloc", "calloc", "libc/memory.qcore"),
-            ("rd_free", "free", "libc/memory.qcore"),
-            ("rd_malloc", "malloc", "libc/memory.qcore"),
-            ("rd_strdup", "strdup", "libc/string.qcore"),
-            ("rd_strndup", "strndup", "libc/string.qcore"),
+            ("rd_calloc", "calloc", "libc/memory.qv"),
+            ("rd_free", "free", "libc/memory.qv"),
+            ("rd_malloc", "malloc", "libc/memory.qv"),
+            ("rd_strdup", "strdup", "libc/string.qv"),
+            ("rd_strndup", "strndup", "libc/string.qv"),
         ],
     ),
     (
         LIBEVENT,
-        "monkey/memory.qcore",
+        "monkey/memory.qv",
         "monkey_memory_hand_written.qcore",
         &[
-            ("mk_mem_alloc", "malloc", "libc/memory.qcore"),
-            ("mk_mem_alloc_z", "malloc", "libc/memory.qcore"),
-            ("mk_mem_free", "free", "libc/memory.qcore"),
+            ("mk_mem_alloc", "malloc", "libc/memory.qv"),
+            ("mk_mem_alloc_z", "malloc", "libc/memory.qv"),
+            ("mk_mem_free", "free", "libc/memory.qv"),
         ],
     ),
 ];
@@ -246,16 +246,16 @@ fn the_resource_manifest_selects_the_converted_modules_with_equal_meaning() {
     assert_eq!(
         keys,
         [
-            "qcore-provider-libevent:monkey/memory.qcore",
-            "qcore-provider-librdkafka:librdkafka/memory.qcore",
-            "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
-            "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
+            "qcore-provider-libevent:monkey/memory.qv",
+            "qcore-provider-librdkafka:librdkafka/memory.qv",
+            "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+            "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",
         ]
     );
     let provenance = inclusion_provenance(&contracts).unwrap();
     for child in ["rd_malloc", "rd_strndup", "rd_free"] {
         assert!(
-            provenance["modules"]["qcore-provider-librdkafka:librdkafka/memory.qcore"]["inherited"]
+            provenance["modules"]["qcore-provider-librdkafka:librdkafka/memory.qv"]["inherited"]
                 [child]
                 .is_array(),
             "{child}"
@@ -375,9 +375,9 @@ fn real_package_inventories_pin_their_included_parents() {
         (
             LIBRDKAFKA,
             "qcore.librdkafka",
-            &["libc/memory.qcore", "libc/string.qcore"][..],
+            &["libc/memory.qv", "libc/string.qv"][..],
         ),
-        (LIBEVENT, "qcore.libevent", &["libc/memory.qcore"][..]),
+        (LIBEVENT, "qcore.libevent", &["libc/memory.qv"][..]),
     ] {
         let scratch = ScratchPackage::new(krate);
         let pins = scratch.pins();
@@ -433,14 +433,14 @@ fn real_package_inventories_pin_their_included_parents() {
 const APP: &str = "quirin-provider-app";
 const ALIAS_MODULE: &str = "app/alias.qcore";
 
-/// The real libc crate (its real `libc/string.qcore` and `libc/time.qcore`
-/// texts, with `libc/time.qcore` additionally published **in this test's copy
+/// The real libc crate (its real `libc/string.qv` and `libc/time.qv`
+/// texts, with `libc/time.qv` additionally published **in this test's copy
 /// only**, for the index-1 base of `gmtime_r`) and one application crate that
 /// depends on it and owns `app/alias.qcore`.
 fn alias_load_path(child: &str) -> ContractLoadPath {
     let manifest = real_load_path();
     let mut libc = manifest.load_path.crate_named(LIBC).unwrap().clone();
-    libc.published.insert("libc/time.qcore".to_owned());
+    libc.published.insert("libc/time.qv".to_owned());
     let app = PublishedContractCrate {
         name: APP.into(),
         namespace: "app".into(),
@@ -458,15 +458,15 @@ fn load_alias(child: &str) -> Result<qcore_schemas::contract::ResourceContracts,
         &load_path,
         &[
             PublishedModuleRef::new(APP, ALIAS_MODULE),
-            PublishedModuleRef::new(LIBC, "libc/string.qcore"),
-            PublishedModuleRef::new(LIBC, "libc/time.qcore"),
+            PublishedModuleRef::new(LIBC, "libc/string.qv"),
+            PublishedModuleRef::new(LIBC, "libc/time.qv"),
         ],
     )
 }
 
 const ALIAS_CHILDREN: &str = "module contract;\n\
-#include \"quirin-provider-libc:libc/string.qcore\";\n\
-#include \"quirin-provider-libc:libc/time.qcore\";\n\
+#include \"quirin-provider-libc:libc/string.qv\";\n\
+#include \"quirin-provider-libc:libc/time.qv\";\n\
 extern fn app_copy(to: ptr<mut, u8>, from: ptr<const, u8>, count: usize) -> ptr<mut, u8> contract inherit libc::memcpy;\n\
 extern fn app_find(text: ptr<const, u8>, wanted: i32) -> ptr<mut, u8> contract inherit libc::strchr;\n\
 extern fn app_search(hay: ptr<const, u8>, pin: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strstr;\n\
@@ -529,7 +529,7 @@ fn alias_and_interior_parents_are_inherited_with_their_base_index() {
     );
     let chains = &loaded.inclusion_evidence()[&key].inherited;
     assert_eq!(chains["app_copy"][0].declaration, "memcpy");
-    assert_eq!(chains["app_gmtime"][0].module.module, "libc/time.qcore");
+    assert_eq!(chains["app_gmtime"][0].module.module, "libc/time.qv");
     check_source_assumptions(&loaded).unwrap();
 }
 
@@ -552,7 +552,7 @@ fn a_child_that_reorders_the_parameters_is_refused() {
         "extern fn app_gmtime(out: ptr<mut, u8>, clock: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::gmtime_r;",
     ] {
         let module = format!(
-            "module contract;\n#include \"quirin-provider-libc:libc/string.qcore\";\n#include \"quirin-provider-libc:libc/time.qcore\";\n{child}\n"
+            "module contract;\n#include \"quirin-provider-libc:libc/string.qv\";\n#include \"quirin-provider-libc:libc/time.qv\";\n{child}\n"
         );
         refused(&module, "QI010");
     }
@@ -567,7 +567,7 @@ fn a_child_that_reorders_the_parameters_is_refused() {
 #[test]
 fn swapped_parameter_names_do_not_move_the_base() {
     let module = "module contract;\n\
-#include \"quirin-provider-libc:libc/string.qcore\";\n\
+#include \"quirin-provider-libc:libc/string.qv\";\n\
 extern fn app_search(needle: ptr<const, u8>, haystack: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strstr;\n";
     let loaded = load_alias(module).unwrap();
     let child = loaded.contract("app_search").unwrap();
@@ -597,7 +597,7 @@ fn a_child_parameter_spelled_like_the_second_argument_is_captured() {
         ),
     ] {
         let module = format!(
-            "module contract;\n#include \"quirin-provider-libc:libc/string.qcore\";\n{child}\n"
+            "module contract;\n#include \"quirin-provider-libc:libc/string.qv\";\n{child}\n"
         );
         let error = refused(&module, "QI012");
         assert!(error.contains(word), "{error}");

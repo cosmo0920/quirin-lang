@@ -76,7 +76,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // the null test.
     refused(
         &mutate(
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
             "ensures normal live_after == (result_null == 0);",
             "ensures normal live_after == 1;",
         ),
@@ -85,7 +85,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // The backend-result clause, removed.
     refused(
         &mutate(
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
             "ensures normal size == 0 or result_is_backend == 1;",
             "ensures normal size == 0 or backend_calls == 1;",
         ),
@@ -94,7 +94,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // `flb_free` leaving an allocation live.
     refused(
         &mutate(
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
             "ensures normal live_after == 0;",
             "ensures normal live_after == 1;",
         ),
@@ -104,7 +104,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // claim more than the detailed contract supports.
     refused(
         &mutate(
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
             "extern fn flb_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires ordinary_allocator_profile == 1;",
             "extern fn flb_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires ordinary_allocator_profile == 1;\n    requires size_is_small == 1;",
         ),
@@ -113,7 +113,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // A signature disagreement.
     refused(
         &mutate(
-            "fluent_bit/memory.qcore",
+            "fluent_bit/memory.qv",
             "flb_calloc(n: usize, size: usize)",
             "flb_calloc(n: i32, size: usize)",
         ),
@@ -122,7 +122,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
     // A stronger view than the detailed contract supports: a non-null result.
     refused(
         &mutate(
-            "fluent_bit/resource_memory.qcore",
+            "fluent_bit/resource_memory.qv",
             "resource_return_owned(nullable)",
             "resource_return_owned(nonnull)",
         ),
@@ -134,7 +134,7 @@ fn the_allocator_view_follows_from_the_native_evaluated_contract_and_mutations_r
 fn the_chunk_close_views_are_checked_and_mutations_refuse() {
     refused(
         &mutate(
-            "chunkio/memory_close.qcore",
+            "chunkio/memory_close.qv",
             "ensures normal not chunk_was_nonnull or chunk_released;",
             "ensures normal not chunk_was_nonnull or name_released;",
         ),
@@ -142,7 +142,7 @@ fn the_chunk_close_views_are_checked_and_mutations_refuse() {
     );
     refused(
         &mutate(
-            "chunkio/chunk_destructor.qcore",
+            "chunkio/chunk_destructor.qv",
             "ensures normal chunk_name_and_object_are_released;",
             "ensures normal chunk_name_is_released;",
         ),
@@ -151,7 +151,7 @@ fn the_chunk_close_views_are_checked_and_mutations_refuse() {
     // The ABI disagreement this card repaired is refused if it returns.
     refused(
         &mutate(
-            "chunkio/chunk_destructor.qcore",
+            "chunkio/chunk_destructor.qv",
             "delete_backing: i32",
             "delete_backing: bool",
         ),
@@ -161,7 +161,7 @@ fn the_chunk_close_views_are_checked_and_mutations_refuse() {
     // release.
     refused(
         &mutate(
-            "chunkio/chunk_destructor.qcore",
+            "chunkio/chunk_destructor.qv",
             "chunk: own<Chunk> use one,",
             "chunk: borrow<'call, mut, Chunk> use one,",
         ),
@@ -173,7 +173,7 @@ fn the_chunk_close_views_are_checked_and_mutations_refuse() {
 fn the_error_reset_frames_are_renamed_equivalents_and_mutations_refuse() {
     refused(
         &mutate(
-            "chunkio/error_state.qcore",
+            "chunkio/error_state.qv",
             "ensures normal lock_is_preserved;",
             "ensures normal writes_only_declared_fields;",
         ),
@@ -181,7 +181,7 @@ fn the_error_reset_frames_are_renamed_equivalents_and_mutations_refuse() {
     );
     refused(
         &mutate(
-            "chunkio/error_frame.qcore",
+            "chunkio/error_frame.qv",
             "requires exclusive_object_access;",
             "requires object_is_live;",
         ),
@@ -201,11 +201,11 @@ fn the_frame_equivalence_condition_is_load_bearing() {
         layout: Vec::new(),
         writes: vec![("error_n".into(), 0)],
     };
-    let chunk = evaluate_chunk_frame_contract(&summary, &modules["chunkio/error_state.qcore"]);
+    let chunk = evaluate_chunk_frame_contract(&summary, &modules["chunkio/error_state.qv"]);
     let lock_only = BTreeSet::from(["lock".to_owned()]);
     let generic = evaluate_boolean_frame_contract(
         &summary,
-        &modules["chunkio/error_frame.qcore"],
+        &modules["chunkio/error_frame.qv"],
         "cio_chunk",
         &lock_only,
     );
@@ -214,7 +214,7 @@ fn the_frame_equivalence_condition_is_load_bearing() {
     assert!(
         evaluate_boolean_frame_contract(
             &summary,
-            &modules["chunkio/error_frame.qcore"],
+            &modules["chunkio/error_frame.qv"],
             "cio_chunk",
             &covering,
         )
@@ -226,7 +226,7 @@ fn the_frame_equivalence_condition_is_load_bearing() {
 fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_refuse() {
     refused(
         &mutate(
-            "monkey/wait_source_policy.qcore",
+            "monkey/wait_source_policy.qv",
             "signature == \"void *(int)\"",
             "signature == \"void *(int, int)\"",
         ),
@@ -234,7 +234,7 @@ fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_re
     );
     refused(
         &mutate(
-            "monkey/wait_source_policy.qcore",
+            "monkey/wait_source_policy.qv",
             "signature == \"void (struct mk_event_ctx *)\"",
             "signature == \"void (struct mk_event_loop *)\"",
         ),
@@ -242,7 +242,7 @@ fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_re
     );
     refused(
         &mutate(
-            "monkey/wait_source_policy.qcore",
+            "monkey/wait_source_policy.qv",
             "signature == \"int (struct mk_event_loop *, int)\"",
             "signature == \"int (struct mk_event_loop *, long)\"",
         ),
@@ -250,7 +250,7 @@ fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_re
     );
     refused(
         &mutate(
-            "monkey/wrapper_paths.qcore",
+            "monkey/wrapper_paths.qv",
             "_mk_event_wait_with_flags(\n    loop: borrow<'call, mut, EventLoop> use one, flags: i32\n) -> i32",
             "_mk_event_wait_with_flags(\n    loop: borrow<'call, mut, EventLoop> use one, flags: i64\n) -> i32",
         ),
@@ -258,7 +258,7 @@ fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_re
     );
     refused(
         &mutate(
-            "monkey/wait_source_policy.qcore",
+            "monkey/wait_source_policy.qv",
             "ensures normal parameter_types == \"i32\";",
             "ensures normal parameter_types == \"i64\";",
         ),
@@ -267,7 +267,7 @@ fn the_source_shape_metadata_agrees_with_the_typed_declarations_and_mutations_re
     // The callback projection binds the C callback's third parameter.
     refused(
         &mutate(
-            "monkey/wait_source_policy.qcore",
+            "monkey/wait_source_policy.qv",
             "(signature == \"void (evutil_socket_t, short, void *)\")",
             "(signature == \"void (evutil_socket_t, short)\")",
         ),
@@ -280,7 +280,7 @@ fn the_guard_refuses_new_stale_and_unjustified_registrations() {
     // A new multi-module declaration: the removed duplicate, restored.
     refused(
         &mutate(
-            "monkey/timeout_teardown.qcore",
+            "monkey/timeout_teardown.qv",
             "extern fn cb_timeout_source() -> unit",
             "extern fn source_identity() -> unit\ncontract {\n    ensures normal source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\";\n    ensures normal library == \"monkey\";\n    ensures normal source_set == \"fluent-bit\";\n    ensures normal profile_digest != \"\";\n};\n\nextern fn cb_timeout_source() -> unit",
         ),
@@ -289,7 +289,7 @@ fn the_guard_refuses_new_stale_and_unjustified_registrations() {
     // A declaration copied into an unrelated module.
     refused(
         &mutate(
-            "fluent_bit/logging.qcore",
+            "fluent_bit/logging.qv",
             "module contract;",
             "module contract;\nextern fn flb_sds_destroy(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};",
         ),
@@ -329,15 +329,15 @@ fn the_guard_refuses_new_stale_and_unjustified_registrations() {
     // A textual duplicate cannot be registered as a relation to keep it: it
     // must be removed, or kept as `Identical` with a registered finding.
     let restored = mutate(
-        "monkey/timeout_teardown.qcore",
+        "monkey/timeout_teardown.qv",
         "extern fn cb_timeout_source() -> unit",
         "extern fn source_identity() -> unit\ncontract {\n    ensures normal source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\";\n    ensures normal library == \"monkey\";\n    ensures normal source_set == \"fluent-bit\";\n    ensures normal profile_digest != \"\";\n};\n\nextern fn cb_timeout_source() -> unit",
     );
     let mut registry: Vec<RegisteredRelation> = REGISTERED_RELATIONS.to_vec();
     let mut duplicate = registry[0];
     duplicate.function = "source_identity";
-    duplicate.detailed = "monkey/wait_source_policy.qcore";
-    duplicate.view = "monkey/timeout_teardown.qcore";
+    duplicate.detailed = "monkey/wait_source_policy.qv";
+    duplicate.view = "monkey/timeout_teardown.qv";
     duplicate.assumed_premises = &[];
     duplicate.check = RelationCheck::SourceShape {
         projection: None,

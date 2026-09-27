@@ -52,7 +52,7 @@ fn clang_available() -> bool {
 }
 
 const RULES: &str = include_str!(
-    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 /// Declared ChunkIO Boolean model in `contract/profiles/fluent-bit`: record
 /// `cio_chunk`, field `lock`. `error_n` is the ordinary metadata field a frame

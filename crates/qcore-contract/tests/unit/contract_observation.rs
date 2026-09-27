@@ -3,7 +3,7 @@ use super::*;
 #[test]
 fn native_delete_observations_check_eligibility_arguments_and_frames() {
     let contract = include_str!(
-        "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qcore"
+        "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qv"
     );
     let observations = include_str!("../fixtures/chunkio/native_delete.jsonl");
     let mut scenarios = std::collections::BTreeSet::new();
@@ -73,7 +73,7 @@ fn native_delete_observations_check_eligibility_arguments_and_frames() {
 #[test]
 fn native_cleanup_observations_execute_every_policy_predicate() {
     let contract = include_str!(
-        "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qcore"
+        "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qv"
     );
     let observations = include_str!("../fixtures/chunkio/native_cleanup.jsonl");
     let mut outcomes = std::collections::BTreeSet::new();

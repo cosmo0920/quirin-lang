@@ -10,10 +10,10 @@ use qcore_verification::counter_contract::check_counter_contract;
 use qcore_verification::field_destructor::check_field_destructor;
 use qcore_verification::list_unlink_contract::check_list_unlink;
 const SOURCE: &str = include_str!("fixtures/generic_source/sample.c");
-const COUNTER: &str = include_str!("fixtures/generic_source/counter.qcore");
-const DESTRUCTOR: &str = include_str!("fixtures/generic_source/destructor.qcore");
-const UNLINK: &str = include_str!("fixtures/generic_source/unlink.qcore");
-const CLEANUP: &str = include_str!("fixtures/generic_source/cleanup.qcore");
+const COUNTER: &str = include_str!("fixtures/generic_source/counter.qv");
+const DESTRUCTOR: &str = include_str!("fixtures/generic_source/destructor.qv");
+const UNLINK: &str = include_str!("fixtures/generic_source/unlink.qv");
+const CLEANUP: &str = include_str!("fixtures/generic_source/cleanup.qv");
 fn clang_available() -> bool {
     match qcore_c_gateway::clang_command() {
         Ok(_) => true,

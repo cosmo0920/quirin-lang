@@ -4,10 +4,10 @@ use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::C11TranslationUnit;
 
 const BUSY: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv"
 );
 const LOCK: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv");
 
 fn summary(body: &str) -> ChunkSourceSummary {
     let source = format!(

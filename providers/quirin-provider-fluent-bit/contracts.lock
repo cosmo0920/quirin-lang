@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "cb_queue_chunks",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",
       "identities": [
         {
@@ -40,7 +40,7 @@
     },
     {
       "function": "flb_calloc",
-      "module": "fluent_bit/resource_memory.qcore",
+      "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "b5598ca7af3b38fd15290890bbd5041e7f92b9f20f6e4b7cf1492633fb6f90ac",
       "identities": [
         {
@@ -67,7 +67,7 @@
     },
     {
       "function": "flb_errno_print",
-      "module": "fluent_bit/logging.qcore",
+      "module": "fluent_bit/logging.qv",
       "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
       "identities": [
         {
@@ -99,7 +99,7 @@
     },
     {
       "function": "flb_free",
-      "module": "fluent_bit/resource_memory.qcore",
+      "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "ac614ad38ebf5f029c19d67e97fee05892cc13bd03c26f1f61f512aeffc74172",
       "identities": [
         {
@@ -126,7 +126,7 @@
     },
     {
       "function": "flb_hash_table_add",
-      "module": "fluent_bit/hash_table_publication.qcore",
+      "module": "fluent_bit/hash_table_publication.qv",
       "contract_sha256": "cc36eeb4be89d4656625eaaead16171b5023bd6f874a92f9f66dcacb04ea4b6c",
       "identities": [
         {
@@ -158,7 +158,7 @@
     },
     {
       "function": "flb_input_chunk_destroy",
-      "module": "fluent_bit/input_chunk_destroy.qcore",
+      "module": "fluent_bit/input_chunk_destroy.qv",
       "contract_sha256": "5fe7f48a4f15261dae3e2779b2521b2caa44b61b7442c950711c0d44f9141354",
       "identities": [
         {
@@ -190,7 +190,7 @@
     },
     {
       "function": "flb_input_chunk_destroy_direct_routes",
-      "module": "fluent_bit/input_chunk_destroy_direct_routes.qcore",
+      "module": "fluent_bit/input_chunk_destroy_direct_routes.qv",
       "contract_sha256": "a13bbc5958e4ef6442b284e82ae98d43d3857cd78470882c598bda45ba154fa2",
       "identities": [
         {
@@ -222,7 +222,7 @@
     },
     {
       "function": "flb_input_chunk_get_name",
-      "module": "fluent_bit/input_chunk_name.qcore",
+      "module": "fluent_bit/input_chunk_name.qv",
       "contract_sha256": "fedbda90012ba980b541c22dc8213ad3d63c37490829fcef18c0e1cbd4e0eed5",
       "identities": [
         {
@@ -254,7 +254,7 @@
     },
     {
       "function": "flb_input_chunk_get_real_size",
-      "module": "fluent_bit/input_chunk_sizes.qcore",
+      "module": "fluent_bit/input_chunk_sizes.qv",
       "contract_sha256": "cefdbb5fa8a0bbc2d4d7600fb8b8529809251988dbcaca71a0482f1379ce0d1b",
       "identities": [
         {
@@ -286,7 +286,7 @@
     },
     {
       "function": "flb_input_chunk_get_size",
-      "module": "fluent_bit/input_chunk_sizes.qcore",
+      "module": "fluent_bit/input_chunk_sizes.qv",
       "contract_sha256": "1f50bfd70bb0e590227f44e07d86679ede77d058b06aef942ca9e3afe21c9d75",
       "identities": [
         {
@@ -318,7 +318,7 @@
     },
     {
       "function": "flb_input_chunk_is_mem_overlimit",
-      "module": "fluent_bit/input_chunk_is_up.qcore",
+      "module": "fluent_bit/input_chunk_is_up.qv",
       "contract_sha256": "29043a1929ff30aae30e49d7f177d4ff307be80607c32d9f06ac17f67fdf77fb",
       "identities": [
         {
@@ -345,7 +345,7 @@
     },
     {
       "function": "flb_input_chunk_is_storage_overlimit",
-      "module": "fluent_bit/input_chunk_is_up.qcore",
+      "module": "fluent_bit/input_chunk_is_up.qv",
       "contract_sha256": "c16780bab30058164f2b54d6a6c824fe5c40919a9650d4215d58d6e707fc2535",
       "identities": [
         {
@@ -372,7 +372,7 @@
     },
     {
       "function": "flb_input_chunk_is_up",
-      "module": "fluent_bit/input_chunk_is_up.qcore",
+      "module": "fluent_bit/input_chunk_is_up.qv",
       "contract_sha256": "07bc9f4b74fdb2de4ba33f4be0561459a73a083bab725c2af65bbc750589e123",
       "identities": [
         {
@@ -404,7 +404,7 @@
     },
     {
       "function": "flb_input_chunk_total_size",
-      "module": "fluent_bit/input_chunk_total_size.qcore",
+      "module": "fluent_bit/input_chunk_total_size.qv",
       "contract_sha256": "dde554289008ea4d237be5c4cdb949ae08642e5789a53570290d9159acf4f47b",
       "identities": [
         {
@@ -436,7 +436,7 @@
     },
     {
       "function": "flb_log_check",
-      "module": "fluent_bit/logging.qcore",
+      "module": "fluent_bit/logging.qv",
       "contract_sha256": "055cebefa1d4d696bf7b9a25983eaeca44d800d670b222bdfd6819a19f51ee62",
       "identities": [
         {
@@ -463,7 +463,7 @@
     },
     {
       "function": "flb_log_print",
-      "module": "fluent_bit/logging.qcore",
+      "module": "fluent_bit/logging.qv",
       "contract_sha256": "462e9f3c1839cf3b6dfd8129e7c4fd8fff1978a32b37de50b8502601cbfb3c3b",
       "identities": [
         {
@@ -495,7 +495,7 @@
     },
     {
       "function": "flb_malloc",
-      "module": "fluent_bit/resource_memory.qcore",
+      "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "d95ce00637913918a595a5be535abab01a7dbc620e8790beffd313437dde4eb9",
       "identities": [
         {
@@ -522,7 +522,7 @@
     },
     {
       "function": "flb_output_flush_id_get",
-      "module": "fluent_bit/output_flush_id.qcore",
+      "module": "fluent_bit/output_flush_id.qv",
       "contract_sha256": "32ce25a90e71d44b47dd12aee51f240ccf068fcc7570e1516771fa05e71b189d",
       "identities": [
         {
@@ -554,7 +554,7 @@
     },
     {
       "function": "flb_output_task_flush",
-      "module": "fluent_bit/output_singleplex.qcore",
+      "module": "fluent_bit/output_singleplex.qv",
       "contract_sha256": "9743f0cb604ebce81b45d8a972ec9604e6d4d0711892f4e8c32f7fe094ce6ea6",
       "identities": [
         {
@@ -603,7 +603,7 @@
     },
     {
       "function": "flb_output_task_singleplex_enqueue",
-      "module": "fluent_bit/output_singleplex.qcore",
+      "module": "fluent_bit/output_singleplex.qv",
       "contract_sha256": "3fa952f42286b313798f24b2fede4b97f8446d41e9eb46da051fd964d97b58d6",
       "identities": [
         {
@@ -635,7 +635,7 @@
     },
     {
       "function": "flb_output_thread_pool_flush",
-      "module": "fluent_bit/task_users.qcore",
+      "module": "fluent_bit/task_users.qv",
       "contract_sha256": "79cfab237a788987dca51074ad1a7b29ec1adf0ba9966f302c26674de771f1a2",
       "identities": [
         {
@@ -667,7 +667,7 @@
     },
     {
       "function": "flb_routes_mask_get_size",
-      "module": "fluent_bit/routes_mask.qcore",
+      "module": "fluent_bit/routes_mask.qv",
       "contract_sha256": "0992e1d46af0abf7c8b2d03e6d30c267ee1a8db1ecbe3674204db048f37a13b0",
       "identities": [
         {
@@ -699,7 +699,7 @@
     },
     {
       "function": "flb_routes_mask_get_slots",
-      "module": "fluent_bit/routes_mask.qcore",
+      "module": "fluent_bit/routes_mask.qv",
       "contract_sha256": "afdfd4876dc6b4a913f0a228c5ecfddd8df5e19b6bce0db9394e5d3c85d00cbc",
       "identities": [
         {
@@ -731,7 +731,7 @@
     },
     {
       "function": "flb_routes_mask_is_empty",
-      "module": "fluent_bit/routes_mask.qcore",
+      "module": "fluent_bit/routes_mask.qv",
       "contract_sha256": "abcf0840e0616ed4082a8af5d947558e2b93b81ecd58e82ad10ccb184e090172",
       "identities": [
         {
@@ -763,7 +763,7 @@
     },
     {
       "function": "flb_routes_mask_set_by_tag",
-      "module": "fluent_bit/routes_mask.qcore",
+      "module": "fluent_bit/routes_mask.qv",
       "contract_sha256": "67d345215da3086b0958f2c11e20d55ce1891437eeac19e572226c8360271d55",
       "identities": [
         {
@@ -795,7 +795,7 @@
     },
     {
       "function": "flb_sds_create_len",
-      "module": "fluent_bit/resource_memory.qcore",
+      "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "23e59794820125ede3722ee0ef0d655eb0d42ffa963391f25b1a67beed87e8b8",
       "identities": [
         {
@@ -827,7 +827,7 @@
     },
     {
       "function": "flb_sds_destroy",
-      "module": "fluent_bit/resource_memory.qcore",
+      "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "3b4c7733df6161663673f9cdfb28e0f3ad4dcadc92b1dd2d7b59771eddcd4715",
       "identities": [
         {
@@ -859,7 +859,7 @@
     },
     {
       "function": "flb_strdup",
-      "module": "fluent_bit/resource_string.qcore",
+      "module": "fluent_bit/resource_string.qv",
       "contract_sha256": "172ff1988e8a5c65692080ef54f640da5c2bfdaf786039cf14e6faff7f448b4a",
       "identities": [
         {
@@ -886,7 +886,7 @@
     },
     {
       "function": "flb_strndup",
-      "module": "fluent_bit/resource_string.qcore",
+      "module": "fluent_bit/resource_string.qv",
       "contract_sha256": "32b13404eecd505b8a2530e1250ff81bc989c09bae244460b0744e48545e8a81",
       "identities": [
         {
@@ -913,7 +913,7 @@
     },
     {
       "function": "flb_task_get_route_status",
-      "module": "fluent_bit/task_route_queries.qcore",
+      "module": "fluent_bit/task_route_queries.qv",
       "contract_sha256": "a550a297d0cd64ad0ce7b946f229144944a35b0a68de24e11c7ddea6830105a5",
       "identities": [
         {
@@ -940,7 +940,7 @@
     },
     {
       "function": "flb_task_retry_count",
-      "module": "fluent_bit/task_route_queries.qcore",
+      "module": "fluent_bit/task_route_queries.qv",
       "contract_sha256": "b3a70a50c492eaa0672943dbae8c3e5fe8e02117d2114e325b0e565ddff1f8ca",
       "identities": [
         {
@@ -972,7 +972,7 @@
     },
     {
       "function": "flb_task_retry_destroy",
-      "module": "fluent_bit/task_users.qcore",
+      "module": "fluent_bit/task_users.qv",
       "contract_sha256": "c90a2e6a3e19fa762f53187b874a94fb8e7610a3fb7c8f54592231009f634b06",
       "identities": [
         {
@@ -1004,7 +1004,7 @@
     },
     {
       "function": "flb_task_running_count",
-      "module": "fluent_bit/task_route_queries.qcore",
+      "module": "fluent_bit/task_route_queries.qv",
       "contract_sha256": "6fb4954e34bc36e0d5adf3af8a4457eb0df99ecff15c2ae8546475e83f806911",
       "identities": [
         {
@@ -1036,7 +1036,7 @@
     },
     {
       "function": "flb_task_set_route_status",
-      "module": "fluent_bit/task_route_queries.qcore",
+      "module": "fluent_bit/task_route_queries.qv",
       "contract_sha256": "33d638ede574d3cfd63b6aa672a0bf8b9fffcf6adc8bac9383884331acc479f9",
       "identities": [
         {
@@ -1063,7 +1063,7 @@
     },
     {
       "function": "flb_task_users_dec",
-      "module": "fluent_bit/task_users.qcore",
+      "module": "fluent_bit/task_users.qv",
       "contract_sha256": "535551ccaf9404e3952b47c630a4b7cb2386a9c3b97103483f748a840e17e538",
       "identities": [
         {
@@ -1090,7 +1090,7 @@
     },
     {
       "function": "flb_task_users_inc",
-      "module": "fluent_bit/task_users.qcore",
+      "module": "fluent_bit/task_users.qv",
       "contract_sha256": "2c6086c0624fe127986f9a557f8d959de268bca7ad50b9f7327bd6d1dc7b87b2",
       "identities": [
         {
@@ -1117,7 +1117,7 @@
     },
     {
       "function": "flb_time_now",
-      "module": "fluent_bit/time.qcore",
+      "module": "fluent_bit/time.qv",
       "contract_sha256": "4979b0c2d32b0e3a072bfb8a5a701d1123b7488af618f9c4ff69fa0f7400fca7",
       "identities": [
         {
@@ -1149,7 +1149,7 @@
     },
     {
       "function": "generate_chunk_name",
-      "module": "fluent_bit/input_chunk_helpers.qcore",
+      "module": "fluent_bit/input_chunk_helpers.qv",
       "contract_sha256": "41c12f61c53960bac2fb70dcf99a75c59409b73202fef5bd9f5fa95d73f96979",
       "identities": [
         {
@@ -1176,7 +1176,7 @@
     },
     {
       "function": "input_chunk_has_magic_bytes",
-      "module": "fluent_bit/input_chunk_is_up.qcore",
+      "module": "fluent_bit/input_chunk_is_up.qv",
       "contract_sha256": "25a03a767543f2e6060862a0374c519df31d04fe10ccc704cc808cf164e34312",
       "identities": [
         {
@@ -1203,7 +1203,7 @@
     },
     {
       "function": "input_chunk_write_header",
-      "module": "fluent_bit/input_chunk_helpers.qcore",
+      "module": "fluent_bit/input_chunk_helpers.qv",
       "contract_sha256": "756424bcff1f9779b1cea8687faf2a9e1b18c060503b772aa567df41d19c586b",
       "identities": [
         {
@@ -1230,7 +1230,7 @@
     },
     {
       "function": "sb_allocate_backlogs",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "53161949fef18d454fab6cf5bbfd0d5e494181efa43d89d775a34a8ab33a61b8",
       "identities": [
         {
@@ -1262,7 +1262,7 @@
     },
     {
       "function": "sb_allocate_chunk",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "a38e962421ae34edd8857eeeea4e4a6d06bfa708faca32f381341dc34201eb66",
       "identities": [
         {
@@ -1294,7 +1294,7 @@
     },
     {
       "function": "sb_append_chunk_to_segregated_backlog",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "7dd643ba5a72bc63af85a12b8d6ee8e408ee171383677838c0a6f9e9b42e8838",
       "identities": [
         {
@@ -1326,7 +1326,7 @@
     },
     {
       "function": "sb_append_chunk_to_segregated_backlogs",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "2d4aff08af834082498b4a3dab7d6dcbfa8d08e0f3491f3b3686d7669b5804b7",
       "identities": [
         {
@@ -1358,7 +1358,7 @@
     },
     {
       "function": "sb_destroy_backlog",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "e7f8bb4389bdd42ca39c7b1b8aaee161e34632401d3ea23c001c01fce1d5c357",
       "identities": [
         {
@@ -1390,7 +1390,7 @@
     },
     {
       "function": "sb_destroy_backlogs",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "4f8f50dc435d32486fe308c4a0ab01f70a08e726e10b6d068b77fdfaa3c2eaf4",
       "identities": [
         {
@@ -1422,7 +1422,7 @@
     },
     {
       "function": "sb_destroy_chunk",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "e0c87b2d070dd160eedf2237895dbce220266ab01b9aa45ccb14cc56d43134e0",
       "identities": [
         {
@@ -1454,7 +1454,7 @@
     },
     {
       "function": "sb_release_output_queue_space",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "53f4c9bb9d6040bcff9c34d3e3004f302e3752eb397f3241a43f9e2877340cdd",
       "identities": [
         {
@@ -1497,7 +1497,7 @@
     },
     {
       "function": "sb_remove_chunk_from_segregated_backlog",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "64eb3dfdd53ba4c2be3983e9585dfa3039ac0b16391eaf73c10bc277ec88282c",
       "identities": [
         {
@@ -1529,7 +1529,7 @@
     },
     {
       "function": "sb_remove_chunk_from_segregated_backlogs",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "453aeb30c928efa32ca6d53e5cb9513155e85b5e5f2d9ff97b1b238cf40471bf",
       "identities": [
         {
@@ -1561,7 +1561,7 @@
     },
     {
       "function": "sb_segregate_chunks",
-      "module": "fluent_bit/storage_backlog.qcore",
+      "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b",
       "identities": [
         {

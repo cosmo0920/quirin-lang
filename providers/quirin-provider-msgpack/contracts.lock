@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "msgpack_packer_init",
-      "module": "msgpack/packer.qcore",
+      "module": "msgpack/packer.qv",
       "contract_sha256": "0e8e11c3127b9f6963830a51a141d5aa62b40e3242780a1386bb52b35d0c2c62",
       "identities": [
         {

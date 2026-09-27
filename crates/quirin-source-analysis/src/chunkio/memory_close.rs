@@ -23,12 +23,12 @@ use qcore_verification::memory_close_composition::{
 };
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv"
 );
 
 /// The frame helper prerequisite's pinned contract.
 pub const FRAME_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv"
 );
 
 /// The derivation recipe this route appends to the unit under analysis.

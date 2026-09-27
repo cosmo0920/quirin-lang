@@ -40,7 +40,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 mod text;
 use text::normalize_newlines;
 
-const GENERIC: &str = include_str!("fixtures/contracts/chained_tail_generic.qcore");
+const GENERIC: &str = include_str!("fixtures/contracts/chained_tail_generic.qv");
 
 /// The held-out C declarations. Every record shape the premises separate is
 /// present: a fully typed two-link chain, a four-link chain, a record-valued

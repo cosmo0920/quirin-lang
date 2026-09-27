@@ -35,7 +35,7 @@ header include/qcore_buffer_demo_decorated.h;
 header_hash sha256:88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e;
 include "qcore_buffer_demo_visibility.h" from include/qcore_buffer_demo_visibility.h sha256:8fce29e5cac9277ea8ebbb8ed70ad4b7a58c8ba7d469a76af03e9da9bf611c0b;
 
-contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qcore;
-contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qv;
+contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qv;

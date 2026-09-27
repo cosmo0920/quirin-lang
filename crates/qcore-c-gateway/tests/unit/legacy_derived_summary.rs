@@ -7,7 +7,7 @@ use super::*;
 
 use crate::legacy_c::tokenize;
 
-const DERIVED: &str = include_str!("../fixtures/contracts/derived_result_generic.qcore");
+const DERIVED: &str = include_str!("../fixtures/contracts/derived_result_generic.qv");
 
 const DECLARATIONS: &str = "\
 char *d_alloc(unsigned long n); \

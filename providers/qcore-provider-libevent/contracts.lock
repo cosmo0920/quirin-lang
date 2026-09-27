@@ -7,7 +7,7 @@
   "pinned": [
     {
       "function": "MK_EVENT_NEW",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "02b7a311ef042c3ca2bb07a3fe5f3e79306868934dd7a5af2a339408a3f586e8",
       "identities": [
         {
@@ -34,7 +34,7 @@
     },
     {
       "function": "_mk_string_search",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "cd5674f1153f26704a4091a26dba7bedeffc43399ea31309a5993932aed22844",
       "identities": [
         {
@@ -61,7 +61,7 @@
     },
     {
       "function": "event_base_get_features",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "310fa234b79e708ce7ac225ef5c0cf1e46a614fbfab342d43c22185c18cf9ca8",
       "identities": [
         {
@@ -114,7 +114,7 @@
     },
     {
       "function": "event_get_struct_event_size",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "0d50d2726f380d35bc0e89761fb2120abf1538316507ae6bbd0142f0ade69cd9",
       "identities": [
         {
@@ -167,7 +167,7 @@
     },
     {
       "function": "event_get_version_number",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "8971b73e495e3a98b807077ee758e660c3b18b1acf4b15b29b668981a0c060d5",
       "identities": [
         {
@@ -220,7 +220,7 @@
     },
     {
       "function": "mk_list_add",
-      "module": "monkey/intrusive_list.qcore",
+      "module": "monkey/intrusive_list.qv",
       "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
       "identities": [
         {
@@ -253,7 +253,7 @@
     },
     {
       "function": "mk_list_del",
-      "module": "monkey/intrusive_list.qcore",
+      "module": "monkey/intrusive_list.qv",
       "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
       "identities": [
         {
@@ -286,7 +286,7 @@
     },
     {
       "function": "mk_mem_alloc",
-      "module": "monkey/memory.qcore",
+      "module": "monkey/memory.qv",
       "contract_sha256": "30b051b31acb3878b8134da69e16c51e24b4eee30e44654a1b28bbef026f6902",
       "identities": [
         {
@@ -313,7 +313,7 @@
     },
     {
       "function": "mk_mem_alloc_z",
-      "module": "monkey/memory.qcore",
+      "module": "monkey/memory.qv",
       "contract_sha256": "8364d7deffc38b4c9777e9a827b5bb20e22ffde71d2948f4f33990df55062d15",
       "identities": [
         {
@@ -340,7 +340,7 @@
     },
     {
       "function": "mk_mem_free",
-      "module": "monkey/memory.qcore",
+      "module": "monkey/memory.qv",
       "contract_sha256": "2774440c44b71b2b2c8ba5daa323d1d7efcb962cc64c74219354cc66a10b91bf",
       "identities": [
         {
@@ -372,7 +372,7 @@
     },
     {
       "function": "mk_print",
-      "module": "monkey/logging.qcore",
+      "module": "monkey/logging.qv",
       "contract_sha256": "ba408119d8a536af77c0ed47c407e5ea8498d4a2215917d03f2497b10a974b8c",
       "identities": [
         {
@@ -404,7 +404,7 @@
     },
     {
       "function": "mk_string_char_search",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "814f7c3ed560a6bb72a7b24e51a8b84b9087776af608545aa0b18817d29adf5f",
       "identities": [
         {
@@ -436,7 +436,7 @@
     },
     {
       "function": "mk_string_char_search_r",
-      "module": "monkey/scalar_observation.qcore",
+      "module": "monkey/scalar_observation.qv",
       "contract_sha256": "1e5bc5ed672fb519b45e396edf59f697ac450c739afe41660b36b391e0d9361b",
       "identities": [
         {
@@ -468,7 +468,7 @@
     },
     {
       "function": "mk_utils_libc_error",
-      "module": "monkey/logging.qcore",
+      "module": "monkey/logging.qv",
       "contract_sha256": "72ea3ca55194e4970fb552b6d32a20c613aa390d43ea7c910f96fa26d3322d0c",
       "identities": [
         {

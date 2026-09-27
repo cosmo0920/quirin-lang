@@ -241,7 +241,7 @@ fn cmetrics_summary() -> qcore_c_gateway::boolean_source::ChunkSourceSummary {
         &["cmetrics"],
         &[],
         include_str!(
-            "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+            "../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
         ),
     )
     .expect("the CMetrics unit source imports");
@@ -325,7 +325,7 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
     let chunkio_summary = boolean::checked(boolean::SOURCE, vec![]);
     let cmetrics_source = cmetrics_summary();
     let cmetrics_contract = include_str!(
-        "../../../providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+        "../../../providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv"
     )
     .to_owned();
     let routes = vec![

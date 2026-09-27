@@ -29,7 +29,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
-const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qcore");
+const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qv");
 
 /// The fixture contracts' C declarations, then glibc's macro over `d_chr`.
 /// The declarations precede the macro, as in `string.h`, so they are not

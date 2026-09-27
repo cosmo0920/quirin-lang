@@ -116,7 +116,7 @@ fn renamed_native_manifest_preserves_artifact_premises_and_emission() {
 #[test]
 fn qrlib_contract_references_require_the_exact_selected_qv_path() {
     let source = include_str!("fixtures/extern_calls/round_trip.qcore");
-    let text = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
+    let text = include_str!("fixtures/native_library/contracts/buffer_lib.qv");
     let manifest = include_str!("fixtures/native_library/buffer_lib.qcorelib");
     let old = "fixtures/native_library/contracts/buffer_lib.qcore";
     let new = "fixtures/native_library/contracts/buffer_lib.qv";
@@ -126,7 +126,7 @@ fn qrlib_contract_references_require_the_exact_selected_qv_path() {
             &CompileOptions {
                 extern_contracts: Some([(new.to_owned(), text.to_owned())].into_iter().collect()),
                 native_libraries: Some(
-                    [("buffer.qrlib".into(), manifest.replace(old, reference))]
+                    [("buffer.qrlib".into(), manifest.replace(new, reference))]
                         .into_iter()
                         .collect(),
                 ),

@@ -29,10 +29,10 @@ use qcore_compiler::{
 
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 const WAIVED_ROUND_TRIP: &str = include_str!("fixtures/unsafe_linkage/round_trip.qcore");
-const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qcore";
-const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qcore");
-const SHARED_MODULE: &str = "fixtures/extern_calls/contracts/buffer_api.qcore";
-const SHARED: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
+const SLICE_MODULE: &str = "fixtures/native_library/contracts/buffer_lib.qv";
+const SLICE: &str = include_str!("fixtures/native_library/contracts/buffer_lib.qv");
+const SHARED_MODULE: &str = "fixtures/extern_calls/contracts/buffer_api.qv";
+const SHARED: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qv");
 const MANIFEST_PATH: &str = "fixtures/native_library/buffer_lib.qcorelib";
 const MANIFEST: &str = include_str!("fixtures/native_library/buffer_lib.qcorelib");
 const L1_MANIFEST: &str = include_str!("fixtures/native_library/unchecked_demo.qcorelib");
@@ -229,7 +229,7 @@ fn an_entry_whose_contract_the_environment_does_not_declare_rejects_the_selectio
 
 #[test]
 fn an_entry_naming_another_module_rejects_rather_than_resolving_by_symbol_name() {
-    let edited = manifest_with(SLICE_MODULE, "fixtures/somewhere/else.qcore");
+    let edited = manifest_with(SLICE_MODULE, "fixtures/somewhere/else.qv");
     assert_eq!(
         codes(
             ROUND_TRIP,

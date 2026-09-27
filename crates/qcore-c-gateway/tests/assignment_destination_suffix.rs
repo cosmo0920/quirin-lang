@@ -302,7 +302,7 @@ fn a_whole_member_place_keeps_the_aggregate_store() {
 
 // -- Composition with descriptor custody ---------------------------------------
 
-const DESCRIPTOR_CONTRACTS: &str = include_str!("fixtures/contracts/descriptor_generic.qcore");
+const DESCRIPTOR_CONTRACTS: &str = include_str!("fixtures/contracts/descriptor_generic.qv");
 
 const DESCRIPTOR_DECLARATIONS: &str = "\
 int k_open(const char *path); int k_close(int fd); \

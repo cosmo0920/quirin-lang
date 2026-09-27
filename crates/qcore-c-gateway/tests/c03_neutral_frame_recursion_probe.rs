@@ -90,7 +90,7 @@ impl Probe {
 fn contracts(declared: Option<&str>) -> ResourceContracts {
     let mut sources = vec![(
         "q_base.qcore".to_owned(),
-        include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+        include_str!("fixtures/contracts/q_base.qv").to_owned(),
     )];
     if let Some(declared) = declared {
         sources.push(("c03_probe.qcore".to_owned(), declared.to_owned()));

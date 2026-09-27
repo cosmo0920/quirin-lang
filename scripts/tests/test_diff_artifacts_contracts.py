@@ -139,14 +139,14 @@ class ContractItemizationTest(unittest.TestCase):
         return diff_artifacts.diff_contracts(self.BEFORE, self.AFTER, full)
 
     def test_canonical_locations_compare_without_rewriting_raw_identity(self):
-        old = "/old/contract/qcore/monkey/memory.qcore"
-        provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        shared = "/new/providers/quirin-provider-shared/contracts/monkey/memory.qcore"
+        old = "/old/contract/qcore/monkey/memory.qv"
+        provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qv"
+        second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qv"
+        shared = "/new/providers/quirin-provider-shared/contracts/monkey/memory.qv"
         # The pre-QUIRIN-PROVIDER-SHARED spelling of the shared root must still
         # compare, so a diff across that move names the same logical module.
-        former_shared = "/old/providers/shared/contracts/monkey/memory.qcore"
-        library = "/new/providers/quirin-provider-libc/contracts/monkey/memory.qcore"
+        former_shared = "/old/providers/shared/contracts/monkey/memory.qv"
+        library = "/new/providers/quirin-provider-libc/contracts/monkey/memory.qv"
         for path in [provider, second, shared, former_shared, library]:
             self.assertEqual(diff_artifacts.contract_module(old), diff_artifacts.contract_module(path))
         result = diff_artifacts.diff_contracts({"sources": {old: "policy"}}, {"sources": {provider: "changed"}}, False)
@@ -237,19 +237,19 @@ class RecordedBlindSpotTest(unittest.TestCase):
         expected = {
             "wave13-corpus": {
                 "added": [
-                    "qcore/fluent_bit/input_chunk_name.qcore",
-                    "qcore/fluent_bit/logging.qcore",
-                    "qcore/fluent_bit/routes_mask.qcore",
+                    "qcore/fluent_bit/input_chunk_name.qv",
+                    "qcore/fluent_bit/logging.qv",
+                    "qcore/fluent_bit/routes_mask.qv",
                 ],
                 # HASH-CLAUSE retired the comment carrier in this module; the
                 # wave-14 report could only describe it as a byte-size change.
-                "changed": ["qcore/fluent_bit/hash_table_publication.qcore"],
+                "changed": ["qcore/fluent_bit/hash_table_publication.qv"],
             },
             "wave14-corpus": {
                 "added": [
-                    "qcore/chunkio/chunk_residency.qcore",
-                    "qcore/fluent_bit/input_chunk_helpers.qcore",
-                    "qcore/fluent_bit/time.qcore",
+                    "qcore/chunkio/chunk_residency.qv",
+                    "qcore/fluent_bit/input_chunk_helpers.qv",
+                    "qcore/fluent_bit/time.qv",
                 ],
                 "changed": [],
             },

@@ -11,9 +11,10 @@ for tool in old new; do
   if [ $tool = old ]; then BIN=$OLD; else BIN=$NEW; fi
   $BIN measure/base-src/cycle19-resource-contracts.json measure/capture/plain/*.i > $OUT/manifest-$tool.txt 2>&1
   echo "manifest-$tool $?" >> $OUT/exits.txt
-  $BIN docs/reports/w43-libc-result-alias/measurement/new13.qcore -- measure/capture/plain/*.i > $OUT/new13-$tool.txt 2>&1
+  # The archived run used .qcore names; .qv is the current rerun path.
+  $BIN docs/reports/w43-libc-result-alias/measurement/new13.qv -- measure/capture/plain/*.i > $OUT/new13-$tool.txt 2>&1
   echo "new13-$tool $?" >> $OUT/exits.txt
-  $BIN docs/reports/w43-libc-result-alias/measurement/restrict14.qcore -- measure/capture/plain/*.i > $OUT/restrict14-$tool.txt 2>&1
+  $BIN docs/reports/w43-libc-result-alias/measurement/restrict14.qv -- measure/capture/plain/*.i > $OUT/restrict14-$tool.txt 2>&1
   echo "restrict14-$tool $?" >> $OUT/exits.txt
 done
 cat $OUT/exits.txt

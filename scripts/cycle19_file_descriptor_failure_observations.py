@@ -51,7 +51,7 @@ def main():
     observations=check_trace(records,processes)
     for row in observations:row['values']['compiled_source_and_build_recorded']=1
     obs=out/'observations.jsonl';obs.write_text(''.join(json.dumps(row)+'\n' for row in observations))
-    contract=REPO/'providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qcore'
+    contract=REPO/'providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qv'
     checked=run(['cargo','run','--quiet','-p','qcore-compiler','--example','check_contract_observations','--',str(contract),str(obs)],cwd=REPO,capture_output=True)
     (out/'contract_result.json').write_text(checked.stdout)
     for key,path in {'profile_driver':Path(__file__),'trace_checker':REPO/'scripts/check_file_descriptor_failure_trace.py',

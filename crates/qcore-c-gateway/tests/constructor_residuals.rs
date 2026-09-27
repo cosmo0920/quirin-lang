@@ -38,7 +38,7 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const GENERIC_CONTRACTS: &str =
-    include_str!("fixtures/contracts/constructor_residuals_generic.qcore");
+    include_str!("fixtures/contracts/constructor_residuals_generic.qv");
 
 /// The existing rejection every refused shape must keep.
 const INDIRECT: &str = "indirect memory access is outside the resource projection";

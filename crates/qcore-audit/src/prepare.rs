@@ -450,7 +450,7 @@ fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared
         contracts.set(
             "source_rules",
             PyJson::string(text(&request.repository.join(
-                "providers/quirin-provider-shared/contracts/library/source_projection.qcore",
+                "providers/quirin-provider-shared/contracts/library/source_projection.qv",
             ))?),
         )?;
     } else {

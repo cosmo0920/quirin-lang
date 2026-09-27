@@ -23,7 +23,7 @@ pub use qcore_verification::unmap_composition::{UnmapCase, UnmapCertificate};
 use qcore_verification::unmap_composition::{UnmapCompositionContracts, check_unmap_composition};
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv"
 );
 
 /// The prerequisite record profile this composition is taken under. It is the

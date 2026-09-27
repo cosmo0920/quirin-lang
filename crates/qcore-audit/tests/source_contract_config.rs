@@ -282,7 +282,7 @@ fn relocated_real_cmetrics_bundle_has_exact_policy_parity_without_a_provider() {
         fs::create_dir_all(target.parent().unwrap()).unwrap();
         fs::copy(owner.join(path), target).unwrap();
     }
-    let selected = "contracts/cmetrics/counter_reset.qcore";
+    let selected = "contracts/cmetrics/counter_reset.qv";
     let expected = fs::read_to_string(owner.join(selected)).unwrap();
     let mut config = fixture.good();
     config["schema_version"] = json!(2);
@@ -329,7 +329,7 @@ fn shipped_cmetrics_selection_loads_canonical_policy() {
     )
     .unwrap();
     let expected = fs::read_to_string(
-        root.join("providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"),
+        root.join("providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv"),
     )
     .unwrap();
     assert_eq!(policies.contract_for_library("cmetrics").unwrap(), expected);

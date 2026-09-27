@@ -2,7 +2,7 @@
   "schema_version": 1,
   "checkers": [
     {
-      "module": "acme/pool.qcore",
+      "module": "acme/pool.qv",
       "functions": ["acme_pool_get", "acme_pool_put"],
       "package": "checkers/pool-check"
     }

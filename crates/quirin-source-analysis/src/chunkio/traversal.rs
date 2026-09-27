@@ -7,7 +7,7 @@ use crate::typed_source_match::{SourceFieldProfile, SourceMatch, check_source_ma
 use serde::Serialize;
 
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv"
 );
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]

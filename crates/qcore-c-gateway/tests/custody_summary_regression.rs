@@ -22,23 +22,23 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const Q_BASE: (&str, &str) = (
     "q_base.qcore",
-    include_str!("fixtures/contracts/q_base.qcore"),
+    include_str!("fixtures/contracts/q_base.qv"),
 );
 const Q_NULLABLE: (&str, &str) = (
     "q_nullable.qcore",
-    include_str!("fixtures/contracts/q_nullable.qcore"),
+    include_str!("fixtures/contracts/q_nullable.qv"),
 );
 const Q_RICH_MODES: (&str, &str) = (
     "q_rich_modes.qcore",
-    include_str!("fixtures/contracts/q_rich_modes.qcore"),
+    include_str!("fixtures/contracts/q_rich_modes.qv"),
 );
 const Q_CONTAINER_STORE: (&str, &str) = (
     "q_container_store.qcore",
-    include_str!("fixtures/contracts/q_container_store.qcore"),
+    include_str!("fixtures/contracts/q_container_store.qv"),
 );
 const Q_REALLOC: (&str, &str) = (
     "q_realloc.qcore",
-    include_str!("fixtures/contracts/q_realloc.qcore"),
+    include_str!("fixtures/contracts/q_realloc.qv"),
 );
 
 /// The reason a certificate whose summaries cannot be re-derived is refused.

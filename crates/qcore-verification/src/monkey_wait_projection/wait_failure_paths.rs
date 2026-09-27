@@ -8,7 +8,7 @@ use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 
 const POLICY: &str = include_str!(
-    "../../../../providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qcore"
+    "../../../../providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qv"
 );
 
 pub fn wait_failure_policy_digest() -> String {

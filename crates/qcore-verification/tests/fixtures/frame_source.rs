@@ -20,16 +20,16 @@ use std::path::PathBuf;
 
 /// The declared source-projection acceptance rules every import runs under.
 pub const RULES: &str = include_str!(
-    "../../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+    "../../../../providers/quirin-provider-shared/contracts/library/source_projection.qv"
 );
 /// The `Chunk`-vocabulary contract `memory_close` already checks this helper
 /// against, unedited.
 pub const CHUNK_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv"
 );
 /// The generic declared-record contract the configured audit selects.
 pub const RECORD_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv"
 );
 
 /// The declared ChunkIO Boolean model is `cio_chunk.lock`; `error_n` is the

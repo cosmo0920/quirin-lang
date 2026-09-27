@@ -58,27 +58,27 @@ use std::path::PathBuf;
 
 /// The seven pinned contracts these two compositions are taken under.
 pub const CLOSE_CONTRACT: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv");
 pub const CLOSE_DELETE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv"
 );
 pub const UNMAP_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv"
 );
 pub const OUTCOMES_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv"
 );
 pub const DELETE_OUTCOMES_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv"
 );
 pub const ATTEMPT_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv"
 );
 pub const DELETE_ATTEMPT_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv"
 );
 pub const COUNTER_CONTRACT: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv");
 
 #[cfg(target_os = "windows")]
 fn outcomes_contract() -> &'static str {

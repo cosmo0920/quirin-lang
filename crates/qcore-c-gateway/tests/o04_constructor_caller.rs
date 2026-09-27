@@ -37,8 +37,8 @@ const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
 const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
 const INSTANCE: &str = include_str!("fixtures/o04/flb_input_instance.h.txt");
 const PROVENANCE: &str = include_str!("fixtures/o04/provenance.json");
-const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
-const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/o04_generic.qcore");
+const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qv");
+const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/o04_generic.qv");
 
 /// The existing rejection every ambiguous shape must keep.
 const INDIRECT: &str = "indirect memory access is outside the resource projection";

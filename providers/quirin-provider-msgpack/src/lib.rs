@@ -19,10 +19,10 @@ pub const PUBLISHED: &[&str] = &[];
 
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
-/// is the name `contract/corpus.json` resolves (for example `msgpack/packer.qcore`).
+/// is the name `contract/corpus.json` resolves (for example `msgpack/packer.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[(
-    "msgpack/packer.qcore",
-    include_str!("../contracts/msgpack/packer.qcore"),
+    "msgpack/packer.qv",
+    include_str!("../contracts/msgpack/packer.qv"),
 )];
 
 /// The source text of one owned module, by logical path.

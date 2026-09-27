@@ -25,9 +25,9 @@ use qcore_verification::file_close_composition::{
 };
 
 pub const CONTRACT: &str =
-    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv");
 pub const DELETE_CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv"
 );
 
 /// The native close prerequisite's record profile, the same table the retained

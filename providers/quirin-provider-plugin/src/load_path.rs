@@ -7,9 +7,9 @@
 //!   "extends": "/opt/quirin/providers/contract-load-path.json",
 //!   "crates": [ { "name": "quirin-provider-acme", "namespace": "acme", "version": "0.1.0",
 //!                 "contracts": "quirin-provider-acme/contracts", "dependencies": [],
-//!                 "modules": ["acme/pool.qcore"], "published": {} } ],
+//!                 "modules": ["acme/pool.qv"], "published": {} } ],
 //!   "overrides": [],
-//!   "checkers": [ { "crate": "quirin-provider-acme", "module": "acme/pool.qcore",
+//!   "checkers": [ { "crate": "quirin-provider-acme", "module": "acme/pool.qv",
 //!                   "functions": ["acme_pool_get", "acme_pool_put"],
 //!                   "package": "quirin-provider-acme/checkers/pool-check" } ]
 //! }

@@ -16,8 +16,8 @@ use std::{
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 const PARENT: &str = "module contract;\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n";
-const CHILD: &str = "module contract;\n#include \"quirin-provider-libc:libc/memory.qcore\";\nextern fn flb_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;\n";
-const KEY: &str = "quirin-provider-libc:libc/memory.qcore";
+const CHILD: &str = "module contract;\n#include \"quirin-provider-libc:libc/memory.qv\";\nextern fn flb_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;\n";
+const KEY: &str = "quirin-provider-libc:libc/memory.qv";
 
 struct Fixture(PathBuf);
 
@@ -32,7 +32,7 @@ impl Fixture {
         fs::create_dir_all(root.join("includes/quirin-provider-libc/libc")).unwrap();
         fs::write(root.join("contracts/example/wrap.qcore"), CHILD).unwrap();
         fs::write(
-            root.join("includes/quirin-provider-libc/libc/memory.qcore"),
+            root.join("includes/quirin-provider-libc/libc/memory.qv"),
             PARENT,
         )
         .unwrap();
@@ -46,7 +46,7 @@ impl Fixture {
             "contracts": {"contracts/example/wrap.qcore": sha256_hex(CHILD.as_bytes())},
             "includes": {KEY: {
                 "crate": "quirin-provider-libc", "version": "0.1.0",
-                "module": "libc/memory.qcore", "sha256": sha256_hex(PARENT.as_bytes())
+                "module": "libc/memory.qv", "sha256": sha256_hex(PARENT.as_bytes())
             }}
         })
     }
@@ -108,7 +108,7 @@ fn every_include_departure_refuses_the_bundle() {
     // A changed parent.
     let f = Fixture::new();
     fs::write(
-        f.0.join("includes/quirin-provider-libc/libc/memory.qcore"),
+        f.0.join("includes/quirin-provider-libc/libc/memory.qv"),
         PARENT.replace("nullable", "nonnull"),
     )
     .unwrap();
@@ -116,7 +116,7 @@ fn every_include_departure_refuses_the_bundle() {
 
     // A missing parent text, and an extra one.
     let f = Fixture::new();
-    fs::remove_file(f.0.join("includes/quirin-provider-libc/libc/memory.qcore")).unwrap();
+    fs::remove_file(f.0.join("includes/quirin-provider-libc/libc/memory.qv")).unwrap();
     assert!(f.load(&f.inventory()).is_err());
     let f = Fixture::new();
     fs::write(

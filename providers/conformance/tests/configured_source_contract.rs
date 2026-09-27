@@ -21,17 +21,17 @@ use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 const SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample.c");
-const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qcore");
-const RULES: &str = include_str!("fixtures/configured_boolean_source/source_projection.qcore");
+const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qv");
+const RULES: &str = include_str!("fixtures/configured_boolean_source/source_projection.qv");
 const PROFILE: &str = include_str!("fixtures/configured_boolean_source/sample-set/profile.json");
 const MANIFEST: &str = include_str!("fixtures/configured_boolean_source/provider-template.json");
 const LIBRARY: &str = "sample_widgets";
 const PROVIDER: &str = "qcore.sample_boolean";
 const HELPER_SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample_reset.c");
-const HELPER_POLICY: &str = include_str!("fixtures/configured_boolean_source/sample_reset.qcore");
+const HELPER_POLICY: &str = include_str!("fixtures/configured_boolean_source/sample_reset.qv");
 const HELPER_MAIN: &str = include_str!("fixtures/configured_boolean_source/sample_with_helper.c");
 const HELPER_MAIN_POLICY: &str =
-    include_str!("fixtures/configured_boolean_source/sample_with_helper.qcore");
+    include_str!("fixtures/configured_boolean_source/sample_with_helper.qv");
 static NEXT_FIXTURE: AtomicU64 = AtomicU64::new(0);
 
 struct Fixture(PathBuf);

@@ -21,82 +21,82 @@ use qcore_contract::contract_views::{
 mod contract_corpus;
 
 /// Every function declared in more than one corpus module, with its modules.
-/// `source_identity` (`monkey/timeout_teardown.qcore` and
-/// `monkey/wait_source_policy.qcore`, textually identical) was removed from
+/// `source_identity` (`monkey/timeout_teardown.qv` and
+/// `monkey/wait_source_policy.qv`, textually identical) was removed from
 /// the timeout policy by this card, so it is absent; restoring it fails here.
 const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
     (
         "_mk_event_loop_create",
         &[
-            "monkey/wait_source_policy.qcore",
-            "monkey/wrapper_paths.qcore",
+            "monkey/wait_source_policy.qv",
+            "monkey/wrapper_paths.qv",
         ],
     ),
     (
         "_mk_event_loop_destroy",
         &[
-            "monkey/wait_source_policy.qcore",
-            "monkey/wrapper_paths.qcore",
+            "monkey/wait_source_policy.qv",
+            "monkey/wrapper_paths.qv",
         ],
     ),
     (
         "_mk_event_wait_2",
         &[
-            "monkey/wait_source_policy.qcore",
-            "monkey/wrapper_paths.qcore",
+            "monkey/wait_source_policy.qv",
+            "monkey/wrapper_paths.qv",
         ],
     ),
     (
         "_mk_event_wait_with_flags",
         &[
-            "monkey/wait_source_policy.qcore",
-            "monkey/wrapper_paths.qcore",
+            "monkey/wait_source_policy.qv",
+            "monkey/wrapper_paths.qv",
         ],
     ),
     (
         "cb_wait_2_timeout",
         &[
-            "monkey/composition.qcore",
-            "monkey/wait_source_policy.qcore",
+            "monkey/composition.qv",
+            "monkey/wait_source_policy.qv",
         ],
     ),
     (
         "cio_chunk_close",
         &[
-            "chunkio/chunk_destructor.qcore",
-            "chunkio/memory_close.qcore",
-            "chunkio/resource_open_close.qcore",
+            "chunkio/chunk_destructor.qv",
+            "chunkio/memory_close.qv",
+            "chunkio/resource_open_close.qv",
         ],
     ),
     (
         "cio_error_reset",
-        &["chunkio/error_frame.qcore", "chunkio/error_state.qcore"],
+        &["chunkio/error_frame.qv", "chunkio/error_state.qv"],
     ),
     (
         "flb_calloc",
         &[
-            "fluent_bit/memory.qcore",
-            "fluent_bit/resource_memory.qcore",
+            "fluent_bit/memory.qv",
+            "fluent_bit/resource_memory.qv",
         ],
     ),
     (
         "flb_free",
         &[
-            "fluent_bit/memory.qcore",
-            "fluent_bit/resource_memory.qcore",
+            "fluent_bit/memory.qv",
+            "fluent_bit/resource_memory.qv",
         ],
     ),
     (
         "flb_malloc",
         &[
-            "fluent_bit/memory.qcore",
-            "fluent_bit/resource_memory.qcore",
+            "fluent_bit/memory.qv",
+            "fluent_bit/resource_memory.qv",
         ],
     ),
     // Card W45-FB-RETRY-LIFETIME: the resource-v1 view of the unlink.
     (
         "mk_list_del",
-        &["chunkio/list_unlink.qcore", "monkey/intrusive_list.qcore"],
+        &["chunkio/list_unlink.qv", "monkey/intrusive_list.qv"],
     ),
 ];
 

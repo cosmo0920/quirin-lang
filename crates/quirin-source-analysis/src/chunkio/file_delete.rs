@@ -7,7 +7,7 @@ use crate::cleanup_outcome::{
 };
 use crate::legacy_c::C11TranslationUnit;
 pub const CONTRACT: &str = include_str!(
-    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv"
 );
 pub fn check_native_delete_source(
     unit: &C11TranslationUnit<'_>,
