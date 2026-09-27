@@ -1,0 +1,13 @@
+{
+  "note": "EXT-01 post-correction gate started at 89722675 (implementation 8ee9583c). 335 Rust units / 348 summaries; zero failures, 11 ignored. Commands, times, exits and private logs in gate/steps.json; provider 129-test integrated workspace gate and repaired-tip five-package build/verify in the provider track report. Clang recorded in this worktree for this run. First gate failures and incomplete attempts are retained in README. Source alias parity is not C corpus safety coverage.",
+  "workspace_tests": 6096,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 215,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

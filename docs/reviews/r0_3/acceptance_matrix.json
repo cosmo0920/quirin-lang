@@ -6738,10 +6738,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W46-CONTRACT-ACCESS-EXPANSION fresh merged gate at 329ccd052845ea5aa740ec2f63553e02cda43b66; all recorded steps exit 0. Core runner: 327 units, 339 summaries; 6051 passed, 0 failed, 11 ignored; private summary private/test-binaries/20260927T061741Z-879946/summary.json. Provider suite: 129 passed, 0 failed, 1 ignored in 43 summaries. Lean 213 audits; root Python 364; provider Python 15. Both reevaluation examples, core/provider fmt and clippy, submodule, contracts check, all five package builds and verifications, documentation index and Clang recording passed. Clang was measured in this merged worktree, not borrowed. Exact commands, environments, times and exits are in gate/steps.json and gate/command.json; private logs at private/w46-next/integration-gate/. Final full Python after gate-driven matrix regeneration is recorded in gate/final-checks.json. Isolated card failures and repairs remain in their own reports; this is one fresh merged run.",
-  "workspace_tests": 6051,
+  "note": "EXT-01 post-correction gate started at 89722675 (implementation 8ee9583c). 335 Rust units / 348 summaries; zero failures, 11 ignored. Commands, times, exits and private logs in gate/steps.json; provider 129-test integrated workspace gate and repaired-tip five-package build/verify in the provider track report. Clang recorded in this worktree for this run. First gate failures and incomplete attempts are retained in README. Source alias parity is not C corpus safety coverage.",
+  "workspace_tests": 6096,
   "provider_tests": 129,
-  "python_evidence_validator_tests": 364,
+  "python_evidence_validator_tests": 365,
   "lean_audits": 215,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6966,7 +6966,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/extension-compatibility/gate.json)"
  },
  "named_followups": [
   {
