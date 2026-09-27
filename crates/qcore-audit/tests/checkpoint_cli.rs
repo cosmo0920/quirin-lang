@@ -486,6 +486,46 @@ fn multiple_configurations_of_one_source_get_distinct_complete_files() {
 }
 
 #[test]
+fn a_re_pin_invalidates_every_unit_checkpoint() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang);
+    succeeded(&fixture.run("before", &["--jobs", "2", "--checkpoint-dir", "qo"]));
+    let alpha = checkpoint_for(&fixture, "qo", "alpha/alpha_0.c");
+    let before = Checkpoint::from_bytes(&fs::read(&alpha).unwrap()).unwrap();
+    assert!(before.identity.run.contracts.locks.is_empty());
+    let pinned = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        .current_dir(&fixture.0)
+        .args(["pin", "--source-root", "checkout", "--modules", "contracts"])
+        .output()
+        .unwrap();
+    succeeded(&pinned);
+    let after = fixture.run(
+        "after",
+        &["--jobs", "2", "--checkpoint-dir", "qo", "--resume"],
+    );
+    succeeded(&after);
+    let stderr = String::from_utf8_lossy(&after.stderr);
+    assert_eq!(
+        stderr.matches("recomputed (contract set differs)").count(),
+        6,
+        "{stderr}"
+    );
+    let now = Checkpoint::from_bytes(&fs::read(&alpha).unwrap()).unwrap();
+    assert_eq!(now.identity.run.contracts.locks.len(), 1);
+    assert_ne!(
+        now.identity.run.contracts.pin_evaluation_sha256,
+        before.identity.run.contracts.pin_evaluation_sha256
+    );
+    succeeded(&fixture.run("after-whole", &["--jobs", "2"]));
+    assert_eq!(fixture.outputs("after"), fixture.outputs("after-whole"));
+    assert_ne!(fixture.outputs("after"), fixture.outputs("before"));
+    refused(
+        &fixture.run("bad", &["--resume"]),
+        "--resume needs --checkpoint-dir",
+    );
+}
+
+#[test]
 fn selection_with_unrecorded_file_resumes() {
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang);
@@ -505,6 +545,33 @@ fn selection_with_unrecorded_file_resumes() {
         3
     );
     assert_eq!(fixture.outputs("again"), fixture.outputs("whole"));
+    let selection_path = fixture.path("selection.json");
+    let mut selection_json: serde_json::Value =
+        serde_json::from_slice(&fs::read(&selection_path).unwrap()).unwrap();
+    selection_json["groups"][0]["files"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    fs::write(
+        &selection_path,
+        serde_json::to_vec(&selection_json).unwrap(),
+    )
+    .unwrap();
+    let reordered = fixture.run("reordered", &args);
+    succeeded(&reordered);
+    assert_eq!(
+        String::from_utf8_lossy(&reordered.stderr)
+            .matches("reused (identity equal)")
+            .count(),
+        3
+    );
+    let reordered_whole = fixture.run("reordered-whole", &selection);
+    succeeded(&reordered_whole);
+    assert_eq!(
+        fixture.outputs("reordered"),
+        fixture.outputs("reordered-whole")
+    );
+    assert_eq!(console(&reordered), console(&reordered_whole));
 }
 
 #[test]

@@ -697,10 +697,11 @@ quirin-audit checkpoint decompose out/qo/UNIT.qo --format yaml --output unit.yam
 quirin-audit checkpoint recompose unit.yaml --format yaml --output unit.qo
 ```
 
-A `.qo` file has ten separately digested sections (identity, plan, global,
+A schema-3 `.qo` file has ten separately digested binary sections (identity, plan, global,
 preparation, lowering, verdicts, certificates, contracts, result, provenance).
-It contains the full run plan and global publication inputs, so each file is
-self-contained. A truncated, tampered or version-mismatched file is refused
+It encodes integers, finite float bits and common result statuses numerically,
+with UTF-8 for names, paths and messages. Each file contains the full run plan
+and global publication inputs, so it is self-contained. A truncated, tampered or version-mismatched file is refused
 whole; composition refuses missing, duplicate or mixed-run files. Every section
 but `provenance` (wall time, peak memory, timings) is deterministic, so runs
 at any `--jobs` agree on the content digest `verify` prints. The run's verdict

@@ -23,12 +23,12 @@ use qcore_schemas::sha256_hex;
 use serde_json::{Value, json};
 
 use crate::checkpoint::{
-    AnalyzerIdentity, CategoryCount, CertificateRecord, CertificatesSection, Checkpoint,
-    CheckpointReader, CompilerIdentity, ContractSetIdentity, ContractsSection, CountsRecord,
-    EnvironmentValue, GlobalSection, GroupIdentity, HeldCallRecord, HeldFunction, IdentitySection,
-    LockDigest, ModuleDigest, PendingMarkerRecord, PlanSection, PlannedGroup, PreparationFacts,
-    ProvenanceSection, ResultSection, RowMembers, RowStepSection, RunIdentity, UnitFingerprint,
-    UnitKey, exact_json, json_sha256, split_row,
+    AnalyzerIdentity, BinaryValue, CategoryCount, CertificateOutcome, CertificateRecord,
+    CertificatesSection, Checkpoint, CheckpointReader, CompilerIdentity, ContractSetIdentity,
+    ContractsSection, CountsRecord, EnvironmentValue, GlobalSection, GroupIdentity, HeldCallRecord,
+    HeldFunction, IdentitySection, LockDigest, ModuleDigest, PendingMarkerRecord, PlanSection,
+    PlannedGroup, PreparationFacts, ProvenanceSection, ResultSection, RowMembers, RowStepSection,
+    RunIdentity, UnitFingerprint, UnitKey, exact_json, json_sha256, split_row,
 };
 use crate::compile_db::{EffectiveInput, compile_task_identity, compiler_options};
 use crate::current::CurrentAudit;
@@ -478,8 +478,11 @@ fn global_section(
         console_preamble: preamble,
         source_revision: audit.revision().to_owned(),
         revision_key: REVISION_KEY.into(),
-        report_evidence_json: audit.report_evidence().map(exact_json).transpose()?,
-        assumptions_json: exact_json(audit.assumptions())?,
+        report_evidence: audit
+            .report_evidence()
+            .map(BinaryValue::from_json)
+            .transpose()?,
+        assumptions: BinaryValue::from_json(audit.assumptions())?,
         pending_declarations: markers.declarations as u64,
         pending_markers: markers
             .markers
@@ -494,7 +497,9 @@ fn global_section(
                 module_sha256: marker.module_sha256,
             })
             .collect(),
-        revision_template_json,
+        revision_template: BinaryValue::from_json(
+            &serde_json::from_str(&revision_template_json).map_err(|error| error.to_string())?,
+        )?,
         historical_reference_revision: route.historical_reference_revision.to_owned(),
     })
 }
@@ -704,21 +709,33 @@ fn fingerprint_task(
     }
 }
 
-/// Reuse the checkpoint at `path`: when this run's plan or run-wide inputs differ from those it records, re-seal it with
-/// this run's (its step sections and provenance unchanged). Returns its
-/// content digest.
+/// Reuse the checkpoint at `path`. If the plan, global inputs or header
+/// position changed, re-seal those sections with the current values while
+/// retaining the analysis steps and provenance. Returns the content digest.
 fn reuse(path: &Path, plan: &PlanSection, global: &GlobalSection) -> Result<String, String> {
     let mut reader = CheckpointReader::open(path)?;
     let stored_plan = reader.section::<PlanSection>("plan")?;
     let stored_global = reader.section::<GlobalSection>("global")?;
-    if stored_plan == *plan && stored_global == *global {
+    let mut result = reader.section::<ResultSection>("result")?;
+    let position = usize::try_from(plan.group).map_err(|_| "plan position overflows usize")?;
+    let header = &plan
+        .groups
+        .get(position)
+        .ok_or("plan position is outside the plan")?
+        .header;
+    let header_changed = result.header != *header;
+    if stored_plan == *plan && stored_global == *global && !header_changed {
         return reader.content_sha256();
     }
+    result.header.clone_from(header);
     let mut sections = Vec::new();
     for name in crate::checkpoint::SECTIONS {
         let bytes = match name {
             "plan" => postcard::to_stdvec(plan).map_err(|error| error.to_string())?,
             "global" => postcard::to_stdvec(global).map_err(|error| error.to_string())?,
+            "result" if header_changed => {
+                postcard::to_stdvec(&result).map_err(|error| error.to_string())?
+            }
             other => reader.raw(other)?,
         };
         sections.push((name, bytes));
@@ -822,10 +839,10 @@ fn compute_group(
                     sha256: sha256_hex(text.as_bytes()),
                 })
                 .collect(),
-            provider_selection_json: route
+            provider_selection: route
                 .contracts
                 .provider_record()
-                .map(exact_json)
+                .map(BinaryValue::from_json)
                 .transpose()?,
             evidence_mode: run.mode.clone(),
             locks: run.contracts.locks.clone(),
@@ -877,9 +894,7 @@ fn compute_group(
                 })
                 .collect(),
             sources: sources.into_iter().collect(),
-            verdict: qcore_schemas::verdict::Verdict::fold(unit_verdicts)
-                .as_str()
-                .to_owned(),
+            verdict: qcore_schemas::verdict::Verdict::fold(unit_verdicts),
         },
         provenance: ProvenanceSection {
             wall_time_ms: started.elapsed().as_millis() as u64,
@@ -970,13 +985,12 @@ impl GroupBuilder {
         self.certificates.push(CertificateRecord {
             file,
             outcome: if status == "Safe" {
-                "published-safe"
+                CertificateOutcome::PublishedSafe
             } else if refused.is_some() {
-                "binding-refused"
+                CertificateOutcome::BindingRefused
             } else {
-                "not-published"
-            }
-            .into(),
+                CertificateOutcome::NotPublished
+            },
             compile_task_identity_json_sha256: configuration
                 .get("compile_task_identity")
                 .map(json_sha256)
@@ -1003,8 +1017,9 @@ impl GroupBuilder {
 }
 
 /// Flush a complete sibling temporary file before atomic publication.
-/// The parent directory is synced after rename so completed units survive a
-/// process interruption and, where supported, a host crash.
+/// On Unix, the parent directory is synced after rename. Completed units
+/// survive process interruption on every supported host; host-crash durability
+/// depends on the filesystem and is only requested through directory sync on Unix.
 pub(crate) fn write_atomically(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let temporary = path.with_extension("qo.partial");
     let mut file = fs::File::create(&temporary)
@@ -1015,7 +1030,12 @@ pub(crate) fn write_atomically(path: &Path, bytes: &[u8]) -> Result<(), String> 
         .map_err(|error| format!("{}: {error}", temporary.display()))?;
     drop(file);
     fs::rename(&temporary, path).map_err(|error| format!("{}: {error}", path.display()))?;
-    if let Some(parent) = path.parent() {
+    #[cfg(unix)]
+    {
+        let parent = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or_else(|| Path::new("."));
         fs::File::open(parent)
             .and_then(|directory| directory.sync_all())
             .map_err(|error| format!("{}: {error}", parent.display()))?;
