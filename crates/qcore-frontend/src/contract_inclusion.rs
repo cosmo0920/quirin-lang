@@ -175,7 +175,7 @@ pub fn valid_contract_crate_name(name: &str) -> bool {
 /// unrepresentable.
 #[must_use]
 pub fn valid_contract_module_path(module: &str) -> bool {
-    module.strip_suffix(".qcore").is_some_and(|stem| {
+    crate::source_extension::contract_module_stem(module).is_some_and(|stem| {
         charset(stem, &['_', '-', '/']) && stem.split('/').all(|segment| !segment.is_empty())
     })
 }
@@ -254,7 +254,7 @@ pub fn scan_contract_inclusion(
                 span: span_at(cursor + 2),
                 message: format!(
                     "include target `{text}` is not `crate:module` (a lowercase crate name, \
-                     then a relative `[a-z0-9_/-]+.qcore` module path)"
+                     then a relative `[a-z0-9_/-]+` module path ending in `.qv` or `.qcore`)"
                 ),
             });
         };
