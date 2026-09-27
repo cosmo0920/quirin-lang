@@ -4,9 +4,11 @@
 
 use std::cell::OnceCell;
 use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -18,7 +20,13 @@ use crate::typed_c_ast::{children, kind, translation_unit_ast};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
-static PARITY_SINK: Mutex<Option<BufWriter<File>>> = Mutex::new(None);
+static PARITY_SINK: Mutex<Option<ParitySink>> = Mutex::new(None);
+
+struct ParitySink {
+    rows: BufWriter<File>,
+    contexts: BufWriter<File>,
+    seen_frontends: BTreeSet<String>,
+}
 
 pub(crate) fn parity_enabled() -> bool {
     std::env::var_os(PARITY_PATH).is_some()
@@ -91,28 +99,48 @@ pub(crate) fn record_legacy_route(
 }
 
 fn write_parity(mut value: Value) {
-    let Some((source_sha256, dialect, frontend)) = ANALYSED_SOURCE.with(|cell| {
-        let context = cell.borrow();
-        let context = context.as_ref()?;
-        Some((
-            context.source_sha256.clone(),
-            format!("{:?}", context.dialect),
-            format!("{:?}", context.request),
-        ))
-    }) else {
+    let Some((source_sha256, dialect, frontend_sha256, frontend_debug)) =
+        ANALYSED_SOURCE.with(|cell| {
+            let context = cell.borrow();
+            let context = context.as_ref()?;
+            Some((
+                context.source_sha256.clone(),
+                format!("{:?}", context.dialect),
+                context.frontend_sha256.clone(),
+                Arc::clone(&context.frontend_debug),
+            ))
+        })
+    else {
         return;
     };
     let object = value.as_object_mut().expect("typed parity object");
     object.insert("source_sha256".into(), source_sha256.into());
     object.insert("dialect".into(), dialect.into());
-    object.insert("frontend".into(), frontend.into());
+    object.insert("frontend_sha256".into(), frontend_sha256.into());
     let mut guard = PARITY_SINK.lock().expect("typed access parity sink lock");
-    let writer = guard.get_or_insert_with(|| {
-        let path = std::env::var_os(PARITY_PATH).expect("typed access parity path");
-        BufWriter::new(File::create(path).expect("typed access parity sink"))
+    let sink = guard.get_or_insert_with(|| {
+        let path = PathBuf::from(std::env::var_os(PARITY_PATH).expect("typed access parity path"));
+        let mut context_path = path.clone().into_os_string();
+        context_path.push(".contexts.jsonl");
+        ParitySink {
+            rows: BufWriter::new(File::create(path).expect("typed access parity sink")),
+            contexts: BufWriter::new(
+                File::create(PathBuf::from(context_path)).expect("typed access context sink"),
+            ),
+            seen_frontends: BTreeSet::new(),
+        }
     });
-    writeln!(writer, "{value}").expect("typed access parity write");
-    writer.flush().expect("typed access parity flush");
+    let frontend_sha256 = value["frontend_sha256"].as_str().expect("frontend digest");
+    if sink.seen_frontends.insert(frontend_sha256.to_owned()) {
+        let context = serde_json::json!({
+            "frontend_sha256": frontend_sha256,
+            "frontend_debug": frontend_debug.as_str(),
+        });
+        writeln!(sink.contexts, "{context}").expect("typed access context write");
+        sink.contexts.flush().expect("typed access context flush");
+    }
+    writeln!(sink.rows, "{value}").expect("typed access parity write");
+    sink.rows.flush().expect("typed access parity flush");
 }
 
 #[derive(Clone, Debug)]
@@ -129,7 +157,13 @@ pub(crate) struct StatementPlan {
 pub(crate) struct StatementIndex {
     source: Arc<String>,
     function: Value,
-    bitfields: BTreeSet<String>,
+    fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct FieldFacts {
+    union_owner: bool,
+    bitfield: bool,
 }
 
 thread_local! {
@@ -139,9 +173,12 @@ thread_local! {
 struct SourceContext {
     source: Arc<String>,
     source_sha256: String,
+    frontend_sha256: String,
+    frontend_debug: Arc<String>,
     dialect: CCompilerDialect,
     request: LegacyCertificateRequest,
     ast: OnceCell<Option<Value>>,
+    fields: OnceCell<Arc<BTreeMap<String, Option<FieldFacts>>>>,
 }
 
 /// Keep the exact analysed source in the worker that builds this unit's CFGs.
@@ -153,20 +190,25 @@ pub(crate) fn enter_source(
     dialect: CCompilerDialect,
     request: Option<&LegacyCertificateRequest>,
 ) -> SourceScope {
+    let request = request
+        .cloned()
+        .unwrap_or_else(|| LegacyCertificateRequest {
+            include_paths: Vec::new(),
+            definitions: Vec::new(),
+            preprocessor_options: Vec::new(),
+            input: Default::default(),
+        });
+    let frontend_debug = Arc::new(format!("{request:?}"));
     SourceScope(ANALYSED_SOURCE.with(|cell| {
         cell.replace(Some(SourceContext {
             source: Arc::new(source.to_owned()),
             source_sha256: qcore_schemas::sha256_hex(source.as_bytes()),
+            frontend_sha256: qcore_schemas::sha256_hex(frontend_debug.as_bytes()),
+            frontend_debug,
             dialect,
-            request: request
-                .cloned()
-                .unwrap_or_else(|| LegacyCertificateRequest {
-                    include_paths: Vec::new(),
-                    definitions: Vec::new(),
-                    preprocessor_options: Vec::new(),
-                    input: Default::default(),
-                }),
+            request,
             ast: OnceCell::new(),
+            fields: OnceCell::new(),
         }))
     }))
 }
@@ -211,12 +253,15 @@ impl StatementIndex {
             if functions.len() != 1 {
                 return None;
             }
-            let mut bitfields = BTreeSet::new();
-            collect_bitfields(ast, &mut bitfields);
+            let fields = context.fields.get_or_init(|| {
+                let mut fields = BTreeMap::new();
+                collect_field_facts(ast, &mut fields);
+                Arc::new(fields)
+            });
             Some(Self {
                 source: Arc::clone(&context.source),
                 function: functions.remove(0).clone(),
-                bitfields,
+                fields: Arc::clone(fields),
             })
         })
     }
@@ -249,7 +294,7 @@ impl StatementIndex {
                 accesses: 0,
                 borrowed_destination: false,
             },
-            bitfields: &self.bitfields,
+            fields: &self.fields,
             never_bound: &never_bound,
         };
         reader.statement(node)?;
@@ -292,15 +337,36 @@ fn offset(location: &Value) -> Option<usize> {
         .map(|offset| offset as usize)
 }
 
-fn collect_bitfields(node: &Value, fields: &mut BTreeSet<String>) {
-    if kind(node) == "FieldDecl"
-        && node["isBitfield"].as_bool() == Some(true)
-        && let Some(id) = node["id"].as_str()
-    {
-        fields.insert(id.to_owned());
+fn collect_field_facts(node: &Value, fields: &mut BTreeMap<String, Option<FieldFacts>>) {
+    if kind(node) == "RecordDecl" {
+        let owner = node["tagUsed"].as_str();
+        let complete = node["completeDefinition"].as_bool() == Some(true);
+        for child in children(node)
+            .iter()
+            .filter(|child| kind(child) == "FieldDecl")
+        {
+            let Some(id) = child["id"].as_str() else {
+                continue;
+            };
+            let facts = match owner {
+                Some("struct" | "union") if complete && qual(child).is_some() => Some(FieldFacts {
+                    union_owner: owner == Some("union"),
+                    bitfield: child["isBitfield"].as_bool() == Some(true),
+                }),
+                _ => None,
+            };
+            fields
+                .entry(id.to_owned())
+                .and_modify(|old| {
+                    if *old != facts {
+                        *old = None;
+                    }
+                })
+                .or_insert(facts);
+        }
     }
     for child in children(node) {
-        collect_bitfields(child, fields);
+        collect_field_facts(child, fields);
     }
 }
 
@@ -379,7 +445,7 @@ fn is_control(node: &Value) -> bool {
 
 struct Reader<'a> {
     plan: StatementPlan,
-    bitfields: &'a BTreeSet<String>,
+    fields: &'a BTreeMap<String, Option<FieldFacts>>,
     never_bound: &'a dyn Fn(&str) -> bool,
 }
 
@@ -543,10 +609,11 @@ impl Reader<'_> {
             cursor = strip(cursor)?;
             match kind(cursor) {
                 "MemberExpr" => {
-                    if self
-                        .bitfields
-                        .contains(cursor["referencedMemberDecl"].as_str()?)
-                    {
+                    let field = self
+                        .fields
+                        .get(cursor["referencedMemberDecl"].as_str()?)?
+                        .as_ref()?;
+                    if field.union_owner || field.bitfield {
                         return None;
                     }
                     let member = cursor["name"].as_str()?.to_owned();
@@ -802,5 +869,15 @@ mod tests {
         assert_eq!(plan.accesses, 2);
         assert!(plan.chains.iter().all(|chain| chain.links.is_empty()));
         assert!(index.statement(&texts, 1, |name| name != "p").is_none());
+    }
+
+    #[test]
+    fn field_owner_refuses_typedef_union_but_accepts_typedef_struct() {
+        let union = "typedef union U { int x; int y; } U; int f(U *u) { int x = u->x; return 0; }";
+        assert!(plan(union, "int x = u->x").is_none());
+        let nested = "typedef union U { int x; int y; } U; typedef struct S { U *u; } S; int f(S *s) { int x = s->u->x; return 0; }";
+        assert!(plan(nested, "int x = s->u->x").is_none());
+        let accepted = "typedef struct S { int x; } S; int f(S *s) { int x = s->x; return 0; }";
+        assert!(plan(accepted, "int x = s->x").is_some());
     }
 }

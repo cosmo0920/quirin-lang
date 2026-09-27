@@ -8,6 +8,7 @@ Every changed function row is retained; no Unknown is removed from counts.
 
 import collections
 import gzip
+import hashlib
 import io
 import json
 import pathlib
@@ -98,10 +99,23 @@ def main():
             })
     parity_totals = collections.Counter()
     parity_disagreements = collections.Counter()
+    context_path = pathlib.Path(str(parity_path) + ".contexts.jsonl")
+    contexts = {}
+    with context_path.open() as stream:
+        for line in stream:
+            row = json.loads(line)
+            digest = hashlib.sha256(row["frontend_debug"].encode()).hexdigest()
+            if digest != row["frontend_sha256"]:
+                raise SystemExit("frontend context digest mismatch")
+            if digest in contexts and contexts[digest] != row:
+                raise SystemExit("conflicting frontend context")
+            contexts[digest] = row
     disagreements = []
     with parity_path.open() as stream:
         for line in stream:
             row = json.loads(line)
+            if row["frontend_sha256"] not in contexts:
+                raise SystemExit("parity row has no archived frontend context")
             route = row["old_route"]
             parity_totals[route] += 1
             if row["disagreement"]:
@@ -110,6 +124,9 @@ def main():
     with gzip_writer(out_path / "parity-disagreements.jsonl.gz") as output:
         for row in sorted(disagreements):
             output.write(row + "\n")
+    with gzip_writer(out_path / "frontend-contexts.jsonl.gz") as output:
+        for digest in sorted(contexts):
+            output.write(json.dumps(contexts[digest], sort_keys=True) + "\n")
     result = {
         "schema": "qcore.w46-access-path-statements-comparison.v1",
         "before_status": dict(before_status),
@@ -123,6 +140,7 @@ def main():
         "p2_hits": sum(row["hit"] for row in forecast),
         "parity_rows": dict(parity_totals),
         "parity_disagreements": dict(parity_disagreements),
+        "frontend_contexts": len(contexts),
     }
     (out_path / "comparison.json").write_text(json.dumps(result, indent=2) + "\n")
     with gzip_writer(out_path / "changed-functions.jsonl.gz") as output:

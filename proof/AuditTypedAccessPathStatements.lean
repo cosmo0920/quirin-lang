@@ -3,6 +3,7 @@ import QCore.TypedAccessPathStatements
 /-! Audited abstract companion to W46-ACCESS-PATH-STATEMENTS. -/
 
 #print axioms QCore.TypedAccessPathStatements.missing_type_refuses
+#print axioms QCore.TypedAccessPathStatements.missing_field_owner_refuses
 #print axioms QCore.TypedAccessPathStatements.pointer_store_refuses
 #print axioms QCore.TypedAccessPathStatements.union_refuses
 #print axioms QCore.TypedAccessPathStatements.cast_refuses

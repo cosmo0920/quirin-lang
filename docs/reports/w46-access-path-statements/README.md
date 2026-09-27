@@ -29,6 +29,11 @@ statically never-bound to a tracked identity; every pointer loaded from that
 untracked graph is outside this resource projection. A tracked mixed path
 still refuses because the existing field-link state cannot name its nested
 places. A focused indexed path test checks both arms.
+Each member ID must have a direct owning Clang `RecordDecl` with a complete
+struct/union tag and a field type. Missing or conflicting ownership refuses;
+union-owned fields and bitfields refuse even when a typedef hides `union` in
+the expression's surface type. Held-out typedef-union and nested union-pointer
+controls check that boundary beside a typedef-struct positive control.
 `sizeof` is admitted as no access only for a childless, non-array AST type:
 Clang represents evaluated VLA bounds as children, and the held-out
 `sizeof(int[(close(fd), n)])` control stays `Unknown`.
@@ -38,7 +43,9 @@ typed scalar, chain, sub-object-store and pointer-step shape readers stay
 first. With
 `QCORE_TYPED_PATH_PARITY` set to an output JSONL path, each consulted
 statement records both readers' complete plans, any disagreement, and the
-analyzed source identity. The corpus artifact below archives that stream.
+analyzed source identity. The frontend request is identified by SHA-256 of
+its retained request record rather than repeated verbatim in every row; the
+AST still receives those exact flags. The corpus artifact below archives that stream.
 The process writer is mutex-protected, and each row has stable source,
 function, line and route keys; archive scripts sort rows canonically, so
 four-job audits do not depend on arrival order.

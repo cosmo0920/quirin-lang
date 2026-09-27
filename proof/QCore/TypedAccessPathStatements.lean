@@ -14,6 +14,7 @@ open QCore.IndirectScalarAccess
 
 structure Shape where
   exactType : Bool
+  knownFieldOwner : Bool
   scalarValue : Bool
   unionField : Bool
   bitfield : Bool
@@ -29,7 +30,7 @@ structure Shape where
 
 /-- Each admitted fact is positive, and each unlisted form is a refusal. -/
 def admits (p : Shape) : Bool :=
-  p.exactType && p.scalarValue && !p.unionField && !p.bitfield &&
+  p.exactType && p.knownFieldOwner && p.scalarValue && !p.unionField && !p.bitfield &&
   !p.incompleteRecord && !p.castInPath && !p.pointerArithmetic &&
   !p.volatileAtomic && !p.pointerStore && !p.call && !p.otherForm &&
   (!p.mixedPath || p.untrackedRoot)
@@ -46,6 +47,10 @@ def lower (s : IndirectChainAccess.State) (p : Statement) :
   else none
 
 theorem missing_type_refuses (p : Shape) (h : p.exactType = false) : admits p = false := by
+  simp [admits, h]
+
+theorem missing_field_owner_refuses (p : Shape) (h : p.knownFieldOwner = false) :
+    admits p = false := by
   simp [admits, h]
 
 theorem pointer_store_refuses (p : Shape) (h : p.pointerStore = true) : admits p = false := by
