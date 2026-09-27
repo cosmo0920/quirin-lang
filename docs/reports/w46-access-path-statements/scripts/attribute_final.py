@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Join every changed diagnostic to the side-by-side statement coordinates.
 
-Usage: attribute_final.py CHANGED_FUNCTIONS_GZ PARITY_JSONL AFTER_DIAGNOSTICS OUTPUT_DIR.
+Usage: attribute_final.py CHANGED_FUNCTIONS_GZ PARITY_JSONL AFTER_DIAGNOSTICS OUTPUT_DIR
+       [CORPUS_SOURCE_REPLAY_JSON].
 
 System units expose the exact preprocessed source SHA in their compile-task
-identity, so even repeated configurations bind to parity. Corpus units do not;
-their source SHA is bound only if parity rows for functions unique to one unit
-consistently witness that same unit. Other rows retain ambiguity.
+identity, so even repeated configurations bind to parity. Corpus units require
+exact replay of the archived frontend request against pinned source bytes.
+Other rows retain ambiguity rather than borrowing header functions from a
+different unit.
 """
 
 import collections
@@ -29,9 +31,10 @@ def read(path):
 
 
 def main():
-    if len(sys.argv) != 5:
+    if len(sys.argv) not in (5, 6):
         raise SystemExit(__doc__)
     changes, parity, diagnostics, out = map(pathlib.Path, sys.argv[1:5])
+    replay = pathlib.Path(sys.argv[5]) if len(sys.argv) == 6 else None
     out.mkdir(parents=True, exist_ok=False)
     units = read(diagnostics)["units"]
     occurrences = collections.defaultdict(list)
@@ -49,16 +52,19 @@ def main():
     with parity.open() as stream:
         parity_rows = [json.loads(line) for line in stream]
     source_provenance = {sha: "compile_task_identity" for sha in source_units}
+    if replay:
+        for record in read(replay)["units"]:
+            index = record["unit_index"]
+            unit = units[index]
+            if (record["library"], record["file"]) != (unit["library"], unit["file"]):
+                raise SystemExit(f"replay unit identity mismatch: {index}")
+            for match in record["matches"]:
+                if match["exit"] != 0 or match["preprocessed_sha256"] != match["source_sha256"]:
+                    raise SystemExit(f"invalid replay match: {match}")
+                source_units[match["source_sha256"]].add(index)
+                source_provenance[match["source_sha256"]] = "clang_preprocess_replay"
     if not source_units:
-        witness_units = collections.defaultdict(set)
-        for row in parity_rows:
-            owners = occurrences[row["function"]]
-            if len(owners) == 1:
-                witness_units[row["source_sha256"]].add(owners[0][0])
-        for sha, owners in witness_units.items():
-            if len(owners) == 1:
-                source_units[sha].update(owners)
-                source_provenance[sha] = "unique_function_witness"
+        raise SystemExit("corpus attribution requires exact source replay mapping")
     direct = collections.defaultdict(set)
     direct_by_unit_function = collections.defaultdict(set)
     candidate_direct = collections.defaultdict(set)
@@ -104,19 +110,9 @@ def main():
                     elif len(matched_sources) > 1:
                         relationship = "ambiguous_source_context_same_line"
                     elif matched_sources:
-                        relationship = (
-                            "newly_admitted_statement_same_line"
-                            if source_provenance[matched_sources[0]] == "compile_task_identity"
-                            else "unique_function_witness_same_line"
-                        )
+                        relationship = "newly_admitted_statement_same_line"
                     elif matched_lines:
-                        relationship = (
-                            "same_function_downstream_or_summary"
-                            if all(source_provenance[sha] == "compile_task_identity"
-                                   for line in matched_lines
-                                   for sha in direct[(unit_index, name, line)])
-                            else "unique_function_witness_downstream_or_summary"
-                        )
+                        relationship = "same_function_downstream_or_summary"
                     else:
                         relationship = "no_new_statement_in_function"
                     row = {
