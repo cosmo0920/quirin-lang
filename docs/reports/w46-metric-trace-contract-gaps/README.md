@@ -111,6 +111,8 @@ declarations. `W36-CTRACES-FAMILY-FIRST` remains an integrator convention
 decision: this card adds declarations to the existing sole CTraces module,
 not a second module that settles its naming convention.
 
+## For the integrator
+
 The integrator should regenerate current corpus and system slice measurements,
 attribute every changed leaf and verdict, update `docs/STATUS.md`, the
 acceptance matrix and one wave-46 increment paragraph from that primary
