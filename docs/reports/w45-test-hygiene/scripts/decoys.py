@@ -20,9 +20,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-SOCKET_V4 = "examples/sockets/inet_v4_echo.qcore"
-SOCKET_V6 = "examples/sockets/inet_v6_echo.qcore"
-CT_CASE = "compiler/tests/fixtures/ct/CT01/case.qcore"
+SOCKET_V4 = "examples/sockets/inet_v4_echo.qr"
+SOCKET_V6 = "examples/sockets/inet_v6_echo.qr"
+CT_CASE = "compiler/tests/fixtures/ct/CT01/case.qr"
 
 # (relative path, content: str literal, or ("copy", repository path))
 SETS = {
@@ -53,7 +53,7 @@ SETS = {
     ],
     "a-ignored": [
         # The 2026-09-26 incident: an export under /private/.
-        ("private/w45-th-decoys/export/examples/sockets/inet_v6_echo.qcore", ("copy", SOCKET_V6)),
+        ("private/w45-th-decoys/export/examples/sockets/inet_v6_echo.qr", ("copy", SOCKET_V6)),
         ("examples/w45-th-ignored/.gitignore", "*\n"),
         ("examples/w45-th-ignored/decoy.qcore", "fn main() -> i32 {\n    return 0;\n}\n"),
         ("compiler/tests/fixtures/w45-th-ignored/.gitignore", "*\n"),

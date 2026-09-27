@@ -16,9 +16,9 @@ Cards `HTTP-QUIRIN-V1` and `HTTP-V1-COMPUTED-LENGTH`; the evidence packages are
 
 | File | Route | What it shows |
 |---|---|---|
-| [`exchange.qcore`](exchange.qcore) | `source.http.v1` | a **declared** request and response: the compiler builds and checks the wire bytes |
-| [`computed_length.qcore`](computed_length.qcore) | `source.http.v1` | a `Content-Length` the program **computes** over a composed body — and the same compile-time equality holding over it |
-| [`raw_request.qcore`](raw_request.qcore) | `source.socket.v1` | the same kind of bytes **written by hand** as a string payload — and what the compiler then does *not* know |
+| [`exchange.qr`](exchange.qr) | `source.http.v1` | a **declared** request and response: the compiler builds and checks the wire bytes |
+| [`computed_length.qr`](computed_length.qr) | `source.http.v1` | a `Content-Length` the program **computes** over a composed body — and the same compile-time equality holding over it |
+| [`raw_request.qr`](raw_request.qr) | `source.socket.v1` | the same kind of bytes **written by hand** as a string payload — and what the compiler then does *not* know |
 
 ## What is being claimed, and what is not
 
@@ -57,7 +57,7 @@ message head is one the compiler put there.** Header injection is therefore not
 expressible on this route, and the framing is a property rather than an
 intention.
 
-## The wire bytes `exchange.qcore` builds
+## The wire bytes `exchange.qr` builds
 
 Read out of the certificate by
 `compiler/tests/std_http.rs::the_readme_wire_transcript_is_the_real_one`, so
@@ -86,8 +86,8 @@ hello\n
 
 ## The `Content-Length` the program works out
 
-`computed_length.qcore` is the second half of the same idea, and it is card
-`HTTP-V1-COMPUTED-LENGTH`. In `exchange.qcore` the length is a token the author
+`computed_length.qr` is the second half of the same idea, and it is card
+`HTTP-V1-COMPUTED-LENGTH`. In `exchange.qr` the length is a token the author
 wrote and the compiler checks. Here it is a number the compiler **derived**:
 
 ```qcore
@@ -188,7 +188,7 @@ follow-on `HTTP-V1-TEXT-TRANSCRIPT`.
 
 ## The emitted C, and why there is only one `main`
 
-`exchange.qcore` is the first program in this repository that genuinely
+`exchange.qr` is the first program in this repository that genuinely
 **composes two routes' emitted fragments**. The HTTP route contributes a banner
 and one `static const unsigned char` array per transferred message; the socket
 route contributes the compatibility header, the includes and the standard-IO
@@ -203,7 +203,7 @@ One message is one object in the emitted C. `send client rq;` and
 what the client sent" is visible in the generated file rather than something a
 reader has to check by comparing two arrays.
 
-## What `raw_request.qcore` is for
+## What `raw_request.qr` is for
 
 It writes the same kind of bytes by hand, as a string payload
 (`send C "GET / HTTP/1.1\r\n…";`) — the socket card's follow-on

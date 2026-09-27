@@ -94,7 +94,7 @@ fn work(quantity: &qcore_core::resource_flow::Quantity) -> u64 {
 
 #[test]
 fn ct35_counts_one_shared_allocation_once_however_many_tasks_read_it() {
-    let module = compile_case("CT35", "case.qcore").expect("CT35 is an admitted epoch");
+    let module = compile_case("CT35", "case.qr").expect("CT35 is an admitted epoch");
     let certificate = certificate_of(&module);
     assert_eq!(
         memory(&certificate.shared_entry_union),
@@ -109,14 +109,14 @@ fn ct35_counts_one_shared_allocation_once_however_many_tasks_read_it() {
     // Control: two *distinct* cells each read by both tasks are two footprints.
     // The union counts identities, so this is 8192 — a different epoch, not a
     // different reading of the same one.
-    let two_cells = compile_case("CT35", "two_cells.qcore").expect("the control is admitted");
+    let two_cells = compile_case("CT35", "two_cells.qr").expect("the control is admitted");
     let two_cells = certificate_of(&two_cells);
     assert_eq!(memory(&two_cells.shared_entry_union), 8192);
 
     // Control: one task naming the same cell twice is refused, not silently
     // deduplicated — a repeated entry is evidence the plan is summing.
     assert_eq!(
-        compile_case("CT35", "repeated_entry.qcore").unwrap_err(),
+        compile_case("CT35", "repeated_entry.qr").unwrap_err(),
         vec!["Q630"]
     );
 }
@@ -128,7 +128,7 @@ fn ct35_counts_one_shared_allocation_once_however_many_tasks_read_it() {
 
 #[test]
 fn ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead() {
-    let module = compile_case("CT36", "case.qcore").expect("CT36 is an admitted epoch");
+    let module = compile_case("CT36", "case.qr").expect("CT36 is an admitted epoch");
     let certificate = certificate_of(&module);
     assert_eq!(
         memory(&certificate.concurrent_private_peak),
@@ -145,9 +145,9 @@ fn ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead() {
     // The two controls straddle the summed figure: 8192 is admitted and 8191 is
     // refused. A maximized reading would have called 5120 the peak and admitted
     // both, so the refusal is what makes the summing falsifiable.
-    compile_case("CT36", "summed_allocation.qcore").expect("the summed peak fits exactly 8192");
+    compile_case("CT36", "summed_allocation.qr").expect("the summed peak fits exactly 8192");
     assert_eq!(
-        compile_case("CT36", "maximized_allocation.qcore").unwrap_err(),
+        compile_case("CT36", "maximized_allocation.qr").unwrap_err(),
         vec!["Q637", "Q638"],
         "one byte short of the summed peak refuses on the credits and on the epoch"
     );
@@ -160,12 +160,12 @@ fn ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead() {
 #[test]
 fn ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation() {
     assert_eq!(
-        compile_case("CT38", "case.qcore").unwrap_err(),
+        compile_case("CT38", "case.qr").unwrap_err(),
         vec!["Q637"],
         "6144 + 6144 granted out of an 8192 allocation is refused, and only that"
     );
     // Control: the same epoch with credits that really do split the total.
-    let module = compile_case("CT38", "split_within_total.qcore").expect("4096 + 4096 splits 8192");
+    let module = compile_case("CT38", "split_within_total.qr").expect("4096 + 4096 splits 8192");
     let certificate = certificate_of(&module);
     assert_eq!(memory(&certificate.granted_credits), 8192);
     assert_eq!(memory(&certificate.allocation), 8192);
@@ -178,7 +178,7 @@ fn ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation() {
 #[test]
 fn ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound() {
     assert_eq!(
-        compile_case("CT39", "case.qcore").unwrap_err(),
+        compile_case("CT39", "case.qr").unwrap_err(),
         vec!["Q639"],
         "the epoch is well accounted; it is the time claim that does not follow"
     );
@@ -186,7 +186,7 @@ fn ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound() {
     // is published as work — a quantity, never a duration. The profile records
     // that it has no schedule model on the certificate itself, so a consumer
     // cannot drop the premise and read the total as a finish time.
-    let module = compile_case("CT39", "work_bound_only.qcore").expect("the epoch itself is fine");
+    let module = compile_case("CT39", "work_bound_only.qr").expect("the epoch itself is fine");
     let certificate = certificate_of(&module);
     assert_eq!(work(&certificate.work_total), 800);
     assert!(

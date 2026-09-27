@@ -38,9 +38,9 @@ use qcore_core::typed_errors::EffectRow;
 ///
 /// **Card `CT07-TWO-THREAD-REMAP` (wave 37) moved which file in that directory
 /// it is.** CT07's case moved onto the two-thread range write lease, so
-/// `case.qcore` is now a *task*-route program and this card's sequential
-/// program is `sequential_write_halves.qcore`, retained there as that case's
-/// accept control. This include follows it. Pointing at `case.qcore` would
+/// `case.qr` is now a *task*-route program and this card's sequential
+/// program is `sequential_write_halves.qr`, retained there as that case's
+/// accept control. This include follows it. Pointing at `case.qr` would
 /// silently hand this card's tests someone else's program — which is exactly
 /// what the wave-37 lane caught here, so the coupling is now named rather than
 /// implicit.

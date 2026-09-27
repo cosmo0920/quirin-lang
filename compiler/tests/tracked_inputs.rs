@@ -94,7 +94,7 @@ fn only_tracked_files_are_listed() {
     scratch.git(&["add", "examples/staged.qcore"]);
     fs::remove_file(scratch.0.join("examples/gone.qcore")).unwrap();
     scratch.write("examples/untracked.qcore", "untracked\n");
-    scratch.write("examples/export/copy.qcore", "untracked copy\n");
+    scratch.write("examples/export/copy.qr", "untracked copy\n");
     scratch.write("private/export/examples/a.qcore", "ignored copy\n");
 
     let root = tracked_files::tracked_files(&scratch.0);

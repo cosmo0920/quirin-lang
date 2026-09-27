@@ -490,7 +490,7 @@ fn sorted(leases: &[Lease]) -> Vec<Lease> {
 /// ledger reaches the same lease set step for step.
 #[test]
 fn ct07_artifact_is_the_lean_proved_disjoint_halves_shape() {
-    let artifact = artifact_of("case.qcore", CT07_SOURCE);
+    let artifact = artifact_of("case.qr", CT07_SOURCE);
 
     // The lease captures the checked IR carries are the two halves, each
     // handed to the writer, and they are the ranges the reference run opens.

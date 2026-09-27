@@ -4,9 +4,9 @@ Calling C whose behaviour you have written down.
 
 | Example | What it demonstrates |
 |---|---|
-| [buffer_round_trip.qcore](buffer_round_trip.qcore) | One resource's whole life across the boundary |
-| [scalar_results.qcore](scalar_results.qcore) | Scalar results, and why they may leave the boundary |
-| [borrowed_render.qcore](borrowed_render.qcore) | `borrow NAME`: rendering a live resource without consuming it |
+| [buffer_round_trip.qr](buffer_round_trip.qr) | One resource's whole life across the boundary |
+| [scalar_results.qr](scalar_results.qr) | Scalar results, and why they may leave the boundary |
+| [borrowed_render.qr](borrowed_render.qr) | `borrow NAME`: rendering a live resource without consuming it |
 
 Supporting files, shared with [../stdio/](../stdio/) and [../pipes/](../pipes/):
 
@@ -68,7 +68,7 @@ C really compares the returned pointer against the declared outcome.
 `move b` at the release is where custody leaves the function. Use `b` after it
 and the module refuses; forget the release and it refuses too.
 
-`buffer_round_trip.qcore` explicitly selects `log_level trace;`, rendering its
+`buffer_round_trip.qr` explicitly selects `log_level trace;`, rendering its
 typed resource and call observations on stdout:
 
 <!-- transcript: buffer_round_trip stdout -->
@@ -97,7 +97,7 @@ without one binds whatever the callee returned. Where it is written, the emitted
 C compares the real result and exits `70` rather than continuing with a number
 nobody computed; the structured outcome event records that value.
 
-`scalar_results.qcore` also specifies `log_level trace;`, so it writes:
+`scalar_results.qr` also specifies `log_level trace;`, so it writes:
 
 <!-- transcript: scalar_results stdout -->
 ```text
@@ -111,7 +111,7 @@ return
 
 ## `borrow NAME`: a line about a resource that is still alive
 
-[borrowed_render.qcore](borrowed_render.qcore) renders something *about* a live
+[borrowed_render.qr](borrowed_render.qr) renders something *about* a live
 resource without consuming it, releasing it, or laundering its identity into a
 value.
 

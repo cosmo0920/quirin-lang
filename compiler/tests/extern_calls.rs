@@ -364,7 +364,7 @@ fn a_selection_without_the_callee_refuses() {
     assert_eq!(
         codes(
             ROUND_TRIP,
-            Some(BTreeMap::from([("partial.qcore".to_owned(), partial)]))
+            Some(BTreeMap::from([("partial.qr".to_owned(), partial)]))
         ),
         ["Q023"]
     );
@@ -1364,7 +1364,7 @@ fn a_scalar_result_is_bound_and_read_at_a_declared_scalar_parameter() {
     let checked = module.checked.as_extern_calls().unwrap();
     // The scalar bindings are published by name, and they are the only
     // certificate field they touch: the custody accounting beside them is
-    // `round_trip.qcore`'s exactly.
+    // `round_trip.qr`'s exactly.
     assert_eq!(
         checked.certificate.scalar_bindings,
         vec![
@@ -1659,7 +1659,7 @@ fn an_unchecked_scalar_result_binds_and_keeps_its_waiver() {
 // --- Card `EXTERN-SCALAR-OUTCOME` (trace half): the observation names the
 // returned number where a declared outcome makes it well-defined. ---
 
-/// `scalar_result.qcore` with both of its bindings given the site's declared
+/// `scalar_result.qr` with both of its bindings given the site's declared
 /// outcome. `qcore_extern_fill(b, 7)` writes eight bytes of 7, so the real
 /// `qcore_extern_sum(b, 8)` is 56 and the real `qcore_extern_scale(56, 2)` is
 /// 112 — both numbers are the source's, and the emitted program refuses to go
@@ -1684,7 +1684,7 @@ fn declared_outcomes() -> String {
 /// **The whole change, at the route that owns the format.** The two declared
 /// bindings name their numbers; every other line of the trace — the
 /// acquisition, the lend, the consumption, the return — is
-/// `scalar_result.qcore`'s exactly, so the diff against the undeclared pin
+/// `scalar_result.qr`'s exactly, so the diff against the undeclared pin
 /// above is the two `-> N` fields and nothing else.
 #[test]
 fn a_declared_outcome_is_named_in_the_observation() {

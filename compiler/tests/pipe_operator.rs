@@ -618,7 +618,7 @@ fn a_multi_stage_pipeline_is_its_hand_written_statement_sequence() {
     // The load-bearing claim of this card, in the same form wave 18 used for
     // one stage: a chain is *the same program* as the sequence a reader would
     // have written, so it emits byte-identical C11 and observes identically.
-    // `realloc_piped.qcore` is a three-stage pipeline over a shipped fixture,
+    // `realloc_piped.qr` is a three-stage pipeline over a shipped fixture,
     // not a program written to make a test pass.
     for [piped, unpiped] in [with_line_endings(REALLOC_PIPED)]
         .into_iter()

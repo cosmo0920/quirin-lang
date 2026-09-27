@@ -235,8 +235,8 @@ is retired.
 ```sh
 git submodule update --init --recursive
 cargo build --bin quirin
-./target/debug/quirin check examples/cycle12.qcore
-./target/debug/quirin emit -o generated.c examples/cycle12.qcore
+./target/debug/quirin check examples/cycle12.qr
+./target/debug/quirin emit -o generated.c examples/cycle12.qr
 ```
 
 Checking/emitting Quirin does not require Clang. Compiling emitted C needs a

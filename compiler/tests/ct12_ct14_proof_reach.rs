@@ -9,7 +9,7 @@
 //!
 //! The premise was measured rather than assumed, and it holds — for a stronger
 //! reason than the survey recorded, which is why **both rows were withdrawn**:
-//! `compiler/tests/fixtures/ct/{CT01,CT12,CT14}/case.qcore` are one
+//! `compiler/tests/fixtures/ct/{CT01,CT12,CT14}/case.qr` are one
 //! **byte-identical file** (sha256 `131f635d…`, the only duplicate among the
 //! corpus's forty case fixtures). The proof stage as all three landed proof
 //! legs define it is a function of the fixture's bytes alone — compile,
@@ -128,7 +128,7 @@ fn reference_order(
     script: &TaskExecutionScript,
 ) -> Result<AdmittedCausalOrder, TraceDeriveError> {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", source)],
+        &[SourceFile::new("case.qr", source)],
         &CompileOptions::default(),
     )
     .expect("all three cases are mapped, accepted task modules");

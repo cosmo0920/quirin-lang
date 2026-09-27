@@ -408,10 +408,7 @@ fn two_manifests_may_not_bind_the_same_symbol() {
     assert_eq!(
         codes(
             ROUND_TRIP,
-            selection(&[
-                (MANIFEST_PATH, MANIFEST.to_owned()),
-                ("twin.qrlib", twin)
-            ])
+            selection(&[(MANIFEST_PATH, MANIFEST.to_owned()), ("twin.qrlib", twin)])
         ),
         ["Q040"]
     );

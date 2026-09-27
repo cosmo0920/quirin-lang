@@ -652,7 +652,7 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 fn the_published_examples_still_match_byte_for_byte() {
     let source = include_str!("../../examples/threads/two_workers.qr");
     let module = compile_files(
-        &[SourceFile::new("two_workers.qcore", source)],
+        &[SourceFile::new("two_workers.qr", source)],
         &CompileOptions::default(),
     )
     .unwrap();

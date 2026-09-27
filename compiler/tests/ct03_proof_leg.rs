@@ -370,7 +370,7 @@ fn discharges_shared_reads(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct03_reference_events() -> Vec<ObservedEvent> {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT03_SOURCE)],
+        &[SourceFile::new("case.qr", CT03_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT03 is the manifest's accepted shared-reads case");

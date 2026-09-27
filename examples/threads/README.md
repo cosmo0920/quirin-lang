@@ -5,10 +5,10 @@ Linux and macOS. The Windows instructions below use MSVC's `cl.exe`.
 
 | Example | What it demonstrates | Successful main result |
 |---|---|---|
-| [two_workers.qcore](two_workers.qcore) | Two copied inputs, both workers started before either join, recovery if the second creation fails; both results logged and one printed by the source | `7` |
-| [owned_buffer.qcore](owned_buffer.qcore) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile, and logs the number it reads back out of the returned buffer. It also shows both pipeline spellings: `second \|> qcore_buffer_read \|> log info dec;` chains a model intrinsic into a sink, while the post-join read keeps its own binding because the number is used twice and a pipeline is linear | `42` |
-| [shared_readers.qcore](shared_readers.qcore) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
-| [core_context.qcore](core_context.qcore) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
+| [two_workers.qr](two_workers.qr) | Two copied inputs, both workers started before either join, recovery if the second creation fails; both results logged and one printed by the source | `7` |
+| [owned_buffer.qr](owned_buffer.qr) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile, and logs the number it reads back out of the returned buffer. It also shows both pipeline spellings: `second \|> qcore_buffer_read \|> log info dec;` chains a model intrinsic into a sink, while the post-join read keeps its own binding because the number is used twice and a pipeline is linear | `42` |
+| [shared_readers.qr](shared_readers.qr) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
+| [core_context.qr](core_context.qr) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
 
 All four also `import std.logger;` and `import std.fmt;` (and `two_workers`
 additionally `import std.io;`), which is what lets them say something of their
@@ -19,7 +19,7 @@ own beside the trace the compiler synthesizes — see
 
 The frontend lowers these examples into the checked models exposed by
 `qcore_core::prelude::concurrency`. The prelude is a Rust import surface for
-compiler and library implementers. Every `.qcore` example explicitly opts in:
+compiler and library implementers. Every `.qr` example explicitly opts in:
 
 ```qcore
 import std.concurrency;
@@ -42,7 +42,7 @@ with `Q014`; user-file imports are not yet supported.
 | `read buffer share 512` in `shared_readers` | `reserve_with_loans` and share reclamation on join | `ReadShare` proves the lending budget and restoration after the last share |
 
 Run the [Rust custody-model counterpart](../../crates/qcore-core/examples/concurrency_prelude.rs)
-of `core_context.qcore`:
+of `core_context.qr`:
 
 ```sh
 cargo run -p qcore-core --example concurrency_prelude
@@ -92,7 +92,7 @@ To perform the steps yourself, from the repository root:
 
 ```powershell
 New-Item -ItemType Directory -Force target\thread-examples | Out-Null
-cargo run -p qcorec -- emit examples\threads\two_workers.qcore -o target\thread-examples\two_workers.c
+cargo run -p qcorec -- emit examples\threads\two_workers.qr -o target\thread-examples\two_workers.c
 cl /nologo /std:c11 /utf-8 /W4 /WX target\thread-examples\two_workers.c /Fotarget\thread-examples\two_workers.obj /Fe:target\thread-examples\two_workers.exe
 .\target\thread-examples\two_workers.exe
 ```
@@ -137,7 +137,7 @@ parent inside the join — so a line placed at any point of the parent has a
 determined position relative to every other line. A line inside a worker body
 would be written by that worker's thread, concurrently with the parent's writes
 and with its siblings', and nothing in the checked model orders those; it is
-refused at `Q050`. `shared_readers.qcore`'s worker carries a comment where such
+refused at `Q050`. `shared_readers.qr`'s worker carries a comment where such
 a line would go.
 
 Both transcripts below are not prose: `thread_examples.rs` reads them out of

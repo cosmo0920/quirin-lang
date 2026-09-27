@@ -4,7 +4,7 @@ Calling C that nothing describes, and saying so out loud.
 
 | File | What it is |
 |---|---|
-| [unchecked_calls.qcore](unchecked_calls.qcore) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
+| [unchecked_calls.qr](unchecked_calls.qr) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
 | [unchecked_api.c](unchecked_api.c) | The C behind them — no contract, and there never will be one |
 | [unchecked_demo.qrlib](unchecked_demo.qrlib) | A `source.native-library.v1` manifest: *which build* was waived |
 

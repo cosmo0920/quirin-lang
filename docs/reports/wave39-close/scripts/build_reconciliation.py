@@ -694,7 +694,7 @@ record = {
             {
                 "name": "EXAMPLES-STYLE-SLICE-FANOUT",
                 "verdict": "deferred",
-                "ground": "Still deferred, a seventh wave. NEW EVIDENCE, which does not decide it: examples/ moved this wave for the first time since wave 33 - git diff --name-only e878b362 b6d1f101 -- examples/ names seven files: three new programs (examples/records/owned_field.qcore, examples/loops/lend_fill.qcore, examples/strings/looped_fill.qcore) and their four README rows; no existing example was respelled, and the decision is about the slice fan-out spelling of existing programs, which none of the three touches. Re-listed so it does not expire in silence.",
+                "ground": "Still deferred, a seventh wave. NEW EVIDENCE, which does not decide it: examples/ moved this wave for the first time since wave 33 - git diff --name-only e878b362 b6d1f101 -- examples/ names seven files: three new programs (examples/records/owned_field.qr, examples/loops/lend_fill.qr, examples/strings/looped_fill.qr) and their four README rows; no existing example was respelled, and the decision is about the slice fan-out spelling of existing programs, which none of the three touches. Re-listed so it does not expire in silence.",
             },
             {
                 "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",

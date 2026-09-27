@@ -291,10 +291,7 @@ fn a_decoration_that_changes_the_type_is_not_erased() {
         ),
     );
     let refusals = codes(
-        (
-            "fixtures/native_library/buffer_lib_header.qrlib",
-            &rehashed,
-        ),
+        ("fixtures/native_library/buffer_lib_header.qrlib", &rehashed),
         supplied(&[("include/qcore_buffer_demo.h", &decorated)]),
     );
     assert_eq!(

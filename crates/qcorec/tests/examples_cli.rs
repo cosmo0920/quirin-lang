@@ -66,9 +66,8 @@ fn check(arguments: &[PathBuf]) -> std::process::Output {
 
 #[test]
 fn bitfield_property_route_prints_its_success_window_boundary() {
-    let output = check(&[
-        repository().join("compiler/tests/fixtures/bitfield_concurrency/addressable.qr")
-    ]);
+    let output =
+        check(&[repository().join("compiler/tests/fixtures/bitfield_concurrency/addressable.qr")]);
     assert!(output.status.success(), "{output:?}");
     assert_eq!(
         String::from_utf8_lossy(&output.stdout),
@@ -220,7 +219,7 @@ fn every_published_driver_command_line_names_a_real_file_and_works() {
             let (Some(verb), Some(argument)) = (words.next(), words.next()) else {
                 continue;
             };
-            if !argument.ends_with(".qcore") {
+            if !argument.ends_with(".qr") {
                 continue;
             }
             let source = root.join(argument);

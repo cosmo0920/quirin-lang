@@ -27,14 +27,14 @@ fn cli_windows_emission_recovers_from_second_creation_failure() {
     let c = directory.join("recovery.c");
     let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
-        .arg(fixture.join("case.qcore"))
+        .arg(fixture.join("case.qr"))
         .output()
         .unwrap();
     assert!(checked.status.success(), "{checked:?}");
     assert!(String::from_utf8_lossy(&checked.stdout).contains("Linux/macOS/Windows threads"));
     let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
-        .arg(fixture.join("case.qcore"))
+        .arg(fixture.join("case.qr"))
         .arg("-o")
         .arg(&c)
         .output()
@@ -262,7 +262,7 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
     let directory =
         std::env::temp_dir().join(format!("qcore-cli-task-recovery-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
-    let source = fixture.join("case.qcore");
+    let source = fixture.join("case.qr");
     let c = directory.join("recovery.c");
     let exe = directory.join("recovery");
     let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
@@ -384,8 +384,7 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
 
     // A manifest that does not load refuses the module rather than being
     // ignored, and the CLI reports it as a diagnostic.
-    let broken =
-        std::env::temp_dir().join(format!("qcore-manifest-{}.qrlib", std::process::id()));
+    let broken = std::env::temp_dir().join(format!("qcore-manifest-{}.qrlib", std::process::id()));
     std::fs::write(
         &broken,
         std::fs::read_to_string(&manifest)

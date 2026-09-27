@@ -118,7 +118,7 @@ fn native_with_sink(
 
 /// The checked task module, whichever route published it.
 ///
-/// `core_context.qcore` moved to `source.std-io-tasks.v1` when card
+/// `core_context.qr` moved to `source.std-io-tasks.v1` when card
 /// `COMPOSE-CONCURRENCY` gave it a rollback-arm log line; its task half is
 /// literally the module the task route checked, and every assertion below is
 /// about that half.

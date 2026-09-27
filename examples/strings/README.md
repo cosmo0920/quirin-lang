@@ -8,9 +8,9 @@ its `std.buffer` bridge (cards `STRING-SLICE`, `STRING-SLICE-IO` and
 
 | Program | What it shows |
 |---|---|
-| [status_line.qcore](status_line.qcore) | An HTTP/1.1 response head rendered to standard output: literal views, the empty line, a bound view and a slice of one |
-| [computed_length.qcore](computed_length.qcore) | The same head with a **computed** `Content-Length`: content the program writes into storage it owns, borrowed as UTF-8, its length taken, and the header line composed from that number |
-| [looped_fill.qcore](looped_fill.qcore) | A `for` filling a buffer before it is borrowed, and a second `for` inside a live loan's window writing only the bytes the loan does not hold — the shape `STRING-CONCAT-LOOP-WINDOW` refused until the borrow window was decided over iterations |
+| [status_line.qr](status_line.qr) | An HTTP/1.1 response head rendered to standard output: literal views, the empty line, a bound view and a slice of one |
+| [computed_length.qr](computed_length.qr) | The same head with a **computed** `Content-Length`: content the program writes into storage it owns, borrowed as UTF-8, its length taken, and the header line composed from that number |
+| [looped_fill.qr](looped_fill.qr) | A `for` filling a buffer before it is borrowed, and a second `for` inside a live loan's window writing only the bytes the loan does not hold — the shape `STRING-CONCAT-LOOP-WINDOW` refused until the borrow window was decided over iterations |
 
 ## What a rendered string is
 
@@ -33,7 +33,7 @@ and **not** `std.fmt`: it names no rendering.
 
 ## Computed text
 
-`computed_length.qcore` uses the two operations card `STRING-CONCAT` added:
+`computed_length.qr` uses the two operations card `STRING-CONCAT` added:
 
 * **`borrow_utf8(b)`** views an owned `std.buffer`'s bytes as an immutable
   `string`. The UTF-8 validity decision is made **at check time**, out of the
@@ -56,8 +56,8 @@ and `mut` in this program's effect row are the **buffer's**.
 ## Running them
 
 ```sh
-cargo test -p qcore-compiler --test string_slice_io   # status_line.qcore
-cargo test -p qcore-compiler --test string_concat     # computed_length.qcore
+cargo test -p qcore-compiler --test string_slice_io   # status_line.qr
+cargo test -p qcore-compiler --test string_concat     # computed_length.qr
 ```
 
 Each test compiles its program through the real pipeline, builds the emitted C
@@ -70,7 +70,7 @@ either program a second time: it reads each transcript below out of its marked
 block and compares it with the reference execution, and it holds the table above
 to the directory — every program indexed, every row a file that exists.
 
-## Transcript — `status_line.qcore`
+## Transcript — `status_line.qr`
 
 <!-- transcript: status_line stdout -->
 ```text
@@ -84,7 +84,7 @@ world
 
 Nothing is written to the logger's stream: the program writes no `log` line.
 
-## Transcript — `computed_length.qcore`
+## Transcript — `computed_length.qr`
 
 Each head line ends with a carriage return the program wrote and a line feed the
 sink's framing supplied, so the head below is CRLF-framed. The `11` is derived
@@ -99,7 +99,7 @@ Content-Length: 11
 {"ok":true}
 ```
 
-## Transcript — `looped_fill.qcore`
+## Transcript — `looped_fill.qr`
 
 The first loop runs before any view exists and writes every byte of the owner;
 `all` then views `aaaa`. The second loop runs inside `head`'s window — `head`
@@ -120,9 +120,9 @@ aabb
 Neither of the first two is an HTTP implementation, and neither claims to be. There is no socket,
 no request parsing and no header model — writing a message to a wire is
 `source.http.v1`'s, and connecting a computed length to that route is the named
-follow-on `HTTP-V1-COMPUTED-LENGTH`. In `status_line.qcore` the
+follow-on `HTTP-V1-COMPUTED-LENGTH`. In `status_line.qr` the
 `Content-Length` line and the body are two independent literals that no rule
-relates; in `computed_length.qcore` they *are* related, and the remaining gap is
+relates; in `computed_length.qr` they *are* related, and the remaining gap is
 the last line's framing: the content's eleven bytes reach standard output
 followed by the line feed every rendered line carries, which the message's
 content does not contain.

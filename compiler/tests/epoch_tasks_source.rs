@@ -115,7 +115,7 @@ fn composed() -> String {
 fn compile(source: &str) -> Result<CompiledModule, Vec<String>> {
     compile_files(
         &[SourceFile {
-            path: "composed.qcore".into(),
+            path: "composed.qr".into(),
             source: source.into(),
         }],
         &CompileOptions::default(),
@@ -139,7 +139,7 @@ fn codes(source: &str) -> Vec<String> {
 fn message(source: &str) -> String {
     let diagnostics = compile_files(
         &[SourceFile {
-            path: "composed.qcore".into(),
+            path: "composed.qr".into(),
             source: source.into(),
         }],
         &CompileOptions::default(),

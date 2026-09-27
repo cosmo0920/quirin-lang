@@ -65,11 +65,9 @@ const PIPELINE: &str = include_str!("../../examples/stdio/pipeline.qr");
 
 const RENDERED_LINES: &str = include_str!("../../examples/pipes/rendered_lines.qr");
 const SCALAR_STAGES: &str = include_str!("../../examples/pipes/scalar_stages.qr");
-const SCALAR_STAGES_HAND: &str =
-    include_str!("../../examples/pipes/scalar_stages_hand_written.qr");
+const SCALAR_STAGES_HAND: &str = include_str!("../../examples/pipes/scalar_stages_hand_written.qr");
 
-const CONDITIONAL_RELEASE: &str =
-    include_str!("../../examples/branching/conditional_release.qr");
+const CONDITIONAL_RELEASE: &str = include_str!("../../examples/branching/conditional_release.qr");
 const CONDITION_TIER: &str = include_str!("../../examples/branching/condition_tier.qr");
 const EARLY_RETURN: &str = include_str!("../../examples/branching/early_return.qr");
 
@@ -130,7 +128,7 @@ fn contracted(name: &str, source: &str) -> CompiledModule {
 
 /// The rendered diagnostics a source is refused with, in order.
 fn refusal(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> Vec<String> {
-    compile_named("refusal.qcore", source, extern_contracts)
+    compile_named("refusal.qr", source, extern_contracts)
         .map(|module| module.execution_profile)
         .expect_err("this program must be refused")
         .iter()
@@ -140,7 +138,7 @@ fn refusal(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> 
 
 /// Just the codes, from the same refusal.
 fn refusal_codes(source: &str, extern_contracts: Option<BTreeMap<String, String>>) -> Vec<String> {
-    compile_named("refusal.qcore", source, extern_contracts)
+    compile_named("refusal.qr", source, extern_contracts)
         .map(|module| module.execution_profile)
         .expect_err("this program must be refused")
         .into_iter()
@@ -319,7 +317,7 @@ fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
         assert_eq!(module.entry.as_deref(), Some("main"));
         // The derived effect row is exactly `io`: this route's operand grammar
         // admits no resource, so it can neither allocate nor mutate one. That
-        // is the claim `renderings.qcore` makes in prose.
+        // is the claim `renderings.qr` makes in prose.
         let checked = module.checked.as_standard_io().unwrap();
         assert_eq!(checked.certificate.effects.iter().count(), 1);
         assert!(
@@ -358,19 +356,10 @@ fn every_published_example_defines_exactly_one_entry_point() {
     // asserted: the assembler guarantees it writes one entry point, not that no
     // fragment carries another.
     for (name, module) in [
-        (
-            "stdio/renderings",
-            plain("stdio/renderings.qr", RENDERINGS),
-        ),
-        (
-            "stdio/severities",
-            plain("stdio/severities.qr", SEVERITIES),
-        ),
+        ("stdio/renderings", plain("stdio/renderings.qr", RENDERINGS)),
+        ("stdio/severities", plain("stdio/severities.qr", SEVERITIES)),
         ("stdio/barrier", plain("stdio/barrier.qr", BARRIER)),
-        (
-            "stdio/pipeline",
-            contracted("stdio/pipeline.qr", PIPELINE),
-        ),
+        ("stdio/pipeline", contracted("stdio/pipeline.qr", PIPELINE)),
         (
             "pipes/rendered_lines",
             plain("pipes/rendered_lines.qr", RENDERED_LINES),
@@ -788,7 +777,7 @@ fn the_branching_examples_take_the_sequential_route_and_run_clean() {
             "transcript: early_return stdout",
         ),
     ] {
-        let module = plain(&format!("branching/{label}.qcore"), source);
+        let module = plain(&format!("branching/{label}.qr"), source);
         assert_eq!(
             module.execution_profile,
             SourceExecutionProfile::SequentialCleanupV1,
@@ -842,7 +831,7 @@ fn the_documented_bitwise_refusal_is_the_refusal_the_compiler_gives() {
     );
     // The grouped spelling the page tells the reader to write is the program.
     let grouped = program.replace("mask | 3 == 15", "(mask | 3) == 15");
-    compile_named("grouped.qcore", &grouped, None).expect("the parenthesized spelling checks");
+    compile_named("grouped.qr", &grouped, None).expect("the parenthesized spelling checks");
     // The same rule in the other direction, for `!`.
     let negated = program.replace("mask | 3 == 15", "!3 < 5");
     assert_eq!(refusal_codes(&negated, None), ["Q045"]);
@@ -877,7 +866,7 @@ fn every_row_of_the_documented_lowering_table_is_a_byte_identity() {
     const Y: &str = "        drop a;\n";
 
     let emit = |source: &str| {
-        compile_named("table.qcore", source, None)
+        compile_named("table.qr", source, None)
             .expect("both spellings check")
             .c_source
             .unwrap()
@@ -1163,7 +1152,7 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
     let broken = MANIFEST.replace("data_model lp64;", "data_model ilp32;");
     let diagnostics = compile_files(
         &[SourceFile::new(
-            "unchecked_calls.qcore".to_owned(),
+            "unchecked_calls.qr".to_owned(),
             UNCHECKED_CALLS,
         )],
         &CompileOptions {
@@ -1189,7 +1178,7 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
     // rather than adding a sixth.
     let sharpened = compile_files(
         &[SourceFile::new(
-            "unchecked_calls.qcore".to_owned(),
+            "unchecked_calls.qr".to_owned(),
             UNCHECKED_CALLS,
         )],
         &CompileOptions {
@@ -1219,8 +1208,8 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
 // under the sanitizers and byte-compares both streams. The gap is what this
 // suite adds *beyond* a per-card test:
 //
-//   1. **A directory scan.** Every `.qcore` program in a family directory is
-//      indexed on that family's page, and every `.qcore` a page names exists.
+//   1. **A directory scan.** Every `.qr` program in a family directory is
+//      indexed on that family's page, and every `.qr` a page names exists.
 //      An explicit list cannot notice a file nobody added it to — which is
 //      exactly how `examples/sockets/` came to be published without a row in
 //      `examples/README.md` until the HTTP card added one.
@@ -1306,7 +1295,7 @@ fn family_directories() -> Vec<String> {
     families
 }
 
-/// The `.qcore` programs one family directory publishes, sorted. Not recursive:
+/// The `.qr` programs one family directory publishes, sorted. Not recursive:
 /// `examples/extern/contracts/` holds a declared contract module, which is a
 /// support file rather than a published program, and its page says so.
 fn published_programs(family: &str) -> Vec<String> {
@@ -1314,7 +1303,7 @@ fn published_programs(family: &str) -> Vec<String> {
     let mut programs: Vec<String> = tracked_example_paths()
         .iter()
         .filter_map(|path| path.strip_prefix(&prefix))
-        .filter(|name| !name.contains('/') && name.ends_with(".qcore"))
+        .filter(|name| !name.contains('/') && name.ends_with(".qr"))
         .map(str::to_owned)
         .collect();
     programs.sort();
@@ -1340,7 +1329,7 @@ fn link_targets(page: &str, suffix: &str) -> Vec<String> {
 }
 
 /// Every published program is indexed on its own family page, and every
-/// `.qcore` a family page links exists.
+/// `.qr` a family page links exists.
 ///
 /// This is the check an explicit list cannot make. `examples/sockets/` was
 /// published with no row in `examples/README.md` at all until the HTTP card
@@ -1363,13 +1352,13 @@ fn every_published_program_is_indexed_and_every_indexed_program_exists() {
         );
         for program in &programs {
             assert!(
-                link_targets(&page, ".qcore")
+                link_targets(&page, ".qr")
                     .iter()
                     .any(|target| target == program || target.ends_with(&format!("/{program}"))),
                 "examples/{family}/{program} is published but its page does not link it"
             );
         }
-        for target in link_targets(&page, ".qcore") {
+        for target in link_targets(&page, ".qr") {
             let resolved = examples_root().join(family).join(&target);
             assert!(
                 resolved.exists(),
@@ -1396,7 +1385,7 @@ fn the_examples_index_names_every_family_and_only_real_ones() {
     }
     // Non-vacuous in the other direction: the index links files too, and each
     // of those exists as well.
-    for target in link_targets(INDEX_README, ".qcore") {
+    for target in link_targets(INDEX_README, ".qr") {
         assert!(
             examples_root().join(&target).exists(),
             "examples/README.md links `{target}`, which does not exist"
@@ -1480,7 +1469,7 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
             SourceExecutionProfile::StandardStringV1,
         ),
         // A record is admitted on the buffer route and on no other, so both
-        // records programs are that route's — including `point.qcore`, which
+        // records programs are that route's — including `point.qr`, which
         // holds no buffer at all.
         (
             "records/point.qr",
@@ -1500,7 +1489,7 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
             SourceExecutionProfile::StandardBufferV1,
         ),
         (
-            "cycle12.qcore",
+            "cycle12.qr",
             CYCLE12,
             SourceExecutionProfile::SequentialCleanupV1,
         ),
@@ -1540,7 +1529,7 @@ fn the_check_only_example_is_the_only_one_that_emits_no_c() {
         ("records/point.qr", RECORD_POINT),
         ("records/pixel_writes.qr", PIXEL_WRITES),
         ("records/owned_field.qr", OWNED_FIELD),
-        ("cycle12.qcore", CYCLE12),
+        ("cycle12.qr", CYCLE12),
     ] {
         assert!(
             plain(name, source).c_source.is_some(),
@@ -1672,7 +1661,7 @@ fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
         }
     }
 
-    // `computed_length.qcore` is the one page that shows its transcript with the
+    // `computed_length.qr` is the one page that shows its transcript with the
     // carriage returns removed, and says so in the sentence above the block: the
     // program writes a CRLF-framed head, and a `\r` is not something a reader
     // can see. Compared with the `\r`s stripped from the *projection* rather
@@ -1813,7 +1802,7 @@ fn the_documented_zero_bound_refusal_is_the_refusal_the_compiler_gives() {
     // Non-vacuous: the same program with a bound of one is admitted, so what the
     // page pins is the zero rather than the shape.
     let one = program.replace("0..0", "0..1");
-    compile_named("one.qcore", &one, None).expect("a bound of one is a loop");
+    compile_named("one.qr", &one, None).expect("a bound of one is a loop");
 }
 
 /// The three refusals the page names beside it, and the one it says is not this
@@ -1858,9 +1847,9 @@ fn the_loop_refusals_the_page_names_beside_it_hold() {
 /// transcripts.
 ///
 /// The two programs are each other's leak control, and the page says so.
-/// `point.qcore` allocates nothing at all, so its run is a **negative**
+/// `point.qr` allocates nothing at all, so its run is a **negative**
 /// control: LSan reporting a leak would mean the aggregate had acquired
-/// something the model says it cannot. `pixel_writes.qcore` allocates one real
+/// something the model says it cannot. `pixel_writes.qr` allocates one real
 /// buffer and releases it, so its run is a **positive** control: a lost
 /// release would be a finding, and the two records beside the buffer change
 /// nothing about that.
@@ -1930,7 +1919,7 @@ fn the_records_page_publishes_the_struct_the_backend_really_writes() {
     // program holding none carries no allocator at all.
     assert!(
         !c.contains("qcore_bytes_new"),
-        "point.qcore acquires nothing and must carry no buffer prelude"
+        "point.qr acquires nothing and must carry no buffer prelude"
     );
     // And the neighbouring program does hold a buffer, so the contrast is a
     // fact about the programs rather than about the backend.
@@ -1941,7 +1930,7 @@ fn the_records_page_publishes_the_struct_the_backend_really_writes() {
             .as_deref()
             .unwrap()
             .contains("qcore_bytes_new"),
-        "pixel_writes.qcore acquires a real buffer"
+        "pixel_writes.qr acquires a real buffer"
     );
     // Card `AGGREGATE-OWNED-FIELD`: the page's struct for the record that
     // owns — pointer members — is the one the backend writes, the initializer
@@ -1978,7 +1967,7 @@ fn the_documented_incomplete_construction_is_the_refusal_the_compiler_gives() {
     // Non-vacuous: the same construction with the field supplied is admitted,
     // so what the page pins is the totality rule rather than the shape.
     let complete = program.replace("Point { x: 1 }", "Point { x: 1, y: 2 }");
-    compile_named("complete.qcore", &complete, None).expect("the complete construction checks");
+    compile_named("complete.qr", &complete, None).expect("the complete construction checks");
 }
 
 /// The four refusals the page names beside it, each earned by exactly the

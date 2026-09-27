@@ -2239,7 +2239,7 @@ fn run_mapped_case(case: &ManifestCase) {
     );
     // The route decides what the case's own artifact is: a QCore source on the
     // three source routes, a C twin on `legacy_c`.
-    let case_file = if legacy { "case.c" } else { "case.qcore" };
+    let case_file = if legacy { "case.c" } else { "case.qr" };
     let mut required_files = BTreeSet::from([case_file.to_owned(), "expected.json".to_owned()]);
     if let Some(native) = &expected.native_task_scenarios {
         assert!(!native.scenarios.is_empty());
@@ -2271,7 +2271,7 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(native) = &expected.native_create_recovery {
         assert_eq!(case.id, "CT13");
         assert_eq!(native.header, "create_failure.h");
-        assert_eq!(native.unjoined_source, "unjoined_failure.qcore");
+        assert_eq!(native.unjoined_source, "unjoined_failure.qr");
         assert_eq!(native.success_i32, 7);
         assert_eq!(native.recovery_i32, 42);
         required_files.insert(native.header.clone());
@@ -3018,7 +3018,7 @@ fn run_mapped_case(case: &ManifestCase) {
         check_legacy_twin_shape(&case.id, twin, &mut required_files);
     }
     if let Some(control) = &expected.positive_control {
-        assert_eq!(control.source, "joined_sibling.qcore");
+        assert_eq!(control.source, "joined_sibling.qr");
         assert_eq!(control.evidence_target, "linux");
         assert_eq!(control.joined_children, 2);
         required_files.insert(control.source.clone());
@@ -7971,7 +7971,7 @@ fn run_native_task_scenarios(
 fn ct16_retains_sequential_implicit_cleanup_control() {
     let module = compile_files(
         &[SourceFile::new(
-            "sequential-worker-error.qcore",
+            "sequential-worker-error.qr",
             include_str!("fixtures/task_worker_allocations/sequential_worker_error.qr"),
         )],
         &CompileOptions {
@@ -7998,7 +7998,7 @@ fn ct16_retains_sequential_implicit_cleanup_control() {
 fn ct37_retains_sequential_transferred_payload_control() {
     let module = compile_files(
         &[SourceFile::new(
-            "sequential-completion-payload.qcore",
+            "sequential-completion-payload.qr",
             include_str!("fixtures/task_worker_allocations/sequential_completion_payload.qr"),
         )],
         &CompileOptions {
@@ -8030,7 +8030,7 @@ fn ct37_retains_sequential_transferred_payload_control() {
 /// with this harness green. This test reads each named file and asserts the
 /// binding the string credits: the named `fn` exists, its attribute block
 /// carries `#[test]` and no `#[ignore]`, and the file `include_str!`s the
-/// case's own `fixtures/ct/<ID>/case.qcore`. Shown red by mutation in
+/// case's own `fixtures/ct/<ID>/case.qr`. Shown red by mutation in
 /// `docs/reports/stability-reeval-3/`; the residual it closes is
 /// `CT-PROOF-LEG-BINDING-BY-NAME`.
 #[test]
@@ -8066,7 +8066,7 @@ fn proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture() {
             "{id}: `{signature}` in `{file}` is ignored, so the proof stage it is credited \
              with runs nowhere: {attributes:?}"
         );
-        let fixture = format!("include_str!(\"fixtures/ct/{id}/case.qcore\")");
+        let fixture = format!("include_str!(\"fixtures/ct/{id}/case.qr\")");
         assert!(
             text.contains(&fixture),
             "{id}: `{file}` does not read `{fixture}`, so the test it names is not lowering \

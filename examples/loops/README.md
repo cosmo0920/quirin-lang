@@ -12,8 +12,8 @@ iterations. Its sanitized native run is `compiler/tests/loops_on_composed_routes
 
 | Program | What it shows |
 |---|---|
-| [`buffer_copy.qcore`](buffer_copy.qcore) | A bulk copy between two owned buffers — `STD-BUFFER-COPY`, the blocker this construct was landed for — and a second loop that renders its own index |
-| [`lend_fill.qcore`](lend_fill.qcore) | A loop filling a lend's range **through the loan**, index by index, while the owner writes a byte it kept — the shape `SLICE-PERMISSIONS-LOOP-WINDOW` refused until the window was computed over iterations |
+| [`buffer_copy.qr`](buffer_copy.qr) | A bulk copy between two owned buffers — `STD-BUFFER-COPY`, the blocker this construct was landed for — and a second loop that renders its own index |
+| [`lend_fill.qr`](lend_fill.qr) | A loop filling a lend's range **through the loan**, index by index, while the owner writes a byte it kept — the shape `SLICE-PERMISSIONS-LOOP-WINDOW` refused until the window was computed over iterations |
 
 ## The form
 
@@ -97,7 +97,7 @@ checker read out of the buffer's footprint:
 `81 67 111 114` is `QCor` in ASCII, copied byte by byte from `src` into a `dst`
 no source statement ever writes at a spelled index.
 
-## A loop beside a lend — `lend_fill.qcore`
+## A loop beside a lend — `lend_fill.qr`
 
 The loan `part` covers `[0, 4)` of `store`; the loop copies `src` into it
 **through the loan**, and in the same body writes `store[7]`, a byte the loan
@@ -158,7 +158,7 @@ and refused like this:
 
 <!-- diagnostic: Q098 -->
 ```text
-refusal.qcore:5:5: Q098: a bound of 0 runs no iteration, so this body would never be checked; `source.loop.v1` refuses it rather than admitting an unchecked statement
+refusal.qr:5:5: Q098: a bound of 0 runs no iteration, so this body would never be checked; `source.loop.v1` refuses it rather than admitting an unchecked statement
     for i in 0..0 {
     ^
 ```

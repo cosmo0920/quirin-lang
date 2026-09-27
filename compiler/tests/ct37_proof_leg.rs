@@ -268,7 +268,7 @@ fn discharges_completion_capsule(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct37_reference_events() -> Vec<ObservedEvent> {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT37_SOURCE)],
+        &[SourceFile::new("case.qr", CT37_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT37 is the manifest's accepted completion-capsule case");

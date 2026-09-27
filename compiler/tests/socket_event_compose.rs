@@ -1179,7 +1179,7 @@ fn the_readme_transcript_is_the_real_one() {
         "the page's transcript must be the one the pipeline produces: {transcript:?}"
     );
     assert!(
-        readme.contains("socket_server.qcore"),
+        readme.contains("socket_server.qr"),
         "the page must index the program"
     );
 }

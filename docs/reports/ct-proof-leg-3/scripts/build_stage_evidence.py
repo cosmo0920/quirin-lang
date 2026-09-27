@@ -56,7 +56,7 @@ def main():
             row = {
                 "status": "executed",
                 "executor": EXECUTOR,
-                "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+                "artifact": "compiler/tests/fixtures/ct/CT50/case.qr",
                 "observations": 1,
                 "note": PROOF_NOTE,
             }

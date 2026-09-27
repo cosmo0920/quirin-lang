@@ -883,16 +883,8 @@ fn named_selection(entries: &[(&str, &str, &str)]) -> NativeLibraries {
 
 fn two_libraries() -> NativeLibraries {
     named_selection(&[
-        (
-            "a.qrlib",
-            "libA",
-            "unchecked fn k_a(int32_t) -> int32_t;",
-        ),
-        (
-            "b.qrlib",
-            "libB",
-            "unchecked fn k_b(int32_t) -> int32_t;",
-        ),
+        ("a.qrlib", "libA", "unchecked fn k_a(int32_t) -> int32_t;"),
+        ("b.qrlib", "libB", "unchecked fn k_b(int32_t) -> int32_t;"),
     ])
 }
 
@@ -971,24 +963,13 @@ fn two_manifests_declaring_one_library_name_refuse_as_ambiguous() {
     // The ground `SelectionRefusal::SymbolBoundTwice` refuses its own ambiguity
     // on: a binding that is not a function has no defined premise.
     let libraries = named_selection(&[
-        (
-            "a.qrlib",
-            "libA",
-            "unchecked fn k_a(int32_t) -> int32_t;",
-        ),
-        (
-            "b.qrlib",
-            "libA",
-            "unchecked fn k_b(int32_t) -> int32_t;",
-        ),
+        ("a.qrlib", "libA", "unchecked fn k_a(int32_t) -> int32_t;"),
+        ("b.qrlib", "libA", "unchecked fn k_b(int32_t) -> int32_t;"),
     ]);
     match libraries.bind_source(&["libA".to_owned()]) {
         Err(BindingRefusal::AmbiguousLibrary { named, manifests }) => {
             assert_eq!(named, "libA");
-            assert_eq!(
-                manifests,
-                vec!["a.qrlib".to_owned(), "b.qrlib".to_owned()]
-            );
+            assert_eq!(manifests, vec!["a.qrlib".to_owned(), "b.qrlib".to_owned()]);
         }
         other => panic!("an ambiguous library must refuse: {other:?}"),
     }

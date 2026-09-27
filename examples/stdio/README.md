@@ -6,10 +6,10 @@ lets a printing module also call declared C.
 
 | Example | What it demonstrates |
 |---|---|
-| [renderings.qcore](renderings.qcore) | `print` with both renderings, `dec` and `hex` |
-| [severities.qcore](severities.qcore) | `log` at all three severities, and `flush` |
-| [barrier.qcore](barrier.qcore) | `flush` alone: the smallest complete module on this route |
-| [pipeline.qcore](pipeline.qcore) | The composed route: `value \|> render \|> log` over a declared extern callee |
+| [renderings.qr](renderings.qr) | `print` with both renderings, `dec` and `hex` |
+| [severities.qr](severities.qr) | `log` at all three severities, and `flush` |
+| [barrier.qr](barrier.qr) | `flush` alone: the smallest complete module on this route |
+| [pipeline.qr](pipeline.qr) | The composed route: `value \|> render \|> log` over a declared extern callee |
 
 Everything below is checked. The transcripts are read out of this file by
 [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs) and
@@ -50,7 +50,7 @@ The operand grammar admits no form that could denote a resource, which is why
 this route's derived effect row is exactly `io`: never `alloc`, never `mut`.
 Nothing a `print` touches can be consumed, released or retained.
 
-`renderings.qcore` writes to **stdout**:
+`renderings.qr` writes to **stdout**:
 
 <!-- transcript: renderings stdout -->
 ```text
@@ -74,7 +74,7 @@ error Failure { Failed; }
 
 `fatal` is a tag on a line. It does not exit, abort or raise.
 
-`severities.qcore` writes nothing to stdout, and to **stderr**:
+`severities.qr` writes nothing to stdout, and to **stderr**:
 
 <!-- transcript: severities stderr -->
 ```text
@@ -102,7 +102,7 @@ model claims otherwise — so nothing in the emitted C claims it either: `flush`
 emits exactly one `fflush`. If you need durability, this is not the construct,
 and QCore does not currently have one.
 
-`flush` names no rendering, so [barrier.qcore](barrier.qcore) needs no
+`flush` names no rendering, so [barrier.qr](barrier.qr) needs no
 `std.fmt` import — it is `std.logger` that grants the barrier. It is the
 smallest complete module on this route, and its transcript is the empty one:
 
@@ -115,7 +115,7 @@ smallest complete module on this route, and its transcript is the empty one:
 
 ## The composed route
 
-[pipeline.qcore](pipeline.qcore) both calls declared C and prints. It needs no
+[pipeline.qr](pipeline.qr) both calls declared C and prints. It needs no
 marker to say so: a module using `std.extern`'s calls *and* `std.io`'s lines is
 checked by `source.std-io-extern.v1`, which runs both routes' own checkers and
 publishes both certificates side by side. Composing weakens nothing — every
@@ -140,7 +140,7 @@ makes a rendered line worth reading — the number in it is the number the run
 produced, or the run stopped.
 
 The declared outcome is retained in the structured diagnostic trace.
-`pipeline.qcore` explicitly selects `log_level trace;`, so that trace is
+`pipeline.qr` explicitly selects `log_level trace;`, so that trace is
 rendered together with its source-authored stdout lines:
 
 <!-- transcript: pipeline stdout -->
@@ -182,9 +182,9 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic /tmp/renderings.c -o /tmp/renderings
 /tmp/renderings
 ```
 
-The same works for `severities.qcore` and `barrier.qcore`.
+The same works for `severities.qr` and `barrier.qr`.
 
-**`pipeline.qcore` cannot be checked through the CLI today.** The driver selects
+**`pipeline.qr` cannot be checked through the CLI today.** The driver selects
 no extern contract environment, so a declared extern call reaches it as
 
 ```text
@@ -204,7 +204,7 @@ beside the emitted translation unit.
 
 The programs run clean under ASan/UBSan, and under LSan on Linux (Apple's
 AddressSanitizer ships no leak detector, so leak checking stays a Linux
-observation). For `pipeline.qcore` that is a **positive** control: it allocates
+observation). For `pipeline.qr` that is a **positive** control: it allocates
 a real buffer and releases it, so a lost release would be reported rather than
 passing silently.
 

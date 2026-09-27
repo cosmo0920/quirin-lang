@@ -208,7 +208,7 @@ fn discharges_owned_transfer(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct01_reference_events() -> Vec<ObservedEvent> {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT01_SOURCE)],
+        &[SourceFile::new("case.qr", CT01_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT01 is the manifest's accepted owned-transfer case");

@@ -728,7 +728,7 @@ fn the_content_length_field_name_is_still_a_written_token() {
 
 #[test]
 fn the_computed_length_example_takes_the_http_route() {
-    let compiled = compile(COMPUTED_LENGTH).expect("computed_length.qcore must be admitted");
+    let compiled = compile(COMPUTED_LENGTH).expect("computed_length.qr must be admitted");
     assert_eq!(
         compiled.execution_profile,
         SourceExecutionProfile::StandardHttpV1

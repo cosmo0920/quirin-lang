@@ -298,7 +298,7 @@ fn discharges_lifetime_identity(trace: &[ObservedEvent]) -> bool {
 /// causal order derived by the production observer.
 fn ct50_admitted_order() -> AdmittedCausalOrder {
     let module = compile_files(
-        &[SourceFile::new("case.qcore", CT50_SOURCE)],
+        &[SourceFile::new("case.qr", CT50_SOURCE)],
         &CompileOptions::default(),
     )
     .expect("CT50 is the manifest's accepted lifetime-identity case");
