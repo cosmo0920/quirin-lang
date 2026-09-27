@@ -117,3 +117,49 @@ fn provider_load_path_discovers_qv_and_refuses_alias_collision() {
     );
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn qv_includes_resolve_the_same_declarations_and_keep_exact_targets() {
+    use qcore_contract::contract_inclusion::{
+        ContractLoadPath, PublishedContractCrate, derive_contract_namespace,
+    };
+    use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
+    let build = |suffix: &str, target_suffix: &str| {
+        let base_path = format!("base/alloc.{suffix}");
+        let app_path = format!("app/wrap.{suffix}");
+        let app_source = format!(
+            "module contract; #include \"quirin-provider-base:base/alloc.{target_suffix}\"; extern fn wrap() -> ptr<mut, u8> contract inherit base::alloc;"
+        );
+        let krate =
+            |name: &str, deps: Vec<String>, path: String, source: String| PublishedContractCrate {
+                name: name.into(),
+                namespace: derive_contract_namespace(name).unwrap(),
+                version: "0.1.0".into(),
+                dependencies: deps.into_iter().collect(),
+                published: [path.clone()].into_iter().collect(),
+                modules: BTreeMap::from([(path, source)]),
+            };
+        let path = ContractLoadPath::new(vec![
+            krate("quirin-provider-base", vec![], base_path, CONTRACT.into()),
+            krate(
+                "quirin-provider-app",
+                vec!["quirin-provider-base".into()],
+                app_path.clone(),
+                app_source,
+            ),
+        ])
+        .unwrap();
+        load_published_resource_contracts(
+            &path,
+            &[PublishedModuleRef::new("quirin-provider-app", app_path)],
+        )
+    };
+    let old = build("qcore", "qcore").unwrap();
+    let current = build("qv", "qv").unwrap();
+    assert_eq!(old.functions(), current.functions());
+    assert!(current.contract("wrap").is_some());
+    assert!(
+        build("qv", "qcore").is_err(),
+        "an old include must not silently resolve to a new filename"
+    );
+}
