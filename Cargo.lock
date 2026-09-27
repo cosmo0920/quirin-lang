@@ -211,6 +211,7 @@ version = "0.1.0"
 dependencies = [
  "cc",
  "qcore-compiler",
+ "qcore-contract",
  "serde",
  "serde_json",
 ]

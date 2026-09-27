@@ -38,6 +38,14 @@ The current repository shares one structural syntax among several consumers. The
 
 A caller MUST select the interpreter deliberately. The v1 marker is mandatory within the resource loader; it does not make the ordinary `quirin check` command automatically dispatch every contract to that loader. Current verifier scopes enter bounded core derivation/dispatch; unsupported lifecycle source effects still leave obligations incomplete.
 
+For a contract owned by a published load-path manifest, the resource-v1 admission check is explicit:
+
+```sh
+quirin check --contract-load-path providers/contract-load-path.json providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv
+```
+
+This selects one owned contract module, including an owned module that is not itself published. Each included parent must be published by an owned or directly declared dependency crate and must satisfy its recorded digest. The result validates trusted resource-v1 assumptions and inherited-clause agreement; it checks no C bodies and establishes no safety verdict. Without this option, unresolved inclusion still refuses at the structural parser.
+
 A verification result MUST account for every clause relevant to the requested property. Clauses can be retained without interpretation by an editor or structural tool, but the output MUST NOT imply that retained clauses were discharged. A consumer MUST reject an unsupported semantic clause, return Unknown for its requested property, or explicitly limit its claim to a different covered property. Silently deleting a clause and publishing the original full-contract claim is forbidden.
 
 The ordinary checker now rejects nonempty source function contract clauses with Q021 until enforced. Extern envelopes remain structural unless an explicit consumer is invoked. Neither structural retention nor Q021 rejection proves arbitrary postconditions. See R08.
