@@ -1,24 +1,24 @@
-//! Card **W45-AUDIT-CHECKPOINTS**: the `.qo` ("Quirin-audit Object") per-group
+//! Card **W45-AUDIT-CHECKPOINTS**: the `.qo` ("Quirin-audit Object") per-configuration
 //! audit checkpoint — its binary format, its sections and their text
 //! decomposition.
 //!
-//! A checkpointed `quirin-audit current` run analyses one library group at a
-//! time and seals each group's intermediate results into `<label>.qo`. A file
+//! A checkpointed `quirin-audit current` run seals each source/compile configuration
+//! independently into `<group-label>-<unit-key-digest>.qo`. A file
 //! holds ten sections in a fixed order, each encoded separately with
 //! [postcard] (a specified, stable serde wire format) and separately digested
 //! with SHA-256:
 //!
 //! | section        | step (pipeline order)                                        | identity | composed |
 //! |----------------|--------------------------------------------------------------|----------|----------|
-//! | `identity`     | every input of the group's result                            | the key  | checked  |
-//! | `plan`         | the run's groups and their units                             | no       | checked  |
+//! | `identity`     | every input of the unit result                            | the key  | checked  |
+//! | `plan`         | the run's ordered unit checkpoints                             | no       | checked  |
 //! | `global`       | run-wide publication inputs (revision, assumptions, markers) | no       | used     |
 //! | `preparation`  | per unit: compile configuration and task identity, enumeration, original coordinates | no | used |
 //! | `lowering`     | per unit: refusal reason and code, source functions, not projected | no | used |
 //! | `verdicts`     | per unit: verdict, per-function summaries/verdicts/diagnostics, tallies | no | used |
 //! | `certificates` | per unit: the Safe certificate's binding outcome (derived)    | no       | no       |
-//! | `contracts`    | the contract set in force and the group's held calls          | no       | used     |
-//! | `result`       | the group's final result: console lines, counts, sources      | no       | used     |
+//! | `contracts`    | the contract set in force and the unit's held calls          | no       | used     |
+//! | `result`       | the unit's final result: console lines, counts, sources      | no       | used     |
 //! | `provenance`   | wall time, peak memory, preparation timings                   | no       | console only |
 //!
 //! The format is specified in `docs/development/audit-checkpoints.md`. Every
@@ -45,8 +45,8 @@ pub const EXTENSION: &str = "qo";
 pub const FORMAT_VERSION: u16 = 1;
 /// The version of the section schemas this build writes and reads.
 // Card W45-REFUTED-CONTRACT-WITHDRAWAL: schema 2 adds the refutation
-// table's digest to the contract set of every group's identity.
-pub const SCHEMA_VERSION: u32 = 2;
+// table's digest to the contract set of every unit's identity.
+pub const SCHEMA_VERSION: u32 = 3;
 /// The sections of a schema-1 file, in file order.
 pub const SECTIONS: [&str; 10] = [
     "identity",
@@ -118,13 +118,11 @@ fn unhex(text: &str) -> Result<[u8; 32], String> {
 }
 
 // ---------------------------------------------------------------------------
-// Section schemas (schema version 2). Every type is plain data: strings,
-// unsigned integers, options, vectors, structs and one enum, so each has a
-// lossless YAML and TOML form. `Option` never appears inside a vector (TOML
-// has no null); a `None` field is omitted from TOML and read back as `None`.
+// Section schemas (schema version 3): typed binary recursive values and
+// closed numeric status/verdict codes, with optional YAML/TOML inspection.
 // ---------------------------------------------------------------------------
 
-/// Every input the group's result depends on. A resumed run reuses a group
+/// Every input the unit result depends on. A resumed run reuses a unit
 /// only when this whole section is equal.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -133,7 +131,7 @@ pub struct IdentitySection {
     pub group: GroupIdentity,
 }
 
-/// The run-wide inputs every group shares.
+/// The run-wide inputs every unit shares.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RunIdentity {
@@ -186,12 +184,12 @@ pub struct ContractSetIdentity {
     /// SHA-256 of the checker-plugin section (card W45-USER-CONTRACT-PLUGINS:
     /// each binding's package digest, task digest and classified verdict), when
     /// a checker ran. A plugin's verdict enters every function that applies its
-    /// contract, so it is an input of every group.
+    /// contract, so it is an input of every unit.
     pub plugin_checks_sha256: Option<String>,
-    /// SHA-256 of the refutation table the group's units were analysed under
+    /// SHA-256 of the refutation table the unit was analysed under
     /// (card W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4): the empty
     /// table's digest in a first phase, the whole run's table in a second. A
-    /// changed table recomputes every group, and groups analysed under
+    /// changed table recomputes every unit, and units analysed under
     /// different tables never compose.
     pub refuted_table_sha256: String,
 }
@@ -220,7 +218,7 @@ pub struct EnvironmentValue {
     pub value: String,
 }
 
-/// The group's own inputs.
+/// The unit checkpoint's own inputs.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GroupIdentity {
@@ -271,7 +269,7 @@ impl PreparationFacts {
     }
 }
 
-/// The run's plan: every group, in order, with its units' keys.
+/// The run's plan: every checkpoint unit, in order, with its key.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PlanSection {
@@ -284,7 +282,7 @@ pub struct PlanSection {
 #[serde(deny_unknown_fields)]
 pub struct PlannedGroup {
     pub label: String,
-    /// The group's console header line.
+    /// The library header for its first unit, empty on later units.
     pub header: String,
     pub units: Vec<UnitKey>,
 }
@@ -298,7 +296,125 @@ pub struct UnitKey {
     pub record_sha256: String,
 }
 
-/// Run-wide publication inputs. Every group of one run carries the same.
+/// Common row status spellings encoded as one-byte postcard discriminants.
+/// Unknown future spellings remain strings and keep their fail-closed meaning.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StatusCode {
+    Safe,
+    Pending,
+    Unknown,
+    Unsafe,
+    DataOnly,
+    GatewayFailure,
+}
+
+impl StatusCode {
+    fn of(value: &str) -> Option<Self> {
+        Some(match value {
+            "Safe" => Self::Safe,
+            "Pending" => Self::Pending,
+            "Unknown" => Self::Unknown,
+            "Unsafe" => Self::Unsafe,
+            "data_only" => Self::DataOnly,
+            "gateway_failure" => Self::GatewayFailure,
+            _ => return None,
+        })
+    }
+
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Safe => "Safe",
+            Self::Pending => "Pending",
+            Self::Unknown => "Unknown",
+            Self::Unsafe => "Unsafe",
+            Self::DataOnly => "data_only",
+            Self::GatewayFailure => "gateway_failure",
+        }
+    }
+}
+
+/// A JSON value encoded as postcard tags and native numeric payloads, never
+/// as an embedded JSON document. Float bits retain negative zero and adjacent
+/// finite values exactly; names and messages remain UTF-8 strings.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BinaryValue {
+    Null,
+    Bool(bool),
+    I64(i64),
+    U64(u64),
+    F64Bits(u64),
+    Status(StatusCode),
+    String(String),
+    Array(Vec<Self>),
+    Object(Vec<(String, Self)>),
+}
+
+impl BinaryValue {
+    pub fn from_json(value: &Value) -> Result<Self, String> {
+        Ok(match value {
+            Value::Null => Self::Null,
+            Value::Bool(value) => Self::Bool(*value),
+            Value::Number(number) => {
+                if number.is_f64() {
+                    Self::F64Bits(
+                        number
+                            .as_f64()
+                            .ok_or("JSON number is not representable as a finite f64")?
+                            .to_bits(),
+                    )
+                } else if let Some(value) = number.as_i64() {
+                    Self::I64(value)
+                } else {
+                    Self::U64(number.as_u64().ok_or("JSON integer exceeds u64")?)
+                }
+            }
+            Value::String(value) => StatusCode::of(value)
+                .map(Self::Status)
+                .unwrap_or_else(|| Self::String(value.clone())),
+            Value::Array(values) => Self::Array(
+                values
+                    .iter()
+                    .map(Self::from_json)
+                    .collect::<Result<_, _>>()?,
+            ),
+            Value::Object(values) => Self::Object(
+                values
+                    .iter()
+                    .map(|(key, value)| Ok((key.clone(), Self::from_json(value)?)))
+                    .collect::<Result<_, String>>()?,
+            ),
+        })
+    }
+
+    pub fn to_json(&self) -> Result<Value, String> {
+        Ok(match self {
+            Self::Null => Value::Null,
+            Self::Bool(value) => Value::Bool(*value),
+            Self::I64(value) => Value::Number((*value).into()),
+            Self::U64(value) => Value::Number((*value).into()),
+            Self::F64Bits(bits) => Value::Number(
+                serde_json::Number::from_f64(f64::from_bits(*bits))
+                    .ok_or("checkpoint contains a non-finite float")?,
+            ),
+            Self::Status(status) => Value::String(status.as_str().to_owned()),
+            Self::String(value) => Value::String(value.clone()),
+            Self::Array(values) => {
+                Value::Array(values.iter().map(Self::to_json).collect::<Result<_, _>>()?)
+            }
+            Self::Object(values) => {
+                let mut object = serde_json::Map::new();
+                for (key, value) in values {
+                    if object.insert(key.clone(), value.to_json()?).is_some() {
+                        return Err(format!("checkpoint object repeats key `{key}`"));
+                    }
+                }
+                Value::Object(object)
+            }
+        })
+    }
+}
+
+/// Run-wide publication inputs. Every unit of one run carries the same.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GlobalSection {
@@ -307,15 +423,15 @@ pub struct GlobalSection {
     pub source_revision: String,
     /// The report's revision key (`fluent_bit_revision`).
     pub revision_key: String,
-    /// The report's `evidence` record (a contracts-only run), as JSON.
-    pub report_evidence_json: Option<String>,
-    /// The `.contracts.json` assumptions before the run-final keys, as JSON.
-    pub assumptions_json: String,
+    /// The report's `evidence` record (a contracts-only run), typed binary.
+    pub report_evidence: Option<BinaryValue>,
+    /// The `.contracts.json` assumptions before run-final keys, typed binary.
+    pub assumptions: BinaryValue,
     pub pending_declarations: u64,
     pub pending_markers: Vec<PendingMarkerRecord>,
     /// The report-independent part of the `contract_revision` section
-    /// ([`crate::contract_revision::SectionTemplate`]), as JSON.
-    pub revision_template_json: String,
+    /// ([`crate::contract_revision::SectionTemplate`]), typed binary.
+    pub revision_template: BinaryValue,
     /// The historical reference revision the Unknown sidecars name.
     pub historical_reference_revision: String,
 }
@@ -333,7 +449,7 @@ pub struct PendingMarkerRecord {
 }
 
 /// One step's share of every unit row: per unit, in unit order, the row's
-/// members this step owns, each as its value's pretty JSON text.
+/// members this step owns, each as a typed binary value.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RowStepSection {
@@ -346,13 +462,20 @@ pub struct RowMembers {
     pub members: Vec<JsonMember>,
 }
 
-/// One member of a JSON object: its key and its value as serde_json's pretty
-/// text at depth zero, exactly the bytes the report nests.
+/// One member of a report row: its key and numerically typed binary value.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct JsonMember {
     pub key: String,
-    pub json: String,
+    pub value: BinaryValue,
+}
+
+/// Closed certificate publication state, encoded as a postcard discriminant.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CertificateOutcome {
+    PublishedSafe,
+    BindingRefused,
+    NotPublished,
 }
 
 /// Per unit, what became of a `Safe` certificate. Derived from the rows for
@@ -369,19 +492,19 @@ pub struct CertificateRecord {
     pub file: String,
     /// `bound` (a Safe certificate admitted and bound to the unit's
     /// compile-task identity), `binding-refused`, or `none`.
-    pub outcome: String,
+    pub outcome: CertificateOutcome,
     pub compile_task_identity_json_sha256: Option<String>,
     pub reason: Option<String>,
 }
 
-/// The contract set in force, and the group's held calls.
+/// The contract set in force, and the unit's held calls.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ContractsSection {
     pub manifest_sha256: String,
     pub sources_sha256: String,
     pub modules: Vec<ModuleDigest>,
-    pub provider_selection_json: Option<String>,
+    pub provider_selection: Option<BinaryValue>,
     pub evidence_mode: String,
     pub locks: Vec<LockDigest>,
     pub pending_declarations: u64,
@@ -418,7 +541,7 @@ pub struct HeldFunction {
     pub function: String,
 }
 
-/// The group's final result.
+/// The unit's final result.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ResultSection {
@@ -427,11 +550,11 @@ pub struct ResultSection {
     pub outputs: Vec<String>,
     pub counts: CountsRecord,
     pub diagnostic_counts: Vec<CategoryCount>,
-    /// The canonical checkout sources the group's units stand for.
+    /// The canonical checkout source this unit stands for.
     pub sources: Vec<String>,
     /// The group's verdict: the join (`qcore_schemas::verdict::Verdict::fold`)
     /// of its units' verdicts ([`unit_verdict`]), spelled as in reports.
-    pub verdict: String,
+    pub verdict: Verdict,
 }
 
 /// A unit row's status as a four-value verdict (card W45-USER-CONTRACT-PLUGINS,
@@ -565,8 +688,17 @@ impl Checkpoint {
         ])
     }
 
+    fn validate_payloads(&self) -> Result<(), String> {
+        validate_payloads(
+            &self.global,
+            [&self.preparation, &self.lowering, &self.verdicts],
+            &self.contracts,
+        )
+    }
+
     /// The file's bytes.
     pub fn to_bytes(&self) -> Result<Vec<u8>, String> {
+        self.validate_payloads()?;
         assemble(self.encode_sections()?)
     }
 
@@ -588,7 +720,7 @@ impl Checkpoint {
             offset += length;
         }
         let get = |name: &str| sections[name];
-        Ok(Self {
+        let checkpoint = Self {
             identity: decode("identity", get("identity"))?,
             plan: decode("plan", get("plan"))?,
             global: decode("global", get("global"))?,
@@ -599,7 +731,9 @@ impl Checkpoint {
             contracts: decode("contracts", get("contracts"))?,
             result: decode("result", get("result"))?,
             provenance: decode("provenance", get("provenance"))?,
-        })
+        };
+        checkpoint.validate_payloads()?;
+        Ok(checkpoint)
     }
 
     /// The manifest this checkpoint encodes to.
@@ -619,6 +753,29 @@ impl Checkpoint {
     pub fn content_sha256(&self) -> Result<String, String> {
         content_sha256(&self.manifest()?)
     }
+}
+
+fn validate_payloads(
+    global: &GlobalSection,
+    steps: [&RowStepSection; 3],
+    contracts: &ContractsSection,
+) -> Result<(), String> {
+    if let Some(value) = &global.report_evidence {
+        value.to_json()?;
+    }
+    global.assumptions.to_json()?;
+    global.revision_template.to_json()?;
+    if let Some(value) = &contracts.provider_selection {
+        value.to_json()?;
+    }
+    for section in steps {
+        for unit in &section.units {
+            for member in &unit.members {
+                member.value.to_json()?;
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Assemble a file from encoded sections in [`SECTIONS`] order.
@@ -815,15 +972,15 @@ impl CheckpointReader {
     pub fn verify(&mut self) -> Result<(), String> {
         self.section::<IdentitySection>("identity")?;
         self.section::<PlanSection>("plan")?;
-        self.section::<GlobalSection>("global")?;
-        self.section::<RowStepSection>("preparation")?;
-        self.section::<RowStepSection>("lowering")?;
-        self.section::<RowStepSection>("verdicts")?;
+        let global = self.section::<GlobalSection>("global")?;
+        let preparation = self.section::<RowStepSection>("preparation")?;
+        let lowering = self.section::<RowStepSection>("lowering")?;
+        let verdicts = self.section::<RowStepSection>("verdicts")?;
         self.section::<CertificatesSection>("certificates")?;
-        self.section::<ContractsSection>("contracts")?;
+        let contracts = self.section::<ContractsSection>("contracts")?;
         self.section::<ResultSection>("result")?;
         self.section::<ProvenanceSection>("provenance")?;
-        Ok(())
+        validate_payloads(&global, [&preparation, &lowering, &verdicts], &contracts)
     }
 
     /// The content digest of this file's manifest.
@@ -859,10 +1016,9 @@ pub fn split_row(row: &Value) -> Result<[RowMembers; 3], String> {
     };
     let mut steps: [RowMembers; 3] = Default::default();
     for (key, value) in map {
-        let json = serde_json::to_string_pretty(value).map_err(|error| error.to_string())?;
         steps[step_of(key)].members.push(JsonMember {
             key: key.clone(),
-            json,
+            value: BinaryValue::from_json(value)?,
         });
     }
     Ok(steps)
@@ -905,7 +1061,9 @@ pub fn render_row(steps: [&RowMembers; 3], depth: usize, out: &mut String) -> Re
         out.push_str(&indent);
         out.push_str(&serde_json::to_string(&member.key).map_err(|error| error.to_string())?);
         out.push_str(": ");
-        reindent(&member.json, depth + 1, out);
+        let json = serde_json::to_string_pretty(&member.value.to_json()?)
+            .map_err(|error| error.to_string())?;
+        reindent(&json, depth + 1, out);
     }
     out.push('\n');
     out.push_str(&"  ".repeat(depth));
@@ -1206,8 +1364,8 @@ mod tests {
                 console_preamble: vec!["x r (current checkout)".into()],
                 source_revision: "r".into(),
                 revision_key: "fluent_bit_revision".into(),
-                report_evidence_json: None,
-                assumptions_json: "{\"a\":1}".into(),
+                report_evidence: None,
+                assumptions: BinaryValue::from_json(&json!({"a":1})).unwrap(),
                 pending_declarations: 0,
                 pending_markers: vec![PendingMarkerRecord {
                     function: "k".into(),
@@ -1218,7 +1376,7 @@ mod tests {
                     module: "m".into(),
                     module_sha256: None,
                 }],
-                revision_template_json: "{\"pinned\":[]}".into(),
+                revision_template: BinaryValue::from_json(&json!({"pinned":[]})).unwrap(),
                 historical_reference_revision: "h".into(),
             },
             preparation: RowStepSection {
@@ -1233,7 +1391,7 @@ mod tests {
             certificates: CertificatesSection {
                 units: vec![CertificateRecord {
                     file: "a.c".into(),
-                    outcome: "none".into(),
+                    outcome: CertificateOutcome::NotPublished,
                     compile_task_identity_json_sha256: None,
                     reason: None,
                 }],
@@ -1245,7 +1403,7 @@ mod tests {
                     module: "m".into(),
                     sha256: "9".repeat(64),
                 }],
-                provider_selection_json: None,
+                provider_selection: None,
                 evidence_mode: "configured".into(),
                 locks: vec![],
                 pending_declarations: 0,
@@ -1275,7 +1433,7 @@ mod tests {
                     count: 1,
                 }],
                 sources: vec!["/c/a.c".into()],
-                verdict: "Unknown".into(),
+                verdict: Verdict::Unknown,
             },
             provenance: ProvenanceSection {
                 wall_time_ms: 5,
@@ -1283,6 +1441,53 @@ mod tests {
                 ..Default::default()
             },
         }
+    }
+
+    #[test]
+    fn numeric_binary_values_preserve_json_boundaries_and_float_bits() {
+        let floats = [
+            -0.0f64,
+            1.0,
+            1e100,
+            1e-100,
+            f64::from_bits(1.0f64.to_bits() + 1),
+        ];
+        let mut values = vec![json!(u64::MAX), json!(i64::MIN)];
+        values.extend(
+            floats
+                .into_iter()
+                .map(|value| Value::Number(serde_json::Number::from_f64(value).unwrap())),
+        );
+        for value in values {
+            let binary = BinaryValue::from_json(&value).unwrap();
+            let encoded = postcard::to_stdvec(&binary).unwrap();
+            let decoded: BinaryValue = postcard::from_bytes(&encoded).unwrap();
+            assert_eq!(decoded, binary);
+            assert_eq!(decoded.to_json().unwrap(), value);
+            assert_eq!(
+                serde_json::to_vec(&decoded.to_json().unwrap()).unwrap(),
+                serde_json::to_vec(&value).unwrap()
+            );
+            if let BinaryValue::F64Bits(bits) = decoded {
+                assert_eq!(bits, value.as_f64().unwrap().to_bits());
+            }
+        }
+        assert!(
+            postcard::to_stdvec(&BinaryValue::U64(u64::MAX))
+                .unwrap()
+                .len()
+                < 20
+        );
+        assert!(postcard::from_bytes::<BinaryValue>(&[0x7f]).is_err());
+        assert!(BinaryValue::F64Bits(f64::NAN.to_bits()).to_json().is_err());
+        assert!(
+            BinaryValue::Object(vec![
+                ("x".into(), BinaryValue::Null),
+                ("x".into(), BinaryValue::Null)
+            ])
+            .to_json()
+            .is_err()
+        );
     }
 
     #[test]
@@ -1410,36 +1615,34 @@ mod tests {
     }
 
     #[test]
-    fn a_future_schema_version_is_refused() {
-        let checkpoint = sample();
-        let sections = checkpoint.encode_sections().unwrap();
-        let header = Header {
-            schema_version: SCHEMA_VERSION + 1,
-            sections: sections
-                .iter()
-                .map(|(name, bytes)| SectionEntry {
-                    name: (*name).to_owned(),
-                    length: bytes.len() as u64,
-                    sha256: sha256_bytes(bytes),
-                })
-                .collect(),
-        };
-        let header_bytes = encode("header", &header).unwrap();
-        let mut out = prelude().to_vec();
-        out.extend_from_slice(&(header_bytes.len() as u32).to_le_bytes());
-        out.extend_from_slice(&header_bytes);
-        let digest = sha256_bytes(&out);
-        out.extend_from_slice(&digest);
-        for (_, bytes) in sections {
-            out.extend_from_slice(&bytes);
+    fn old_and_future_schema_versions_are_refused() {
+        let sections = sample().encode_sections().unwrap();
+        for version in [2, SCHEMA_VERSION + 1] {
+            let header = Header {
+                schema_version: version,
+                sections: sections
+                    .iter()
+                    .map(|(name, bytes)| SectionEntry {
+                        name: (*name).to_owned(),
+                        length: bytes.len() as u64,
+                        sha256: sha256_bytes(bytes),
+                    })
+                    .collect(),
+            };
+            let header_bytes = encode("header", &header).unwrap();
+            let mut out = prelude().to_vec();
+            out.extend_from_slice(&(header_bytes.len() as u32).to_le_bytes());
+            out.extend_from_slice(&header_bytes);
+            out.extend_from_slice(&sha256_bytes(&out));
+            for (_, bytes) in &sections {
+                out.extend_from_slice(bytes);
+            }
+            assert!(
+                Checkpoint::from_bytes(&out)
+                    .unwrap_err()
+                    .contains(&format!("unsupported checkpoint schema version {version}"))
+            );
         }
-        // Card W45-REFUTED-CONTRACT-WITHDRAWAL moved the schema to 2, so the
-        // future version is 3.
-        assert!(
-            Checkpoint::from_bytes(&out)
-                .unwrap_err()
-                .contains("unsupported checkpoint schema version 3")
-        );
     }
 
     #[test]

@@ -21,6 +21,12 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
 
+| [audit-checkpoint-files](audit-checkpoint-files/README.md) | Per-configuration audit checkpoints |
+
+| [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
+
+| [audit-prepare-progress](audit-prepare-progress/README.md) | Audit preparation progress |
+
 ## B
 
 | Card directory | Original report title |

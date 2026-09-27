@@ -2,6 +2,7 @@
 name = "qcore-audit"
 version = "0.1.0"
 edition = "2024"
+default-run = "quirin-audit"
 license = "MIT OR Apache-2.0"
 description = "Configured existing-C resource projection and reproducible audit reports."
 
@@ -10,6 +11,10 @@ description = "Configured existing-C resource projection and reproducible audit 
 [[bin]]
 name = "quirin-audit"
 path = "src/main.rs"
+
+[[bin]]
+name = "quirin-dump-checkpoint"
+path = "src/bin/quirin-dump-checkpoint.rs"
 
 [dependencies]
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }

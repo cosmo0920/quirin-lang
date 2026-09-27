@@ -1,6 +1,6 @@
 import QCore.Checkpoints
 
-/-! Card **W45-AUDIT-CHECKPOINTS**: per-group `.qo` audit checkpoints, resumed
+/-! Card **W45-AUDIT-CHECKPOINTS**: per-configuration `.qo` audit checkpoints, resumed
 under an identity guard and composed into one report.
 
 Three directions are audited.
@@ -42,6 +42,7 @@ the report. -/
 #print axioms QCore.Checkpoints.compose_eq_whole
 #print axioms QCore.Checkpoints.group_rows_flatten
 #print axioms QCore.Checkpoints.resume_then_compose_eq_whole
+#print axioms QCore.Checkpoints.per_unit_resume_then_compose_eq_whole
 
 -- Admission.
 #print axioms QCore.Checkpoints.compose_admits_one_run

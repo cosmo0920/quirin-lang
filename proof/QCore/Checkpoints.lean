@@ -1,10 +1,10 @@
-/-! Card **W45-AUDIT-CHECKPOINTS** — per-group audit checkpoints: identity-guarded
+/-! Card **W45-AUDIT-CHECKPOINTS** — per-configuration audit checkpoints: identity-guarded
 reuse and composition.
 
 This is a model of `crates/qcore-audit/src/checkpoint_run.rs` (resume) and
 `crates/qcore-audit/src/compose.rs` (composition). A checkpointed
-`quirin-audit current` run analyses one library group at a time, seals each
-group's rows and tallies with an identity, and publishes the report by folding
+`quirin-audit current` run analyses independent compile configurations, seals each
+unit's rows and tallies with an identity, and publishes the report by folding
 the groups' results. Three facts are proved.
 
 * **Reuse is recomputation.** A group's stored rows are reused only when the
@@ -225,6 +225,25 @@ theorem resume_then_compose_eq_whole [DecidableEq Fp] [DecidableEq RunId] [Decid
   have resumed : (gs.map fun g => resume a e g (stored g)) = gs.map (List.map (a.analyze e)) :=
     List.map_congr_left fun g _ => resume_eq_recompute determined e g (stored g) (sealed g)
   rw [resumed, compose_eq_whole, group_rows_flatten]
+
+/-- A singleton checkpoint is enough to publish one configuration; later
+completed configurations may be stored independently while ordered publication
+waits for an earlier unit. The wait changes neither the rows nor their fold. -/
+theorem per_unit_resume_then_compose_eq_whole [DecidableEq Fp] [DecidableEq RunId]
+    [DecidableEq Src] {a : Analysis Env Input Fp Row RunId} (determined : Determined a)
+    (tally : Row → Nat) (source : Row → Src) (e : Env) (units : List Input)
+    (stored : List Input → Option (Checkpoint Fp Row RunId))
+    (sealed : ∀ g c, stored g = some c → Sealed a c) :
+    composeGroups tally source
+      (units.map fun unit => resume a e [unit] (stored [unit])) =
+      publish tally source (units.map (a.analyze e)) := by
+  have h := resume_then_compose_eq_whole determined tally source e
+    (units.map fun unit => [unit]) stored sealed
+  have flat (xs : List Input) : (xs.map fun unit => [unit]).flatten = xs := by
+    induction xs with
+    | nil => rfl
+    | cons unit rest ih => simp [ih]
+  simpa [List.map_map, Function.comp_def, flat] using h
 
 /-! ## Admission -/
 

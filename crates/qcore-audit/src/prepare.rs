@@ -34,9 +34,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::ffi::OsString;
 use std::fs;
-use std::io::Read;
 use std::path::{Component, Path, PathBuf};
 use std::process::{Command, ExitCode};
+use std::time::Instant;
 
 use qcore_contract::profile_loader::sha256_hex;
 use serde_json::{Value, json};
@@ -166,6 +166,7 @@ pub fn main(arguments: Vec<String>) -> ExitCode {
 
 fn run(arguments: &[String]) -> Result<ExitCode, String> {
     let (step, options) = parse(arguments)?;
+    eprintln!("prepare: checking checkout and tools");
     let cwd = std::env::current_dir().map_err(|error| error.to_string())?;
     let repository = repository_root(options.repository.as_deref(), &cwd)?;
     let tools = Tools {
@@ -325,6 +326,11 @@ fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared
     }
     create_dir_all(&output)?;
     if !source.exists() {
+        eprintln!(
+            "prepare: cloning {} into {}",
+            upstream.display(),
+            source.display()
+        );
         // No shared object alternates: the persistent checkout is independent.
         capture(
             "git",
@@ -338,6 +344,7 @@ fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared
         )?;
         capture("git", &["-C", text(&source)?, "checkout", "--detach", &pin])?;
     }
+    eprintln!("prepare: validating source {}", source.display());
     if !source.join(".git").is_dir() {
         return Err("existing source is not an independent Git checkout".into());
     }
@@ -524,6 +531,7 @@ struct MonkeyPrepared {
 
 /// Port of the retired Cycle 19 Monkey preparation script.
 fn prepare_monkey(request: &MonkeyRequest) -> Result<MonkeyPrepared, String> {
+    eprintln!("prepare: preparing Monkey inputs");
     let upstream = strict_resolve(request.fluent_bit)?;
     let out = resolve(
         &request
@@ -693,15 +701,7 @@ fn prepare_monkey(request: &MonkeyRequest) -> Result<MonkeyPrepared, String> {
         ]
         .map(|name| format!("-DMK_PLUGIN_{name}=OFF")),
     );
-    let result = Command::new(&command[0])
-        .args(&command[1..])
-        .output()
-        .map_err(|error| format!("{}: {error}", command[0]))?;
-    let log = out.join("configure.log");
-    write_text(&log, &(decode(result.stdout)? + &decode(result.stderr)?))?;
-    if !result.status.success() {
-        return Err(format!("CMake configuration failed; see {}", log.display()));
-    }
+    logged_with_order(&command, &out.join("configure.log"), true)?;
     let database = build.join("compile_commands.json");
     let entries = PyJson::parse(&read_text(&database)?)
         .map_err(|error| format!("{}: {error}", database.display()))?;
@@ -1015,28 +1015,54 @@ fn capture(program: &str, arguments: &[&str]) -> Result<String, String> {
     run_raw(program, arguments).map(|output| python_strip(&output).to_owned())
 }
 
-/// The script's `logged`: standard output and error through one pipe into
-/// `path`, written whatever the exit status.
+/// Stream combined output to the log while the command runs, retaining the
+/// scripts' final UTF-8/universal-newline representation.
 fn logged(command: &[String], path: &Path) -> Result<(), String> {
-    let (mut reader, writer) = std::io::pipe().map_err(|error| error.to_string())?;
-    let error_writer = writer.try_clone().map_err(|error| error.to_string())?;
-    let mut child = {
-        // The command owns both write ends; it is dropped once the child
-        // holds them, so the read below ends with the child's output.
-        let mut process = Command::new(&command[0]);
-        process
-            .args(&command[1..])
-            .stdout(writer)
-            .stderr(error_writer);
-        process
-            .spawn()
-            .map_err(|error| format!("{}: {error}", command[0]))?
+    logged_with_order(command, path, false)
+}
+
+/// Monkey's historical log places stdout before stderr. Keep a live stderr
+/// sibling during execution, then concatenate the two in that same order.
+/// An interrupted command leaves its available output on disk.
+fn logged_with_order(command: &[String], path: &Path, separate_stderr: bool) -> Result<(), String> {
+    let stdout = fs::File::create(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let stderr_path = path.with_extension("stderr.log");
+    let stderr = if separate_stderr {
+        fs::File::create(&stderr_path)
+            .map_err(|error| format!("{}: {error}", stderr_path.display()))?
+    } else {
+        stdout.try_clone().map_err(|error| error.to_string())?
     };
-    let mut bytes = Vec::new();
-    let read = reader.read_to_end(&mut bytes);
-    let status = child.wait().map_err(|error| error.to_string())?;
-    read.map_err(|error| error.to_string())?;
-    write_text(path, &decode(bytes)?)?;
+    eprintln!(
+        "prepare: running {}; live log: {}",
+        command[0],
+        path.display()
+    );
+    if separate_stderr {
+        eprintln!("prepare: live stderr: {}", stderr_path.display());
+    }
+    let started = Instant::now();
+    let status = Command::new(&command[0])
+        .args(&command[1..])
+        .stdout(stdout)
+        .stderr(stderr)
+        .status()
+        .map_err(|error| format!("{}: {error}; see {}", command[0], path.display()))?;
+    let mut contents = read_text(path)?;
+    if separate_stderr {
+        contents.push_str(&read_text(&stderr_path)?);
+    }
+    write_text(path, &contents)?;
+    if separate_stderr {
+        fs::remove_file(&stderr_path)
+            .map_err(|error| format!("{}: {error}", stderr_path.display()))?;
+    }
+    eprintln!(
+        "prepare: {} finished ({status}) in {:.1}s; log: {}",
+        command[0],
+        started.elapsed().as_secs_f64(),
+        path.display()
+    );
     if !status.success() {
         let code = status
             .code()
@@ -1287,6 +1313,54 @@ mod tests {
         ] {
             assert!(parse(&args(misuse)).is_err(), "{misuse:?}");
         }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn preparation_logs_are_readable_before_exit_and_keep_final_order_on_failure() {
+        use std::time::{Duration, SystemTime, UNIX_EPOCH};
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "qcore-prepare-live-{}-{unique}",
+            std::process::id()
+        ));
+        fs::create_dir(&root).unwrap();
+        let path = root.join("configure.log");
+        let worker_path = path.clone();
+        let script = "printf 'out\\r\\n'; printf 'err\\r\\n' >&2; n=0; while [ ! -e \"$1/release\" ] && [ \"$n\" -lt 1000 ]; do sleep 0.02; n=$((n+1)); done; exit 7";
+        let command = vec![
+            "/bin/sh".into(),
+            "-c".into(),
+            script.into(),
+            "fixture".into(),
+            root.display().to_string(),
+        ];
+        let worker = std::thread::spawn(move || logged_with_order(&command, &worker_path, true));
+        let deadline = Instant::now() + Duration::from_secs(10);
+        let mut observed = false;
+        while Instant::now() < deadline && !worker.is_finished() {
+            if fs::read(&path).ok().as_deref() == Some(b"out\r\n")
+                && fs::read(path.with_extension("stderr.log")).ok().as_deref() == Some(b"err\r\n")
+            {
+                observed = true;
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        // Always release before asserting: a failed observation cannot strand a child.
+        fs::write(root.join("release"), b"").unwrap();
+        let result = worker.join().unwrap();
+        assert!(
+            observed,
+            "logs were not readable while the command was blocked"
+        );
+        assert!(result.unwrap_err().contains("command failed (7)"));
+        assert_eq!(fs::read_to_string(&path).unwrap(), "out\nerr\n");
+        assert!(!path.with_extension("stderr.log").exists());
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]

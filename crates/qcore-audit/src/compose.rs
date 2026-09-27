@@ -1,14 +1,14 @@
-//! Card **W45-AUDIT-CHECKPOINTS**: streaming composition of per-group `.qo`
+//! Card **W45-AUDIT-CHECKPOINTS**: streaming composition of per-configuration `.qo`
 //! checkpoints into one report.
 //!
 //! [`compose`] first opens and fully verifies every checkpoint, one section at
 //! a time, and refuses the set unless it is exactly one run's plan: every
-//! group present once, no unit in two groups, and every checkpoint agreeing on
+//! planned unit present once, no repeated unit, and every checkpoint agreeing on
 //! the run identity (analyzer, contract set, configuration, environment,
 //! revision), the run-wide publication inputs and the plan. Only then does it
-//! write anything. It merges the small per-group results (tallies, sources,
-//! held calls), writes the report's head, and streams the rows group by group:
-//! it holds one group's step sections at a time, never the whole corpus. The
+//! write anything. It merges the small per-unit results (tallies, sources,
+//! held calls), writes the report's head, and streams the rows unit by unit:
+//! it holds one unit's step sections at a time, never the whole corpus. The
 //! report goes to a temporary sibling and is renamed into place only when
 //! complete, so a refusal part-way never leaves a partial report.
 //!
@@ -44,7 +44,7 @@ pub struct ComposeOutputs<'a> {
 /// Which console lines a composition prints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Console {
-    /// Everything the whole run prints: the preamble, each group's header and
+    /// Everything the whole run prints: the preamble, each library's header and
     /// unit lines, and the totals.
     Full,
     /// Only the totals: a checkpointed run has printed the rest as it went.
@@ -105,7 +105,7 @@ pub fn compose(
     let mut members = open_members(files)?;
     let global = members[0].global.clone();
     let groups = members[0].plan.groups.clone();
-    // Merge the small per-group results; print group lines in plan order.
+    // Merge the small per-unit results; print group lines in plan order.
     if console == Console::Full {
         for line in &global.console_preamble {
             println!("{line}");
@@ -117,6 +117,12 @@ pub fn compose(
         let contracts = member.reader.section::<ContractsSection>("contracts")?;
         let provenance = member.reader.section::<ProvenanceSection>("provenance")?;
         let expected = member.identity.group.units.len();
+        if result.header != member.plan.groups[member.plan.group as usize].header {
+            return Err(format!(
+                "{}: result header differs from the run plan",
+                member.path.display()
+            ));
+        }
         if result.outputs.len() != expected {
             return Err(format!(
                 "{}: the result records {} unit(s), the identity {expected}",
@@ -125,7 +131,9 @@ pub fn compose(
             ));
         }
         if console == Console::Full {
-            println!("{}", result.header);
+            if !result.header.is_empty() {
+                println!("{}", result.header);
+            }
             for output in &result.outputs {
                 print!("{output}");
             }
@@ -135,11 +143,10 @@ pub fn compose(
             .map_err(|error| format!("{}: {error}", member.path.display()))?;
     }
     let evidence = global
-        .report_evidence_json
-        .as_deref()
-        .map(serde_json::from_str::<Value>)
-        .transpose()
-        .map_err(|error| error.to_string())?;
+        .report_evidence
+        .as_ref()
+        .map(crate::checkpoint::BinaryValue::to_json)
+        .transpose()?;
     let markers = PendingMarkers {
         declarations: global.pending_declarations as usize,
         markers: global
@@ -158,7 +165,8 @@ pub fn compose(
     };
     let pending = crate::pending_review::render(&markers, &totals.held);
     let template: crate::contract_revision::SectionTemplate =
-        serde_json::from_str(&global.revision_template_json).map_err(|error| error.to_string())?;
+        serde_json::from_value(global.revision_template.to_json()?)
+            .map_err(|error| error.to_string())?;
     let revision = crate::contract_revision::render(&template, &totals.revision);
     let counts = &totals.counts;
     println!(
@@ -183,8 +191,7 @@ pub fn compose(
     println!("{}", crate::pending_review::tally(&pending));
     // Card W45-USER-CONTRACT-PLUGINS: printed only when a checker ran, as the
     // whole run prints it.
-    let assumptions: Value =
-        serde_json::from_str(&global.assumptions_json).map_err(|error| error.to_string())?;
+    let assumptions: Value = global.assumptions.to_json()?;
     if assumptions["plugin_checks"].is_object() {
         println!(
             "{}",
@@ -259,10 +266,7 @@ fn refuted_rows(members: &mut [Member]) -> Result<crate::refuted_contracts::RowT
             let mut unit = serde_json::Map::new();
             for member in preparation.members.iter().chain(&verdicts.members) {
                 if matches!(member.key.as_str(), "library" | "file" | "functions") {
-                    unit.insert(
-                        member.key.clone(),
-                        serde_json::from_str(&member.json).map_err(|error| error.to_string())?,
-                    );
+                    unit.insert(member.key.clone(), member.value.to_json()?);
                 }
             }
             tally.absorb(&Value::Object(unit));
@@ -393,7 +397,7 @@ fn fold_verdicts(
     totals: &mut BTreeMap<&'static str, u64>,
     group: &ResultSection,
 ) -> Result<(), String> {
-    let recorded = group.verdict.parse::<Verdict>()?;
+    let recorded = group.verdict;
     let tallied = tallied_verdict(&group.counts);
     if recorded != tallied {
         return Err(format!(
@@ -507,7 +511,7 @@ impl Totals {
     }
 }
 
-/// Stream every group's rows into `path`, one group's step sections at a time.
+/// Stream every group's rows into `path`, one unit's step sections at a time.
 fn write_report(
     path: &Path,
     head: &str,
@@ -586,9 +590,7 @@ mod tests {
             counts,
             diagnostic_counts: Vec::new(),
             sources: Vec::new(),
-            verdict: Verdict::fold(verdicts.iter().map(|status| unit_verdict(status)))
-                .as_str()
-                .into(),
+            verdict: Verdict::fold(verdicts.iter().map(|status| unit_verdict(status))),
         }
     }
 
@@ -624,12 +626,10 @@ mod tests {
     #[test]
     fn a_group_whose_verdict_disagrees_with_its_tallies_is_refused() {
         let mut forged = group(&["Pending", "Safe"]);
-        forged.verdict = "Safe".into();
+        forged.verdict = Verdict::Safe;
         let error = fold_verdicts(&mut Verdict::Safe, &mut BTreeMap::new(), &forged).unwrap_err();
         assert!(error.contains("records verdict Safe but its tallies imply Pending"));
-        let mut unspelled = group(&["Safe"]);
-        unspelled.verdict = "Fine".into();
-        assert!(fold_verdicts(&mut Verdict::Safe, &mut BTreeMap::new(), &unspelled).is_err());
+        assert!(postcard::from_bytes::<Verdict>(&[0x7f]).is_err());
         assert_eq!(unit_verdict("gateway_failure"), Verdict::Unknown);
         assert_eq!(unit_verdict("something new"), Verdict::Unknown);
     }

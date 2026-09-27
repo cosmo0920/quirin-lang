@@ -677,38 +677,37 @@ and its `Unsafe` only with a validated witness, and otherwise either is
 applies a bound contract, and the sidecar carries a `plugin_checks` section.
 The SDK is [`providers/quirin-provider-plugin`](../../providers/quirin-provider-plugin/README.md).
 
-## Checkpoints: group by group, resume, compose
+## Checkpoints: per configuration, resume, compose
 
-`quirin-audit current … --checkpoint-dir D` analyses the route's library
-groups one at a time and seals each into `D/<label>.qo`, dropping the group's
-state before the next, so peak memory is bounded by one group; the report is
-then composed from the checkpoints and is byte-identical to the whole run's.
-`--resume` reuses each group whose identity (analyzer build, contract set and
-locks, configuration, environment, revision, and every unit's compile-task
-identity and preparation facts) is unchanged, and recomputes the rest, saying
-why. Checkpointing is off by default and never changes a verdict.
+`quirin-audit current … --checkpoint-dir D` seals one complete `.qo` for
+each source translation unit and compile configuration as its worker finishes.
+Two compile records for one C source get distinct files. Completed files survive
+an interrupted run even when ordered output waits for an earlier slow unit;
+`--resume` checks each file's analyzer, contract, environment, revision,
+compile-task and preparation identity and recomputes only changed or missing
+units. The report is then composed in plan order and is byte-identical to the
+whole run's. Checkpointing is off by default and never changes a verdict.
 
 ```sh
 quirin-audit current --checkout … --profile-directory … --report out/r.json \
   --checkpoint-dir out/qo [--resume] --jobs 16
 quirin-audit checkpoint verify out/qo/*.qo
 quirin-audit checkpoint compose out/qo/*.qo --report again/r.json
-quirin-audit checkpoint decompose out/qo/chunkio.qo --format yaml --output chunkio.yaml
-quirin-audit checkpoint recompose chunkio.yaml --format yaml --output chunkio.qo
+quirin-audit checkpoint decompose out/qo/UNIT.qo --format yaml --output unit.yaml
+quirin-audit checkpoint recompose unit.yaml --format yaml --output unit.qo
 ```
 
-A `.qo` file is `QO`, a big-endian format version, a guard, a postcard header
-listing ten sections (identity, plan, global, preparation, lowering, verdicts,
-certificates, contracts, result, provenance) with their lengths and SHA-256,
-the header's own SHA-256, and the postcard-encoded sections. A truncated,
-tampered or version-mismatched file is refused whole. Every section but
-`provenance` (wall time, peak memory, timings) is deterministic, so runs at any
-`--jobs` agree on the content digest `verify` prints. Each group records its
-verdict, the join of its units' (`Safe < Pending < Unknown < Unsafe`), and
-`compose` reports the run's verdict, the join of the groups'. The full specification,
-including the YAML/TOML mapping, is
-[docs/development/audit-checkpoints.md](../../docs/development/audit-checkpoints.md)
-([report](../../docs/reports/w45-audit-checkpoints/README.md)).
+A schema-3 `.qo` file has ten separately digested binary sections (identity, plan, global,
+preparation, lowering, verdicts, certificates, contracts, result, provenance).
+It encodes integers, finite float bits and common result statuses numerically,
+with UTF-8 for names, paths and messages. Each file contains the full run plan
+and global publication inputs, so it is self-contained. A truncated, tampered or version-mismatched file is refused
+whole; composition refuses missing, duplicate or mixed-run files. Every section
+but `provenance` (wall time, peak memory, timings) is deterministic, so runs
+at any `--jobs` agree on the content digest `verify` prints. The run's verdict
+joins every unit's verdict (`Safe < Pending < Unknown < Unsafe`). The full
+[checkpoint specification](../../docs/development/audit-checkpoints.md)
+describes the binary and YAML/TOML formats and identity rules.
 
 ## Configured source-contract processes
 
