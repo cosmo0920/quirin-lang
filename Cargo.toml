@@ -2,6 +2,7 @@
 exclude = ["providers"]
 members = [
     "crates/qcore-audit",
+    "crates/quirin-source-analysis",
     "compiler",
     "crates/qcore-c-gateway",
     "crates/qcore-contract",

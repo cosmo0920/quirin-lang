@@ -67,7 +67,7 @@ Run the semantic source checks with the existing Fluent Bit build database:
 
 ```sh
 cargo run --quiet -p qcore-compiler \
-  --example cycle19_fluent_bit_libraries_audit -- ../fluent-bit
+  -- current --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit
 ```
 
 Look for `qcore-contract ...: Checked` for the three field functions. The audit additionally

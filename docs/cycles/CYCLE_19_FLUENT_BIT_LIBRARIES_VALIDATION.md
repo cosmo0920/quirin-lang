@@ -101,8 +101,7 @@ input-chunk wrapper, and the Monkey source-contract gate can be reproduced
 with:
 
 ```sh
-cargo run --quiet -p qcore-compiler \
-  --example cycle19_fluent_bit_libraries_audit -- ../fluent-bit
+cargo run --quiet -p qcore-audit -- pinned ../fluent-bit
 ```
 
 The existing Linux Fluent Bit build auto-selects Monkey's epoll implementation;
@@ -130,8 +129,7 @@ cmake -S "$monkey_source/monkey" -B "$monkey_build" \
   -DEVENT__DISABLE_BENCHMARK=ON \
   -DEVENT__DISABLE_SAMPLES=ON
 cmake --build "$monkey_build" --parallel 2
-cargo run --quiet -p qcore-compiler \
-  --example cycle19_fluent_bit_libraries_audit -- \
+cargo run --quiet -p qcore-audit -- pinned \
   ../fluent-bit "$monkey_build/compile_commands.json"
 ```
 
@@ -336,7 +334,7 @@ outside the proved numerator.
 The current audit also imports the three included Monkey callbacks from the
 forced-Libevent `mk_event.c` build. It emits four `cb_event` source paths, three
 `cb_timeout` paths, and one `cb_wait_2_timeout` path. The optional third argument
-to `cycle19_fluent_bit_libraries_audit` saves their typed access/call report.
+to `quirin-audit pinned` saves their typed access/call report.
 The copied adapter and core layout/macro headers are explicitly byte-checked
 in addition to the standalone translation units.
 

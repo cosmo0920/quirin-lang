@@ -1,6 +1,8 @@
 # Checker generalization plan
 
-Date: 2026-09-06. Status: proposed execution plan. Audience: implementation
+Date: 2026-09-06. Status: historical proposed execution plan. The current pinned
+Fluent Bit arbiter is `quirin-audit pinned`; its source adapters now live in
+`crates/quirin-source-analysis/`. See [architecture](development/architecture.md). Audience: implementation
 agents (Opus/Sonnet-class) and reviewers. This plan reviews the current checker
 architecture, names where it is over-fitted to the pinned source sets, sets a
 pluggable-system decomposition target for the monolithic crate, and orders the

@@ -77,7 +77,7 @@ pub const USAGE: &str = "usage: quirin-audit [--plugin-path DIR]... --output DIR
 
 /// Every built-in subcommand of `quirin-audit` (`src/main.rs`). An external
 /// executable of one of these names is never run.
-pub const BUILTINS: [&str; 16] = [
+pub const BUILTINS: [&str; 17] = [
     "callback-task-handoff",
     "callback-task-handoff-fixture",
     "checkpoint",
@@ -89,6 +89,7 @@ pub const BUILTINS: [&str; 16] = [
     "event-payload",
     "native-platform-matrix",
     "observed-wait",
+    "pinned",
     "pin",
     "plugin",
     "prepare",
