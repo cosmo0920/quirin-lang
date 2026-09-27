@@ -37,16 +37,13 @@ pub(crate) fn record_parity(
     if !parity_enabled() {
         return;
     }
-    let old_bases = old.map(|(plan, _)| plan.bases.as_slice()).unwrap_or(&[]);
-    let old_chains = old.map(|(_, chains)| chains.len()).unwrap_or(0);
-    let old_destination = old.and_then(|(plan, _)| plan.destination.as_deref());
-    let new_bases = new.map(|plan| plan.scalar.bases.as_slice()).unwrap_or(&[]);
-    let new_chains = new.map(|plan| plan.chains.len()).unwrap_or(0);
-    let new_destination = new.and_then(|plan| plan.scalar.destination.as_deref());
-    let disagreement = old.is_some() != new.is_some()
-        || old_bases != new_bases
-        || old_destination != new_destination
-        || old_chains != new_chains;
+    let disagreement = match (old, new) {
+        (Some((old_scalar, old_chains)), Some(new)) => {
+            old_scalar != &new.scalar || old_chains != new.chains || new.borrowed_destination
+        }
+        (None, None) => false,
+        _ => true,
+    };
     let value = serde_json::json!({
         "function": function,
         "line": line,
@@ -54,12 +51,10 @@ pub(crate) fn record_parity(
         "old_route": old_route,
         "old_admitted": old.is_some(),
         "new_admitted": new.is_some(),
-        "old_bases": old_bases,
-        "new_bases": new_bases,
-        "old_chains": old_chains,
-        "new_chains": new_chains,
-        "old_destination": old_destination,
-        "new_destination": new_destination,
+        "old_scalar": old.map(|(plan, _)| format!("{plan:?}")),
+        "new_scalar": new.map(|plan| format!("{:?}", plan.scalar)),
+        "old_chains": old.map(|(_, chains)| format!("{chains:?}")),
+        "new_chains": new.map(|plan| format!("{:?}", plan.chains)),
         "new_borrowed_destination": new.is_some_and(|plan| plan.borrowed_destination),
         "disagreement": disagreement,
     });
@@ -218,7 +213,9 @@ impl StatementIndex {
     fn node_line(&self, node: &Value) -> Option<usize> {
         let offset = offset(&node["range"]["begin"])?;
         Some(
-            self.source.as_bytes()[..offset]
+            self.source
+                .as_bytes()
+                .get(..offset)?
                 .iter()
                 .filter(|&&b| b == b'\n')
                 .count()
