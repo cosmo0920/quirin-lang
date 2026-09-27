@@ -50,10 +50,7 @@ fn the_example_crate_reads_and_generates_its_user_load_path() {
     let krate = UserCrate::read(&example().join("quirin-provider-acme")).unwrap();
     assert_eq!(krate.name, "quirin-provider-acme");
     assert_eq!(krate.namespace, "acme");
-    assert_eq!(
-        krate.modules.keys().collect::<Vec<_>>(),
-        ["acme/pool.qv"]
-    );
+    assert_eq!(krate.modules.keys().collect::<Vec<_>>(), ["acme/pool.qv"]);
     assert_eq!(krate.manifest.checkers.len(), 1);
     let manifest =
         load_path::user_load_path("../providers/contract-load-path.json", &example(), &[krate])
@@ -128,6 +125,20 @@ fn a_crate_outside_the_load_path_directory_or_malformed_is_refused() {
             .unwrap_err()
             .contains("unexpected contract asset")
     );
+
+    let root = scratch("alias");
+    let directory = root.join("quirin-provider-acme");
+    copy_tree(&example().join("quirin-provider-acme"), &directory);
+    fs::copy(
+        directory.join("contracts/acme/pool.qv"),
+        directory.join("contracts/acme/pool.qcore"),
+    )
+    .unwrap();
+    assert!(
+        UserCrate::read(&directory)
+            .unwrap_err()
+            .contains("share one stem")
+    );
 }
 
 #[test]
@@ -137,7 +148,7 @@ fn a_new_crate_from_the_template_is_a_valid_crate_held_for_review() {
     template::instantiate(&directory, "quirin-provider-widget-pool").unwrap();
     let krate = UserCrate::read(&directory).unwrap();
     assert_eq!(krate.namespace, "widget_pool");
-    let text = &krate.modules["widget_pool/example.qcore"];
+    let text = &krate.modules["widget_pool/example.qv"];
     assert!(text.contains("extern fn widget_pool_release("));
     assert!(text.contains("requires resource_review_pending("));
     assert!(template::instantiate(&directory, "quirin-provider-widget-pool").is_err());

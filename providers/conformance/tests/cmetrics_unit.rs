@@ -57,10 +57,9 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
     let ChunkSourceResult::Summary(summary) = imports.remove(0) else {
         panic!("missing unit import")
     };
-    let contract = std::fs::read_to_string(
-        output.join("qcore.cmetrics/contracts/cmetrics/counter_reset.qv"),
-    )
-    .unwrap();
+    let contract =
+        std::fs::read_to_string(output.join("qcore.cmetrics/contracts/cmetrics/counter_reset.qv"))
+            .unwrap();
     let target = TargetProfile {
         library: "cmetrics".into(),
         revision: summary.source_revision().into(),
