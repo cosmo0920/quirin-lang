@@ -1,5 +1,8 @@
 # Owned Buffer source tasks
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `fa3e947`, 2026-09-07. `compile_files` and normal `qcorec check`/`emit`
 now support `ScopedOwnedTasksV1`: root allocation of an immutable i32 Buffer,
 affine move into a leaf child, typed original-input return, creator join and

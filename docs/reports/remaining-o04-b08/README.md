@@ -1,5 +1,8 @@
 # O04-B08 — aggregate stores and the aggregate branch condition — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-ARMS
 ([`docs/reports/remaining-o04-arms/README.md`](../remaining-o04-arms/README.md)
 §3.2), which settled four of the six exits of byte-verbatim

@@ -1,5 +1,8 @@
 # W45-FB-RETRY-LIFETIME: counted users and container publication, decided on the singleplex queue
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W45-FB-RETRY-LIFETIME, 2026-09-26, base `74579af6` ("Record the
 w45-fb-retry-fault-injection integration gate"). It is the first semantic
 slice of P1.3 (FB-RETRY-LIFETIME) of the

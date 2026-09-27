@@ -1,5 +1,8 @@
 # W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-DESCRIPTOR-RESOURCE-TRACKING, 2026-09-25, on base `f8b41209` (main
 after CONTRACT-INHERIT-ADOPTION's matrix repair), merged with main `0a07cb57`
 (W43-INDIRECT-ACCESS-GENERAL, CONTRACT-INHERIT-QCORE-PROVIDER-NAMING and

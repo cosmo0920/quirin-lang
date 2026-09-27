@@ -1,5 +1,8 @@
 # O04 — Validate one constructor-to-caller custody path — 2026-09-08
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Execution of the single bounded path card O00 recommended
 ([`docs/reports/remaining-o00/README.md`](../remaining-o00/README.md) §8):
 **per-arm constructor-to-caller cleanup discharge on the early-return arms of

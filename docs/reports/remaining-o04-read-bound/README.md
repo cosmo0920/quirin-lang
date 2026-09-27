@@ -1,5 +1,8 @@
 # O04-READ-BOUND — reading a member back through a base this body bound — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-B08
 ([`docs/reports/remaining-o04-b08/README.md`](../remaining-o04-b08/README.md)
 §7), whose last open boundary was **`O04-B08-READ-BOUND-BASE`**:

@@ -1,5 +1,8 @@
 # STD-MODULES — `std.fmt`, `std.io`, `std.logger` (wave 17)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card brief: *"Audit and provide `std.fmt`; `std.io`; `std.logger` — format and
 logging features. Some of the QCore sources use this feature implicitly, so we
 need to tidy up the feature."* Plus a mid-card amendment on an asynchronous,

@@ -1,5 +1,8 @@
 # Resource-boundary integration
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base: `119115de866e5b50a4ca0dc478c6223790f75fc2`, after the first prioritized
 review wave was merged and pushed. Status: implemented, integrated and validated. Three GPT-5.6 Sol agents at medium reasoning implemented the next
 bounded wave authorized by the user. The supplied analysis documents were

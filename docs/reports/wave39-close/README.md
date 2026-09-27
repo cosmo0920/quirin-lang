@@ -1,5 +1,8 @@
 # WAVE-39-CLOSE — five cards swept, one uncounted tally corrected, the integrator's own record kept, two retirements and three registrations — 2026-09-18
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base `b6d1f101`, the `LOOPS-ON-COMPOSED-ROUTES` merge, equal to `origin/main`
 at the start; the compiler-side wave of five cards, the only card running at
 the close. Record: `reconciliation.json` (106 verdicts, `verify_applied: true`),

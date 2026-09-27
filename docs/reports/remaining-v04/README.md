@@ -1,5 +1,8 @@
 # V04 — R05 adversarial probe matrix: unconditional declaration checks
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Date:** 2026-09-07. **Worktree HEAD:** `536dc01`. **Card:** V04 (`verify_or_repair`).
 **Raw log:** [`probe_run.log`](probe_run.log). **Probe sources:** [`probes/`](probes/).
 

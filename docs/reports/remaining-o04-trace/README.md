@@ -1,5 +1,8 @@
 # O04-TRACE — the variadic tail and one level of nesting — 2026-09-09
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 The named continuation of card O04-B09B10
 ([`docs/reports/remaining-o04-b09b10/README.md`](../remaining-o04-b09b10/README.md)
 §9), whose follow-on **`O04-B09B10-TRACE`** reads: *"C6's whole residual is one

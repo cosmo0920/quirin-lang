@@ -1,5 +1,8 @@
 # Card `LOOPS-ON-COMPOSED-ROUTES` (wave 39) — a `for` beside a borrow or a lend, with the window computed over iterations
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Status: closed (2026-09-18).** Base `e878b362` (`origin/main` at branch
 time). Rust plus audited Lean (`proof/QCore/LoopWindows.lean`,
 `proof/AuditLoopWindows.lean`, registered in `proof/QCore.lean`); mutations

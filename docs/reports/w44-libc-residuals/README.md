@@ -1,5 +1,8 @@
 # W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W44-LIBC-RESIDUALS, 2026-09-25. It started on base `c1e69bb5` and was
 re-measured on main `5355998d`, after merging W44-INDIRECT-CHAIN-ACCESS and
 W44-CORPUS-CALLEE-SUMMARIES. It works the four libc-side residuals beside the

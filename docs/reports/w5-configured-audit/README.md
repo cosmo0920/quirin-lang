@@ -1,5 +1,8 @@
 # W5: configured resource-audit driver
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Date: 2026-09-07. This is the first bounded W5 orchestration extraction, not
 provider-process or whole-workspace consolidation completion.
 

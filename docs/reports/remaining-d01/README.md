@@ -1,5 +1,8 @@
 # D01 — Diagnostic ownership and actionable `Unknown` reasons
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Date:** 2026-09-07. **Base:** `bfbad21` (*Merge P02 enforced process resource
 limits*). **Card type:** implementation (W7).
 

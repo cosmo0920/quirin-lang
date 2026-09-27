@@ -1,5 +1,8 @@
 # W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-LIBC-RESULT-ALIAS, 2026-09-24, on base `a7a936d9` (main after the
 W43-LIBC-CONTRACTS integration). `memcpy` returns its first argument, and
 `strchr` returns a pointer into its first argument or NULL. The resource

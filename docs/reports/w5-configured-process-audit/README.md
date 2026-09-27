@@ -1,5 +1,8 @@
 # Configured process source-contract audit
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `59f5c09`, 2026-09-07. The normal `qcore-audit CONFIG.json` command now
 connects explicit package/policy configuration to the actual pinned C checkout,
 strict compile-database options, trusted source import and independent replay of

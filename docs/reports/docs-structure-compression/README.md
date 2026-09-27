@@ -1,5 +1,8 @@
 # DOCS-STRUCTURE-COMPRESSION — routed rules and a single documentation hub
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 User-requested structural compaction, 2026-09-19. Base:
 `463fa6e8d0c44c23e402dd78bdc146963f0244ca`. This supersedes the old policy
 that all current rules/status must physically live in root `AGENTS.md` and

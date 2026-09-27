@@ -1,5 +1,8 @@
 # V03 — R04: admitted source signatures, results and exits (adversarial probe matrix)
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 **Date:** 2026-09-07. **Worktree HEAD at write time:** `ea2af0f`
 (`536dc01` plus two report-only commits; no implementation commit landed
 during this card). **Card type:** verify_or_repair, executed as report-only.

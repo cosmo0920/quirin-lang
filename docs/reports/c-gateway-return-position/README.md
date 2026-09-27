@@ -1,5 +1,8 @@
 # C-GATEWAY-RETURN-POSITION — a pointer-valued chain leaf in a `return`
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Wave 33's only card, and therefore the wave's **arbiter**: it owns the corpus
 re-pin.
 

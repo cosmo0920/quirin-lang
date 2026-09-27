@@ -1,5 +1,8 @@
 # W45-CONTRACT-REVISION-MODE: pinned and flexible contracts, pinned by default
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Base `74579af6` (local `main`, "Record the w45-fb-retry-fault-injection
 integration gate"), with `main` at `84ebad57` (W45-FB-RETRY-LIFETIME
 integrated) merged in at the integration review. A resource-v1 contract, or one clause of it, now says

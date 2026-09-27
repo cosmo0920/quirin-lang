@@ -1,5 +1,8 @@
 # W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card W43-DESCRIPTOR-NATIVE-CHECK, 2026-09-25, on base `f8b41209`. Phase A was
 measured with main `0a07cb57` merged. **Phase B** binds the records to the libc
 descriptor contracts that W43-DESCRIPTOR-RESOURCE-TRACKING landed on main

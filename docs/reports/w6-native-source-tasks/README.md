@@ -1,5 +1,8 @@
 # Native scoped-copy source tasks
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Baseline `9262b29`, 2026-09-07. `compile_files` and the ordinary `qcorec check`
 and `emit` commands now admit a named scoped-copy task profile on Linux C11
 threads. Source programs carry `concurrency checked;`, first-order leaf workers,

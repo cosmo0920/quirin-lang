@@ -1,5 +1,8 @@
 # CONTRACT-INHERIT-ADOPTION: contract inclusion and inheritance in the real provider crates
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Card CONTRACT-INHERIT-ADOPTION, 2026-09-24, on base `dfe10c92` (main after the
 CONTRACT-INHERIT integration). [CONTRACT-INHERIT](../contract-inherit/README.md)
 added `#include "CRATE:MODULE";` and `contract inherit [NS::]NAME;` and tested

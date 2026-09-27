@@ -1,5 +1,8 @@
 # `CT-PROOF-LEG-3` (wave 41) — survey every unproved mapped case, then land the leg the survey picks
 
+> Historical checkpoint: source filenames, runnable references or discovery scripts in this archive were updated by the [extension migration](../extension-physical-migration/README.md). Recorded results, hashes and gate counts describe the original revision, not a new run of the maintained files. Use [current status](../../STATUS.md) for present measurements.
+
+
 Branched from `463fa6e8` (`origin/main` at branch time, confirmed equal) and
 **rebased onto `96142e49`**, the documentation restructure, before merge — §13
 records exactly what that changed and what it did not. Report directory: this
