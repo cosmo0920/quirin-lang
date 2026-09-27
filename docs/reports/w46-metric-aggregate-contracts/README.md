@@ -87,7 +87,37 @@ The required fresh-worktree `git submodule update --init --recursive` first
 exited 1 because the sandbox could not create its Git worktree module
 directory. The integrator initialized it from a local cache at exit 0; the
 worktree now reports pinned `d82464a2`. A second scoped escalation request
-was interrupted while awaiting approval and launched no full gate. The
-integrator owns the remaining full standing/provider gate run and will supply
-its exact exits, counts and private log paths before integration. No card
-claim of a completed full gate is made here.
+was interrupted while awaiting approval and launched no full gate.
+
+The integrator ran the full standing/provider gate at pre-repair tip
+`5dcf8ff8` under `private/w46-next-full-gate/`. Its `steps.json` records
+every exact command and exit, with a same-named `.log` and `.exit` for each
+step. The workspace runner exited **101**: 325 units, 337 summaries, 6,028
+passed, 3 failed, 11 ignored; its unit detail is in
+`private/test-binaries/20260927T034856Z-191845/summary.json`. The three
+failures came from two binaries: `qcore-compiler::contract_loader` (two tests)
+found the deliberate count was still 219 rather than 225 and the six new
+neutral declarations absent from its parity list; `qcore-audit::source_contract_config`
+(one test) found the active CMetrics manifest digest had accidentally been
+shortened to 54 characters. The original failing stdout logs remain under
+that private test-binaries directory. These were real card errors, not
+environmental failures.
+
+The same full run recorded exit **0** for submodule update, workspace fmt and
+Clippy, both reevaluation examples, Lean audit (212/212), script tests
+(364/364), docs index, provider Cargo tests (129 passed, 0 failed, 1 ignored
+across 43 summaries), provider fmt and Clippy, `providers/contracts.py check`,
+package build, verification of all five first-party packages, provider Python
+tests (15/15), and Clang version (`Ubuntu clang version 21.1.8`). Logs and
+exits for each are in `private/w46-next-full-gate/`.
+
+The two missed pins were repaired after that run: `contract_loader.rs` now
+lists all six declarations with their exact arities and expects
+`(54 selected, 225 v1, 216 rejected)`; the source policy now carries the
+full 64-character manifest SHA-256. Focused post-repair checks all exited 0:
+`contract_loader` 10/10, `source_contract_config` 12/12,
+`providers/contracts.py check`, and workspace fmt. Their commands, exits and
+logs are in `private/w46-metric-aggregates/repair-1/steps.json`. The
+integrator's final union gate will establish a full green result at the
+merged revision; the pre-repair workspace failure remains part of this
+card's evidence.
