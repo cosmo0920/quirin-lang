@@ -411,6 +411,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_is_up",
         4,
     ),
+    // W46-FLUENT-ROUTING-QUERY-CONTRACTS: five source-pinned, custody-neutral
+    // scalar queries. The existing routes-mask size declaration is retained.
+    (
+        "fluent_bit/input_chunk_is_up.qcore",
+        "input_chunk_has_magic_bytes",
+        5,
+    ),
+    (
+        "fluent_bit/input_chunk_is_up.qcore",
+        "flb_input_chunk_is_mem_overlimit",
+        4,
+    ),
+    (
+        "fluent_bit/input_chunk_is_up.qcore",
+        "flb_input_chunk_is_storage_overlimit",
+        4,
+    ),
     // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
     // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
     // resource-v1 declaration count 20 -> 25. Deliberate; see
@@ -503,6 +520,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "fluent_bit/routes_mask.qcore",
         "flb_routes_mask_get_size",
         3,
+    ),
+    (
+        "fluent_bit/routes_mask.qcore",
+        "flb_routes_mask_get_slots",
+        4,
+    ),
+    (
+        "fluent_bit/routes_mask.qcore",
+        "flb_routes_mask_is_empty",
+        5,
     ),
     // Card W45-FB-BACKLOG-CUSTODY: the twelve storage-backlog functions of
     // `plugins/in_storage_backlog/sb.c` as CHECKED SPECIFICATIONS (contract
@@ -1391,7 +1418,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 113 -> 114 by card W45-FB-BACKLOG-CUSTODY's
     // `fluent_bit/storage_backlog.qcore`: twelve checked specifications of the
     // storage-backlog bodies (contract spec §C06.3).
-    // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+    // Combined W46 cards plus five routing queries: 54 selected modules,
+    // 224 resource declarations, 118 corpus modules.
     assert_eq!(sources.len(), 118, "unexpected contract corpus size");
 
     for (logical, path) in &sources {

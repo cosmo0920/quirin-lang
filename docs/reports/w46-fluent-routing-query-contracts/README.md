@@ -1,0 +1,29 @@
+# W46 Fluent routing query contracts
+
+Base `207cebe4cdb745f6216ff2b511c4b7fd134581b9`; the [prediction](PREDICTION.md) was committed separately as `305e1355` before implementation. This card adds five source-pinned resource-v1 declarations for callback-free Fluent Bit scalar queries. `flb_routes_mask_get_size` already had a declaration, so it is retained rather than duplicated. The declarations are caller premises. Neither the pins nor the acceptance tests prove a C body or its buffer bounds.
+
+## Reviewed source boundary
+
+| Function | 66910c10 source | 046accf6 source | Effect read |
+|---|---|---|---|
+| `input_chunk_has_magic_bytes` | `src/flb_input_chunk.c:291-307` | same | Returns false for a short length; otherwise reads `buf[0]` and `buf[1]`, returns a scalar. |
+| `flb_input_chunk_is_mem_overlimit` | `src/flb_input_chunk.c:2915-2926` | `:2955-2966` | Compares `mem_buf_limit` and `mem_chunks_size`; no setter or callback. |
+| `flb_input_chunk_is_storage_overlimit` | `src/flb_input_chunk.c:2928-2941` | `:2968-2981` | Reads storage type, pause policy, and ChunkIO chunk counts; no setter or callback. |
+| `flb_routes_mask_get_slots` | `src/flb_routes_mask.c:36-43` | same | Null gate, one scalar field read. |
+| `flb_routes_mask_is_empty` | `src/flb_routes_mask.c:175-185` | same | Null gates, `memcmp` of the caller mask and router empty mask for `route_mask_size` elements. |
+
+The pointer parameters are borrowed; returned values carry no resource identity; counted-user state is neutral. In particular `is_empty` does not release or retain either mask. The C caller still owes readable extents for both `memcmp` buffers and the magic bytes, plus valid nested pointers on the overlimit paths. The query declarations make no routing lifecycle or concurrency claim. `set_bit`, `clear_bit` and `get_bit` stay undeclared: an invalid index reaches `flb_warn`, whose configured logging callback is not known neutral. Metadata/accounting writers, the input-limit setter, flush remapping/destruction, and OR-1/OR-7 likewise stay outside this card.
+
+The five declarations are added to the existing `input_chunk_is_up.qcore` and `routes_mask.qcore` modules, so module and selection counts do not change. The per-file structured-clause pins and Fluent Bit source locks were updated deliberately. Both source revisions report all **51** Fluent Bit pinned entries recorded, **0** stale. `providers/contracts.py sync` refreshed package inventories and the load path. The ABI projection uses `i32` for C `int` and `u64` for the pinned LP64 `size_t`, matching the existing `get_size` contract.
+
+## Controls and evidence
+
+The Rust controls load the production modules byte for byte. Each new query is Safe in a held-out caller and Unknown with an uncontracted-call refusal after withdrawal of this card's declarations. A separately allocated mask remains owned by its caller: explicit `free` discharges it, omission leaves a leak candidate. The Lean counted-user model proves five classified neutral queries preserve a known delta and an opaque later routing call stays unknown; this is conditional on the reviewed C classification, not a C proof. Both Lean theorems are audited in `AuditCountedUsers.lean`.
+
+Focused checks: `cargo test -p qcore-c-gateway --test w46_routing_query_contracts` exit **0**, 3/3; `cargo test -p qcore-compiler --test qcore_contract_corpus` exit **0**, 4/4; `python3 scripts/check_lean_audits.py` exit **0**, 263 build jobs and 212 audits. `python3 providers/contracts.py sync` initially exited **1** because the five new declarations had no source lock; after pinning both reviewed revisions it exited **0**. `python3 providers/contracts.py check` exited **0**. `providers/package.py build` exited **0**, and verification of all five package directories exited **0**; logs are under `private/w46-routing-queries/provider-package/`. The first broad verify glob also passed `packages.json` and five `.tar.gz` archives to a command requiring a package directory; those six invocation attempts exited **1**, while all five actual directories passed. Both `pin --check` invocations exited **0** with 51 recorded / 0 stale.
+
+Corpus and system arbiter measurements, standing-gate exits and derived counts will be appended after their scheduled run. Baselines are the preceding [W46 expansion](../w46-contract-gap-expansion/README.md): corpus 411 Safe / 9 provisional Unsafe / 4,414 Unknown; system 28 Safe / 2 provisional Unsafe / 204 Unknown. No movement is asserted from a source pin alone.
+
+## For the integrator
+
+Register the residual `W46-ROUTING-QUERY-EXTENTS`: readable buffer extents in `input_chunk_has_magic_bytes` and `flb_routes_mask_is_empty`, nested pointer validity in the overlimit predicates, and routing concurrency remain outside the resource-v1 declarations. Preserve `PROD-CONTRACTS-MASK-EXTENT`, the existing `get_size` declaration, OR-1/OR-7 body refutations and ten held caller sites. Any current-status or acceptance-matrix count should be updated from the combined arbiter rather than summing this branch with parallel W46 branches. In the current increment record, add one paragraph: “W46-FLUENT-ROUTING-QUERY-CONTRACTS added five dual-pinned, callback-free Fluent Bit scalar query premises to the existing chunk and routes-mask modules, with Rust acceptance/withdrawal/custody controls and audited Lean neutral-count reasoning. Buffer extents and lifecycle routing remain open; counts are those of the integrated arbiter.”

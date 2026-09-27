@@ -55,3 +55,5 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.CountedUsers.a_neutral_helper_preserves_delta
 #print axioms QCore.CountedUsers.a_neutral_helper_preserves_pending
 #print axioms QCore.CountedUsers.an_opaque_flush_after_neutral_is_unknown
+#print axioms QCore.CountedUsers.five_routing_queries_preserve_delta
+#print axioms QCore.CountedUsers.opaque_routing_after_queries_remains_unknown
