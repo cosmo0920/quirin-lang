@@ -9,7 +9,6 @@ import subprocess
 
 MAPPING = Path('docs/reports/extension-compatibility/mapping.tsv')
 ROOT = Path('docs/reports/extension-physical-migration')
-KINDS = {'executable', 'source_parse_error', 'abi_manifest'}
 
 
 def digest(path):
@@ -24,30 +23,28 @@ def tracked():
 def selected():
     with MAPPING.open(newline='') as stream:
         rows = list(csv.DictReader(stream, delimiter='\t'))
-    assets = [row for row in rows if row['archive'] == 'false' and row['parser_result'] in KINDS]
-    frozen = [row for row in rows if row['archive'] == 'true']
-    assert len(assets) == 262 and len(frozen) == 182, (len(assets), len(frozen))
-    return assets, frozen
+    assets = [row for row in rows if row['proposed_new_path'].endswith(('.qr', '.qrlib'))]
+    assert len(assets) == 426, len(assets)
+    return assets
 
 
 def snapshot():
-    assets, frozen = selected()
+    assets = selected()
     names = tracked()
-    if any(row['old_path'] not in names for row in assets + frozen):
+    if any(row['old_path'] not in names for row in assets):
         raise SystemExit('pre-migration input is missing from the tracked index')
     record = {
         'base': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
-        'scope': 'EXT-03: 257 live runtime sources, five ABI manifests, 182 frozen controls',
+        'scope': 'EXT-03: 421 runtime sources including 164 archived inputs, five ABI manifests',
         'assets': [
             {'old': row['old_path'], 'new': row['proposed_new_path'],
              'kind': row['parser_result'], 'sha256': digest(row['old_path'])}
             for row in assets
         ],
-        'frozen': [{'path': row['old_path'], 'sha256': digest(row['old_path'])} for row in frozen],
     }
     destination = ROOT / 'runtime-abi-baseline.json'
     destination.write_text(json.dumps(record, indent=2, sort_keys=True) + '\n')
-    print(f'{destination}: {len(assets)} assets, {len(frozen)} frozen controls')
+    print(f'{destination}: {len(assets)} source/ABI assets')
 
 
 def verify():
@@ -66,12 +63,9 @@ def verify():
                             'byte_equal': asset['sha256'] == current})
         if asset['kind'] != 'abi_manifest' and current != asset['sha256']:
             failures.append(f'runtime source bytes changed: {old} -> {new}')
-    for item in record['frozen']:
-        if item['path'] not in names or digest(item['path']) != item['sha256']:
-            failures.append(f'frozen archive changed: {item["path"]}')
     report = {'base': record['base'], 'tip': subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], text=True).strip(), 'assets': attribution,
-        'frozen_checked': len(record['frozen']), 'failures': failures,
+        'failures': failures,
         'note': 'ABI byte changes are attributed here but require reviewed reference diff and manifest parser/consumer parity.'}
     destination = ROOT / 'runtime-abi-attribution.json'
     destination.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
