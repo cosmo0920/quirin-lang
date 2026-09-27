@@ -48,6 +48,9 @@ def main():
     with contexts.open() as stream:
         frontends = {row["frontend_sha256"]: row["frontend_debug"]
                      for row in (json.loads(line) for line in stream)}
+    for digest, debug in frontends.items():
+        if hashlib.sha256(debug.encode()).hexdigest() != digest:
+            raise SystemExit(f"archived frontend request digest mismatch: {digest}")
     parity_by_function = collections.defaultdict(set)
     parity_pairs = set()
     with parity.open() as stream:
