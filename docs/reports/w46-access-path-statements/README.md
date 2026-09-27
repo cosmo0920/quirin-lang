@@ -39,6 +39,9 @@ first. With
 `QCORE_TYPED_PATH_PARITY` set to an output JSONL path, each consulted
 statement records both readers' complete plans, any disagreement, and the
 analyzed source identity. The corpus artifact below archives that stream.
+The process writer is mutex-protected, and each row has stable source,
+function, line and route keys; archive scripts sort rows canonically, so
+four-job audits do not depend on arrival order.
 Routes with a different instruction vocabulary record every overlap as an
 unresolved structural comparison, including cases both admit; they make no
 parity claim. Verdict/coverage comparison remains the retirement arbiter.
@@ -51,9 +54,22 @@ the target-free borrowed binding, and the untracked declarator boundary.
 
 ## Measured corpus and system slice
 
-TBD after the arbiter slot: BEFORE identity, AFTER verdicts and diagnostic
-counts, every moving function with attribution, P1 prediction hit/miss table,
-side-by-side disagreements, and the `046accf6` Fluent Bit slice.
+The integrator's fresh unchanged-implementation BEFORE at `29b799f9`
+completed the pinned 185-unit corpus arbiter with exit 0. All five primary
+artifacts were byte-identical to the prior archived baseline; the diagnostic
+SHA-256 is `c784c398a174a8c582821ab067e46245954df068d3897dfa7374db69bd149c69`.
+Its 4,834 functions are 411 Safe, 9 provisional Unsafe and 4,414 Unknown,
+with 41,086 unsupported, 3,573 unknown-alias and 34 leak leaves. The
+`046accf6` configured system BEFORE also exited 0, with byte-identical
+diagnostics, contracts, chunk contracts and source effects. Raw BEFORE runs
+are under `private/w46-next/baseline/{corpus,system}` in the main checkout;
+the [archived baseline](../w46-contract-access-expansion/artifacts/baseline/manifest.json)
+and [corpus identity check](../w46-contract-access-expansion/census/baseline-corpus-identity.json)
+are owned by the integrator.
+
+TBD after the arbiter slot: AFTER verdicts and diagnostic counts, every moving
+function with attribution, P1 prediction hit/miss table, side-by-side
+disagreements, and the `046accf6` Fluent Bit slice.
 
 ## Validation
 

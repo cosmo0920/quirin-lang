@@ -33,7 +33,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     environment = dict(os.environ)
     environment["QCORE_TYPED_PATH_PARITY"] = str(out / "parity.jsonl")
-    environment["QCORE_AUDIT_JOBS"] = "1"
+    environment["QCORE_AUDIT_JOBS"] = "4"
     if scope == "corpus":
         binary = target / "release/examples/cycle19_fluent_bit_libraries_audit"
         environment["QCORE_CLANG"] = "/usr/bin/clang"
@@ -62,7 +62,7 @@ def main():
             "--profile-directory", str(ROOT / "contract/profiles/fluent-bit"),
             "--compile-database", str(SYSTEM / "fluent-bit-clang-production/compile_commands.json"),
             "--selection", str(ROOT / "contract/profiles/fluent-bit/system-selection.json"),
-            "--jobs", "1", "--report", str(out / "resource-diagnostics.json"),
+            "--jobs", "4", "--report", str(out / "resource-diagnostics.json"),
         ]
     record = {
         "scope": scope,

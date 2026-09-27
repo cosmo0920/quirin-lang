@@ -98,14 +98,18 @@ def main():
             })
     parity_totals = collections.Counter()
     parity_disagreements = collections.Counter()
-    with parity_path.open() as stream, gzip_writer(out_path / "parity-disagreements.jsonl.gz") as output:
+    disagreements = []
+    with parity_path.open() as stream:
         for line in stream:
             row = json.loads(line)
             route = row["old_route"]
             parity_totals[route] += 1
             if row["disagreement"]:
                 parity_disagreements[route] += 1
-                output.write(json.dumps(row, sort_keys=True) + "\n")
+                disagreements.append(json.dumps(row, sort_keys=True))
+    with gzip_writer(out_path / "parity-disagreements.jsonl.gz") as output:
+        for row in sorted(disagreements):
+            output.write(row + "\n")
     result = {
         "schema": "qcore.w46-access-path-statements-comparison.v1",
         "before_status": dict(before_status),

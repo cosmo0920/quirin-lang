@@ -86,8 +86,9 @@ pub fn active_census_sinks() -> Vec<&'static str> {
 /// the sinks declared in this crate's sources.
 pub fn census_sink_variables() -> Vec<&'static str> {
     #[allow(unused_mut)]
-    // W46 statement side-by-side stream writes in analysis order.
-    let mut variables: Vec<&'static str> = vec![typed_access_path::PARITY_PATH];
+    // The W46 parity stream carries stable source/function/line/route keys
+    // and is sorted before archival; it does not number records by arrival.
+    let mut variables: Vec<&'static str> = Vec::new();
     #[cfg(feature = "indirect-census")]
     variables.extend([
         indirect_census::CENSUS_PATH_VARIABLE,
