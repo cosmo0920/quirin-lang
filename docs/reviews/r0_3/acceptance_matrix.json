@@ -6689,7 +6689,7 @@
   }
  },
  "workspace": {
-  "cargo_workspace_members": 12,
+  "cargo_workspace_members": 13,
   "cargo_workspace_member_paths": [
    "compiler",
    "crates/qcore-audit",
@@ -6702,7 +6702,8 @@
    "crates/qcore-verifier-host",
    "crates/qcorec",
    "crates/quirin-audit-plugin",
-   "crates/quirin-audit-plugin-libevent"
+   "crates/quirin-audit-plugin-libevent",
+   "crates/quirin-source-analysis"
   ],
   "crates_directory_members": [
    "crates/qcore-audit",
@@ -6715,7 +6716,8 @@
    "crates/qcore-verifier-host",
    "crates/qcorec",
    "crates/quirin-audit-plugin",
-   "crates/quirin-audit-plugin-libevent"
+   "crates/quirin-audit-plugin-libevent",
+   "crates/quirin-source-analysis"
   ],
   "provider_workspace_members": 13,
   "provider_workspace_member_paths": [
@@ -6740,7 +6742,7 @@
   "workspace_tests": 6051,
   "provider_tests": 129,
   "python_evidence_validator_tests": 364,
-  "lean_audits": 214,
+  "lean_audits": 215,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6921,6 +6923,7 @@
    "AuditSourceAnnotation.lean",
    "AuditSourceCoordinate.lean",
    "AuditSourceEnumeration.lean",
+   "AuditSourceExtensions.lean",
    "AuditSourceLoop.lean",
    "AuditSourceRecord.lean",
    "AuditSourceRootAdmission.lean",
