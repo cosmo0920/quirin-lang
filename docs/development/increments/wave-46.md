@@ -9,6 +9,8 @@
 > [wave-45-history.md](wave-45-history.md)) hold the wave-45 paragraphs and stay
 > unchanged. Wave 46 follows the [unsupported-coverage queue](../../plans/unsupported-coverage/README.md).
 
+**`QUIRIN-EXTENSION-MIGRATION-PLAN` (2026-09-27, base `2e44e963`).** The user-directed [staged plan](../../plans/quirin-extension-migration/README.md) retains binary checkpoints as `.qo`, assigns contract-mode sources to `.qv`, runtime sources to `.qr` and native ABI definitions to `.qrlib`. It records a tracked-file inventory and compatibility-first candidate cards; no source is renamed and no reader behavior or coverage changes in this planning increment.
+
 **`AUDIT-CHECKPOINT-INSPECTOR` (2026-09-27, base `2e44e963`).** `quirin-dump-checkpoint` validates every binary section before rendering a summary, one selected section or a full JSON dump. The second executable preserves `quirin-audit` as Cargo's default run target; no analysis or verdict changes. Scope and integrated validation live in the [report](../../reports/audit-checkpoint-inspector/README.md).
 
 **`AUDIT-PREPARE-PROGRESS` (2026-09-27, base `2e44e963`).** Preparation reports checkout/clone/configure/build activity and live subprocess log paths, preserving final log ordering and prepared artifact identities. Lost-tree recovery uses the existing `quirin-audit prepare` command; no analyzer semantics or coverage changes. The bounded live-log failure regression and integrated validation are recorded in the [report](../../reports/audit-prepare-progress/README.md).
