@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for wave-47 typed-dispatch publication (integrate/w47-typed-dispatch: main e56e0af9 [W47-CONDVAR-JOIN-PUBLICATION] + merge 70605056 [W47-LOOP-OWNER-TYPED-DISPATCH]), measured by the integrator in its own worktree; every exit captured to a file (private/w47-int-h/gate-70605056). Full gate at 70605056: every step 0 (submodule, tests, clean-dev, fmt, clippy, reevaluation probe and followup, lean, python, docs index, provider tests/clean-dev/fmt/clippy/contracts-check, package build, five package verifies, provider-python, clang-version). run_test_binaries.py: 349 units, 362 summaries, 6,250 passed / 0 failed / 11 ignored; no failure in cycle20_verifier_plugins (20 passed / 0 failed), so no rerun was needed. Provider Rust 129 passed / 0 failed / 1 ignored; 223 Lean audits; 365 root Python tests; contracts check, five package build/verify, reevaluation probe and followup, docs index: 0. Release build, corpus arbiter and system slice: 0. compose3.py (base = A = B = docs/reports/w47-condvar-join-publication/integration/artifacts/<scope>, the previous integration's baseline, per the typed-dispatch card's own claim that no per-unit route moves): all three scopes COMPOSE with 0 mismatches and 0 functions/leaves touched by both cards; merged corpus 526 Safe / 10 Unsafe / 4,298 Unknown, merged system 31 / 2 / 201, merged slice functions 24 / 1 / 245 (integration-confirmation.md). Census re-derivation on the merged tree: the typed loop-owner census (fixed/previous, raw and configured) and the condvar/join census (fixed/previous) all reproduce their respective cards' archived outputs byte-for-byte at both 90978ac6 and 90978ac6~1.",
+ "workspace_tests": 6250,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 365,
+ "lean_audits": 223,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
