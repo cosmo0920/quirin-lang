@@ -492,3 +492,20 @@ it lands, `cfl_arena_destroy` is not a v1 release (it is declared only in the
 non-v1 `cfl/arena_lifetime.qv`) and `cfl_arena_reset` is undeclared, so a
 caller of either stays Unknown; no result is shown invalid after destroy or
 reset.
+
+## User decision on OpenSSL and libcurl (2026-09-28, recorded by the integrator)
+
+OpenSSL and libcurl contracts are to be provided through the quirin-audit
+plugin crate mechanism (the `crates/quirin-audit-plugin` SDK, rule 10h), not
+through a flexible mode in a provider crate. Each library gets its own
+contracts and its own checking/proof system, and its results are integrated
+through the existing four-value verdict semigroup (`QCore.VerdictSemigroup`,
+contract specification §C11.1), which must not erase any
+Safe/Pending/Unsafe/Unknown information or reason those checkers report.
+Registered by [scripts/record_external_decisions.py](scripts/record_external_decisions.py):
+`W48-PLUGIN-VERDICT-PRESERVATION` (first: prove and test that composition
+keeps every plugin's verdict and reasons), then `W48-OPENSSL-CONTRACT-PLUGIN`
+and `W48-LIBCURL-CONTRACT-PLUGIN`. Until a trusted certificate checker exists
+(`W45-SUBCOMMAND-CERTIFICATE-ROUTE`), an uncertified plugin `Safe` or
+`Unsafe` is published as `Pending`. The other declined classes remain
+undecided.
