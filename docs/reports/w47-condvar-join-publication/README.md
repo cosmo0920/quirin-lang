@@ -248,7 +248,23 @@ directly, the per-unit route still has no compile record for it.
 ## 8. Gate
 
 [`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in `gate/`,
-figures in [gate.json](gate.json).
+figures in [gate.json](gate.json). Every step exits 0 on the tree of `32651f26`: the Rust
+suite 347 units / 360 summaries, **6,225 passed, 0 failed**, 11 ignored; fmt
+and clippy clean; both probes 0; **223 Lean audits**; provider gate (contracts
+check, package build and verify, 24 provider Python tests, **129 provider
+tests**, provider fmt and clippy) 0; `pin --check` of the libc crate at the
+three revisions and `pin --verify-contracts` 0; after the matrix and index
+regeneration, the Python suite (365) and the docs-index check 0.
+
+**Composition with `main`.** Module-count pins after this card: 56 selected
+contract modules, 120 corpus modules, 242 v1 declarations, libc view 17, 223
+Lean audits (each one more than the base). Shared files: `legacy_literal_premise.rs`
+(one mark beside 10p's), `contract_loader.rs`, `gateway.md` (10q appended
+after 10p), `docs/agents/README.md`, `concurrency.md` 27, the spec's C04 list,
+`proof/QCore.lean`, `lib.rs` of three crates and the count-pinning tests. No
+edit to `legacy_c.rs`, `thread_entry_census.rs`, `loop_owner.rs` or
+`loop_owner_census.rs`: the census calls `thread_entry_census::read_program`
+and `loop_owner_census::thread_program` as they stood at `51fb793c`.
 
 ## Reproduce
 
