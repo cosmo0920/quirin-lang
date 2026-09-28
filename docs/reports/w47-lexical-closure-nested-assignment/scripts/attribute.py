@@ -94,16 +94,19 @@ def roots_of(entry):
 
 def root_facts(rows):
     """function -> {'join': names, 'nested': names} over every analysis of it."""
-    out = collections.defaultdict(lambda: {"join": set(), "nested": set()})
+    out = collections.defaultdict(lambda: {"join": set(), "nested": set(), "may_bind": set(),
+                                           "protected": set()})
     for row in rows:
         if row.get("position") != "root-declarations":
             continue
         facts = out[row["function"]]
-        for name in row.get("names", []):
-            if name.get("nested_reading_binds"):
-                facts["nested"].add(name["name"])
-            if name.get("ast_binds") and name.get("lexical_never_bound") and row.get("lexical_readable"):
-                facts["join"].add(name["name"])
+        facts["nested"] |= set(row.get("nested_bindings", []))
+        facts["protected"] |= set(row.get("protected_formals", []))
+        if row.get("lexical_readable"):
+            # Spellings the AST closure binds while the (extended) lexical
+            # closure does not: what the join adds, file-scope names included.
+            facts["join"] |= set(row.get("ast_binds_spellings", [])) - set(row.get("lexical_risky", []))
+            facts["may_bind"] |= set(row.get("ast_may_bind_spellings", []))
     return out
 
 
@@ -150,7 +153,8 @@ def main():
             if old_leaves == new_leaves and old["status"] == new["status"]:
                 continue
             changed_functions += 1
-            fact = facts.get(name, {"join": set(), "nested": set()})
+            fact = facts.get(name, {"join": set(), "nested": set(), "may_bind": set(),
+                                    "protected": set()})
             reasons = []
             for change, bag in (("removed", old_leaves - new_leaves), ("added", new_leaves - old_leaves)):
                 for text in bag.elements():
@@ -164,6 +168,8 @@ def main():
                             kind = "typed-row:join"
                         elif roots & fact["nested"]:
                             kind = "typed-row:nested"
+                        elif roots & fact["may_bind"] and family(d) == "unsupported:RET":
+                            kind = "typed-row:join-may-bind"
                         else:
                             kind = "typed-row:other-root"
                     elif d["category"] == "unknown_alias":
@@ -173,6 +179,8 @@ def main():
                             kind = "alias-root:join"
                         elif root in fact["nested"]:
                             kind = "alias-root:nested"
+                    if kind == "unexplained" and "formal" in d["description"]:
+                        kind = "protected-formal-alias"
                     if kind == "unexplained" and fact["nested"]:
                         kind = "nested-consumer"
                     if kind == "unexplained" and fact["join"]:

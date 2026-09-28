@@ -56,6 +56,8 @@ pub(crate) struct Assignment<'a> {
     pub(crate) value: Range<usize>,
     /// Whether the destination was spelled in parentheses (`(p) = …`).
     pub(crate) parenthesised: bool,
+    /// The index of the `=` token in the body.
+    pub(crate) operator: usize,
 }
 
 /// Whether the `=` at `index` is a simple assignment operator.
@@ -168,6 +170,7 @@ pub(crate) fn assignments<'a>(body: &[&'a str]) -> Vec<Assignment<'a>> {
             destination,
             value: equal + 1..value_end(body, equal + 1),
             parenthesised,
+            operator: equal,
         });
     }
     out
@@ -226,6 +229,25 @@ pub(crate) fn written_names(body: &[&str]) -> BTreeSet<String> {
             .into_iter()
             .map(|assignment| assignment.destination.to_owned()),
     );
+    out
+}
+
+/// The index of the first `=` token of every `;{}` run: the one assignment a
+/// statement reader that takes the run's first `=` saw (the protected-formal
+/// alias closure of [`crate::legacy_c`]).
+pub(crate) fn first_equals_of_runs(body: &[&str]) -> BTreeSet<usize> {
+    let mut out = BTreeSet::new();
+    let mut seen = false;
+    for (index, text) in body.iter().enumerate() {
+        match *text {
+            ";" | "{" | "}" => seen = false,
+            "=" if !seen => {
+                seen = true;
+                out.insert(index);
+            }
+            _ => {}
+        }
+    }
     out
 }
 

@@ -3433,8 +3433,13 @@ fn protected_resource_formals(
         }
     }
     // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): the aliases the
-    // statement reading above skips (nested, later-declarator, parenthesised).
+    // statement reading above skips (nested, later-declarator, parenthesised);
+    // the run's first `=`, which it read, keeps its decision.
+    let first = crate::lexical_nested_assignment::first_equals_of_runs(&body);
     for assignment in crate::lexical_nested_assignment::assignments(&body) {
+        if first.contains(&assignment.operator) {
+            continue;
+        }
         if let Some(source) = canonical_place(&body[assignment.value.clone()])
             && is_identifier(&source)
         {

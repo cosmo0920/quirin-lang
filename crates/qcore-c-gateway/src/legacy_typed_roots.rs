@@ -166,6 +166,11 @@ impl Parser<'_> {
             "served": if lexical { "lexical" } else if roots.answers() { "ast" } else { "none" },
             "names": names,
             "disagreements": disagreements,
+            "ast_binds_spellings": roots.spellings().0,
+            "ast_may_bind_spellings": roots.spellings().1,
+            "lexical_risky": lexical_risky,
+            "nested_bindings": self.typed_bases.nested_bindings(),
+            "protected_formals": self.protected_formals,
             "nested_census": {
                 "unread_by_statement": self.typed_bases.nested_census().unread_by_statement,
                 "parenthesised": self.typed_bases.nested_census().parenthesised,

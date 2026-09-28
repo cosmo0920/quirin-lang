@@ -218,6 +218,17 @@ impl RootDeclarations {
             .is_some_and(|facts| facts.risky.contains(name))
     }
 
+    /// Rule 10o (parity only): every spelling the AST closure binds, and every
+    /// spelling it names `may_bind`; empty where it refuses the function.
+    pub(crate) fn spellings(&self) -> (Vec<String>, Vec<String>) {
+        self.facts.as_ref().map_or_else(Default::default, |facts| {
+            (
+                facts.risky.iter().cloned().collect(),
+                facts.bound.iter().cloned().collect(),
+            )
+        })
+    }
+
     /// Rule 10o: whether the AST names `name` written, address-taken or in a
     /// call's actuals, in a function it answers (spelling-level); `false`
     /// where it refuses the function.
