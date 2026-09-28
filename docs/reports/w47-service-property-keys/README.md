@@ -263,7 +263,46 @@ unchanged.
 
 ## 7. Corpus, system and tail-pause slice
 
-@ARBITERS@
+[`arbiters.py`](../w47-loop-owner-typed-dispatch/scripts/arbiters.py) ran
+with `--jobs 8`:
+
+- **BEFORE** from an exported copy of the base `ec4c9d4a` (outside the
+  repository), binary `076504b7…`. The corpus step was rerun once: the first
+  attempt stopped on the export's missing libevent submodule checkout
+  (`Pin(GitUnavailable)`); it is retained in `private/sk/arb-before/` and
+  discarded.
+- **AFTER** at `207120f6`, binary `9f1a04b5…`, with the contract changes in.
+
+[`identity.py`](scripts/identity.py) compares each run with the in_tail
+resolution integration's archive
+(`w47-loop-owner-instance-flow/integration/artifacts`) and composes it
+(compose3). [`before_after.py`](scripts/before_after.py) attributes every
+function, and [`line_diff.py`](scripts/line_diff.py) classifies differing
+lines. Logs are in [artifacts/identity-before/](artifacts/identity-before/)
+and [artifacts/identity-after/](artifacts/identity-after/).
+
+**BEFORE** reproduces the baseline:
+
+- the corpus `resource-diagnostics.json` is byte-identical (`ae17152b…`);
+- the system and slice differ only in `resource_contract_sources` and
+  `inventory_sha256` lines (30 + 15 and 32 + 16, the checkout root);
+- all three compose with 0 mismatches.
+
+| Measure | BEFORE | AFTER | Moves (all attributed) |
+|---|---|---|---|
+| corpus (185 units, `66910c10`) | 526 / 10 / 4,298 | **identical `resource-diagnostics.json`** (`ae17152b…`), compose3 0 mismatches | none. The contracts and source-effects sidecars change with the contract set (one more held declaration, new contract digests). The console tally reads `pending human review: 10 declaration(s), 13 marker(s)` (was 9 / 12). The parity stream is equal once sorted. |
+| system (`046accf6`) | 60 Safe / 4 Unsafe / 384 Unknown rows | same | none. Only `resource_contract_sources`/`inventory_sha256` lines and the same tally line differ; no call site reaches `flb_config_set_property` |
+| tail-pause slice (`90978ac6`) | 37 / 1 / 364 / 2 Pending rows | same | `src/flb_lib.c::flb_service_set` (both variants, `:691`), still **Unknown** on its other leaves (`va_start`/`va_arg`/`va_end`, the loop condition). The statement `ret = flb_config_set_property(ctx->config, key, value);` now reports the held call (`whose declared contract awaits human review`) in place of its argument refusal (`indirect memory access is outside the resource projection`). The unit tally reads 135 unsupported, 3 held (was 136, 2). compose3 names this one leaf change. |
+
+No function moves Safe → non-Safe, so no correction is named. No leak or
+violation is added or removed, so none needs classifying.
+
+The one leaf change is the review-hold replacement
+W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL describes: a held call reported in
+place of a refusal in the same statement. Here it moves no status, because
+the row stays Unknown on its other leaves. The new baseline is archived in
+[artifacts/after/](artifacts/after/). The corpus keeps only the files that
+changed; the rest are byte-identical to the integration archive.
 
 ## 8. Prediction against outcome
 
@@ -275,7 +314,7 @@ unchanged.
 | old test, both readings | not discharged, byte-identical (90%) | **as predicted** |
 | other sites, edges, seeds | unchanged (95%) | **as predicted** |
 | `flb_input_set` / others | reach no hazard (80%) | **as predicted** (`flb_input_set` read and refused as not table-driven; its closure reaches no hazard) |
-| corpus / system / slice | @PREDICT_ARB@ | @MEASURED_ARB@ |
+| corpus / system / slice | corpus byte-identical, only sidecars and tallies move (90%); system unchanged (90%); slice unchanged (85%), `flb_service_set` may gain or reword a leaf, never Safe (30%) | **as predicted**: corpus and system unchanged; the slice's `flb_service_set` leaf at `:691` reworded, still Unknown |
 | follow-up | amended, not retired (70%) | **retired**: its DISCHARGE clause (a literal-key reading of `flb_config_set_property`'s comparisons, fail-closed, measured on the census) is met; the prediction conflated it with site discharge. The 3 sites move to the successor `W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS` |
 
 ## 9. Lean
@@ -327,7 +366,7 @@ premise that macro invocations on the region call no hazard
 ## 11. Follow-ups
 
 [`followups.json`](followups.json) is applied by the idempotent
-[`scripts/update_ledger.py`](scripts/update_ledger.py): @LEDGER@.
+[`scripts/update_ledger.py`](scripts/update_ledger.py): 561 → 562 (2 registered, 1 retired, 3 amended).
 
 - **Retired:** `W47-LOOP-OWNER-SERVICE-PROPERTY-KEYS` (§8).
 - **Registered:**

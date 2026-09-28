@@ -1,0 +1,7 @@
+before {'Unknown': 364, 'Safe': 37, 'Pending': 2, 'Unsafe': 1}
+after  {'Unknown': 364, 'Safe': 37, 'Pending': 2, 'Unsafe': 1}
+== src/flb_lib.c flb_service_set: ['Unknown', 'Unknown'] -> ['Unknown', 'Unknown']
+   -  {"category": "unsupported", "description": "indirect memory access is outside the resource projection", "line": 18792, "origin": "src/flb_lib.c:691"}
+   -  {"category": "unsupported", "description": "indirect memory access is outside the resource projection", "line": 18792, "origin": "src/flb_lib.c:691"}
+   +  {"category": "unsupported", "description": "call to `flb_config_set_property` whose declared contract awaits human review (awaiting-human-review)", "line": 18792, "origin": "src/flb_lib.c:691"}
+   +  {"category": "unsupported", "description": "call to `flb_config_set_property` whose declared contract awaits human review (awaiting-human-review)", "line": 18792, "origin": "src/flb_lib.c:691"}

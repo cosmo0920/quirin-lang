@@ -1,0 +1,22 @@
+{
+ "audit.log": {
+  "bytes": 134227,
+  "file": "audit.log.gz",
+  "sha256": "83ab9caca7eaa47c6f94be14b6f696cb3a8f75e70b1cdae51a4eee55660ff769"
+ },
+ "resource-diagnostics.contracts.json": {
+  "bytes": 680684,
+  "file": "resource-diagnostics.contracts.json.gz",
+  "sha256": "b2507d7ae03f15e08a3d926c3cae5dbb8298417479629210077e44833d027efb"
+ },
+ "resource-diagnostics.source-effects.json": {
+  "bytes": 118505,
+  "file": "resource-diagnostics.source-effects.json.gz",
+  "sha256": "2d3f1f14a17b3cc7f538b702721cf639da9ae46dd9f0921a4261764a6de3b466"
+ },
+ "run.json": {
+  "bytes": 1207,
+  "file": "run.json.gz",
+  "sha256": "ae24d60451d8db414034a9e5f49afdebec847f6af348572e8806bd461a43b8d5"
+ }
+}
