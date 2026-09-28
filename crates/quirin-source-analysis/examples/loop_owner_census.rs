@@ -17,9 +17,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::thread_entry_census::{BuildConfiguration, CensusFile};
+use qcore_c_gateway::typed_dispatch_census::TypedFacts;
 use qcore_contract::contract_loader::loop_owner_obligations;
 use qcore_core::loop_owner::OwnerVerdict;
-use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census_configured};
+use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census_typed};
 
 fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
     if path.is_dir() {
@@ -97,6 +98,51 @@ fn compile_defines(database: &str, root: &Path) -> BTreeMap<String, BTreeSet<Str
     units
 }
 
+/// For each coroutine body that may yield, one shortest call path (hops other
+/// than the coroutine hop) to a function that yields (card
+/// W47-LOOP-OWNER-TYPED-DISPATCH): what holds the body unresolved.
+fn yield_paths(
+    result: &quirin_source_analysis::loop_owner_census::Census,
+) -> BTreeMap<String, Vec<String>> {
+    use qcore_c_gateway::thread_entry_census::ReadHop;
+    let reading = &result.reading;
+    let mut next: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
+    for edge in &reading.edges {
+        if edge.hop != ReadHop::Coroutine {
+            next.entry(edge.caller).or_default().push(edge.callee);
+        }
+    }
+    let mut paths = BTreeMap::new();
+    for (_, body) in &reading.coroutine_bodies {
+        let mut parent: BTreeMap<usize, usize> = BTreeMap::new();
+        let mut queue = std::collections::VecDeque::from([*body]);
+        let mut seen = BTreeSet::from([*body]);
+        let mut found = None;
+        while let Some(at) = queue.pop_front() {
+            if reading.yields.contains_key(&at) {
+                found = Some(at);
+                break;
+            }
+            for callee in next.get(&at).into_iter().flatten() {
+                if seen.insert(*callee) {
+                    parent.insert(*callee, at);
+                    queue.push_back(*callee);
+                }
+            }
+        }
+        if let Some(mut at) = found {
+            let mut path = vec![reading.functions[at].clone()];
+            while let Some(previous) = parent.get(&at) {
+                at = *previous;
+                path.push(reading.functions[at].clone());
+            }
+            path.reverse();
+            paths.insert(reading.functions[*body].clone(), path);
+        }
+    }
+    paths
+}
+
 fn main() {
     let mut arguments = std::env::args().skip(1).collect::<Vec<_>>();
     // Card W47-LOOP-OWNER-COROUTINE-HOP: `--compile-commands=PATH` reads the
@@ -105,7 +151,14 @@ fn main() {
     let mut database = None;
     let mut generated = None;
     let mut prefixes = Vec::new();
+    // Card W47-LOOP-OWNER-TYPED-DISPATCH: `--typed-facts=PATH` (written by the
+    // `typed_dispatch_facts` example) keys field dispatch by record type.
+    let mut typed_paths = Vec::new();
     arguments.retain(|argument| {
+        if let Some(path) = argument.strip_prefix("--typed-facts=") {
+            typed_paths.push(path.to_owned());
+            return false;
+        }
         if let Some(path) = argument.strip_prefix("--compile-commands=") {
             database = Some(path.to_owned());
             false
@@ -189,11 +242,21 @@ fn main() {
             defined_elsewhere,
         }
     });
-    let result = census_configured(
+    // Repeatable: the library's facts and the test's are read separately.
+    let typed = (!typed_paths.is_empty()).then(|| {
+        let mut merged = TypedFacts::default();
+        for path in &typed_paths {
+            let text = fs::read_to_string(path).expect("typed facts");
+            merged.merge(serde_json::from_str::<TypedFacts>(&text).expect("typed facts JSON"));
+        }
+        merged
+    });
+    let result = census_typed(
         &files,
         &obligations,
         &FLUENT_BIT_HOPS,
         configuration.as_ref(),
+        typed.as_ref(),
     );
     let sites = result
         .sites
@@ -260,7 +323,7 @@ fn main() {
             }))
         })
         .collect::<Vec<_>>();
-    let report = serde_json::json!({
+    let mut report = serde_json::json!({
         "files": files.len(),
         "functions": result.program.functions.len(),
         "roots": result.program.roots.iter().map(|r| result.program.functions[r.function].clone()).collect::<Vec<_>>(),
@@ -299,5 +362,48 @@ fn main() {
         "dispatchers": focus,
         "sites": sites,
     });
+    if let Some(typed) = &typed {
+        report["typed"] = serde_json::json!({
+            "units": typed.units.len(),
+            "failures": typed.failures,
+            "dispatch_facts": typed.dispatches.len(),
+            "store_facts": typed.stores.len(),
+            "dispatch_sites": result
+                .reading
+                .dispatch_typing
+                .iter()
+                .map(|(kind, sites)| (kind.clone(), sites.len()))
+                .collect::<BTreeMap<_, _>>(),
+            "dispatch_site_list": result.reading.dispatch_typing,
+            "yield_paths": yield_paths(&result),
+            // The seeds this card's typed reading adds: a dispatch or a store
+            // through an unmatched record type.
+            "typed_unresolved_seeds": result
+                .reading
+                .unresolved
+                .iter()
+                .filter_map(|(id, reasons)| {
+                    let typed = reasons
+                        .iter()
+                        .filter(|r| {
+                            r.contains("whose record type is not matched")
+                                || r.contains("through an unmatched record type")
+                        })
+                        .collect::<Vec<_>>();
+                    (!typed.is_empty())
+                        .then(|| (result.program.functions[*id].clone(), typed))
+                })
+                .collect::<BTreeMap<_, _>>(),
+            "instance_flags": result
+                .reading
+                .instance_flags
+                .iter()
+                .map(|(id, flag)| (
+                    result.program.functions[*id].clone(),
+                    serde_json::json!({"derived": flag.derived, "reason": flag.reason}),
+                ))
+                .collect::<BTreeMap<_, _>>(),
+        });
+    }
     println!("{}", serde_json::to_string_pretty(&report).expect("json"));
 }

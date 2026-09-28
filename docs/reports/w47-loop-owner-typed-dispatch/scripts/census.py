@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Run the thread-entry census over the in_tail runtime test binary's sources.
 
-Usage: census.py OUT_DIR BINARY [--typed-fixed=FACTS --typed-previous=FACTS]
+Usage: census.py OUT_DIR BINARY [--typed-library=FACTS --typed-fixed=FACTS
+                                 --typed-previous=FACTS]
 
 The same four readings as W47-LOOP-OWNER-COROUTINE-HOP's census.sh (the
 90978ac6 export and the same tree with the previous test, raw and configured
@@ -39,8 +40,8 @@ def main():
         typed[name.lstrip("-")] = value
     out.mkdir(parents=True, exist_ok=False)
     for name, test in (("fixed", "-"), ("previous", str(PREVIOUS_TEST))):
-        facts = typed.get(f"typed-{name}")
-        extra = [f"--typed-facts={facts}"] if facts else []
+        facts = [typed[key] for key in ("typed-library", f"typed-{name}") if key in typed]
+        extra = [f"--typed-facts={path}" for path in facts]
         for suffix, configured in (("", []), ("-configured", CONFIGURED)):
             stem = out / f"{name}{suffix}"
             with open(f"{stem}.json", "wb") as stdout, open(f"{stem}.stderr", "wb") as stderr:

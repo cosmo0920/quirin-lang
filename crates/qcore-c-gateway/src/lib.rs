@@ -62,6 +62,9 @@ mod typed_access_positions;
 mod typed_position_shapes;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
+// Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type
+// of each field dispatch and store, for the thread-entry census.
+pub mod typed_dispatch_census;
 // Card W47-TYPED-CONST-POINTER-VALUE (rule 10m).
 mod typed_const_pointer_value;
 mod typed_field_access;
