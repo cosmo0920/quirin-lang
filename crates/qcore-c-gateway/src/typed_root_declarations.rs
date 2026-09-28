@@ -372,6 +372,14 @@ impl<'a> Walk<'a, '_> {
                 }
             }
             "CallExpr" => self.call(node),
+            // Builtins Clang does not spell as a call (`__atomic_*`,
+            // `__c11_atomic_*`, `__builtin_va_arg`) take every operand as an
+            // uncontracted callee would.
+            "AtomicExpr" | "VAArgExpr" => {
+                for operand in children(node) {
+                    self.uncontracted_operand(operand);
+                }
+            }
             _ => {}
         }
         let block = matches!(
@@ -382,6 +390,19 @@ impl<'a> Walk<'a, '_> {
             self.node_at(child, block)?;
         }
         Ok(())
+    }
+
+    fn uncontracted_operand(&mut self, operand: &'a Value) {
+        let mut names = Vec::new();
+        variables(operand, &mut names, false);
+        for name in &names {
+            self.facts.bound.insert((*name).to_owned());
+        }
+        let mut roots = Vec::new();
+        variables(operand, &mut roots, true);
+        for root in roots {
+            self.facts.mark(root, "custody-actual");
+        }
     }
 
     fn call(&mut self, node: &'a Value) {
@@ -585,6 +606,8 @@ contract { requires resource_contract_v1; ensures normal resource_released(b, no
             "int w(struct c_box *b) { c_other(b); return 0; }",
             "int w(struct c_box *b) { b = c_global; return b->flag; }",
             "int w(struct c_box *b) { b = ({ c_make(1); }); return b->flag; }",
+            "int w(struct c_box *b) { struct c_box *o = __atomic_exchange_n(&c_global, b, 5); \
+             return o->flag; }",
         ] {
             let roots = read(body).expect("answers");
             assert!(!roots.ast_never_bound("b"), "{body}");

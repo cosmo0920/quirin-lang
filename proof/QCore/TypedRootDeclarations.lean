@@ -45,7 +45,8 @@ inductive BindingEvent where
   holds a tracked identity at entry. -/
   | protectedFormal (n : Nat)
   /-- The roots of an actual at a position its contract does not declare
-  `Borrowed` (every position of an uncontracted or indirect callee). -/
+  `Borrowed` (every position of an uncontracted or indirect callee, and every
+  operand of an atomic or `va_arg` builtin). -/
   | custodyActual (roots : List Nat)
   /-- The names of an actual at a declared `Borrowed` position. -/
   | borrowedActual (names : List Nat)
