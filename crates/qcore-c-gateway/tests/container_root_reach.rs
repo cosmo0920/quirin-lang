@@ -136,22 +136,24 @@ fn a_publication_into_a_static_list_discharges() {
 }
 
 #[test]
-fn a_member_of_a_static_record_now_reaches_the_container_rule() {
+fn a_member_of_a_static_record_is_still_refused_before_the_effect() {
     if !clang_available() {
         return;
     }
-    // `&G.F` reaches the container rule once the call's member-address gate
-    // reads a static record's member. Re-pinned deliberately by
-    // W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the lexical gate still
-    // refuses, and the typed address fallback asked after it reads
-    // `&global_queue.items` (a member of static storage, not a pointer) at the
-    // `Borrowed` head position, so the publication into a static container
-    // discharges exactly as `&registry` does above.
+    // `&G.F` reaches the container rule only once the call's member-address
+    // gate reads a static record's member. Rule 10n's typed address fallback
+    // would read `&global_queue.items` at the `Borrowed` head position, but
+    // its root must be never bound, and since rule 10o the never-bound
+    // closure counts the address taken of `global_queue` as a possible
+    // binding; the whole call is refused first, and nothing is discharged or
+    // accused (measured at the round-2b integration; the address class is
+    // recorded under W47-JOIN-AST-CONSERVATIVE-CLASSES).
     let (status, diagnostics) = analyze(
         "struct queue global_queue;
          void subject(void) { struct item *e = q_alloc(); mk_list_add(&e->_head, &global_queue.items); }",
     );
-    assert_eq!(status, AnalysisStatus::Safe, "{diagnostics:?}");
+    assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
+    assert_eq!(leaks(&diagnostics), 0, "{diagnostics:?}");
     // A local record's member is not static storage: never `Safe`, nothing
     // accused.
     let (status, diagnostics) = analyze(

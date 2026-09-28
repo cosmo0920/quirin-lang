@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for wave-47 round 2b (integrate/w47-r2b: main 2a0d37b0 + merge 2bf8b732 [W47-ACCESS-PATH-POSITION-RESIDUALS] + ledger 9135e7a1 + one re-pin), measured by the integrator in its own worktree; every exit captured to a file. Full gate at 9135e7a1 (private/w47-int-f/gate-9135e7a1): every step 0 except run_test_binaries.py, whose single failure was container_root_reach::a_member_of_a_static_record_now_reaches_the_container_rule (the card pinned Safe; the merged tree gives Unknown because rule 10o binds the address-taken root). The pin was restored to main's Unknown with nothing accused; full rerun on it: 344 units, 357 summaries, 6,172 passed / 0 failed / 11 ignored; fmt and clippy 0. Provider Rust 129 passed / 0 failed / 1 ignored; providers/tests 24 OK; 220 Lean audits; 365 root Python tests; contracts check, five package build/verify, reevaluation probe and followup, docs index: 0. Release build, corpus arbiter and system slice: 0 (the re-pin does not touch the analyzer). compose3.py (base = round-1 integration, A = round-2a integration = main, B = the card's AFTER): system COMPOSES; corpus 527 / 10 / 4,297 vs 528 additive: one of the card's gains (rd_kafka_toppar_needs_query) held back and 33 Unknown functions keep refusals the card alone removed, all in the stricter direction; no Safe of main lost, no Unsafe or leak added (integration-confirmation.md).",
+ "workspace_tests": 6172,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 365,
+ "lean_audits": 220,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
