@@ -974,6 +974,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-callee-closure-r2](w47-callee-closure-r2/README.md) | W47-CALLEE-CLOSURE-R2: callee closure and external contracts after P3 |
 
+| [w47-lexical-closure-nested-assignment](w47-lexical-closure-nested-assignment/README.md) | W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT |
+
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |

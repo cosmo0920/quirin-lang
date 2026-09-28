@@ -1,0 +1,13 @@
+{
+  "note": "W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT card gate (scripts/gate.sh). The code part (submodule, run_test_binaries.py, cargo clean --profile dev, fmt, clippy, census-feature gateway clippy and library tests, both reevaluation examples, check_lean_audits.py, clang --version) ran at 4e744d6c; every later commit changes docs only. run_test_binaries.py: 342 units, 355 summaries, 6,151 passed, 0 failed, 11 ignored (private/test-binaries/20260928T033852Z-1438367/summary.json); census-feature library tests 630 passed. The Python suite and the docs-index check ran after the matrix and index regeneration (gate/head-docs.txt). No providers/ path is touched, so the provider gate is not run; provider_tests (129) is carried from the preceding matrix, not measured here. Clang recorded in this worktree. Exits in gate/; logs under private/nested/gate/ of this worktree.",
+  "workspace_tests": 6151,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 218,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
