@@ -1,0 +1,2 @@
+twelve-function trace run exit: 0
+premise census run exit: 0

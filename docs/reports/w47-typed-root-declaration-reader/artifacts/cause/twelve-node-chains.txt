@@ -1,0 +1,84 @@
+== rd_kafka_ConfigEntry_name [return] line 21733
+  MemberExpr {'isArrow': True, 'name': 'name'} type='char[1]'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='rd_strtup_t *'
+      MemberExpr {'isArrow': True, 'name': 'kv'} type='rd_strtup_t *const'
+        ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_ConfigEntry_t *'
+          DeclRefExpr {} type='const rd_kafka_ConfigEntry_t *' ref=entry
+== rd_kafka_messages_get [return] line 23085
+  ArraySubscriptExpr {} type='rd_kafka_message_t *const'
+    ImplicitCastExpr {'castKind': 'ArrayToPointerDecay'} type='rd_kafka_message_t *const *'
+      MemberExpr {'isArrow': True, 'name': 'elems'} type='rd_kafka_message_t *const[]'
+        ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_messages_t *'
+          DeclRefExpr {} type='const rd_kafka_messages_t *' ref=messages
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='unsigned long'
+      DeclRefExpr {} type='unsigned long' ref=index
+== rd_kafka_opaque [return] line 24637
+  MemberExpr {'isArrow': False, 'name': 'opaque'} type='void *const'
+    MemberExpr {'isArrow': True, 'name': 'rk_conf'} type='const struct rd_kafka_conf_s'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_t *'
+        DeclRefExpr {} type='const rd_kafka_t *' ref=rk
+== rd_kafka_topic_partition_get_current_leader_epoch [condition] line 21728
+  BinaryOperator {'opcode': '='} type='const rd_kafka_topic_partition_private_t *'
+    DeclRefExpr {} type='const rd_kafka_topic_partition_private_t *' ref=parpriv
+    ImplicitCastExpr {'castKind': 'BitCast'} type='const rd_kafka_topic_partition_private_t *'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='void *'
+        MemberExpr {'isArrow': True, 'name': '_private'} type='void *const'
+          ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_topic_partition_t *'
+            DeclRefExpr {} type='const rd_kafka_topic_partition_t *' ref=rktpar
+== rd_kafka_topic_partition_get_current_leader_epoch [condition-assignment] line 21728
+  BinaryOperator {'opcode': '='} type='const rd_kafka_topic_partition_private_t *'
+    DeclRefExpr {} type='const rd_kafka_topic_partition_private_t *' ref=parpriv
+    ImplicitCastExpr {'castKind': 'BitCast'} type='const rd_kafka_topic_partition_private_t *'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='void *'
+        MemberExpr {'isArrow': True, 'name': '_private'} type='void *const'
+          ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_topic_partition_t *'
+            DeclRefExpr {} type='const rd_kafka_topic_partition_t *' ref=rktpar
+== rd_kafka_topic_partition_get_leader_epoch [condition] line 21712
+  BinaryOperator {'opcode': '='} type='const rd_kafka_topic_partition_private_t *'
+    DeclRefExpr {} type='const rd_kafka_topic_partition_private_t *' ref=parpriv
+    ImplicitCastExpr {'castKind': 'BitCast'} type='const rd_kafka_topic_partition_private_t *'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='void *'
+        MemberExpr {'isArrow': True, 'name': '_private'} type='void *const'
+          ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_topic_partition_t *'
+            DeclRefExpr {} type='const rd_kafka_topic_partition_t *' ref=rktpar
+== rd_kafka_topic_partition_get_leader_epoch [condition-assignment] line 21712
+  BinaryOperator {'opcode': '='} type='const rd_kafka_topic_partition_private_t *'
+    DeclRefExpr {} type='const rd_kafka_topic_partition_private_t *' ref=parpriv
+    ImplicitCastExpr {'castKind': 'BitCast'} type='const rd_kafka_topic_partition_private_t *'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='void *'
+        MemberExpr {'isArrow': True, 'name': '_private'} type='void *const'
+          ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_topic_partition_t *'
+            DeclRefExpr {} type='const rd_kafka_topic_partition_t *' ref=rktpar
+== rd_kafka_handle_mock_cluster [return] line 23469
+  MemberExpr {'isArrow': False, 'name': 'cluster'} type='rd_kafka_mock_cluster_t *const'
+    MemberExpr {'isArrow': True, 'name': 'rk_mock'} type='const struct rd_kafka_s::(unnamed at <stdin>:19334:9)'
+      ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_t *'
+        DeclRefExpr {} type='const rd_kafka_t *' ref=rk
+== rd_kafka_mock_cluster_bootstraps [return] line 23473
+  MemberExpr {'isArrow': True, 'name': 'bootstraps'} type='char *const'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_mock_cluster_t *'
+      DeclRefExpr {} type='const rd_kafka_mock_cluster_t *' ref=mcluster
+== rd_kafka_mock_cluster_handle [return] line 23466
+  MemberExpr {'isArrow': True, 'name': 'rk'} type='rd_kafka_t *const'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_mock_cluster_t *'
+      DeclRefExpr {} type='const rd_kafka_mock_cluster_t *' ref=mcluster
+== rd_kafka_share_partition_offsets_list_get [return] line 20237
+  ArraySubscriptExpr {} type='rd_kafka_share_partition_offsets_t *const'
+    ImplicitCastExpr {'castKind': 'ArrayToPointerDecay'} type='rd_kafka_share_partition_offsets_t *const *'
+      MemberExpr {'isArrow': True, 'name': 'elems'} type='rd_kafka_share_partition_offsets_t *const[]'
+        ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_share_partition_offsets_list_t *'
+          DeclRefExpr {} type='const rd_kafka_share_partition_offsets_list_t *' ref=list
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='unsigned long'
+      DeclRefExpr {} type='unsigned long' ref=index
+== rd_kafka_share_partition_offsets_offsets [return] line 20255
+  MemberExpr {'isArrow': True, 'name': 'offsets'} type='const int64_t[]'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_share_partition_offsets_t *'
+      DeclRefExpr {} type='const rd_kafka_share_partition_offsets_t *' ref=partition_offsets
+== rd_kafka_Node_host [return] line 19789
+  MemberExpr {'isArrow': True, 'name': 'host'} type='char *const'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_Node_t *'
+      DeclRefExpr {} type='const rd_kafka_Node_t *' ref=node
+== rd_kafka_Node_rack [return] line 19795
+  MemberExpr {'isArrow': True, 'name': 'rack'} type='char *const'
+    ImplicitCastExpr {'castKind': 'LValueToRValue'} type='const rd_kafka_Node_t *'
+      DeclRefExpr {} type='const rd_kafka_Node_t *' ref=node

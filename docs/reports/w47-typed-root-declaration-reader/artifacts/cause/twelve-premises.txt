@@ -1,0 +1,56 @@
+rd_kafka_ConfigEntry_name [return] line=21733 readable=true index=true texts=["entry", "-", ">", "kv", "-", ">", "name"]
+    names=["entry:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_ConfigEntry_s\")) formal=true", "kv:nb=true mb=false sc=false pk=None dt=None formal=false", "name:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_ConfigEntry_t *')]
+rd_kafka_messages_get [return] line=23085 readable=true index=true texts=["messages", "-", ">", "elems", "[", "index", "]"]
+    names=["messages:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_messages_s\")) formal=true", "elems:nb=true mb=false sc=false pk=None dt=None formal=false", "index:nb=true mb=false sc=true pk=None dt=Some(Scalar) formal=true"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_messages_t *'), ('ParmVarDecl', 'unsigned long')]
+rd_kafka_opaque [return] line=24637 readable=true index=true texts=["rk", "-", ">", "rk_conf", ".", "opaque"]
+    names=["rk:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_s\")) formal=true", "rk_conf:nb=true mb=false sc=false pk=None dt=None formal=false", "opaque:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_t *')]
+rd_kafka_topic_partition_get_current_leader_epoch [condition] line=21728 readable=true index=true texts=["parpriv", "=", "rktpar", "-", ">", "_private"]
+    names=["parpriv:nb=true mb=true sc=false pk=None dt=Some(Opaque) formal=false", "rktpar:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "_private:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('VarDecl', 'const rd_kafka_topic_partition_private_t *'), ('ParmVarDecl', 'const rd_kafka_topic_partition_t *')]
+rd_kafka_topic_partition_get_current_leader_epoch [condition-assignment] line=21728 readable=true index=true texts=["parpriv", "=", "rktpar", "-", ">", "_private"]
+    names=["parpriv:nb=true mb=true sc=false pk=None dt=Some(Opaque) formal=false", "rktpar:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "_private:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('VarDecl', 'const rd_kafka_topic_partition_private_t *'), ('ParmVarDecl', 'const rd_kafka_topic_partition_t *')]
+rd_kafka_topic_partition_get_leader_epoch [condition] line=21712 readable=true index=true texts=["parpriv", "=", "rktpar", "-", ">", "_private"]
+    names=["parpriv:nb=true mb=true sc=false pk=None dt=Some(Opaque) formal=false", "rktpar:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "_private:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('VarDecl', 'const rd_kafka_topic_partition_private_t *'), ('ParmVarDecl', 'const rd_kafka_topic_partition_t *')]
+rd_kafka_topic_partition_get_leader_epoch [condition-assignment] line=21712 readable=true index=true texts=["parpriv", "=", "rktpar", "-", ">", "_private"]
+    names=["parpriv:nb=true mb=true sc=false pk=None dt=Some(Opaque) formal=false", "rktpar:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "_private:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('VarDecl', 'const rd_kafka_topic_partition_private_t *'), ('ParmVarDecl', 'const rd_kafka_topic_partition_t *')]
+rd_kafka_handle_mock_cluster [return] line=23469 readable=true index=true texts=["rk", "-", ">", "rk_mock", ".", "cluster"]
+    names=["rk:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_s\")) formal=true", "rk_mock:nb=true mb=false sc=false pk=None dt=None formal=false", "cluster:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_t *')]
+rd_kafka_mock_cluster_bootstraps [return] line=23473 readable=true index=true texts=["mcluster", "-", ">", "bootstraps"]
+    names=["mcluster:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_mock_cluster_s\")) formal=true", "bootstraps:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_mock_cluster_t *')]
+rd_kafka_mock_cluster_handle [return] line=23466 readable=true index=true texts=["mcluster", "-", ">", "rk"]
+    names=["mcluster:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_mock_cluster_s\")) formal=true", "rk:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_mock_cluster_t *')]
+rd_kafka_share_partition_offsets_list_get [return] line=20237 readable=true index=true texts=["list", "-", ">", "elems", "[", "index", "]"]
+    names=["list:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_share_partition_offsets_list_s\")) formal=true", "elems:nb=true mb=false sc=false pk=None dt=None formal=false", "index:nb=true mb=false sc=true pk=None dt=Some(Scalar) formal=true"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_share_partition_offsets_list_t *'), ('ParmVarDecl', 'unsigned long')]
+rd_kafka_share_partition_offsets_offsets [return] line=20255 readable=true index=true texts=["partition_offsets", "-", ">", "offsets"]
+    names=["partition_offsets:nb=true mb=false sc=false pk=Some(Record) dt=Some(RecordPointer(\"rd_kafka_share_partition_offsets_s\")) formal=true", "offsets:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_share_partition_offsets_t *')]
+rd_kafka_Node_host [return] line=19789 readable=true index=true texts=["node", "-", ">", "host"]
+    names=["node:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "host:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_Node_t *')]
+rd_kafka_Node_rack [return] line=19795 readable=true index=true texts=["node", "-", ">", "rack"]
+    names=["node:nb=true mb=false sc=false pk=None dt=Some(Opaque) formal=true", "rack:nb=true mb=false sc=false pk=None dt=None formal=false"]
+    permissive_return=None
+    node types=[('ParmVarDecl', 'const rd_kafka_Node_t *')]
