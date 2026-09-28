@@ -984,6 +984,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-loop-owner-coroutine-hop](w47-loop-owner-coroutine-hop/README.md) | W47-LOOP-OWNER-COROUTINE-HOP: the coroutine hop and a configured conditional reading for the thread-entry census |
 
+| [w47-loop-owner-instance-flow](w47-loop-owner-instance-flow/README.md) | W47-LOOP-OWNER-INSTANCE-FLOW: the instance a plugin copy is installed on |
+
 | [w47-loop-owner-typed-dispatch](w47-loop-owner-typed-dispatch/README.md) | W47-LOOP-OWNER-TYPED-DISPATCH: type-keyed field dispatch and a plugin copy's instance flag |
 
 | [w47-summary-validation-protected-formals](w47-summary-validation-protected-formals/README.md) | W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated on the premises its reported row reads (wave 47) |

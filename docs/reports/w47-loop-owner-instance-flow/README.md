@@ -394,7 +394,24 @@ DISCHARGE clause is not met for the list-head instance.
 ## 12. Gate
 
 [`scripts/gate.py`](scripts/gate.py) runs `rust` then `records`. Exits are
-in [gate/](gate/) and figures in [gate.json](gate.json).
+in [gate/](gate/) and figures in [gate.json](gate.json). The `rust` phase ran
+at `a5e1c799` and every step exited 0:
+
+- submodule; fmt clean; the Rust suite: 350 units / 363 summaries, **6,266
+  passed, 0 failed**, 11 ignored; clippy clean; both probes 0;
+- **223 Lean audits** (no new audit module);
+- the provider gate: provider cargo test 129 passed / 0 failed / 1 ignored;
+  provider fmt and clippy clean; `contracts.py check` 0; package build and
+  all five verifies 0; provider Python 24 tests OK; `pin --check` at the three
+  trees (4 recorded, 0 not in force each) and `pin --verify-contracts` 0.
+
+A first run at `d2679795` (private `gate-2`) failed on three contract-corpus
+pins and two clippy lints. The pins were the corpus module count 120 → 121,
+the declaration counts 56 / 242 → 57 / 246 (with the withheld declarations
+counted beside the function map) and the structured-clause table's order.
+All were repaired in `a5e1c799`. The Python suite and docs-index check ran
+after the matrix and index regeneration (matrix: 554 follow-ups, 223 Lean
+audits, 121 contract modules).
 
 **Files likely to conflict** with the parallel W47-CONDVAR-JOIN-STOP-PATHS:
 
