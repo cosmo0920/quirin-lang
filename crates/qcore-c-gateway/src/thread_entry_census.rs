@@ -2447,7 +2447,9 @@ impl StepB<'_> {
 /// plugin copy is derived to run no coroutine only when the copy's own flags
 /// and the flag of the one instance it is installed on both derive none.
 fn derive_instance_flags(step: &StepB<'_>) -> BTreeMap<usize, InstanceFlag> {
-    let mut by_registrant: BTreeMap<usize, Vec<(usize, Option<&str>, usize)>> = BTreeMap::new();
+    // registrant -> (registering function, instance argument, file).
+    type Registrations<'r> = Vec<(usize, Option<&'r str>, usize)>;
+    let mut by_registrant: BTreeMap<usize, Registrations<'_>> = BTreeMap::new();
     for (registrant, function, instance, file) in step.collector_registrations {
         by_registrant
             .entry(*registrant)
