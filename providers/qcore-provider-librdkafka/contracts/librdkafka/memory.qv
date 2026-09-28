@@ -92,3 +92,88 @@ contract {
     ensures normal resource_borrowed(ra);
     ensures normal resource_return_none();
 };
+
+// ## Card W47-CALLEE-CLOSURE-R2: `rd_file_read`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`; one copy
+// in the tree). After P3 it is the last uncontracted call of
+// `rd_kafka_oidc_assertion_read_from_file`
+// (`src/rdkafka_sasl_oauthbearer_oidc.c:651-656`: a null test of its formal,
+// then `return rd_file_read(file_path, NULL, max_size);`); its other call site
+// (`:275`) sits in a function with other blockers. It sits in this module,
+// beside `rd_malloc` and `rd_free`, whose custody its result carries.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/rd.h:472-521`
+//
+//     static RD_INLINE RD_UNUSED char *
+//     rd_file_read(const char *file_path, size_t *size, size_t max_size) {
+//             FILE *file;
+//             char *buf = NULL;
+//             size_t file_size;
+//             size_t read_size;
+//             if (!size)
+//                     size = &read_size;
+//             file = fopen(file_path, "rb");          /* the non-_WIN32 arm */
+//             if (!file)
+//                     return NULL;
+//             if (fseek(file, 0, SEEK_END) != 0)
+//                     goto err;
+//             file_size = (size_t)ftell(file);
+//             ...                                      /* seek back, size cap */
+//             buf       = (char *)rd_malloc(file_size + 1);
+//             read_size = fread(buf, 1, file_size, file);
+//             if (read_size != file_size)
+//                     goto err;
+//             buf[file_size] = '\0';
+//             *size          = file_size;
+//             fclose(file);
+//             return buf;
+//     err:
+//             fclose(file);
+//             if (buf)
+//                     rd_free(buf);
+//             return NULL;
+//     }
+//
+// Its comment says so (`:468`): "@remark The returned pointer ownership is
+// transferred to the caller."
+//
+// ## Custody
+//
+//   * The result is `resource_return_owned(nullable)`: on success it is the
+//     buffer `rd_malloc` returned (the heap kind `rd_free` releases, as
+//     `libc::free`), handed to the caller; on every failure arm the body has
+//     released it itself (`rd_free(buf)`) or never allocated it, and returns
+//     NULL. The `FILE` the body opens is closed on every arm before the
+//     return, so nothing else outlives the call.
+//   * `file_path` is `resource_borrowed` (read by `fopen`); `size` is
+//     `resource_borrowed` (optional: the body substitutes a local when it is
+//     NULL, and writes a scalar through it on success); `max_size` is a scalar.
+//
+// ## Where the body lives
+//
+// `static RD_INLINE` in a header: every unit that includes `rd.h` holds a
+// copy, but no analysed function of the corpus is this function, so no body
+// is checked against this declaration (constraint 8, rule 10g); it is an
+// unchecked premise pinned to the header text, as `rd_atomic32_get` above.
+//
+// ## ABI (constraint 8)
+//
+// `const char *` is `ptr<const, u8>`, `size_t *` one object-pointer level
+// (`ptr<mut, u8>`), `size_t` is `usize` under LP64 and `char *` is
+// `ptr<mut, u8>`.
+//
+// NOT CLAIMED: the buffer's contents or NUL termination, the size written
+// through `size`, `errno`, or the Windows arm (`fopen_s`), which is not in
+// the audited build.
+
+// --- read a whole file into a new heap buffer ---
+extern fn rd_file_read(file_path: ptr<const, u8>, size: ptr<mut, u8>, max_size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file_path);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(max_size);
+    ensures normal resource_return_owned(nullable);
+};

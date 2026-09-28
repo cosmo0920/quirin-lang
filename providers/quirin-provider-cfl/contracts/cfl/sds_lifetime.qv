@@ -167,3 +167,86 @@ contract {
     ensures normal resource_borrowed(s);
     ensures normal resource_return_none();
 };
+
+// ## Card W47-CALLEE-CLOSURE-R2: `cfl_arena_calloc`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`; one copy
+// in the tree). After P3 it is the last uncontracted call of
+// `initialize_attribute_list` and `initialize_summary_value_at_quantile_list`
+// (`lib/cmetrics/src/cmt_encode_opentelemetry.c:2000-2011`, `:2230-2241`),
+// which bind its result and return it; its other eleven call sites sit in
+// functions with other blockers. It sits in this module because the crate's
+// only other resource-view module is `cfl/time.qv`, and `cfl/arena_lifetime.qv`
+// is not a v1 resource module (one declaration does not justify a new
+// resource-view module).
+//
+// ## The body, read from `lib/cfl/src/cfl_arena.c:354-371`
+//
+//     void *cfl_arena_calloc(struct cfl_arena *arena,
+//                            size_t count, size_t size)
+//     {
+//         void *result;
+//         size_t total;
+//
+//         if (count != 0 && size > SIZE_MAX / count) {
+//             return NULL;
+//         }
+//
+//         total = count * size;
+//         result = cfl_arena_malloc(arena, total);
+//         if (result != NULL) {
+//             memset(result, 0, total);
+//         }
+//
+//         return result;
+//     }
+//
+// `cfl_arena_malloc` (`:279-347`) returns NULL for a NULL arena or a zero
+// size, otherwise a pointer into the data of a chunk the arena owns: an
+// existing chunk (`&chunk->data[offset]`) or a new one it allocates with the
+// arena's own allocator and links into `arena->head` (NULL when that fails).
+// The header (`lib/cfl/include/cfl/cfl_arena.h:42-46`) states the contract:
+// raw allocations "cannot be freed individually and remain valid until reset
+// or destruction", and a zero-sized or overflowing request returns NULL.
+//
+// ## Custody
+//
+//   * `arena` is `resource_borrowed`: the call hands the caller no custody of
+//     the arena and takes none from it (the arena's chunk list grows, which is
+//     the arena's own state, as a writer's buffer is the writer's).
+//   * `count` and `size` are scalars.
+//   * The result is `resource_return_interior(arena, nullable)`. It acquires,
+//     discharges and transfers nothing (rule 1 of C04.3.1); releasing it is
+//     not a release of the arena and is an invalid free (rule 2: the value was
+//     never returned by the C allocator); releasing the arena invalidates it
+//     (rule 3: `cfl_arena_destroy` frees every chunk); its nullness is its own
+//     (rule 4: NULL for overflow, zero size or a failed chunk allocation,
+//     whatever the arena is). The extent is read as *the storage the arena
+//     object owns*, not the bytes of `struct cfl_arena` itself: the chunks are
+//     separate allocations reached from it, destroyed with it. That is the
+//     reading every consumer rule above applies, and it is the only v1 result
+//     mode that keeps the result's dependence on the arena:
+//     `resource_return_none()` would forget it, and card W47-CALLEE-CLOSURE-R2
+//     measured that it then admits a use of the result after its base is
+//     released as `Safe`.
+//
+// ## ABI (constraint 8)
+//
+// `struct cfl_arena *` is one object-pointer level, `ptr<mut, u8>`; `size_t`
+// is `usize` under LP64; `void *` is `ptr<mut, u8>`. `lib/cfl/src/cfl_arena.c`
+// is not an analysed unit, so no body is checked against this declaration.
+//
+// NOT CLAIMED: anything about `cfl_arena_reset` (which also invalidates the
+// result without releasing the arena; it is undeclared, so a caller of it is
+// refused), the arena's allocator callbacks, alignment, or the zeroing.
+
+// --- a zeroed allocation inside a CFL arena -----------------------------------
+extern fn cfl_arena_calloc(arena: ptr<mut, u8>, count: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(arena);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_interior(arena, nullable);
+};

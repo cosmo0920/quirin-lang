@@ -59,3 +59,15 @@ contract {
     ensures normal resource_borrowed(ra);
     ensures normal resource_return_none();
 };
+
+// Card W47-CALLEE-CLOSURE-R2 appended `rd_file_read` to the converted module;
+// it inherits nothing either, so its hand-written form is the module's own
+// text and the conversion's parity is unchanged.
+extern fn rd_file_read(file_path: ptr<const, u8>, size: ptr<mut, u8>, max_size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file_path);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(max_size);
+    ensures normal resource_return_owned(nullable);
+};

@@ -6,6 +6,38 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "cfl_arena_calloc",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "0e2ac02cb6cf2e4ac11a95a08d66cd1d08a501a0037739b087c0dac3e15400cc",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_arena.h",
+              "kind": "declaration",
+              "declaration_sha256": "a3b6f92f099874e326bd9d2213e1e296e75777e337a70001fa0fd722ca4ef126"
+            },
+            {
+              "path": "lib/cfl/src/cfl_arena.c",
+              "kind": "definition",
+              "declaration_sha256": "a3b6f92f099874e326bd9d2213e1e296e75777e337a70001fa0fd722ca4ef126",
+              "body_sha256": "66748763fe59b4a66a61596594ac839df9250adf40dfa1a0b3a26d8ca6daf006"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cfl_sds_destroy",
       "module": "cfl/sds_lifetime.qv",
       "contract_sha256": "35529034b5141fb407fda784094208c87f4295ba829e14e0066d6de5fb44814e",

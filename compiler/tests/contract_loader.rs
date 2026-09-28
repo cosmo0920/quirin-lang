@@ -534,6 +534,27 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ),
         );
     }
+    // Card W47-CALLEE-CLOSURE-R2: two external callees read off their bodies
+    // at both audited revisions. `cfl_arena_calloc`'s result is interior to
+    // its borrowed arena (a zeroed allocation inside a chunk the arena owns and
+    // `cfl_arena_destroy` frees), never `const`-dropped; `rd_file_read`'s is a
+    // fresh `rd_malloc` buffer or NULL, which `rd_free` releases.
+    old.insert_contract(
+        "cfl_arena_calloc",
+        ResourceFunctionContract::new(
+            vec![P::Borrowed; 3],
+            R::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Interior,
+                nullable: true,
+                const_dropped: false,
+            },
+        ),
+    );
+    old.insert_contract(
+        "rd_file_read",
+        ResourceFunctionContract::new(vec![P::Borrowed; 3], R::Owned { nullable: true }),
+    );
     // Card CONTRACT-INHERIT-ADOPTION: `strndup` is `strdup` with a borrowed
     // size (the trailing borrow is canonicalised away below).
     old.insert_contract(
@@ -1369,9 +1390,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // unchanged.
     // The two new W46 cards add six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
+    // 230 -> 232 by card W47-CALLEE-CLOSURE-R2: `cfl_arena_calloc` appended
+    // to `cfl/sds_lifetime.qv` and `rd_file_read` to `librdkafka/memory.qv`,
+    // both already selected. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (54, 230, 216)
+        (54, 232, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

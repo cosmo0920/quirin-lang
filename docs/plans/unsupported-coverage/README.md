@@ -187,6 +187,12 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   short-circuit operand's obligations only where it is evaluated.
 
 ### P4: CALLEE-CLOSURE
+- **Status (round 2):** measured and contracted by
+  [W47-CALLEE-CLOSURE-R2](../../reports/w47-callee-closure-r2/README.md) on
+  the post-P3 corpus. The in-corpus closure frees 0 functions under the
+  existing rules and 3 under a cross-unit route. Two external callees were
+  declared (+3 Safe). The remaining ranking (`W47-EXTERNAL-RESIDUAL-RANKING-R2`)
+  waits on decisions listed in that report's §6.
 - **The in-corpus gain:** re-run P1's closure on the post-P3 corpus. That gain
   arrives through the existing summary rules. P4 adds no new trust.
 - **External callees:** rank them by the functions they would unblock alone.

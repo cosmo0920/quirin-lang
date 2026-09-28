@@ -1,0 +1,79 @@
+[
+  {
+    "function": "cmt_encode_opentelemetry.c::append_sample_to_metric",
+    "category": "unsupported",
+    "description": "nested call `get_context_arena` inside a modeled call is outside the resource projection",
+    "line": 9186,
+    "reason": "exchanged refusal at the served call (cmt_encode_opentelemetry.c:3181, `attribute_list = initialize_attribute_list(get_context_arena(context), attribute_count);`): the callee's uncontracted-call leaf at this coordinate is removed because initialize_attribute_list is now Safe and its summary serves the call, which exposes the nested call in its first argument (NESTED-CALL-IN-ARGUMENT-POSITION). Unknown-class; the function stays Unknown."
+  },
+  {
+    "function": "cmt_encode_opentelemetry.c::initialize_histogram_data_point",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `data_point`",
+    "line": 8574,
+    "reason": "later obligation exposed by the declaration (cmt_encode_opentelemetry.c:2397, `return data_point;`): data_point is now bound to cfl_arena_calloc's interior result over the `arena` formal, and its return in a body with other refusals (pointer stores into fields, uncontracted protobuf-c `__init` calls) is unresolved. Before, the uncontracted call left data_point unbound and the return carried no leaf. Unknown-class, accusing direction; the function stays Unknown."
+  },
+  {
+    "function": "cmt_encode_opentelemetry.c::initialize_numerical_data_point",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `data_point`",
+    "line": 8434,
+    "reason": "later obligation exposed by the declaration (cmt_encode_opentelemetry.c:2207, `return data_point;`), the same shape as initialize_histogram_data_point: the interior result is returned from a body with other refusals. Unknown-class; the function stays Unknown."
+  },
+  {
+    "function": "cmt_encode_opentelemetry.c::initialize_string_attribute",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `attribute`",
+    "line": 8255,
+    "reason": "later obligation exposed by the declaration (cmt_encode_opentelemetry.c:1991, `return attribute;`): attribute is cfl_arena_calloc's interior result, returned after pointer stores into its fields (`attribute->value = cfl_arena_calloc(...)`, `attribute->key = cfl_arena_strndup(...)`) the projection refuses. Unknown-class; the function stays Unknown."
+  },
+  {
+    "function": "cmt_encode_opentelemetry.c::initialize_summary_data_point",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `data_point`",
+    "line": 8515,
+    "reason": "later obligation exposed by the declaration (cmt_encode_opentelemetry.c:2313, `return data_point;`), the same shape as initialize_histogram_data_point. Unknown-class; the function stays Unknown."
+  },
+  {
+    "function": "cmt_encode_opentelemetry.c::initialize_summary_value_at_quantile",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `instance`",
+    "line": 8449,
+    "reason": "later obligation exposed by the declaration (cmt_encode_opentelemetry.c:2227, `return instance;`): the interior result is returned from a body whose `opentelemetry__proto__metrics__v1__summary_data_point__value_at_quantile__init(instance)` call is uncontracted. Unknown-class; the function stays Unknown."
+  },
+  {
+    "function": "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_assertion_parse_template_file",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `template_content`",
+    "line": 21385,
+    "reason": "identity resolved by the declaration (rdkafka_sasl_oauthbearer_oidc.c:277, `if (!template_content)`): template_content is now rd_file_read's owned nullable result, so its null test is decided. The function keeps its other blockers (cJSON calls, stores through `*header`/`*payload`) and stays Unknown."
+  },
+  {
+    "function": "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_assertion_parse_template_file",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `template_content`",
+    "line": 21391,
+    "reason": "identity resolved by the declaration (rdkafka_sasl_oauthbearer_oidc.c:287, `rd_free(template_content);` on the empty-file arm): the owned result is released there. The later cleanup-arm uses (:324-325) keep their unknown_alias leaves behind the refused cJSON calls. The function stays Unknown."
+  },
+  {
+    "function": "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `result`",
+    "line": 22183,
+    "reason": "identity resolved through the summary cascade (rdkafka_sasl_oauthbearer_oidc.c:1596, `rd_free(result);`): result is now the owned nullable result the Safe rd_kafka_oidc_assertion_read_from_file's summary returns at :1589, and its release is decided."
+  },
+  {
+    "function": "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "category": "leak",
+    "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1599",
+    "line": 22185,
+    "reason": "ARTIFACT (summary approximation), classified by reading: `result = rd_kafka_oidc_assertion_read_from_file(NULL); RD_UT_ASSERT(result == NULL, ...)` (:1599-1600). The leak is on the assertion's failure arm (`return 1` without rd_free, rdunittest.h:93-106), which needs a non-NULL result; the callee's body returns NULL for a NULL argument (`if (!file_path) return NULL;`, :652-653), so the path is infeasible in C. The inferred summary (owned, nullable) does not carry the argument-conditional nullness. Registered as W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL. The function's provisional Unsafe does not rest on this leaf alone: the leak at :1605 is real."
+  },
+  {
+    "function": "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "category": "leak",
+    "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1603",
+    "line": 22188,
+    "reason": "REAL, classified by reading, on a unit-test failure path: `result = rd_kafka_oidc_assertion_read_from_file(\"/non/existent/file/path\"); RD_UT_ASSERT(result == NULL, ...)` (:1603-1606). When that path exists and reads, rd_file_read returns an rd_malloc buffer, the assertion fails, and RD_UT_ASSERT returns 1 without rd_free (unless rd_unittest_assert_on_failure aborts first). The same shape as the leak its sibling ut_sasl_oauthbearer_oidc_assertion_process_template_file already carries (:1656/:1659). A provisional candidate in test code on an environment-dependent failure arm, not an upstream defect claim."
+  }
+]

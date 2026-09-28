@@ -1,0 +1,47 @@
+{
+ "after": {
+  "functions": {
+   "Safe": 510,
+   "Unknown": 4314,
+   "Unsafe": 10
+  },
+  "leaves": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7442,
+   "unsupported": 36250
+  },
+  "units": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ },
+ "before": {
+  "functions": {
+   "Safe": 507,
+   "Unknown": 4318,
+   "Unsafe": 9
+  },
+  "leaves": {
+   "leak": 34,
+   "summary_conflict": 1,
+   "unknown_alias": 7440,
+   "unsupported": 36262
+  },
+  "units": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ },
+ "identical": {
+  "monkey-source.json": true,
+  "parity.jsonl (sorted rows)": false,
+  "parity.jsonl.contexts.jsonl (sorted rows)": true,
+  "resource-diagnostics.chunk-contracts.json": true,
+  "resource-diagnostics.source-effects.json": true
+ }
+}

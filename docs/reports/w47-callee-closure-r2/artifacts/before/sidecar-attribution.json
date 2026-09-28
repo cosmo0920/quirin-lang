@@ -1,0 +1,52 @@
+{
+ "resource-diagnostics.contracts.json": {
+  "raw_identical": false,
+  "identical_after_f4018a92_rename": false,
+  "remaining_after_rename": {
+   "digest": 34
+  },
+  "non_digest": [],
+  "digest_paths": [
+   "/contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qv/module/sha256",
+   "/contract_inclusion/modules/qcore-provider-librdkafka:librdkafka/memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_string.qv/module/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-chunkio/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-cmetrics/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-ctraces/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-cfl/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-libc/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-mpack/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-msgpack/contracts.lock/sha256",
+   "/contract_revision/pinned_in_force[]/module_sha256"
+  ]
+ },
+ "resource-diagnostics.source-effects.json": {
+  "raw_identical": false,
+  "identical_after_f4018a92_rename": false,
+  "remaining_after_rename": {
+   "digest": 26
+  },
+  "non_digest": [],
+  "digest_paths": [
+   "/results[]/bounds/<resource_contracts:4ac71eed0b35b81830cdb39a -> resource_contracts:832a42d35cefd26ab50e96ba>",
+   "/results[]/bounds/<resource_contracts:9c659193a1d12fbaf7b11be7 -> resource_contracts:b2790bdef09fd2d667e7b59c>",
+   "/results[]/bounds/<resource_contracts:adb286926c97899c5fcb077c -> resource_contracts:537fef8509d16a1ee674a839>",
+   "/results[]/evidence/coverage[]",
+   "/results[]/evidence/unit/build_digest",
+   "/results[]/import_identity/configuration_digest",
+   "/results[]/import_identity/helpers/cio_error_reset/configuration_digest",
+   "/results[]/task/contract_sources/qcore:boolean-field-import:v1",
+   "/results[]/task/obligations[]/obligation_id",
+   "/results[]/task/unit/build_digest",
+   "/results[]/witness/task_digest"
+  ]
+ },
+ "attributed": true
+}

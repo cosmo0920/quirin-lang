@@ -1,0 +1,100 @@
+//! PROBE (temporary): how the gateway treats the two candidate declarations.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, LegacyFunctionSummary, LegacyProgramSummary,
+    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
+const LIBC_MEMORY: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
+
+const DECLARATIONS: &str = "\
+typedef unsigned long size_t; \
+struct cfl_arena; \
+typedef struct kv kv; \
+void *malloc(size_t size); \
+void free(void *ptr); \
+void *cfl_arena_calloc(struct cfl_arena *arena, size_t count, size_t size); \
+char *rd_file_read(const char *file_path, size_t *size, size_t max_size);\n\
+#define NULL ((void *)0)\n";
+
+fn contracts(result: &str) -> ResourceContracts {
+    let card = format!(
+        "module contract;\n\
+extern fn cfl_arena_calloc(arena: ptr<mut, u8>, count: usize, size: usize) -> ptr<mut, u8>\n\
+contract {{\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(arena);\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal {result};\n}};\n\
+extern fn rd_file_read(file_path: ptr<const, u8>, size: ptr<mut, u8>, max_size: usize) -> ptr<mut, u8>\n\
+contract {{\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(file_path);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_borrowed(max_size);\n    ensures normal resource_return_owned(nullable);\n}};\n"
+    );
+    load_resource_contract_sources(&BTreeMap::from([
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
+        ("probe/card.qv".to_owned(), card),
+    ]))
+    .unwrap_or_else(|error| panic!("contract text rejected: {error}"))
+}
+
+fn program(result: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
+    match result {
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        }
+        | UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        other => panic!("expected an analyzable summary: {other:?}"),
+    }
+}
+
+fn summary_with(contracts: &ResourceContracts, body: &str, entry: &str) -> LegacyFunctionSummary {
+    let source = format!("{DECLARATIONS}{body}\n");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        entry,
+        contracts,
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{source}"));
+    program(&result)
+        .functions
+        .get(entry)
+        .unwrap_or_else(|| panic!("missing function `{entry}`"))
+        .clone()
+}
+
+#[test]
+fn probe() {
+    let bodies = [
+        ("list", "kv **a(struct cfl_arena *arena, size_t n) { kv **l; l = cfl_arena_calloc(arena, n + 1, sizeof(kv *)); return l; }"),
+        ("free", "void a(struct cfl_arena *arena) { char *p; p = cfl_arena_calloc(arena, 1, 8); free(p); }"),
+        ("discard", "void a(struct cfl_arena *arena) { cfl_arena_calloc(arena, 1, 8); }"),
+        ("owned-arena", "void a(void) { struct cfl_arena *m; m = malloc(64); if (!m) { return; } cfl_arena_calloc(m, 1, 8); free(m); }"),
+        ("released-arena", "void *a(void) { struct cfl_arena *m; char *p; m = malloc(64); if (!m) { return NULL; } free(m); p = cfl_arena_calloc(m, 1, 8); return p; }"),
+        ("use-after", "int a(void) { struct cfl_arena *m; char *p; m = malloc(64); if (!m) { return 0; } p = cfl_arena_calloc(m, 1, 8); free(m); if (p) { return p[0]; } return 1; }"),
+        ("oidc", "char *a(const char *file_path) { if (!file_path) return NULL; const size_t max_size = 1024 * 1024; return rd_file_read(file_path, NULL, max_size); }"),
+        ("leak", "void a(const char *p) { char *b; b = rd_file_read(p, NULL, 0); }"),
+        ("freed", "void a(const char *p) { char *b; size_t n; b = rd_file_read(p, &n, 0); if (b) { free(b); } }"),
+    ];
+    for result in [
+        "resource_return_none()",
+        "resource_return_interior(arena, nullable)",
+    ] {
+        let contracts = contracts(result);
+        for (name, body) in bodies {
+            let summary = summary_with(&contracts, body, "a");
+            eprintln!(
+                "PROBE {result} {name}: {:?} {:?}",
+                summary.status, summary.diagnostics
+            );
+        }
+    }
+    let _ = AnalysisStatus::Safe;
+}

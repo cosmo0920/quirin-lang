@@ -124,6 +124,33 @@
       ]
     },
     {
+      "function": "rd_file_read",
+      "module": "librdkafka/memory.qv",
+      "contract_sha256": "71d7058050fbdd2eaf500354732db228d42661e8c3275e599e2313339399a7c5",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rd.h",
+              "kind": "definition",
+              "declaration_sha256": "fd049334750d8428324f29e5e46d62c577bf0095be326ef234d1800ec342061f",
+              "body_sha256": "d6d0165eb1d48156cd31b5d81480f379a3554a514ec80e555e6aeb0055809047"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_free",
       "module": "librdkafka/memory.qv",
       "contract_sha256": "11dabb4546a4dd124048cbe5bba773f852adb9494b6ac1cb69517f49dc216fa1",
