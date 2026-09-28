@@ -479,3 +479,16 @@ docs/reports/w47-callee-closure-r2/scripts/archive.py RUN OUT_DIR
 Private runs are under `private/w47cc/` of this card's worktree. The contracts
 sidecar embeds the worktree path in its source keys, as every isolated card's
 does.
+
+## User decision on the arena reading (2026-09-28, recorded by the integrator)
+
+The user accepted the `resource_return_interior(arena, nullable)` reading of
+`cfl_arena_calloc` as reasonable for now, and stated that an arena should in
+future be treated as a memory allocation pool; how to contract that is open.
+`W47-ARENA-INTERIOR-READING` stays open as the interim declaration, and
+`W47-ARENA-POOL-RESULT-MODE` is registered for the pool treatment
+([scripts/record_arena_decision.py](scripts/record_arena_decision.py)). Until
+it lands, `cfl_arena_destroy` is not a v1 release (it is declared only in the
+non-v1 `cfl/arena_lifetime.qv`) and `cfl_arena_reset` is undeclared, so a
+caller of either stays Unknown; no result is shown invalid after destroy or
+reset.
