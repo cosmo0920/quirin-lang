@@ -6738,8 +6738,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W47-LOOP-OWNER-COROUTINE-HOP card gate at base 51fb793c. Rust, Lean and provider-test steps ran on the tree of 92e160dd (later commits change only docs, report records, the regenerated matrix and index): run_test_binaries.py 347 units, 360 summaries, 6,213 passed, 0 failed, 11 ignored (private/test-binaries/20260928T084319Z-3482471/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 222 audits passed (AuditLoopOwner.lean 22 -> 34 theorems, no new audit module). No providers/ change, so the provider gate is not due; the provider cargo test ran once to measure this figure: 129 passed / 0 failed. The Python suite and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/hop/gate-1/ and private/hop/gate-records/ of this worktree.",
-  "workspace_tests": 6213,
+  "note": "Integration gate for wave-47 condvar-join publication (integrate/w47-condvar: main 27854776 [W47-LOOP-OWNER-COROUTINE-HOP] + merge 1b91394b [W47-CONDVAR-JOIN-PUBLICATION]), measured by the integrator in its own worktree; every exit captured to a file (private/w47-int-g/gate-1b91394b). Full gate at 1b91394b: every step 0 (submodule, tests, clean-dev, fmt, clippy, reevaluation probe and followup, lean, python, docs index, provider tests/clean-dev/fmt/clippy/contracts-check, package build, five package verifies, provider-python, clang-version). run_test_binaries.py: 348 units, 361 summaries, 6,240 passed / 0 failed / 11 ignored; no failure in cycle20_verifier_plugins (20 passed / 0 failed), so no rerun was needed. Provider Rust 129 passed / 0 failed / 1 ignored; 223 Lean audits; 365 root Python tests; contracts check, five package build/verify, reevaluation probe and followup, docs index: 0. Release build, corpus arbiter and system slice: 0. compose3.py (base = round-1 integration [w47-loop-owner-contracts/artifacts/after], A = same base, B = the card's AFTER [w47-condvar-join-publication/artifacts/after]): all three scopes COMPOSE with 0 mismatches and 0 functions/leaves touched by both cards; merged corpus 526 Safe / 10 Unsafe / 4,298 Unknown, merged system 31 / 2 / 201, merged slice functions 24 / 1 / 245 (integration-confirmation.md).",
+  "workspace_tests": 6240,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 223,
@@ -6974,7 +6974,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-condvar-join-publication/integration/gate.json)"
  },
  "named_followups": [
   {
