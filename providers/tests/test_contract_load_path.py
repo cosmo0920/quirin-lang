@@ -375,8 +375,9 @@ class LoadPathManifest(unittest.TestCase):
         # `libc/pthread_sync.qv`.
         # 56 -> 57 (fluent-bit 19 -> 20) by card W47-CONDVAR-JOIN-STOP-PATHS:
         # `fluent_bit/lib_engine_thread.qv`, five declarations awaiting review.
+        # 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 57)
+        self.assertEqual(sum(len(view) for view in views.values()), 58)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # The real inventories: exactly the two crates that inherit carry pins.

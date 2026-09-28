@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::CensusFile;
+use qcore_c_gateway::thread_entry_census::{CensusFile, FLUENT_BIT_INSTANCE_FLOW};
 use qcore_c_gateway::typed_dispatch_census::{
     TypedFacts, TypedRecord, TypedUnit, dispatch_key, read_units, store_key,
 };
@@ -422,7 +422,12 @@ fn facts(fixture: &Fixture, untyped: &[&str]) -> TypedFacts {
             ],
         })
         .collect::<Vec<_>>();
-    let facts = read_units(&units, &fixture.root, &FLUENT_BIT_HOPS.typed_options(), 2);
+    let facts = read_units(
+        &units,
+        &fixture.root,
+        &FLUENT_BIT_HOPS.instance_flow_options(&FLUENT_BIT_INSTANCE_FLOW),
+        2,
+    );
     assert!(facts.failures.is_empty(), "{:#?}", facts.failures);
     facts
 }
@@ -638,7 +643,17 @@ fn nc_the_fixed_test_shape_keeps_the_coroutine_route_while_a_yield_is_reachable(
         )
         .expect("a Step B derivation");
     assert_eq!(flag.derived, None);
-    assert!(flag.reason.contains("escapes"), "{}", flag.reason);
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the holder's escape into the
+    // installed instance's `data` is now derived not to reach the route (the
+    // holder's type is the test file's own, the copy member is written only
+    // here, `p` only by the constructor and this installation); the instance
+    // read from an unknown function stays untied.
+    assert!(
+        !flag.reason.contains("holding the copy escapes"),
+        "{}",
+        flag.reason
+    );
+    assert!(flag.reason.contains("holder escape:"), "{}", flag.reason);
     assert!(
         flag.reason.contains("not tied to its creation"),
         "{}",

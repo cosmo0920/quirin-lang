@@ -921,5 +921,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
     // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    assert_eq!(contracts.source_assumptions().len(), 57);
+    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 58);
 }

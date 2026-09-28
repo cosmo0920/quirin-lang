@@ -54,6 +54,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/input_chunk_total_size.qv"),
     ),
     (
+        "fluent_bit/input_instance.qv",
+        include_str!("../contracts/fluent_bit/input_instance.qv"),
+    ),
+    (
         "fluent_bit/lib_engine_thread.qv",
         include_str!("../contracts/fluent_bit/lib_engine_thread.qv"),
     ),

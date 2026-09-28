@@ -1303,6 +1303,64 @@ which is not a second authority.
     sub-relation of field-keyed dispatch that removes only cross-type edges or
     refuses, and the route dropped only when both flags derive none;
     [report](../reports/w47-loop-owner-typed-dispatch/README.md).
+    **Amendment (W47-LOOP-OWNER-INSTANCE-FLOW): the instance a plugin copy
+    is installed on.** Step B may tie an instance read as the head of a
+    context's input list (`X = mk_list_entry(H, struct flb_input_instance,
+    _head)`, `H` a context's `config->inputs.next`) to its creation
+    (`loop_owner_instance.rs`, child of `thread_entry_census.rs`): the context
+    is a local returned by a function of the test's file that assigns it once
+    from `flb_create()`; on the test's path to the read (the test up to it,
+    that function, and `flb_create` read in place; a block that ends in
+    `return NULL;` pruned only where the test returns on a null context or
+    the context constructor itself returns null) exactly one call, outside
+    every loop, reaches a hazard over the census graph (all dispatch edges,
+    spawns and coroutine entries, the coroutine route not pruned), and it is
+    a wrapper that passes one unassigned parameter as the plugin name to one
+    `flb_input_new` call, called with a literal the typed reading records;
+    each function read in place must itself be free of hazards. A
+    hazard is the constructor, a use of `struct flb_config::inputs` or
+    `::in_plugins` other than a read or the listed initialisations, a write
+    of a context's `config`, an untyped function naming those members, a
+    function of an unstructured file whose text names one of them or a
+    function reaching one, or a call to a name only such a file may define;
+    and when the path's closure makes an unmodelled indirect call or has
+    a function the build's typed reading could not read, no escaped function
+    (an address taken, a macro name, a registrant of a function-pointer field
+    read as a value through a matching record) may reach a hazard. Every
+    descriptor whose name matches the literal ignoring ASCII case must derive
+    no coroutine (`check_protocol`); the literal-constructor path now matches
+    the same way. The copy's holder may escape only as `X->data = &holder`
+    into the installed instance, when the holder's `struct` is named in the
+    test's file alone, the copy member is written or its address taken
+    nowhere else there, and `struct flb_input_instance::p` is written only by
+    the constructor and that installation. P-CALLBACK-INSTANCE is now derived,
+    or the flag is underived: every dispatch of the copy's callback field
+    that may reach it passes `X` with `X->p->F(X, …)` or `Q->F(X, …)` after
+    `Q = X->p`, or is the callback passing its own first parameter; and
+    `struct flb_input_collector::instance` is written only by
+    `collector_create`, from a parameter each registration passes its first
+    parameter to. The typed reading records the listed members' accesses,
+    function-pointer members read as values, the functions it read and each
+    unmodelled indirect call. **Do not** take a list head for an instance
+    without the single-creation derivation, count a creation inside a loop
+    once, read a key-dependent call as not taking a branch, or treat an
+    unstructured or unread function as hazard-free. Premises added (trust
+    boundary 28): P-HEAD-INSTANCE (the list the test reads is not empty: its
+    context's and its one input's creations succeeded), P-FRESH-CONTEXT,
+    P-REGISTERED-DESCRIPTORS (the build's descriptors, one registration each,
+    before any registration the path reaches), P-HOLDER-OPAQUE (code that does
+    not name the holder's type reads or writes no holder byte through
+    `ins->data`), P-INSTANCE-FIELDS-BY-MEMBER (an instance's `p` and flag and
+    a collector's instance are written only through member accesses) and
+    acutest's `TEST_CHECK` as its argument's truth; the stated ones are
+    recorded as provider contracts held for review
+    (`fluent_bit/input_instance.qv`: `flb_create`, `flb_input`,
+    `flb_input_new`, `flb_service_set`, pinned at `66910c10`, `046accf6`
+    and the `90978ac6` export). `QCore.LoopOwner` proves a derived head the
+    one creation on every path, a second creation or an unmodelled mutation
+    keeping the route, and an escape that writes neither the flag nor the
+    instance keeping the derivation;
+    [report](../reports/w47-loop-owner-instance-flow/README.md).
 
 <a id="constraint-10q"></a>
 

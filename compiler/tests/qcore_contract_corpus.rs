@@ -454,6 +454,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_total_size",
         3,
     ),
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the observations the census needed,
+    // each a marker plus its clauses (held clauses wrapped for review).
+    ("fluent_bit/input_instance.qv", "flb_create", 2),
+    ("fluent_bit/input_instance.qv", "flb_input", 5),
+    ("fluent_bit/input_instance.qv", "flb_input_new", 6),
+    ("fluent_bit/input_instance.qv", "flb_service_set", 4),
     // Card W47-CONDVAR-JOIN-STOP-PATHS: the marker, the contract-level review
     // marker carrying the observed join behaviour, one parameter mode and the
     // scalar result; every declaration is withheld awaiting review.
@@ -1327,7 +1333,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 119 -> 120 by card W47-CONDVAR-JOIN-PUBLICATION's `libc/pthread_sync.qv`.
     // 120 -> 121 by card W47-CONDVAR-JOIN-STOP-PATHS'
     // `fluent_bit/lib_engine_thread.qv`.
-    assert_eq!(sources.len(), 121, "unexpected contract corpus size");
+    // 121 -> 122 by card W47-LOOP-OWNER-INSTANCE-FLOW's `fluent_bit/input_instance.qv`.
+    assert_eq!(sources.len(), 122, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

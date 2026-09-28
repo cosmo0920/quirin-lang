@@ -162,6 +162,12 @@ use crate::legacy_c::{
     ConditionalDirective, ConditionalMark, Token, is_identifier, tokenize_with_conditionals,
 };
 
+// Card W47-LOOP-OWNER-INSTANCE-FLOW: the instance a runtime plugin copy is
+// installed on, read by Step B.
+#[path = "loop_owner_instance.rs"]
+mod loop_owner_instance;
+pub use loop_owner_instance::{FLUENT_BIT_INSTANCE_FLOW, InstanceFlowTables};
+
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
 pub struct HopTables {
@@ -293,7 +299,26 @@ impl HopTables {
                 self.plugin_name_field.to_owned(),
             )],
             aliases: BTreeMap::new(),
+            member_fields: Vec::new(),
         }
+    }
+
+    /// [`HopTables::typed_options`] with the instance-flow facts (card
+    /// W47-LOOP-OWNER-INSTANCE-FLOW): the creator wrappers' literals and the
+    /// member accesses Step B's list-head and holder derivations read.
+    #[must_use]
+    pub fn instance_flow_options(
+        &self,
+        flow: &InstanceFlowTables,
+    ) -> crate::typed_dispatch_census::TypedOptions {
+        let mut options = self.typed_options();
+        options.literal_calls.extend(
+            flow.creator_wrappers
+                .iter()
+                .map(|(wrapper, argument)| ((*wrapper).to_owned(), *argument)),
+        );
+        options.member_fields = flow.member_fields(self);
+        options
     }
 }
 
@@ -1321,6 +1346,8 @@ pub fn read_program_typed(
     // Step B: functions whose address is taken or named in a macro.
     let mut taken: BTreeSet<usize> = BTreeSet::new();
     let mut poisoned_fields: BTreeMap<String, String> = BTreeMap::new();
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: every site a field is read as a value.
+    let mut poison_sites: Vec<(String, String, usize)> = Vec::new();
     let mut edges = BTreeSet::new();
     // Direct edges with where they were read, so hop C can place an entry's
     // calls before or after its hand-off.
@@ -1541,6 +1568,7 @@ pub fn read_program_typed(
                         poisoned_fields
                             .entry(text.to_owned())
                             .or_insert_with(|| format!("{path}:{line}"));
+                        poison_sites.push((text.to_owned(), path.clone(), line));
                     }
                 }
                 continue;
@@ -1737,6 +1765,11 @@ pub fn read_program_typed(
         }
     };
     let mut bodies: BTreeSet<(usize, usize)> = BTreeSet::new();
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the unplaced direct calls.
+    let raw_direct = positioned
+        .iter()
+        .map(|(_, _, edge)| (edge.caller, edge.callee))
+        .collect::<Vec<_>>();
     for (file, position, edge) in positioned {
         let (callers, body) = placed(edge.caller, file, position);
         for caller in callers {
@@ -1746,6 +1779,39 @@ pub fn read_program_typed(
             bodies.insert((edge.caller, edge.callee));
         }
     }
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the census graph as reachability for
+    // Step B's list-head derivation, whatever the coroutine route.
+    let reach = instance_reach(&InstanceReachInputs {
+        definitions: &definitions,
+        index: &index,
+        scans: &scans,
+        raw_direct: &raw_direct,
+        dispatches: &dispatches,
+        registrants: &registrants,
+        spawns: &spawns,
+        entries: &entries,
+        constructor_calls: &constructor_calls,
+        coroutines: hops.coroutines,
+        functions: &program.functions,
+        taken: &taken,
+        poison_sites: &poison_sites,
+        typed,
+    });
+    let dispatch_sites = dispatches
+        .iter()
+        .map(
+            |(caller, field, _, file, position, typing)| loop_owner_instance::DispatchSite {
+                caller: *caller,
+                field: field.clone(),
+                file: *file,
+                position: *position,
+                records: match typing {
+                    Typing::Records(records) => Some(records.clone()),
+                    Typing::Untyped | Typing::Unmatched(_) => None,
+                },
+            },
+        )
+        .collect::<Vec<_>>();
     // Step B (card W47-LOOP-OWNER-TYPED-DISPATCH): a collector registrant
     // registered outside a plugin directory, on an instance whose plugin is a
     // runtime copy.
@@ -1766,6 +1832,10 @@ pub fn read_program_typed(
         descriptor_objects: &descriptor_objects,
         numeric_macros: &numeric_macros,
         functions: &program.functions,
+        flow: &FLUENT_BIT_INSTANCE_FLOW,
+        reach: &reach,
+        dispatch_sites: &dispatch_sites,
+        notes: std::cell::RefCell::new(BTreeSet::new()),
     });
     // Which inputs run their collectors in a coroutine, from their plugin
     // directory's descriptor flags, else from Step B; undecided when a
@@ -2003,6 +2073,131 @@ pub fn read_program_typed(
     program
 }
 
+/// `(resumer, coroutine hop, handle variable, path, line, effect)` (hop C).
+type ConstructorCall = (usize, usize, Option<String>, String, usize, ReadEffect);
+
+/// What the instance-flow reachability reads (card
+/// W47-LOOP-OWNER-INSTANCE-FLOW).
+struct InstanceReachInputs<'a> {
+    definitions: &'a [Definition],
+    index: &'a BTreeMap<String, usize>,
+    scans: &'a [Scan],
+    raw_direct: &'a [(usize, usize)],
+    dispatches: &'a [(usize, String, ReadEffect, usize, usize, Typing)],
+    registrants: &'a BTreeMap<String, BTreeMap<usize, BTreeSet<Keyed>>>,
+    spawns: &'a BTreeSet<(usize, usize)>,
+    entries: &'a BTreeMap<usize, BTreeSet<usize>>,
+    constructor_calls: &'a [ConstructorCall],
+    coroutines: &'a [CoroutineHop],
+    functions: &'a [String],
+    taken: &'a BTreeSet<usize>,
+    poison_sites: &'a [(String, String, usize)],
+    typed: Option<&'a crate::typed_dispatch_census::TypedFacts>,
+}
+
+/// The census graph over-approximated as reachability (card
+/// W47-LOOP-OWNER-INSTANCE-FLOW): every direct call at its own caller, every
+/// registrant a dispatch may reach (the coroutine route not pruned), spawns
+/// and coroutine entries; and the functions an unmodelled call may reach.
+fn instance_reach(inputs: &InstanceReachInputs<'_>) -> loop_owner_instance::Reach {
+    let mut reach = loop_owner_instance::Reach::default();
+    let mut next: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+    let mut edge = |from: usize, to: usize| {
+        next.entry(from).or_default().insert(to);
+    };
+    for (caller, callee) in inputs.raw_direct {
+        edge(*caller, *callee);
+    }
+    for (caller, field, _, _, _, typing) in inputs.dispatches {
+        for (callee, keys) in inputs.registrants.get(field).into_iter().flatten() {
+            let reached = match typing {
+                Typing::Untyped | Typing::Unmatched(_) => true,
+                Typing::Records(records) => keys.iter().any(|key| match key {
+                    Keyed::Any => true,
+                    Keyed::Record(record) => records.contains(record),
+                }),
+            };
+            if reached {
+                edge(*caller, *callee);
+            }
+        }
+    }
+    for (spawner, entry) in inputs.spawns {
+        edge(*spawner, *entry);
+    }
+    let plain = |id: usize| {
+        let name = &inputs.functions[id];
+        name.rsplit_once("::")
+            .map_or(name.as_str(), |(_, plain)| plain)
+            .to_owned()
+    };
+    for (entry, constructors) in inputs.entries {
+        for constructor in constructors {
+            edge(*constructor, *entry);
+        }
+    }
+    for (caller, hop, ..) in inputs.constructor_calls {
+        for (entry, constructors) in inputs.entries {
+            if constructors
+                .iter()
+                .any(|k| plain(*k) == inputs.coroutines[*hop].constructor)
+            {
+                edge(*caller, *entry);
+            }
+        }
+    }
+    reach.next = next;
+    for id in inputs.taken {
+        reach.wild.insert(
+            *id,
+            "its address is taken or it is named in a macro".to_owned(),
+        );
+    }
+    for (field, path, line) in inputs.poison_sites {
+        let records = inputs.typed.and_then(|typed| {
+            typed
+                .field_values
+                .get(&format!("{path}|{line}|{field}"))
+                .filter(|records| {
+                    records
+                        .iter()
+                        .all(|r| matches!(r, crate::typed_dispatch_census::TypedRecord::Record(_)))
+                })
+                .map(|records| {
+                    records
+                        .iter()
+                        .filter_map(|r| match r {
+                            crate::typed_dispatch_census::TypedRecord::Record(r) => Some(r.clone()),
+                            crate::typed_dispatch_census::TypedRecord::Unmatched(_) => None,
+                        })
+                        .collect::<BTreeSet<_>>()
+                })
+        });
+        for (id, keys) in inputs.registrants.get(field).into_iter().flatten() {
+            let escapes = records.as_ref().is_none_or(|records| {
+                keys.iter().any(|key| match key {
+                    Keyed::Any => true,
+                    Keyed::Record(record) => records.contains(record),
+                })
+            });
+            if escapes {
+                reach
+                    .wild
+                    .entry(*id)
+                    .or_insert_with(|| format!("field `{field}` read as a value at {path}:{line}"));
+            }
+        }
+    }
+    for definition in inputs.definitions {
+        if inputs.scans[definition.file].unstructured {
+            reach
+                .unstructured
+                .insert(inputs.index[&definition.census_name]);
+        }
+    }
+    reach
+}
+
 /// What Step B reads (card W47-LOOP-OWNER-TYPED-DISPATCH).
 struct StepB<'a> {
     files: &'a [CensusFile],
@@ -2021,6 +2216,11 @@ struct StepB<'a> {
     descriptor_objects: &'a BTreeMap<String, Option<bool>>,
     numeric_macros: &'a BTreeSet<String>,
     functions: &'a [String],
+    /// Card W47-LOOP-OWNER-INSTANCE-FLOW.
+    flow: &'a InstanceFlowTables,
+    reach: &'a loop_owner_instance::Reach,
+    dispatch_sites: &'a [loop_owner_instance::DispatchSite],
+    notes: std::cell::RefCell<BTreeSet<String>>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the
@@ -2121,6 +2321,11 @@ impl StepB<'_> {
         let Some(start) = creation else {
             return Err(format!("the instance `{instance}` is never assigned here"));
         };
+        // Card W47-LOOP-OWNER-INSTANCE-FLOW: an instance read as a context's
+        // input-list head.
+        if texts[start] == self.flow.list_entry_macro && texts[start + 1] == "(" {
+            return self.list_head_instance(g, instance, start);
+        }
         if texts[start] != constructor || texts[start + 1] != "(" {
             return Err(format!(
                 "the instance `{instance}` is not tied to its creation: it is assigned from \
@@ -2148,29 +2353,9 @@ impl StepB<'_> {
                  not one literal the typed reading reads"
             ));
         };
-        let record = format!("struct {}", self.hops.plugin_descriptor);
-        let objects = self
-            .typed
-            .and_then(|typed| {
-                typed
-                    .named_objects
-                    .get(&crate::typed_dispatch_census::named_object_key(
-                        &record,
-                        self.hops.plugin_name_field,
-                        literal,
-                    ))
-            })
-            .cloned()
-            .unwrap_or_default();
-        let [object] = objects.iter().collect::<Vec<_>>()[..] else {
-            return Err(format!(
-                "not exactly one descriptor declares the plugin name \"{literal}\""
-            ));
-        };
-        match self.descriptor_objects.get(object.as_str()) {
-            Some(Some(flag)) => Ok(*flag),
-            _ => Err(format!("the descriptor `{object}`'s flags are not derived")),
-        }
+        // Card W47-LOOP-OWNER-INSTANCE-FLOW: every descriptor the name matches,
+        // ignoring ASCII case as `check_protocol` compares.
+        self.descriptors_flag(literal)
     }
 
     /// The copy of a plugin at local object path `base` in `g`, installed on
@@ -2185,6 +2370,8 @@ impl StepB<'_> {
         }
         let mut sources: Vec<Derivation> = Vec::new();
         let mut installed: BTreeSet<String> = BTreeSet::new();
+        // Card W47-LOOP-OWNER-INSTANCE-FLOW: `X->data = &root;`.
+        let mut escapes: BTreeSet<String> = BTreeSet::new();
         let mut declared = false;
         let mut blockers: Vec<String> = Vec::new();
         let statement_end = |from: usize| {
@@ -2214,6 +2401,19 @@ impl StepB<'_> {
                         }
                         sources.push(Ok(false));
                     }
+                    continue;
+                }
+                if texts[k - 1] == "&"
+                    && texts[k - 2] == "="
+                    && k >= 7
+                    && texts[k - 3] == self.flow.instance_data_field
+                    && texts[k - 4] == ">"
+                    && texts[k - 5] == "-"
+                    && is_identifier(texts[k - 6])
+                    && !matches!(texts[k - 7], "." | ">")
+                    && texts[k + 1] == ";"
+                {
+                    escapes.insert(texts[k - 6].to_owned());
                     continue;
                 }
                 if texts[k - 1] == "&" && texts[k - 2] != "&" && texts[k + 1] != "." {
@@ -2315,6 +2515,16 @@ impl StepB<'_> {
                 _ => {}
             }
         }
+        if !escapes.is_empty() {
+            if escapes != installed || base.len() < 2 {
+                blockers.push(format!(
+                    "the object `{root}` holding the copy escapes into an instance other than \
+                     the one the copy is installed on"
+                ));
+            } else if let Err(why) = self.holder_escape(g, root, base[1]) {
+                blockers.push(why);
+            }
+        }
         let installed = installed.iter().collect::<Vec<_>>();
         let instance = match installed[..] {
             [instance] => self.instance_flag(g, instance),
@@ -2409,6 +2619,24 @@ impl StepB<'_> {
                 "`{name}` is not registered only through plugin fields"
             ));
         }
+        // Card W47-LOOP-OWNER-INSTANCE-FLOW: P-CALLBACK-INSTANCE, derived.
+        let fields = stores
+            .iter()
+            .map(|(_, field, ..)| field.clone())
+            .collect::<BTreeSet<_>>();
+        let mut keys = BTreeSet::new();
+        let mut any_key = false;
+        for set in self.registrants.values() {
+            for key in set.get(&function).into_iter().flatten() {
+                match key {
+                    Keyed::Any => any_key = true,
+                    Keyed::Record(record) => {
+                        keys.insert(record.clone());
+                    }
+                }
+            }
+        }
+        self.callback_instance(function, &fields, &keys, any_key)?;
         let mut flag: Derivation = Ok(false);
         for (_, _, file, position) in stores {
             let texts = self.texts(*file);
@@ -2477,13 +2705,28 @@ fn derive_instance_flags(step: &StepB<'_>) -> BTreeMap<usize, InstanceFlag> {
                 .reduce(join_flags)
                 .unwrap_or_else(|| Err("no registration".to_owned()))
         };
+        let notes = step.notes.take();
         let (derived, reason) = match derivation {
             Ok(false) => (
                 Some(false),
-                "the copy's flags and its instance's creating plugin derive no coroutine"
-                    .to_owned(),
+                std::iter::once(
+                    "the copy's flags and its instance's creating plugin derive no coroutine"
+                        .to_owned(),
+                )
+                .chain(notes)
+                .collect::<Vec<_>>()
+                .join("; "),
             ),
             Ok(true) => (Some(true), "the coroutine flag is derived".to_owned()),
+            // Card W47-LOOP-OWNER-INSTANCE-FLOW: what did derive, beside why
+            // the flag did not.
+            Err(why) if !notes.is_empty() => (
+                None,
+                format!(
+                    "{why}; derived nonetheless: {}",
+                    notes.into_iter().collect::<Vec<_>>().join("; ")
+                ),
+            ),
             Err(why) => (None, why),
         };
         flags.insert(registrant, InstanceFlag { derived, reason });

@@ -1,0 +1,106 @@
+module contract;
+
+// W47-LOOP-OWNER-INSTANCE-FLOW (gateway rule 10p's amendment). The Fluent
+// Bit facts the thread-entry census needed to tie the fixed in_tail pause
+// test's plugin copy to the instance it is installed on
+// (`tests/runtime/in_tail.c:2551-2557` at 90978ac6), written down as
+// contracts. Nothing here is trusted: every clause below is either checked
+// against its body or held for human review.
+//
+// ## What is checked, and how
+//
+// The four bodies were read at 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 (the
+// corpus source), 046accf6aded7906f66a1baf0202da349e521736 (the system clone)
+// and the 90978ac6a59e96d19621108f63e115eb4cd1c576 export (synthetic commit
+// 34155955): `flb_create` (src/flb_lib.c:145), `flb_input` (:268) and
+// `flb_service_set` (:674) are byte-identical at all three; `flb_input_new`
+// (src/flb_input.c:326) differs only by one TLS field initialisation at
+// 046accf6 and the export (`tls_crl_file`), which changes no custody
+// (docs/reports/w47-loop-owner-instance-flow/scripts/bodies.py). A bare clause
+// is a custody fact those readings establish; the per-unit audit also checks
+// it against the body wherever it analyses one (contract specification
+// C06.4). Each declaration is pinned to those three identities.
+//
+// ## What is held for review, and why
+//
+// Resource v1 cannot state a retained pointer (rule 10j), an instance's list
+// membership, its coroutine flag, or a list's contents. Every clause that
+// would need one is wrapped in `resource_review_pending` (contract
+// specification C06.1): the declaration is loaded, validated and pinned, then
+// withheld, so it discharges nothing and accuses nothing, and every call site
+// that would apply it is held as `awaiting-human-review` (Pending when
+// nothing else is open, never Safe, never Unsafe). The reason of each marker
+// is the observation itself. Resolving one is a person's decision that the
+// observation holds AND that v1 can say it; unwrapping a clause whose reason
+// says "retained" would state a false borrow and is not a resolution.
+
+// The context the test's list is read from (P-FRESH-CONTEXT,
+// P-REGISTERED-DESCRIPTORS). `flb_create` allocates the context
+// (`flb_calloc`, :163) and returns it, or NULL after releasing what it made on
+// every failure path (:163-212). Its config comes from `flb_config_init`
+// (:169), which initialises `config->inputs` empty (src/flb_config.c:507)
+// and `config->in_plugins` (:502) and registers the build's descriptors
+// through the generated `flb_plugins_register` (one heap copy of each
+// compiled-in descriptor, `memcpy` then `mk_list_add(&in->_head,
+// &config->in_plugins)`), which no census reads.
+extern fn flb_create() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_review_pending(resource_return_owned(nullable), "P-FRESH-CONTEXT and P-REGISTERED-DESCRIPTORS: a non-null result is a new context whose config's input list is empty and whose registered input plugins are the build's compiled-in descriptors, one copy each (src/flb_lib.c:145-221, src/flb_config.c:502-507, the generated flb_plugins_register); v1 states the owned result, not a list's contents", "fluent-bit maintainers");
+};
+
+// The test's one creation (P-HEAD-INSTANCE). `flb_input` calls
+// `flb_input_new(ctx->config, input, data, FLB_TRUE)` once (:272) and
+// returns the instance's id, or -1 when it returns NULL. `input` is read,
+// not kept (`flb_input_new` compares it with each registered name and parses
+// a network address out of it into its own strings); `data` is stored in the
+// instance (`instance->data = data`, src/flb_input.c:496) and handed to the
+// plugin's callbacks (`flb_input_instance_init` passes `ins->data` to
+// `cb_init`).
+extern fn flb_input(ctx: ptr<mut, u8>, input: ptr<const, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(input);
+    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the created instance (instance->data, src/flb_input.c:496) and passed to the plugin's callbacks; v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_review_pending(resource_return_none(), "P-HEAD-INSTANCE: a result >= 0 means flb_input_new created at least one instance on ctx->config's input list (src/flb_lib.c:268-278); the test reads that list's head without checking it (tests/runtime/in_tail.c:2551-2552), so the census states that the creation succeeded");
+};
+
+// The constructor. It walks `config->in_plugins` and, for **every** plugin
+// whose name matches `input` ignoring ASCII case (`check_protocol`, :244; the
+// loop has no `break` after a creation), allocates an instance, sets
+// `instance->p = plugin` (:490), `instance->data = data` (:496),
+// `instance->config = config` (:408), `runs_in_coroutine` false then true iff
+// the plugin's flags carry FLB_INPUT_CORO (:501, :626), appends it with
+// `mk_list_add(&instance->_head, &config->inputs)` (:677), and returns the
+// last one, or NULL. The instance is owned by the config's list and released
+// by `flb_input_exit_all` through the config's exit, so the result points
+// into storage `config` owns (rule 10j's W47-CALLEE-CLOSURE-R2 amendment).
+extern fn flb_input_new(config: ptr<mut, u8>, input: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_review_pending(resource_borrowed(config), "retained, not borrowed: the created instance keeps config (instance->config, src/flb_input.c:408) and is linked into config->inputs (:677); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_borrowed(input);
+    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the instance (instance->data, src/flb_input.c:496); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_borrowed(public_only);
+    ensures normal resource_review_pending(resource_return_interior(config, nullable), "creation: one instance per registered input plugin whose name matches input ignoring ASCII case, each appended to config->inputs (src/flb_input.c:677) with p set to that plugin (:490) and runs_in_coroutine set from its FLB_INPUT_CORO flag (:501, :626) and written nowhere else; the last is returned; v1 states neither list membership nor the flag");
+};
+
+// The call that holds the fixed test's derivation at the 90978ac6 export.
+// `flb_service_set(ctx, key, value, …, NULL)` passes each pair to
+// `flb_config_set_property(ctx->config, key, value)` (src/flb_lib.c:674-700).
+// That function dispatches on the key's text (src/flb_config.c:855-): the
+// `Plugins_File` key loads shared-object and Go-proxy input plugins
+// (`flb_plugin_load_config_file` → `flb_plugin_load_router`), which register
+// into `config->in_plugins` (src/flb_plugin.c:251, src/flb_plugin_proxy.c:410)
+// and call a registration entry point through a function pointer; the other
+// keys the test passes (Flush, Grace, Log_Level, Parsers_File) do not. The
+// census reads calls, not the key values a variadic call carries, so it
+// cannot exclude the registration branch on the test's path.
+extern fn flb_service_set(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_review_pending(resource_variadic_data_tail(), "key-dependent effects: only the Plugins_File key registers input plugins (src/flb_config.c:903-907, src/flb_plugin.c:251); a call whose keys are all literals other than Plugins_File registers none and creates no input instance; whether the value strings are copied on every key's branch was not read, and v1 cannot state a key-dependent effect");
+    ensures normal resource_return_none();
+};

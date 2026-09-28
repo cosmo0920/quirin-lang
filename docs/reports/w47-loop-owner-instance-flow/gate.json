@@ -1,0 +1,13 @@
+{
+  "note": "W47-LOOP-OWNER-INSTANCE-FLOW card gate at base fefb9199, rust phase on a5e1c799 (private/if/gate-3 of this worktree): run_test_binaries.py 350 units, 363 summaries, 6,266 passed, 0 failed, 11 ignored (private/test-binaries/20260928T122550Z-531511/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 223 audits passed (AuditLoopOwner.lean 43 -> 53 theorems, no new audit module). providers/ changed (fluent_bit/input_instance.qv), so the provider gate ran: provider cargo test 129 passed / 0 failed / 1 ignored, provider fmt and clippy clean, contracts.py check 0, package build and all 5 package verifies 0, provider Python 24 tests OK, pin --check 4 recorded / 0 not in force at 66910c10, 046accf6 and the 90978ac6 export (34155955), pin --verify-contracts 0. A first run at d2679795 (private/if/gate-2) failed on three contract-corpus pins (corpus module count 120 -> 121, declaration counts, the structured-clause table order) and two clippy lints; all were repaired in a5e1c799 before this run. The records phase ran after the matrix and index regeneration: its first run failed scripts/tests corpus pins (module count 120 -> 121, quirin-provider modules 47 -> 48), repaired and rerun: 365 tests OK, docs index 0 (private/if/gate-records3; confirmed after the final matrix regeneration in private/if/gate-records4). Clang 21.1.8 recorded in this worktree. Exits in gate/.",
+  "workspace_tests": 6266,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 223,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

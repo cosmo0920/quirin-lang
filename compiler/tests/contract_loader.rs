@@ -87,7 +87,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
     // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    assert_eq!(contracts.source_assumptions().len(), 57);
+    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 58);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -753,6 +754,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             let name = declaration.value.name;
             // W47-CONDVAR-JOIN-STOP-PATHS: a declaration awaiting review is
             // withheld (C06.1): it has no mode to preserve.
+            // Card W47-LOOP-OWNER-INSTANCE-FLOW: a declaration held for human
+            // review is withheld from the function map (contract spec C06.1).
             if contracts.pending_review().contains_key(&name) {
                 assert!(contracts.contract(&name).is_none(), "{name}");
                 continue;
@@ -1041,7 +1044,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
     // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
-    assert_eq!(certificate.contracts.source_assumptions().len(), 57);
+    // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 58);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1271,7 +1275,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 120 -> 121: card W47-CONDVAR-JOIN-STOP-PATHS adds
     // `fluent_bit/lib_engine_thread.qv`, entirely v1 (every declaration
     // awaiting review) and manifest-selected.
-    assert_eq!(modules.len(), 121, "corpus module count");
+    // 121 -> 122: card W47-LOOP-OWNER-INSTANCE-FLOW adds
+    // `fluent_bit/input_instance.qv`, entirely v1 (review markers included)
+    // and manifest-selected.
+    assert_eq!(modules.len(), 122, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1437,12 +1444,19 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // declarations of `fluent_bit/lib_engine_thread.qv`, each awaiting
     // review (C06.1), so loaded and withheld: the function table keeps 242
     // and the five are its pending-review entries. Rejected unchanged.
+    // 57 -> 58 and 247 -> 251 by card W47-LOOP-OWNER-INSTANCE-FLOW: the four
+    // declarations of `fluent_bit/input_instance.qv`, each loaded and then
+    // withheld for human review. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (57, 247, 216)
+        (58, 251, 216)
     );
+    // A declaration held for human review is loaded and withheld from the
+    // function map (contract spec C06.1): the map plus the held set is every
+    // v1 declaration (5 from W47-CONDVAR-JOIN-STOP-PATHS, 4 from
+    // W47-LOOP-OWNER-INSTANCE-FLOW).
     let loaded = load_resource_contract_manifest(&manifest()).unwrap();
-    assert_eq!(loaded.pending_review().len(), 5);
+    assert_eq!(loaded.pending_review().len(), 9);
     assert_eq!(
         loaded.functions().len() + loaded.pending_review().len(),
         v1_declarations

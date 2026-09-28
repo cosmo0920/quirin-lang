@@ -19,7 +19,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::FLUENT_BIT_HOPS;
+use qcore_c_gateway::thread_entry_census::{FLUENT_BIT_HOPS, FLUENT_BIT_INSTANCE_FLOW};
 use qcore_c_gateway::typed_dispatch_census::{TypedUnit, read_units};
 
 /// A compile command's words as a POSIX shell splits them: single quotes,
@@ -166,7 +166,8 @@ fn main() {
             units.push(unit);
         }
     }
-    let mut options = FLUENT_BIT_HOPS.typed_options();
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: with the instance-flow facts.
+    let mut options = FLUENT_BIT_HOPS.instance_flow_options(&FLUENT_BIT_INSTANCE_FLOW);
     if !extras.is_empty() {
         let like = like.expect("--extra needs --like");
         let template = by_relative

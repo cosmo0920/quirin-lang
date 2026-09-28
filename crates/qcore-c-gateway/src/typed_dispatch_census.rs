@@ -86,6 +86,51 @@ pub struct TypedOptions {
     /// A source read under another name (the previous test, read from a copy
     /// beside the tree it belongs to): its facts are keyed by that name.
     pub aliases: BTreeMap<PathBuf, String>,
+    /// `(record, field)` (card W47-LOOP-OWNER-INSTANCE-FLOW): record every
+    /// member access of that field with how it is used (a read, a write, an
+    /// address taken, passed to a call, or read through), and every access of
+    /// a listed field name whose record is not matched.
+    pub member_fields: Vec<(String, String)>,
+}
+
+/// How a member access is used, as [`TypedFacts::member_accesses`] records it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Use<'a> {
+    /// Its value is read.
+    Value,
+    /// It is the destination of an assignment, a compound assignment or an
+    /// increment.
+    Write,
+    /// Its address is taken and the pointer used other than below.
+    Address,
+    /// Its address is taken only to read through it (`(&x->f)->next`) or to
+    /// compare it.
+    AddressRead,
+    /// An argument of the named call (`?` for an indirect call): its value
+    /// is read, and an address taken there is passed to the call.
+    Argument(&'a str),
+    /// Its address is passed to the named call.
+    AddressArgument(&'a str),
+    /// The object of an arrow access: its pointee is read through.
+    ArrowBase,
+    /// An operand of a comparison.
+    Compare,
+    /// The called value of a call (a dispatch, recorded as such).
+    Callee,
+}
+
+impl Use<'_> {
+    fn label(self) -> String {
+        match self {
+            Use::Value | Use::ArrowBase | Use::Compare | Use::Callee | Use::Argument(_) => {
+                "read".to_owned()
+            }
+            Use::Write => "write".to_owned(),
+            Use::Address => "address".to_owned(),
+            Use::AddressRead => "address-read".to_owned(),
+            Use::AddressArgument(callee) => format!("arg:{callee}"),
+        }
+    }
 }
 
 /// The typed facts of one build (the union over its translation units).
@@ -104,6 +149,34 @@ pub struct TypedFacts {
     pub literal_calls: BTreeMap<String, BTreeSet<String>>,
     /// `RECORD|FIELD|LITERAL` → the objects initialized with it.
     pub named_objects: BTreeMap<String, BTreeSet<String>>,
+    /// Card W47-LOOP-OWNER-INSTANCE-FLOW: `RECORD|FIELD` (or `?|FIELD` when
+    /// the record is not matched) → `FILE|LINE|FUNCTION|USE` for each access
+    /// of a listed member ([`TypedOptions::member_fields`]).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub member_accesses: BTreeMap<String, BTreeSet<String>>,
+    /// The `RECORD|FIELD` pairs the reading recorded accesses of: an absent
+    /// access means no access only for a listed pair.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub member_fields_read: BTreeSet<String>,
+    /// `FILE|NAME` of every function definition read.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub functions: BTreeSet<String>,
+    /// `FILE|LINE|FIELD` → the records of a function-pointer member read as
+    /// a value (neither called nor tested), where the census reads a field
+    /// read as a value.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub field_values: BTreeMap<String, BTreeSet<TypedRecord>>,
+    /// `FILE|FUNCTION|LINE` of each call whose callee is neither a function
+    /// named directly nor a member (a dispatch): a call through a function
+    /// pointer the census does not model.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub indirect_calls: BTreeSet<String>,
+}
+
+/// The key of a member's accesses.
+#[must_use]
+pub fn member_key(record: &str, field: &str) -> String {
+    format!("{record}|{field}")
 }
 
 /// The key of a dispatch site.
@@ -148,6 +221,15 @@ impl TypedFacts {
         for (key, objects) in other.named_objects {
             self.named_objects.entry(key).or_default().extend(objects);
         }
+        for (key, sites) in other.member_accesses {
+            self.member_accesses.entry(key).or_default().extend(sites);
+        }
+        self.member_fields_read.extend(other.member_fields_read);
+        self.functions.extend(other.functions);
+        for (key, records) in other.field_values {
+            self.field_values.entry(key).or_default().extend(records);
+        }
+        self.indirect_calls.extend(other.indirect_calls);
     }
 }
 
@@ -347,6 +429,7 @@ struct Node {
     value: Option<String>,
     is_bitfield: bool,
     complete: bool,
+    is_arrow: bool,
     begin: Option<Place>,
     end: Option<Place>,
     inner: Vec<Node>,
@@ -544,6 +627,7 @@ impl<'de> Visitor<'de> for NodeSeed<'_> {
                 "field" => node.union_field = bare_decl(map.next_value()?),
                 "decl" | "ownedTagDecl" => node.decls.extend(bare_decl(map.next_value()?)),
                 "isBitfield" => node.is_bitfield = map.next_value()?,
+                "isArrow" => node.is_arrow = map.next_value()?,
                 "completeDefinition" => node.complete = map.next_value()?,
                 "value" => {
                     node.value = map
@@ -679,6 +763,14 @@ enum Stored {
 
 impl<'o> Reader<'o> {
     fn new(root: PathBuf, options: &'o TypedOptions) -> Self {
+        let facts = TypedFacts {
+            member_fields_read: options
+                .member_fields
+                .iter()
+                .map(|(record, field)| member_key(record, field))
+                .collect(),
+            ..TypedFacts::default()
+        };
         Self {
             root,
             options,
@@ -687,7 +779,7 @@ impl<'o> Reader<'o> {
             field_owner: HashMap::new(),
             by_key: HashMap::new(),
             typedefs: HashMap::new(),
-            facts: TypedFacts::default(),
+            facts,
         }
     }
 
@@ -705,6 +797,131 @@ impl<'o> Reader<'o> {
             .then(|| node.name.clone())
             .flatten();
         self.walk(node, function.as_deref(), None);
+        if let Some(name) = &function
+            && node.inner.iter().any(|child| child.kind == "CompoundStmt")
+            && let Some((file, _)) = self.place(node.begin)
+        {
+            self.facts.functions.insert(format!("{file}|{name}"));
+        }
+        if function.is_some() {
+            self.accesses(node, function.as_deref(), Use::Value);
+        }
+    }
+
+    /// Card W47-LOOP-OWNER-INSTANCE-FLOW: record each listed member access
+    /// with its use, and each function-pointer member read as a value.
+    fn accesses<'n>(&mut self, node: &'n Node, function: Option<&str>, role: Use<'n>) {
+        let count = node.inner.len();
+        let children = |role: Use<'n>| vec![role; count];
+        let roles: Vec<Use<'n>> = match node.kind.as_str() {
+            "MemberExpr" => {
+                self.member_access(node, function, role);
+                if node.is_arrow {
+                    children(Use::ArrowBase)
+                } else {
+                    children(match role {
+                        Use::Write => Use::Write,
+                        Use::Address | Use::AddressArgument(_) => Use::Address,
+                        Use::AddressRead | Use::ArrowBase | Use::Compare => Use::AddressRead,
+                        Use::Value | Use::Callee | Use::Argument(_) => Use::Value,
+                    })
+                }
+            }
+            "ParenExpr" | "ImplicitCastExpr" | "CStyleCastExpr" => children(role),
+            "UnaryOperator" => match node.opcode.as_deref() {
+                Some("&") => children(match role {
+                    Use::Argument(callee) => Use::AddressArgument(callee),
+                    Use::ArrowBase | Use::Compare | Use::AddressRead => Use::AddressRead,
+                    _ => Use::Address,
+                }),
+                Some("++" | "--") => children(Use::Write),
+                _ => children(Use::Value),
+            },
+            "BinaryOperator" => match node.opcode.as_deref() {
+                Some("=") => {
+                    let mut roles = children(Use::Value);
+                    if let Some(first) = roles.first_mut() {
+                        *first = Use::Write;
+                    }
+                    roles
+                }
+                Some("==" | "!=" | "<" | ">" | "<=" | ">=") => children(Use::Compare),
+                _ => children(Use::Value),
+            },
+            "CompoundAssignOperator" => {
+                let mut roles = children(Use::Value);
+                if let Some(first) = roles.first_mut() {
+                    *first = Use::Write;
+                }
+                roles
+            }
+            "CallExpr" => {
+                let callee = node.inner.first().and_then(called_function);
+                if let Some(first) = node.inner.first()
+                    && callee.is_none()
+                    && !calls_a_member(first)
+                    && let Some((file, line)) = self.place(node.begin)
+                {
+                    self.facts
+                        .indirect_calls
+                        .insert(format!("{file}|{}|{line}", function.unwrap_or("")));
+                }
+                let mut roles = children(Use::Argument(callee.unwrap_or("?")));
+                if let Some(first) = roles.first_mut() {
+                    *first = Use::Callee;
+                }
+                roles
+            }
+            _ => children(Use::Value),
+        };
+        for (child, role) in node.inner.iter().zip(roles) {
+            self.accesses(child, function, role);
+        }
+    }
+
+    fn member_access(&mut self, node: &Node, function: Option<&str>, role: Use<'_>) {
+        let field = node.name.clone().unwrap_or_default();
+        let Some((file, line)) = self.place(node.end) else {
+            return;
+        };
+        let record = self.field_record(node.referenced_member.as_ref());
+        if role == Use::Value
+            && node
+                .qual_type
+                .as_deref()
+                .is_some_and(|qual| qual.contains("(*)"))
+        {
+            self.facts
+                .field_values
+                .entry(format!("{file}|{line}|{field}"))
+                .or_default()
+                .insert(record.clone());
+        }
+        if !self.options.member_fields.iter().any(|(_, f)| *f == field) {
+            return;
+        }
+        let key = match &record {
+            TypedRecord::Record(record)
+                if self
+                    .options
+                    .member_fields
+                    .iter()
+                    .any(|(r, f)| r == record && *f == field) =>
+            {
+                member_key(record, &field)
+            }
+            TypedRecord::Record(_) => return,
+            TypedRecord::Unmatched(_) => member_key("?", &field),
+        };
+        let use_label = role.label();
+        self.facts
+            .member_accesses
+            .entry(key)
+            .or_default()
+            .insert(format!(
+                "{file}|{line}|{}|{use_label}",
+                function.unwrap_or("")
+            ));
     }
 
     fn walk(&mut self, node: &Node, function: Option<&str>, object: Option<&str>) {
@@ -1025,6 +1242,43 @@ impl<'o> Reader<'o> {
                     self.stored(&field, &key, init, None);
                 }
             }
+        }
+    }
+}
+
+/// Whether a call's callee is, through parentheses, conversions and `*`, a
+/// member (a dispatch the census reads, typed or not).
+fn calls_a_member(node: &Node) -> bool {
+    let mut current = node;
+    loop {
+        match current.kind.as_str() {
+            "ParenExpr" | "ImplicitCastExpr" | "CStyleCastExpr" => {}
+            "UnaryOperator" if current.opcode.as_deref() == Some("*") => {}
+            "MemberExpr" => return true,
+            _ => return false,
+        }
+        let Some(next) = current.inner.first() else {
+            return false;
+        };
+        current = next;
+    }
+}
+
+/// The function a call names directly (through parentheses and implicit
+/// conversions), if any.
+fn called_function(node: &Node) -> Option<&str> {
+    let mut current = node;
+    loop {
+        match current.kind.as_str() {
+            "ParenExpr" | "ImplicitCastExpr" => current = current.inner.first()?,
+            "UnaryOperator" if current.opcode.as_deref() == Some("*") => {
+                current = current.inner.first()?;
+            }
+            "DeclRefExpr" => {
+                let decl = current.referenced.as_ref()?;
+                return (decl.kind == "FunctionDecl").then_some(decl.name.as_str());
+            }
+            _ => return None,
         }
     }
 }

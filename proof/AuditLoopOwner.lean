@@ -43,12 +43,24 @@ plugin copy's instance drops the coroutine route only when both the creating
 plugin's flag and the copy's derive none; a copy written with the coroutine
 flag, or an underived part, keeps it.
 
+**The list-head instance** (card W47-LOOP-OWNER-INSTANCE-FLOW). From a fresh
+context's empty input list, a path that creates exactly once and mutates the
+list in no unmodelled way leaves exactly the created instance, so a derived
+head is the one creation on every path; a second creation, an unmodelled
+mutation or no creation leaves the head underived and keeps the coroutine
+route. An escaping holder keeps the derivation only when what it reaches
+writes neither the instance's flag nor which instance runs the callback; the
+route is dropped only through one non-coroutine creation, such an escape and a
+non-coroutine copy. The old test's resolved test-thread context is never
+discharged.
+
 The lexical census reading, the hop tables, P-INSTANCE and the Rust
 correspondence are trust boundary 28's premises, pinned by
 `crates/qcore-core/tests/unit/loop_owner.rs`,
 `crates/quirin-source-analysis/tests/loop_owner_census.rs` and
 `crates/quirin-source-analysis/tests/loop_owner_coroutine.rs` and
-`crates/quirin-source-analysis/tests/loop_owner_typed_dispatch.rs`. -/
+`crates/quirin-source-analysis/tests/loop_owner_typed_dispatch.rs` and
+`crates/quirin-source-analysis/tests/loop_owner_instance_flow.rs`. -/
 
 -- Derived ownership.
 #print axioms QCore.LoopOwner.a_step_keeps_the_thread
@@ -108,3 +120,16 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.a_coroutine_copy_keeps_the_route
 #print axioms QCore.LoopOwner.an_underived_part_keeps_the_route
 #print axioms QCore.LoopOwner.the_route_is_dropped_only_when_both_derive_none
+
+-- The list-head instance, the holder escape and the old test's path
+-- (card W47-LOOP-OWNER-INSTANCE-FLOW).
+#print axioms QCore.LoopOwner.a_derived_head_is_the_one_creation
+#print axioms QCore.LoopOwner.every_path_reads_the_one_creation
+#print axioms QCore.LoopOwner.a_second_creator_keeps_the_route
+#print axioms QCore.LoopOwner.an_unmodelled_mutation_keeps_the_route
+#print axioms QCore.LoopOwner.a_path_without_a_creation_derives_nothing
+#print axioms QCore.LoopOwner.an_underived_head_keeps_the_route
+#print axioms QCore.LoopOwner.an_escape_that_writes_neither_keeps_the_derivation
+#print axioms QCore.LoopOwner.an_escape_that_writes_the_flag_or_the_instance_keeps_the_route
+#print axioms QCore.LoopOwner.the_route_is_dropped_only_through_one_non_coroutine_creation
+#print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged
