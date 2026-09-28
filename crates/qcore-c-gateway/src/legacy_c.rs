@@ -3592,6 +3592,9 @@ pub(crate) enum ConditionalDirective {
 pub(crate) struct ConditionalMark {
     token_index: usize,
     directive: ConditionalDirective,
+    /// The directive's byte range in the source, `#` to the end of its logical
+    /// line (card W47-LOOP-OWNER-COROUTINE-HOP reads the condition).
+    span: (usize, usize),
 }
 
 impl ConditionalMark {
@@ -3604,6 +3607,11 @@ impl ConditionalMark {
     /// The directive's structural role.
     pub(crate) fn directive(self) -> ConditionalDirective {
         self.directive
+    }
+
+    /// The directive's byte range in the source it was read from.
+    pub(crate) fn span(self) -> (usize, usize) {
+        self.span
     }
 }
 
@@ -3720,6 +3728,7 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
                 conditionals.push(ConditionalMark {
                     token_index: tokens.len(),
                     directive,
+                    span: (start, cursor),
                 });
             }
         } else if byte == b'"' || byte == b'\'' {

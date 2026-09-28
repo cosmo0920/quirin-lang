@@ -402,4 +402,233 @@ theorem a_resume_without_ingestion_is_refused (first second : Result) :
     pairing .resume first second .inactive .discharged = .refused := by
   simp [pairing]
 
+/-! ## Hop C: a coroutine runs on the thread that resumes it
+
+Card **W47-LOOP-OWNER-COROUTINE-HOP**. The census derives a coroutine entry's
+resumers from the source (a loop dispatcher that constructs the coroutine and
+resumes the handle it returned); a handle it cannot tie to its constructor,
+and a body's continuation after a yield, are undetermined resumers. The body's
+contexts are exactly its derived resumers' (`a_coroutine_runs_on_its_resumers`),
+so a coroutine resumed only on `owner L` runs on `owner L`
+(`a_coroutine_resumed_only_on_the_owner_runs_on_the_owner`), one non-owner
+resumer refuses (`a_non_owner_resumer_refuses`) and an undetermined resumer
+never discharges (`an_undetermined_resumer_never_discharges`,
+`a_body_that_may_yield_is_never_discharged`). -/
+
+/-- A coroutine's resumer: a derived context, or one the census cannot derive. -/
+inductive Resumer where
+  | derived (context : Context)
+  | undetermined
+  deriving DecidableEq, Repr
+
+/-- The contexts a coroutine body runs in: its derived resumers', thread kept. -/
+def coroutineContexts : List Resumer → List Context
+  | [] => []
+  | .derived c :: rest => c :: coroutineContexts rest
+  | .undetermined :: rest => coroutineContexts rest
+
+def coroutineUnresolved (resumers : List Resumer) : Bool :=
+  resumers.any (· == .undetermined)
+
+/-- A body that may yield continues on a resumer that is not derived. -/
+def resumersOf (initial : List Context) (mayYield : Bool) : List Resumer :=
+  initial.map .derived ++ (if mayYield then [.undetermined] else [])
+
+/-- The owner verdict of an operation inside a coroutine body. -/
+def coroutineVerdict (owners : Owners) (resumers : List Resumer) : Verdict :=
+  siteVerdict owners (coroutineContexts resumers) (coroutineUnresolved resumers)
+
+theorem a_coroutine_runs_on_its_resumers (c : Context) (resumers : List Resumer) :
+    c ∈ coroutineContexts resumers ↔ Resumer.derived c ∈ resumers := by
+  induction resumers with
+  | nil => simp [coroutineContexts]
+  | cons r rest ih =>
+    cases r with
+    | derived d =>
+      simp only [coroutineContexts, List.mem_cons, ih, Resumer.derived.injEq]
+    | undetermined => simp [coroutineContexts, ih]
+
+theorem an_undetermined_resumer_never_discharges {owners : Owners} {resumers : List Resumer}
+    (h : Resumer.undetermined ∈ resumers) :
+    coroutineVerdict owners resumers ≠ .discharged := by
+  have hu : coroutineUnresolved resumers = true :=
+    List.any_eq_true.mpr ⟨.undetermined, h, by simp⟩
+  unfold coroutineVerdict
+  rw [hu]
+  exact unresolved_is_never_discharged owners _
+
+theorem a_body_that_may_yield_is_never_discharged (owners : Owners) (initial : List Context) :
+    coroutineVerdict owners (resumersOf initial true) ≠ .discharged := by
+  apply an_undetermined_resumer_never_discharges
+  simp [resumersOf]
+
+theorem a_non_owner_resumer_refuses {owners : Owners} {resumers : List Resumer} {c : Context}
+    {list : List Thread} (hc : Resumer.derived c ∈ resumers)
+    (hl : candidates owners c.mode = some list) (hn : c.thread ∉ list) :
+    coroutineVerdict owners resumers = .notDischarged :=
+  a_non_owner_context_refuses ((a_coroutine_runs_on_its_resumers c resumers).mpr hc) hl hn
+
+/-- A coroutine whose every resumer is derived on the engine loop's owner in
+the non-threaded mode runs there: the operation is discharged. -/
+theorem a_coroutine_resumed_only_on_the_owner_runs_on_the_owner
+    {owners : Owners} {t : Thread} {resumers : List Resumer}
+    (howner : owners.engine = some t)
+    (hall : ∀ r ∈ resumers, r = .derived { thread := t, mode := .nonThreaded })
+    (hne : resumers ≠ []) :
+    coroutineVerdict owners resumers = .discharged := by
+  have hctx : ∀ c ∈ coroutineContexts resumers, c = { thread := t, mode := .nonThreaded } := by
+    intro c hc
+    have := hall _ ((a_coroutine_runs_on_its_resumers c resumers).mp hc)
+    exact (Resumer.derived.inj this)
+  have hu : coroutineUnresolved resumers = false := by
+    unfold coroutineUnresolved
+    rw [Bool.eq_false_iff]
+    intro h
+    obtain ⟨r, hr, hq⟩ := List.any_eq_true.mp h
+    rw [hall r hr] at hq
+    simp at hq
+  have hnonempty : coroutineContexts resumers ≠ [] := by
+    obtain ⟨r, rest, rfl⟩ := List.exists_cons_of_ne_nil hne
+    rw [hall r (List.mem_cons_self ..)]
+    simp [coroutineContexts]
+  have hv : ∀ c ∈ coroutineContexts resumers, contextVerdict owners c = .discharged := by
+    intro c hc
+    rw [hctx c hc]
+    simp [contextVerdict, candidates, howner]
+  unfold coroutineVerdict siteVerdict
+  rw [hu]
+  have h1 : (coroutineContexts resumers).any
+      (fun c => contextVerdict owners c == .notDischarged) = false := by
+    rw [Bool.eq_false_iff]
+    intro h
+    obtain ⟨c, hc, hq⟩ := List.any_eq_true.mp h
+    rw [hv c hc] at hq
+    simp at hq
+  have h2 : (coroutineContexts resumers).any
+      (fun c => contextVerdict owners c == .unresolved) = false := by
+    rw [Bool.eq_false_iff]
+    intro h
+    obtain ⟨c, hc, hq⟩ := List.any_eq_true.mp h
+    rw [hv c hc] at hq
+    simp at hq
+  have h3 : (coroutineContexts resumers).isEmpty = false := by
+    cases hcs : coroutineContexts resumers with
+    | nil => exact absurd hcs hnonempty
+    | cons _ _ => rfl
+  simp [h1, h2, h3]
+
+/-- The loop dispatcher's resume keeps its thread and fixes the mode, like the
+direct dispatch (hop L): a dispatcher on thread `t` resumes on `t`. -/
+theorem the_dispatcher_resumes_on_its_own_thread
+    {dispatcher : Context} {t : Thread} (hthread : dispatcher.thread = t) :
+    (step (.dispatch .nonThreaded) dispatcher).map Resumer.derived =
+      some (.derived { thread := t, mode := .nonThreaded }) := by
+  simp [step, applyEffect, hthread]
+
+/-! ### Which inputs the hop dispatches
+
+An input whose descriptor flags are derived to run no coroutine is never
+dispatched from the coroutine entry; an underived flag keeps the dispatch. -/
+
+def coroutineDispatched {α : Type} (flag : α → Option Bool) (registrants : List α) : List α :=
+  registrants.filter fun r => flag r != some false
+
+theorem an_input_without_a_coroutine_is_not_dispatched_by_the_hop {α : Type}
+    {flag : α → Option Bool} {registrants : List α} {r : α} (h : flag r = some false) :
+    r ∉ coroutineDispatched flag registrants := by
+  simp [coroutineDispatched, h]
+
+theorem an_underived_flag_keeps_the_hop {α : Type}
+    {flag : α → Option Bool} {registrants : List α} {r : α}
+    (h : flag r = none) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched flag registrants := by
+  simp [coroutineDispatched, h, hr]
+
+/-! ### The configured reading of a conditional group
+
+Each arm's condition is decided true, decided false or undecided under the
+build configuration. An arm is kept unless it is decided false or an earlier
+arm is decided true. Whatever arm the preprocessor takes under a
+configuration that agrees with every decided condition is kept
+(`the_taken_arm_is_read`); a decided-false arm is dropped
+(`a_decided_false_arm_is_not_read`); after a decided-true arm nothing is read
+(`nothing_after_a_decided_arm_is_read`). -/
+
+inductive Truth where
+  | yes
+  | no
+  | unknown
+  deriving DecidableEq, Repr
+
+/-- The actual value of a condition agrees with what the configuration decided. -/
+def agrees : Truth → Bool → Bool
+  | .yes, b => b
+  | .no, b => !b
+  | .unknown, _ => true
+
+def agreesAll : List Truth → List Bool → Bool
+  | c :: cs, b :: bs => agrees c b && agreesAll cs bs
+  | [], [] => true
+  | _, _ => false
+
+/-- The arms the configured reading keeps; `decided` means an earlier arm was
+decided true. -/
+def keptArms : Bool → List Truth → List Bool
+  | _, [] => []
+  | decided, c :: rest => (!decided && c != .no) :: keptArms (decided || c == .yes) rest
+
+/-- The arm the preprocessor takes: the first whose condition holds. -/
+def takenArms : Bool → List Bool → List Bool
+  | _, [] => []
+  | done, b :: rest => (!done && b) :: takenArms (done || b) rest
+
+/-- Pointwise: every arm marked in the first list is marked in the second. -/
+def within : List Bool → List Bool → Bool
+  | a :: as, b :: bs => (!a || b) && within as bs
+  | _, _ => true
+
+theorem taken_within_kept (known : List Truth) :
+    ∀ (actual : List Bool) (decided done : Bool),
+      agreesAll known actual = true → (decided = true → done = true) →
+      within (takenArms done actual) (keptArms decided known) = true := by
+  induction known with
+  | nil => intro actual decided done _ _; cases actual <;> simp [takenArms, keptArms, within]
+  | cons c rest ih =>
+    intro actual decided done hagree hdec
+    cases actual with
+    | nil => simp [agreesAll] at hagree
+    | cons b bs =>
+      simp only [agreesAll, Bool.and_eq_true] at hagree
+      obtain ⟨hcb, hrest⟩ := hagree
+      simp only [takenArms, keptArms, within, Bool.and_eq_true]
+      refine ⟨?_, ih bs _ _ hrest ?_⟩
+      · cases done <;> cases b <;> cases decided <;> cases c <;> simp_all [agrees]
+      · intro h
+        cases decided <;> cases c <;> cases done <;> cases b <;> simp_all [agrees]
+
+theorem the_taken_arm_is_read (known : List Truth) (actual : List Bool)
+    (hagree : agreesAll known actual = true) :
+    within (takenArms false actual) (keptArms false known) = true :=
+  taken_within_kept known actual false false hagree (fun h => h)
+
+/-- Pointwise: no decided-false arm is kept. -/
+def noDecidedFalseKept : List Truth → List Bool → Bool
+  | c :: cs, k :: ks => (c != .no || !k) && noDecidedFalseKept cs ks
+  | _, _ => true
+
+theorem a_decided_false_arm_is_not_read (known : List Truth) :
+    ∀ decided, noDecidedFalseKept known (keptArms decided known) = true := by
+  induction known with
+  | nil => intro decided; simp [noDecidedFalseKept]
+  | cons c rest ih =>
+    intro decided
+    simp only [keptArms, noDecidedFalseKept, Bool.and_eq_true]
+    exact ⟨by cases c <;> cases decided <;> simp, ih _⟩
+
+theorem nothing_after_a_decided_arm_is_read (known : List Truth) :
+    keptArms true known = known.map (fun _ => false) := by
+  induction known with
+  | nil => rfl
+  | cons c rest ih => simp [keptArms, ih]
+
 end QCore.LoopOwner

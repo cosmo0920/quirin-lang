@@ -706,6 +706,7 @@ pub(crate) fn normalise_unit(
         .map(|mark| ConditionalMark {
             token_index: mark.token_index - before[mark.token_index.min(tokens.len())],
             directive: mark.directive,
+            span: mark.span,
         })
         .collect();
     Some((kept, marks, rewrites))

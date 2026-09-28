@@ -12,7 +12,8 @@
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::thread_entry_census::{
-    CensusFile, CensusReading, HopTables, ReadEffect, ReadHop, ReadMode, read_program,
+    BuildConfiguration, CensusFile, CensusReading, HopTables, ReadEffect, ReadHop, ReadMode,
+    read_program_configured,
 };
 use qcore_contract::contract_loader::{DeclaredLoopOwner, LoopOwnerOperation};
 use qcore_core::loop_owner::{
@@ -80,6 +81,7 @@ fn hop(hop: ReadHop) -> HopKind {
         ReadHop::Direct => HopKind::Direct,
         ReadHop::Vtable => HopKind::Vtable,
         ReadHop::CollectorRegistry => HopKind::CollectorRegistry,
+        ReadHop::Coroutine => HopKind::Coroutine,
     }
 }
 
@@ -111,17 +113,32 @@ pub fn thread_program(reading: &CensusReading) -> ThreadProgram {
             .collect(),
         spawns: reading.spawns.clone(),
         unresolved: reading.unresolved.clone(),
+        coroutine_bodies: reading.coroutine_bodies.clone(),
+        yields: reading.yields.clone(),
     }
 }
 
-/// Read, derive and decide every declared obligation of one program.
+/// Read, derive and decide every declared obligation of one program, every
+/// conditional arm included.
 #[must_use]
 pub fn census(
     files: &[CensusFile],
     obligations: &BTreeMap<String, DeclaredLoopOwner>,
     hops: &HopTables,
 ) -> Census {
-    let reading = read_program(files, hops);
+    census_configured(files, obligations, hops, None)
+}
+
+/// [`census`] under a build configuration (card W47-LOOP-OWNER-COROUTINE-HOP):
+/// an arm the configuration decides is not taken is not read.
+#[must_use]
+pub fn census_configured(
+    files: &[CensusFile],
+    obligations: &BTreeMap<String, DeclaredLoopOwner>,
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+) -> Census {
+    let reading = read_program_configured(files, hops, configuration);
     let program = thread_program(&reading);
     let derived = derive(&program);
     let owners = Owners::from_dispatchers(

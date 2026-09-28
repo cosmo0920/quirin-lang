@@ -34,6 +34,16 @@
 //!   obligation. It is still only a refusal (`Unknown` downstream), never a
 //!   validated reachable violation.
 //!
+//! # Coroutines (hop C)
+//!
+//! A coroutine runs on the thread that resumes it (card
+//! W47-LOOP-OWNER-COROUTINE-HOP). The adapter supplies an edge
+//! ([`HopKind::Coroutine`]) from each derived resumer to the coroutine's
+//! entry, so the entry's contexts are exactly its resumers'. A body the entry
+//! runs ([`ThreadProgram::coroutine_bodies`]) that may reach a yield
+//! ([`ThreadProgram::yields`]) continues after the yield on a resumer that is
+//! not derived: it is unresolved ([`underived_resumer`]), never discharged.
+//!
 //! # Completion meanings (C2) and paired collectors (C3)
 //!
 //! [`control_completion`] separates the two meanings of a public
@@ -98,6 +108,10 @@ pub enum HopKind {
     /// R: a collector registered through `flb_input_set_collector_*`,
     /// dispatched through `cb_collect`.
     CollectorRegistry,
+    /// C: a derived resumer runs a coroutine's entry. A coroutine runs on the
+    /// thread that resumes it, so the edge keeps the thread like a call
+    /// (card W47-LOOP-OWNER-COROUTINE-HOP).
+    Coroutine,
 }
 
 /// The mode an edge requires of its caller's context (hop F), or fixes for its
@@ -143,6 +157,52 @@ pub struct ThreadProgram {
     pub spawns: Vec<(FunctionId, FunctionId)>,
     /// Functions the adapter could not close, with why.
     pub unresolved: BTreeMap<FunctionId, BTreeSet<String>>,
+    /// `(entry, body)`: `body` runs inside coroutine `entry` after its
+    /// hand-off, on the entry's resumer (hop C).
+    pub coroutine_bodies: Vec<(FunctionId, FunctionId)>,
+    /// Functions that yield their coroutine without ending it, with where.
+    pub yields: BTreeMap<FunctionId, String>,
+}
+
+/// The reason a coroutine body that may yield carries: its continuation after
+/// the yield runs on whichever thread resumes the coroutine next, which is
+/// not derived.
+#[must_use]
+pub fn underived_resumer(entry: &str, body: &str, site: &str) -> String {
+    format!(
+        "`{body}` runs in coroutine `{entry}` and may yield ({site}): its resumer after the \
+         yield is not derived"
+    )
+}
+
+/// Every function that reaches a yield over call edges (not into another
+/// coroutine's entry), with the yield it reaches.
+fn reaches_a_yield(program: &ThreadProgram) -> Vec<Option<String>> {
+    let count = program.functions.len();
+    let mut reach = vec![None; count];
+    let mut incoming: Vec<Vec<FunctionId>> = vec![Vec::new(); count];
+    for edge in &program.edges {
+        if edge.hop != HopKind::Coroutine && edge.caller < count && edge.callee < count {
+            incoming[edge.callee].push(edge.caller);
+        }
+    }
+    let mut pending = VecDeque::new();
+    for (function, site) in &program.yields {
+        if *function < count && reach[*function].is_none() {
+            reach[*function] = Some(site.clone());
+            pending.push_back(*function);
+        }
+    }
+    while let Some(function) = pending.pop_front() {
+        let site = reach[function].clone();
+        for caller in &incoming[function] {
+            if reach[*caller].is_none() {
+                reach[*caller].clone_from(&site);
+                pending.push_back(*caller);
+            }
+        }
+    }
+    reach
 }
 
 /// What [`derive`] computed for one function.
@@ -203,6 +263,24 @@ pub fn derive(program: &ThreadProgram) -> Vec<Derived> {
                 .unresolved
                 .extend(reasons.iter().cloned());
             pending.push_back(*function);
+        }
+    }
+    // Hop C: a coroutine body that may yield continues on an underived
+    // resumer, so it is unresolved whatever else reaches it.
+    if !program.coroutine_bodies.is_empty() {
+        let reach = reaches_a_yield(program);
+        for (entry, body) in &program.coroutine_bodies {
+            if *entry < count
+                && *body < count
+                && let Some(site) = &reach[*body]
+            {
+                derived[*body].unresolved.insert(underived_resumer(
+                    &program.functions[*entry],
+                    &program.functions[*body],
+                    site,
+                ));
+                pending.push_back(*body);
+            }
         }
     }
     while let Some(function) = pending.pop_front() {

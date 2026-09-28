@@ -90,7 +90,11 @@ const FUNCTIONS: &[&str] = &[
 
 /// The part both versions of the test share: E and I and their dispatch.
 fn engine() -> Shape {
-    let mut shape = Shape::new(FUNCTIONS);
+    engine_with(FUNCTIONS)
+}
+
+fn engine_with(functions: &[&'static str]) -> Shape {
+    let mut shape = Shape::new(functions);
     shape.root("test_main", "T");
     shape.call("test_main", "flb_start");
     shape.spawn("flb_start", "flb_lib_worker");
@@ -384,4 +388,130 @@ fn the_reactor_refuses_exactly_the_foreign_accesses() {
             .iter()
             .all(|d| matches!(d, EventDiagnostic::L05ConflictingAccess { .. }))
     );
+}
+
+/// Hop C (card W47-LOOP-OWNER-COROUTINE-HOP): the input coroutine's entry,
+/// resumed by the loop dispatchers, dispatches a collector body.
+fn coroutine() -> Shape {
+    let mut functions = FUNCTIONS.to_vec();
+    functions.extend([
+        "input_pre_cb_collect",
+        "cb_coro",
+        "net_write",
+        "other_entry",
+    ]);
+    let mut shape = engine_with(&functions);
+    shape.edge(
+        "flb_input_collector_fd",
+        "input_pre_cb_collect",
+        HopKind::Coroutine,
+        ModeEffect::Dispatch(Mode::NonThreaded),
+    );
+    shape.edge(
+        "input_collector_fd",
+        "input_pre_cb_collect",
+        HopKind::Coroutine,
+        ModeEffect::Dispatch(Mode::Threaded),
+    );
+    shape.edge(
+        "input_pre_cb_collect",
+        "cb_coro",
+        HopKind::CollectorRegistry,
+        ModeEffect::Keep,
+    );
+    let (entry, body) = (shape.id("input_pre_cb_collect"), shape.id("cb_coro"));
+    shape.program.coroutine_bodies.push((entry, body));
+    let yielding = shape.id("net_write");
+    shape
+        .program
+        .yields
+        .insert(yielding, "`flb_coro_yield` at src/flb_io.c:487".to_owned());
+    shape
+}
+
+#[test]
+fn a_coroutine_resumed_only_on_the_owners_runs_on_the_owners() {
+    let shape = coroutine();
+    let OwnerVerdict::Discharged { contexts } = shape.verdict("cb_coro") else {
+        panic!("expected discharged");
+    };
+    assert_eq!(
+        contexts,
+        BTreeSet::from([
+            Context {
+                thread: "flb_lib_worker".to_owned(),
+                mode: Mode::NonThreaded,
+            },
+            Context {
+                thread: "input_thread".to_owned(),
+                mode: Mode::Threaded,
+            },
+        ])
+    );
+}
+
+#[test]
+fn a_coroutine_resumed_from_a_non_owner_thread_refuses() {
+    let mut shape = coroutine();
+    shape.edge(
+        "test_main",
+        "input_pre_cb_collect",
+        HopKind::Coroutine,
+        ModeEffect::Keep,
+    );
+    let OwnerVerdict::NotDischarged { context, .. } = shape.verdict("cb_coro") else {
+        panic!("expected a refusal");
+    };
+    assert_eq!(context.thread, "T");
+}
+
+#[test]
+fn a_coroutine_body_that_may_yield_has_an_underived_resumer() {
+    let mut shape = coroutine();
+    shape.call("cb_coro", "net_write");
+    let OwnerVerdict::Unresolved { reasons } = shape.verdict("cb_coro") else {
+        panic!("expected unresolved");
+    };
+    assert!(reasons.contains(&underived_resumer(
+        "input_pre_cb_collect",
+        "cb_coro",
+        "`flb_coro_yield` at src/flb_io.c:487"
+    )));
+    // The same callee dispatched only directly (not a coroutine body) does
+    // not depend on the hop.
+    shape.program.coroutine_bodies.clear();
+    assert!(matches!(
+        shape.verdict("cb_coro"),
+        OwnerVerdict::Discharged { .. }
+    ));
+}
+
+#[test]
+fn a_yield_inside_another_coroutine_is_not_this_bodys() {
+    let mut shape = coroutine();
+    shape.edge(
+        "cb_coro",
+        "other_entry",
+        HopKind::Coroutine,
+        ModeEffect::Keep,
+    );
+    shape.call("other_entry", "net_write");
+    assert!(matches!(
+        shape.verdict("cb_coro"),
+        OwnerVerdict::Discharged { .. }
+    ));
+}
+
+#[test]
+fn an_unresolved_resumer_never_discharges_the_coroutine() {
+    let mut shape = coroutine();
+    let entry = shape.id("input_pre_cb_collect");
+    shape.program.unresolved.insert(
+        entry,
+        BTreeSet::from(["a handle not derived from the constructor".to_owned()]),
+    );
+    assert!(matches!(
+        shape.verdict("cb_coro"),
+        OwnerVerdict::Unresolved { .. }
+    ));
 }

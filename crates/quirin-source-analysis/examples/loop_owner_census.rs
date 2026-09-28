@@ -12,14 +12,14 @@
 //! not `-`, replaces the contents of `tests/runtime/in_tail.c` (the previous
 //! test at `90978ac6~1`, which is blob-identical to `046accf6`'s). Read-only.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::CensusFile;
+use qcore_c_gateway::thread_entry_census::{BuildConfiguration, CensusFile};
 use qcore_contract::contract_loader::loop_owner_obligations;
 use qcore_core::loop_owner::OwnerVerdict;
-use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census};
+use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census_configured};
 
 fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
     if path.is_dir() {
@@ -38,10 +38,92 @@ fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
     }
 }
 
+/// The macros each translation unit's compile command defines (`-DNAME`,
+/// `-DNAME=VALUE`, `-D NAME`; a later `-UNAME` removes it), keyed by the
+/// file's path under `root`.
+fn compile_defines(database: &str, root: &Path) -> BTreeMap<String, BTreeSet<String>> {
+    let text = fs::read_to_string(database).expect("compile database");
+    let entries: Vec<serde_json::Value> = serde_json::from_str(&text).expect("compile database");
+    let mut units = BTreeMap::new();
+    for entry in entries {
+        let directory = PathBuf::from(entry["directory"].as_str().unwrap_or(""));
+        let file = PathBuf::from(entry["file"].as_str().expect("file"));
+        let file = if file.is_absolute() {
+            file
+        } else {
+            directory.join(file)
+        };
+        let Ok(relative) = file.strip_prefix(root) else {
+            continue;
+        };
+        let words = match entry.get("arguments").and_then(|a| a.as_array()) {
+            Some(arguments) => arguments
+                .iter()
+                .filter_map(|a| a.as_str().map(str::to_owned))
+                .collect::<Vec<_>>(),
+            None => entry["command"]
+                .as_str()
+                .unwrap_or("")
+                .split_whitespace()
+                .map(str::to_owned)
+                .collect(),
+        };
+        let mut defined = BTreeSet::new();
+        let mut words = words.iter();
+        while let Some(word) = words.next() {
+            let (flag, value) = match word.as_str() {
+                "-D" | "-U" => (word.as_str(), words.next().map_or("", String::as_str)),
+                _ if word.starts_with("-D") => ("-D", &word[2..]),
+                _ if word.starts_with("-U") => ("-U", &word[2..]),
+                _ => continue,
+            };
+            let name = value.split('=').next().unwrap_or("").to_owned();
+            if flag == "-D" {
+                defined.insert(name);
+            } else {
+                defined.remove(&name);
+            }
+        }
+        let key = relative.to_string_lossy().replace('\\', "/");
+        // One file compiled into several targets: keep what every command
+        // defines.
+        units
+            .entry(key)
+            .and_modify(|seen: &mut BTreeSet<String>| {
+                *seen = seen.intersection(&defined).cloned().collect();
+            })
+            .or_insert(defined);
+    }
+    units
+}
+
 fn main() {
-    let arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    let mut arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    // Card W47-LOOP-OWNER-COROUTINE-HOP: `--compile-commands=PATH` reads the
+    // conditional groups under that build's configuration, with
+    // `--owned-prefix=P` (repeatable) naming the macros it owns.
+    let mut database = None;
+    let mut generated = None;
+    let mut prefixes = Vec::new();
+    arguments.retain(|argument| {
+        if let Some(path) = argument.strip_prefix("--compile-commands=") {
+            database = Some(path.to_owned());
+            false
+        } else if let Some(path) = argument.strip_prefix("--generated-root=") {
+            generated = Some(path.to_owned());
+            false
+        } else if let Some(prefix) = argument.strip_prefix("--owned-prefix=") {
+            prefixes.push(prefix.to_owned());
+            false
+        } else {
+            true
+        }
+    });
     let [module, root, test, paths @ ..] = arguments.as_slice() else {
-        eprintln!("usage: loop_owner_census MODULE SOURCE_ROOT OVERRIDE_TEST|- PATH...");
+        eprintln!(
+            "usage: loop_owner_census [--compile-commands=DB [--owned-prefix=P]...] MODULE \
+             SOURCE_ROOT OVERRIDE_TEST|- PATH..."
+        );
         std::process::exit(2);
     };
     let module_text = fs::read_to_string(module).expect("contract module");
@@ -71,7 +153,48 @@ fn main() {
             CensusFile { path: name, text }
         })
         .collect::<Vec<_>>();
-    let result = census(&files, &obligations, &FLUENT_BIT_HOPS);
+    let configuration = database.as_ref().map(|database| {
+        let read = files
+            .iter()
+            .map(|file| file.path.clone())
+            .collect::<BTreeSet<_>>();
+        let mut units = compile_defines(database, &root);
+        units.retain(|path, _| read.contains(path));
+        let mut headers = Vec::new();
+        if let Some(generated) = &generated {
+            collect(Path::new(generated), Path::new(generated), &mut headers);
+        }
+        let defined_elsewhere = headers
+            .iter()
+            .filter_map(|header| {
+                fs::read(Path::new(generated.as_deref().unwrap_or("")).join(header)).ok()
+            })
+            .flat_map(|bytes| {
+                String::from_utf8_lossy(&bytes)
+                    .lines()
+                    .filter_map(|line| {
+                        let rest = line.trim_start().strip_prefix('#')?.trim_start();
+                        let name = rest.strip_prefix("define")?.trim_start();
+                        let end = name
+                            .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                            .unwrap_or(name.len());
+                        Some(name[..end].to_owned())
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        BuildConfiguration {
+            units,
+            owned_prefixes: prefixes.clone(),
+            defined_elsewhere,
+        }
+    });
+    let result = census_configured(
+        &files,
+        &obligations,
+        &FLUENT_BIT_HOPS,
+        configuration.as_ref(),
+    );
     let sites = result
         .sites
         .iter()
@@ -121,7 +244,12 @@ fn main() {
     let unresolved = result.program.unresolved.len();
     // The derivation of the loop dispatchers and the thread entries, in full:
     // what the owners rest on.
-    let focus = ["flb_input_collector_fd", "input_collector_fd", "flb_engine_start"]
+    let focus = [
+        "flb_input_collector_fd",
+        "input_collector_fd",
+        "flb_engine_start",
+        "include/fluent-bit/flb_input.h::input_pre_cb_collect",
+    ]
         .iter()
         .filter_map(|name| {
             let derived = result.derived(name)?;
@@ -139,6 +267,16 @@ fn main() {
         "spawns": result.program.spawns.iter().map(|(s, e)| format!("{} -> {}", result.program.functions[*s], result.program.functions[*e])).collect::<Vec<_>>(),
         "edges": result.program.edges.len(),
         "unresolved_seeds": unresolved,
+        "configured_units": configuration.as_ref().map(|c| c.units.len()),
+        "unstructured_files": result
+            .program
+            .unresolved
+            .values()
+            .flatten()
+            .filter_map(|reason| reason.strip_suffix(": a conditional group this reader cannot structure"))
+            .collect::<BTreeSet<_>>(),
+        "coroutine_bodies": result.program.coroutine_bodies.len(),
+        "yields": result.program.yields.len(),
         "owners": {
             "engine_loop": result.owners.non_threaded,
             "worker_loop": result.owners.threaded,

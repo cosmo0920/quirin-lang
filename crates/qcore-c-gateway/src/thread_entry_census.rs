@@ -35,6 +35,29 @@
 //!   thread in that loop's mode.
 //! * **F**: a call inside the then/else block of `if (P(x))` or
 //!   `if (!P(x))`, `P` the threaded-flag predicate, requires that mode.
+//! * **C** (card W47-LOOP-OWNER-COROUTINE-HOP): a coroutine runs on the thread
+//!   that resumes it. A listed constructor ([`CoroutineHop`]) names its entry
+//!   at the coroutine primitive's entry argument (`co_create(_, E, _)`); each
+//!   function that calls the constructor as `v = K(…)` and resumes `v` through
+//!   the listed wrapper is a derived resumer, and runs the entry after its
+//!   hand-off (inside a loop dispatcher, in that loop's mode, as hop L). The
+//!   entry's calls before its single switch back to the resumer
+//!   (`co_switch(x->caller)`) run in the constructor. A constructor call that
+//!   is not so resumed, or a wrapper call on a handle that is not the
+//!   constructor's, leaves the entry unresolved. A function the entry
+//!   dispatches after its hand-off is a coroutine body: one that may reach a
+//!   non-terminal yield has an underived resumer after the yield (the kernel's
+//!   rule), and a collector registrant whose input plugin's descriptor flags
+//!   say it runs no coroutine is not dispatched from the entry at all.
+//!
+//! # Configured reading
+//!
+//! [`read_program_configured`] reads conditional groups under a
+//! [`BuildConfiguration`]: an arm is dropped only when its condition is
+//! decided false (or an earlier arm is decided true) for that file's
+//! translation unit; a group whose first kept arm is decided true is read as
+//! that arm alone. A condition it cannot decide keeps its arm, and every kept
+//! arm is scanned as the raw reading does.
 //!
 //! # Fail-closed
 //!
@@ -76,6 +99,8 @@ pub enum ReadHop {
     Direct,
     Vtable,
     CollectorRegistry,
+    /// Hop C: a derived resumer runs a coroutine's entry.
+    Coroutine,
 }
 
 /// One edge the census read.
@@ -112,6 +137,11 @@ pub struct CensusReading {
     /// The single definition of each loop dispatcher, when there is one.
     pub engine_dispatcher: Option<usize>,
     pub worker_dispatcher: Option<usize>,
+    /// `(entry, body)`: `body` is dispatched from coroutine `entry` after its
+    /// hand-off, so it runs on the entry's resumer (hop C).
+    pub coroutine_bodies: Vec<(usize, usize)>,
+    /// Functions that yield their coroutine without ending it, with where.
+    pub yields: BTreeMap<usize, String>,
 }
 
 impl CensusReading {
@@ -122,7 +152,9 @@ impl CensusReading {
     }
 }
 
-use crate::legacy_c::{ConditionalDirective, Token, is_identifier, tokenize_with_conditionals};
+use crate::legacy_c::{
+    ConditionalDirective, ConditionalMark, Token, is_identifier, tokenize_with_conditionals,
+};
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -142,6 +174,33 @@ pub struct HopTables {
     pub test_thread: &'static str,
     /// The threaded-flag predicate (hop F).
     pub threaded_predicate: &'static str,
+    /// `(primitive, index of the entry argument)` that creates a coroutine
+    /// (hop C).
+    pub coroutine_primitive: (&'static str, usize),
+    /// The coroutine constructors whose resumers are derived.
+    pub coroutines: &'static [CoroutineHop],
+    /// The context switch; `switch(x->RESUMER_FIELD)` switches back to the
+    /// coroutine's resumer (a yield, or an entry's hand-off).
+    pub switch_primitive: &'static str,
+    pub resumer_field: &'static str,
+    /// Functions whose switch back ends the coroutine: it is not resumed again.
+    pub terminal_returns: &'static [&'static str],
+    /// The input-plugin descriptor type (`struct T NAME = { … }`), its flags
+    /// field and the flag that makes an instance run its collectors in a
+    /// coroutine, and the directory plugins live under.
+    pub plugin_descriptor: &'static str,
+    pub plugin_flags_field: &'static str,
+    pub coroutine_flag: &'static str,
+    pub plugin_root: &'static str,
+}
+
+/// One coroutine constructor whose resumers the census derives (hop C).
+#[derive(Clone, Copy, Debug)]
+pub struct CoroutineHop {
+    /// Names the entry at the coroutine primitive and returns the handle.
+    pub constructor: &'static str,
+    /// The wrapper a caller resumes the returned handle with.
+    pub resume: &'static str,
 }
 
 /// Fluent Bit's hops as W47-TAIL-PAUSE-BINDINGS bound them at `90978ac6`.
@@ -171,7 +230,321 @@ pub const FLUENT_BIT_HOPS: HopTables = HopTables {
     test_table: "TEST_LIST",
     test_thread: "T",
     threaded_predicate: "flb_input_is_threaded",
+    // include/fluent-bit/flb_input.h:720 (`coro->callee = co_create(…,
+    // input_pre_cb_collect, …)` in flb_input_coro_collect), resumed by
+    // flb_input_coro_resume at src/flb_input.c:3318 and
+    // src/flb_input_thread.c:167.
+    coroutine_primitive: ("co_create", 1),
+    coroutines: &[CoroutineHop {
+        constructor: "flb_input_coro_collect",
+        resume: "flb_input_coro_resume",
+    }],
+    switch_primitive: "co_switch",
+    resumer_field: "caller",
+    // include/fluent-bit/flb_input.h:772: FLB_INPUT_RETURN's yield after
+    // flb_input_coro_prepare_destroy.
+    terminal_returns: &["flb_input_return_do"],
+    // src/flb_input.c:625: `if (plugin->flags & FLB_INPUT_CORO)
+    // instance->runs_in_coroutine = FLB_TRUE;`.
+    plugin_descriptor: "flb_input_plugin",
+    plugin_flags_field: "flags",
+    coroutine_flag: "FLB_INPUT_CORO",
+    plugin_root: "plugins/",
 };
+
+/// The build a configured reading is for: the macros each translation unit's
+/// compile command defines, and the macro prefixes the build configuration
+/// owns.
+#[derive(Clone, Debug, Default)]
+pub struct BuildConfiguration {
+    /// A read `.c` file's path → the macros its compile command defines.
+    pub units: BTreeMap<String, BTreeSet<String>>,
+    /// A macro with one of these prefixes that no compile command defines
+    /// and no read file `#define`s is undefined; any other macro not defined
+    /// by the unit's command is undecided.
+    pub owned_prefixes: Vec<String>,
+    /// Macros `#define`d in files the census does not read (the build's
+    /// generated headers): never decided undefined.
+    pub defined_elsewhere: BTreeSet<String>,
+}
+
+/// A condition's value under a configuration.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Truth {
+    True,
+    False,
+    Unknown,
+}
+
+impl Truth {
+    fn not(self) -> Self {
+        match self {
+            Self::True => Self::False,
+            Self::False => Self::True,
+            Self::Unknown => Self::Unknown,
+        }
+    }
+
+    fn and(self, other: Self) -> Self {
+        match (self, other) {
+            (Self::False, _) | (_, Self::False) => Self::False,
+            (Self::True, Self::True) => Self::True,
+            _ => Self::Unknown,
+        }
+    }
+
+    fn or(self, other: Self) -> Self {
+        self.not().and(other.not()).not()
+    }
+}
+
+/// What a configured reading of one file knows about each macro.
+struct MacroView<'a> {
+    defined: &'a BTreeSet<String>,
+    defined_by_some_unit: &'a BTreeSet<String>,
+    written: &'a BTreeSet<String>,
+    undefined_somewhere: &'a BTreeSet<String>,
+    owned_prefixes: &'a [String],
+}
+
+impl MacroView<'_> {
+    fn defined(&self, name: &str) -> Truth {
+        if self.defined.contains(name) && !self.undefined_somewhere.contains(name) {
+            Truth::True
+        } else if self
+            .owned_prefixes
+            .iter()
+            .any(|p| name.starts_with(p.as_str()))
+            && !self.defined_by_some_unit.contains(name)
+            && !self.written.contains(name)
+        {
+            Truth::False
+        } else {
+            Truth::Unknown
+        }
+    }
+}
+
+/// The value of one conditional directive's condition, `#else` being true.
+/// Only `defined`, `!`, `&&`, `||` and parentheses are read; anything else
+/// is undecided.
+fn directive_truth(text: &str, view: &MacroView<'_>) -> Truth {
+    let mut line = text.replace("\\\r\n", " ").replace("\\\n", " ");
+    while let Some(start) = line.find("/*") {
+        let end = line[start + 2..]
+            .find("*/")
+            .map_or(line.len(), |e| start + 2 + e + 2);
+        line.replace_range(start..end, " ");
+    }
+    if let Some(start) = line.find("//") {
+        line.truncate(start);
+    }
+    let body = line.trim_start().trim_start_matches('#').trim_start();
+    let word_end = body
+        .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+        .unwrap_or(body.len());
+    let (word, rest) = body.split_at(word_end);
+    let rest = rest.trim();
+    let single = |rest: &str| {
+        if is_identifier(rest) {
+            view.defined(rest)
+        } else {
+            Truth::Unknown
+        }
+    };
+    match word {
+        "else" => Truth::True,
+        "ifdef" | "elifdef" => single(rest),
+        "ifndef" | "elifndef" => single(rest).not(),
+        "if" | "elif" => expression_truth(rest, view),
+        _ => Truth::Unknown,
+    }
+}
+
+fn expression_truth(text: &str, view: &MacroView<'_>) -> Truth {
+    let mut tokens = Vec::new();
+    let bytes = text.as_bytes();
+    let mut index = 0;
+    while index < bytes.len() {
+        let byte = bytes[index];
+        if byte.is_ascii_whitespace() {
+            index += 1;
+        } else if byte.is_ascii_alphabetic() || byte == b'_' {
+            let start = index;
+            while index < bytes.len()
+                && (bytes[index].is_ascii_alphanumeric() || bytes[index] == b'_')
+            {
+                index += 1;
+            }
+            tokens.push(&text[start..index]);
+        } else if text[index..].starts_with("&&") || text[index..].starts_with("||") {
+            tokens.push(&text[index..index + 2]);
+            index += 2;
+        } else if (byte == b'!' && bytes.get(index + 1) != Some(&b'='))
+            || byte == b'('
+            || byte == b')'
+        {
+            tokens.push(&text[index..=index]);
+            index += 1;
+        } else {
+            return Truth::Unknown;
+        }
+    }
+    let mut position = 0;
+    let value = disjunction(&tokens, &mut position, view);
+    if position == tokens.len() {
+        value.unwrap_or(Truth::Unknown)
+    } else {
+        Truth::Unknown
+    }
+}
+
+fn disjunction(tokens: &[&str], position: &mut usize, view: &MacroView<'_>) -> Option<Truth> {
+    let mut value = conjunction(tokens, position, view)?;
+    while tokens.get(*position) == Some(&"||") {
+        *position += 1;
+        value = value.or(conjunction(tokens, position, view)?);
+    }
+    Some(value)
+}
+
+fn conjunction(tokens: &[&str], position: &mut usize, view: &MacroView<'_>) -> Option<Truth> {
+    let mut value = unary(tokens, position, view)?;
+    while tokens.get(*position) == Some(&"&&") {
+        *position += 1;
+        value = value.and(unary(tokens, position, view)?);
+    }
+    Some(value)
+}
+
+fn unary(tokens: &[&str], position: &mut usize, view: &MacroView<'_>) -> Option<Truth> {
+    match *tokens.get(*position)? {
+        "!" => {
+            *position += 1;
+            Some(unary(tokens, position, view)?.not())
+        }
+        "(" => {
+            *position += 1;
+            let value = disjunction(tokens, position, view)?;
+            (tokens.get(*position) == Some(&")")).then(|| {
+                *position += 1;
+                value
+            })
+        }
+        "defined" => {
+            *position += 1;
+            let parenthesised = tokens.get(*position) == Some(&"(");
+            if parenthesised {
+                *position += 1;
+            }
+            let name = *tokens.get(*position)?;
+            if !is_identifier(name) {
+                return None;
+            }
+            *position += 1;
+            if parenthesised {
+                if tokens.get(*position) != Some(&")") {
+                    return None;
+                }
+                *position += 1;
+            }
+            Some(view.defined(name))
+        }
+        // A macro's value, a number or any other operand is not read.
+        _ => None,
+    }
+}
+
+/// One conditional group being narrowed by [`configure`].
+struct Narrowing {
+    /// The group stands in a kept arm of every enclosing group.
+    live: bool,
+    /// Some earlier arm is decided true: no later arm is taken.
+    decided: bool,
+    /// Whether the current arm is kept.
+    kept: bool,
+    /// Whether a kept arm has been seen, and whether the first one was
+    /// decided true (then the group is read as that arm alone).
+    first_kept: Option<bool>,
+}
+
+/// Drop the arms a configuration decides are not taken, and the marks of a
+/// group reduced to one decided arm. The token stream keeps its lines.
+fn configure(
+    tokens: Vec<Token>,
+    marks: &[ConditionalMark],
+    text: &str,
+    view: &MacroView<'_>,
+) -> (Vec<Token>, Vec<(usize, ConditionalDirective)>) {
+    let mut kept_tokens = Vec::with_capacity(tokens.len());
+    let mut kept_marks = Vec::new();
+    let mut groups: Vec<Narrowing> = Vec::new();
+    let mut next_mark = 0;
+    let live = |groups: &[Narrowing]| groups.iter().all(|g| g.live && g.kept);
+    for index in 0..=tokens.len() {
+        while next_mark < marks.len() && marks[next_mark].token_index() <= index {
+            let mark = marks[next_mark];
+            next_mark += 1;
+            let (start, end) = mark.span();
+            let truth = || directive_truth(text.get(start..end).unwrap_or(""), view);
+            match mark.directive() {
+                ConditionalDirective::Open => {
+                    let parent = live(&groups);
+                    let condition = if parent { truth() } else { Truth::False };
+                    let kept = parent && condition != Truth::False;
+                    let first_kept = kept.then_some(condition == Truth::True);
+                    if first_kept == Some(false) {
+                        kept_marks.push((kept_tokens.len(), ConditionalDirective::Open));
+                    }
+                    groups.push(Narrowing {
+                        live: parent,
+                        decided: condition == Truth::True,
+                        kept,
+                        first_kept,
+                    });
+                }
+                directive @ (ConditionalDirective::Alternative
+                | ConditionalDirective::Otherwise) => {
+                    let Some(group) = groups.last_mut() else {
+                        // A stray arm: leave it to the structural scan.
+                        kept_marks.push((kept_tokens.len(), directive));
+                        continue;
+                    };
+                    if !group.live {
+                        continue;
+                    }
+                    let condition = if group.decided { Truth::False } else { truth() };
+                    group.kept = condition != Truth::False;
+                    if group.kept {
+                        match group.first_kept {
+                            None => {
+                                group.first_kept = Some(condition == Truth::True);
+                                if condition != Truth::True {
+                                    kept_marks
+                                        .push((kept_tokens.len(), ConditionalDirective::Open));
+                                }
+                            }
+                            Some(_) => kept_marks.push((kept_tokens.len(), directive)),
+                        }
+                    }
+                    group.decided |= condition == Truth::True;
+                }
+                ConditionalDirective::Close => match groups.pop() {
+                    Some(group) => {
+                        if group.first_kept == Some(false) {
+                            kept_marks.push((kept_tokens.len(), ConditionalDirective::Close));
+                        }
+                    }
+                    None => kept_marks.push((kept_tokens.len(), ConditionalDirective::Close)),
+                },
+            }
+        }
+        if index < tokens.len() && live(&groups) {
+            kept_tokens.push(tokens[index].clone());
+        }
+    }
+    (kept_tokens, kept_marks)
+}
 
 /// One file of the program.
 #[derive(Clone, Debug)]
@@ -228,8 +601,24 @@ fn is_callable_name(text: &str) -> bool {
 /// Find file-scope definitions and declarations, reading conditional groups
 /// as the raw enumeration does: every arm is scanned from the group's entry
 /// depth, and a group whose arms end at different depths is unstructured.
-fn scan_file(file: usize, path: &str, text: &str, definitions: &mut Vec<Definition>) -> Scan {
-    let (tokens, marks) = tokenize_with_conditionals(text);
+fn scan_file(
+    file: usize,
+    path: &str,
+    text: &str,
+    definitions: &mut Vec<Definition>,
+    view: Option<&MacroView<'_>>,
+) -> Scan {
+    let (tokens, raw_marks) = tokenize_with_conditionals(text);
+    let (tokens, marks) = match view {
+        Some(view) => configure(tokens, &raw_marks, text, view),
+        None => {
+            let marks = raw_marks
+                .iter()
+                .map(|mark| (mark.token_index(), mark.directive()))
+                .collect::<Vec<_>>();
+            (tokens, marks)
+        }
+    };
     let mut scan = Scan {
         tokens: Vec::new(),
         definitions: Vec::new(),
@@ -245,33 +634,13 @@ fn scan_file(file: usize, path: &str, text: &str, definitions: &mut Vec<Definiti
     let mut statement_start = 0usize;
     let mut index = 0;
     while index < tokens.len() {
-        while next_mark < marks.len() && marks[next_mark].token_index() <= index {
-            match marks[next_mark].directive() {
-                ConditionalDirective::Open => frames.push((depth, Vec::new(), false)),
-                ConditionalDirective::Alternative | ConditionalDirective::Otherwise => {
-                    if let Some(frame) = frames.last_mut() {
-                        frame.1.push(depth);
-                        frame.2 |= marks[next_mark].directive() == ConditionalDirective::Otherwise;
-                        depth = frame.0;
-                    } else {
-                        scan.unstructured = true;
-                    }
-                }
-                ConditionalDirective::Close => {
-                    if let Some((entry, mut arms, saw_else)) = frames.pop() {
-                        arms.push(depth);
-                        if !saw_else {
-                            arms.push(entry);
-                        }
-                        if arms.iter().any(|arm| *arm != arms[0]) {
-                            scan.unstructured = true;
-                        }
-                        depth = arms.into_iter().max().unwrap_or(entry);
-                    } else {
-                        scan.unstructured = true;
-                    }
-                }
-            }
+        while next_mark < marks.len() && marks[next_mark].0 <= index {
+            apply_mark(
+                marks[next_mark].1,
+                &mut depth,
+                &mut frames,
+                &mut scan.unstructured,
+            );
             next_mark += 1;
         }
         let text = tokens[index].text.as_str();
@@ -351,11 +720,55 @@ fn scan_file(file: usize, path: &str, text: &str, definitions: &mut Vec<Definiti
         }
         index += 1;
     }
+    // A directive after the last token (an include guard's closing `#endif`)
+    // stands at `tokens.len()`, which the token loop never reaches: it closes
+    // its group here (card W47-LOOP-OWNER-COROUTINE-HOP; before, every such
+    // file was read as unstructured).
+    for (_, directive) in &marks[next_mark..] {
+        apply_mark(*directive, &mut depth, &mut frames, &mut scan.unstructured);
+    }
     if !frames.is_empty() || depth != 0 {
         scan.unstructured = true;
     }
     scan.tokens = tokens;
     scan
+}
+
+/// One conditional directive's effect on the raw scan's brace depth: every arm
+/// is scanned from the group's entry depth, and a group whose arms end at
+/// different depths is unstructured.
+fn apply_mark(
+    directive: ConditionalDirective,
+    depth: &mut usize,
+    frames: &mut Vec<(usize, Vec<usize>, bool)>,
+    unstructured: &mut bool,
+) {
+    match directive {
+        ConditionalDirective::Open => frames.push((*depth, Vec::new(), false)),
+        ConditionalDirective::Alternative | ConditionalDirective::Otherwise => {
+            if let Some(frame) = frames.last_mut() {
+                frame.1.push(*depth);
+                frame.2 |= directive == ConditionalDirective::Otherwise;
+                *depth = frame.0;
+            } else {
+                *unstructured = true;
+            }
+        }
+        ConditionalDirective::Close => {
+            if let Some((entry, mut arms, saw_else)) = frames.pop() {
+                arms.push(*depth);
+                if !saw_else {
+                    arms.push(entry);
+                }
+                if arms.iter().any(|arm| *arm != arms[0]) {
+                    *unstructured = true;
+                }
+                *depth = arms.into_iter().max().unwrap_or(entry);
+            } else {
+                *unstructured = true;
+            }
+        }
+    }
 }
 
 /// The names a parameter list declares: an identifier directly before `,`,
@@ -514,14 +927,137 @@ fn mode_ranges(
     ranges
 }
 
-/// Read one program's files into a [`CensusReading`].
+/// A file's `#define`s (name, names the replacement list writes) and
+/// `#undef`s.
+type MacroDefinitions = (Vec<(String, BTreeSet<String>)>, BTreeSet<String>);
+
+/// Every `#define` in a file (its name and the names its replacement list
+/// writes) and every `#undef`'s name.
+fn macro_definitions(text: &str) -> MacroDefinitions {
+    let mut defines = Vec::new();
+    let mut undefs = BTreeSet::new();
+    let mut logical = String::new();
+    for line in text.lines() {
+        if logical.is_empty() {
+            let trimmed = line.trim_start();
+            let Some(directive) = trimmed.strip_prefix('#') else {
+                continue;
+            };
+            let directive = directive.trim_start();
+            if let Some(name) = directive.strip_prefix("undef") {
+                let name = name.trim();
+                if is_identifier(name) {
+                    undefs.insert(name.to_owned());
+                }
+                continue;
+            }
+            if !directive.starts_with("define") {
+                continue;
+            }
+        }
+        if let Some(stripped) = line.strip_suffix('\\') {
+            logical.push_str(stripped);
+            logical.push(' ');
+            continue;
+        }
+        logical.push_str(line);
+        // Comments are not replacement text.
+        while let Some(start) = logical.find("/*") {
+            let end = logical[start + 2..]
+                .find("*/")
+                .map_or(logical.len(), |e| start + 2 + e + 2);
+            logical.replace_range(start..end, " ");
+        }
+        if let Some(start) = logical.find("//") {
+            logical.truncate(start);
+        }
+        let body = logical.trim_start().trim_start_matches('#').trim_start();
+        let body = body.strip_prefix("define").unwrap_or(body);
+        let words = body
+            .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+            .filter(|word| is_identifier(word))
+            .map(str::to_owned)
+            .collect::<Vec<_>>();
+        if let Some((name, rest)) = words.split_first() {
+            defines.push((name.clone(), rest.iter().cloned().collect()));
+        }
+        logical.clear();
+    }
+    (defines, undefs)
+}
+
+/// Read one program's files into a [`CensusReading`], every conditional arm
+/// included.
 #[must_use]
 pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
+    read_program_configured(files, hops, None)
+}
+
+/// Read one program's files under a build configuration, when one is given:
+/// an arm the configuration decides is not taken is not read.
+#[must_use]
+pub fn read_program_configured(
+    files: &[CensusFile],
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+) -> CensusReading {
+    let macros = files
+        .iter()
+        .map(|source| macro_definitions(&source.text))
+        .collect::<Vec<_>>();
+    let written = macros
+        .iter()
+        .flat_map(|(defines, _)| defines.iter().map(|(name, _)| name.clone()))
+        .chain(
+            configuration
+                .into_iter()
+                .flat_map(|configuration| configuration.defined_elsewhere.iter().cloned()),
+        )
+        .collect::<BTreeSet<_>>();
+    let undefined_somewhere = macros
+        .iter()
+        .flat_map(|(_, undefs)| undefs.iter().cloned())
+        .collect::<BTreeSet<_>>();
+    let (common, any_unit) = configuration.map_or_else(
+        || (BTreeSet::new(), BTreeSet::new()),
+        |configuration| {
+            let mut units = configuration.units.values();
+            let common = units.next().map_or_else(BTreeSet::new, |first| {
+                units.fold(first.clone(), |acc, unit| {
+                    acc.intersection(unit).cloned().collect()
+                })
+            });
+            let any = configuration
+                .units
+                .values()
+                .flat_map(|unit| unit.iter().cloned())
+                .collect::<BTreeSet<_>>();
+            (common, any)
+        },
+    );
     let mut definitions = Vec::new();
     let scans = files
         .iter()
         .enumerate()
-        .map(|(file, source)| scan_file(file, &source.path, &source.text, &mut definitions))
+        .map(|(file, source)| {
+            let view = configuration.map(|configuration| {
+                let unit = configuration.units.get(&source.path);
+                MacroView {
+                    defined: unit.unwrap_or(&common),
+                    defined_by_some_unit: unit.unwrap_or(&any_unit),
+                    written: &written,
+                    undefined_somewhere: &undefined_somewhere,
+                    owned_prefixes: &configuration.owned_prefixes,
+                }
+            });
+            scan_file(
+                file,
+                &source.path,
+                &source.text,
+                &mut definitions,
+                view.as_ref(),
+            )
+        })
         .collect::<Vec<_>>();
     let mut program = CensusReading::default();
     let mut index = BTreeMap::new();
@@ -575,12 +1111,34 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
         }
     };
     let mut registrants: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
-    let mut dispatches: Vec<(usize, String, ReadEffect)> = Vec::new();
+    // (caller, field, effect, file, position of the field name)
+    let mut dispatches: Vec<(usize, String, ReadEffect, usize, usize)> = Vec::new();
     let mut poisoned_fields: BTreeMap<String, String> = BTreeMap::new();
     let mut edges = BTreeSet::new();
+    // Direct edges with where they were read, so hop C can place an entry's
+    // calls before or after its hand-off.
+    let mut positioned: Vec<(usize, usize, ReadEdge)> = Vec::new();
     let mut spawns = BTreeSet::new();
     let mut roots = BTreeSet::new();
     let mut calls: Vec<ReadCall> = Vec::new();
+    // Hop C.
+    let numeric_macros = numeric_macros(&macros);
+    let plugin_dir = |path: &str| {
+        path.strip_prefix(hops.plugin_root)
+            .and_then(|rest| rest.split_once('/'))
+            .map(|(dir, _)| dir.to_owned())
+    };
+    let mut descriptor_flags: BTreeMap<String, Vec<Option<bool>>> = BTreeMap::new();
+    let mut collector_sites: BTreeMap<usize, BTreeSet<String>> = BTreeMap::new();
+    // entry -> the constructors that create it.
+    let mut entries: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+    // (resumer, coroutine hop, handle variable, path, line, effect)
+    let mut constructor_calls: Vec<(usize, usize, Option<String>, String, usize, ReadEffect)> =
+        Vec::new();
+    // (caller, coroutine hop, handle variable, path, line)
+    let mut resume_calls: Vec<(usize, usize, Option<String>, String, usize)> = Vec::new();
+    // (caller, file, position): `switch(x->RESUMER_FIELD)`.
+    let mut switch_backs: Vec<(usize, usize, usize)> = Vec::new();
 
     for (file, scan) in scans.iter().enumerate() {
         let path = &files[file].path;
@@ -654,6 +1212,32 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
         // The tokenizer emits every punctuator byte on its own: `->` is `-`
         // `>`, `==` is `=` `=`, `&&` is `&` `&`.
         let at = |position: usize| tokens.get(position).map_or("", |t| t.text.as_str());
+        // Input-plugin descriptors and their coroutine flag (hop C).
+        if let Some(dir) = plugin_dir(path) {
+            for position in 0..tokens.len() {
+                if at(position) != "struct"
+                    || at(position + 1) != hops.plugin_descriptor
+                    || !is_identifier(at(position + 2))
+                    || at(position + 3) != "="
+                    || at(position + 4) != "{"
+                {
+                    continue;
+                }
+                let Some(end) = crate::legacy_c::matching(tokens, position + 4, "{", "}") else {
+                    continue;
+                };
+                descriptor_flags
+                    .entry(dir.clone())
+                    .or_default()
+                    .push(descriptor_flag(
+                        tokens,
+                        position + 4,
+                        end,
+                        hops,
+                        &numeric_macros,
+                    ));
+            }
+        }
         for position in 0..tokens.len() {
             let text = tokens[position].text.as_str();
             let previous = position.checked_sub(1).map_or("", at);
@@ -681,7 +1265,7 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
                                     *dispatcher == caller_name && text == hops.collector_field
                                 })
                                 .map_or(ReadEffect::Keep, |(_, mode)| ReadEffect::Dispatch(*mode));
-                            dispatches.push((caller, text.to_owned(), effect));
+                            dispatches.push((caller, text.to_owned(), effect, file, position));
                         }
                     }
                     Some("=") => {
@@ -692,6 +1276,14 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
                         {
                             let ids = resolve(file, value);
                             if !ids.is_empty() {
+                                if text == hops.collector_field {
+                                    for id in &ids {
+                                        collector_sites
+                                            .entry(*id)
+                                            .or_default()
+                                            .insert(path.clone());
+                                    }
+                                }
                                 registrants.entry(text.to_owned()).or_default().extend(ids);
                                 consumed.insert(position + 2);
                             }
@@ -751,6 +1343,7 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
                                 if is_spawn {
                                     spawns.insert((caller, id));
                                 } else {
+                                    collector_sites.entry(id).or_default().insert(path.clone());
                                     registrants
                                         .entry(hops.collector_field.to_owned())
                                         .or_default()
@@ -760,6 +1353,45 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
                         }
                     }
                 }
+                // Hop C: a listed constructor names its entry at the
+                // coroutine primitive; the entry's address is then consumed.
+                let caller_name = plain_name(caller);
+                if text == hops.coroutine_primitive.0
+                    && hops
+                        .coroutines
+                        .iter()
+                        .any(|hop| hop.constructor == caller_name)
+                    && let Some((start, end)) = ranges.get(hops.coroutine_primitive.1)
+                    && end - start == 1
+                {
+                    let ids = resolve(file, &tokens[*start].text);
+                    if !ids.is_empty() {
+                        consumed.insert(*start);
+                        for id in ids {
+                            entries.entry(id).or_default().insert(caller);
+                        }
+                    }
+                }
+                if text == hops.switch_primitive
+                    && let Some((start, end)) = ranges.first()
+                {
+                    let argument = tokens[*start..*end]
+                        .iter()
+                        .map(|t| t.text.as_str())
+                        .collect::<Vec<_>>();
+                    if matches!(argument.as_slice(),
+                        [base, "-", ">", field] | [base, ".", field]
+                            if is_identifier(base) && *field == hops.resumer_field)
+                    {
+                        switch_backs.push((caller, file, position));
+                    }
+                }
+                let handle = |range: Option<&(usize, usize)>| {
+                    range
+                        .filter(|(start, end)| end - start == 1)
+                        .map(|(start, _)| tokens[*start].text.clone())
+                        .filter(|name| is_identifier(name))
+                };
                 let fixed = mode_at(position);
                 let effect = match fixed.iter().collect::<Vec<_>>().as_slice() {
                     [] => ReadEffect::Keep,
@@ -767,13 +1399,36 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
                     // Nested contradictory branches: this call is unreachable.
                     _ => continue,
                 };
+                if let Some(hop) = hops
+                    .coroutines
+                    .iter()
+                    .position(|hop| hop.constructor == text)
+                {
+                    let variable = (at(position.wrapping_sub(1)) == "="
+                        && at(position.wrapping_sub(2)) != "="
+                        && is_identifier(at(position.wrapping_sub(2))))
+                    .then(|| at(position - 2).to_owned());
+                    let dispatch = hops
+                        .loop_dispatchers
+                        .iter()
+                        .find(|(dispatcher, _)| *dispatcher == caller_name)
+                        .map_or(effect, |(_, mode)| ReadEffect::Dispatch(*mode));
+                    constructor_calls.push((caller, hop, variable, path.clone(), line, dispatch));
+                }
+                if let Some(hop) = hops.coroutines.iter().position(|hop| hop.resume == text) {
+                    resume_calls.push((caller, hop, handle(ranges.first()), path.clone(), line));
+                }
                 for callee in resolve(file, text) {
-                    edges.insert(ReadEdge {
-                        caller,
-                        callee,
-                        hop: ReadHop::Direct,
-                        effect,
-                    });
+                    positioned.push((
+                        file,
+                        position,
+                        ReadEdge {
+                            caller,
+                            callee,
+                            hop: ReadHop::Direct,
+                            effect,
+                        },
+                    ));
                 }
                 calls.push(ReadCall {
                     file: path.clone(),
@@ -792,19 +1447,203 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
             }
         }
     }
+    // Hop C: each entry's hand-off, its single switch back to the resumer
+    // outside any loop. Its calls before the switch run in the constructor.
+    let mut handoffs: BTreeMap<usize, (usize, usize)> = BTreeMap::new();
+    for entry in entries.keys() {
+        let switches = switch_backs
+            .iter()
+            .filter(|(caller, ..)| caller == entry)
+            .collect::<Vec<_>>();
+        let looped = definitions
+            .iter()
+            .filter(|d| index[&d.census_name] == *entry)
+            .any(|d| {
+                scans[d.file].tokens[d.body.0..=d.body.1]
+                    .iter()
+                    .any(|t| matches!(t.text.as_str(), "while" | "for" | "do" | "goto"))
+            });
+        match switches.as_slice() {
+            [(_, file, position)] if !looped => {
+                handoffs.insert(*entry, (*file, *position));
+            }
+            _ => escape(
+                &[*entry],
+                format!(
+                    "the hand-off of coroutine entry `{}` cannot be read (one switch back to \
+                     its resumer, outside any loop)",
+                    program.functions[*entry]
+                ),
+            ),
+        }
+    }
+    let placed = |caller: usize, file: usize, position: usize| -> (Vec<usize>, bool) {
+        match handoffs.get(&caller) {
+            Some((handoff_file, handoff)) if *handoff_file == file && position < *handoff => {
+                (entries[&caller].iter().copied().collect(), false)
+            }
+            Some(_) => (vec![caller], true),
+            None => (vec![caller], false),
+        }
+    };
+    let mut bodies: BTreeSet<(usize, usize)> = BTreeSet::new();
+    for (file, position, edge) in positioned {
+        let (callers, body) = placed(edge.caller, file, position);
+        for caller in callers {
+            edges.insert(ReadEdge { caller, ..edge });
+        }
+        if body {
+            bodies.insert((edge.caller, edge.callee));
+        }
+    }
+    // Which inputs run their collectors in a coroutine, from their plugin
+    // directory's descriptor flags; undecided when a registration is outside
+    // a plugin directory or the directory's descriptors disagree.
+    let runs_in_coroutine = |id: usize| -> Option<bool> {
+        let mut value = None;
+        for path in collector_sites.get(&id)? {
+            for flag in descriptor_flags.get(&plugin_dir(path)?)? {
+                let flag = (*flag)?;
+                if value.is_some_and(|v| v != flag) {
+                    return None;
+                }
+                value = Some(flag);
+            }
+        }
+        value
+    };
     // Field dispatch edges (hops V, V*, R, L).
-    for (caller, field, effect) in &dispatches {
+    for (caller, field, effect, file, position) in &dispatches {
         let hop = if field == hops.collector_field {
             ReadHop::CollectorRegistry
         } else {
             ReadHop::Vtable
         };
+        let (callers, body) = placed(*caller, *file, *position);
         for callee in registrants.get(field).into_iter().flatten() {
-            edges.insert(ReadEdge {
-                caller: *caller,
-                callee: *callee,
-                hop,
-                effect: *effect,
+            // An input whose descriptors run no coroutine is never
+            // dispatched from a coroutine entry.
+            if body && field == hops.collector_field && runs_in_coroutine(*callee) == Some(false) {
+                continue;
+            }
+            for from in &callers {
+                edges.insert(ReadEdge {
+                    caller: *from,
+                    callee: *callee,
+                    hop,
+                    effect: *effect,
+                });
+            }
+            if body {
+                bodies.insert((*caller, *callee));
+            }
+        }
+    }
+    // Hop C's resumers: a constructor call resumed in the same function
+    // through the wrapper on the handle it returned.
+    let constructed = |hop: usize| {
+        entries
+            .iter()
+            .filter(|(_, constructors)| {
+                constructors
+                    .iter()
+                    .any(|k| plain_name(*k) == hops.coroutines[hop].constructor)
+            })
+            .map(|(entry, _)| *entry)
+            .collect::<Vec<_>>()
+    };
+    for (caller, hop, variable, path, line, effect) in &constructor_calls {
+        let coroutine = &hops.coroutines[*hop];
+        let resumed = variable.as_ref().is_some_and(|variable| {
+            resume_calls
+                .iter()
+                .any(|(c, h, v, ..)| c == caller && h == hop && v.as_ref() == Some(variable))
+        });
+        for entry in constructed(*hop) {
+            if resumed {
+                edges.insert(ReadEdge {
+                    caller: *caller,
+                    callee: entry,
+                    hop: ReadHop::Coroutine,
+                    effect: *effect,
+                });
+            } else {
+                escape(
+                    &[entry],
+                    format!(
+                        "`{}` constructs coroutine `{}` at {path}:{line} without resuming the \
+                         handle it returns through `{}` there: its resumer is not derived",
+                        coroutine.constructor, program.functions[entry], coroutine.resume
+                    ),
+                );
+            }
+        }
+    }
+    for (caller, hop, variable, path, line) in &resume_calls {
+        let coroutine = &hops.coroutines[*hop];
+        let derived = variable.as_ref().is_some_and(|variable| {
+            constructor_calls
+                .iter()
+                .any(|(c, h, v, ..)| c == caller && h == hop && v.as_ref() == Some(variable))
+        });
+        if !derived {
+            escape(
+                &constructed(*hop),
+                format!(
+                    "`{}` resumes a handle not derived from `{}` at {path}:{line}: the \
+                     coroutine's resumer is not derived",
+                    coroutine.resume, coroutine.constructor
+                ),
+            );
+        }
+    }
+    // Yields: a function (not an entry) that switches back to its resumer is
+    // a yield primitive; a macro that does, or names a primitive, is a yield
+    // macro; a call of either yields, except in a terminal return.
+    let primitives = switch_backs
+        .iter()
+        .map(|(caller, ..)| *caller)
+        .filter(|caller| !entries.contains_key(caller))
+        .collect::<BTreeSet<_>>();
+    let primitive_names = primitives
+        .iter()
+        .map(|id| plain_name(*id))
+        .collect::<BTreeSet<_>>();
+    let yield_macros = macros
+        .iter()
+        .flat_map(|(defines, _)| defines.iter())
+        .filter(|(_, words)| {
+            (words.contains(hops.switch_primitive) && words.contains(hops.resumer_field))
+                || words.iter().any(|word| primitive_names.contains(word))
+        })
+        .map(|(name, _)| name.clone())
+        .collect::<BTreeSet<_>>();
+    let mut yields: BTreeMap<usize, String> = BTreeMap::new();
+    for call in &calls {
+        if entries.contains_key(&call.caller)
+            || hops
+                .terminal_returns
+                .contains(&plain_name(call.caller).as_str())
+        {
+            continue;
+        }
+        if primitive_names.contains(&call.callee) || yield_macros.contains(&call.callee) {
+            yields
+                .entry(call.caller)
+                .or_insert_with(|| format!("`{}` at {}:{}", call.callee, call.file, call.line));
+        }
+    }
+    // A primitive run other than by a direct call (a field registrant, or a
+    // coroutine body itself) yields where it runs.
+    for primitive in &primitives {
+        if registrants.values().any(|set| set.contains(primitive))
+            || bodies.iter().any(|(_, body)| body == primitive)
+        {
+            yields.entry(*primitive).or_insert_with(|| {
+                format!(
+                    "`{}` switches back to its resumer",
+                    program.functions[*primitive]
+                )
             });
         }
     }
@@ -822,6 +1661,8 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
     program.roots = roots.into_iter().collect();
     program.unresolved = unresolved;
     program.calls = calls;
+    program.coroutine_bodies = bodies.into_iter().collect();
+    program.yields = yields;
     let dispatcher = |mode: ReadMode| {
         let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
@@ -840,6 +1681,74 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
     program.engine_dispatcher = dispatcher(ReadMode::NonThreaded);
     program.worker_dispatcher = dispatcher(ReadMode::Threaded);
     program
+}
+
+/// Macros every definition of which writes no name (a number): a flags
+/// operand spelled with one is not the coroutine flag.
+fn numeric_macros(macros: &[MacroDefinitions]) -> BTreeSet<String> {
+    let mut numeric: BTreeMap<&str, bool> = BTreeMap::new();
+    for (defines, _) in macros {
+        for (name, words) in defines {
+            let entry = numeric.entry(name.as_str()).or_insert(true);
+            *entry &= words.is_empty();
+        }
+    }
+    numeric
+        .into_iter()
+        .filter(|(_, numeric)| *numeric)
+        .map(|(name, _)| name.to_owned())
+        .collect()
+}
+
+/// A plugin descriptor's coroutine flag from its `.flags = A | B | …`
+/// initializer: `Some(true)` when an operand is the flag, `Some(false)` when
+/// every operand is a number or a numeric macro (or there is no flags
+/// initializer: the field is zero), `None` otherwise.
+fn descriptor_flag(
+    tokens: &[Token],
+    open: usize,
+    close: usize,
+    hops: &HopTables,
+    numeric_macros: &BTreeSet<String>,
+) -> Option<bool> {
+    let mut depth = 0usize;
+    let mut index = open + 1;
+    while index < close {
+        match tokens[index].text.as_str() {
+            "{" | "(" | "[" => depth += 1,
+            "}" | ")" | "]" => depth = depth.saturating_sub(1),
+            "." if depth == 0
+                && tokens
+                    .get(index + 1)
+                    .is_some_and(|t| t.text == hops.plugin_flags_field)
+                && tokens.get(index + 2).is_some_and(|t| t.text == "=") =>
+            {
+                let mut value = false;
+                let mut operand = true;
+                let mut cursor = index + 3;
+                while cursor < close && tokens[cursor].text != "," {
+                    let text = tokens[cursor].text.as_str();
+                    if operand {
+                        if text == hops.coroutine_flag {
+                            value = true;
+                        } else if !(text.chars().all(|c| c.is_ascii_digit())
+                            || numeric_macros.contains(text))
+                        {
+                            return None;
+                        }
+                    } else if text != "|" {
+                        return None;
+                    }
+                    operand = !operand;
+                    cursor += 1;
+                }
+                return (!operand).then_some(value);
+            }
+            _ => {}
+        }
+        index += 1;
+    }
+    Some(false)
 }
 
 /// Whether the `)` at `close` ends a condition (`if (…)`, `while (…)`, a
