@@ -895,15 +895,12 @@ impl StepB<'_> {
                 };
                 for definition in self.definitions.iter().filter(|d| d.file == *file) {
                     let id = self.index[&definition.census_name];
-                    if !hazards.contains_key(&id) {
-                        hazards.insert(
-                            id,
-                            format!(
-                                "its file ({}) has a conditional group this reader cannot \
-                                 structure and names `{word}`",
-                                self.files[*file].path
-                            ),
-                        );
+                    if let std::collections::btree_map::Entry::Vacant(slot) = hazards.entry(id) {
+                        slot.insert(format!(
+                            "its file ({}) has a conditional group this reader cannot \
+                             structure and names `{word}`",
+                            self.files[*file].path
+                        ));
                         added = true;
                     }
                 }

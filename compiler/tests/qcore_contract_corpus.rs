@@ -454,6 +454,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_total_size",
         3,
     ),
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the observations the census needed,
+    // each a marker plus its clauses (held clauses wrapped for review).
+    ("fluent_bit/input_instance.qv", "flb_create", 2),
+    ("fluent_bit/input_instance.qv", "flb_input", 5),
+    ("fluent_bit/input_instance.qv", "flb_input_new", 6),
+    ("fluent_bit/input_instance.qv", "flb_service_set", 4),
     ("fluent_bit/logging.qv", "flb_log_check", 3),
     // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
     // `libc/errno.qv`, and this module gains one declaration. Deliberate;
@@ -464,12 +470,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/logging.qv", "flb_log_print", 7),
     // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
     // borrowed arguments, the neutral user clause and the scalar result.
-    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the observations the census needed,
-    // each a marker plus its clauses (held clauses wrapped for review).
-    ("fluent_bit/input_instance.qv", "flb_create", 2),
-    ("fluent_bit/input_instance.qv", "flb_input", 5),
-    ("fluent_bit/input_instance.qv", "flb_input_new", 6),
-    ("fluent_bit/input_instance.qv", "flb_service_set", 4),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_pause", 6),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_resume", 6),
@@ -1311,7 +1311,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 118 -> 119 by card W47-LOOP-OWNER-CONTRACTS' `fluent_bit/loop_owner.qv`.
     // 119 -> 120 by card W47-CONDVAR-JOIN-PUBLICATION's `libc/pthread_sync.qv`.
-    assert_eq!(sources.len(), 120, "unexpected contract corpus size");
+    // 120 -> 121 by card W47-LOOP-OWNER-INSTANCE-FLOW's `fluent_bit/input_instance.qv`.
+    assert_eq!(sources.len(), 121, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

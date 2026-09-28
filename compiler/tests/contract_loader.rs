@@ -1268,7 +1268,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `fluent_bit/loop_owner.qv`, entirely v1 and manifest-selected.
     // 119 -> 120: card W47-CONDVAR-JOIN-PUBLICATION adds
     // `libc/pthread_sync.qv`, entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 120, "corpus module count");
+    // 120 -> 121: card W47-LOOP-OWNER-INSTANCE-FLOW adds
+    // `fluent_bit/input_instance.qv`, entirely v1 (review markers included)
+    // and manifest-selected.
+    assert_eq!(modules.len(), 121, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1430,15 +1433,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 55 -> 56 and 236 -> 242 by card W47-CONDVAR-JOIN-PUBLICATION: the six
     // declarations of `libc/pthread_sync.qv`, each with a declared
     // thread-synchronization obligation. Rejected unchanged.
+    // 56 -> 57 and 242 -> 246 by card W47-LOOP-OWNER-INSTANCE-FLOW: the four
+    // declarations of `fluent_bit/input_instance.qv`, each loaded and then
+    // withheld for human review. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (56, 242, 216)
+        (57, 246, 216)
     );
+    // A declaration held for human review is loaded and withheld from the
+    // function map (contract spec C06.1): the map plus the held set is every
+    // v1 declaration (card W47-LOOP-OWNER-INSTANCE-FLOW: 4 held).
+    let loaded = load_resource_contract_manifest(&manifest()).unwrap();
+    assert_eq!(loaded.pending_review().len(), 4);
     assert_eq!(
-        load_resource_contract_manifest(&manifest())
-            .unwrap()
-            .functions()
-            .len(),
+        loaded.functions().len() + loaded.pending_review().len(),
         v1_declarations
     );
 

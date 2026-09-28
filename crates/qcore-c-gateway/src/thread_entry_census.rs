@@ -2073,6 +2073,9 @@ pub fn read_program_typed(
     program
 }
 
+/// `(resumer, coroutine hop, handle variable, path, line, effect)` (hop C).
+type ConstructorCall = (usize, usize, Option<String>, String, usize, ReadEffect);
+
 /// What the instance-flow reachability reads (card
 /// W47-LOOP-OWNER-INSTANCE-FLOW).
 struct InstanceReachInputs<'a> {
@@ -2084,7 +2087,7 @@ struct InstanceReachInputs<'a> {
     registrants: &'a BTreeMap<String, BTreeMap<usize, BTreeSet<Keyed>>>,
     spawns: &'a BTreeSet<(usize, usize)>,
     entries: &'a BTreeMap<usize, BTreeSet<usize>>,
-    constructor_calls: &'a [(usize, usize, Option<String>, String, usize, ReadEffect)],
+    constructor_calls: &'a [ConstructorCall],
     coroutines: &'a [CoroutineHop],
     functions: &'a [String],
     taken: &'a BTreeSet<usize>,
