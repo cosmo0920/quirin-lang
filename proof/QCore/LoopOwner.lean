@@ -813,4 +813,215 @@ theorem the_route_is_dropped_only_when_both_derive_none {α : Type} {registrants
     | false => rfl
     | true => exact absurd (by simp [coroutineDispatched, hr, h]) hdropped
 
+/-! ### The list-head instance (card W47-LOOP-OWNER-INSTANCE-FLOW)
+
+On a path from a fresh context (its input list empty, P-FRESH-CONTEXT) to the
+read of the list's head, each call either creates one instance from a
+descriptor whose coroutine flag is known (the creation appends it), leaves the
+list alone, or is an unmodelled mutation. The census derives the head's flag
+only when no path mutates the list unmodelled and every path creates exactly
+once; the derived flag is then the flag of the only element the list holds
+(`a_derived_head_is_the_one_creation`). A second creation or an unmodelled
+mutation leaves it underived, which keeps the coroutine route
+(`a_second_creator_keeps_the_route`, `an_unmodelled_mutation_keeps_the_route`).
+The empty list's read is P-HEAD-INSTANCE's, outside the census. -/
+
+inductive PathEvent where
+  /-- A creation from a descriptor whose coroutine flag is `flag`. -/
+  | create (flag : Bool)
+  /-- A call that neither creates an instance nor mutates an input list. -/
+  | other
+  /-- A list mutation the census does not model. -/
+  | mutate
+  deriving DecidableEq, Repr
+
+/-- The input list after one event; `none` once it is not known. -/
+def listStep : Option (List Bool) → PathEvent → Option (List Bool)
+  | none, _ => none
+  | some l, .create flag => some (l ++ [flag])
+  | some l, .other => some l
+  | some _, .mutate => none
+
+/-- The list the path leaves, from the fresh context's empty list. -/
+def listAfter (events : List PathEvent) : Option (List Bool) :=
+  events.foldl listStep (some [])
+
+def created : List PathEvent → List Bool
+  | [] => []
+  | .create flag :: rest => flag :: created rest
+  | _ :: rest => created rest
+
+def mutates (events : List PathEvent) : Bool :=
+  events.any (· == .mutate)
+
+/-- The census's derivation on one path. -/
+def headDerivation (events : List PathEvent) : Option Bool :=
+  if mutates events then none
+  else match created events with
+    | [flag] => some flag
+    | _ => none
+
+/-- Over every path: one flag all paths derive, or none. -/
+def pathsDerivation : List (List PathEvent) → Option Bool
+  | [] => none
+  | first :: rest =>
+    match headDerivation first with
+    | none => none
+    | some flag => if rest.all (fun p => headDerivation p == some flag) then some flag else none
+
+theorem listStep_unmutated (l : List Bool) (events : List PathEvent) (h : mutates events = false) :
+    events.foldl listStep (some l) = some (l ++ created events) := by
+  induction events generalizing l with
+  | nil => simp [created]
+  | cons e rest ih =>
+    have hrest : mutates rest = false := by
+      simp [mutates, List.any_cons] at h ⊢; exact h.2
+    cases e with
+    | create flag =>
+      simp only [List.foldl_cons, listStep, created]
+      rw [ih _ hrest]; simp
+    | other =>
+      simp only [List.foldl_cons, listStep, created]
+      exact ih _ hrest
+    | mutate => simp [mutates] at h
+
+/-- A derived head is the one creation: the list holds exactly that instance. -/
+theorem a_derived_head_is_the_one_creation {events : List PathEvent} {flag : Bool}
+    (h : headDerivation events = some flag) : listAfter events = some [flag] := by
+  unfold headDerivation at h
+  cases hm : mutates events with
+  | true => simp [hm] at h
+  | false =>
+    unfold listAfter
+    rw [listStep_unmutated [] events hm]
+    simp only [hm, Bool.false_eq_true, ite_false] at h
+    cases hc : created events with
+    | nil => simp [hc] at h
+    | cons x rest =>
+      cases rest with
+      | nil =>
+        simp only [hc, Option.some.injEq] at h
+        simp [h]
+      | cons y rest' => simp [hc] at h
+
+/-- Every path agrees: each leaves exactly the one created instance. -/
+theorem every_path_reads_the_one_creation {paths : List (List PathEvent)} {flag : Bool}
+    (h : pathsDerivation paths = some flag) :
+    ∀ p ∈ paths, listAfter p = some [flag] := by
+  cases paths with
+  | nil => simp [pathsDerivation] at h
+  | cons first rest =>
+    unfold pathsDerivation at h
+    cases hf : headDerivation first with
+    | none => simp [hf] at h
+    | some f =>
+      simp only [hf] at h
+      split at h
+      · rename_i hall
+        have hfl : f = flag := by simpa using h
+        subst hfl
+        intro p hp
+        rcases List.mem_cons.mp hp with hp | hp
+        · subst hp; exact a_derived_head_is_the_one_creation hf
+        · have := List.all_eq_true.mp hall p hp
+          exact a_derived_head_is_the_one_creation (by simpa using this)
+      · simp at h
+
+theorem a_second_creator_keeps_the_route {events : List PathEvent}
+    (h : 2 ≤ (created events).length) : headDerivation events = none := by
+  unfold headDerivation
+  cases hm : mutates events with
+  | true => simp
+  | false =>
+    simp only [Bool.false_eq_true, ite_false]
+    cases hc : created events with
+    | nil => rfl
+    | cons x rest =>
+      cases rest with
+      | nil => rw [hc] at h; simp at h
+      | cons y rest' => rfl
+
+theorem an_unmodelled_mutation_keeps_the_route {events : List PathEvent}
+    (h : PathEvent.mutate ∈ events) : headDerivation events = none := by
+  have : mutates events = true := List.any_eq_true.mpr ⟨_, h, by simp⟩
+  simp [headDerivation, this]
+
+theorem a_path_without_a_creation_derives_nothing {events : List PathEvent}
+    (h : created events = []) : headDerivation events = none := by
+  unfold headDerivation
+  cases mutates events with
+  | true => simp
+  | false => simp [h]
+
+/-- An underived head keeps the coroutine route for the copy's registrant. -/
+theorem an_underived_head_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    {paths : List (List PathEvent)} (copy : Option Bool) (hr : r ∈ registrants)
+    (h : pathsDerivation paths = none) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag (pathsDerivation paths) copy) registrants := by
+  rw [h]
+  exact an_underived_part_keeps_the_route (Or.inl rfl) hr
+
+/-! ### The holder escape
+
+The object holding the plugin copy escapes into the installed instance's
+`data`. The route reads the instance's coroutine flag and which instance the
+callback is registered on; an escape is admitted only when what it can reach
+writes neither (the flag has one writer, the instance's plugin field two, and
+the holder's type is named in the test alone). An escape that can write
+either leaves the derivation underived. -/
+
+structure EscapeReach where
+  writesFlag : Bool
+  writesInstance : Bool
+  deriving DecidableEq, Repr
+
+def afterEscape (derived : Option Bool) (escape : EscapeReach) : Option Bool :=
+  if escape.writesFlag || escape.writesInstance then none else derived
+
+theorem an_escape_that_writes_neither_keeps_the_derivation (derived : Option Bool) :
+    afterEscape derived { writesFlag := false, writesInstance := false } = derived := by
+  simp [afterEscape]
+
+theorem an_escape_that_writes_the_flag_or_the_instance_keeps_the_route {α : Type}
+    {registrants : List α} {r : α} {derived copy : Option Bool} {escape : EscapeReach}
+    (hw : escape.writesFlag = true ∨ escape.writesInstance = true) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag (afterEscape derived escape) copy)
+      registrants := by
+  have : afterEscape derived escape = none := by
+    rcases hw with h | h <;> simp [afterEscape, h]
+  rw [this]
+  exact an_underived_part_keeps_the_route (Or.inl rfl) hr
+
+/-- The route is dropped only through a derived single creation whose
+descriptor runs no coroutine, an escape that writes neither fact, and a copy
+that runs none. -/
+theorem the_route_is_dropped_only_through_one_non_coroutine_creation {α : Type}
+    {registrants : List α} {r : α} {paths : List (List PathEvent)} {escape : EscapeReach}
+    {copy : Option Bool} (hr : r ∈ registrants)
+    (hdropped : r ∉ coroutineDispatched
+      (fun _ => instanceFlag (afterEscape (pathsDerivation paths) escape) copy) registrants) :
+    escape.writesFlag = false ∧ escape.writesInstance = false ∧ copy = some false ∧
+      ∀ p ∈ paths, listAfter p = some [false] := by
+  obtain ⟨hcreating, hcopy⟩ := the_route_is_dropped_only_when_both_derive_none hr hdropped
+  unfold afterEscape at hcreating
+  by_cases hw : (escape.writesFlag || escape.writesInstance) = true
+  · simp [hw] at hcreating
+  · simp only [Bool.or_eq_true, not_or, Bool.not_eq_true] at hw
+    simp only [hw.1, hw.2, Bool.or_false, Bool.false_eq_true, ite_false] at hcreating
+    exact ⟨hw.1, hw.2, hcopy, every_path_reads_the_one_creation hcreating⟩
+
+/-! ### The old test's path
+
+The previous test (`90978ac6~1`) calls the collector operations from the
+test thread itself; that context is resolved and off both loops' owners, so
+the site is refused whatever the instance derivation says. -/
+
+theorem the_old_test_path_is_never_discharged {owners : Owners} {contexts : List Context}
+    {unresolved : Bool} {t : Thread} {list : List Thread}
+    (hc : { thread := t, mode := .either } ∈ contexts)
+    (hl : candidates owners .either = some list) (hn : t ∉ list) :
+    siteVerdict owners contexts unresolved ≠ .discharged := by
+  rw [a_non_owner_context_refuses hc hl hn]
+  simp
+
 end QCore.LoopOwner
