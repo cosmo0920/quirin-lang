@@ -1,0 +1,14 @@
+{
+  "note": "W47-REVIEW-HOLD-CONCRETE-REASON card gate at base ec4c9d4a, measured on the tree of 4c4df6d3 (its Rust, Lean and contract content; later commits change only this report's records). submodule 0; run_test_binaries.py 352 units, 365 summaries, 6,298 passed, 0 failed, 11 ignored (private/test-binaries/20260928T184422Z-1258425/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditReviewHoldStanding.lean 22 -> 42 theorems, propext, Classical.choice and Quot.sound only). Provider gate (providers/ changed: fluent_bit/input_instance.qv, fluent_bit/lib_engine_thread.qv and the Fluent Bit lock): provider cargo test 129 passed, 0 failed, 1 ignored; provider fmt and clippy clean; contracts.py check 0; package build 0 and five verifies 0 (chunkio, cmetrics, ctraces, libevent, librdkafka); provider Python 24 tests OK. pin --check of the four re-pinned and of all nine review-held declarations 0 at 66910c10, 046accf6 and the 90978ac6 export; whole crate 0 at 66910c10 and 046accf6 (64 recorded), 1 at the export (13 recorded, 51 in force through the 046accf6/66910c10 identity, 0 not in force: the pre-existing W47-FB-PIN-EXPORT-IDENTITIES condition); pin --verify-contracts 0. The Python suite (365) and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/cr/gate/ of this worktree.",
+  "workspace_tests": 6298,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "provider_tests": 129,
+  "provider_python_tests": 24,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
