@@ -7,9 +7,12 @@
 //! runtime test binary's library, plugin and test sources — read lexically
 //! with the gateway's own tokenizer. Every definition is found at file scope;
 //! a `static` one is named `FILE::NAME`, an external one `NAME`.
-//! [`census`] builds a [`ThreadProgram`] for
-//! [`qcore_core::loop_owner`] and decides the owner obligation at every call
-//! to a function whose contract declares one.
+//! [`read_program`] returns the plain reading ([`CensusReading`]): roots,
+//! edges with their hop and mode effect, spawns, unresolved functions and every
+//! call. The gateway depends on no kernel crate (workspace layering), so
+//! `quirin_source_analysis::loop_owner_census` turns the reading into a
+//! `qcore_core::loop_owner::ThreadProgram`, derives it and decides the owner
+//! obligation at every call to a function whose contract declares one.
 //!
 //! # The hop kinds it follows (W47-TAIL-PAUSE-BINDINGS §2.1)
 //!
@@ -52,11 +55,72 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_contract::contract_loader::{DeclaredLoopOwner, LoopOwnerOperation};
-use qcore_core::loop_owner::{
-    Context, Derived, Edge, HopKind, Mode, ModeEffect, OwnerVerdict, Owners, ThreadProgram,
-    ThreadRoot, derive, owner_verdict,
-};
+/// The threaded flag a hop fixes or requires (hop F, hop L).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ReadMode {
+    NonThreaded,
+    Threaded,
+}
+
+/// What an edge does to the mode of the path.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ReadEffect {
+    Keep,
+    Require(ReadMode),
+    Dispatch(ReadMode),
+}
+
+/// The hop an edge was read through.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ReadHop {
+    Direct,
+    Vtable,
+    CollectorRegistry,
+}
+
+/// One edge the census read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct ReadEdge {
+    pub caller: usize,
+    pub callee: usize,
+    pub hop: ReadHop,
+    pub effect: ReadEffect,
+}
+
+/// One call by name, for the obligation check.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReadCall {
+    pub file: String,
+    pub line: usize,
+    pub caller: usize,
+    pub callee: String,
+}
+
+/// The census's reading of one program.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct CensusReading {
+    /// Census names (`NAME`, or `PATH::NAME` for a `static` definition).
+    pub functions: Vec<String>,
+    /// Test-table roots and their thread.
+    pub roots: Vec<(usize, String)>,
+    pub edges: Vec<ReadEdge>,
+    /// `(spawner, entry)`: the entry is a new thread named after it.
+    pub spawns: Vec<(usize, usize)>,
+    /// Functions the census could not close, with why.
+    pub unresolved: BTreeMap<usize, BTreeSet<String>>,
+    pub calls: Vec<ReadCall>,
+    /// The single definition of each loop dispatcher, when there is one.
+    pub engine_dispatcher: Option<usize>,
+    pub worker_dispatcher: Option<usize>,
+}
+
+impl CensusReading {
+    /// A function's index by census name.
+    #[must_use]
+    pub fn index(&self, name: &str) -> Option<usize> {
+        self.functions.iter().position(|function| function == name)
+    }
+}
 
 use crate::legacy_c::{ConditionalDirective, Token, is_identifier, tokenize_with_conditionals};
 
@@ -71,7 +135,7 @@ pub struct HopTables {
     pub collector_field: &'static str,
     /// `(dispatcher function, mode)`: a dispatch of the collector field inside
     /// that function runs on its thread in that mode.
-    pub loop_dispatchers: &'static [(&'static str, Mode)],
+    pub loop_dispatchers: &'static [(&'static str, ReadMode)],
     /// The test-table variable (hop A).
     pub test_table: &'static str,
     /// The thread name of a test-table root.
@@ -100,9 +164,9 @@ pub const FLUENT_BIT_HOPS: HopTables = HopTables {
     collector_field: "cb_collect",
     loop_dispatchers: &[
         // src/flb_input.c: the engine loop, config->evl.
-        ("flb_input_collector_fd", Mode::NonThreaded),
+        ("flb_input_collector_fd", ReadMode::NonThreaded),
         // src/flb_input_thread.c: the worker loop, thi->evl.
-        ("input_collector_fd", Mode::Threaded),
+        ("input_collector_fd", ReadMode::Threaded),
     ],
     test_table: "TEST_LIST",
     test_thread: "T",
@@ -114,45 +178,6 @@ pub const FLUENT_BIT_HOPS: HopTables = HopTables {
 pub struct CensusFile {
     pub path: String,
     pub text: String,
-}
-
-/// The obligation's answer at one call site.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct OwnerSite {
-    pub file: String,
-    pub line: usize,
-    /// The calling function's census name.
-    pub function: String,
-    pub callee: String,
-    pub operation: LoopOwnerOperation,
-    pub verdict: OwnerVerdict,
-}
-
-/// The census of one program.
-#[derive(Clone, Debug)]
-pub struct Census {
-    pub program: ThreadProgram,
-    pub derived: Vec<Derived>,
-    pub owners: Owners,
-    pub sites: Vec<OwnerSite>,
-    /// Census names, index-aligned with `program.functions`.
-    pub index: BTreeMap<String, usize>,
-}
-
-impl Census {
-    /// The derivation of a function by census name.
-    #[must_use]
-    pub fn derived(&self, name: &str) -> Option<&Derived> {
-        self.index.get(name).map(|id| &self.derived[*id])
-    }
-
-    /// A witness path's names.
-    #[must_use]
-    pub fn names(&self, path: &[usize]) -> Vec<String> {
-        path.iter()
-            .map(|id| self.program.functions[*id].clone())
-            .collect()
-    }
 }
 
 struct Definition {
@@ -408,8 +433,8 @@ fn arguments(tokens: &[Token], open: usize) -> Option<(Vec<(usize, usize)>, usiz
     let mut ranges = Vec::new();
     let mut depth = 0usize;
     let mut start = open + 1;
-    for index in open + 1..close {
-        match tokens[index].text.as_str() {
+    for (index, token) in tokens.iter().enumerate().take(close).skip(open + 1) {
+        match token.text.as_str() {
             "(" | "[" | "{" => depth += 1,
             ")" | "]" | "}" => depth = depth.saturating_sub(1),
             "," if depth == 0 => {
@@ -431,8 +456,8 @@ fn statement_end(tokens: &[Token], start: usize, limit: usize) -> usize {
         return crate::legacy_c::matching(tokens, start, "{", "}").unwrap_or(limit);
     }
     let mut depth = 0usize;
-    for index in start..limit {
-        match tokens[index].text.as_str() {
+    for (index, token) in tokens.iter().enumerate().take(limit).skip(start) {
+        match token.text.as_str() {
             "(" | "[" | "{" => depth += 1,
             ")" | "]" | "}" => depth = depth.saturating_sub(1),
             ";" if depth == 0 => return index,
@@ -447,7 +472,7 @@ fn mode_ranges(
     tokens: &[Token],
     body: (usize, usize),
     predicate: &str,
-) -> Vec<(usize, usize, Mode)> {
+) -> Vec<(usize, usize, ReadMode)> {
     let mut ranges = Vec::new();
     for index in body.0..body.1 {
         if tokens[index].text != "if" || tokens.get(index + 1).is_none_or(|t| t.text != "(") {
@@ -467,9 +492,9 @@ fn mode_ranges(
         let fixed = match rest {
             [name, "(", argument, ")"] if *name == predicate && is_identifier(argument) => {
                 if negated {
-                    Mode::NonThreaded
+                    ReadMode::NonThreaded
                 } else {
-                    Mode::Threaded
+                    ReadMode::Threaded
                 }
             }
             _ => continue,
@@ -478,10 +503,10 @@ fn mode_ranges(
         ranges.push((close + 1, then_end, fixed));
         if tokens.get(then_end + 1).is_some_and(|t| t.text == "else") {
             let else_end = statement_end(tokens, then_end + 2, body.1);
-            let other = if fixed == Mode::Threaded {
-                Mode::NonThreaded
+            let other = if fixed == ReadMode::Threaded {
+                ReadMode::NonThreaded
             } else {
-                Mode::Threaded
+                ReadMode::Threaded
             };
             ranges.push((then_end + 2, else_end, other));
         }
@@ -489,20 +514,16 @@ fn mode_ranges(
     ranges
 }
 
-/// Build the program, derive it and decide every declared obligation.
+/// Read one program's files into a [`CensusReading`].
 #[must_use]
-pub fn census(
-    files: &[CensusFile],
-    obligations: &BTreeMap<String, DeclaredLoopOwner>,
-    hops: &HopTables,
-) -> Census {
+pub fn read_program(files: &[CensusFile], hops: &HopTables) -> CensusReading {
     let mut definitions = Vec::new();
     let scans = files
         .iter()
         .enumerate()
         .map(|(file, source)| scan_file(file, &source.path, &source.text, &mut definitions))
         .collect::<Vec<_>>();
-    let mut program = ThreadProgram::default();
+    let mut program = CensusReading::default();
     let mut index = BTreeMap::new();
     for definition in &definitions {
         if !index.contains_key(&definition.census_name) {
@@ -554,12 +575,12 @@ pub fn census(
         }
     };
     let mut registrants: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
-    let mut dispatches: Vec<(usize, String, ModeEffect)> = Vec::new();
+    let mut dispatches: Vec<(usize, String, ReadEffect)> = Vec::new();
     let mut poisoned_fields: BTreeMap<String, String> = BTreeMap::new();
     let mut edges = BTreeSet::new();
     let mut spawns = BTreeSet::new();
     let mut roots = BTreeSet::new();
-    let mut calls: Vec<(usize, usize, String, usize)> = Vec::new(); // (file, caller id, callee name, line)
+    let mut calls: Vec<ReadCall> = Vec::new();
 
     for (file, scan) in scans.iter().enumerate() {
         let path = &files[file].path;
@@ -582,7 +603,7 @@ pub fn census(
         // Which definition each token belongs to.
         let mut owner_of = vec![None; tokens.len()];
         let mut shadow_of: Vec<Option<&BTreeSet<String>>> = vec![None; tokens.len()];
-        let mut modes: Vec<(usize, usize, Mode)> = Vec::new();
+        let mut modes: Vec<(usize, usize, ReadMode)> = Vec::new();
         for definition in &scan.definitions {
             let definition = &definitions[*definition];
             let id = index[&definition.census_name];
@@ -659,7 +680,7 @@ pub fn census(
                                 .find(|(dispatcher, _)| {
                                     *dispatcher == caller_name && text == hops.collector_field
                                 })
-                                .map_or(ModeEffect::Keep, |(_, mode)| ModeEffect::Dispatch(*mode));
+                                .map_or(ReadEffect::Keep, |(_, mode)| ReadEffect::Dispatch(*mode));
                             dispatches.push((caller, text.to_owned(), effect));
                         }
                     }
@@ -740,21 +761,26 @@ pub fn census(
                     }
                 }
                 let fixed = mode_at(position);
-                let effect = match fixed.len() {
-                    0 => ModeEffect::Keep,
-                    1 => ModeEffect::Require(*fixed.iter().next().unwrap_or(&Mode::Either)),
+                let effect = match fixed.iter().collect::<Vec<_>>().as_slice() {
+                    [] => ReadEffect::Keep,
+                    [mode] => ReadEffect::Require(**mode),
                     // Nested contradictory branches: this call is unreachable.
                     _ => continue,
                 };
                 for callee in resolve(file, text) {
-                    edges.insert(Edge {
+                    edges.insert(ReadEdge {
                         caller,
                         callee,
-                        hop: HopKind::Direct,
+                        hop: ReadHop::Direct,
                         effect,
                     });
                 }
-                calls.push((file, caller, text.to_owned(), line));
+                calls.push(ReadCall {
+                    file: path.clone(),
+                    line,
+                    caller,
+                    callee: text.to_owned(),
+                });
                 // Arguments are scanned in their own positions.
                 continue;
             }
@@ -769,12 +795,12 @@ pub fn census(
     // Field dispatch edges (hops V, V*, R, L).
     for (caller, field, effect) in &dispatches {
         let hop = if field == hops.collector_field {
-            HopKind::CollectorRegistry
+            ReadHop::CollectorRegistry
         } else {
-            HopKind::Vtable
+            ReadHop::Vtable
         };
         for callee in registrants.get(field).into_iter().flatten() {
-            edges.insert(Edge {
+            edges.insert(ReadEdge {
                 caller: *caller,
                 callee: *callee,
                 hop,
@@ -793,63 +819,27 @@ pub fn census(
     }
     program.edges = edges.into_iter().collect();
     program.spawns = spawns.into_iter().collect();
-    program.roots = roots
-        .into_iter()
-        .map(|(function, thread)| ThreadRoot {
-            function,
-            context: Context {
-                thread,
-                mode: Mode::Either,
-            },
-        })
-        .collect();
+    program.roots = roots.into_iter().collect();
     program.unresolved = unresolved;
-    // A spawned thread is named by its entry's census name.
-    let derived = derive(&program);
-    let dispatcher = |name: &str| {
+    program.calls = calls;
+    let dispatcher = |mode: ReadMode| {
+        let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
             .get(name)
             .map(|found| {
-                found
+                let mut ids = found
                     .iter()
                     .map(|d| index[&d.census_name])
-                    .collect::<Vec<_>>()
+                    .collect::<Vec<_>>();
+                ids.dedup();
+                ids
             })
             .unwrap_or_default();
-        (ids.len() == 1).then(|| &derived[ids[0]])
+        (ids.len() == 1).then(|| ids[0])
     };
-    let engine = hops
-        .loop_dispatchers
-        .iter()
-        .find(|(_, mode)| *mode == Mode::NonThreaded)
-        .and_then(|(name, _)| dispatcher(name));
-    let worker = hops
-        .loop_dispatchers
-        .iter()
-        .find(|(_, mode)| *mode == Mode::Threaded)
-        .and_then(|(name, _)| dispatcher(name));
-    let owners = Owners::from_dispatchers(engine, worker);
-    let mut sites = Vec::new();
-    for (file, caller, callee, line) in calls {
-        let Some(obligation) = obligations.get(&callee) else {
-            continue;
-        };
-        sites.push(OwnerSite {
-            file: files[file].path.clone(),
-            line,
-            function: program.functions[caller].clone(),
-            callee,
-            operation: obligation.operation,
-            verdict: owner_verdict(&derived[caller], &owners),
-        });
-    }
-    Census {
-        program,
-        derived,
-        owners,
-        sites,
-        index,
-    }
+    program.engine_dispatcher = dispatcher(ReadMode::NonThreaded);
+    program.worker_dispatcher = dispatcher(ReadMode::Threaded);
+    program
 }
 
 /// Whether the `)` at `close` ends a condition (`if (…)`, `while (…)`, a

@@ -6,6 +6,8 @@
 pub mod chunk_contract;
 pub mod chunkio;
 pub mod libevent;
+// Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
+pub mod loop_owner_census;
 pub mod source_profiles;
 pub mod typed_source_match;
 

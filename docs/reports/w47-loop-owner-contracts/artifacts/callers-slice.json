@@ -1,0 +1,482 @@
+[
+ {
+  "file": "src/flb_input.c",
+  "function": "collector_start",
+  "callee": "mk_event_timeout_create",
+  "line": 2351,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "collector_start",
+  "callee": "mk_event_add",
+  "line": 2362,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_rate_gate_resume",
+  "callee": "flb_input_resume",
+  "line": 2708,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_rate_gate_protect",
+  "callee": "flb_input_pause",
+  "line": 2741,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_test_pause_resume",
+  "callee": "flb_input_pause",
+  "line": 3005,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_test_pause_resume",
+  "callee": "flb_input_resume",
+  "line": 3011,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_pause_all",
+  "callee": "flb_input_pause",
+  "line": 3131,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_destroy",
+  "callee": "mk_event_timeout_destroy",
+  "line": 3146,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_destroy",
+  "callee": "mk_event_del",
+  "line": 3150,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_pause",
+  "callee": "mk_event_timeout_destroy",
+  "line": 3182,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_pause",
+  "callee": "mk_event_del",
+  "line": 3185,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_delete",
+  "callee": "flb_input_collector_pause",
+  "line": 3205,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_resume",
+  "callee": "mk_event_timeout_create",
+  "line": 3248,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_resume",
+  "callee": "mk_event_add",
+  "line": 3261,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "collector_start",
+  "callee": "mk_event_timeout_create",
+  "line": 2351,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "collector_start",
+  "callee": "mk_event_add",
+  "line": 2362,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_rate_gate_resume",
+  "callee": "flb_input_resume",
+  "line": 2708,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_rate_gate_protect",
+  "callee": "flb_input_pause",
+  "line": 2741,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_test_pause_resume",
+  "callee": "flb_input_pause",
+  "line": 3005,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_test_pause_resume",
+  "callee": "flb_input_resume",
+  "line": 3011,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_pause_all",
+  "callee": "flb_input_pause",
+  "line": 3131,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_destroy",
+  "callee": "mk_event_timeout_destroy",
+  "line": 3146,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_destroy",
+  "callee": "mk_event_del",
+  "line": 3150,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_pause",
+  "callee": "mk_event_timeout_destroy",
+  "line": 3182,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_pause",
+  "callee": "mk_event_del",
+  "line": 3185,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_delete",
+  "callee": "flb_input_collector_pause",
+  "line": 3205,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_resume",
+  "callee": "mk_event_timeout_create",
+  "line": 3248,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_collector_resume",
+  "callee": "mk_event_add",
+  "line": 3261,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_destroy",
+  "callee": "mk_event_del",
+  "line": 237,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_destroy",
+  "callee": "mk_event_del",
+  "line": 237,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_event",
+  "line": 410,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 419,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 430,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 440,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_event",
+  "line": 450,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 467,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 481,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 527,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 528,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 531,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 539,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 554,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 555,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 558,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 562,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_init",
+  "callee": "flb_input_set_collector_event",
+  "line": 432,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 444,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 459,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 460,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 465,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "flb_tail_fs_inotify_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 466,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 206,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_set_collector_time`"
+  ]
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 214,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_set_collector_time`"
+  ]
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 226,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 227,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 232,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_stat.c",
+  "function": "flb_tail_fs_stat_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 233,
+  "status": "Unknown",
+  "leaves": []
+ }
+]

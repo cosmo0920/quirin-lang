@@ -13,7 +13,7 @@
 
 use std::collections::BTreeMap;
 
-use qcore_c_gateway::thread_entry_census::{CensusFile, FLUENT_BIT_HOPS, OwnerSite, census};
+use qcore_c_gateway::thread_entry_census::CensusFile;
 use qcore_contract::contract_loader::{
     LoopOwnerOperation, load_resource_contract_sources, loop_owner_obligations,
 };
@@ -21,6 +21,7 @@ use qcore_core::loop_owner::{
     CollectorResult, ControlClaim, Ingestion, Mode, OwnerVerdict, PairDirection, PairingClaim,
     claim_discharged, control_completion, pairing,
 };
+use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, OwnerSite, census};
 
 const CONTRACTS: &str = include_str!(
     "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv"

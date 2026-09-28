@@ -1,0 +1,302 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 245,
+   "Safe": 24,
+   "Unsafe": 1
+  },
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 245,
+   "Safe": 24,
+   "Unsafe": 1
+  },
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "plugins/in_tail/tail.c",
+   "function": "in_tail_pause",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     19617,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     19618,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     19620,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     19627,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19617,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19618,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19620,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19627,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail.c",
+   "function": "in_tail_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     19638,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     19639,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     19641,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     19644,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19638,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19639,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19641,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19644,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_pause",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     20349,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     20350,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20349,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20350,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     20354,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     20355,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20354,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20355,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_stat.c",
+   "function": "flb_tail_fs_stat_pause",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     20153,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)",
+     20154,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20153,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20154,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_stat.c",
+   "function": "flb_tail_fs_stat_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     20158,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)",
+     20159,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20158,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20159,
+     1
+    ]
+   ]
+  }
+ ]
+}

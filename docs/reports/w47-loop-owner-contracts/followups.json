@@ -23,7 +23,7 @@
  {
   "id": "W47-LOOP-OWNER-AUDIT-ROUTE",
   "title": "Feed the thread-entry census into the audit routes",
-  "why": "The per-unit resource routes (quirin-audit pinned/current) derive no thread, so they refuse every call to a declared loop-owner operation (rule 10p (1)): 16 slice call sites and 3 system call sites (in_storage_backlog/sb.c cb_sb_pause, cb_sb_resume, cb_sb_exit) now carry `outside its declared loop-owner obligation`, and none can be discharged there. The census route (qcore_c_gateway::thread_entry_census) is a separate read of one program. DISCHARGE: a whole-program census phase whose per-site answers reach the per-unit routes (as rule 10g's refutation table does), with its inputs in the run identity; measured on the three routes.",
+  "why": "The per-unit resource routes (quirin-audit pinned/current) derive no thread, so they refuse every call to a declared loop-owner operation (rule 10p (1)): 16 slice call sites and 3 system call sites (in_storage_backlog/sb.c cb_sb_pause, cb_sb_resume, cb_sb_exit) now carry `outside its declared loop-owner obligation`, and none can be discharged there. The census route (quirin_source_analysis::loop_owner_census) is a separate read of one program. DISCHARGE: a whole-program census phase whose per-site answers reach the per-unit routes (as rule 10g's refutation table does), with its inputs in the run identity; measured on the three routes.",
   "source": "docs/reports/w47-loop-owner-contracts/README.md",
   "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
  },

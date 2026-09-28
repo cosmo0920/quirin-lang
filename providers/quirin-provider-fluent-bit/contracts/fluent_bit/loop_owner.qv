@@ -21,7 +21,7 @@ module contract;
 // No per-unit resource route derives a thread. There the obligation is never
 // discharged and every call to these functions is refused, as an uncontracted
 // call already was: the declaration can only refuse. Only the thread-entry
-// census route (qcore_c_gateway::thread_entry_census) can discharge it.
+// census route (quirin_source_analysis::loop_owner_census) can discharge it.
 //
 // ## The custody part, checked against the bodies
 //

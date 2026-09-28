@@ -12,7 +12,7 @@ previous_test=/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-c
 module="$repo/providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
-CARGO_INCREMENTAL=0 cargo build -q -p qcore-c-gateway --example loop_owner_census > "$out/build.log" 2>&1
+CARGO_INCREMENTAL=0 cargo build -q -p quirin-source-analysis --example loop_owner_census > "$out/build.log" 2>&1
 echo $? > "$out/build.exit"
 bin="$repo/target/debug/examples/loop_owner_census"
 # The test binary: the library, every plugin, Monkey, the public headers and

@@ -2,7 +2,7 @@
 //! program's sources and print every loop-owner site as JSON.
 //!
 //! ```text
-//! cargo run -p qcore-c-gateway --example loop_owner_census -- \
+//! cargo run -p quirin-source-analysis --example loop_owner_census -- \
 //!     CONTRACT_MODULE SOURCE_ROOT OVERRIDE_TEST|- PATH...
 //! ```
 //!
@@ -16,9 +16,10 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::{CensusFile, FLUENT_BIT_HOPS, census};
+use qcore_c_gateway::thread_entry_census::CensusFile;
 use qcore_contract::contract_loader::loop_owner_obligations;
 use qcore_core::loop_owner::OwnerVerdict;
+use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census};
 
 fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
     if path.is_dir() {

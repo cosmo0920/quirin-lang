@@ -54,8 +54,10 @@ Five parts, each fail-closed.
    refused as `call to X outside its declared loop-owner obligation (no
    derived thread on this route)`. The clause can only refuse there; every
    literal-premise refusal keeps its wording byte for byte.
-5. **Thread-entry census** `crates/qcore-c-gateway/src/thread_entry_census.rs`
-   (+ `examples/loop_owner_census.rs`, [`scripts/census.sh`](scripts/census.sh)).
+5. **Thread-entry census**: the lexical reading `crates/qcore-c-gateway/src/thread_entry_census.rs`
+   and its kernel adapter `crates/quirin-source-analysis/src/loop_owner_census.rs`
+   (the gateway may depend on no kernel crate, `workspace_layering.rs`), run by
+   `crates/quirin-source-analysis/examples/loop_owner_census.rs` and [`scripts/census.sh`](scripts/census.sh).
    A lexical reading of one program's files with the gateway tokenizer:
    definitions (`static` ones named `path::name`), direct calls, hops A (the
    `TEST_LIST` table → thread `T`), S (`mk_utils_worker_spawn`,
@@ -73,7 +75,7 @@ Five parts, each fail-closed.
 ## 2. Negative controls (fixtures first)
 
 `crates/qcore-core/tests/unit/loop_owner.rs` (10 tests, kernel programs) and
-`crates/qcore-c-gateway/tests/loop_owner_census.rs` (11 tests, C fixtures
+`crates/quirin-source-analysis/tests/loop_owner_census.rs` (11 tests, C fixtures
 built from the bound shapes B01–B60 and run through the census):
 
 | Case | Outcome |

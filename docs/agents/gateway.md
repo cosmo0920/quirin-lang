@@ -1197,7 +1197,8 @@ which is not a second authority.
 10p. **A loop-owned collector operation is admitted only on a derived path
     whose thread is its loop's owner, and every route that derives no thread
     refuses it.** Card W47-LOOP-OWNER-CONTRACTS (`qcore_core::loop_owner`,
-    `thread_entry_census.rs`, the hook in `legacy_literal_premise.rs`;
+    `thread_entry_census.rs` read by `quirin_source_analysis::loop_owner_census`,
+    the hook in `legacy_literal_premise.rs`;
     contract specification C04.9). `requires resource_loop_owner(p,
     read|mutate);` on `flb_input_collector_{running,pause,resume,delete}`
     (`fluent_bit/loop_owner.qv`, pinned at `66910c10`, `046accf6` and the

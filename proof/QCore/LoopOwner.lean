@@ -6,7 +6,8 @@ namespace QCore.LoopOwner
 specification §C04.9): the loop-owner obligation over derived thread identity.
 
 Companion to `crates/qcore-core/src/loop_owner.rs` and
-`crates/qcore-c-gateway/src/thread_entry_census.rs`.
+`crates/qcore-c-gateway/src/thread_entry_census.rs` with
+`crates/quirin-source-analysis/src/loop_owner_census.rs`.
 
 * A context is a derived thread and the mode (the threaded flag of the
   instance the path is about). An edge keeps the thread; a loop dispatch

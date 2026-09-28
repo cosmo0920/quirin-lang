@@ -1,0 +1,352 @@
+[
+ {
+  "file": "plugins/in_storage_backlog/sb.c",
+  "function": "cb_sb_init",
+  "callee": "flb_input_set_collector_time",
+  "line": 769,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_set_collector_time`"
+  ]
+ },
+ {
+  "file": "plugins/in_storage_backlog/sb.c",
+  "function": "cb_sb_pause",
+  "callee": "flb_input_collector_pause",
+  "line": 784,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_storage_backlog/sb.c",
+  "function": "cb_sb_resume",
+  "callee": "flb_input_collector_resume",
+  "line": 790,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "plugins/in_storage_backlog/sb.c",
+  "function": "cb_sb_exit",
+  "callee": "flb_input_collector_pause",
+  "line": 797,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_set_limits",
+  "callee": "flb_input_resume",
+  "line": 3058,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3090,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3125,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_set_limits",
+  "callee": "flb_input_resume",
+  "line": 3058,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3090,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3125,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_destroy",
+  "line": 320,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_create",
+  "line": 325,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_create",
+  "line": 337,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "callee": "mk_event_timeout_create",
+  "line": 1498,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "callee": "mk_event_timeout_destroy",
+  "line": 1564,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_shutdown",
+  "callee": "flb_input_pause_all",
+  "line": 1671,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause_all`"
+  ]
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_stop_ingestion",
+  "callee": "flb_input_pause_all",
+  "line": 1746,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause_all`"
+  ]
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_destroy",
+  "line": 320,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_create",
+  "line": 325,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "callee": "mk_event_timeout_create",
+  "line": 337,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "callee": "mk_event_timeout_create",
+  "line": 1498,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "callee": "mk_event_timeout_destroy",
+  "line": 1564,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_shutdown",
+  "callee": "flb_input_pause_all",
+  "line": 1671,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause_all`"
+  ]
+ },
+ {
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_stop_ingestion",
+  "callee": "flb_input_pause_all",
+  "line": 1746,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause_all`"
+  ]
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "schedule_request_now",
+  "callee": "mk_event_timeout_create",
+  "line": 133,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "schedule_request_now",
+  "callee": "mk_event_timeout_create",
+  "line": 142,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_create",
+  "callee": "mk_event_timeout_create",
+  "line": 672,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_create",
+  "callee": "mk_event_timeout_create",
+  "line": 681,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_disable",
+  "callee": "mk_event_timeout_destroy",
+  "line": 723,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_create",
+  "callee": "mk_event_timeout_create",
+  "line": 783,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_timeout_create`"
+  ]
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_create",
+  "callee": "mk_event_timeout_create",
+  "line": 805,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_timeout_create`"
+  ]
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_destroy",
+  "callee": "mk_event_timeout_destroy",
+  "line": 843,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "schedule_request_now",
+  "callee": "mk_event_timeout_create",
+  "line": 133,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "schedule_request_now",
+  "callee": "mk_event_timeout_create",
+  "line": 142,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_create",
+  "callee": "mk_event_timeout_create",
+  "line": 672,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_create",
+  "callee": "mk_event_timeout_create",
+  "line": 681,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_disable",
+  "callee": "mk_event_timeout_destroy",
+  "line": 723,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_create",
+  "callee": "mk_event_timeout_create",
+  "line": 783,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_timeout_create`"
+  ]
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_create",
+  "callee": "mk_event_timeout_create",
+  "line": 805,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_timeout_create`"
+  ]
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_destroy",
+  "callee": "mk_event_timeout_destroy",
+  "line": 843,
+  "status": "Unknown",
+  "leaves": []
+ }
+]

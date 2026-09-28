@@ -1,0 +1,228 @@
+[
+ {
+  "file": "flb_input_chunk.c",
+  "function": "flb_input_chunk_set_limits",
+  "callee": "flb_input_resume",
+  "line": 3018,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_resume`"
+  ]
+ },
+ {
+  "file": "flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3050,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "callee": "flb_input_pause",
+  "line": 3085,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_input_pause`"
+  ]
+ },
+ {
+  "file": "mk_core/mk_event.c",
+  "function": "mk_event_timeout_disable",
+  "callee": "mk_event_del",
+  "line": 168,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_del`"
+  ]
+ },
+ {
+  "file": "mk_server/mk_http_thread.c",
+  "function": "thread_cb_init_vars",
+  "callee": "mk_event_add",
+  "line": 126,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_lib.c",
+  "function": "mk_lib_yield",
+  "callee": "mk_event_add",
+  "line": 106,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_lib.c",
+  "function": "mk_lib_yield",
+  "callee": "mk_event_add",
+  "line": 119,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_lib.c",
+  "function": "mk_lib_yield",
+  "callee": "mk_event_del",
+  "line": 126,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_create",
+  "callee": "mk_event_add",
+  "line": 276,
+  "status": "Unsafe",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_create",
+  "callee": "mk_event_del",
+  "line": 291,
+  "status": "Unsafe",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_write",
+  "callee": "mk_event_add",
+  "line": 356,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_write",
+  "callee": "mk_event_del",
+  "line": 378,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_write",
+  "callee": "mk_event_add",
+  "line": 412,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_net.c",
+  "function": "mk_net_conn_write",
+  "callee": "mk_event_del",
+  "line": 433,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_remove_client",
+  "callee": "mk_event_del",
+  "line": 536,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_event_read",
+  "callee": "mk_event_add",
+  "line": 705,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_event_write",
+  "callee": "mk_event_add",
+  "line": 766,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_event_write",
+  "callee": "mk_event_add",
+  "line": 784,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_event_close",
+  "callee": "mk_event_del",
+  "line": 806,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_listen_handler",
+  "callee": "mk_event_add",
+  "line": 114,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_fifo_worker_setup",
+  "callee": "mk_event_add",
+  "line": 297,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_loop_balancer",
+  "callee": "mk_event_add",
+  "line": 346,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_loop_balancer",
+  "callee": "mk_event_add",
+  "line": 353,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_worker_loop",
+  "callee": "mk_event_add",
+  "line": 485,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_worker_loop",
+  "callee": "mk_event_timeout_create",
+  "line": 502,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_worker_loop",
+  "callee": "mk_event_timeout_destroy",
+  "line": 586,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_event_timeout_destroy`"
+  ]
+ },
+ {
+  "file": "mk_server/mk_stream.c",
+  "function": "mk_channel_flush",
+  "callee": "mk_event_add",
+  "line": 109,
+  "status": "Unknown",
+  "leaves": []
+ }
+]

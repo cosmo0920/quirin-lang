@@ -895,5 +895,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // 49 -> 50 by card W45-FB-BACKLOG-CUSTODY: `fluent_bit/storage_backlog.qv`
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    assert_eq!(contracts.source_assumptions().len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 55);
 }

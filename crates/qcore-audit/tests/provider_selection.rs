@@ -635,7 +635,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     let entries = cycle19_selection(&repository);
     // 49 -> 50: W45-FB-BACKLOG-CUSTODY's `fluent_bit/storage_backlog.qv`.
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    assert_eq!(entries.len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(entries.len(), 55);
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -654,7 +655,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     let from_manifest = load_resource_contract_manifest(&manifest_path).unwrap();
     let from_selection = ContractInput::providers(&resolved, None).load().unwrap();
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    assert_eq!(from_selection.source_assumptions().len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(from_selection.source_assumptions().len(), 55);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
@@ -770,7 +772,8 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
         assert_eq!(contracts.source_assumptions().len(), view.len(), "{name}");
     }
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    assert_eq!(total, 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(total, 55);
 }
 
 #[test]
@@ -801,7 +804,8 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     let manifest_text = fs::read_to_string(&manifest_path).unwrap();
     assert_eq!(entries(all.manifest_text()), entries(&manifest_text));
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
-    assert_eq!(entries(&manifest_text).1.len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(entries(&manifest_text).1.len(), 55);
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.

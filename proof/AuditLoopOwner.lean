@@ -29,7 +29,7 @@ ingestion.
 The lexical census reading, the hop tables, P-INSTANCE and the Rust
 correspondence are trust boundary 28's premises, pinned by
 `crates/qcore-core/tests/unit/loop_owner.rs` and
-`crates/qcore-c-gateway/tests/loop_owner_census.rs`. -/
+`crates/quirin-source-analysis/tests/loop_owner_census.rs`. -/
 
 -- Derived ownership.
 #print axioms QCore.LoopOwner.a_step_keeps_the_thread
