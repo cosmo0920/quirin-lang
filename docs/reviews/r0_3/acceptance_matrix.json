@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 551
+  "named_followups": 555
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 120,
+  "contract_modules": 121,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6738,8 +6738,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for wave-47 typed-dispatch publication (integrate/w47-typed-dispatch: main e56e0af9 [W47-CONDVAR-JOIN-PUBLICATION] + merge 70605056 [W47-LOOP-OWNER-TYPED-DISPATCH]), measured by the integrator in its own worktree; every exit captured to a file (private/w47-int-h/gate-70605056). Full gate at 70605056: every step 0 (submodule, tests, clean-dev, fmt, clippy, reevaluation probe and followup, lean, python, docs index, provider tests/clean-dev/fmt/clippy/contracts-check, package build, five package verifies, provider-python, clang-version). run_test_binaries.py: 349 units, 362 summaries, 6,250 passed / 0 failed / 11 ignored; no failure in cycle20_verifier_plugins (20 passed / 0 failed), so no rerun was needed. Provider Rust 129 passed / 0 failed / 1 ignored; 223 Lean audits; 365 root Python tests; contracts check, five package build/verify, reevaluation probe and followup, docs index: 0. Release build, corpus arbiter and system slice: 0. compose3.py (base = A = B = docs/reports/w47-condvar-join-publication/integration/artifacts/<scope>, the previous integration's baseline, per the typed-dispatch card's own claim that no per-unit route moves): all three scopes COMPOSE with 0 mismatches and 0 functions/leaves touched by both cards; merged corpus 526 Safe / 10 Unsafe / 4,298 Unknown, merged system 31 / 2 / 201, merged slice functions 24 / 1 / 245 (integration-confirmation.md). Census re-derivation on the merged tree: the typed loop-owner census (fixed/previous, raw and configured) and the condvar/join census (fixed/previous) all reproduce their respective cards' archived outputs byte-for-byte at both 90978ac6 and 90978ac6~1.",
-  "workspace_tests": 6250,
+  "note": "W47-CONDVAR-JOIN-STOP-PATHS card gate at base fefb9199. Rust, Lean and provider steps ran on the tree of 13f6fa58 (later commits change only docs, gate records, the regenerated matrix and index): run_test_binaries.py 350 units, 363 summaries, 6,262 passed, 0 failed, 11 ignored (private/test-binaries/20260928T122025Z-396447/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 223 audits passed (AuditCondvarJoin.lean extended, 30 -> 51 theorems). Provider gate: contracts.py check 0, package build 0 and verify 0 (qcore.libevent), provider Python 24 tests OK, provider cargo test 129 passed / 0 failed / 1 ignored, provider fmt and clippy clean. quirin-audit pin --check of quirin-provider-fluent-bit exit 0 at 66910c10 and 046accf6 (60 recorded each); at the 90978ac6 export (synthetic 34155955) exit 1: 9 recorded (this card's 5 and W47-LOOP-OWNER-CONTRACTS' 4), 51 in force through their 046accf6/66910c10 identity but never recorded at 34155955, 0 not in force, 0 stale -- the same 51 are unrecorded there in the base lock (pre-existing; this card did not pin other cards' contracts). pin --verify-contracts over every crate 0. The submodule step names third_party/libevent (the --recursive spelling was refused by the permission classifier; the submodule has no nested submodule). The Python suite and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/sp/gate-1/ and private/sp/gate-records/ of this worktree.",
+  "workspace_tests": 6262,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 223,
@@ -6974,7 +6974,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-loop-owner-typed-dispatch/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-condvar-join-stop-paths/gate.json)"
  },
  "named_followups": [
   {

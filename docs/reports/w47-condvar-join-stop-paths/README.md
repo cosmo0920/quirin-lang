@@ -343,7 +343,39 @@ candidates), `W47-LIB-ENGINE-THREAD-REVIEW` (the 5 withheld declarations).
 
 ## 11. Gate
 
-GATE-SECTION
+[`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in
+[gate/](gate/), figures in [gate.json](gate.json). Rust, Lean and provider
+steps ran on the tree of `13f6fa58`: the Rust suite **350 units / 363
+summaries, 6,262 passed, 0 failed, 11 ignored**; fmt and clippy clean; both
+probes 0; **223 Lean audits** (the audit count is unchanged: `AuditCondvarJoin.lean`
+is extended, 30 → 51 theorems); provider gate: contracts check, package
+build and verify (`qcore.libevent`) 0, **24** provider Python tests OK,
+**129** provider tests passed (0 failed, 1 ignored), provider fmt and clippy
+clean; `pin --verify-contracts` 0. `pin --check` of the Fluent Bit crate
+exits 0 at `66910c10` and `046accf6` (60 recorded each) and **1 at the
+`90978ac6` export**: 9 recorded (these 5 and the loop-owner card's 4), 0 not
+in force, 0 stale, and 51 in force only through their `046accf6`/`66910c10`
+identity. Those 51 are equally unrecorded there in the base lock
+(pre-existing), and this card does not pin other cards' contracts. The
+submodule step names `third_party/libevent`: the `--recursive` spelling was
+refused by the permission classifier, and the submodule has no nested
+submodule. After the matrix and index regeneration, the records phase ran
+the Python suite and the docs-index check (see gate.json). Logs are under
+`private/sp/gate-1/` and `private/sp/gate-records/` of this worktree.
+
+**Files likely to conflict with a parallel card:** `docs/agents/gateway.md`
+(an amendment appended to 10q), `docs/agents/README.md` (the 10q row),
+`docs/QCORE_CONTRACT_SPEC_r0_3.md` (C04.10), `docs/STATUS.md`,
+`docs/development/increments/wave-47.md`, the acceptance matrix,
+`docs/reports/INDEX.md`, `cycle19-resource-contracts.json`,
+`providers/contract-load-path.json`, the Fluent Bit crate's `lib.rs`,
+`contracts.lock` and README, and the count-pinning tests
+(`compiler/tests/{contract_loader,qcore_contract_corpus}.rs`,
+`crates/qcore-audit/tests/provider_selection.rs`,
+`crates/qcore-c-gateway/tests/{prod_contracts,neighbours}.rs`,
+`providers/tests/test_contract_load_path.py`,
+`scripts/tests/test_contract_corpus.py`). The shared census files
+(`thread_entry_census.rs`, `loop_owner_census.rs`) are untouched.
 
 ## Reproduce
 
