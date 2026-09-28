@@ -304,6 +304,21 @@ pub(crate) fn contextual_cfg(
     descriptor: &ContextFunction,
     zero: bool,
 ) -> Option<LegacyCfg> {
+    contextual_cfg_under(tokens, function, environment, descriptor, zero, None)
+}
+
+/// [`contextual_cfg`] with `own` read as the function's own contract where
+/// the body's construction reads it (card
+/// W47-SUMMARY-VALIDATION-PROTECTED-FORMALS); calls still resolve through
+/// `environment` alone.
+pub(crate) fn contextual_cfg_under(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+    descriptor: &ContextFunction,
+    zero: bool,
+    own: Option<&ResourceFunctionContract>,
+) -> Option<LegacyCfg> {
     // A checked summary borrows the scalar control and is identical at every
     // rank. Erase only its proved `control - 1` actual to a scalar placeholder
     // for the resource CFG; this is NOT a claim that its runtime value is zero.
@@ -323,7 +338,7 @@ pub(crate) fn contextual_cfg(
             index += 1;
         }
     }
-    let mut cfg = build_function_cfg(&abstracted, function, environment).ok()?;
+    let mut cfg = build_function_cfg_with(&abstracted, function, environment, false, own).ok()?;
     for node in &mut cfg.nodes {
         if let LegacyInstruction::BranchOnNull {
             source,

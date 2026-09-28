@@ -242,6 +242,7 @@ pub(crate) fn derive_custody_summaries(
         .iter()
         .map(|name| (name.clone(), direct_calls(tokens, name, &candidates)))
         .collect::<BTreeMap<_, _>>();
+    premises::record_graph(&graph);
 
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
@@ -387,6 +388,9 @@ fn infer_contextual_component(
         }
     }
     let mut zeros = BTreeMap::new();
+    // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the environment the zero
+    // contexts are built in, kept for the re-check under the reported premises.
+    let zero_environment = lower.clone();
     for name in component {
         let descriptor = &descriptors[name];
         let cfg = recursion::contextual_cfg(tokens, name, &lower, descriptor, true)?;
@@ -420,6 +424,15 @@ fn infer_contextual_component(
         if !observations_match_contract(&contract, &entry, &summary, &observations) {
             return None;
         }
+        let _ = premises::contextual_under_reported_premises(
+            tokens,
+            name,
+            &zero_environment,
+            &lower,
+            descriptor,
+            &contract,
+            combined.clone(),
+        );
         published.insert(name.clone(), (contract, combined));
     }
     Some(published)
@@ -466,7 +479,17 @@ fn infer_live_entry_summary(
 ) -> Option<ResourceFunctionContract> {
     let parameters = function_parameters(tokens, function)?;
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
-    infer_cfg_summary(&parameters, cfg)
+    let candidate = infer_cfg_summary(&parameters, cfg.clone())?;
+    let _ = premises::validates_under_reported_premises(
+        tokens,
+        function,
+        environment,
+        &parameters,
+        &candidate,
+        premises::Route::LiveEntry,
+        &cfg,
+    );
+    Some(candidate)
 }
 
 fn infer_cfg_summary(
@@ -610,6 +633,15 @@ fn infer_removed_wrapper(
             candidate = nullable;
         }
     }
+    let _ = premises::validates_under_reported_premises(
+        tokens,
+        function,
+        environment,
+        &parameters,
+        &candidate,
+        premises::Route::RemovedWrapper,
+        &cfg,
+    );
     Some(candidate)
 }
 
@@ -1383,6 +1415,9 @@ mod neutral;
 
 #[path = "legacy_derived_summary.rs"]
 mod derived;
+
+#[path = "legacy_summary_premises.rs"]
+mod premises;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]

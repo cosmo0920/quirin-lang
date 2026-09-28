@@ -171,7 +171,17 @@ pub(crate) fn infer_derived_result_summary(
     }
     let out = out_parameter_candidates(&cfg, &parameters);
     let base = select_base(&cfg, &parameters, &out)?;
-    infer_for_base(&cfg, &parameters, &out, base)
+    let candidate = infer_for_base(&cfg, &parameters, &out, base)?;
+    let _ = super::premises::validates_under_reported_premises(
+        tokens,
+        function,
+        environment,
+        &parameters,
+        &candidate,
+        super::premises::Route::DerivedResult,
+        &cfg,
+    );
+    Ok(candidate)
 }
 
 /// Does some exit escape a place a derived-result call assigned? Structural:

@@ -2867,7 +2867,7 @@ pub(crate) fn build_function_cfg(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyCfg, LegacyCError> {
-    build_function_cfg_with(tokens, function, contracts, false)
+    build_function_cfg_with(tokens, function, contracts, false, None)
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: does the body name a callee whose contract in force has a derived result,
@@ -2904,7 +2904,24 @@ pub(crate) fn build_derived_return_cfg(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyCfg, LegacyCError> {
-    build_function_cfg_with(tokens, function, contracts, true)
+    build_function_cfg_with(tokens, function, contracts, true, None)
+}
+
+/// Card **W47-SUMMARY-VALIDATION-PROTECTED-FORMALS**: the CFG the reported
+/// run builds for `function` once `own` is its contract in force, for a W4
+/// candidate the environment does not yet hold. `own` is read exactly where
+/// the function's own contract is read — the protected formals and the
+/// descriptor names — and nowhere else: a call to `function` inside its own
+/// body still resolves through `contracts` alone, so no recursive
+/// assumption is introduced (rule 4). A declaration in `contracts` wins.
+pub(crate) fn build_function_cfg_under_own_contract(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+    own: &ResourceFunctionContract,
+    admit_derived_returns: bool,
+) -> Result<LegacyCfg, LegacyCError> {
+    build_function_cfg_with(tokens, function, contracts, admit_derived_returns, Some(own))
 }
 
 fn build_function_cfg_with(
@@ -2912,7 +2929,11 @@ fn build_function_cfg_with(
     function: &str,
     contracts: &ResourceContracts,
     admit_derived_returns: bool,
+    own: Option<&ResourceFunctionContract>,
 ) -> Result<LegacyCfg, LegacyCError> {
+    // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the contract in force for
+    // this function's own body, which its declaration decides when it has one.
+    let own_contract = contracts.contract(function).or(own);
     // Card W44-C11-GENERIC-SELECTION: lower every selection-invariant
     // `_Generic` in this body to its common expression first, so every reader
     // below (the literal premises included) sees the call C evaluates. Only
@@ -2938,7 +2959,7 @@ fn build_function_cfg_with(
     let parameters = function_parameters(tokens, function).unwrap_or_default();
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =
-        protected_resource_formals(tokens, body_start, function, &parameters, contracts);
+        protected_resource_formals_under(tokens, body_start, &parameters, contracts, own_contract);
     let variadic_tails = declared_variadic_tails(contracts);
     let (typed_model, typed_types, typed_bases, store_bases, publications, frame_protected) =
         typed_access_facts(
@@ -2974,12 +2995,7 @@ fn build_function_cfg_with(
                 .iter()
                 .map(|token| token.text.as_str())
                 .collect::<Vec<_>>();
-            descriptor_custody::DescriptorNames::read(
-                &body,
-                contracts,
-                contracts.contract(function),
-                &parameters,
-            )
+            descriptor_custody::DescriptorNames::read(&body, contracts, own_contract, &parameters)
         },
     );
     let declared_callees = if descriptor_names.is_empty() {
@@ -3331,6 +3347,9 @@ fn function_parameter_range(
 // This is only a conservative candidate inventory, never an inferred effect:
 // direct *formal writes, forwarded Out calls, and non-borrowed resource calls
 // are still checked by CFG re-analysis. Declared modes also protect formals.
+// Production reads [`protected_resource_formals_under`]; this form, which
+// reads the function's contract from `contracts`, is kept for the unit tests.
+#[cfg(test)]
 fn protected_resource_formals(
     tokens: &[Token],
     body_start: usize,
@@ -3338,13 +3357,32 @@ fn protected_resource_formals(
     parameters: &[Option<String>],
     contracts: &ResourceContracts,
 ) -> BTreeSet<String> {
+    protected_resource_formals_under(
+        tokens,
+        body_start,
+        parameters,
+        contracts,
+        contracts.contract(function),
+    )
+}
+
+/// [`protected_resource_formals`] with the function's own contract in force
+/// given explicitly (card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS), so W4
+/// validation reads the protection its reported run reads.
+fn protected_resource_formals_under(
+    tokens: &[Token],
+    body_start: usize,
+    parameters: &[Option<String>],
+    contracts: &ResourceContracts,
+    own_contract: Option<&ResourceFunctionContract>,
+) -> BTreeSet<String> {
     let formals = parameters
         .iter()
         .flatten()
         .map(String::as_str)
         .collect::<BTreeSet<_>>();
     let mut protected = BTreeSet::new();
-    if let Some(contract) = contracts.contract(function) {
+    if let Some(contract) = own_contract {
         for (parameter, mode) in parameters.iter().zip(&contract.parameters) {
             if !matches!(mode, ResourceParameterMode::Borrowed)
                 && let Some(name) = parameter
