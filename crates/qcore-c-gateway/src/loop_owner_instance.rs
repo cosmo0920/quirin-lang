@@ -686,9 +686,68 @@ impl StepB<'_> {
     }
 
     /// What makes a function a hazard for the single-creation derivation.
+    /// Names a file whose conditional groups the reader cannot structure may
+    /// define (`name (…) {` anywhere in its tokens) that the census has no
+    /// definition of: a call to one is a call the census graph does not see.
+    pub(super) fn hidden_definitions(&self) -> BTreeMap<String, String> {
+        let defined = self
+            .definitions
+            .iter()
+            .map(|d| d.name.as_str())
+            .collect::<BTreeSet<_>>();
+        let mut hidden = BTreeMap::new();
+        for (file, scan) in self.scans.iter().enumerate() {
+            if !scan.unstructured {
+                continue;
+            }
+            let texts = self.texts(file);
+            for k in 0..texts.len() {
+                if !is_identifier(texts[k])
+                    || NOT_CALLS.contains(&texts[k])
+                    || texts.get(k + 1) != Some(&"(")
+                    || defined.contains(texts[k])
+                {
+                    continue;
+                }
+                let Some((_, close)) = call_arguments(&texts, k + 1) else {
+                    continue;
+                };
+                if texts.get(close + 1) == Some(&"{") {
+                    hidden
+                        .entry(texts[k].to_owned())
+                        .or_insert_with(|| self.files[file].path.clone());
+                }
+            }
+        }
+        hidden
+    }
+
     fn hazards(&self, typed: &TypedFacts) -> BTreeMap<usize, String> {
         let tables = self.flow;
         let mut hazards: BTreeMap<usize, String> = BTreeMap::new();
+        // A call to a name only an unstructured file may define.
+        let hidden = self.hidden_definitions();
+        if !hidden.is_empty() {
+            for definition in self.definitions {
+                let texts = self.texts(definition.file);
+                let found = (definition.body.0..=definition.body.1).find(|&k| {
+                    texts.get(k + 1) == Some(&"(")
+                        && !matches!(texts[k - 1], "." | ">")
+                        && hidden.contains_key(texts[k])
+                });
+                if let Some(k) = found {
+                    hazards
+                        .entry(self.index[&definition.census_name])
+                        .or_insert_with(|| {
+                            format!(
+                                "calls `{}`, which only {} (a file this reader cannot \
+                                 structure) may define",
+                                texts[k], hidden[texts[k]]
+                            )
+                        });
+                }
+            }
+        }
         let by_plain = |file: &str, function: &str| -> Vec<usize> {
             self.definitions
                 .iter()
@@ -1166,6 +1225,7 @@ impl StepB<'_> {
             return not_tied(format!("`{maker}` has a jump"));
         }
         let hazards = self.hazards(typed);
+        let hidden = self.hidden_definitions();
         let hazardous_set = hazards.keys().copied().collect::<BTreeSet<_>>();
         let reaching = self.reach.reaching(&hazardous_set);
         let mut creations = Vec::new();
@@ -1224,6 +1284,13 @@ impl StepB<'_> {
                 }
                 let callees = self.resolve_name(file, text);
                 if callees.is_empty() {
+                    if call && let Some(defined_in) = hidden.get(text) {
+                        return not_tied(format!(
+                            "`{text}` at {path}:{} may be defined only in {defined_in}, a \
+                             file this reader cannot structure",
+                            self.scans[file].tokens[k].line
+                        ));
+                    }
                     continue;
                 }
                 // The context constructor is read in place, its null-returning

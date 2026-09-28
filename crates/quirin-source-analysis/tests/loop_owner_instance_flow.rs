@@ -619,6 +619,37 @@ fn an_escaped_creator_no_unmodelled_call_on_the_path_can_reach_does_not_block() 
 }
 
 #[test]
+fn nc_a_call_into_a_file_the_reader_cannot_structure_is_unresolved() {
+    let service = r#"
+#include "fluent-bit/flb_input.h"
+void hidden_impl(struct flb_lib_ctx *ctx);
+void service_hook(struct flb_lib_ctx *ctx)
+{
+    hidden_impl(ctx);
+}
+"#;
+    // The arms end at different depths, so the census cannot structure the
+    // file; Clang compiles the second arm.
+    let hidden = r#"
+#include "fluent-bit/flb_input.h"
+static struct flb_input_instance other;
+#ifdef NEVER_DEFINED
+void hidden_impl(struct flb_lib_ctx *ctx) { {
+#else
+void hidden_impl(struct flb_lib_ctx *ctx) {
+#endif
+    mk_list_add(&other._head, &ctx->config->inputs);
+}
+"#;
+    let fixture = make_fixture(
+        "unstructured",
+        &test_file(ONE_TAIL, "", "", ""),
+        &[("src/service.c", service), ("src/hidden.c", hidden)],
+    );
+    route_kept(&run(&fixture), "cannot");
+}
+
+#[test]
 fn nc_a_holder_that_writes_the_instance_flag_is_unresolved() {
     let extra = r#"
 static int cb_force(struct flb_input_instance *ins, void *config, void *data)
