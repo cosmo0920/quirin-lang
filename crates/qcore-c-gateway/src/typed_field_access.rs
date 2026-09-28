@@ -1598,6 +1598,10 @@ fn bound_names(body: &[&str], protected_formals: &BTreeSet<String>) -> BTreeSet<
             bound.insert(text.to_owned());
         }
     }
+    // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): a parenthesised
+    // destination or operand (`(x) = …`, `(x)++`, `&(x)`, the spelling of a
+    // macro-expanded write) is a write the adjacency test above does not see.
+    bound.extend(crate::lexical_nested_assignment::written_names(body));
     bound
 }
 

@@ -1,0 +1,37 @@
+{
+ "console.log": {
+  "raw_identical": false
+ },
+ "exit": {
+  "raw_identical": true
+ },
+ "parity.jsonl": {
+  "raw_identical": false,
+  "sorted_lines_identical": true
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "raw_identical": false,
+  "sorted_lines_identical": true
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "raw_identical": true
+ },
+ "resource-diagnostics.contracts.json": {
+  "raw_identical": false
+ },
+ "resource-diagnostics.invocation.json": {
+  "raw_identical": false
+ },
+ "resource-diagnostics.json": {
+  "raw_identical": false
+ },
+ "resource-diagnostics.source-effects.json": {
+  "raw_identical": true
+ },
+ "run.json": {
+  "raw_identical": false
+ },
+ "stderr.log": {
+  "raw_identical": true
+ }
+}

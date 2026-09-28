@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 536
+  "named_followups": 538
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6742,7 +6742,7 @@
   "workspace_tests": 6152,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 218,
+  "lean_audits": 219,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6843,6 +6843,7 @@
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
+   "AuditLexicalClosureNestedAssignment.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
    "AuditLiteralArgumentPremise.lean",
@@ -6969,7 +6970,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-typed-const-pointer-value/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -10623,13 +10624,6 @@
    "recorded_by": "W47-CALLEE-CLOSURE-R2"
   },
   {
-   "id": "W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT",
-   "title": "The lexical untracked-base closure does not see an assignment nested in a condition or a for clause",
-   "why": "borrowed_actual::untracked_bases reads assignments with a top-level `=` of a `;{}`-delimited token run, so `if (!(p = f()))`, `while ((p = next(q)))` and `for (p = f(); ...)` never make `p` risky, although the body binds `p` from a call. Rule 10l's side-by-side parity (docs/reports/w47-typed-root-declaration-reader/artifacts/after/root-declarations/) measured, in functions the lexical reader reads (where its answer is served, unchanged), 119 name records the AST closure binds from a call in a nested assignment while the lexical closure calls them never bound; 33 are roots of admitted typed rows (never-bound chains), all in non-Safe functions. No Safe function rests on such a root: the three Safe functions with a disputed root are rule 5l container_of bindings (mk_fifo_queue_get, mk_plugin_cap) and a scalar-array sub-object store (rd_kafka_Uuid_str), where the AST reader is the over-conservative side. The same records show the lexical closure's other blind spots the AST names (a later declarator initialised from an earlier one, 177 copies of AST-bound names). DISCHARGE: the lexical closure reads nested and later-declarator assignments (or the typed premises read the AST-joined answer in every function), with every Safe -> non-Safe move named as a correction in a measured re-pin, and matching Lean.",
-   "source": "docs/reports/w47-typed-root-declaration-reader/README.md",
-   "recorded_by": "W47-TYPED-ROOT-DECLARATION-READER"
-  },
-  {
    "id": "W47-ARENA-POOL-RESULT-MODE",
    "title": "An arena is an allocation pool: its results should be invalidated by the pool's destroy and reset",
    "why": "User decision 2026-09-28 on W47-ARENA-INTERIOR-READING: cfl_arena_calloc's resource_return_interior(arena, nullable) declaration (quirin-provider-cfl cfl/sds_lifetime.qv) is accepted as the interim reading, and the arena should in future be treated as a memory allocation pool. Today the interior mode ties each result to the arena argument's release, but cfl_arena_destroy is declared only in cfl/arena_lifetime.qv, which is not a v1 resource-view module, and cfl_arena_reset (which invalidates every result without releasing the arena) is undeclared; a caller of either is refused (Unknown, fail-closed), so no result is shown invalid after destroy or reset. DISCHARGE: a pool resource kind (or result mode) in the contract spec (C04) whose allocations depend on the pool, are invalidated by the pool's destroy and by reset, are never released individually and whose nullness is their own; cfl_arena_create/destroy/reset declared in that kind in quirin-provider-cfl, checked against their bodies and pinned in revision mode; gateway rule, matching audited Lean, negative controls (use after destroy, use after reset, free of a pool result, a pool result outliving its pool through a store), and a measured corpus/system re-pin; W47-ARENA-INTERIOR-READING retired when this lands.",
@@ -10663,6 +10657,27 @@
    "why": "Measured by W47-TYPED-CONST-POINTER-VALUE (docs/reports/w47-typed-const-pointer-value/README.md, 'The two cascades'). W4 derives and validates a summary (legacy_summary::infer_cfg_summary) on a CFG built in an environment that does not yet hold the function's own contract, so protected_resource_formals protects none of its formals even though the validation run seeds the unresolved ones as entry-bound Owned resources. The typed reader's never-bound closure therefore treats a copy of such a formal (`const T *a = _a;`) as a root the body never binds, and the typed reads rooted there are admitted in the validation run. The reported run analyses the same body with the derived contract in force: the formals are protected, the copies are bound, and the same reads refuse. Instance: rd_kafka_topic_partition_cmp stays Unknown (IND at 21963, RET at 21967, unknown_alias _a/_b) while its summary (Owned, Owned, result none; reproduced in a fixture) validates, and rd_kafka_topic_partition_cmp_opaque moves Unknown -> Safe on it at this card's step 1. The summary is custody-correct for that body (it only reads), and every per-hop base obligation is still checked in the validation run; what differs is rule 5b's premise that a never-bound root reaches no tracked place, which is false there for a copy of an entry-seeded formal. The extent across the corpus (Safe functions whose same-unit callee has a validated summary but an Unknown row) is not measured. DISCHARGE: validation reads the typed-root premises with the same protected-formal set the reported run uses (or seeds a formal it binds as protected), with audited Lean and a measured corpus/system re-pin naming every Safe that moves; or a recorded decision, with the measured extent, that the validation run's premise is sufficient for the summary's claim.",
    "source": "docs/reports/w47-typed-const-pointer-value/README.md",
    "recorded_by": "W47-TYPED-CONST-POINTER-VALUE"
+  },
+  {
+   "id": "W47-JOIN-AST-CONSERVATIVE-CLASSES",
+   "title": "The typed-position join withdraws Safe functions through AST closure classes that rules 5l and 5i read as unbound",
+   "why": "Rule 10o serves, at every P2 statement and P3 position of a function the lexical reader reads, the join of the extended lexical closure and the rule-10l AST closure. After rule 10o the lexical closure reads every nested, for-clause, later-declarator, parenthesised and brace-initialiser assignment (the re-emitted disputed set, docs/reports/w47-lexical-closure-nested-assignment/artifacts/after/disputed-corpus.json, has no root of those classes left that the AST binds and the lexical closure does not), so what the join still adds are AST classes the lexical closure reads under established rules: a statement-expression value (rule 5l's container_of element: 127 admitted-row roots in 32 corpus function records, 498 in the system slice), a sub-object store whose root is the admitted store's own (rule 5i; including file-scope objects), and a static array initialiser counted by the AST's may_bind. Measured withdrawals (Safe -> Unknown, none an unsound Safe): corpus mk_fifo_queue_get (q), mk_plugin_cap (plugin), rd_kafka_Uuid_str (bytes), unit_test_telemetry_decoded_int64 (unit_test_data); system flb_engine_get_chunk_backpressure_percent (ins), sb_find_segregated_backlog_by_output_plugin_instance (backlog); plus summary cascades from the static inline flb_task_get_route_data/_status/set_route_status/set_route_data bodies. DISCHARGE: the AST closure reads rule 5l's admitted container_of element and rule 5i's admitted scalar or never-bound sub-object store as the lexical rules do (or the join is narrowed to the binding classes the lexical closure models, with a stated argument), with matching audited Lean, negative controls (a statement expression holding a custody call, a sub-object store of a tracked value) and a measured re-pin restoring the six without flipping any other row.",
+   "source": "docs/reports/w47-lexical-closure-nested-assignment/README.md",
+   "recorded_by": "W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT"
+  },
+  {
+   "id": "W47-PARENTHESISED-WRITE-READERS",
+   "title": "Token-adjacency write readers do not see a parenthesised destination `(x) = ...`",
+   "why": "Rule 10o reads a parenthesised destination (the macro-expanded spelling: TAILQ_FOREACH's `(var) = ...`) in the never-bound closure, may_bind, O04-B08's store-base premises and the protected-formal alias closure. Other readers that find writes by token adjacency (`name =`) still do not: container_publication::CallerFormals::writes (rule 10d's unrebound formals), list_iteration::function_facts (rule 5l's element-only names and `written`), member_release's P1 and the return-family and sub-object-store readers. Measured by the rule-10o parity census over the pinned corpus: 803 parenthesised-destination records over the 17,850 function analyses (72 distinct spellings; tmp, _tmp, rkb, member, rkt ...), of which 0 are formals of their function (so rule 10d's stable formals are not affected at this pin); 0 in the Fluent Bit system slice. DISCHARGE: those readers take their writes from lexical_nested_assignment::written_names (a monotone refusal), with a measured re-pin.",
+   "source": "docs/reports/w47-lexical-closure-nested-assignment/README.md",
+   "recorded_by": "W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT"
+  },
+  {
+   "id": "W47-PUBLICATION-NESTED-STORE-READER",
+   "title": "The continued-access publication reader reads only a statement's first top-level store",
+   "why": "publication.rs reads a continued-access store into a static destination (`G.f = p`, CTWIN-RESIDUALS) from a `;{}` run's first top-level simple `=`, the reading rule 10o replaced in the custody closure. The direction is fail-closed (a store it misses is not a publication, so nothing is discharged through it), so rule 10o registers it rather than widening it. Measured by the rule-10o parity census: 3,649 member-store records (summed over the 17,850 function analyses of the corpus) stand where that reader does not look (nested in a condition, a comma operand or a later position of their run; how many target a static destination is not measured), 0 in the system slice. DISCHARGE: the publication reader reads every member store through lexical_nested_assignment, refusing (not admitting) a nested one it cannot model, with a measured re-pin.",
+   "source": "docs/reports/w47-lexical-closure-nested-assignment/README.md",
+   "recorded_by": "W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

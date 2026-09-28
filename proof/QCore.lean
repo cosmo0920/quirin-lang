@@ -164,6 +164,7 @@ import QCore.TypedAccessPathStatements
 import QCore.TypedAccessPathPositions
 import QCore.TypedRootDeclarations
 import QCore.TypedConstPointerValue
+import QCore.LexicalClosureNestedAssignment
 import QCore.AssignmentDestinationSuffix
 import QCore.SubObjectStore
 import QCore.GenericSelection

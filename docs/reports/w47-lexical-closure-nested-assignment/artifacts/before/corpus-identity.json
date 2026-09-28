@@ -1,0 +1,31 @@
+{
+ "audit.log": {
+  "raw_identical": false
+ },
+ "monkey-source.json": {
+  "raw_identical": true
+ },
+ "parity.jsonl": {
+  "raw_identical": false,
+  "sorted_lines_identical": true
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "raw_identical": false,
+  "sorted_lines_identical": true
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "raw_identical": true
+ },
+ "resource-diagnostics.contracts.json": {
+  "raw_identical": false
+ },
+ "resource-diagnostics.json": {
+  "raw_identical": true
+ },
+ "resource-diagnostics.source-effects.json": {
+  "raw_identical": false
+ },
+ "run.json": {
+  "raw_identical": false
+ }
+}

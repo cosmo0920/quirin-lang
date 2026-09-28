@@ -1,0 +1,84 @@
+[
+ {
+  "unit": 69,
+  "library": "librdkafka",
+  "file": "rdkafka.c",
+  "function": "rd_kafka_Uuid_str",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "bytes"
+  ],
+  "nested": [],
+  "leaf_reasons": {
+   "typed-row:join": 2,
+   "join-function": 2
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `bytes`\", \"line\": 25154, \"origin\": \"rdkafka.c:7230\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `bytes`\", \"line\": 25155, \"origin\": \"rdkafka.c:7231\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `ret`\", \"line\": 25158, \"origin\": \"rdkafka.c:7240\"}",
+   "{\"category\": \"unsupported\", \"description\": \"nullable resource `ret` used by a non-null contract\", \"line\": 25158, \"origin\": \"rdkafka.c:7240\"}"
+  ]
+ },
+ {
+  "unit": 118,
+  "library": "librdkafka",
+  "file": "rdkafka_telemetry_decode.c",
+  "function": "unit_test_telemetry_decoded_int64",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "unit_test_data"
+  ],
+  "nested": [],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 21752, \"origin\": \"rdkafka_telemetry_decode.c:504\"}"
+  ]
+ },
+ {
+  "unit": 166,
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_queue_get",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "q"
+  ],
+  "nested": [
+   "__mptr",
+   "head"
+  ],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `q`\", \"line\": 5229, \"origin\": \"mk_server/mk_fifo.c:204\"}"
+  ]
+ },
+ {
+  "unit": 175,
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_cap",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "plugin"
+  ],
+  "nested": [
+   "__mptr",
+   "head"
+  ],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `plugin`\", \"line\": 6545, \"origin\": \"mk_server/mk_plugin.c:782\"}"
+  ]
+ }
+]

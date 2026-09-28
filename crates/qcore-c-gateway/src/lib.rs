@@ -36,7 +36,9 @@ pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;
+// Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
+mod lexical_nested_assignment;
 mod may_alias;
 mod neutral_position;
 mod publication;

@@ -3432,6 +3432,20 @@ fn protected_resource_formals(
             aliases.push((destination, source));
         }
     }
+    // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): the aliases the
+    // statement reading above skips (nested, later-declarator, parenthesised);
+    // the run's first `=`, which it read, keeps its decision.
+    let first = crate::lexical_nested_assignment::first_equals_of_runs(&body);
+    for assignment in crate::lexical_nested_assignment::assignments(&body) {
+        if first.contains(&assignment.operator) {
+            continue;
+        }
+        if let Some(source) = canonical_place(&body[assignment.value.clone()])
+            && is_identifier(&source)
+        {
+            aliases.push((assignment.destination.to_owned(), source));
+        }
+    }
     loop {
         let before = protected.len();
         for (destination, source) in &aliases {
@@ -4480,8 +4494,10 @@ impl Parser<'_> {
             .typed_path_index
             .get_or_init(|| crate::typed_access_path::StatementIndex::read(function))
             .as_ref()?;
+        // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): the join of
+        // the lexical and AST closures.
         index.statement(&texts, tokens.first()?.line, |name| {
-            self.typed_bases.never_bound(name)
+            self.joined_never_bound(name)
         })
     }
 

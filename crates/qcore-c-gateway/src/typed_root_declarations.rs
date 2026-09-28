@@ -207,6 +207,37 @@ impl RootDeclarations {
         self.ast_never_bound(name) && !lexical_risky.contains(name)
     }
 
+    /// Card **W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT** (rule 10o): whether the
+    /// AST closure binds some object spelled `name` in a function it answers.
+    /// `false` where it refuses the function, so the lexical answer stands
+    /// there; spelling-level, so a shadowed or foreign name the closure binds
+    /// is bound.
+    pub(crate) fn binds(&self, name: &str) -> bool {
+        self.facts
+            .as_ref()
+            .is_some_and(|facts| facts.risky.contains(name))
+    }
+
+    /// Rule 10o (parity only): every spelling the AST closure binds, and every
+    /// spelling it names `may_bind`; empty where it refuses the function.
+    pub(crate) fn spellings(&self) -> (Vec<String>, Vec<String>) {
+        self.facts.as_ref().map_or_else(Default::default, |facts| {
+            (
+                facts.risky.iter().cloned().collect(),
+                facts.bound.iter().cloned().collect(),
+            )
+        })
+    }
+
+    /// Rule 10o: whether the AST names `name` written, address-taken or in a
+    /// call's actuals, in a function it answers (spelling-level); `false`
+    /// where it refuses the function.
+    pub(crate) fn names_may_bind(&self, name: &str) -> bool {
+        self.facts
+            .as_ref()
+            .is_some_and(|facts| facts.bound.contains(name))
+    }
+
     /// Whether this function may bind `name`: written, address-taken or
     /// named in a call's actuals. `true` for every name not answered.
     pub(crate) fn may_bind(&self, name: &str) -> bool {

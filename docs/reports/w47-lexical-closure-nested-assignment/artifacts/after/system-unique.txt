@@ -1,0 +1,2 @@
+private/nested/before-system/resource-diagnostics.json 234 {'Unknown': 199, 'Safe': 33, 'Unsafe': 2}
+private/nested/after3-system/resource-diagnostics.json 234 {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}

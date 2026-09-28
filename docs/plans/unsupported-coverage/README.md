@@ -179,9 +179,14 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   Clang AST where the lexical reader answers nothing
   ([W47-TYPED-ROOT-DECLARATION-READER](../../reports/w47-typed-root-declaration-reader/README.md),
   gateway 10l; no verdict moves); the twelve forecast misses it was opened for
-  refuse on the value type, not the premise, and a lexical-closure blind spot
-  is tracked as `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`. The value type is
-  read since
+  refuse on the value type, not the premise, and the lexical-closure blind
+  spot it found is closed by
+  [W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT](../../reports/w47-lexical-closure-nested-assignment/README.md)
+  (gateway 10o: the closure reads every assignment, nested, `for`-clause,
+  later-declarator and parenthesised, and the typed positions serve its join
+  with the AST closure; six Safe functions withdrawn through AST classes rules
+  5l/5i read as unbound, `W47-JOIN-AST-CONSERVATIVE-CLASSES`). The value type
+  is read since
   [W47-TYPED-CONST-POINTER-VALUE](../../reports/w47-typed-const-pointer-value/README.md)
   (gateway 10m): a lone top-level `const` on a pointer value is erased, and a
   `void *` bit-cast at the top of a pointer-destination statement is the

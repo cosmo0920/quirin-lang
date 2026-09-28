@@ -320,14 +320,35 @@ pub(crate) fn store_bases(
     }
     // Premise 3: exactly one binding, and that binding calls something.
     let acquired = acquired_bindings(body);
+    // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): every simple
+    // assignment wherever it stands, a parenthesised destination included, and
+    // every parenthesised write.
+    let every = crate::lexical_nested_assignment::assignments(body);
+    let parenthesised = crate::lexical_nested_assignment::parenthesised_writes(body);
     for name in &candidates {
         let bindings = assignments.iter().filter(|other| *other == name).count();
-        if bindings != 1 || !acquired.contains(name) {
+        let every_binding = every
+            .iter()
+            .filter(|assignment| assignment.destination == name)
+            .count();
+        if bindings != 1
+            || every_binding != 1
+            || parenthesised.contains(name)
+            || !acquired.contains(name)
+        {
             refused.insert(name.clone());
         }
     }
     // Premise 5.
     refuse_aliased_sources(body, &mut refused);
+    // Rule 10o: a nested, later-declarator or parenthesised alias `x = BASE`.
+    for assignment in &every {
+        if let [name] = strip_parentheses(&body[assignment.value.clone()])
+            && is_name(name)
+        {
+            refused.insert((*name).to_owned());
+        }
+    }
     refuse_rebinding_arguments(body, contracts, &mut refused);
     let admissible: BTreeSet<String> = candidates.difference(&refused).cloned().collect();
     let insulated = insulated_bases(body, &admissible, contracts, model, types);

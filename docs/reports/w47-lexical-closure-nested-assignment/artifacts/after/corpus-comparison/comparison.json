@@ -1,0 +1,142 @@
+{
+ "functions": {
+  "before": {
+   "Unknown": 4314,
+   "Safe": 510,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4318,
+   "Safe": 506,
+   "Unsafe": 10
+  }
+ },
+ "units": {
+  "before": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ },
+ "leaf_families": {
+  "before": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7443,
+   "unsupported:COND": 6331,
+   "unsupported:IND": 15037,
+   "unsupported:OTHER": 5674,
+   "unsupported:RET": 284,
+   "unsupported:UNC": 8883
+  },
+  "after": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7602,
+   "unsupported:COND": 6374,
+   "unsupported:IND": 15084,
+   "unsupported:OTHER": 5680,
+   "unsupported:RET": 290,
+   "unsupported:UNC": 8885
+  }
+ },
+ "move_counts": {
+  "Safe->Unknown": 4
+ },
+ "moves": [
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_Uuid_str",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "bytes"
+   ],
+   "nested": [],
+   "leaf_reasons": {
+    "typed-row:join": 2,
+    "join-function": 2
+   }
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decoded_int64",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "unit_test_data"
+   ],
+   "nested": [],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_fifo.c",
+   "function": "mk_fifo_queue_get",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "q"
+   ],
+   "nested": [
+    "__mptr",
+    "head"
+   ],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_cap",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "plugin"
+   ],
+   "nested": [
+    "__mptr",
+    "head"
+   ],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  }
+ ],
+ "changed_functions": 162,
+ "leaf_attribution": {
+  "added|unknown_alias|alias-root:join": 2,
+  "added|unknown_alias|join-function": 1,
+  "added|unknown_alias|typed-row:join": 34,
+  "added|unknown_alias|typed-row:nested": 125,
+  "added|unsupported:COND|nested-consumer": 5,
+  "added|unsupported:COND|summary-cascade": 1,
+  "added|unsupported:COND|typed-row:join": 7,
+  "added|unsupported:COND|typed-row:nested": 30,
+  "added|unsupported:IND|summary-cascade": 1,
+  "added|unsupported:IND|typed-row:join": 35,
+  "added|unsupported:IND|typed-row:nested": 11,
+  "added|unsupported:OTHER|join-function": 1,
+  "added|unsupported:OTHER|nested-consumer": 1,
+  "added|unsupported:OTHER|typed-row:join": 3,
+  "added|unsupported:OTHER|typed-row:nested": 2,
+  "added|unsupported:RET|typed-row:join-may-bind": 5,
+  "added|unsupported:RET|typed-row:nested": 1,
+  "added|unsupported:UNC|summary-cascade": 2,
+  "removed|unknown_alias|typed-row:join": 1,
+  "removed|unknown_alias|typed-row:nested": 2,
+  "removed|unsupported:OTHER|summary-cascade": 1
+ }
+}
