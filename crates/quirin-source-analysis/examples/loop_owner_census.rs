@@ -277,6 +277,21 @@ fn main() {
             .collect::<BTreeSet<_>>(),
         "coroutine_bodies": result.program.coroutine_bodies.len(),
         "yields": result.program.yields.len(),
+        "coroutine_body_functions": result
+            .program
+            .coroutine_bodies
+            .iter()
+            .map(|(entry, body)| format!(
+                "{} -> {}",
+                result.program.functions[*entry], result.program.functions[*body]
+            ))
+            .collect::<Vec<_>>(),
+        "yield_sites": result
+            .program
+            .yields
+            .iter()
+            .map(|(function, site)| (result.program.functions[*function].clone(), site.clone()))
+            .collect::<BTreeMap<_, _>>(),
         "owners": {
             "engine_loop": result.owners.non_threaded,
             "worker_loop": result.owners.threaded,

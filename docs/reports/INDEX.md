@@ -980,6 +980,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-loop-owner-contracts](w47-loop-owner-contracts/README.md) | W47-LOOP-OWNER-CONTRACTS: loop-owner obligation over derived thread identity (C1–C3) |
 
+| [w47-loop-owner-coroutine-hop](w47-loop-owner-coroutine-hop/README.md) | W47-LOOP-OWNER-COROUTINE-HOP: the coroutine hop and a configured conditional reading for the thread-entry census |
+
 | [w47-summary-validation-protected-formals](w47-summary-validation-protected-formals/README.md) | W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated on the premises its reported row reads (wave 47) |
 
 | [w47-tail-pause-bindings](w47-tail-pause-bindings/README.md) | W47-TAIL-PAUSE-BINDINGS: in_tail pause/resume bindings, negative cases and slice baseline |

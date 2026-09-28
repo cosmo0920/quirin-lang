@@ -1238,3 +1238,39 @@ which is not a second authority.
     flag is immutable after init. `QCore.LoopOwner` derives, for this route,
     the single-dispatcher premise `QCore.EventDriven` takes as supplied;
     [report](../reports/w47-loop-owner-contracts/README.md).
+    **Amendment (W47-LOOP-OWNER-COROUTINE-HOP): hop C and the configured
+    reading.** A coroutine runs on the thread that resumes it. The census
+    derives the input coroutine's resumers: `flb_input_coro_collect` names
+    `input_pre_cb_collect` at `co_create`, and each function that constructs
+    it as `v = flb_input_coro_collect(…)` and resumes `v` through
+    `flb_input_coro_resume` runs the entry (the two loop dispatchers, each in
+    its loop's mode, as hop L); the entry's calls up to its single switch back
+    to the resumer run in the constructor. A constructor call not so resumed, a
+    wrapper call on any other handle, or a hand-off that is not one switch
+    outside a loop leaves the entry unresolved. A function the entry
+    dispatches after the hand-off is a coroutine body: one that may reach a
+    non-terminal yield (a call of a function that switches back to its
+    resumer, or of a macro that does, outside `flb_input_return_do`) is
+    unresolved, its resumer after the yield not derived; a collector registrant
+    whose plugin directory's descriptors derive `.flags` without
+    `FLB_INPUT_CORO` is not dispatched from the entry at all, and one
+    registered outside `plugins/` keeps the dispatch. An include guard's
+    closing `#endif` after a file's last token closes its group. The census may
+    read under a build configuration (each read `.c` file's compile-command
+    `-D` set, the intersection for other files, `FLB_`-prefixed macros owned):
+    an arm is dropped only when its condition (`defined`, `!`, `&&`, `||`) is
+    decided false or an earlier arm is decided true, and an owned macro is
+    undefined only when no command defines it and no read file or generated
+    header `#define`s it. **Do not** take a generic `flb_coro_resume` of a
+    handle not tied to its constructor as a derived resumer, treat a body that
+    may yield as running on its first resumer, or guess across an undecided
+    `#if`. Premises added (trust boundary 28): P-CORO-HANDLE (an input
+    coroutine's handle reaches a generic resume site only through its own
+    `flb_coro_get()`, after it yields, and `ins->input_coro_list` is never
+    resumed from); P-PLUGIN-DIR (a plugin directory registers collectors only
+    on instances of the plugins it declares, and descriptor flags do not
+    change at run time); and that the test file is configured as the library's
+    common set. `QCore.LoopOwner` proves the hop (a coroutine resumed only on
+    `owner L` runs on `owner L`; an undetermined resumer never discharges), the
+    gating and the configured reading;
+    [report](../reports/w47-loop-owner-coroutine-hop/README.md).

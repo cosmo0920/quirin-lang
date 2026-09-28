@@ -1,0 +1,9 @@
+[
+ {
+  "id": "W47-LOOP-OWNER-COROUTINE-POST-YIELD",
+  "title": "Derive who resumes an input coroutine after it yields",
+  "why": "W47-LOOP-OWNER-COROUTINE-HOP derives an input coroutine's initial resumers (each loop dispatcher that constructs it with flb_input_coro_collect and resumes the returned handle; include/fluent-bit/flb_input.h::input_pre_cb_collect now runs on flb_lib_worker non-threaded and input_thread threaded, with no unresolved path), but not who resumes a body after a non-terminal yield: the continuation runs on whichever thread handles the event the body registered before yielding (flb_coro_resume(connection->coroutine) at src/flb_engine.c:1609, src/flb_input_thread.c:470, src/flb_output_thread.c:336, src/flb_downstream_worker.c:223; flb_time_sleep's timer at include/fluent-bit/flb_time_utils.h:33), a handle taken from flb_coro_get(). The census therefore leaves every coroutine body that may reach a yield unresolved. At the 90978ac6 export (configured census) 17 coroutine bodies are read; 5 that reach a yield hold declared sites: in_calyptia_fleet_collect_once (3 sites; flb_http_do > flb_io_net_write > net_io_write_async, src/flb_io.c:487), in_event_test's cb_collector_server_socket and cb_collector_server_client (2 sites; flb_time_sleep, include/fluent-bit/flb_time_utils.h:68), src/flb_plugin_proxy.c::flb_proxy_input_cb_collect (the Go proxy, runtime-flagged; it reaches every collector registrant through field-keyed V, see W47-LOOP-OWNER-FIELD-KEYED-V-AND-F) and tests/runtime/in_tail.c::cb_tail_pause_test (3 sites; see W47-LOOP-OWNER-INSTANCE-FLOW). DISCHARGE: derive the post-yield resumer from the thread-local event-loop binding (each thread's flb_engine_evl_set, the connection or timer event registered on flb_engine_evl_get()) or prove a body yield-free, measured on the census.",
+  "source": "docs/reports/w47-loop-owner-coroutine-hop/README.md",
+  "recorded_by": "W47-LOOP-OWNER-COROUTINE-HOP"
+ }
+]

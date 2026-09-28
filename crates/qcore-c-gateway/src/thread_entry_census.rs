@@ -41,7 +41,7 @@
 //!   function that calls the constructor as `v = K(…)` and resumes `v` through
 //!   the listed wrapper is a derived resumer, and runs the entry after its
 //!   hand-off (inside a loop dispatcher, in that loop's mode, as hop L). The
-//!   entry's calls before its single switch back to the resumer
+//!   entry's calls up to its single switch back to the resumer
 //!   (`co_switch(x->caller)`) run in the constructor. A constructor call that
 //!   is not so resumed, or a wrapper call on a handle that is not the
 //!   constructor's, leaves the entry unresolved. A function the entry
@@ -1448,7 +1448,7 @@ pub fn read_program_configured(
         }
     }
     // Hop C: each entry's hand-off, its single switch back to the resumer
-    // outside any loop. Its calls before the switch run in the constructor.
+    // outside any loop. Its calls up to the switch run in the constructor.
     let mut handoffs: BTreeMap<usize, (usize, usize)> = BTreeMap::new();
     for entry in entries.keys() {
         let switches = switch_backs
@@ -1479,7 +1479,7 @@ pub fn read_program_configured(
     }
     let placed = |caller: usize, file: usize, position: usize| -> (Vec<usize>, bool) {
         match handoffs.get(&caller) {
-            Some((handoff_file, handoff)) if *handoff_file == file && position < *handoff => {
+            Some((handoff_file, handoff)) if *handoff_file == file && position <= *handoff => {
                 (entries[&caller].iter().copied().collect(), false)
             }
             Some(_) => (vec![caller], true),
