@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_dual_extension_same_stem_is_refused_before_manifest_selection (test_contract_load_path.LoadPathManifest.test_dual_extension_same_stem_is_refused_before_manifest_selection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a72a7dbb863a63b80/providers/tests/test_contract_load_path.py", line 170, in test_dual_extension_same_stem_is_refused_before_manifest_selection
+    with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.057s
+
+FAILED (failures=1)

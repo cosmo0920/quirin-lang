@@ -110,9 +110,16 @@ class Tree:
 
 class LoadPathManifest(unittest.TestCase):
     def test_exact_owner_selector_admits_new_spelling_without_broadening_owner(self):
+        # A legacy `.qcore` selector admits its own `.qv` spelling, and no
+        # other stem (the pre-f4018a92 intent; the migration collapsed both
+        # assertions onto the `.qv` spelling, leaving the legacy branch unexercised).
+        selector = ("fluent_bit/busy_state.qcore",)
+        self.assertTrue(contracts.owned("fluent_bit/busy_state.qcore", selector))
+        self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
+        self.assertFalse(contracts.owned("fluent_bit/busy_state_extra.qv", selector))
         selector = ("fluent_bit/busy_state.qv",)
         self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
-        self.assertTrue(contracts.owned("fluent_bit/busy_state.qv", selector))
+        self.assertFalse(contracts.owned("fluent_bit/busy_state.qcore", selector))
         self.assertFalse(contracts.owned("fluent_bit/busy_state_extra.qv", selector))
 
     def test_generated_from_metadata_and_constants(self):
@@ -153,7 +160,12 @@ class LoadPathManifest(unittest.TestCase):
     def test_dual_extension_same_stem_is_refused_before_manifest_selection(self):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
-            sibling = tree.root / "quirin-provider-libc/contracts/libc/memory.qv"
+            # The fixture already owns `libc/memory.qv`; the legacy spelling
+            # of the same stem beside it is the ambiguous pair (EXT-01).
+            owned_qv = tree.root / "quirin-provider-libc/contracts/libc/memory.qv"
+            self.assertTrue(owned_qv.is_file())
+            sibling = owned_qv.with_suffix(".qcore")
+            self.assertFalse(sibling.exists())
             sibling.write_text(PARENT)
             with self.assertRaisesRegex(ValueError, "ambiguous contract asset stem"):
                 contracts.load_path_manifest(tree.root, tree.metadata())
