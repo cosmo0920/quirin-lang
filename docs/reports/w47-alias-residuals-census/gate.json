@@ -1,0 +1,12 @@
+{
+ "note": "W47-ALIAS-RESIDUALS-CENSUS, 2026-09-28. Standing gate by scripts/gate.sh in this card's worktree, CARGO_INCREMENTAL=0, every exit in its own file (copied to gate/), no pipe; logs private under private/gate/. Rust part at 04a34176 (every script of the card committed; the later records commit 8b974790 changes only docs/): submodule 0 (libevent d82464a2); run_test_binaries.py 0: 339 units, 352 summaries; 6122 passed; 0 failed; 11 ignored (private/test-binaries/20260928T011213Z-298718/summary.json); cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 216 (no Lean change); cargo clean --profile dev 0; clang --version 0 in this worktree. Records part at 8b974790, after the matrix and INDEX regeneration: unittest discover -s scripts/tests 0 (365 OK); build_docs_index.py --check 0. No providers/, crates/ or proof/ path is touched, so the provider gate does not apply.",
+ "workspace_tests": 6122,
+ "python_evidence_validator_tests": 365,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 216,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

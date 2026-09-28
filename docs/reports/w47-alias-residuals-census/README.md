@@ -316,7 +316,22 @@ card list is ranked but should not be read as a promise of Safe functions.
 
 ## 7. Gate
 
-[gate.json](gate.json), exits in [gate/](gate/).
+[gate.json](gate.json), exits in [gate/](gate/) (`scripts/gate.sh`, each exit
+in its own file, no pipe). The Rust part ran at `04a34176`. The later records
+commit changes only `docs/`.
+
+- submodule: exit 0.
+- `run_test_binaries.py`: exit 0, **339 units, 352 summaries; 6,122 passed,
+  0 failed, 11 ignored**
+  (`private/test-binaries/20260928T011213Z-298718/summary.json`).
+- `cargo clean --profile dev`, fmt, clippy, `reevaluation_probe` and
+  `reevaluation_followup`: exit 0 each.
+- `check_lean_audits.py`: exit 0, **216** audits (no Lean change).
+- `clang --version`: 21.1.8, recorded here.
+- Records part at `8b974790`: `unittest discover -s scripts/tests` exit 0
+  (**365** OK); `build_docs_index.py --check` exit 0.
+
+No `providers/`, `crates/` or `proof/` path is touched.
 
 ## 8. Follow-ups
 
