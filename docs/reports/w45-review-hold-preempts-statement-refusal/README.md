@@ -299,4 +299,24 @@ the routes today.
 
 ## 10. Gate
 
-GATE
+[`scripts/gate.sh`](scripts/gate.sh) `LOG_DIR rust|records`, every exit in
+[gate/](gate/), figures in [gate.json](gate.json), logs in this worktree's
+`private/rh/gate-5c22f21f/`. Measured on the tree of `5c22f21f`.
+
+| Step | Exit | Count |
+|---|---:|---|
+| submodule update (run by hand before the script) | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `scripts/run_test_binaries.py` | 0 | 350 units, 363 summaries; 6,259 passed / 0 failed / 11 ignored |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `scripts/check_lean_audits.py` | 0 | 224 audits |
+| `python3 -m unittest discover -s scripts/tests` (after the matrix and index) | 0 | 365 |
+| `scripts/build_docs_index.py --check` | 0 | |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 |
+
+The first run, at `9a9f1fc0`, failed one unit:
+`qcore-audit::test::sr5_pending_gates`, whose `Pending` control was the
+`dropped-release` mutation this card corrects (§4); it was repaired and the
+whole gate rerun. `cargo clean --profile dev` ran after the test and Lean
+steps. No provider gate: `providers/` is unchanged.
