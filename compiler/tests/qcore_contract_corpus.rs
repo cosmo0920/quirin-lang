@@ -462,6 +462,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // result. No variadic tail — the C declaration is not variadic.
     ("fluent_bit/logging.qv", "flb_errno_print", 5),
     ("fluent_bit/logging.qv", "flb_log_print", 7),
+    // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
+    // borrowed arguments, the neutral user clause and the scalar result.
+    ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
+    ("fluent_bit/loop_owner.qv", "flb_input_collector_pause", 6),
+    ("fluent_bit/loop_owner.qv", "flb_input_collector_resume", 6),
+    ("fluent_bit/loop_owner.qv", "flb_input_collector_delete", 6),
     ("fluent_bit/memory.qv", "flb_malloc", 6),
     ("fluent_bit/memory.qv", "flb_calloc", 7),
     ("fluent_bit/memory.qv", "flb_realloc", 9),
@@ -1287,7 +1293,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // storage-backlog bodies (contract spec §C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
-    assert_eq!(sources.len(), 118, "unexpected contract corpus size");
+    // 118 -> 119 by card W47-LOOP-OWNER-CONTRACTS' `fluent_bit/loop_owner.qv`.
+    assert_eq!(sources.len(), 119, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

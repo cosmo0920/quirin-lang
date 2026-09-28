@@ -20,6 +20,9 @@ provenance-rounds-census = []
 
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
+# Card W47-LOOP-OWNER-CONTRACTS: the loop-owner kernel the thread-entry
+# census feeds (already a dependency of qcore-contract).
+qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "17.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

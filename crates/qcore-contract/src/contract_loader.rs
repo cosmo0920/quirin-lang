@@ -383,6 +383,33 @@ pub struct DeclaredLiteralArgument {
     pub literal: Vec<String>,
 }
 
+/// What a declared loop-owner obligation says the operation does to the loop
+/// its instance's collectors attach to (card **W47-LOOP-OWNER-CONTRACTS**,
+/// §C04.10).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LoopOwnerOperation {
+    /// Reads loop-owned state (a collector's `running` flag).
+    Read,
+    /// Mutates the loop's links or a collector's state.
+    Mutate,
+}
+
+/// `requires resource_loop_owner(p, read|mutate);` (card
+/// **W47-LOOP-OWNER-CONTRACTS**, §C04.10): the declaration applies at a call
+/// site only where the call's derived thread is exactly the owner of the loop
+/// that the instance at `p` attaches its collectors to. No per-unit resource
+/// route derives a thread, so there the declaration is never applied; only the
+/// thread-entry census route can discharge it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredLoopOwner {
+    /// Index into the declaration's parameter list: the input instance.
+    pub parameter: usize,
+    pub operation: LoopOwnerOperation,
+}
+
+/// The loop-owner precondition's name.
+pub const LOOP_OWNER_CLAUSE: &str = "resource_loop_owner";
+
 /// The declared C ABI projection of one admitted declaration (card
 /// **LOADER-ABI**).
 ///
@@ -415,6 +442,8 @@ struct LoadedDeclaration {
     contract: ResourceFunctionContract,
     variadic_data_tail: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
+    /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
+    loop_owner: Option<DeclaredLoopOwner>,
     abi: DeclaredAbiSignature,
     /// Card W45-CONTRACT-DEFERRED-REVIEW: every review marker, in clause
     /// order. Nonempty withholds the whole contract.
@@ -1004,6 +1033,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
         if child_loaded.contract != parent_loaded.contract
             || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
+            || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.abi != parent_loaded.abi
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
             || child_loaded.body_checked != parent_loaded.body_checked
@@ -1087,6 +1117,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut body_checked = false;
     let mut variadic_data_tail = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
+    let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: which validity vocabulary each
@@ -1184,6 +1215,25 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     return Err(format!("duplicate requirement `{expression}`"));
                 }
                 body_checked = true;
+                continue;
+            }
+            // Card W47-LOOP-OWNER-CONTRACTS: the loop-owner obligation, at
+            // most once, naming a pointer parameter.
+            if let Some((parameter, operation)) = loop_owner_clause(expression)? {
+                if loop_owner.is_some() {
+                    return Err(format!("duplicate requirement `{expression}`"));
+                }
+                let parameter = index(&parameter)?;
+                if !POINTER_ABI_TYPES.contains(&parameter_types[parameter].as_str()) {
+                    return Err(format!(
+                        "a loop-owner obligation names an instance pointer, not `{}`",
+                        decl.parameters[parameter].name.value
+                    ));
+                }
+                loop_owner = Some(DeclaredLoopOwner {
+                    parameter,
+                    operation,
+                });
                 continue;
             }
             // Card HASH-CLAUSE. The only other admitted precondition: the
@@ -1436,6 +1486,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         contract,
         variadic_data_tail,
         literal_arguments,
+        loop_owner,
         abi: DeclaredAbiSignature {
             parameters: parameter_types,
             result: return_type.to_owned(),
@@ -1592,7 +1643,10 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
         )),
         (Some(inner), false) => {
             let name = inner.split('(').next().unwrap_or_default().trim();
-            if name == "resource_contract_v1" || name == "resource_literal_argument" {
+            if name == "resource_contract_v1"
+                || name == "resource_literal_argument"
+                || name == LOOP_OWNER_CLAUSE
+            {
                 return Err(format!(
                     "unsupported review marker `{expression}`: only an `ensures normal` \
                      resource-v1 clause can be deferred"
@@ -1628,6 +1682,77 @@ fn review_inherited(child: &[ReviewDeferral], parent: &[ReviewDeferral]) -> bool
                         | (ReviewScope::Clause { .. }, ReviewScope::Clause { .. })
                 )
         })
+}
+
+/// `resource_loop_owner(PARAM, read|mutate)`, exactly (card
+/// W47-LOOP-OWNER-CONTRACTS). `None` when the expression is not this clause at
+/// all; an expression that names it and is malformed rejects the module.
+fn loop_owner_clause(source: &str) -> Result<Option<(String, LoopOwnerOperation)>, String> {
+    let tokens = token_kinds(source)?;
+    let Some(TokenKind::Word(name)) = tokens.first() else {
+        return Ok(None);
+    };
+    if name != LOOP_OWNER_CLAUSE {
+        return Ok(None);
+    }
+    let malformed = || format!("unsupported loop-owner requirement `{source}`");
+    let [
+        _,
+        TokenKind::Symbol(Symbol::LeftParen),
+        TokenKind::Word(parameter),
+        TokenKind::Symbol(Symbol::Comma),
+        TokenKind::Word(operation),
+        TokenKind::Symbol(Symbol::RightParen),
+    ] = tokens.as_slice()
+    else {
+        return Err(malformed());
+    };
+    let operation = match operation.as_str() {
+        "read" => LoopOwnerOperation::Read,
+        "mutate" => LoopOwnerOperation::Mutate,
+        _ => return Err(malformed()),
+    };
+    Ok(Some((parameter.clone(), operation)))
+}
+
+/// The loop-owner obligations `sources` declares, keyed by function name
+/// (card W47-LOOP-OWNER-CONTRACTS). Total-or-reject exactly as
+/// [`literal_argument_premises`]: a consumer must treat an error as a refusal
+/// of every call it cannot classify, never as an empty map.
+pub fn loop_owner_obligations(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, DeclaredLoopOwner>, String> {
+    let mut obligations = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if let Some(obligation) = loaded.loop_owner
+                && obligations.insert(decl.name.clone(), obligation).is_some()
+            {
+                return Err(format!("{context}: duplicate function contract"));
+            }
+        }
+    }
+    Ok(obligations)
+}
+
+/// The loop-owner obligations of an environment, rederived from its retained
+/// trusted sources (card W47-LOOP-OWNER-CONTRACTS).
+pub fn declared_loop_owner_obligations(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, DeclaredLoopOwner>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    loop_owner_obligations(contracts.source_assumptions())
 }
 
 /// `resource_literal_argument(PARAM, LITERAL)`, exactly (card HASH-CLAUSE).

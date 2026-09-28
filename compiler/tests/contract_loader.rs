@@ -84,7 +84,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
-    assert_eq!(contracts.source_assumptions().len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 55);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -715,6 +716,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("flb_task_set_route_status", 3),
         ("flb_task_retry_count", 2),
         ("flb_task_running_count", 1),
+        // W47-LOOP-OWNER-CONTRACTS: the four collector operations borrow both
+        // arguments; their loop-owner obligation is not a custody mode.
+        ("flb_input_collector_running", 2),
+        ("flb_input_collector_pause", 2),
+        ("flb_input_collector_resume", 2),
+        ("flb_input_collector_delete", 2),
     ] {
         let mut contract = ResourceFunctionContract::new(vec![P::Borrowed; arity], R::None);
         contract.counted_users.neutral = true;
@@ -1014,7 +1021,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // (twelve checked specifications, contract spec C06.3).
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 54);
+    // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 55);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1237,7 +1245,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // and manifest-selected.
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
-    assert_eq!(modules.len(), 118, "corpus module count");
+    // 118 -> 119: card W47-LOOP-OWNER-CONTRACTS adds
+    // `fluent_bit/loop_owner.qv`, entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 119, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1393,9 +1403,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 230 -> 232 by card W47-CALLEE-CLOSURE-R2: `cfl_arena_calloc` appended
     // to `cfl/sds_lifetime.qv` and `rd_file_read` to `librdkafka/memory.qv`,
     // both already selected. Selection and rejected unchanged.
+    // 54 -> 55 and 232 -> 236 by card W47-LOOP-OWNER-CONTRACTS: the four
+    // collector operations of `fluent_bit/loop_owner.qv`, each with a declared
+    // loop-owner obligation. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (54, 232, 216)
+        (55, 236, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

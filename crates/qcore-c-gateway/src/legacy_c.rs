@@ -3594,6 +3594,19 @@ pub(crate) struct ConditionalMark {
     directive: ConditionalDirective,
 }
 
+impl ConditionalMark {
+    /// The number of tokens emitted before the directive (card
+    /// W47-LOOP-OWNER-CONTRACTS reads the group structure too).
+    pub(crate) fn token_index(self) -> usize {
+        self.token_index
+    }
+
+    /// The directive's structural role.
+    pub(crate) fn directive(self) -> ConditionalDirective {
+        self.directive
+    }
+}
+
 /// Read the directive word of one complete directive line, which begins at its
 /// `#`, and classify it if it is a conditional-inclusion directive.
 ///
@@ -7549,13 +7562,11 @@ impl Parser<'_> {
         // declaration did not cover it rather than the access the withdrawn
         // declaration would have admitted. Both are the same `Unknown`; only
         // the attribution differs, and the informative one is the premise.
-        if let Some(callee) =
-            find_call(&texts).and_then(|(_, function)| literal_premise::unmet_callee(function))
+        if let Some(description) =
+            find_call(&texts).and_then(|(_, function)| literal_premise::unmet_description(function))
         {
             return LegacyInstruction::Unknown {
-                description: format!(
-                    "call to `{callee}` outside its declared literal-argument premise"
-                ),
+                description,
                 writes: self.refused_writes(&texts),
             };
         }
@@ -8036,11 +8047,9 @@ impl Parser<'_> {
             // Only the wording distinguishes the two, so that a report can tell
             // "nothing was declared" from "the declaration does not cover this
             // call".
-            if let Some(callee) = literal_premise::unmet_callee(function) {
+            if let Some(description) = literal_premise::unmet_description(function) {
                 return LegacyInstruction::Unknown {
-                    description: format!(
-                        "call to `{callee}` outside its declared literal-argument premise"
-                    ),
+                    description,
                     writes: self.refused_writes(&texts),
                 };
             }

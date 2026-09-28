@@ -210,11 +210,23 @@ fn nc3_a_running_poll_from_the_test_thread_is_not_discharged_whatever_the_mode()
     // The enqueue discharges only "request available", never "applied".
     let completion = control_completion(Mode::Threaded);
     assert!(claim_discharged(ControlClaim::RequestAvailable, completion));
-    assert!(!claim_discharged(ControlClaim::OperationApplied, completion));
-    assert!(!claim_discharged(ControlClaim::CallbackFinished, completion));
+    assert!(!claim_discharged(
+        ControlClaim::OperationApplied,
+        completion
+    ));
+    assert!(!claim_discharged(
+        ControlClaim::CallbackFinished,
+        completion
+    ));
     let synchronous = control_completion(Mode::NonThreaded);
-    assert!(claim_discharged(ControlClaim::CallbackFinished, synchronous));
-    assert!(!claim_discharged(ControlClaim::OperationApplied, synchronous));
+    assert!(claim_discharged(
+        ControlClaim::CallbackFinished,
+        synchronous
+    ));
+    assert!(!claim_discharged(
+        ControlClaim::OperationApplied,
+        synchronous
+    ));
     assert_eq!(control_completion(Mode::Either), None);
 }
 
@@ -296,7 +308,11 @@ fn a_site_nothing_reaches_is_unresolved_not_vacuously_discharged() {
     let OwnerVerdict::Unresolved { reasons } = shape.verdict("cb_tail_pause_test") else {
         panic!("expected unresolved");
     };
-    assert!(reasons.iter().any(|reason| reason.contains("no derived caller")));
+    assert!(
+        reasons
+            .iter()
+            .any(|reason| reason.contains("no derived caller"))
+    );
 }
 
 #[test]
@@ -306,7 +322,10 @@ fn an_owner_that_is_not_a_single_derived_thread_is_unresolved() {
     shape.root("flb_input_collector_fd", "other");
     let verdict = shape.verdict("cb_tail_pause_test");
     assert!(
-        matches!(verdict, OwnerVerdict::NotDischarged { .. } | OwnerVerdict::Unresolved { .. }),
+        matches!(
+            verdict,
+            OwnerVerdict::NotDischarged { .. } | OwnerVerdict::Unresolved { .. }
+        ),
         "{verdict:?}"
     );
     assert!(!matches!(verdict, OwnerVerdict::Discharged { .. }));
@@ -319,13 +338,17 @@ fn an_infeasible_threaded_flag_branch_is_pruned() {
     let enqueue = &derived[shape.id("flb_input_thread_instance_pause")];
     // The callback is dispatched in the non-threaded mode on E and in the
     // threaded mode on I; only the latter reaches the enqueue branch.
-    assert!(enqueue.contexts.iter().all(|context| context.mode == Mode::Threaded));
     assert!(
         enqueue
             .contexts
             .iter()
-            .all(|context| context.thread != "flb_lib_worker"
-                || context.mode == Mode::Threaded)
+            .all(|context| context.mode == Mode::Threaded)
+    );
+    assert!(
+        enqueue
+            .contexts
+            .iter()
+            .all(|context| context.thread != "flb_lib_worker" || context.mode == Mode::Threaded)
     );
 }
 

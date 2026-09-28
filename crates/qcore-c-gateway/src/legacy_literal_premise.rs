@@ -65,9 +65,31 @@ use super::Token;
 /// (asserted by the tests), so the rewrite can never collide with a real name.
 pub(super) const UNMET_PREFIX: &str = "qcore_premise_unmet__";
 
+/// The mark that follows [`UNMET_PREFIX`] when the unmet premise is a declared
+/// loop-owner obligation (card **W47-LOOP-OWNER-CONTRACTS**, rule 10p). It
+/// sits under the same reserved prefix, so every reader that already
+/// recognises an unmet premise recognises this one, and the reserved-spelling
+/// escape (rule 10i) covers it.
+const LOOP_OWNER_MARK: &str = "loop_owner__";
+
 /// The callee a rewritten name stands for, for diagnostics.
 pub(super) fn unmet_callee(function: &str) -> Option<&str> {
-    function.strip_prefix(UNMET_PREFIX)
+    let callee = function.strip_prefix(UNMET_PREFIX)?;
+    Some(callee.strip_prefix(LOOP_OWNER_MARK).unwrap_or(callee))
+}
+
+/// The refusal wording for a rewritten callee: a declared loop-owner
+/// obligation is named as such, and every literal-argument refusal keeps its
+/// wording byte for byte.
+pub(super) fn unmet_description(function: &str) -> Option<String> {
+    let rest = function.strip_prefix(UNMET_PREFIX)?;
+    Some(match rest.strip_prefix(LOOP_OWNER_MARK) {
+        Some(callee) => format!(
+            "call to `{callee}` outside its declared loop-owner obligation (no derived thread \
+             on this route)"
+        ),
+        None => format!("call to `{rest}` outside its declared literal-argument premise"),
+    })
 }
 
 /// One declared premise: parameter `index` of `function` must be exactly the
@@ -82,6 +104,10 @@ pub(super) struct LiteralArgument {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct LiteralPremises {
     required: BTreeMap<String, Vec<LiteralArgument>>,
+    /// Card W47-LOOP-OWNER-CONTRACTS: every callee with a declared loop-owner
+    /// obligation. No per-unit route derives a thread, so each of their call
+    /// sites is refused here, whatever its arguments.
+    loop_owner: std::collections::BTreeSet<String>,
     /// Why the set is unreadable, if it is. `Some` poisons the whole set.
     malformed: Option<String>,
 }
@@ -106,6 +132,16 @@ impl LiteralPremises {
     /// call instead.
     pub(super) fn read(contracts: &ResourceContracts) -> Self {
         let mut premises = Self::default();
+        if contracts
+            .source_assumptions()
+            .values()
+            .any(|source| source.contains(qcore_contract::contract_loader::LOOP_OWNER_CLAUSE))
+        {
+            match qcore_contract::contract_loader::declared_loop_owner_obligations(contracts) {
+                Ok(declared) => premises.loop_owner.extend(declared.into_keys()),
+                Err(message) => premises.poison(&message),
+            }
+        }
         if !contracts.source_assumptions().values().any(|source| {
             source.contains(CLAUSE)
                 || source.contains(qcore_contract::contract_loader::RETIRED_PREMISE_DIRECTIVE)
@@ -142,7 +178,12 @@ impl LiteralPremises {
 
     #[must_use]
     pub(super) fn is_empty(&self) -> bool {
-        self.required.is_empty() && self.malformed.is_none()
+        self.required.is_empty() && self.loop_owner.is_empty() && self.malformed.is_none()
+    }
+
+    /// Whether `function` carries a declared loop-owner obligation.
+    pub(super) fn loop_owner(&self, function: &str) -> bool {
+        self.loop_owner.contains(function)
     }
 
     /// The premises declared for `function`, in declaration order.
@@ -328,6 +369,13 @@ pub(super) fn restrict_to_declared_literals(
             continue;
         }
         if !is_call_position(tokens, index) {
+            continue;
+        }
+        // Card W47-LOOP-OWNER-CONTRACTS: a loop-owner obligation is never
+        // discharged on this route, so its callee is refused at every call.
+        if !poisoned && premises.loop_owner(callee) {
+            let target = rewritten.get_or_insert_with(|| tokens.to_vec());
+            target[index].text = format!("{UNMET_PREFIX}{LOOP_OWNER_MARK}{callee}");
             continue;
         }
         if !poisoned && premises.declared(callee).is_empty() {

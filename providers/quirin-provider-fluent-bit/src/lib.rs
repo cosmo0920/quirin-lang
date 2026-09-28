@@ -58,6 +58,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/logging.qv"),
     ),
     (
+        "fluent_bit/loop_owner.qv",
+        include_str!("../contracts/fluent_bit/loop_owner.qv"),
+    ),
+    (
         "fluent_bit/memory.qv",
         include_str!("../contracts/fluent_bit/memory.qv"),
     ),

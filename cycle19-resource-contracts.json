@@ -44,6 +44,7 @@
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
     "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
     "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",

@@ -57,9 +57,9 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use crate::event_reactor::{
-    ActivationReason, ArgumentMode, CallbackContext, CallbackSummary, EventDiagnostic,
-    EventFlags, EventKey, EventOperation, EventProgram, LoopControl, PayloadAccessKind,
-    ReactorProfile, check_event_program,
+    ActivationReason, ArgumentMode, CallbackContext, CallbackSummary, EventDiagnostic, EventFlags,
+    EventKey, EventOperation, EventProgram, LoopControl, PayloadAccessKind, ReactorProfile,
+    check_event_program,
 };
 
 /// Index of a function in [`ThreadProgram::functions`].
@@ -172,7 +172,9 @@ fn apply(effect: ModeEffect, mode: Mode) -> Option<Mode> {
 /// Contexts flow from each root along edges (the thread is kept, the mode is
 /// transformed by the edge's effect, an infeasible `Require` prunes) and along
 /// spawns (a new thread named after the entry, in the spawner's mode).
-/// Unresolved reasons flow along both, independently of contexts.
+/// Unresolved reasons flow along call edges only, independently of contexts:
+/// a spawned thread's identity is its entry, whoever spawns it, and an entry
+/// whose spawner is unresolved is rooted in every mode instead.
 #[must_use]
 pub fn derive(program: &ThreadProgram) -> Vec<Derived> {
     let count = program.functions.len();
@@ -189,10 +191,47 @@ pub fn derive(program: &ThreadProgram) -> Vec<Derived> {
             spawned[*spawner].push(*entry);
         }
     }
+    // Unresolved reasons first: seed, then propagate along every call edge to
+    // a fixed point (monotone over a finite set of reasons). A spawn does not
+    // carry them: the spawned thread is named by its own entry whoever spawns
+    // it. An unresolved spawner instead roots its entry in every mode, since
+    // its own contexts (and so the mode it spawns in) may be incomplete.
+    let mut pending: VecDeque<FunctionId> = VecDeque::new();
+    for (function, reasons) in &program.unresolved {
+        if *function < count {
+            derived[*function]
+                .unresolved
+                .extend(reasons.iter().cloned());
+            pending.push_back(*function);
+        }
+    }
+    while let Some(function) = pending.pop_front() {
+        let reasons = derived[function].unresolved.clone();
+        for edge in &outgoing[function] {
+            let target = edge.callee;
+            let before = derived[target].unresolved.len();
+            derived[target].unresolved.extend(reasons.iter().cloned());
+            if derived[target].unresolved.len() != before {
+                pending.push_back(target);
+            }
+        }
+    }
     let mut queue: VecDeque<(FunctionId, Context, Vec<FunctionId>)> = VecDeque::new();
     for root in &program.roots {
         if root.function < count {
             queue.push_back((root.function, root.context.clone(), vec![root.function]));
+        }
+    }
+    for (spawner, entry) in &program.spawns {
+        if *spawner < count && *entry < count && !derived[*spawner].unresolved.is_empty() {
+            queue.push_back((
+                *entry,
+                Context {
+                    thread: program.functions[*entry].clone(),
+                    mode: Mode::Either,
+                },
+                vec![*spawner, *entry],
+            ));
         }
     }
     while let Some((function, context, path)) = queue.pop_front() {
@@ -229,30 +268,6 @@ pub fn derive(program: &ThreadProgram) -> Vec<Derived> {
             ));
         }
     }
-    // Unresolved reasons: seed, then propagate along every edge and spawn to
-    // a fixed point (monotone over a finite set of reasons).
-    let mut pending: VecDeque<FunctionId> = VecDeque::new();
-    for (function, reasons) in &program.unresolved {
-        if *function < count {
-            derived[*function].unresolved.extend(reasons.iter().cloned());
-            pending.push_back(*function);
-        }
-    }
-    while let Some(function) = pending.pop_front() {
-        let reasons = derived[function].unresolved.clone();
-        let targets = outgoing[function]
-            .iter()
-            .map(|edge| edge.callee)
-            .chain(spawned[function].iter().copied())
-            .collect::<Vec<_>>();
-        for target in targets {
-            let before = derived[target].unresolved.len();
-            derived[target].unresolved.extend(reasons.iter().cloned());
-            if derived[target].unresolved.len() != before {
-                pending.push_back(target);
-            }
-        }
-    }
     derived
 }
 
@@ -280,7 +295,9 @@ impl Owners {
                 .iter()
                 .map(|context| context.thread.clone())
                 .collect::<BTreeSet<_>>();
-            (threads.len() == 1).then(|| threads.into_iter().next()).flatten()
+            (threads.len() == 1)
+                .then(|| threads.into_iter().next())
+                .flatten()
         };
         Self {
             non_threaded: single(engine),

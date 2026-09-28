@@ -1,0 +1,94 @@
+module contract;
+
+// W47-LOOP-OWNER-CONTRACTS (gateway rule 10p, contract specification
+// §C04.10). The collector operations of src/flb_input.c, each with a declared
+// loop-owner obligation.
+//
+// ## The obligation
+//
+// `requires resource_loop_owner(in, KIND);` says the operation reads (`read`)
+// or mutates (`mutate`) state owned by the loop that `in`'s collectors attach
+// to: `collector_create` sets `coll->evl` to `thi->evl` for a threaded input
+// and to `config->evl` otherwise (flb_input.c:2250-2258 at 046accf6 and
+// 90978ac6, :2233-2240 at 66910c10). Pause and resume unlink and relink the
+// collector's event in Monkey's userspace priority queue (mk_event_del /
+// mk_event_add, mk_event_timeout_destroy / _create), which `epoll_ctl`'s own
+// thread safety does not protect, and every operation reads or writes
+// `coll->running` without synchronization. The obligation is discharged only
+// where the call's derived thread is exactly that loop's owner (the engine
+// thread for `config->evl`, the input's worker for `thi->evl`).
+//
+// No per-unit resource route derives a thread. There the obligation is never
+// discharged and every call to these functions is refused, as an uncontracted
+// call already was: the declaration can only refuse. Only the thread-entry
+// census route (qcore_c_gateway::thread_entry_census) can discharge it.
+//
+// ## The custody part, checked against the bodies
+//
+// The four bodies are byte-identical at 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+// (:2946, :3138, :3177, :3198), 046accf6aded7906f66a1baf0202da349e521736 and
+// 90978ac6a59e96d19621108f63e115eb4cd1c576 (:2964, :3158, :3197, :3218).
+// Each looks the collector up by id in `in->collectors` (get_collector) and
+// returns a scalar status:
+//
+// * running reads `coll->running`;
+// * pause unregisters the collector's own event from its loop and clears
+//   `running`;
+// * resume returns 0 without resuming while `config->is_ingestion_active` is
+//   false, otherwise re-registers the collector's own event and sets
+//   `running` (C3's ingestion premise);
+// * delete pauses, unlinks the collector from `in->collectors` under
+//   `config->collectors_mutex` and frees it.
+//
+// None releases, stores or takes custody of `in`, and none changes a counted
+// user. The collector object and its embedded event are owned by the
+// instance's list; resume's registration hands the loop the collector's own
+// event, the registration it held before its pause, not a pointer the caller
+// passed. So `in` is borrowed, `coll_id` is a scalar and the result is none.
+//
+// Registration (flb_input_set_collector_*) retains a callback, and
+// mk_event_add / mk_event_timeout_create retain the caller's event: rule 10j
+// keeps both undeclared (W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS). The public
+// flb_input_pause / flb_input_resume dispatch a plugin callback (hop V) and
+// stay undeclared for the same reason; their two completion meanings (C2) are
+// the census kernel's (qcore_core::loop_owner::control_completion).
+
+extern fn flb_input_collector_running(coll_id: i32, in: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_loop_owner(in, read);
+    ensures normal resource_borrowed(coll_id);
+    ensures normal resource_borrowed(in);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_collector_pause(coll_id: i32, in: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_loop_owner(in, mutate);
+    ensures normal resource_borrowed(coll_id);
+    ensures normal resource_borrowed(in);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_collector_resume(coll_id: i32, in: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_loop_owner(in, mutate);
+    ensures normal resource_borrowed(coll_id);
+    ensures normal resource_borrowed(in);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_collector_delete(coll_id: i32, in: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_loop_owner(in, mutate);
+    ensures normal resource_borrowed(coll_id);
+    ensures normal resource_borrowed(in);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
