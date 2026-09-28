@@ -174,9 +174,14 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
 - **Status:** landed as a fallback after every older route by
   [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md)
   (gateway 10k), with the owner-aware enum arm measured as its own step.
-  Residuals: `W47-ACCESS-PATH-POSITION-RESIDUALS`,
-  `W47-TYPED-ROOT-DECLARATION-READER`; parity stays open under
-  `W46-ACCESS-PATH-PARITY`.
+  Residuals: `W47-ACCESS-PATH-POSITION-RESIDUALS`; parity stays open under
+  `W46-ACCESS-PATH-PARITY`. The typed-root premises are answered from the
+  Clang AST where the lexical reader answers nothing
+  ([W47-TYPED-ROOT-DECLARATION-READER](../../reports/w47-typed-root-declaration-reader/README.md),
+  gateway 10l; no verdict moves); the twelve forecast misses it was opened for
+  refuse on the value type, not the premise (`W47-TYPED-CONST-POINTER-VALUE`),
+  and a lexical-closure blind spot is tracked as
+  `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`.
 - **Positions:** apply P2's layer in controlling expressions (`if`, `while`,
   `for`, `?:`, `&&`/`||` with their evaluation order), in return expressions,
   and in call arguments.

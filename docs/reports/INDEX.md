@@ -968,6 +968,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-access-path-positions](w47-access-path-positions/README.md) | W47-ACCESS-PATH-POSITIONS |
 
+| [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
