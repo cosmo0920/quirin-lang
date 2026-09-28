@@ -252,8 +252,16 @@ comparisons and member stores, parenthesised writes, the census).
 ## Gate
 
 [gate.json](gate.json), exits in [gate/](gate/),
-[`scripts/gate.sh`](scripts/gate.sh). No `providers/` path is touched, so the
-provider gate does not apply.
+[`scripts/gate.sh`](scripts/gate.sh). Code steps at `4e744d6c` (later commits
+change docs only): submodule 0; `run_test_binaries.py` 0 — **342 units, 355
+summaries; 6,151 passed, 0 failed, 11 ignored**
+(`private/test-binaries/20260928T033852Z-1438367/summary.json`);
+`cargo clean --profile dev` 0; fmt 0; clippy 0; census-feature gateway clippy 0
+and library tests 0 (630); both reevaluation examples 0;
+`check_lean_audits.py` 0 (**218** audits); Clang 21.1.8 recorded. After the
+matrix and index regeneration (`0e617e77`): `unittest discover -s
+scripts/tests` 0 (**365**) and `build_docs_index.py --check` 0. No
+`providers/` path is touched, so the provider gate does not apply.
 
 ## Follow-ups
 
