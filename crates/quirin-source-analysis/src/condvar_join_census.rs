@@ -25,7 +25,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use qcore_c_gateway::condvar_census::{
     Fact, NullTestReading, ReadAccess, ReadHeld, ReadJoin, ReadLoopBody, ReadRefusal,
     ReadSectionEvent, ReadSite, ReleaseReading, SyncReading, SyncSite, SyncTables,
-    read_program_with,
+    read_program_lifecycle,
 };
 use qcore_c_gateway::thread_entry_census::{CensusFile, HopTables};
 use qcore_core::condvar_join::{
@@ -62,6 +62,9 @@ pub struct ReleaseVerdict {
     /// The named premises the decision rests on beyond trust boundary 28's
     /// (card W47-CONDVAR-JOIN-STOP-PATHS).
     pub premises: BTreeSet<&'static str>,
+    /// Card W47-FLB-LIB-LIFECYCLE: the paired-lifecycle preconditions some
+    /// path reaching the release violated (its gate refuses the release).
+    pub lifecycle_violations: BTreeSet<String>,
 }
 
 /// Which live threads a release concerns (binding premise P-RETAIN, stated):
@@ -91,6 +94,9 @@ pub struct Census {
     pub retainers: BTreeSet<String>,
     /// The program-wide thread facts the POSIX exclusions rest on.
     pub facts: ThreadFacts,
+    /// Card W47-FLB-LIB-LIFECYCLE: the lifecycle decisions, when declared
+    /// lifecycle obligations were given.
+    pub lifecycle: Option<crate::lifecycle_census::LifecycleCensus>,
 }
 
 /// The kernel's input for one null test (card W47-CONDVAR-JOIN-STOP-PATHS).
@@ -376,9 +382,38 @@ fn struct_of(key: &str) -> &str {
 /// Read, derive and decide every site of one program.
 #[must_use]
 pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Census {
-    let reading = read_program_with(files, hops, tables, &|test| {
-        null_branch_excluded(&null_branch_evidence(test))
-    });
+    census_inner(files, hops, tables, None)
+}
+
+/// [`census`] under declared lifecycle obligations (card
+/// W47-FLB-LIB-LIFECYCLE): each clause checked against the declared bodies,
+/// each declared call against the contract, and every release refused where
+/// a path reaching it violated a lifecycle precondition.
+#[must_use]
+pub fn census_with_lifecycle(
+    files: &[CensusFile],
+    hops: &HopTables,
+    tables: &SyncTables,
+    declared: &BTreeMap<String, qcore_contract::contract_loader::DeclaredLifecycle>,
+    creators: &[&str],
+) -> Census {
+    let roles = crate::lifecycle_census::roles(declared, creators);
+    census_inner(files, hops, tables, Some(&roles))
+}
+
+fn census_inner(
+    files: &[CensusFile],
+    hops: &HopTables,
+    tables: &SyncTables,
+    roles: Option<&qcore_c_gateway::condvar_census::LifecycleRoles>,
+) -> Census {
+    let reading = read_program_lifecycle(
+        files,
+        hops,
+        tables,
+        &|test| null_branch_excluded(&null_branch_evidence(test)),
+        roles,
+    );
     let program = crate::loop_owner_census::thread_program(&reading.census);
     let derived = derive(&program);
     let facts = ThreadFacts::new(&reading, &program, &derived, tables);
@@ -587,6 +622,9 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                 )
             }
             ReadSite::Lifecycle(lifecycle) => {
+                // Card W47-FLB-LIB-LIFECYCLE: after a join, the paths reaching
+                // the destroy carry their lifecycle violations too.
+                let mut violations = BTreeSet::new();
                 let phase = match (&lifecycle.condvar, unread_reason) {
                     (_, Some(why)) => Phase::Unknown(format!("the body is not read: {why}")),
                     (None, None) => {
@@ -608,6 +646,8 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                             // After a join: every root's reading at this site.
                             let mut merged = ReleaseSite::default();
                             for release in found {
+                                violations
+                                    .extend(crate::lifecycle_census::release_violations(release));
                                 let one = release_site(release);
                                 merged.live.extend(one.live);
                                 merged.unresolved.extend(one.unresolved);
@@ -629,7 +669,8 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                 (
                     if lifecycle.init { "init" } else { "destroy" },
                     lifecycle.condvar.clone(),
-                    quiescence_verdict(&phase),
+                    qcore_core::paired_lifecycle::lifecycle_gate(&violations)
+                        .join(quiescence_verdict(&phase)),
                 )
             }
             ReadSite::Access(access) => {
@@ -670,16 +711,23 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
         .iter()
         .map(|reading_release| {
             let site = release_site(reading_release);
-            let verdict = release_verdict(&site);
+            // Card W47-FLB-LIB-LIFECYCLE: a violated lifecycle precondition
+            // refuses the release first; it never discharges one.
+            let lifecycle_violations =
+                crate::lifecycle_census::release_violations(reading_release);
+            let verdict = qcore_core::paired_lifecycle::lifecycle_gate(&lifecycle_violations)
+                .join(release_verdict(&site));
             let premises = release_premises(&site);
             ReleaseVerdict {
                 reading: reading_release.clone(),
                 site,
                 verdict,
                 premises,
+                lifecycle_violations,
             }
         })
         .collect();
+    let lifecycle = roles.map(|roles| crate::lifecycle_census::decide(&reading, roles));
     Census {
         reading,
         program,
@@ -691,6 +739,7 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
         releases,
         retainers,
         facts,
+        lifecycle,
     }
 }
 

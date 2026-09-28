@@ -111,3 +111,23 @@ and `crates/quirin-source-analysis/tests/condvar_join_census.rs`. -/
 #print axioms QCore.CondvarJoin.the_fixed_test_release_is_not_discharged
 #print axioms QCore.CondvarJoin.the_old_test_stays_not_discharged
 #print axioms QCore.CondvarJoin.the_repeated_join_alone_keeps_the_fixed_test_not_discharged
+
+-- The paired start/stop lifecycle (W47-FLB-LIB-LIFECYCLE).
+#print axioms QCore.CondvarJoin.starting_twice_is_rejected
+#print axioms QCore.CondvarJoin.destroying_before_the_stop_is_rejected
+#print axioms QCore.CondvarJoin.nothing_follows_a_destroy
+#print axioms QCore.CondvarJoin.an_accepted_start_began_unstarted
+#print axioms QCore.CondvarJoin.an_accepted_destroy_was_unstarted
+#print axioms QCore.CondvarJoin.the_paired_sequence_is_accepted
+#print axioms QCore.CondvarJoin.a_history_with_a_double_start_is_rejected
+#print axioms QCore.CondvarJoin.a_no_effect_clause_is_in_force_only_if_every_path_joins_nothing
+#print axioms QCore.CondvarJoin.a_no_effect_clause_is_refuted_only_if_every_path_joins
+#print axioms QCore.CondvarJoin.the_first_stop_clause_is_in_force_only_if_every_path_joins_the_started_thread_once
+#print axioms QCore.CondvarJoin.no_followed_path_holds_the_clause
+#print axioms QCore.CondvarJoin.an_in_force_idempotent_stop_adds_no_join
+#print axioms QCore.CondvarJoin.an_in_force_no_effect_clause_agrees_with_the_body
+#print axioms QCore.CondvarJoin.a_withdrawn_clause_reads_the_body
+#print axioms QCore.CondvarJoin.a_refuted_clause_never_discharges
+#print axioms QCore.CondvarJoin.a_lifecycle_violation_blocks_the_release
+#print axioms QCore.CondvarJoin.without_a_violation_the_release_is_unchanged
+#print axioms QCore.CondvarJoin.the_old_and_fixed_test_shapes_stay_not_discharged

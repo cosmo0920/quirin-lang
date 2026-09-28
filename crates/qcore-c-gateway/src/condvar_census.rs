@@ -69,8 +69,13 @@ use crate::legacy_c::{
 };
 use crate::thread_entry_census::{CensusFile, CensusReading, HopTables};
 
+mod lifecycle;
 mod stop_paths;
 
+pub use lifecycle::{
+    BodyPathReading, LifeHistory, LifecycleBodyReading, LifecycleCallReading, LifecycleRoles,
+    LifecycleScenario, ReadLifeEvent, ReadStartResult, ReadTraceJoin,
+};
 pub use stop_paths::{
     DEFAULT_ATTRIBUTE_CREATE, NullTestReading, SelfSite, ThreadIdSite, WrapperReading,
 };
@@ -324,6 +329,10 @@ pub struct ReleaseReading {
     /// of the join as its witness.
     pub live: BTreeMap<String, BTreeSet<(ReadJoin, String)>>,
     pub unresolved: BTreeSet<String>,
+    /// Card W47-FLB-LIB-LIFECYCLE: per distinct path state, every context's
+    /// lifecycle history (key, events) at the release, the release's own
+    /// lifecycle event included. Empty unless lifecycle roles were given.
+    pub lifecycle: BTreeSet<Vec<(String, LifeHistory)>>,
 }
 
 /// A signaller that signals at most once per thread (derived, see
@@ -369,6 +378,11 @@ pub struct SyncReading {
     pub wrappers: Vec<WrapperReading>,
     /// Every spawned entry run to its exit, by plain entry name.
     pub entry_exits: BTreeMap<String, EntryExit>,
+    /// Card W47-FLB-LIB-LIFECYCLE: every call of a declared lifecycle
+    /// function on a test root's paths (empty unless roles were given).
+    pub lifecycle_calls: Vec<LifecycleCallReading>,
+    /// Every declared stop and destroy run from each clause's state.
+    pub lifecycle_bodies: Vec<LifecycleBodyReading>,
 }
 
 // ---------------------------------------------------------------- scanning
@@ -1708,6 +1722,12 @@ struct Global {
     unresolved: BTreeSet<String>,
     timed_out: bool,
     awaited: bool,
+    /// Card W47-FLB-LIB-LIFECYCLE: each keyed context's lifecycle history on
+    /// this path (empty unless lifecycle roles were given).
+    histories: BTreeMap<String, LifeHistory>,
+    /// Every join executed on this path, as classified (only while a
+    /// declared body is run for a clause check).
+    trace: Vec<(ReadTraceJoin, String)>,
 }
 
 type Env = BTreeMap<String, Val>;
@@ -1756,6 +1776,12 @@ struct C5<'a> {
     /// Remaining statement-state steps of a spawned entry's run; `None` for a
     /// test root (unbounded, as before).
     budget: Option<usize>,
+    /// Card W47-FLB-LIB-LIFECYCLE: the declared lifecycle roles, tracked on a
+    /// test root's paths only.
+    roles: Option<&'a LifecycleRoles>,
+    /// Record every executed join in the path's trace (a clause check).
+    trace: bool,
+    lifecycle_calls: BTreeMap<(String, usize, String), LifecycleCallReading>,
 }
 
 impl C5<'_> {
@@ -1790,9 +1816,19 @@ impl C5<'_> {
             what,
             live: BTreeMap::new(),
             unresolved: BTreeSet::new(),
+            lifecycle: BTreeSet::new(),
         });
         for (global, _) in states {
             entry.unresolved.extend(global.unresolved.iter().cloned());
+            if !global.histories.is_empty() {
+                entry.lifecycle.insert(
+                    global
+                        .histories
+                        .iter()
+                        .map(|(key, history)| (key.clone(), history.clone()))
+                        .collect(),
+                );
+            }
             for (thread, joined) in &global.threads {
                 let evidence = match joined {
                     Joined::Live(note) => (
@@ -2275,6 +2311,28 @@ impl C5<'_> {
             let name = tokens[name_index].text.clone();
             let args = arguments(tokens, open, close);
             let site = self.site(definition, name_index);
+            // Card W47-FLB-LIB-LIFECYCLE: a declared lifecycle call records
+            // its context's history before it; a stop or destroy is appended
+            // now (a destroy's release sees it), a start once its value is
+            // known.
+            let lifecycle = self.lifecycle_call(definition, &name, &args, name_index, &current);
+            if let Some((key, operation)) = &lifecycle
+                && *operation != qcore_contract::contract_loader::LifecycleOperation::Start
+            {
+                let event = if *operation == qcore_contract::contract_loader::LifecycleOperation::Stop
+                {
+                    ReadLifeEvent::Stop
+                } else {
+                    ReadLifeEvent::Destroy
+                };
+                for ((global, _), _) in &mut current {
+                    global
+                        .histories
+                        .entry(key.clone())
+                        .or_default()
+                        .push((event.clone(), site.clone()));
+                }
+            }
             let mut next: Vec<(PState, Option<Val>)> = Vec::new();
             for ((mut global, mut env), _) in current {
                 if self.tables.exits.contains(&name.as_str()) {
@@ -2335,6 +2393,21 @@ impl C5<'_> {
                     let thread = thread
                         .filter(|set| set.len() == 1)
                         .and_then(|set| set.into_iter().next());
+                    // Card W47-FLB-LIB-LIFECYCLE: a clause check records every
+                    // join the body executes, classified as below.
+                    if self.trace {
+                        let kind = match &thread {
+                            None => ReadTraceJoin::Unresolved,
+                            Some(t) if !global.threads.contains_key(t) => {
+                                ReadTraceJoin::NotStarted
+                            }
+                            Some(t) if !matches!(global.threads.get(t), Some(Joined::Live(_))) => {
+                                ReadTraceJoin::Repeated
+                            }
+                            Some(_) => ReadTraceJoin::First,
+                        };
+                        global.trace.push((kind, site.clone()));
+                    }
                     match thread {
                         // A join of a thread this path never started changes
                         // nothing this reader tracks.
@@ -2424,13 +2497,33 @@ impl C5<'_> {
                     None => next.push(((global, env), None)),
                 }
             }
+            if let Some((key, qcore_contract::contract_loader::LifecycleOperation::Start)) =
+                &lifecycle
+            {
+                for ((global, _), value) in &mut next {
+                    let result = lifecycle::start_result(value.as_ref());
+                    global
+                        .histories
+                        .entry(key.clone())
+                        .or_default()
+                        .push((ReadLifeEvent::Start(result), site.clone()));
+                }
+            }
             current = next;
             if current.is_empty() {
                 return vec![(None, None)];
             }
         }
+        // Card W47-FLB-LIB-LIFECYCLE: `KEY = CREATOR(…)` starts a context's
+        // history.
+        let created = self.created_key(definition, &words, range);
         let mut out = Vec::new();
-        for ((global, mut env), value) in current {
+        for ((mut global, mut env), value) in current {
+            if let Some((key, site)) = &created {
+                global
+                    .histories
+                    .insert(key.clone(), vec![(ReadLifeEvent::Create, site.clone())]);
+            }
             if let Some(name) = &assigned {
                 let rest = &words[2..];
                 let assigned_value = if let Some(value) = value.clone() {
@@ -2518,6 +2611,22 @@ pub fn read_program_with(
     hops: &HopTables,
     tables: &SyncTables,
     decide: &dyn Fn(&NullTestReading) -> Result<(), String>,
+) -> SyncReading {
+    read_program_lifecycle(files, hops, tables, decide, None)
+}
+
+/// [`read_program_with`], tracking the declared lifecycle roles (card
+/// W47-FLB-LIB-LIFECYCLE): every declared call on a test root's paths with
+/// its context's history, the histories at every release, and every declared
+/// stop and destroy run from each clause's state. With `None` the reading is
+/// exactly [`read_program_with`]'s.
+#[must_use]
+pub fn read_program_lifecycle(
+    files: &[CensusFile],
+    hops: &HopTables,
+    tables: &SyncTables,
+    decide: &dyn Fn(&NullTestReading) -> Result<(), String>,
+    roles: Option<&LifecycleRoles>,
 ) -> SyncReading {
     let census = crate::thread_entry_census::read_program(files, hops);
     let (scans, definitions) = scan(files);
@@ -2778,6 +2887,7 @@ pub fn read_program_with(
         stop_paths::thread_sites(&scans, &definitions, tables, &thread_fields);
     // C5: every test root, with the relevant bodies read.
     let mut releases = Vec::new();
+    let mut lifecycle_calls = Vec::new();
     for (root_id, _thread) in &census.roots {
         let root_name = &census.functions[*root_id];
         let Some(&root) = by_census.get(root_name) else {
@@ -2804,9 +2914,13 @@ pub fn read_program_with(
             published: BTreeSet::new(),
             releases: BTreeMap::new(),
             budget: None,
+            roles,
+            trace: false,
+            lifecycle_calls: BTreeMap::new(),
         };
         c5.run_root(root);
         releases.extend(c5.releases.into_values());
+        lifecycle_calls.extend(c5.lifecycle_calls.into_values());
     }
     // Every spawned entry, run on its own thread to its exit (its releases
     // are not a test root's and are not recorded).
@@ -2838,6 +2952,9 @@ pub fn read_program_with(
             published: BTreeSet::new(),
             releases: BTreeMap::new(),
             budget: Some(ENTRY_STEP_BUDGET),
+            roles: None,
+            trace: false,
+            lifecycle_calls: BTreeMap::new(),
         };
         let mut exit = EntryExit {
             entry: label.clone(),
@@ -2880,6 +2997,36 @@ pub fn read_program_with(
         }
         entry_exits.insert(plain.to_owned(), exit);
     }
+    // Card W47-FLB-LIB-LIFECYCLE: every declared stop and destroy, run from
+    // each clause's state with the join trace on.
+    let lifecycle_bodies = match roles {
+        Some(roles) => {
+            let mut c5 = C5 {
+                scans: &scans,
+                definitions: &definitions,
+                trees: &trees,
+                by_census: &by_census,
+                tables,
+                relevant: &relevant,
+                joins: &joins,
+                may_thread: &may_thread,
+                thread_fields: &thread_fields,
+                excluded: &excluded,
+                root: "lifecycle clause check".to_owned(),
+                root_definition: usize::MAX,
+                types: BTreeMap::new(),
+                stack: Vec::new(),
+                published: BTreeSet::new(),
+                releases: BTreeMap::new(),
+                budget: Some(ENTRY_STEP_BUDGET),
+                roles: None,
+                trace: true,
+                lifecycle_calls: BTreeMap::new(),
+            };
+            lifecycle::read_bodies(&mut c5, roles)
+        }
+        None => Vec::new(),
+    };
     // Kept-refusal tokens at file scope (a static initialiser).
     for (file, scan) in scans.iter().enumerate() {
         for (index, token) in scan.tokens.iter().enumerate() {
@@ -2928,6 +3075,8 @@ pub fn read_program_with(
         self_sites,
         wrappers,
         entry_exits,
+        lifecycle_calls,
+        lifecycle_bodies,
     }
 }
 
