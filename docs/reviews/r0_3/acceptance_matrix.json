@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 543
+  "named_followups": 547
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 118,
+  "contract_modules": 119,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6738,11 +6738,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W47-TAIL-PAUSE-BINDINGS card gate at base 3aed6150 plus this card's commits (docs, report artifacts, the tail-pause selection file, the ledger, the regenerated matrix and index only; no Rust, Lean, contract or provider change). Rust and Lean steps ran on the tree of 3328a4ae (no Rust, Lean or test input differs at any later commit of this card): run_test_binaries.py 345 units, 358 summaries, 6,177 passed, 0 failed, 11 ignored (private/test-binaries/20260928T055453Z-2640587/summary.json); check_lean_audits.py 221 audits passed. The Python suite (365) and docs-index check ran after the matrix and index regeneration. No providers/ path is touched, so the provider gate is not run; provider_tests (129) is carried from the preceding matrix, not measured here. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/w47-tail/gate-1/ (Rust, Lean) and gate-4/ (Python, docs index, Clang, after the final matrix and index regeneration; gate-2 and gate-3 are earlier records runs, also exit 0) of this worktree.",
-  "workspace_tests": 6177,
+  "note": "W47-LOOP-OWNER-CONTRACTS card gate at base 8eba46d1. Rust, Lean and provider steps ran on the tree of 9b3f9f88 (later commits change only docs, report artifacts, the ledger and the regenerated matrix and index): run_test_binaries.py 346 units, 359 summaries, 6,198 passed, 0 failed, 11 ignored (private/test-binaries/20260928T072337Z-3226062/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 222 audits passed. Provider gate: contracts.py check 0, package build 0 and verify 0 (qcore.libevent), provider Python 24 tests OK, provider cargo test 129 passed / 0 failed, provider fmt and clippy clean; quirin-audit pin --check at 66910c10, 046accf6 and the 90978ac6 export (the four loop-owner entries) and pin --verify-contracts exit 0. An earlier gate run (private/lo/gate-1) failed on the gateway's qcore-core dependency (workspace_layering), clippy's needless_range_loop and five module-count pins; each was repaired in 9b3f9f88 and gate-2 is the full rerun. The Python suite (365) and docs-index check ran after the matrix and index regeneration; a first records run failed on scripts/tests/test_contract_corpus.py's module-count pin (118 -> 119), updated before the recorded run. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/lo/gate-2/ and private/lo/gate-records/ of this worktree.",
+  "workspace_tests": 6198,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 221,
+  "lean_audits": 222,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6849,6 +6849,7 @@
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
+   "AuditLoopOwner.lean",
    "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
@@ -6972,7 +6973,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-tail-pause-bindings/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-loop-owner-contracts/gate.json)"
  },
  "named_followups": [
   {

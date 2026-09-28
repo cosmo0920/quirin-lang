@@ -148,8 +148,8 @@ Artifacts: [artifacts/](artifacts/) — `before/` identities, `after/{corpus,sys
 `compare-{corpus,system,slice}.json` ([`scripts/compare.py`](scripts/compare.py)),
 `callers-*.json` and `slice-tally.json`. BEFORE reproduces all three
 baselines (compose3: 0 mismatches each). Binary SHA-256s: BEFORE `87bd218f…`,
-final AFTER `83b90db1…` (built at `795d6757`; an intermediate AFTER at
-`903029aa` gave the same verdicts and leaves).
+final AFTER `fd273fa8…` (built at `9b3f9f88`; AFTER runs at `903029aa` and
+`795d6757` gave the same verdicts and leaves; only comments changed between them).
 
 ## 5. Lean
 
@@ -193,7 +193,17 @@ stay registered under `W47-TAIL-PAUSE-BINDING-RESIDUALS`.
 
 ## 8. Gate
 
-See [gate.json](gate.json) and `gate/`; commands in [`scripts/gate.sh`](scripts/gate.sh).
+[`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in `gate/`,
+figures in [gate.json](gate.json). All steps exit 0 on `9b3f9f88`: the Rust suite
+346 units / 359 summaries, **6,198 passed, 0 failed**, 11 ignored; fmt and
+clippy clean; both probes 0; **222 Lean audits**; provider gate (contracts
+check, package build and verify, 24 provider Python tests, **129 provider
+tests**, provider fmt and clippy) 0; `pin --check` at the three revisions and
+`pin --verify-contracts` 0; the Python suite and docs-index check after the
+regeneration. A first run (private `gate-1`) failed on the gateway's
+`qcore-core` dependency (`workspace_layering.rs`), two clippy loops and five
+module-count pins; all were repaired in `9b3f9f88` (the census adapter moved
+to `quirin-source-analysis`) before this run.
 
 ## Reproduce
 
