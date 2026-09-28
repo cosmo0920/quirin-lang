@@ -1387,6 +1387,53 @@ which is not a second authority.
     keeping the route, and an escape that writes neither the flag nor the
     instance keeping the derivation;
     [report](../reports/w47-loop-owner-instance-flow/README.md).
+    **Amendment (W47-SERVICE-PROPERTY-KEYS): the keys a property setter
+    carries.** In Step B's list-head region a call of a listed variadic
+    setter (`flb_service_set`, `flb_input_set`, `flb_output_set`,
+    `flb_filter_set`; `loop_owner_property_keys.rs`) reaches only its keys'
+    effects when every part is derived: the typed reading records one
+    argument list at the call's line, NULL-terminated (a `NullToPointer`
+    zero), an even number of arguments before it, no other null, every key a
+    string literal of printable ASCII without a backslash or a quote; the
+    setter's body reads its list with exactly `while ((KEY = va_arg(VA, char *)))` and
+    `VALUE = va_arg(VA, char *);` after `va_start` on its last named
+    parameter, `KEY` and `VALUE` assigned nowhere else, `KEY` one whole
+    argument of exactly one call (the property function), no jump; the
+    property function walks one table (`KV = TABLE[0].KF`, `while (KV !=
+    NULL) { if (CMP(KV, K, LEN) == 0) {…} KV = TABLE[++I].KF; }`, `LEN =
+    strnlen(K, N)`), whose elements the typed reading (keys after macro
+    expansion, type enumerators) and the configured lexical reading
+    (`offsetof` fields) give alike, element for element; `CMP`'s body is
+    exactly the read `strnlen`/`strncasecmp` comparison, so a key matches an
+    entry when they agree ignoring ASCII case over the whole key; the matched
+    block holds one `if (!strncasecmp(KV, C, M)) {…} else if … else {…}`
+    chain, each constant typed; an entry takes the first arm its key
+    satisfies, else the final `else`, whose `switch` stores
+    `*(T *)((char *)config + TABLE[I].OFF)` are admitted only into the
+    entry's own `struct flb_config` field, not a listed list member, declared
+    once with exactly the store's type (`unsigned`/`signed` ignored), no such
+    arithmetic standing elsewhere. The call then reaches what the setter's
+    body and the property function's body outside the arms no key selects
+    name (a call, a value, or an invoked macro's replacement list, through
+    nested macros), the two functions read in place; any other list, shape,
+    unknown key, unclassified entry, undecided conditional group in a read
+    body or field dispatch keeps the whole call. The derived table and each
+    key's reach are printed per call (`typed.property_keys`). **Do not** read
+    a key the typed reading did not record as one literal, read a value as a
+    key, drop an arm a matched entry may take, treat an unmatched key as
+    matching nothing, or admit a scalar store whose field or type is not
+    derived. Premises added (trust boundary 28): the typed reading's argument
+    and initializer extraction; P-KEY-FOLD (the C library's `strncasecmp`
+    folds such printable-ASCII keys no more permissively than ASCII case
+    folding); `strnlen` and `va_arg` as C specifies them. The observation is
+    recorded as the held `flb_config_set_property` declaration and
+    `flb_service_set`'s reworded held tail (`fluent_bit/input_instance.qv`,
+    pinned at `66910c10`, `046accf6` and the export). `QCore.LoopOwner` proves
+    a read key list NULL-terminated and paired, an unreadable list or an
+    unmatched key keeping every branch, the reading covering every run of a
+    prefix of the keys, a matched hazard staying read, case variants
+    matching the same entries, and a read reach holding a hazard keeping the
+    route; [report](../reports/w47-service-property-keys/README.md).
 
 <a id="constraint-10q"></a>
 

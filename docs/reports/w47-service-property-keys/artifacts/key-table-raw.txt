@@ -1,0 +1,6 @@
+## tests/runtime/in_tail.c:218 flb_service_set
+keys not read: `flb_service_set`'s body is not the read shape: the key's callee is not defined once
+
+## tests/runtime/in_tail.c:2546 flb_input_set
+keys not read: `flb_input_set` passes its keys to `flb_input_set_property`, whose keyed branches the typed reading does not record
+
