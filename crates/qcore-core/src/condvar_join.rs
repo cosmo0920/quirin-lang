@@ -511,10 +511,146 @@ pub enum JoinEvidence {
     CheckedSuccess,
     /// A join whose result the path does not check.
     Unchecked,
+    /// The **first** join of a thread the path itself started, whose result
+    /// the path ignores (card W47-CONDVAR-JOIN-STOP-PATHS). It is still not a
+    /// checked join; it counts as successful only when [`join_succeeds`]
+    /// derives every POSIX error case impossible.
+    UncheckedFirst(JoinExclusions),
+    /// A join of a thread the path had already joined: `pthread_join` on a
+    /// thread that is no longer joinable is undefined behaviour, so it never
+    /// ends anything (card W47-CONDVAR-JOIN-STOP-PATHS).
+    Repeated,
     /// A join whose result the path knows failed.
     Failed,
     /// No join on this path; the context says what the path relied on.
     Absent(Absence),
+}
+
+/// The four POSIX error cases of one unchecked first join, each derived
+/// impossible (`Ok`) or not (`Err(reason)`) (card
+/// W47-CONDVAR-JOIN-STOP-PATHS).
+///
+/// Named premise **P-POSIX-JOIN** (stated, not proved): `pthread_join(t, …)`
+/// returns 0 unless `t` does not name a joinable thread (never joinable,
+/// detached, or already joined: `EINVAL`/`ESRCH`), another thread is
+/// already waiting to join `t` (`EINVAL`), or the join deadlocks (`EDEADLK`:
+/// `t` is the caller, or `t` is itself waiting, directly or through other
+/// joins, to join the caller). A thread created with the default or an
+/// explicitly joinable detach state is joinable.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct JoinExclusions {
+    /// Not joinable: the spawn wrapper creates it joinable and no detach in
+    /// the program may name it.
+    pub joinable: Result<(), String>,
+    /// Busy or already joined elsewhere: no join site that may name it runs
+    /// on a thread other than the joiner's.
+    pub not_busy: Result<(), String>,
+    /// Self join: the joiner's own path started it, so it is not the joiner.
+    pub not_self: Result<(), String>,
+    /// Join cycle: nothing running on the joiner's thread publishes the
+    /// joiner's identifier (`pthread_self()`), so no thread can join it.
+    pub no_cycle: Result<(), String>,
+}
+
+/// Whether an unchecked first join counts as a successful one: every POSIX
+/// error case is derived impossible (under P-POSIX-JOIN). The first case not
+/// derived is the reason it does not.
+///
+/// # Errors
+///
+/// The first POSIX case whose exclusion is not derived, with its reason.
+pub fn join_succeeds(exclusions: &JoinExclusions) -> Result<(), String> {
+    for (case, result) in [
+        ("not joinable", &exclusions.joinable),
+        (
+            "already joined or awaited by another joiner",
+            &exclusions.not_busy,
+        ),
+        ("a self join", &exclusions.not_self),
+        ("a join cycle through the joiner", &exclusions.no_cycle),
+    ] {
+        if let Err(reason) = result {
+            return Err(format!("the POSIX case `{case}` is not excluded: {reason}"));
+        }
+    }
+    Ok(())
+}
+
+/// A thread started (transitively) by a live retaining thread, and whether
+/// the parent is derived to join it before it ends (card
+/// W47-CONDVAR-JOIN-STOP-PATHS).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DescendantJoin {
+    pub parent: Thread,
+    pub child: Thread,
+    pub evidence: DescendantEvidence,
+}
+
+/// How a descendant is joined before its parent ends.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum DescendantEvidence {
+    /// Joined on every path of the parent's entry to its exit (a checked
+    /// join, or an unchecked first one that [`join_succeeds`] admits), with
+    /// nothing unresolved on the way; and so are its own descendants.
+    Joined,
+    /// Derived never joined: no join site of the program may name it.
+    NeverJoined(String),
+    /// Neither is derived.
+    Unresolved(String),
+}
+
+/// The evidence one null test of a field (`!X->F`, `X->F == NULL`) carries
+/// for excluding its null arm (card W47-CONDVAR-JOIN-STOP-PATHS).
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct NullBranchEvidence {
+    /// The earlier statement that dereferences `X->F` on every path to the
+    /// test, in the same function.
+    pub dominating_dereference: Option<String>,
+    /// Why the function-local part fails (`X` or `X->F` assigned, `&X`
+    /// taken), if it does.
+    pub local_defeat: Option<String>,
+    /// `X`'s declared type, when read.
+    pub base_type: Option<String>,
+    /// Every store of `F` into an object of that type in the program, with
+    /// whether it is a pre-publication store (`Ok`) or why not (`Err`).
+    pub stores: Vec<(String, Result<(), String>)>,
+    /// Writes of the field the reader cannot rule out: an address of the
+    /// field, a whole-object write, a store whose base type is not read.
+    pub unresolved: Vec<String>,
+}
+
+/// Whether a null test's null arm is infeasible on every analysed execution.
+///
+/// Named premise **P-DEREF** (stated, not proved): an execution that
+/// dereferences a null pointer has undefined behaviour and is not an analysed
+/// execution. Then `X->F` is non-null right after its dominating dereference;
+/// it stays so at the test when neither `X` nor `X->F` is assigned in between
+/// by the function, and no thread can store `F` into an object already
+/// reachable: every store of `F` into an object of `X`'s type is into a fresh
+/// allocation no other code has received yet.
+///
+/// # Errors
+///
+/// The first part of the derivation that does not hold.
+pub fn null_branch_excluded(evidence: &NullBranchEvidence) -> Result<(), String> {
+    if evidence.dominating_dereference.is_none() {
+        return Err("no earlier dereference of the field on every path".to_owned());
+    }
+    if let Some(defeat) = &evidence.local_defeat {
+        return Err(defeat.clone());
+    }
+    if evidence.base_type.is_none() {
+        return Err("the base's declared type is not read".to_owned());
+    }
+    if let Some(write) = evidence.unresolved.first() {
+        return Err(format!("a write of the field is not ruled out: {write}"));
+    }
+    if let Some((site, Err(why))) = evidence.stores.iter().find(|(_, r)| r.is_err()) {
+        return Err(format!(
+            "the store at {site} is not a pre-publication store: {why}"
+        ));
+    }
+    Ok(())
 }
 
 /// Why a path without a join reached the release.
@@ -540,64 +676,120 @@ pub struct LiveThread {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ReleaseSite {
     pub live: Vec<LiveThread>,
-    /// Threads the adapter could not close (a joined thread's children whose
-    /// joins are not derived, an unresolved spawn, an unread join identity).
+    /// Threads the adapter could not close (an unresolved spawn, an unread
+    /// join identity).
     pub unresolved: BTreeSet<String>,
+    /// The threads the live retaining threads start, and whether each is
+    /// derived joined before its parent ends (card
+    /// W47-CONDVAR-JOIN-STOP-PATHS).
+    pub descendants: Vec<DescendantJoin>,
 }
 
 /// Decide one release (C5): only a checked, successful join of every live
 /// thread on every path discharges.
 #[must_use]
 pub fn release_verdict(site: &ReleaseSite) -> SyncVerdict {
-    // The most telling failing path first: no join at all, then a failed
-    // join, then an unchecked one.
+    // The most telling failing path first: no join at all, then a repeated
+    // join, a failed join, an unchecked first join whose POSIX cases are not
+    // all excluded, and an unchecked one.
+    let admitted = |evidence: &JoinEvidence| match evidence {
+        JoinEvidence::CheckedSuccess => true,
+        JoinEvidence::UncheckedFirst(exclusions) => join_succeeds(exclusions).is_ok(),
+        _ => false,
+    };
     let rank = |evidence: &JoinEvidence| match evidence {
         JoinEvidence::Absent(Absence::Nothing) => 0,
         JoinEvidence::Absent(Absence::AfterTimeout) => 1,
         JoinEvidence::Absent(Absence::AfterPublication) => 2,
-        JoinEvidence::Failed => 3,
-        JoinEvidence::Unchecked => 4,
-        JoinEvidence::CheckedSuccess => 5,
+        JoinEvidence::Repeated => 3,
+        JoinEvidence::Failed => 4,
+        JoinEvidence::UncheckedFirst(_) => 5,
+        JoinEvidence::Unchecked => 6,
+        JoinEvidence::CheckedSuccess => 7,
     };
     let mut failing: Vec<(&LiveThread, &JoinEvidence, &String)> = site
         .live
         .iter()
         .flat_map(|live| live.paths.iter().map(move |(e, w)| (live, e, w)))
-        .filter(|(_, evidence, _)| **evidence != JoinEvidence::CheckedSuccess)
+        .filter(|(_, evidence, _)| !admitted(evidence))
         .collect();
     failing.sort_by_key(|(_, evidence, _)| rank(evidence));
-    for (live, evidence, witness) in failing {
-        {
-            let reason = match evidence {
-                JoinEvidence::CheckedSuccess => continue,
-                JoinEvidence::Unchecked => format!(
-                    "the join of `{}` is not checked on a path ({witness})",
-                    live.thread
-                ),
-                JoinEvidence::Failed => {
-                    format!("the join of `{}` failed on a path ({witness})", live.thread)
-                }
-                JoinEvidence::Absent(Absence::Nothing) => {
-                    format!("released before any join of `{}` ({witness})", live.thread)
-                }
-                JoinEvidence::Absent(Absence::AfterPublication) => {
-                    format!("publication is not a join of `{}` ({witness})", live.thread)
-                }
-                JoinEvidence::Absent(Absence::AfterTimeout) => format!(
-                    "a timeout is not cancellation of `{}` ({witness})",
-                    live.thread
-                ),
-            };
-            return SyncVerdict::not_discharged(reason);
+    if let Some((live, evidence, witness)) = failing.first() {
+        let reason = match evidence {
+            JoinEvidence::CheckedSuccess | JoinEvidence::Unchecked => format!(
+                "the join of `{}` is not checked on a path ({witness})",
+                live.thread
+            ),
+            JoinEvidence::UncheckedFirst(exclusions) => format!(
+                "the join of `{}` is not checked on a path ({witness}), and {}",
+                live.thread,
+                join_succeeds(exclusions).err().unwrap_or_default()
+            ),
+            JoinEvidence::Repeated => format!(
+                "`{}` is joined a second time on a path ({witness}): a join of a thread \
+                 that is no longer joinable ends nothing",
+                live.thread
+            ),
+            JoinEvidence::Failed => {
+                format!("the join of `{}` failed on a path ({witness})", live.thread)
+            }
+            JoinEvidence::Absent(Absence::Nothing) => {
+                format!("released before any join of `{}` ({witness})", live.thread)
+            }
+            JoinEvidence::Absent(Absence::AfterPublication) => {
+                format!("publication is not a join of `{}` ({witness})", live.thread)
+            }
+            JoinEvidence::Absent(Absence::AfterTimeout) => format!(
+                "a timeout is not cancellation of `{}` ({witness})",
+                live.thread
+            ),
+        };
+        return SyncVerdict::not_discharged(reason);
+    }
+    let mut descendants: Vec<&DescendantJoin> = site.descendants.iter().collect();
+    descendants.sort();
+    for descendant in &descendants {
+        if let DescendantEvidence::NeverJoined(why) = &descendant.evidence {
+            return SyncVerdict::not_discharged(format!(
+                "`{}` starts `{}`, which is never joined: {why}",
+                descendant.parent, descendant.child
+            ));
         }
     }
-    if site.unresolved.is_empty() {
+    let mut unresolved = site.unresolved.clone();
+    for descendant in descendants {
+        if let DescendantEvidence::Unresolved(why) = &descendant.evidence {
+            unresolved.insert(format!(
+                "`{}` starts `{}`, whose join before `{}` ends is not derived: {why}",
+                descendant.parent, descendant.child, descendant.parent
+            ));
+        }
+    }
+    if unresolved.is_empty() {
         SyncVerdict::Discharged
     } else {
         SyncVerdict::Unresolved {
-            reasons: site.unresolved.clone(),
+            reasons: unresolved,
         }
     }
+}
+
+/// The named premises a release's decision rests on beyond trust boundary
+/// 28's (card W47-CONDVAR-JOIN-STOP-PATHS): `P-POSIX-JOIN` when an unchecked
+/// first join was admitted on some path.
+#[must_use]
+pub fn release_premises(site: &ReleaseSite) -> BTreeSet<&'static str> {
+    let mut premises = BTreeSet::new();
+    for live in &site.live {
+        for (evidence, _) in &live.paths {
+            if let JoinEvidence::UncheckedFirst(exclusions) = evidence
+                && join_succeeds(exclusions).is_ok()
+            {
+                premises.insert("P-POSIX-JOIN");
+            }
+        }
+    }
+    premises
 }
 
 /// A route that derives no thread, no predicate loop and no join (the

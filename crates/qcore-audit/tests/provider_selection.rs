@@ -637,7 +637,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(entries.len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(entries.len(), 57);
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -658,7 +659,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(from_selection.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(from_selection.source_assumptions().len(), 57);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
@@ -776,7 +778,8 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(total, 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(total, 57);
 }
 
 #[test]
@@ -809,7 +812,8 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(entries(&manifest_text).1.len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(entries(&manifest_text).1.len(), 57);
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.

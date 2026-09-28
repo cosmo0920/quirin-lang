@@ -1,0 +1,89 @@
+module contract;
+
+// W47-CONDVAR-JOIN-STOP-PATHS (gateway rule 10q as amended, contract
+// specification §C04.10 and §C06.1). The engine thread's start, stop and the
+// shutdown joins of the threads it starts, as observed in the bodies.
+//
+// ## Why every declaration here awaits review
+//
+// What these functions do to a thread -- start it, hand it `ctx`, join it,
+// ignore the join's result, return without joining -- is not a resource-v1
+// custody fact, and v1 has no clause for it. So each declaration is
+// **withheld** (`resource_review_pending`, §C06.1): it loads, it is pinned, it
+// discharges nothing and accuses nothing, every call that would apply it is
+// held under `awaiting-human-review` (a verdict resting only on such holds is
+// `Pending`, never `Safe`), and no consumer applies the custody clauses below
+// while the marker stands. The reason strings carry the observations; they
+// are data for the reviewer, not assumptions of any analysis.
+//
+// ## Which observations are checked, and against what
+//
+// * **Checked against the body by the rule 10q census** (the lexical path
+//   reader over the `90978ac6` export, `docs/reports/w47-condvar-join-stop-paths/`):
+//   `flb_stop`'s branches (the `!ctx->config` return derived infeasible under
+//   P-DEREF; the status branch's unchecked join; the checked join returned),
+//   `do_start`'s two unchecked joins on its failure returns, the repeated
+//   join a failed `flb_start` followed by `flb_stop` performs, and
+//   `mk_utils_worker_spawn`'s joinable creation.
+// * **Read, not derived by the census**: the shutdown joins
+//   (`flb_input_thread_instance_exit`, `flb_output_thread_pool_destroy`,
+//   `flb_downstream_worker_runtime_stop`). The census leaves every
+//   descendant of the engine thread unresolved: the engine thread's path from
+//   its entry to its exit is not read.
+// * **Body identity**: `quirin-audit pin` records each body's identity at the
+//   revisions it was reviewed against (`contracts.lock`); a changed body puts
+//   the declaration out of force until it is reviewed again.
+//
+// ## Custody clauses, pending with the rest
+//
+// `ctx` and `ins` are not freed by these calls (`flb_stop` releases
+// `ctx->config->cf_main`, a member, and `flb_output_thread_pool_destroy`
+// releases `ins->tp`); `flb_downstream_worker_runtime_stop` frees
+// `runtime` except on its self-join refusal; the results are scalars.
+// `flb_start` hands `ctx` to the engine thread until it is joined, which
+// `resource_borrowed` does not say: that clause is exactly what a reviewer
+// must settle.
+//
+// Nothing here is a verified race, a verified defect or an `Unsafe` claim. A
+// "candidate" names an upstream path whose confirmation needs a native
+// reproduction.
+
+extern fn flb_start(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, lib/monkey/mk_core/mk_utils.c:316-318), and stores its identifier in ctx->config->worker (:973). On both failure returns after the spawn (:980-986, :994-1001) it joins the thread with the result ignored and sets ctx->status to FLB_LIB_ERROR. It returns 0 without setting FLB_LIB_OK when the notification loop finds no started or failed value (:1008). ctx is handed to the engine thread until that thread is joined; v1 cannot state a thread start, a join or that retention.", "qcore-c integrator");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_stop(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: flb_stop reads ctx->config->worker (:1047) before its !ctx->config test (:1062), and ctx->config is stored only by flb_create before publication (:174), so the return 0 without a join at :1063 is derived infeasible under P-DEREF. On the FLB_LIB_NONE or FLB_LIB_ERROR status branch (:1049) it joins the engine thread and returns 0 with the join result ignored (:1058). Otherwise it signals the engine to exit and returns the join result (:1077-1083). Candidate, not a verified defect: after a flb_start whose engine thread already failed and was joined in do_start (:984, :999, status FLB_LIB_ERROR), the status branch joins that thread a second time (:1058), undefined under POSIX; confirming it needs a native reproduction. The status read (:1049) is not synchronised with the engine thread's own write (:932).", "qcore-c integrator");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_thread_instance_exit(ins: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("Read at 90978ac6 (src/flb_input_thread.c), not derived by the census: it copies the input worker's identifier (:591), writes the exit command to the worker and joins it with the result ignored (:607), returning 0. When the command cannot be written it returns -1 without joining (:602-604); whether a caller then releases what the worker retains is not derived.", "qcore-c integrator");
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_output_thread_pool_destroy(ins: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("Read at 90978ac6 (src/flb_output_thread.c), not derived by the census: for each running pool worker it writes the stop command and joins the worker with the result ignored (:646), then destroys the pool (:650). Candidate, not a verified defect: a worker whose stop command cannot be written is skipped without a join (:640-644) and its parameters are freed while it may still run; confirming it needs a native reproduction of the failed write.", "qcore-c integrator");
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_downstream_worker_runtime_stop(runtime: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_review_pending("Read at 90978ac6 (src/flb_downstream_worker.c), not derived by the census: called from one of its own workers it returns -1 without joining (:491-492, which avoids a self join) and without freeing the runtime; otherwise it waits for active operations under the lifecycle mutex, wakes every worker and joins each created worker with the result ignored (:520) before destroying the runtime's synchronisation objects and freeing it. The runtime is freed on that path and not on the -1 return, which v1 cannot state per path.", "qcore-c integrator");
+    ensures normal resource_released(runtime, nullable);
+    ensures normal resource_return_none();
+};

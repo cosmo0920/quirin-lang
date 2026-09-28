@@ -920,5 +920,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(contracts.source_assumptions().len(), 57);
 }

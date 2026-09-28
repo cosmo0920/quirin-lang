@@ -454,6 +454,26 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_total_size",
         3,
     ),
+    // Card W47-CONDVAR-JOIN-STOP-PATHS: the marker, the contract-level review
+    // marker carrying the observed join behaviour, one parameter mode and the
+    // scalar result; every declaration is withheld awaiting review.
+    ("fluent_bit/lib_engine_thread.qv", "flb_start", 4),
+    ("fluent_bit/lib_engine_thread.qv", "flb_stop", 4),
+    (
+        "fluent_bit/lib_engine_thread.qv",
+        "flb_input_thread_instance_exit",
+        4,
+    ),
+    (
+        "fluent_bit/lib_engine_thread.qv",
+        "flb_output_thread_pool_destroy",
+        4,
+    ),
+    (
+        "fluent_bit/lib_engine_thread.qv",
+        "flb_downstream_worker_runtime_stop",
+        4,
+    ),
     ("fluent_bit/logging.qv", "flb_log_check", 3),
     // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
     // `libc/errno.qv`, and this module gains one declaration. Deliberate;
@@ -1305,7 +1325,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 118 -> 119 by card W47-LOOP-OWNER-CONTRACTS' `fluent_bit/loop_owner.qv`.
     // 119 -> 120 by card W47-CONDVAR-JOIN-PUBLICATION's `libc/pthread_sync.qv`.
-    assert_eq!(sources.len(), 120, "unexpected contract corpus size");
+    // 120 -> 121 by card W47-CONDVAR-JOIN-STOP-PATHS'
+    // `fluent_bit/lib_engine_thread.qv`.
+    assert_eq!(sources.len(), 121, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

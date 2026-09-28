@@ -29,6 +29,14 @@
 //!   [`SyncTables::releases`] calls, the `destroy` of a published local's
 //!   condvar or mutex, and the scope end of a local whose address the root
 //!   stored into a field.
+//! * **Stop paths** (card **W47-CONDVAR-JOIN-STOP-PATHS**): the path reader
+//!   tells the first join of a thread the path started (and the wrapper that
+//!   started it) from a repeated join, drops the null arm of a field test the
+//!   adapter's decider excludes ([`NullTestReading`], the kernel's
+//!   `null_branch_excluded`), reads every join/detach identity, every
+//!   `pthread_self` and every spawn wrapper's joinability program-wide, and
+//!   runs every spawned entry to its exit ([`EntryExit`]) so the adapter can
+//!   decide a live thread's own children.
 //!
 //! Objects are **field-keyed**: `&test.mutex` and `&test->mutex` are the key
 //! `tail_pause_test.mutex` when `test` is declared `struct tail_pause_test`.
@@ -60,6 +68,12 @@ use crate::legacy_c::{
     ConditionalDirective, Token, is_identifier, matching, tokenize_with_conditionals,
 };
 use crate::thread_entry_census::{CensusFile, CensusReading, HopTables};
+
+mod stop_paths;
+
+pub use stop_paths::{
+    DEFAULT_ATTRIBUTE_CREATE, NullTestReading, SelfSite, ThreadIdSite, WrapperReading,
+};
 
 /// The closed binding tables of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -281,6 +295,13 @@ pub struct FunctionSync {
 pub enum ReadJoin {
     CheckedSuccess,
     Unchecked,
+    /// The first join of a thread this path started through `wrapper`, its
+    /// result ignored (card W47-CONDVAR-JOIN-STOP-PATHS).
+    UncheckedFirst {
+        wrapper: String,
+    },
+    /// A join of a thread this path had already joined.
+    Repeated,
     Failed,
     /// No join; `true` when a timed wait timed out on the path, and the
     /// second flag when the path awaited a publication.
@@ -314,6 +335,17 @@ pub struct SignalOnce {
     pub derived: Result<String, String>,
 }
 
+/// A spawned entry run on its own thread to its exit (card
+/// W47-CONDVAR-JOIN-STOP-PATHS): the threads its paths started and how each
+/// was joined at the exit, per distinct path state.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct EntryExit {
+    /// The entry's census name.
+    pub entry: String,
+    pub live: BTreeMap<String, BTreeSet<(ReadJoin, String)>>,
+    pub unresolved: BTreeSet<String>,
+}
+
 /// The whole reading of one program.
 #[derive(Clone, Debug, Default)]
 pub struct SyncReading {
@@ -326,6 +358,17 @@ pub struct SyncReading {
     pub thread_fields: BTreeMap<String, BTreeSet<String>>,
     /// The file that defines each census name.
     pub defined_in: BTreeMap<String, String>,
+    /// Card W47-CONDVAR-JOIN-STOP-PATHS: every null test of a field in a read
+    /// function, with its decider's answer.
+    pub null_tests: Vec<NullTestReading>,
+    /// Every `pthread_join`/`pthread_detach` and its identity.
+    pub thread_sites: Vec<ThreadIdSite>,
+    /// Every `pthread_self()`.
+    pub self_sites: Vec<SelfSite>,
+    /// Every spawn wrapper's joinability.
+    pub wrappers: Vec<WrapperReading>,
+    /// Every spawned entry run to its exit, by plain entry name.
+    pub entry_exits: BTreeMap<String, EntryExit>,
 }
 
 // ---------------------------------------------------------------- scanning
@@ -1660,6 +1703,8 @@ enum Val {
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 struct Global {
     threads: BTreeMap<String, Joined>,
+    /// The spawn wrapper that started each thread on this path.
+    spawned_by: BTreeMap<String, String>,
     unresolved: BTreeSet<String>,
     timed_out: bool,
     awaited: bool,
@@ -1678,6 +1723,15 @@ struct PFlow {
 
 const PATH_BUDGET: usize = 4096;
 
+/// Statement-state steps one spawned entry's run may take (card
+/// W47-CONDVAR-JOIN-STOP-PATHS). A run that exhausts it leaves every state
+/// from there on unresolved: the budget bounds the reading, never a verdict.
+pub const ENTRY_STEP_BUDGET: usize = 200_000;
+
+/// The reason an entry run past its step budget carries.
+pub const ENTRY_BUDGET_EXHAUSTED: &str =
+    "the path reader's step budget for this entry's run was exhausted";
+
 struct C5<'a> {
     scans: &'a [FileScan],
     definitions: &'a [Definition],
@@ -1688,6 +1742,10 @@ struct C5<'a> {
     joins: &'a BTreeSet<usize>,
     may_thread: &'a BTreeMap<usize, String>,
     thread_fields: &'a BTreeMap<String, BTreeSet<String>>,
+    /// Card W47-CONDVAR-JOIN-STOP-PATHS: `(file, condition start)` of every
+    /// null test whose null arm the decider excluded, with whether the
+    /// condition holds exactly when the field is null.
+    excluded: &'a BTreeMap<(usize, usize), bool>,
     root: String,
     root_definition: usize,
     /// The struct types of the running frame's names.
@@ -1695,6 +1753,9 @@ struct C5<'a> {
     stack: Vec<usize>,
     published: BTreeSet<String>,
     releases: BTreeMap<(String, usize, String, String), ReleaseReading>,
+    /// Remaining statement-state steps of a spawned entry's run; `None` for a
+    /// test root (unbounded, as before).
+    budget: Option<usize>,
 }
 
 impl C5<'_> {
@@ -1891,6 +1952,20 @@ impl C5<'_> {
             normal,
             ..PFlow::default()
         };
+        if let Some(budget) = &mut self.budget {
+            if *budget == 0 {
+                return normal(
+                    states
+                        .into_iter()
+                        .map(|(mut g, e)| {
+                            g.unresolved.insert(ENTRY_BUDGET_EXHAUSTED.to_owned());
+                            (g, e)
+                        })
+                        .collect(),
+                );
+            }
+            *budget = budget.saturating_sub(states.len().max(1));
+        }
         match stmt {
             Stmt::Empty => normal(states),
             Stmt::Break => PFlow {
@@ -2072,7 +2147,17 @@ impl C5<'_> {
         cond: (usize, usize),
         (global, env): PState,
     ) -> (BTreeSet<PState>, BTreeSet<PState>) {
-        let tokens = &self.scans[self.definitions[definition].file].tokens;
+        let file = self.definitions[definition].file;
+        if let Some(null_when_true) = self.excluded.get(&(file, cond.0)) {
+            // The null arm is infeasible on every analysed execution.
+            let state = BTreeSet::from([(global, env)]);
+            return if *null_when_true {
+                (BTreeSet::new(), state)
+            } else {
+                (state, BTreeSet::new())
+            };
+        }
+        let tokens = &self.scans[file].tokens;
         let (negated, inner) = condition_atom(tokens, cond, self.tables);
         let words = texts(tokens, inner);
         // `NAME`, `NAME == INT`, `NAME != INT`.
@@ -2208,6 +2293,17 @@ impl C5<'_> {
                             .insert(format!("a spawn at {site} names no entry"));
                     } else {
                         global.threads.insert(entry.clone(), Joined::Live(None));
+                        // `pthread_create` with a null attribute object
+                        // creates a joinable thread by default.
+                        let wrapper = if name == "pthread_create"
+                            && args.get(1).is_some_and(|r| {
+                                matches!(texts(tokens, *r).as_slice(), ["NULL" | "0"])
+                            }) {
+                            stop_paths::DEFAULT_ATTRIBUTE_CREATE.to_owned()
+                        } else {
+                            name.clone()
+                        };
+                        global.spawned_by.insert(entry.clone(), wrapper);
                         if let Some(out) = out_arg.and_then(|o| args.get(o))
                             && let Some(local) = root_name(tokens, *out)
                             && texts(tokens, *out).first() == Some(&"&")
@@ -2245,6 +2341,17 @@ impl C5<'_> {
                         Some(thread) if !global.threads.contains_key(&thread) => {
                             next.push(((global, env), None));
                         }
+                        // A thread this path already joined: the join is
+                        // repeated, whatever its result (card
+                        // W47-CONDVAR-JOIN-STOP-PATHS).
+                        Some(thread)
+                            if !matches!(global.threads.get(&thread), Some(Joined::Live(_))) =>
+                        {
+                            global
+                                .threads
+                                .insert(thread, Joined::Done(ReadJoin::Repeated, site.clone()));
+                            next.push(((global, env), None));
+                        }
                         Some(thread) => {
                             let value = Val::JoinResult(thread.clone(), site.clone());
                             if assigned.is_some()
@@ -2254,9 +2361,14 @@ impl C5<'_> {
                                 global.threads.insert(thread, Joined::Pending(site.clone()));
                                 next.push(((global, env), Some(value)));
                             } else {
+                                let wrapper =
+                                    global.spawned_by.get(&thread).cloned().unwrap_or_default();
                                 global.threads.insert(
                                     thread,
-                                    Joined::Done(ReadJoin::Unchecked, site.clone()),
+                                    Joined::Done(
+                                        ReadJoin::UncheckedFirst { wrapper },
+                                        site.clone(),
+                                    ),
                                 );
                                 next.push(((global, env), None));
                             }
@@ -2390,9 +2502,23 @@ fn parse_body(scan: &FileScan, definition: &Definition) -> Result<Vec<Stmt>, Str
 }
 
 /// Read one program: the thread-entry census, every function's C4 sites, the
-/// C5 releases of every test root and the single-signal derivations.
+/// C5 releases of every test root and the single-signal derivations. No null
+/// arm is excluded: [`read_program_with`] takes the decider.
 #[must_use]
 pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> SyncReading {
+    read_program_with(files, hops, tables, &|_| Err("no decider".to_owned()))
+}
+
+/// [`read_program`] with a decider for null tests (card
+/// W47-CONDVAR-JOIN-STOP-PATHS): the path reader drops the null arm of every
+/// test for which `decide` returns `Ok`.
+#[must_use]
+pub fn read_program_with(
+    files: &[CensusFile],
+    hops: &HopTables,
+    tables: &SyncTables,
+    decide: &dyn Fn(&NullTestReading) -> Result<(), String>,
+) -> SyncReading {
     let census = crate::thread_entry_census::read_program(files, hops);
     let (scans, definitions) = scan(files);
     let mut by_census = BTreeMap::new();
@@ -2638,6 +2764,18 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
         }
         trees.insert(id, result);
     }
+    // Card W47-CONDVAR-JOIN-STOP-PATHS: null tests, decided; thread sites.
+    let types = stop_paths::types(&scans);
+    let mut null_tests = stop_paths::null_tests(&scans, &definitions, &trees, &types, tables);
+    let mut excluded: BTreeMap<(usize, usize), bool> = BTreeMap::new();
+    for test in &mut null_tests {
+        test.excluded = decide(test);
+        if test.excluded.is_ok() {
+            excluded.insert((test.file_index, test.cond_start), test.null_when_true);
+        }
+    }
+    let (thread_sites, self_sites, wrappers) =
+        stop_paths::thread_sites(&scans, &definitions, tables, &thread_fields);
     // C5: every test root, with the relevant bodies read.
     let mut releases = Vec::new();
     for (root_id, _thread) in &census.roots {
@@ -2658,15 +2796,89 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
             joins: &joins,
             may_thread: &may_thread,
             thread_fields: &thread_fields,
+            excluded: &excluded,
             root: root_name.clone(),
             root_definition: root,
             types: BTreeMap::new(),
             stack: Vec::new(),
             published: BTreeSet::new(),
             releases: BTreeMap::new(),
+            budget: None,
         };
         c5.run_root(root);
         releases.extend(c5.releases.into_values());
+    }
+    // Every spawned entry, run on its own thread to its exit (its releases
+    // are not a test root's and are not recorded).
+    let mut entry_exits = BTreeMap::new();
+    for (_, entry_id) in &census.spawns {
+        let label = &census.functions[*entry_id];
+        let plain = label.rsplit_once("::").map_or(label.as_str(), |(_, n)| n);
+        if entry_exits.contains_key(plain) {
+            continue;
+        }
+        let Some(&entry) = by_census.get(label) else {
+            continue;
+        };
+        let mut c5 = C5 {
+            scans: &scans,
+            definitions: &definitions,
+            trees: &trees,
+            by_census: &by_census,
+            tables,
+            relevant: &relevant,
+            joins: &joins,
+            may_thread: &may_thread,
+            thread_fields: &thread_fields,
+            excluded: &excluded,
+            root: label.clone(),
+            root_definition: usize::MAX,
+            types: BTreeMap::new(),
+            stack: Vec::new(),
+            published: BTreeSet::new(),
+            releases: BTreeMap::new(),
+            budget: Some(ENTRY_STEP_BUDGET),
+        };
+        let mut exit = EntryExit {
+            entry: label.clone(),
+            ..EntryExit::default()
+        };
+        let parsed;
+        let exits = if trees.contains_key(&entry) {
+            c5.run_function(entry, Global::default())
+        } else {
+            // An entry the path reader does not otherwise read: read it now.
+            parsed = parse_body(&scans[definitions[entry].file], &definitions[entry]);
+            let mut local = trees.clone();
+            local.insert(entry, parsed);
+            let mut c5 = C5 {
+                trees: &local,
+                ..c5
+            };
+            c5.run_function(entry, Global::default())
+        };
+        for (global, _) in exits {
+            exit.unresolved.extend(global.unresolved.iter().cloned());
+            for (thread, joined) in &global.threads {
+                let evidence = match joined {
+                    Joined::Live(note) => (
+                        ReadJoin::Absent {
+                            timed_out: global.timed_out,
+                            awaited: global.awaited,
+                        },
+                        note.clone()
+                            .unwrap_or_else(|| "no join on this path".to_owned()),
+                    ),
+                    Joined::Pending(site) => (ReadJoin::Unchecked, site.clone()),
+                    Joined::Done(join, site) => (join.clone(), site.clone()),
+                };
+                exit.live
+                    .entry(thread.clone())
+                    .or_default()
+                    .insert(evidence);
+            }
+        }
+        entry_exits.insert(plain.to_owned(), exit);
     }
     // Kept-refusal tokens at file scope (a static initialiser).
     for (file, scan) in scans.iter().enumerate() {
@@ -2711,6 +2923,11 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
         signal_once,
         thread_fields,
         defined_in,
+        null_tests,
+        thread_sites,
+        self_sites,
+        wrappers,
+        entry_exits,
     }
 }
 

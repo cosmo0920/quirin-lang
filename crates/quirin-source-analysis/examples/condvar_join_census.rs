@@ -1,5 +1,8 @@
 //! Card W47-CONDVAR-JOIN-PUBLICATION: run the condvar/join census over one
-//! program's sources and print every C4 site and C5 release as JSON.
+//! program's sources and print every C4 site and C5 release as JSON. Card
+//! W47-CONDVAR-JOIN-STOP-PATHS adds each release's POSIX join exclusions,
+//! descendants and named premises, every null test with its decision, and
+//! every spawn wrapper's joinability.
 //!
 //! ```text
 //! cargo run -p quirin-source-analysis --example condvar_join_census -- \
@@ -17,7 +20,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::thread_entry_census::CensusFile;
-use qcore_core::condvar_join::SyncVerdict;
+use qcore_core::condvar_join::{DescendantEvidence, JoinEvidence, SyncVerdict, join_succeeds};
 use quirin_source_analysis::condvar_join_census::{FLUENT_BIT_SYNC, census};
 use quirin_source_analysis::loop_owner_census::FLUENT_BIT_HOPS;
 
@@ -128,6 +131,30 @@ fn main() {
                 "live": live,
                 "unresolved": release.site.unresolved.iter().take(6).collect::<Vec<_>>(),
                 "unresolved_count": release.site.unresolved.len(),
+                "unchecked_first_joins": release.site.live.iter().flat_map(|live| {
+                    live.paths.iter().filter_map(move |(evidence, witness)| match evidence {
+                        JoinEvidence::UncheckedFirst(exclusions) => Some(serde_json::json!({
+                            "thread": live.thread,
+                            "at": witness,
+                            "joinable": format!("{:?}", exclusions.joinable),
+                            "not_busy": format!("{:?}", exclusions.not_busy),
+                            "not_self": format!("{:?}", exclusions.not_self),
+                            "no_cycle": format!("{:?}", exclusions.no_cycle),
+                            "counts_as_success": join_succeeds(exclusions).is_ok(),
+                        })),
+                        _ => None,
+                    })
+                }).collect::<Vec<_>>(),
+                "descendants": release.site.descendants.iter().map(|d| serde_json::json!({
+                    "parent": d.parent,
+                    "child": d.child,
+                    "evidence": match &d.evidence {
+                        DescendantEvidence::Joined => "joined".to_owned(),
+                        DescendantEvidence::NeverJoined(why) => format!("never joined: {why}"),
+                        DescendantEvidence::Unresolved(why) => format!("unresolved: {why}"),
+                    },
+                })).collect::<Vec<_>>(),
+                "premises": release.premises,
                 "result": verdict(&release.verdict),
             })
         })
@@ -162,6 +189,25 @@ fn main() {
             Err(reason) => format!("not derived: {reason}"),
         })).collect::<BTreeMap<_, _>>(),
         "thread_fields": result.reading.thread_fields,
+        "null_tests": result.reading.null_tests.iter().map(|t| serde_json::json!({
+            "file": t.file,
+            "line": t.line,
+            "function": t.function,
+            "test": format!("{}->{} ({})", t.base, t.field, if t.null_when_true { "true when null" } else { "true when non-null" }),
+            "dominating_dereference": t.dominating_dereference,
+            "local_defeat": t.local_defeat,
+            "base_type": t.base_type,
+            "stores": t.stores.iter().map(|(site, r)| format!("{site}: {r:?}")).collect::<Vec<_>>(),
+            "unresolved": t.unresolved.iter().take(6).collect::<Vec<_>>(),
+            "unresolved_count": t.unresolved.len(),
+            "excluded": format!("{:?}", t.excluded),
+        })).collect::<Vec<_>>(),
+        "wrappers": result.facts.wrappers.iter().map(|(w, r)| (w.clone(), format!("{r:?}"))).collect::<BTreeMap<_, _>>(),
+        "entry_exits": result.reading.entry_exits.iter().map(|(entry, exit)| (entry.clone(), serde_json::json!({
+            "started": exit.live.keys().collect::<Vec<_>>(),
+            "unresolved_count": exit.unresolved.len(),
+            "unresolved": exit.unresolved.iter().take(3).collect::<Vec<_>>(),
+        }))).collect::<BTreeMap<_, _>>(),
         "tally": tally,
         "sites": sites,
         "releases": releases,

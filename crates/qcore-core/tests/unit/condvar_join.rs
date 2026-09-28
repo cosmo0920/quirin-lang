@@ -233,6 +233,7 @@ fn live(evidence: JoinEvidence) -> ReleaseSite {
             paths: vec![(evidence, "path".to_owned())],
         }],
         unresolved: BTreeSet::new(),
+        descendants: Vec::new(),
     }
 }
 
@@ -275,6 +276,7 @@ fn nc4_nc5_nc9_publication_timeout_and_early_release_are_rejected() {
             ],
         }],
         unresolved: BTreeSet::new(),
+        descendants: Vec::new(),
     };
     assert!(matches!(
         release_verdict(&mixed),
@@ -354,4 +356,180 @@ fn the_condvar_edge_orders_the_snapshot_in_the_concurrent14_checker() {
         )),
         "{early:?}"
     );
+}
+
+// ------------------------------------------ W47-CONDVAR-JOIN-STOP-PATHS
+
+fn all_excluded() -> JoinExclusions {
+    JoinExclusions {
+        joinable: Ok(()),
+        not_busy: Ok(()),
+        not_self: Ok(()),
+        no_cycle: Ok(()),
+    }
+}
+
+#[test]
+fn an_unchecked_first_join_counts_only_with_every_posix_case_excluded() {
+    assert!(join_succeeds(&all_excluded()).is_ok());
+    // Negative controls first: each case left open refuses on its own.
+    let detached = JoinExclusions {
+        joinable: Err("the wrapper sets PTHREAD_CREATE_DETACHED".to_owned()),
+        ..all_excluded()
+    };
+    let busy = JoinExclusions {
+        not_busy: Err("the join at x.c:1 runs on 6 other threads".to_owned()),
+        ..all_excluded()
+    };
+    let own = JoinExclusions {
+        not_self: Err("the joining thread's own entry".to_owned()),
+        ..all_excluded()
+    };
+    let cycle = JoinExclusions {
+        no_cycle: Err("pthread_self() at y.c:2".to_owned()),
+        ..all_excluded()
+    };
+    for (exclusions, case) in [
+        (&detached, "not joinable"),
+        (&busy, "already joined or awaited"),
+        (&own, "a self join"),
+        (&cycle, "a join cycle"),
+    ] {
+        let reason = join_succeeds(exclusions).unwrap_err();
+        assert!(reason.contains(case), "{reason}");
+        let verdict = release_verdict(&live(JoinEvidence::UncheckedFirst(exclusions.clone())));
+        match verdict {
+            SyncVerdict::NotDischarged { reason } => {
+                assert!(
+                    reason.contains("is not checked") && reason.contains(case),
+                    "{reason}"
+                );
+            }
+            other => panic!("{other:?}"),
+        }
+    }
+    // With every case excluded the unchecked first join admits, and the
+    // decision names P-POSIX-JOIN.
+    let site = live(JoinEvidence::UncheckedFirst(all_excluded()));
+    assert_eq!(release_verdict(&site), SyncVerdict::Discharged);
+    assert_eq!(release_premises(&site), BTreeSet::from(["P-POSIX-JOIN"]));
+    assert!(release_premises(&live(JoinEvidence::CheckedSuccess)).is_empty());
+}
+
+#[test]
+fn a_repeated_join_never_ends_a_thread() {
+    match release_verdict(&live(JoinEvidence::Repeated)) {
+        SyncVerdict::NotDischarged { reason } => {
+            assert!(reason.contains("joined a second time"), "{reason}");
+        }
+        other => panic!("{other:?}"),
+    }
+    // A repeated join ranks before an unchecked first join: it is the reason.
+    let site = ReleaseSite {
+        live: vec![LiveThread {
+            thread: "flb_lib_worker".to_owned(),
+            paths: vec![
+                (JoinEvidence::CheckedSuccess, "main".to_owned()),
+                (
+                    JoinEvidence::UncheckedFirst(JoinExclusions {
+                        not_busy: Err("busy".to_owned()),
+                        ..all_excluded()
+                    }),
+                    "status".to_owned(),
+                ),
+                (JoinEvidence::Repeated, "after do_start".to_owned()),
+            ],
+        }],
+        ..ReleaseSite::default()
+    };
+    match release_verdict(&site) {
+        SyncVerdict::NotDischarged { reason } => {
+            assert!(reason.contains("after do_start"), "{reason}");
+        }
+        other => panic!("{other:?}"),
+    }
+}
+
+#[test]
+fn a_descendant_blocks_the_release_until_its_join_is_derived() {
+    let with = |evidence: DescendantEvidence| {
+        let mut site = live(JoinEvidence::CheckedSuccess);
+        site.descendants.push(DescendantJoin {
+            parent: "flb_lib_worker".to_owned(),
+            child: "input_thread".to_owned(),
+            evidence,
+        });
+        release_verdict(&site)
+    };
+    assert_eq!(with(DescendantEvidence::Joined), SyncVerdict::Discharged);
+    assert!(matches!(
+        with(DescendantEvidence::Unresolved(
+            "the engine loop is not read".to_owned()
+        )),
+        SyncVerdict::Unresolved { .. }
+    ));
+    match with(DescendantEvidence::NeverJoined(
+        "no join names it".to_owned(),
+    )) {
+        SyncVerdict::NotDischarged { reason } => {
+            assert!(reason.contains("never joined"), "{reason}");
+        }
+        other => panic!("{other:?}"),
+    }
+}
+
+#[test]
+fn a_null_arm_is_excluded_only_with_its_whole_derivation() {
+    let derived = NullBranchEvidence {
+        dominating_dereference: Some("src/flb_lib.c:1047".to_owned()),
+        local_defeat: None,
+        base_type: Some("struct flb_lib_ctx".to_owned()),
+        stores: vec![("src/flb_lib.c:174".to_owned(), Ok(()))],
+        unresolved: Vec::new(),
+    };
+    assert!(null_branch_excluded(&derived).is_ok());
+    // Negative controls: every missing part keeps the null arm.
+    for (evidence, words) in [
+        (
+            NullBranchEvidence {
+                dominating_dereference: None,
+                ..derived.clone()
+            },
+            "no earlier dereference",
+        ),
+        (
+            NullBranchEvidence {
+                local_defeat: Some("`ctx` is assigned (line 3)".to_owned()),
+                ..derived.clone()
+            },
+            "is assigned",
+        ),
+        (
+            NullBranchEvidence {
+                base_type: None,
+                ..derived.clone()
+            },
+            "type is not read",
+        ),
+        (
+            NullBranchEvidence {
+                unresolved: vec!["x.c:9: the address of `c->config` is taken".to_owned()],
+                ..derived.clone()
+            },
+            "not ruled out",
+        ),
+        (
+            NullBranchEvidence {
+                stores: vec![(
+                    "x.c:12".to_owned(),
+                    Err("`c` is used before the store".to_owned()),
+                )],
+                ..derived.clone()
+            },
+            "not a pre-publication store",
+        ),
+    ] {
+        let reason = null_branch_excluded(&evidence).unwrap_err();
+        assert!(reason.contains(words), "{reason}");
+    }
 }

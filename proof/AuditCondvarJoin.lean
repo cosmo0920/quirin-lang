@@ -32,6 +32,18 @@ holds the paired mutex; the per-unit route never discharges.
 **Release decisions.** A discharged release saw a checked join on every path;
 one unchecked, failed or absent join refuses.
 
+**Stop paths (card W47-CONDVAR-JOIN-STOP-PATHS).** A null arm is dropped
+only with every part of its derivation, and under P-DEREF a field
+dereferenced before the test and written after it only by pre-publication
+stores is non-null at the test; a store to a reachable object can null it.
+Under P-POSIX-JOIN an unchecked first join succeeds when its four cases are
+excluded; a detached target, a repeated join and a self join never succeed,
+and an underived case does not count. A live descendant that retains the
+object blocks its release; a discharged release joined every descendant; a
+repeated join, an unresolved or a never-joined descendant refuse the
+discharge. The old test's release shapes and the fixed test's stay not
+discharged.
+
 The lexical census reading, its binding tables, P-SYNC-INSTANCE,
 P-JOIN-IDENTITY, P-RETAIN, P-CHECK and the Rust correspondence are trust
 boundary 28's premises, pinned by `crates/qcore-core/tests/unit/condvar_join.rs`
@@ -76,3 +88,26 @@ and `crates/quirin-source-analysis/tests/condvar_join_census.rs`. -/
 #print axioms QCore.CondvarJoin.only_a_discharge_admits
 #print axioms QCore.CondvarJoin.a_join_is_no_less_severe
 #print axioms QCore.CondvarJoin.a_joined_discharge_needs_both
+
+-- Stop paths (W47-CONDVAR-JOIN-STOP-PATHS).
+#print axioms QCore.CondvarJoin.a_pre_publication_store_leaves_a_reachable_field
+#print axioms QCore.CondvarJoin.pre_publication_stores_leave_a_reachable_field
+#print axioms QCore.CondvarJoin.the_null_arm_is_infeasible_after_a_dereference
+#print axioms QCore.CondvarJoin.a_published_store_can_null_the_field
+#print axioms QCore.CondvarJoin.a_dropped_null_arm_had_its_derivation
+#print axioms QCore.CondvarJoin.without_a_dominating_dereference_the_null_arm_stays
+#print axioms QCore.CondvarJoin.a_store_after_publication_keeps_the_null_arm
+#print axioms QCore.CondvarJoin.an_unchecked_first_join_with_every_case_excluded_succeeds
+#print axioms QCore.CondvarJoin.a_detached_thread_join_never_succeeds
+#print axioms QCore.CondvarJoin.a_repeated_join_never_succeeds
+#print axioms QCore.CondvarJoin.a_join_from_the_thread_itself_never_succeeds
+#print axioms QCore.CondvarJoin.an_underived_case_does_not_count
+#print axioms QCore.CondvarJoin.a_discharged_release_joined_every_descendant
+#print axioms QCore.CondvarJoin.a_repeated_join_refuses
+#print axioms QCore.CondvarJoin.an_unchecked_first_join_counts_only_with_every_case_excluded
+#print axioms QCore.CondvarJoin.an_unresolved_descendant_blocks_the_discharge
+#print axioms QCore.CondvarJoin.a_never_joined_descendant_refuses
+#print axioms QCore.CondvarJoin.a_live_descendant_blocks_the_release
+#print axioms QCore.CondvarJoin.the_fixed_test_release_is_not_discharged
+#print axioms QCore.CondvarJoin.the_old_test_stays_not_discharged
+#print axioms QCore.CondvarJoin.the_repeated_join_alone_keeps_the_fixed_test_not_discharged

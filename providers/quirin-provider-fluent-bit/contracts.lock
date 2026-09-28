@@ -66,6 +66,42 @@
       ]
     },
     {
+      "function": "flb_downstream_worker_runtime_stop",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "69235b31f737cd419d318762e98f716d6f0037300e79430dbacf3541783ef4b7",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_downstream_worker.h",
+              "kind": "declaration",
+              "declaration_sha256": "b47336b95a4eeafe0cccdc54224667bb82c651d3e245f4f353be02ef20877ae9"
+            },
+            {
+              "path": "src/flb_downstream_worker.c",
+              "kind": "definition",
+              "declaration_sha256": "b47336b95a4eeafe0cccdc54224667bb82c651d3e245f4f353be02ef20877ae9",
+              "body_sha256": "b975f016e3d6c3d7c9b32deacd91b532c8412313e6927f43d8829423d40849b5"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_errno_print",
       "module": "fluent_bit/logging.qv",
       "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
@@ -579,6 +615,42 @@
       ]
     },
     {
+      "function": "flb_input_thread_instance_exit",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "3588cb3a99fa8c8ac1c39e138d9acf79883ccad12b11cf959bd3f84ee553629f",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "a1960ae84e425669a86466d734d1dba6822faae7e8bbb11fd5edc3f4a2c746ad"
+            },
+            {
+              "path": "src/flb_input_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "a1960ae84e425669a86466d734d1dba6822faae7e8bbb11fd5edc3f4a2c746ad",
+              "body_sha256": "32969b65b01127c7f9521382b37e6c3cc9b8d54bb5efe34e7e8a53338ad765b4"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_log_check",
       "module": "fluent_bit/logging.qv",
       "contract_sha256": "055cebefa1d4d696bf7b9a25983eaeca44d800d670b222bdfd6819a19f51ee62",
@@ -772,6 +844,42 @@
               "kind": "definition",
               "declaration_sha256": "0fccfd1708a32b32b265189e9a7be0325ef9b2ca2623632a46c1f32f78b008dd",
               "body_sha256": "97140a4c46be2b7f7b711af01935acd558ef118cc5fa841ee4cc9a1f3245a209"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_output_thread_pool_destroy",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "77b4ba40611c243b8161b81b7382076ff1d2c9c3f7da625eecd4f0b0996026f0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_output_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "9c28072705c83ce192174c886ea55339fde94e4681650d00853dac7ed2a1ae42"
+            },
+            {
+              "path": "src/flb_output_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "9c28072705c83ce192174c886ea55339fde94e4681650d00853dac7ed2a1ae42",
+              "body_sha256": "2e272c814c93707c5b2839d621ac6943a421153857edfbc4beac60d3bd72d1da"
             }
           ]
         }
@@ -996,6 +1104,78 @@
               "kind": "definition",
               "declaration_sha256": "2d2b883f044029d22362d7ddb81f7879f824a512ff86c20dba9f01a77b0d69a4",
               "body_sha256": "02f01f7321932b5fc027443911c4687dc39cfc7575a7687ef886472f13bde14b"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_start",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "552cbbdad998403b63d65e8fc6adfd5af865e950055ad038ab021261accf019b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_lib.h",
+              "kind": "declaration",
+              "declaration_sha256": "61387c7a670801cf32d8c5fedf5dea2d76c47e29c70a9dc2b3af24d3a689311e"
+            },
+            {
+              "path": "src/flb_lib.c",
+              "kind": "definition",
+              "declaration_sha256": "b4b5bbdc511c8ecc7fe09eb1d32f4e6b46b56f8c46748abcc55a324c6d64556c",
+              "body_sha256": "4ceca3cceb5e2ad246c9585ca96727a5004d9a1d35025738dc75e1d877ee66ee"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_stop",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "97dbcc30d0daaff1ec57d23511af585e849c86c4f670ebf25b6460becf7efa3c",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_lib.h",
+              "kind": "declaration",
+              "declaration_sha256": "8f6045631d31434be97540a21b0a8fcd2b61309439047b121ecd4364dceb164c"
+            },
+            {
+              "path": "src/flb_lib.c",
+              "kind": "definition",
+              "declaration_sha256": "79d2c134ff21820d7fb9d7eccda603003ceb743c7f9d6930d22c00b1f53f03f6",
+              "body_sha256": "c6e3e1264bffdac7b9d435b5cac8ab90cf0971741337fa7eb860cee82f04a613"
             }
           ]
         }

@@ -9,19 +9,31 @@
 //! every condvar with its mutex, reads each condvar's predicate and results,
 //! and decides every site with [`qcore_core::condvar_join`]. It lives here, not
 //! in the gateway, because the gateway depends on no kernel crate.
+//!
+//! Card **W47-CONDVAR-JOIN-STOP-PATHS** adds three decisions, each the
+//! kernel's: a null test's null arm is dropped only where
+//! `null_branch_excluded` admits the reader's evidence (the decider passed to
+//! [`qcore_c_gateway::condvar_census::read_program_with`]); an unchecked first
+//! join carries its four POSIX exclusions ([`ThreadFacts`], derived from the
+//! program-wide thread sites and the loop-owner contexts) and counts only
+//! where `join_succeeds` admits them; and every thread a live retaining
+//! thread starts is decided from that thread's own entry run to its exit
+//! ([`qcore_core::condvar_join::DescendantJoin`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::condvar_census::{
-    Fact, ReadAccess, ReadHeld, ReadJoin, ReadLoopBody, ReadRefusal, ReadSectionEvent, ReadSite,
-    ReleaseReading, SyncReading, SyncSite, SyncTables, read_program,
+    Fact, NullTestReading, ReadAccess, ReadHeld, ReadJoin, ReadLoopBody, ReadRefusal,
+    ReadSectionEvent, ReadSite, ReleaseReading, SyncReading, SyncSite, SyncTables,
+    read_program_with,
 };
 use qcore_c_gateway::thread_entry_census::{CensusFile, HopTables};
 use qcore_core::condvar_join::{
-    Absence, Held, JoinEvidence, KeptRefusal, LiveThread, LoopBody, Pairing, Phase, PredicateLoop,
-    PublishSite, ReadLicence, ReleaseSite, SectionEvent, SignalSite, SyncVerdict, WaitSite,
-    publication_verdict, quiescence_verdict, read_verdict, release_verdict, signal_verdict,
-    wait_verdict,
+    Absence, DescendantEvidence, DescendantJoin, Held, JoinEvidence, JoinExclusions, KeptRefusal,
+    LiveThread, LoopBody, NullBranchEvidence, Pairing, Phase, PredicateLoop, PublishSite,
+    ReadLicence, ReleaseSite, SectionEvent, SignalSite, SyncVerdict, WaitSite, join_succeeds,
+    null_branch_excluded, publication_verdict, quiescence_verdict, read_verdict, release_premises,
+    release_verdict, signal_verdict, wait_verdict,
 };
 use qcore_core::loop_owner::{Derived, ThreadProgram, derive};
 
@@ -47,6 +59,9 @@ pub struct ReleaseVerdict {
     pub reading: ReleaseReading,
     pub site: ReleaseSite,
     pub verdict: SyncVerdict,
+    /// The named premises the decision rests on beyond trust boundary 28's
+    /// (card W47-CONDVAR-JOIN-STOP-PATHS).
+    pub premises: BTreeSet<&'static str>,
 }
 
 /// Which live threads a release concerns (binding premise P-RETAIN, stated):
@@ -74,6 +89,239 @@ pub struct Census {
     pub releases: Vec<ReleaseVerdict>,
     /// The threads (plain entry names) that run code under [`RETAINING_CODE`].
     pub retainers: BTreeSet<String>,
+    /// The program-wide thread facts the POSIX exclusions rest on.
+    pub facts: ThreadFacts,
+}
+
+/// The kernel's input for one null test (card W47-CONDVAR-JOIN-STOP-PATHS).
+#[must_use]
+pub fn null_branch_evidence(test: &NullTestReading) -> NullBranchEvidence {
+    NullBranchEvidence {
+        dominating_dereference: test.dominating_dereference.clone(),
+        local_defeat: test.local_defeat.clone(),
+        base_type: test.base_type.clone(),
+        stores: test.stores.clone(),
+        unresolved: test.unresolved.clone(),
+    }
+}
+
+/// One join or detach site: `(site, call, identity, the threads the enclosing
+/// function may run on, whether some path to it is unresolved)`.
+pub type IdSite = (
+    String,
+    &'static str,
+    Result<BTreeSet<String>, String>,
+    BTreeSet<String>,
+    bool,
+);
+
+/// Program-wide facts about thread identifiers (card
+/// W47-CONDVAR-JOIN-STOP-PATHS): which threads may run each join, detach and
+/// `pthread_self` site, and which spawn wrappers create joinable threads.
+#[derive(Clone, Debug, Default)]
+pub struct ThreadFacts {
+    /// `(site, call, identity, the threads the enclosing function may run
+    /// on, whether some path to it is unresolved)`, for every reached site.
+    pub id_sites: Vec<IdSite>,
+    /// `(site, the threads it may run on, unresolved)` of every `pthread_self`
+    /// whose value may be kept.
+    pub published_self: Vec<(String, BTreeSet<String>, bool)>,
+    /// Each wrapper's joinability.
+    pub wrappers: BTreeMap<String, Result<String, String>>,
+    /// The test-root threads (`T` and the roots' own labels).
+    pub root_threads: BTreeSet<String>,
+    /// Spawn wrappers' own internal entries (`mk_utils_worker_entry`).
+    pub wrapper_entries: BTreeMap<String, String>,
+}
+
+impl ThreadFacts {
+    fn new(
+        reading: &SyncReading,
+        program: &ThreadProgram,
+        derived: &[Derived],
+        tables: &SyncTables,
+    ) -> Self {
+        let id_of: BTreeMap<&str, usize> = program
+            .functions
+            .iter()
+            .enumerate()
+            .map(|(id, label)| (label.as_str(), id))
+            .collect();
+        let threads_of = |function: &str| -> Option<(BTreeSet<String>, bool)> {
+            let id = *id_of.get(function)?;
+            let threads: BTreeSet<String> = derived[id]
+                .contexts
+                .iter()
+                .map(|c| plain(&c.thread).to_owned())
+                .collect();
+            let unresolved = !derived[id].unresolved.is_empty();
+            // A function no root reaches and no unresolved path may reach
+            // never runs in this program.
+            (!threads.is_empty() || unresolved).then_some((threads, unresolved))
+        };
+        let mut id_sites = Vec::new();
+        for site in &reading.thread_sites {
+            if let Some((threads, unresolved)) = threads_of(&site.function) {
+                id_sites.push((
+                    format!("{}:{}", site.file, site.line),
+                    site.call,
+                    site.identity.clone(),
+                    threads,
+                    unresolved,
+                ));
+            }
+        }
+        let mut published_self = Vec::new();
+        for site in &reading.self_sites {
+            if site.published
+                && let Some((threads, unresolved)) = threads_of(&site.function)
+            {
+                published_self.push((format!("{}:{}", site.file, site.line), threads, unresolved));
+            }
+        }
+        let wrappers = reading
+            .wrappers
+            .iter()
+            .map(|w| (w.wrapper.clone(), w.joinable.clone()))
+            .collect();
+        let mut root_threads: BTreeSet<String> = BTreeSet::from(["T".to_owned()]);
+        for (id, _) in &reading.census.roots {
+            root_threads.insert(plain(&reading.census.functions[*id]).to_owned());
+        }
+        let mut wrapper_entries = BTreeMap::new();
+        for (spawner, entry) in &program.spawns {
+            let spawner = plain(&program.functions[*spawner]);
+            if let Some((wrapper, _, _)) = tables.spawns.iter().find(|(n, _, _)| *n == spawner)
+                && *wrapper != "pthread_create"
+            {
+                wrapper_entries.insert(
+                    plain(&program.functions[*entry]).to_owned(),
+                    (*wrapper).to_owned(),
+                );
+            }
+        }
+        Self {
+            id_sites,
+            published_self,
+            wrappers,
+            root_threads,
+            wrapper_entries,
+        }
+    }
+
+    /// The four POSIX exclusions of the unchecked first join of `thread`
+    /// (started through `wrapper`) by `joiner` (a test root's `T`, or a
+    /// parent thread's plain entry name).
+    #[must_use]
+    pub fn exclusions(&self, thread: &str, wrapper: &str, joiner: &str) -> JoinExclusions {
+        let joiners: BTreeSet<String> = if joiner == "T" {
+            self.root_threads.clone()
+        } else {
+            BTreeSet::from([joiner.to_owned()])
+        };
+        let may_name = |identity: &Result<BTreeSet<String>, String>| match identity {
+            Ok(set) => set.contains(thread),
+            Err(_) => true,
+        };
+        let joinable = match self.wrappers.get(wrapper) {
+            None => Err(format!(
+                "`{thread}` was started through `{wrapper}`, which is not read"
+            )),
+            Some(Err(why)) => Err(format!("`{wrapper}`: {why}")),
+            Some(Ok(_)) => self
+                .id_sites
+                .iter()
+                .find(|(_, call, identity, _, _)| *call == "detach" && may_name(identity))
+                .map_or(Ok(()), |(site, _, identity, _, _)| {
+                    Err(match identity {
+                        Ok(_) => format!("the detach at {site} names `{thread}`"),
+                        Err(why) => format!("the detach at {site} may name `{thread}` ({why})"),
+                    })
+                }),
+        };
+        let busy: Vec<String> = self
+            .id_sites
+            .iter()
+            .filter(|(_, call, identity, _, _)| *call == "join" && may_name(identity))
+            .filter_map(|(site, _, identity, threads, unresolved)| {
+                let others: Vec<&String> =
+                    threads.iter().filter(|t| !joiners.contains(*t)).collect();
+                let named = match identity {
+                    Ok(_) => format!("the join at {site} names `{thread}`"),
+                    Err(why) => format!("the join at {site} may name `{thread}` ({why})"),
+                };
+                if let Some(other) = others.first() {
+                    Some(format!(
+                        "{named} and runs on {} other thread(s) (e.g. `{other}`)",
+                        others.len()
+                    ))
+                } else if *unresolved {
+                    Some(format!("{named} and some path to it is unresolved"))
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let not_busy = if busy.is_empty() {
+            Ok(())
+        } else {
+            Err(format!(
+                "{} join site(s) may join it off the joining thread, the joined instance not \
+                 derived: {}",
+                busy.len(),
+                busy.join("; ")
+            ))
+        };
+        let not_self = if joiners.contains(thread) {
+            Err(format!("`{thread}` is the joining thread's own entry"))
+        } else {
+            Ok(())
+        };
+        let keepers: Vec<&String> = self
+            .published_self
+            .iter()
+            .filter(|(_, threads, unresolved)| {
+                *unresolved || threads.iter().any(|t| joiners.contains(t))
+            })
+            .map(|(site, _, _)| site)
+            .collect();
+        let no_cycle = if keepers.is_empty() {
+            Ok(())
+        } else {
+            Err(format!(
+                "{} `pthread_self()` site(s) may keep the joining thread's identifier: {}",
+                keepers.len(),
+                keepers
+                    .iter()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ))
+        };
+        JoinExclusions {
+            joinable,
+            not_busy,
+            not_self,
+            no_cycle,
+        }
+    }
+
+    /// Whether no reached join site may name `thread`.
+    fn never_joined(&self, thread: &str) -> Result<(), String> {
+        for (site, call, identity, _, _) in &self.id_sites {
+            if *call != "join" {
+                continue;
+            }
+            match identity {
+                Ok(set) if set.contains(thread) => {
+                    return Err(format!("the join at {site} names it"));
+                }
+                Ok(_) => {}
+                Err(why) => return Err(format!("the join at {site} is not read ({why})")),
+            }
+        }
+        Ok(())
+    }
 }
 
 fn refusal(kind: ReadRefusal) -> KeptRefusal {
@@ -103,10 +351,14 @@ fn body(body: ReadLoopBody) -> LoopBody {
     }
 }
 
-fn evidence(join: &ReadJoin) -> JoinEvidence {
+fn evidence(join: &ReadJoin, thread: &str, joiner: &str, facts: &ThreadFacts) -> JoinEvidence {
     match join {
         ReadJoin::CheckedSuccess => JoinEvidence::CheckedSuccess,
         ReadJoin::Unchecked => JoinEvidence::Unchecked,
+        ReadJoin::UncheckedFirst { wrapper } => {
+            JoinEvidence::UncheckedFirst(facts.exclusions(thread, wrapper, joiner))
+        }
+        ReadJoin::Repeated => JoinEvidence::Repeated,
         ReadJoin::Failed => JoinEvidence::Failed,
         ReadJoin::Absent {
             timed_out: true, ..
@@ -124,9 +376,12 @@ fn struct_of(key: &str) -> &str {
 /// Read, derive and decide every site of one program.
 #[must_use]
 pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Census {
-    let reading = read_program(files, hops, tables);
+    let reading = read_program_with(files, hops, tables, &|test| {
+        null_branch_excluded(&null_branch_evidence(test))
+    });
     let program = crate::loop_owner_census::thread_program(&reading.census);
     let derived = derive(&program);
+    let facts = ThreadFacts::new(&reading, &program, &derived, tables);
     let unread: BTreeMap<&str, &str> = reading
         .functions
         .iter()
@@ -239,7 +494,7 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
     };
     let retainers = retainers(&program, &derived, &reading);
     let release_site = |release: &ReleaseReading| -> ReleaseSite {
-        release_site(release, &program, &derived, &retainers)
+        release_site(release, &program, &derived, &retainers, &facts, &reading)
     };
 
     let mut sites = Vec::new();
@@ -356,6 +611,7 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                                 let one = release_site(release);
                                 merged.live.extend(one.live);
                                 merged.unresolved.extend(one.unresolved);
+                                merged.descendants.extend(one.descendants);
                             }
                             Phase::AfterJoin(merged)
                         } else if observed {
@@ -415,10 +671,12 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
         .map(|reading_release| {
             let site = release_site(reading_release);
             let verdict = release_verdict(&site);
+            let premises = release_premises(&site);
             ReleaseVerdict {
                 reading: reading_release.clone(),
                 site,
                 verdict,
+                premises,
             }
         })
         .collect();
@@ -432,6 +690,7 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
         sites,
         releases,
         retainers,
+        facts,
     }
 }
 
@@ -547,17 +806,21 @@ fn guarded_read(
     Some((condvar, ReadLicence::None(reason.to_owned())))
 }
 
-/// The kernel's release site of one reading: every live thread's paths, and
-/// the threads each one starts, whose joins before it ends are not derived.
+/// The kernel's release site of one reading: every live thread's paths (the
+/// joiner is the test root's thread), and every thread each one starts, decided
+/// from the parent's own entry run (card W47-CONDVAR-JOIN-STOP-PATHS).
 fn release_site(
     release: &ReleaseReading,
     program: &ThreadProgram,
     derived: &[Derived],
     retainers: &BTreeSet<String>,
+    facts: &ThreadFacts,
+    reading: &SyncReading,
 ) -> ReleaseSite {
     let mut site = ReleaseSite {
         live: Vec::new(),
         unresolved: release.unresolved.clone(),
+        descendants: Vec::new(),
     };
     let whole = WHOLE_ENGINE_RELEASES.contains(&release.what.as_str());
     for (thread, paths) in &release.live {
@@ -568,22 +831,112 @@ fn release_site(
             thread: thread.clone(),
             paths: paths
                 .iter()
-                .map(|(join, witness)| (evidence(join), witness.clone()))
+                .map(|(join, witness)| (evidence(join, thread, "T", facts), witness.clone()))
                 .collect(),
         });
-        let children: BTreeSet<String> = descendants(thread, program, derived)
+        let family: BTreeSet<String> = descendants(thread, program, derived)
             .into_iter()
             .filter(|child| whole || retainers.contains(plain(child)))
             .collect();
-        if !children.is_empty() {
-            site.unresolved.insert(format!(
-                "`{thread}` starts {} thread(s) (e.g. `{}`) whose joins before it ends are not derived",
-                children.len(),
-                children.iter().next().cloned().unwrap_or_default()
-            ));
+        for child in family {
+            for parent in parents(&child, thread, program, derived) {
+                let evidence = descendant_evidence(&parent, &child, facts, reading);
+                site.descendants.push(DescendantJoin {
+                    parent,
+                    child: plain(&child).to_owned(),
+                    evidence,
+                });
+            }
         }
     }
+    site.descendants.sort();
+    site.descendants.dedup();
     site
+}
+
+/// The direct parents of `child` among `root` and its descendants: the
+/// threads whose contexts reach a spawner of `child`.
+fn parents(
+    child: &str,
+    root: &str,
+    program: &ThreadProgram,
+    derived: &[Derived],
+) -> BTreeSet<String> {
+    let mut family = descendants(root, program, derived);
+    family.insert(root.to_owned());
+    let family: BTreeSet<&str> = family.iter().map(|t| plain(t)).collect();
+    let mut out = BTreeSet::new();
+    for (spawner, entry) in &program.spawns {
+        if program.functions[*entry] != child && plain(&program.functions[*entry]) != plain(child) {
+            continue;
+        }
+        for context in &derived[*spawner].contexts {
+            let thread = plain(&context.thread);
+            if family.contains(thread) {
+                out.insert(thread.to_owned());
+            }
+        }
+    }
+    if out.is_empty() {
+        out.insert(plain(root).to_owned());
+    }
+    out
+}
+
+/// Whether `parent` is derived to join `child` before it ends: from the
+/// parent's entry run to its exit, every path joined it (checked, or an
+/// unchecked first join whose POSIX cases are excluded for `parent`), with
+/// nothing unresolved; or no join site of the program may name it.
+fn descendant_evidence(
+    parent: &str,
+    child: &str,
+    facts: &ThreadFacts,
+    reading: &SyncReading,
+) -> DescendantEvidence {
+    let child = plain(child);
+    if let Some(wrapper) = facts.wrapper_entries.get(child) {
+        return DescendantEvidence::Unresolved(format!(
+            "`{child}` is the entry through which `{wrapper}` runs every thread it starts; each \
+             such thread is decided under its own entry"
+        ));
+    }
+    if facts.never_joined(child).is_ok() {
+        return DescendantEvidence::NeverJoined("no join site of the program names it".to_owned());
+    }
+    let Some(exit) = reading.entry_exits.get(parent) else {
+        return DescendantEvidence::Unresolved(format!(
+            "`{parent}`'s entry is not run by the path reader"
+        ));
+    };
+    if let Some(reason) = exit.unresolved.iter().next() {
+        return DescendantEvidence::Unresolved(format!(
+            "{} reason(s) on `{parent}`'s path to its exit, e.g. {reason}",
+            exit.unresolved.len()
+        ));
+    }
+    let Some(paths) = exit.live.get(child) else {
+        return DescendantEvidence::Unresolved(format!(
+            "the path reader does not see `{parent}` start `{child}`"
+        ));
+    };
+    for (join, witness) in paths {
+        match evidence(join, child, parent, facts) {
+            JoinEvidence::CheckedSuccess => {}
+            JoinEvidence::UncheckedFirst(exclusions) => {
+                if let Err(why) = join_succeeds(&exclusions) {
+                    return DescendantEvidence::Unresolved(format!(
+                        "the join at {witness} is not checked, and {why}"
+                    ));
+                }
+            }
+            other => {
+                return DescendantEvidence::Unresolved(format!(
+                    "`{child}` reaches `{parent}`'s exit as {other:?} ({witness})"
+                ));
+            }
+        }
+    }
+    DescendantEvidence::Joined
 }
 
 /// The threads a thread starts, transitively, from the derivation.

@@ -86,7 +86,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(contracts.source_assumptions().len(), 57);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -750,6 +751,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             .declarations
         {
             let name = declaration.value.name;
+            // W47-CONDVAR-JOIN-STOP-PATHS: a declaration awaiting review is
+            // withheld (C06.1): it has no mode to preserve.
+            if contracts.pending_review().contains_key(&name) {
+                assert!(contracts.contract(&name).is_none(), "{name}");
+                continue;
+            }
             assert_eq!(
                 canonical(contracts.contract(&name).unwrap().clone()),
                 canonical(old.contract(&name).unwrap().clone()),
@@ -1033,7 +1040,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
+    assert_eq!(certificate.contracts.source_assumptions().len(), 57);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1260,7 +1268,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `fluent_bit/loop_owner.qv`, entirely v1 and manifest-selected.
     // 119 -> 120: card W47-CONDVAR-JOIN-PUBLICATION adds
     // `libc/pthread_sync.qv`, entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 120, "corpus module count");
+    // 120 -> 121: card W47-CONDVAR-JOIN-STOP-PATHS adds
+    // `fluent_bit/lib_engine_thread.qv`, entirely v1 (every declaration
+    // awaiting review) and manifest-selected.
+    assert_eq!(modules.len(), 121, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1422,15 +1433,18 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 55 -> 56 and 236 -> 242 by card W47-CONDVAR-JOIN-PUBLICATION: the six
     // declarations of `libc/pthread_sync.qv`, each with a declared
     // thread-synchronization obligation. Rejected unchanged.
+    // 56 -> 57 and 242 -> 247 by card W47-CONDVAR-JOIN-STOP-PATHS: the five
+    // declarations of `fluent_bit/lib_engine_thread.qv`, each awaiting
+    // review (C06.1), so loaded and withheld: the function table keeps 242
+    // and the five are its pending-review entries. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (56, 242, 216)
+        (57, 247, 216)
     );
+    let loaded = load_resource_contract_manifest(&manifest()).unwrap();
+    assert_eq!(loaded.pending_review().len(), 5);
     assert_eq!(
-        load_resource_contract_manifest(&manifest())
-            .unwrap()
-            .functions()
-            .len(),
+        loaded.functions().len() + loaded.pending_review().len(),
         v1_declarations
     );
 

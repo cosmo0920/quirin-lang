@@ -654,4 +654,316 @@ theorem a_release_before_the_join_is_refused_by_the_lifetime_model :
 
 end Lifetime
 
+/-! ## Stop paths (card W47-CONDVAR-JOIN-STOP-PATHS)
+
+Companion to `null_branch_excluded`, `join_succeeds`, `JoinEvidence::{UncheckedFirst,
+Repeated}`, `DescendantJoin` and `release_verdict` in
+`crates/qcore-core/src/condvar_join.rs`.
+
+* **An excluded null arm.** After a dereference of `X->F`, an analysed execution
+  (named premise P-DEREF: a null dereference ends it) has `X->F` non-null. A
+  pre-publication store writes an object nobody else can reach yet, so it never
+  writes a reachable one; if every store in the window is one, the field is still
+  non-null at the test (`the_null_arm_is_infeasible_after_a_dereference`). A store
+  to a reachable object can null it (`a_published_store_can_null_the_field`), and
+  the decision drops the arm only with every part of its derivation
+  (`a_dropped_null_arm_had_its_derivation`).
+* **An unchecked first join.** Under the named premise P-POSIX-JOIN (the model
+  `posixSucceeds`), a join returns 0 unless the target is not joinable, already
+  joined, awaited by another joiner, the caller, or in a join cycle with it. Each
+  derived exclusion certifies the absence of its case; with all four and a first
+  join on the path the join succeeds
+  (`an_unchecked_first_join_with_every_case_excluded_succeeds`). A detached
+  target, a repeated join and a join from the thread itself never count.
+* **Descendants.** A live thread that retains the object blocks its release,
+  whoever started it (`a_live_descendant_blocks_the_release`); the decision needs
+  every descendant derived joined (`a_discharged_release_joined_every_descendant`).
+* **The two tests' shapes.** The old test's release paths and the fixed test's
+  (a checked join, a first join whose busy case is not excluded, a repeated join)
+  are both not discharged. -/
+
+section StopPaths
+
+/-! ### The null arm -/
+
+structure Heap where
+  field : Nat → Option Nat
+  reachable : List Nat
+
+inductive Store where
+  | store (o : Nat) (v : Option Nat)
+
+def applyStore (h : Heap) : Store → Heap
+  | .store o v => { h with field := fun p => if p = o then v else h.field p }
+
+def runStores (h : Heap) (stores : List Store) : Heap := stores.foldl applyStore h
+
+/-- A pre-publication store writes an object no one else can reach yet. -/
+def PrePublication (h : Heap) : Store → Prop
+  | .store o _ => o ∉ h.reachable
+
+theorem applyStore_reachable (h : Heap) (s : Store) : (applyStore h s).reachable = h.reachable := by
+  cases s; rfl
+
+theorem a_pre_publication_store_leaves_a_reachable_field (h : Heap) (s : Store) (x : Nat)
+    (hx : x ∈ h.reachable) (hs : PrePublication h s) : (applyStore h s).field x = h.field x := by
+  cases s with
+  | store o v =>
+    simp only [PrePublication] at hs
+    have hne : x ≠ o := fun heq => hs (heq ▸ hx)
+    simp [applyStore, hne]
+
+theorem pre_publication_stores_leave_a_reachable_field :
+    ∀ (stores : List Store) (h : Heap) (x : Nat), x ∈ h.reachable →
+      (∀ s ∈ stores, ∀ h' : Heap, h'.reachable = h.reachable → PrePublication h' s) →
+      (runStores h stores).field x = h.field x ∧ (runStores h stores).reachable = h.reachable
+  | [], h, _, _, _ => by simp [runStores]
+  | s :: rest, h, x, hx, hall => by
+    have hs : PrePublication h s := hall s (by simp) h rfl
+    have h1 := a_pre_publication_store_leaves_a_reachable_field h s x hx hs
+    have hr := applyStore_reachable h s
+    have ih := pre_publication_stores_leave_a_reachable_field rest (applyStore h s) x
+      (by rw [hr]; exact hx)
+      (fun s' hs' h' hh' => hall s' (by simp [hs']) h' (by rw [hh', hr]))
+    simp only [runStores, List.foldl_cons] at ih ⊢
+    exact ⟨by rw [ih.1, h1], by rw [ih.2, hr]⟩
+
+/-- **P-DEREF.** A dereference of `x`'s field in an analysed execution saw it
+non-null; if every store until the test is a pre-publication store, the test
+sees it non-null: the null arm is infeasible. -/
+theorem the_null_arm_is_infeasible_after_a_dereference (h : Heap) (x : Nat)
+    (hx : x ∈ h.reachable) (hderef : h.field x ≠ none) (stores : List Store)
+    (hall : ∀ s ∈ stores, ∀ h' : Heap, h'.reachable = h.reachable → PrePublication h' s) :
+    (runStores h stores).field x ≠ none := by
+  rw [(pre_publication_stores_leave_a_reachable_field stores h x hx hall).1]
+  exact hderef
+
+/-- A store to a reachable object is not a pre-publication store and can null
+the field: without the derivation the arm stays. -/
+theorem a_published_store_can_null_the_field (h : Heap) (x : Nat) (hx : x ∈ h.reachable) :
+    ¬ PrePublication h (.store x none) ∧ (applyStore h (.store x none)).field x = none := by
+  refine ⟨fun hs => hs hx, ?_⟩
+  simp [applyStore]
+
+/-- The kernel's decision (`null_branch_excluded`): every part of the
+derivation, the dominating dereference first. -/
+structure NullBranchEvidence where
+  dominatingDereference : Bool
+  localDefeat : Bool
+  baseTypeRead : Bool
+  unresolvedWrites : Bool
+  everyStorePrePublication : Bool
+  deriving DecidableEq, Repr
+
+def nullBranchExcluded (e : NullBranchEvidence) : Bool :=
+  e.dominatingDereference && !e.localDefeat && e.baseTypeRead && !e.unresolvedWrites &&
+    e.everyStorePrePublication
+
+inductive Arm where
+  | null
+  | nonNull
+  deriving DecidableEq, Repr
+
+/-- The arms the path reader follows at a null test. -/
+def arms (e : NullBranchEvidence) : List Arm :=
+  if nullBranchExcluded e then [.nonNull] else [.null, .nonNull]
+
+theorem a_dropped_null_arm_had_its_derivation (e : NullBranchEvidence)
+    (h : Arm.null ∉ arms e) :
+    e.dominatingDereference = true ∧ e.localDefeat = false ∧ e.baseTypeRead = true ∧
+      e.unresolvedWrites = false ∧ e.everyStorePrePublication = true := by
+  unfold arms at h
+  split at h
+  · rename_i hx
+    simp only [nullBranchExcluded, Bool.and_eq_true, Bool.not_eq_true'] at hx
+    exact ⟨hx.1.1.1.1, hx.1.1.1.2, hx.1.1.2, hx.1.2, hx.2⟩
+  · simp at h
+
+theorem without_a_dominating_dereference_the_null_arm_stays (e : NullBranchEvidence)
+    (h : e.dominatingDereference = false) : Arm.null ∈ arms e := by
+  simp [arms, nullBranchExcluded, h]
+
+theorem a_store_after_publication_keeps_the_null_arm (e : NullBranchEvidence)
+    (h : e.everyStorePrePublication = false) : Arm.null ∈ arms e := by
+  simp [arms, nullBranchExcluded, h]
+
+/-! ### Joins under P-POSIX-JOIN -/
+
+/-- The facts of one join that decide its POSIX result. -/
+structure JoinFacts where
+  joinable : Bool
+  joinedBefore : Bool
+  otherJoiner : Bool
+  isSelf : Bool
+  cycle : Bool
+  deriving DecidableEq, Repr
+
+/-- **P-POSIX-JOIN** (the named premise, as a model of the standard): the join
+returns 0 exactly when none of its error cases holds. -/
+def posixSucceeds (f : JoinFacts) : Bool :=
+  f.joinable && !f.joinedBefore && !f.otherJoiner && !f.isSelf && !f.cycle
+
+/-- The four derived exclusions of an unchecked first join (`JoinExclusions`). -/
+structure JoinExclusions where
+  joinable : Bool
+  notBusy : Bool
+  notSelf : Bool
+  noCycle : Bool
+  deriving DecidableEq, Repr
+
+def joinSucceeds (e : JoinExclusions) : Bool :=
+  e.joinable && e.notBusy && e.notSelf && e.noCycle
+
+/-- What a derived exclusion certifies about the join it excludes. -/
+def Certifies (e : JoinExclusions) (f : JoinFacts) : Prop :=
+  (e.joinable = true → f.joinable = true) ∧ (e.notBusy = true → f.otherJoiner = false) ∧
+    (e.notSelf = true → f.isSelf = false) ∧ (e.noCycle = true → f.cycle = false)
+
+theorem an_unchecked_first_join_with_every_case_excluded_succeeds (e : JoinExclusions)
+    (f : JoinFacts) (hc : Certifies e f) (hfirst : f.joinedBefore = false)
+    (h : joinSucceeds e = true) : posixSucceeds f = true := by
+  simp only [joinSucceeds, Bool.and_eq_true] at h
+  obtain ⟨⟨⟨hj, hb⟩, hs⟩, hy⟩ := h
+  obtain ⟨cj, cb, cs, cy⟩ := hc
+  simp [posixSucceeds, cj hj, cb hb, cs hs, cy hy, hfirst]
+
+theorem a_detached_thread_join_never_succeeds (f : JoinFacts) (h : f.joinable = false) :
+    posixSucceeds f = false := by
+  simp [posixSucceeds, h]
+
+theorem a_repeated_join_never_succeeds (f : JoinFacts) (h : f.joinedBefore = true) :
+    posixSucceeds f = false := by
+  simp [posixSucceeds, h]
+
+theorem a_join_from_the_thread_itself_never_succeeds (f : JoinFacts) (h : f.isSelf = true) :
+    posixSucceeds f = false := by
+  simp [posixSucceeds, h]
+
+theorem an_underived_case_does_not_count (e : JoinExclusions)
+    (h : e.joinable = false ∨ e.notBusy = false ∨ e.notSelf = false ∨ e.noCycle = false) :
+    joinSucceeds e = false := by
+  rcases h with h | h | h | h <;> simp [joinSucceeds, h]
+
+/-! ### The release decision with stop paths -/
+
+inductive StopEvidence where
+  | checkedSuccess
+  | unchecked
+  | uncheckedFirst (e : JoinExclusions)
+  | repeated
+  | failed
+  | absent
+  deriving DecidableEq, Repr
+
+def StopEvidence.admitted : StopEvidence → Bool
+  | .checkedSuccess => true
+  | .uncheckedFirst e => joinSucceeds e
+  | _ => false
+
+inductive Descendant where
+  | joined
+  | neverJoined
+  | unresolved
+  deriving DecidableEq, Repr
+
+/-- `release_verdict` with stop paths: every path admitted, then no descendant
+never joined, then nothing open. -/
+def stopReleaseVerdict (paths : List StopEvidence) (descendants : List Descendant)
+    (openPremise : Bool) : Verdict :=
+  if paths.all StopEvidence.admitted then
+    if descendants.contains .neverJoined then .notDischarged
+    else if openPremise || descendants.contains .unresolved then .unresolved
+    else .discharged
+  else .notDischarged
+
+theorem a_discharged_release_joined_every_descendant (paths : List StopEvidence)
+    (ds : List Descendant) (o : Bool) (h : stopReleaseVerdict paths ds o = .discharged) :
+    (∀ e ∈ paths, e.admitted = true) ∧ (∀ d ∈ ds, d = .joined) ∧ o = false := by
+  unfold stopReleaseVerdict at h
+  split at h
+  · rename_i hall
+    split at h
+    · simp at h
+    · rename_i hnever
+      split at h
+      · simp at h
+      · rename_i hopen
+        simp only [Bool.or_eq_true, not_or, Bool.not_eq_true] at hopen
+        refine ⟨fun e he => List.all_eq_true.mp hall e he, fun d hd => ?_, hopen.1⟩
+        cases d with
+        | joined => rfl
+        | neverJoined => exact absurd (List.elem_eq_true_of_mem hd) (by simpa using hnever)
+        | unresolved =>
+          exact absurd (List.elem_eq_true_of_mem hd) (by simpa using hopen.2)
+  · simp at h
+
+theorem a_repeated_join_refuses (paths : List StopEvidence) (ds : List Descendant) (o : Bool)
+    (h : StopEvidence.repeated ∈ paths) : stopReleaseVerdict paths ds o = .notDischarged := by
+  have : paths.all StopEvidence.admitted = false := by
+    rw [List.all_eq_false]
+    exact ⟨_, h, by simp [StopEvidence.admitted]⟩
+  simp [stopReleaseVerdict, this]
+
+theorem an_unchecked_first_join_counts_only_with_every_case_excluded (e : JoinExclusions) :
+    (StopEvidence.uncheckedFirst e).admitted = true ↔ joinSucceeds e = true := by
+  simp [StopEvidence.admitted]
+
+theorem an_unresolved_descendant_blocks_the_discharge (paths : List StopEvidence)
+    (ds : List Descendant) (o : Bool) (h : Descendant.unresolved ∈ ds) :
+    stopReleaseVerdict paths ds o ≠ .discharged := by
+  intro hd
+  have := (a_discharged_release_joined_every_descendant paths ds o hd).2.1 _ h
+  cases this
+
+theorem a_never_joined_descendant_refuses (paths : List StopEvidence) (ds : List Descendant)
+    (o : Bool) (hall : paths.all StopEvidence.admitted = true) (h : Descendant.neverJoined ∈ ds) :
+    stopReleaseVerdict paths ds o = .notDischarged := by
+  simp [stopReleaseVerdict, hall, h]
+
+/-- Operationally: a live thread that retains the object blocks its release,
+whoever started it; only its join (removing it from `live`) lifts the block. -/
+theorem a_live_descendant_blocks_the_release (retains : Thread → Obj → Bool)
+    (s : ThreadState) (t : Thread) (o : Obj) (hl : t ∈ s.live) (hr : retains t o = true) :
+    step retains s (.release o) = none := by
+  have : (s.live.all fun u => !retains u o) = false := by
+    rw [List.all_eq_false]
+    exact ⟨t, hl, by simp [hr]⟩
+  simp [step, this]
+
+/-! ### The two tests' shapes (negative control and fixed test) -/
+
+/-- The busy case of the fixed test's status-branch join is not excluded (the
+same entry-named identifier is joined on six other threads). -/
+def statusBranchJoin : JoinExclusions :=
+  { joinable := true, notBusy := false, notSelf := true, noCycle := true }
+
+/-- The fixed test's release: a checked join (the main path), the status
+branch's first join, and the repeated join after `flb_start`'s failure. -/
+def fixedTestPaths : List StopEvidence :=
+  [.checkedSuccess, .uncheckedFirst statusBranchJoin, .repeated]
+
+/-- The old test's `unlink` before `flb_stop`, and its `flb_destroy` after an
+unchecked `flb_stop` whose join may have failed. -/
+def oldTestUnlinkPaths : List StopEvidence := [.absent]
+def oldTestDestroyPaths : List StopEvidence :=
+  [.checkedSuccess, .failed, .uncheckedFirst statusBranchJoin, .repeated]
+
+theorem the_fixed_test_release_is_not_discharged :
+    stopReleaseVerdict fixedTestPaths [.unresolved] false = .notDischarged := by decide
+
+theorem the_old_test_stays_not_discharged :
+    stopReleaseVerdict oldTestUnlinkPaths [.unresolved] false = .notDischarged ∧
+      stopReleaseVerdict oldTestDestroyPaths [.unresolved] false = .notDischarged := by decide
+
+/-- Even with the busy case excluded, the repeated join alone keeps the fixed
+test's release not discharged. -/
+theorem the_repeated_join_alone_keeps_the_fixed_test_not_discharged (ds : List Descendant)
+    (o : Bool) :
+    stopReleaseVerdict [.checkedSuccess,
+      .uncheckedFirst { joinable := true, notBusy := true, notSelf := true, noCycle := true },
+      .repeated] ds o = .notDischarged :=
+  a_repeated_join_refuses _ ds o (by simp)
+
+end StopPaths
+
 end QCore.CondvarJoin
