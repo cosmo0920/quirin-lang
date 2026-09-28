@@ -180,8 +180,12 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   ([W47-TYPED-ROOT-DECLARATION-READER](../../reports/w47-typed-root-declaration-reader/README.md),
   gateway 10l; no verdict moves); the twelve forecast misses it was opened for
   refuse on the value type, not the premise (`W47-TYPED-CONST-POINTER-VALUE`),
-  and a lexical-closure blind spot is tracked as
-  `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`.
+  and the lexical-closure blind spot it found (nested, `for`-clause,
+  later-declarator and parenthesised assignments) is closed by
+  [W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT](../../reports/w47-lexical-closure-nested-assignment/README.md)
+  (gateway 10o: the closure reads every assignment, and the typed positions
+  serve its join with the AST closure; six Safe functions withdrawn through
+  AST classes rules 5l/5i read as unbound, `W47-JOIN-AST-CONSERVATIVE-CLASSES`).
 - **Positions:** apply P2's layer in controlling expressions (`if`, `while`,
   `for`, `?:`, `&&`/`||` with their evaluation order), in return expressions,
   and in call arguments.
