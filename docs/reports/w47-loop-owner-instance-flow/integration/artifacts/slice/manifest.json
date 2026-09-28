@@ -1,0 +1,42 @@
+{
+ "console.log": {
+  "file": "console.log.gz",
+  "sha256": "75a7aad2d871685fee139e7f6ce179ee135f4ac531c0a1ffa7c4becade38dea8",
+  "bytes": 11838
+ },
+ "exit": {
+  "file": "exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "bytes": 2
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "file": "resource-diagnostics.chunk-contracts.json.gz",
+  "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+  "bytes": 385
+ },
+ "resource-diagnostics.contracts.json": {
+  "file": "resource-diagnostics.contracts.json.gz",
+  "sha256": "62f3c6d704da668000c9ef837a50258d9b833a1339e1529c441c70aac781cc13",
+  "bytes": 676875
+ },
+ "resource-diagnostics.invocation.json": {
+  "file": "resource-diagnostics.invocation.json.gz",
+  "sha256": "ef76428cf10c19f8c42ba9c5773600c31c9df5ee933b55ba66df3aac3973ad5b",
+  "bytes": 5103
+ },
+ "resource-diagnostics.json": {
+  "file": "resource-diagnostics.json.gz",
+  "sha256": "9ea3b936dcab760bc19ecb701c6d5ea398432883f665c2fab4b83d0b7cb60f6a",
+  "bytes": 1562934
+ },
+ "resource-diagnostics.source-effects.json": {
+  "file": "resource-diagnostics.source-effects.json.gz",
+  "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+  "bytes": 385
+ },
+ "stderr.log": {
+  "file": "stderr.log.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "bytes": 0
+ }
+}
