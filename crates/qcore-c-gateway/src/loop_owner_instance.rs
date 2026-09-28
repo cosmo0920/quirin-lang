@@ -1351,6 +1351,18 @@ impl StepB<'_> {
                 }
             }
         }
+        // A function read in place (the test, its maker, the context
+        // constructor and what it returns null through) is itself on the path:
+        // its own accesses count as a root's closure would.
+        let mut blockers = Vec::new();
+        let own = [self.index[&g.census_name], self.index[&f.census_name]]
+            .into_iter()
+            .chain(inlined.iter().copied());
+        for id in own {
+            if let Some(why) = hazards.get(&id) {
+                blockers.push(format!("`{}`, read in place, {why}", self.functions[id]));
+            }
+        }
         // An unmodelled call (through a function pointer the census does not
         // read) reaches only an escaped function; it matters only where the
         // region's closure makes one, or has a function the typed reading
@@ -1384,7 +1396,6 @@ impl StepB<'_> {
                 }
             })
             .collect::<Vec<_>>();
-        let mut blockers = Vec::new();
         if let Some(first) = unmodelled.first() {
             let wild = self
                 .reach

@@ -650,6 +650,17 @@ void hidden_impl(struct flb_lib_ctx *ctx) {
 }
 
 #[test]
+fn nc_a_list_mutation_in_a_function_read_in_place_is_unresolved() {
+    // The maker itself links another instance into the context's list.
+    let maker = format!(
+        "{ONE_TAIL}\n    static struct flb_input_instance other_ins;\n    \
+         mk_list_add(&other_ins._head, &ctx->flb->config->inputs);"
+    );
+    let fixture = make_fixture("maker-mutation", &test_file(&maker, "", "", ""), &[]);
+    route_kept(&run(&fixture), "read in place");
+}
+
+#[test]
 fn nc_a_holder_that_writes_the_instance_flag_is_unresolved() {
     let extra = r#"
 static int cb_force(struct flb_input_instance *ins, void *config, void *data)

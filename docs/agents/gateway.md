@@ -1316,12 +1316,14 @@ which is not a second authority.
     every loop, reaches a hazard over the census graph (all dispatch edges,
     spawns and coroutine entries, the coroutine route not pruned), and it is
     a wrapper that passes one unassigned parameter as the plugin name to one
-    `flb_input_new` call, called with a literal the typed reading records. A
+    `flb_input_new` call, called with a literal the typed reading records;
+    each function read in place must itself be free of hazards. A
     hazard is the constructor, a use of `struct flb_config::inputs` or
     `::in_plugins` other than a read or the listed initialisations, a write
-    of a context's `config`, an untyped function naming those members, or an
-    unstructured file whose text names one of them or a function reaching
-    one; and when the path's closure makes an unmodelled indirect call or has
+    of a context's `config`, an untyped function naming those members, a
+    function of an unstructured file whose text names one of them or a
+    function reaching one, or a call to a name only such a file may define;
+    and when the path's closure makes an unmodelled indirect call or has
     a function the build's typed reading could not read, no escaped function
     (an address taken, a macro name, a registrant of a function-pointer field
     read as a value through a matching record) may reach a hazard. Every
