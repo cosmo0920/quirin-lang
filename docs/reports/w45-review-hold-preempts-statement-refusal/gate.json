@@ -1,0 +1,12 @@
+{
+  "note": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL card gate at base fefb9199, measured on the tree of 5c22f21f (later commits change only this report's records). A first run at 9a9f1fc0 failed one unit (qcore-audit sr5_pending_gates: its Pending control used the dropped-release mutation this card corrects to Unknown; logs private/rh/gate-9a9f1fc0/), fixed in 5c22f21f and the whole gate rerun. submodule 0; run_test_binaries.py 350 units, 363 summaries, 6,259 passed, 0 failed, 11 ignored (private/test-binaries/20260928T133526Z-881326/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditReviewHoldStanding.lean added, 22 theorems, propext and Quot.sound only). No provider gate: providers/ unchanged. The Python suite (365) and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/rh/gate-5c22f21f/ of this worktree.",
+  "workspace_tests": 6259,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

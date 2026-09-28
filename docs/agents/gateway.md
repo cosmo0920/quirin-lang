@@ -961,6 +961,32 @@ which is not a second authority.
     stated: the lexer yields the identifiers the escape reads (trust boundary
     28). `QCore.ReservedSpelling`, `QCore.Sr5Soundness`;
     [report](../reports/w45-sr5-soundness/README.md).
+    **Amendment (W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL): a held call
+    never masks another reason.** A held call's refusal replaces its
+    statement's other refusal (the classifier checks the hold first) and has
+    no effect, so a row was `Pending` although accepting the declaration would
+    leave the statement's argument refusal or a violation standing
+    (`k_close(0)` beside a pin mismatch, a double release held for review, a
+    caller of a body a re-pin would leave refuted). A unit with a `Pending` row is analysed a second time under
+    `ResourceContracts::with_human_holds_in_force` (every declaration awaiting
+    review or withheld for a pin mismatch in force as written, nothing held),
+    and every `Pending` row is joined with each reason above `Pending` its
+    function carries there, recorded as an `Unsupported` standing reason
+    (`reason standing beside a call held for a human act: …`), so the row is
+    `Unknown`; a violation there is recorded the same way, never as a
+    violation (`legacy_review_standing.rs`). Only a row whose second analysis
+    is `Safe` stays `Pending`; a failed second analysis or a missing row keeps
+    nothing `Pending`. Rows that are not `Pending` are never read, and a unit
+    with none is analysed once. **Do not** repair this per statement (which
+    actuals a position admits depends on the declaration in force), publish a
+    verdict from the second analysis, or lower a row with it. The four
+    `Unknown` holds (refuted, ABI, mode, literal premise with its
+    `loop_owner__`/`thread_sync__` marks) absorb what they preempt and move
+    attribution only. Premises stated, not proved: the second analysis is the
+    held one with the holds lifted; a declaration another unit's body would
+    refute once accepted is not seen (`W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION`).
+    `QCore.ReviewHoldStanding`;
+    [report](../reports/w45-review-hold-preempts-statement-refusal/README.md).
 
 <a id="constraint-10j"></a>
 

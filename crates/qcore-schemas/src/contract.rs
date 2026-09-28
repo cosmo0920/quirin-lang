@@ -749,6 +749,32 @@ impl ResourceContracts {
             .collect();
     }
 
+    /// Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: this environment with
+    /// every declaration withheld for a human act — awaiting review
+    /// ([`Self::pending_review`]) or for a pin mismatch
+    /// ([`Self::pin_mismatch`]) — in force as written, and nothing held.
+    /// `None` when nothing is withheld for either reason.
+    ///
+    /// It is the environment the named human act would produce if it accepted
+    /// every held declaration as written. The gateway analyses under it only
+    /// to find the reasons that would still stand, and only ever joins them
+    /// onto a `Pending` row; it never publishes a verdict from it. The
+    /// refutation table is kept as it is: a name it lists stays held.
+    #[must_use]
+    pub fn with_human_holds_in_force(&self) -> Option<Self> {
+        if self.pending_review.is_empty() && self.pin_mismatch.is_empty() {
+            return None;
+        }
+        let mut resolved = self.clone();
+        for (name, pending) in std::mem::take(&mut resolved.pending_review) {
+            resolved.functions.insert(name, pending.contract);
+        }
+        for (name, withheld) in std::mem::take(&mut resolved.pin_mismatch) {
+            resolved.functions.insert(name, withheld.contract);
+        }
+        Some(resolved)
+    }
+
     #[must_use]
     pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
         self.functions.get(name)

@@ -5,9 +5,14 @@
 //! `Unknown`; the function row keeps its own held reason.
 //!
 //! The fixture is W45-CONTRACT-REVISION-MODE's held-out
-//! `tests/fixtures/revision_mode/` (derived from no production source): its
-//! `dropped-release` mutation puts `box_drop` out of force, so `user_drop` holds
-//! a call for a pin mismatch.
+//! `tests/fixtures/revision_mode/` (derived from no production source): a
+//! body change to `box_drop` puts it out of force, so `user_drop` holds a call
+//! for a pin mismatch. Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: the
+//! change is a second `item_touch` that keeps the release (the identities
+//! test's revision B), so a re-pin as written leaves `user_drop` `Safe` and its
+//! row `Pending`. The `dropped-release` mutation this test used before would
+//! leave the re-pinned declaration refuted by its body, and `user_drop` is
+//! `Unknown` there since that card.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -78,26 +83,17 @@ impl Tree {
             .unwrap()
     }
 
-    /// Pin, then apply the `dropped-release` mutation, then audit.
+    /// Pin, then change `box_drop`'s body (keeping its release), then audit.
     fn held_report(&self, report: &str) -> Value {
         succeeded(&self.quirin(&["pin", "--source-root", "src", "--modules", "contracts"]));
-        let mutation: Value = serde_json::from_str(&fixture("mutations.json")).unwrap();
-        let edits = mutation["mutations"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|m| m["name"] == "dropped-release")
-            .unwrap()["edits"]
-            .as_array()
-            .unwrap()
-            .clone();
+        let (old, new) = (
+            "    item_touch(item);\n    item_free(item);",
+            "    item_touch(item);\n    item_touch(item);\n    item_free(item);",
+        );
         let path = self.0.join("src/queue.c");
         let mut text = fs::read_to_string(&path).unwrap();
-        for pair in edits {
-            let (old, new) = (pair[0].as_str().unwrap(), pair[1].as_str().unwrap());
-            assert_eq!(text.matches(old).count(), 1, "{old}");
-            text = text.replacen(old, new, 1);
-        }
+        assert_eq!(text.matches(old).count(), 1, "{old}");
+        text = text.replacen(old, new, 1);
         fs::write(path, text).unwrap();
         succeeded(&self.quirin(&[
             "contracts",

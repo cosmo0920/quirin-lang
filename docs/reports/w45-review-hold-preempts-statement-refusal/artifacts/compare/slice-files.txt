@@ -1,0 +1,16 @@
+differs   console.log: 1 line(s); first:
+    - preparation: 16 unit(s), 48 Clang invocation(s); -E -P 1499132 us / syntax 2559327 us / line markers 1277843 us
+    + preparation: 16 unit(s), 48 Clang invocation(s); -E -P 985317 us / syntax 1850339 us / line markers 1024177 us
+same      exit
+same      resource-diagnostics.chunk-contracts.json
+differs   resource-diagnostics.contracts.json: 534 line(s); first:
+    -         "module": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-implementation-wave-47-681db5/c8ef992e-a75f-4250-b4e1-07e6e5477601/scratchpad/rh-base/contract/profiles/fluen
+    +         "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a699eb30a516b6732/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_str
+differs   resource-diagnostics.invocation.json: 5 line(s); first:
+    -     "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-implementation-wave-47-681db5/c8ef992e-a75f-4250-b4e1-07e6e5477601/scratchpad/rh-base/contract/profiles/fluent-bit",
+    +     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a699eb30a516b6732/contract/profiles/fluent-bit",
+differs   resource-diagnostics.json: 48 line(s); first:
+    -             "resource_contract_sources": "7d1a7959d08705767e60e824c22af3c16368f6c40fe00fb0ab3205fe9ffa9079",
+    +             "resource_contract_sources": "e228b37a8821d7eb1c7fdf0b78ba7e70515e8f1228d1c0d8d44ea0632aff5129",
+same      resource-diagnostics.source-effects.json
+same      stderr.log

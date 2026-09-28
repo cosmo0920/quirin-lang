@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 558
+  "named_followups": 560
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6742,7 +6742,7 @@
   "workspace_tests": 6262,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 223,
+  "lean_audits": 224,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6912,6 +6912,7 @@
    "AuditReturnExpressionFamilies.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
+   "AuditReviewHoldStanding.lean",
    "AuditRuntimeImports.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
@@ -10819,11 +10820,25 @@
    "recorded_by": "W47-LOOP-OWNER-INSTANCE-FLOW"
   },
   {
-   "id": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL",
-   "title": "Keep a statement's other refusals beside a call held for human review",
-   "why": "W45-CONTRACT-DEFERRED-REVIEW rewrites a pending callee's call site to a marked undeclared name and the statement refuses with the held-call reason; a verdict resting only on held calls is Pending (10i: a named human act alone stands between it and Safe). W47-LOOP-OWNER-INSTANCE-FLOW measured a case where that claim is not true: in the tail-pause slice (90978ac6 export) src/flb_lib.c::flb_input (both variants) was Unknown on \"indirect memory access is outside the resource projection\" at src/flb_lib.c:272 (the ctx->config argument of i_ins = flb_input_new(ctx->config, ...)); with fluent_bit/input_instance.qv's held flb_input_new declaration the statement reports only the held call, so the row is Pending, and resolving the review would expose the argument refusal again (Unknown, not Safe). Size: 1 slice function (2 variants); corpus and system none. DISCHARGE: a held call reports its statement's other refusals too (or a row with a held call and any other refusal in the same statement stays Unknown), measured on the three arbiters.",
-   "source": "docs/reports/w47-loop-owner-instance-flow/README.md",
-   "recorded_by": "W47-LOOP-OWNER-INSTANCE-FLOW"
+   "id": "W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION",
+   "title": "Decide a held declaration against the other units' bodies before a row stays Pending",
+   "why": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL (gateway rule 10i as amended) keeps a row Pending only when its function carries no other reason in a second analysis of the same unit with every declaration held for a human act in force as written. That second analysis settles the unit's own refutations (checked_spec::settle, rule 10g in the defining unit), but the audit's cross-unit refutation table (rule 10g's first phase) is folded from the held rows only: a held declaration whose body another unit defines, and which that body would refute once accepted, is not in the table, so a caller in a third unit can stay Pending where the accepted declaration would be withdrawn (Unknown). Size: 0 Pending rows on the corpus, system and tail-pause slice at main fefb9199 (no review-held declaration; every pin in force); with W47-LOOP-OWNER-INSTANCE-FLOW's input_instance.qv the held flb_create, flb_input, flb_input_new and flb_service_set have bodies in src/flb_lib.c and src/flb_input.c, analysed units of the slice. DISCHARGE: a first-phase refutation table computed from the second analyses as well (or the held declarations' bodies decided against them in the table), with the table's digest in the run identity; measured on the three routes.",
+   "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+   "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
+  },
+  {
+   "id": "W45-REVIEW-HOLD-UNACCEPTABLE-AS-WRITTEN",
+   "title": "A held clause its own marker says must not be accepted as written keeps its callers Pending",
+   "why": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL keeps a row Pending only when its function carries no other reason with every held declaration accepted as written. W47-LOOP-OWNER-INSTANCE-FLOW's input_instance.qv holds flb_input_new's `resource_borrowed(config)` and `resource_borrowed(data)` with the reason `retained, not borrowed: ... so this clause must not be unwrapped as written`: the marker itself says acceptance as written is not a resolution, and v1 has no retained mode (rule 10j), so the realistic outcomes of the review are a rejected clause (the call uncontracted, Unknown) or a new mode. Measured by this card's probe (the branch's four contract-data files over this card's tip, no branch code; report section 6): src/flb_lib.c::flb_input is Pending before and after the fix and Safe with the declarations accepted as written, so the fix correctly leaves it Pending under its definition, while the claim that a named human act alone stands between it and Safe rests on accepting a clause its author marked false. Size: 1 slice function (2 variants), on that branch only; 0 on main. DISCHARGE: a product decision on such markers (for example a marker kind that states the clause is known not to hold, whose callers are Unknown, never Pending), with its contract-spec text, gateway rule and fixture.",
+   "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+   "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
+  },
+  {
+   "id": "W45-HELD-UNIT-REASON-CODE-NAMES-HOLD-FIRST",
+   "title": "An Unknown unit with a held call publishes a human-resolvable reason code",
+   "why": "qcore_schemas::reason::ReasonCategory::classify names the held premise first: a unit summary with at least one held call classifies as awaiting-human-review (or contract-pin-mismatch), on the ground that what the projection leaves open downstream of a held call is not a statement about the source. Since W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL a row can be Unknown because of a reason that stands without the hold (a statement refusal, a body that refutes the accepted declaration), which is about the source; its unit is Unknown and still carries the human-resolvable reason_code (measured: crates/qcore-audit/tests/contract_revision_audit.rs, user_drop Unknown in a unit coded contract-pin-mismatch). The same combination already existed for a unit with one Pending and one Unknown function. The verdict is not affected (the unit status is the fold of its rows). Size: 0 units on the corpus, system and tail-pause slice at main fefb9199 (no held call). DISCHARGE: a unit summary that counts standing reasons (review_standing::is_standing_reason) apart and a classifier that names a human-resolvable category only for a Pending unit, with the reason-code totality tests updated.",
+   "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+   "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
