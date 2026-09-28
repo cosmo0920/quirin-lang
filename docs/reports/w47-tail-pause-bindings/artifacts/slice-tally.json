@@ -1,0 +1,974 @@
+{
+  "bound_functions_in_slice": {
+    "plugins/in_tail/tail.c:in_tail_pause": [
+      {
+        "categories": {
+          "unknown_alias": 3,
+          "unsupported": 11
+        },
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "plugins/in_tail/tail.c:in_tail_resume": [
+      {
+        "categories": {
+          "unknown_alias": 3,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "plugins/in_tail/tail_fs_inotify.c:flb_tail_fs_inotify_init": [
+      {
+        "categories": {
+          "unknown_alias": 4,
+          "unsupported": 8
+        },
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_inotify.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "plugins/in_tail/tail_fs_inotify.c:flb_tail_fs_inotify_pause": [
+      {
+        "categories": {
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_inotify.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "plugins/in_tail/tail_fs_inotify.c:flb_tail_fs_inotify_resume": [
+      {
+        "categories": {
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_inotify.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:collector_create": [
+      {
+        "categories": {
+          "unknown_alias": 8,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 8,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:collector_start": [
+      {
+        "categories": {
+          "unknown_alias": 3,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 3,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_delete": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_destroy": [
+      {
+        "categories": {
+          "unknown_alias": 4,
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 4,
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_fd": [
+      {
+        "categories": {
+          "unknown_alias": 6,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 6,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_pause": [
+      {
+        "categories": {
+          "unknown_alias": 5,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 5,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_resume": [
+      {
+        "categories": {
+          "unknown_alias": 13,
+          "unsupported": 6
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 13,
+          "unsupported": 6
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_collector_running": [
+      {
+        "categories": {
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_pause": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_plugin_pause": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_plugin_resume": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_resume": [
+      {
+        "categories": {
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_set_collector_event": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input.c:flb_input_set_collector_time": [
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:flb_input_thread_instance_exit": [
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 7
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 7
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:flb_input_thread_instance_pause": [
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:flb_input_thread_instance_resume": [
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 2,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:handle_input_event": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:input_collector_fd": [
+      {
+        "categories": {
+          "unknown_alias": 5,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 5,
+          "unsupported": 4
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:input_thread_instance_create": [
+      {
+        "categories": {
+          "unknown_alias": 6,
+          "unsupported": 23
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 6,
+          "unsupported": 23
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:input_thread_instance_get_status": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 3
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_input_thread.c:input_thread_instance_set_status": [
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 1,
+          "unsupported": 1
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_lib.c:do_start": [
+      {
+        "categories": {
+          "unknown_alias": 7,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unknown_alias": 7,
+          "unsupported": 9
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_lib.c:flb_start": [
+      {
+        "categories": {
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unsupported": 2
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Unknown"
+      }
+    ],
+    "src/flb_lib.c:flb_stop": [
+      {
+        "categories": {
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Unknown"
+      },
+      {
+        "categories": {
+          "unsupported": 5
+        },
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Unknown"
+      }
+    ]
+  },
+  "diagnostic_counts": {
+    "counted_user": 1,
+    "unknown_alias": 1009,
+    "unsupported": 2857
+  },
+  "distinct_functions": {
+    "Safe": 24,
+    "Unknown": 245,
+    "Unsafe": 1
+  },
+  "fluent_bit_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "function_variants": 404,
+  "non_unknown_functions": {
+    "plugins/in_tail/tail.c:consume_byte": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file.c:consume_bytes": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file.c:drop_bytes": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file.c:stat_get_st_dev": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file.c:tail_file_stat": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file.c:utf8_safe_truncate_pos": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_file_budget.c:flb_tail_file_budget_destroy": [
+      {
+        "categories": {
+          "counted_user": 1,
+          "unknown_alias": 1,
+          "unsupported": 1
+        },
+        "diagnostics": [
+          {
+            "category": "counted_user",
+            "description": "a user of `budget` dropped without a release check (line 19005) reaches this exit with none re-added",
+            "origin": "plugins/in_tail/tail_file_budget.c:124"
+          },
+          {
+            "category": "unsupported",
+            "description": "unmodeled expression may mutate a formal resource identity",
+            "origin": "plugins/in_tail/tail_file_budget.c:130"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `budget`",
+            "origin": "plugins/in_tail/tail_file_budget.c:133"
+          }
+        ],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file_budget.c.o",
+        "status": "Unsafe"
+      }
+    ],
+    "plugins/in_tail/tail_fs_stat.c:flb_tail_fs_stat_exit": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_stat.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_fs_stat.c:tail_fs_stat_path": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_stat.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_multiline.c:flb_tail_mult_destroy": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_multiline.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_multiline.c:tail_mult_append": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_multiline.c.o",
+        "status": "Safe"
+      }
+    ],
+    "plugins/in_tail/tail_scan.c:flb_tail_scan_register_ignored_file_size": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_scan.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:collector_id": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_check": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_coro_id_get": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_get_cmt_instance": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_handle_notification": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_log_check": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:flb_input_rate_gate_effective_limit": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_input.c:instance_id": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_lib.c:filter_instance_get": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_lib.c:flb_lib_free": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_lib.c:flb_loop": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_lib.c:in_instance_get": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Safe"
+      }
+    ],
+    "src/flb_lib.c:out_instance_get": [
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+        "status": "Safe"
+      },
+      {
+        "categories": {},
+        "diagnostics": [],
+        "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+        "status": "Safe"
+      }
+    ]
+  },
+  "report": "docs/reports/w47-tail-pause-bindings/artifacts/slice/resource-diagnostics.json.gz",
+  "unit_rows": [
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 238,
+        "unsupported": 547
+      },
+      "file": "src/flb_input.c",
+      "functions": 74,
+      "output": "CMakeFiles/fluent-bit-shared.dir/flb_input.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 238,
+        "unsupported": 547
+      },
+      "file": "src/flb_input.c",
+      "functions": 74,
+      "output": "CMakeFiles/fluent-bit-static.dir/flb_input.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 42,
+        "unsupported": 140
+      },
+      "file": "src/flb_input_thread.c",
+      "functions": 19,
+      "output": "CMakeFiles/fluent-bit-shared.dir/flb_input_thread.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 42,
+        "unsupported": 140
+      },
+      "file": "src/flb_input_thread.c",
+      "functions": 19,
+      "output": "CMakeFiles/fluent-bit-static.dir/flb_input_thread.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 33,
+        "unsupported": 138
+      },
+      "file": "src/flb_lib.c",
+      "functions": 41,
+      "output": "CMakeFiles/fluent-bit-shared.dir/flb_lib.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 33,
+        "unsupported": 138
+      },
+      "file": "src/flb_lib.c",
+      "functions": 41,
+      "output": "CMakeFiles/fluent-bit-static.dir/flb_lib.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 42,
+        "unsupported": 79
+      },
+      "file": "plugins/in_tail/tail.c",
+      "functions": 10,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 42,
+        "unsupported": 170
+      },
+      "file": "plugins/in_tail/tail_config.c",
+      "functions": 4,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_config.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 19,
+        "unsupported": 235
+      },
+      "file": "plugins/in_tail/tail_db.c",
+      "functions": 16,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_db.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 30,
+        "unsupported": 68
+      },
+      "file": "plugins/in_tail/tail_dockermode.c",
+      "functions": 10,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_dockermode.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 175,
+        "unsupported": 427
+      },
+      "file": "plugins/in_tail/tail_file.c",
+      "functions": 48,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "counted_user": 1,
+        "unknown_alias": 13,
+        "unsupported": 27
+      },
+      "file": "plugins/in_tail/tail_file_budget.c",
+      "functions": 6,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_file_budget.c.o",
+      "status": "Unsafe"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 17,
+        "unsupported": 68
+      },
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "functions": 13,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_inotify.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 19,
+        "unsupported": 31
+      },
+      "file": "plugins/in_tail/tail_fs_stat.c",
+      "functions": 9,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_fs_stat.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 24,
+        "unsupported": 84
+      },
+      "file": "plugins/in_tail/tail_multiline.c",
+      "functions": 12,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_multiline.c.o",
+      "status": "Unknown"
+    },
+    {
+      "diagnostic_counts": {
+        "unknown_alias": 2,
+        "unsupported": 18
+      },
+      "file": "plugins/in_tail/tail_scan.c",
+      "functions": 8,
+      "output": "CMakeFiles/flb-plugin-in_tail.dir/tail_scan.c.o",
+      "status": "Unknown"
+    }
+  ],
+  "units": {
+    "Unknown": 15,
+    "Unsafe": 1
+  }
+}

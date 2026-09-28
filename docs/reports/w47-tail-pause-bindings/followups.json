@@ -1,0 +1,44 @@
+[
+ {
+  "id": "W47-LOOP-OWNER-CONTRACTS",
+  "title": "Loop-owner contracts for Fluent Bit collectors and input pause/resume (sketch C1-C3)",
+  "why": "W47-TAIL-PAUSE-BINDINGS bound the in_tail pause/resume design sketch's C1-C3 to 90978ac6 (bindings B03-B40, 38 source locations) and found no carrier: resource-v1 has no thread, owner or happens-before clause, no contract names a loop owner, event_reactor.rs takes cross-thread use and synchronization as supplied premises and QCore.EventDriven's sameBaseSingleDispatcher is a Bool premise. Needed: (1) a thread-entry census deriving each call site's thread set from the spawn sites (mk_utils_worker_spawn -> pthread_create; flb_lib_worker = engine thread E, input_thread = input worker I), fail-closed on an unresolved function pointer; (2) a loop-owner vocabulary in quirin-provider-fluent-bit binding coll->evl to config->evl (non-threaded) or thi->evl (threaded) (src/flb_input.c:2251, :2254-2258) and requiring the owner for flb_input_collector_{start,pause,resume,running} and mk_event_add/del/timeout_* on that loop; (3) C2's two meanings (non-threaded synchronous callback; threaded enqueue that is not completion, src/flb_input_thread.c:542/:571, 0 when ins->thi is NULL) and C3's ingestion premise (src/flb_input.c:3241). Soundness premise: the thread-entry inventory is closed and loop dispatch runs callbacks on the loop's owner, both derived, not declared. Negative cases it must reject: NC1 (the previous non-threaded test pauses from T), NC3 (enqueue then an unsynchronized running read), NC6 (resume while ingestion is disabled, then assume running); NC7 must give no conclusion. Size: 18 functions of the tail-pause slice in the bound paths, plus the corpus callers of flb_input_pause/resume in src/flb_input_chunk.c (3 call sites at 90978ac6), which a frozen prediction must name because a new callee obligation can only move a caller away from Safe. DISCHARGE: Rust gateway rule plus audited Lean (an ownership theorem that discharges EventDriven's single-dispatcher premise from the derived owner), the controls above, and a measured re-pin of the tail-pause slice and the 185-unit corpus.",
+  "source": "docs/reports/w47-tail-pause-bindings/README.md",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ },
+ {
+  "id": "W47-CONDVAR-JOIN-PUBLICATION",
+  "title": "Condition-variable publication and join-before-release obligations (sketch C4-C5)",
+  "why": "W47-TAIL-PAUSE-BINDINGS bound C4-C5 to the revised test's publish/await (tests/runtime/in_tail.c:2475-2498, :2565), flb_stop's joins (src/flb_lib.c:1058, :1077), the input worker join (src/flb_input_thread.c:607) and the worker status handshake (src/flb_input_thread.c:683-719, which destroys and re-initialises its condvar after the unlock). No carrier exists: constraint 27 refuses condition variables in the mutex model, no provider declares pthread_cond_*, pthread_create or pthread_join (libc threads.qv declares cnd_wait/cnd_timedwait custody only), QCore.Concurrency has spawn/join and mutex release/acquire edges only over supplied traces, and task_execution's join has no C binding. Needed: a condvar-wait rule (the wait releases and reacquires the mutex; each wakeup rechecks the predicate; a result read is licensed only by the predicate observed under the mutex), a join rule (release of storage a callback may retain only after a successful join of every thread that can run it; a timeout grants nothing), and the libc contracts for pthread_cond_* and pthread_join in quirin-provider-libc. Soundness premise: the joined thread set covers every thread that can reach the storage (derived from W47-LOOP-OWNER-CONTRACTS' thread-entry census). Negative cases it must reject: NC4 (publication is not join), NC5 (timeout is not cancellation), NC9 (fixture removal before join in test_tail_ctx_destroy); NC8 gives no result claim. DISCHARGE: Rust rule plus audited Lean extending QCore.Concurrency with a condvar edge and a join-release theorem, a deliberate amendment of constraint 27, the libc contracts pinned, and the controls above; the test file itself is outside the recorded prepare route (see W47-TAIL-PAUSE-TEST-UNIT).",
+  "source": "docs/reports/w47-tail-pause-bindings/README.md",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ },
+ {
+  "id": "W47-TAIL-REQUEST-CONTROL-API",
+  "title": "Cross-thread request/acknowledgement control API for inputs (sketch C6)",
+  "why": "The sketch's C6 proposes a request identity with input generation, owner-only application, an acknowledgement carrying the result and observed state, and at-most-once terminal replies. No such API exists at 90978ac6: flb_input_thread_instance_pause/resume write an untagged 64-bit command to the worker pipe (src/flb_input_thread.c:542, :571) and handle_input_event logs failures without replying (src/flb_input_thread.c:53-100). Nothing to bind. DISCHARGE: an upstream API exists to bind (a Fluent Bit change, proposed separately, never by editing the audited input), then a contract card over it; until then this stays a registered design follow-up.",
+  "source": "docs/reports/w47-tail-pause-bindings/README.md",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ },
+ {
+  "id": "W47-TAIL-PAUSE-BINDING-RESIDUALS",
+  "title": "Six binding residuals of the in_tail pause/resume census",
+  "why": "Found while binding the sketch at 90978ac6; each is a binding gap a later card must state, not a defect claim: R1 flb_input_collector_destroy deletes through config->evl, not coll->evl (src/flb_input.c:3146, :3150), although a threaded input's collector was attached to thi->evl; R2 flb_stop's NONE/ERROR branch returns 0 without checking its join, and ctx->status is a plain field written by E (src/flb_lib.c:932) and read by T; R3 in_tail_pause does not pause the scan, watcher and rotated collectors (C3 covers the two backend collectors only); R4 the threaded pause/resume return 0 when ins->thi is NULL; R5 flb_input_collector_pause ignores mk_event_timeout_destroy's result; R6 the 18-commit delta adds a process-wide tail file budget shared across inputs (plugins/in_tail/tail_file_budget.c: budget_lock plus CFL atomics) that no C1-C6 obligation covers. DISCHARGE: each residual is either bound by W47-LOOP-OWNER-CONTRACTS / W47-CONDVAR-JOIN-PUBLICATION with a stated outcome, or recorded as out of their scope with a reason.",
+  "source": "docs/reports/w47-tail-pause-bindings/bindings.json",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ },
+ {
+  "id": "W47-COUNTED-USER-MEMBER-NAME-MATCH",
+  "title": "Rule 10e's counter match is by member spelling, so a non-task `users` field reads as a counted user",
+  "why": "The tail-pause slice at 90978ac6 has one provisional Unsafe unit, plugins/in_tail/tail_file_budget.c, from one function, flb_tail_file_budget_destroy: counted_user `a user of budget dropped without a release check`. Classified by reading as an artifact: the function decrements budget->users and frees the budget when it reaches zero, both under budget_lock (tail_file_budget.c:129-135); legacy_counted_users.rs::counter_write matches any `B->users` by member name against the counter task_users.qv declares for flb_task, and an inline zero test followed by a release is not a declared release_check. Not an upstream defect claim. Size: 1 function, 1 unit, 1 counted_user leaf in the tail-pause slice; whether any corpus or system-slice counted_user leaf (system slice: 4) matches a non-task `users` member was not measured by this card. DISCHARGE: the counter is keyed by record type as well as member (or the pass refuses to Unknown on a record type the declaration does not name), with the Lean model QCore.CountedUsers updated, and a measured re-pin showing this leaf withdrawn to Unknown.",
+  "source": "docs/reports/w47-tail-pause-bindings/README.md",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ },
+ {
+  "id": "W47-TAIL-PAUSE-TEST-UNIT",
+  "title": "tests/runtime/in_tail.c is outside the recorded audit route",
+  "why": "The recorded prepare route configures FLB_DEV, which enables FLB_TESTS_INTERNAL but not FLB_TESTS_RUNTIME, so the compile database holds no record for tests/runtime/in_tail.c; a control selection including it gives one Unknown unit with reason environment-unavailable (artifacts/control-test-unit.json). The fluent_bit library profile also does not model the acutest harness. The sketch's C4/C5 bindings and negative cases NC2, NC4, NC5, NC8 and NC9 live in that file. DISCHARGE: a prepare variant that records FLB_TESTS_RUNTIME (a new, separately pinned build route) and a test-harness profile, or a recorded decision that test harnesses stay outside audit scope with the C4/C5 bindings carried by W47-CONDVAR-JOIN-PUBLICATION's own fixtures.",
+  "source": "docs/reports/w47-tail-pause-bindings/README.md",
+  "recorded_by": "W47-TAIL-PAUSE-BINDINGS"
+ }
+]

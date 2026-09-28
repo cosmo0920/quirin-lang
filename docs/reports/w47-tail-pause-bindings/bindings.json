@@ -1,0 +1,1302 @@
+{
+  "schema": "w47-tail-pause-bindings/1",
+  "scope": "a source-binding census of design sketch in_tail_pause_contracts.r1.md (SHA-256 58add9efed43576dc7ae95de8e56c55b45fe4915fcb5493b1f37977a851d51e0); locations and derived thread attributions only. No binding is a verdict, a verified race or an upstream defect claim; every reject is a candidate for a future checker.",
+  "source": {
+    "commit": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+    "tree": "8d1f3cd78a00fcfb4095a39d3d0b3e7eaac80be4",
+    "parent": "cb8d69ffc4bb7f01c5a75b6a5d73a2ab86e186ff",
+    "parent_diff_sha256": "87800af96d47c9f4b4cea616ae85308a6449211136e0850ffaaee4c3296b4314",
+    "pinned_base": "046accf6aded7906f66a1baf0202da349e521736",
+    "corpus_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "previous_test_sha256": "008e32fc3e73ad30a17bdd782387c8c97a612a0c943e77c9e19d2639beebacbb",
+    "file_sha256": {
+      "include/fluent-bit/flb_event_loop.h": "37ab072d569b3f32e726f4bb54d63f061bb494f3f250c8dc2d1d18b000a7bf90",
+      "lib/monkey/mk_core/mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+      "lib/monkey/mk_core/mk_event_epoll.c": "a2a161195fb8b417bad2a6c5410b6508f8f188debeaf9246fe65935c8c23d258",
+      "lib/monkey/mk_core/mk_utils.c": "2ee7487f90d2da5db62f778bc30ea3145b413caf68f500914d7c5f0a86dd890a",
+      "plugins/in_tail/tail.c": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+      "plugins/in_tail/tail_fs.h": "223903a824f51ecdcfc46db4c78347b93ffad6317accd98eb9d869dc660fac0c",
+      "plugins/in_tail/tail_fs_inotify.c": "454a92bedfaec32ede331c08ee22942783fa05a337a7c5515e1885a17be0c597",
+      "src/flb_engine.c": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+      "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+      "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+      "src/flb_lib.c": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89",
+      "tests/runtime/in_tail.c": "676563e15c4d3854b0b48ac5114dc89da3a48c1bdef3c4874292e084d8476863"
+    }
+  },
+  "threads": {
+    "T": "test/API caller thread: the runtime test's main thread (tests/runtime/in_tail.c), which calls flb_start/flb_stop and, in the threaded test and the previous non-threaded test, flb_input_pause/resume",
+    "E": "engine thread: mk_utils_worker_spawn(flb_lib_worker) at src/flb_lib.c:969 -> pthread_create at lib/monkey/mk_core/mk_utils.c:318 -> mk_utils_worker_entry -> flb_lib_worker -> flb_engine_start (src/flb_engine.c:1120), which owns config->evl (set at src/flb_engine.c:1150)",
+    "I": "input worker (threaded=true only): flb_input_thread_instance_init -> flb_tp_thread_start (src/flb_thread_pool.c:119) -> flb_worker_create -> mk_utils_worker_spawn(step_callback) -> input_thread (src/flb_input_thread.c:318), which owns thi->evl (flb_engine_evl_set at src/flb_input_thread.c:337)"
+  },
+  "bindings": [
+    {
+      "id": "B01",
+      "sketch_element": "thread E entry",
+      "contracts": [
+        "C1",
+        "C5"
+      ],
+      "file": "src/flb_lib.c",
+      "line": 969,
+      "anchor": "mk_utils_worker_spawn(flb_lib_worker, ctx, &tid)",
+      "function": "do_start",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T spawns E"
+      },
+      "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
+      "note": "the only spawn of the engine thread; tid stored in config->worker at :973"
+    },
+    {
+      "id": "B02",
+      "sketch_element": "thread E entry (pthread_create)",
+      "contracts": [
+        "C5"
+      ],
+      "file": "lib/monkey/mk_core/mk_utils.c",
+      "line": 318,
+      "anchor": "pthread_create(tid, &thread_attr, mk_utils_worker_entry, start)",
+      "function": "mk_utils_worker_spawn",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T (engine) or E (input workers via flb_worker_create)"
+      },
+      "carrier": "none",
+      "note": "joinable thread; no pthread_create contract exists (libc provider declares none)"
+    },
+    {
+      "id": "B03",
+      "sketch_element": "loop ownership L(E): config->evl",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_engine.c",
+      "line": 1150,
+      "anchor": "config->evl = evl;",
+      "function": "flb_engine_start",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E"
+      },
+      "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
+      "note": "the engine loop is created and published by E before any collector starts"
+    },
+    {
+      "id": "B04",
+      "sketch_element": "loop ownership L(I): thi->evl",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 255,
+      "anchor": "thi->evl = mk_event_loop_create(256);",
+      "function": "input_thread_instance_create",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "E creates it (flb_input_init_all on E); I runs it from src/flb_input_thread.c:421"
+      },
+      "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
+      "note": "created on E during input init, dispatched only by I: a pre-publication phase the sketch calls quiescent"
+    },
+    {
+      "id": "B05",
+      "sketch_element": "collector attachment coll->evl (threaded)",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2251,
+      "anchor": "coll->evl = thi->evl;",
+      "function": "collector_create",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "I (for a threaded input, cb_init and cb_pre_run both run on I: src/flb_input_thread.c:369, :409)"
+      },
+      "carrier": "none",
+      "note": "collector-to-loop attachment; no Quirin vocabulary names a loop owner"
+    },
+    {
+      "id": "B06",
+      "sketch_element": "collector attachment coll->evl (non-threaded) and the stated ownership comment",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2254,
+      "anchor": "Non-threaded inputs must always attach collectors to the owner",
+      "function": "collector_create",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (cb_init and cb_pre_run run on E)"
+      },
+      "carrier": "none",
+      "note": "the survey's flb_input.c:2231-2240 is this text at 66910c10 (2233-2240); at 046accf6 and 90978ac6 it is 2250-2258 (file identical at both)"
+    },
+    {
+      "id": "B07",
+      "sketch_element": "collector register (time)",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2273,
+      "anchor": "int flb_input_set_collector_time(",
+      "function": "flb_input_set_collector_time",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": "list insertion into ins->collectors at :2267 without a lock"
+    },
+    {
+      "id": "B08",
+      "sketch_element": "collector register (fd event)",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2294,
+      "anchor": "int flb_input_set_collector_event(",
+      "function": "flb_input_set_collector_event",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B09",
+      "sketch_element": "collector start",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2335,
+      "anchor": "static int collector_start(",
+      "function": "collector_start",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E via flb_input_collectors_start (src/flb_engine.c:1392)",
+        "threaded input": "I via flb_input_thread_collectors_start (src/flb_input_thread.c:405)"
+      },
+      "carrier": "none",
+      "note": "timer: mk_event_timeout_create on coll->evl; fd: mk_event_add"
+    },
+    {
+      "id": "B10",
+      "sketch_element": "collector running (read)",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 2964,
+      "anchor": "int flb_input_collector_running(",
+      "function": "flb_input_collector_running",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (revised test callback) or T (previous test)",
+        "threaded input": "T (threaded test poll)"
+      },
+      "carrier": "none",
+      "note": "plain int read of coll->running; no atomic, no lock"
+    },
+    {
+      "id": "B11",
+      "sketch_element": "collector pause",
+      "contracts": [
+        "C1",
+        "C3"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3158,
+      "anchor": "int flb_input_collector_pause(",
+      "function": "flb_input_collector_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (revised test) / T (previous test)",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": "timer: fd_timer=-1 then mk_event_timeout_destroy (result ignored); fd: mk_event_del, -1 on failure; running=FALSE only on the success path"
+    },
+    {
+      "id": "B12",
+      "sketch_element": "collector delete",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3197,
+      "anchor": "int flb_input_collector_delete(",
+      "function": "flb_input_collector_delete",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E",
+        "threaded input": "I"
+      },
+      "carrier": "contract: libc pthread_mutex.qv (custody of mutex storage only, not mutual exclusion or protected data)",
+      "note": "the only collector-list mutation under config->collectors_mutex; not called in the sketch's paths"
+    },
+    {
+      "id": "B13",
+      "sketch_element": "collector resume",
+      "contracts": [
+        "C1",
+        "C3"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3218,
+      "anchor": "int flb_input_collector_resume(",
+      "function": "flb_input_collector_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (revised test) / T (previous test)",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": "already-running returns -1 (logged error)"
+    },
+    {
+      "id": "B14",
+      "sketch_element": "is_ingestion_active early return",
+      "contracts": [
+        "C3"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3241,
+      "anchor": "if (config->is_ingestion_active == FLB_FALSE) {",
+      "function": "flb_input_collector_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E / T",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": "returns 0 without resuming and without setting running: success at the API is not a running-state promise"
+    },
+    {
+      "id": "B15",
+      "sketch_element": "is_ingestion_active writers",
+      "contracts": [
+        "C3"
+      ],
+      "file": "src/flb_engine.c",
+      "line": 1742,
+      "anchor": "config->is_ingestion_active = FLB_FALSE;",
+      "function": "flb_engine_stop_ingestion",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "E (engine stop path, src/flb_engine.c:1477)"
+      },
+      "carrier": "none",
+      "note": "also src/flb_engine.c:1670 (flb_engine_shutdown, E) and src/flb_config.c:302 (init); read on I by a threaded resume with no synchronization"
+    },
+    {
+      "id": "B16",
+      "sketch_element": "collector destroy",
+      "contracts": [
+        "C1",
+        "C5"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3140,
+      "anchor": "int flb_input_collector_destroy(",
+      "function": "flb_input_collector_destroy",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (flb_input_instance_destroy from flb_engine_shutdown)",
+        "threaded input": "E after flb_input_thread_instance_exit joined I"
+      },
+      "carrier": "none",
+      "note": "deletes through config->evl, not coll->evl (:3146, :3150): for a threaded input the collector was attached to thi->evl, which I destroyed before exiting (binding residual, not a defect claim)"
+    },
+    {
+      "id": "B17",
+      "sketch_element": "engine dispatch of a collector",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3276,
+      "anchor": "int flb_input_collector_fd(",
+      "function": "flb_input_collector_fd",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (flb_engine_handle_event, src/flb_engine.c:1002)"
+      },
+      "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
+      "note": "linear scan of config->inputs x ins->collectors; runs cb_collect synchronously on E (in_tail is not a coroutine input)"
+    },
+    {
+      "id": "B18",
+      "sketch_element": "worker dispatch of a collector",
+      "contracts": [
+        "C1"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 133,
+      "anchor": "static int input_collector_fd(",
+      "function": "input_collector_fd",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "I"
+      },
+      "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
+      "note": ""
+    },
+    {
+      "id": "B19",
+      "sketch_element": "mk_event_add",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event.c",
+      "line": 99,
+      "anchor": "int mk_event_add(",
+      "function": "mk_event_add",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
+      "note": "delegates to _mk_event_add"
+    },
+    {
+      "id": "B20",
+      "sketch_element": "mk_event_add (epoll): priority-queue link removal",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event_epoll.c",
+      "line": 149,
+      "anchor": "mk_list_del(&event->_priority_head);",
+      "function": "_mk_event_add",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "none",
+      "note": "the userspace intrusive link the sketch names; epoll_ctl (:138) is thread-safe, this unlink is not"
+    },
+    {
+      "id": "B21",
+      "sketch_element": "mk_event_del",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event.c",
+      "line": 132,
+      "anchor": "int mk_event_del(",
+      "function": "mk_event_del",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
+      "note": "returns -1 on an unregistered event"
+    },
+    {
+      "id": "B22",
+      "sketch_element": "mk_event_del (epoll): priority-queue link removal",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event_epoll.c",
+      "line": 180,
+      "anchor": "mk_list_del(&event->_priority_head);",
+      "function": "_mk_event_del",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B23",
+      "sketch_element": "timeout create",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event.c",
+      "line": 156,
+      "anchor": "int mk_event_timeout_create(",
+      "function": "mk_event_timeout_create",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
+      "note": "timerfd backend (MK_HAVE_TIMERFD_CREATE) at mk_event_epoll.c:190"
+    },
+    {
+      "id": "B24",
+      "sketch_element": "timeout destroy",
+      "contracts": [
+        "C1"
+      ],
+      "file": "lib/monkey/mk_core/mk_event_epoll.c",
+      "line": 341,
+      "anchor": "static inline int _mk_event_timeout_destroy(",
+      "function": "_mk_event_timeout_destroy",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "caller's thread"
+      },
+      "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
+      "note": "_mk_event_del then close(event->fd); returns 0 regardless"
+    },
+    {
+      "id": "B25",
+      "sketch_element": "engine loop iteration over the bucket queue",
+      "contracts": [
+        "C1"
+      ],
+      "file": "include/fluent-bit/flb_event_loop.h",
+      "line": 74,
+      "anchor": "#define flb_event_priority_live_foreach",
+      "function": "flb_event_priority_live_foreach (macro)",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (src/flb_engine.c:1454)",
+        "threaded input": "I (src/flb_input_thread.c:422)"
+      },
+      "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
+      "note": "pops _priority_head links the pause/resume paths unlink"
+    },
+    {
+      "id": "B26",
+      "sketch_element": "flb_input_pause",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3074,
+      "anchor": "int flb_input_pause(",
+      "function": "flb_input_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (revised test callback; flb_engine_shutdown/stop_ingestion via flb_input_pause_all) or T (previous test)",
+        "threaded input": "T (threaded test) or E (flb_input_pause_all at shutdown)"
+      },
+      "carrier": "none",
+      "note": "branches: already buffer-paused -> -1; threaded -> flb_input_thread_instance_pause; non-threaded -> flb_input_plugin_pause"
+    },
+    {
+      "id": "B27",
+      "sketch_element": "flb_input_pause shutdown clause",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3078,
+      "anchor": "ins->config->is_shutting_down == FLB_FALSE",
+      "function": "flb_input_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "as B26"
+      },
+      "carrier": "none",
+      "note": "added by 058c2c3c7 (between 66910c10 and 046accf6): an already buffer-paused input passes on to the pause callback only while shutting down with FLB_INPUT_SHUTDOWN_FLUSH, which only in_emitter sets; for in_tail it reduces to the 66910c10 test"
+    },
+    {
+      "id": "B28",
+      "sketch_element": "flb_input_resume",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3100,
+      "anchor": "int flb_input_resume(",
+      "function": "flb_input_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E or T",
+        "threaded input": "T"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B29",
+      "sketch_element": "synchronous plugin pause (non-threaded)",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3034,
+      "anchor": "int flb_input_plugin_pause(",
+      "function": "flb_input_plugin_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "the flb_input_pause caller's thread",
+        "threaded input": "I (handle_input_event)"
+      },
+      "carrier": "none",
+      "note": "void cb_pause returns nothing: ret stays 0; the paused gauge is set on the caller's thread"
+    },
+    {
+      "id": "B30",
+      "sketch_element": "synchronous plugin resume (non-threaded)",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input.c",
+      "line": 3054,
+      "anchor": "int flb_input_plugin_resume(",
+      "function": "flb_input_plugin_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "the flb_input_resume caller's thread",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B31",
+      "sketch_element": "threaded pause request: pipe write",
+      "contracts": [
+        "C2",
+        "C6"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 542,
+      "anchor": "ret = flb_pipe_w(thi->ch_parent_events[1], &val, sizeof(val));",
+      "function": "flb_input_thread_instance_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "T or E"
+      },
+      "carrier": "none",
+      "note": "returns 0 when ins->thi is NULL (:532) and 0 on a successful write: enqueue, not completion"
+    },
+    {
+      "id": "B32",
+      "sketch_element": "threaded resume request: pipe write",
+      "contracts": [
+        "C2",
+        "C6"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 571,
+      "anchor": "ret = flb_pipe_w(thi->ch_parent_events[1], &val, sizeof(val));",
+      "function": "flb_input_thread_instance_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "T"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B33",
+      "sketch_element": "threaded request receive",
+      "contracts": [
+        "C2"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 53,
+      "anchor": "static inline int handle_input_event(",
+      "function": "handle_input_event",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "I (src/flb_input_thread.c:475)"
+      },
+      "carrier": "none",
+      "note": "pause/resume failures are logged only; no acknowledgement to the sender"
+    },
+    {
+      "id": "B34",
+      "sketch_element": "in_tail pause callback",
+      "contracts": [
+        "C2",
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail.c",
+      "line": 518,
+      "anchor": "static void in_tail_pause(",
+      "function": "in_tail_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "as B29",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": "pauses static, pending, docker/multiline flush and the fs backend; scan, watcher and rotated collectors are not paused"
+    },
+    {
+      "id": "B35",
+      "sketch_element": "in_tail resume callback",
+      "contracts": [
+        "C2",
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail.c",
+      "line": 550,
+      "anchor": "static void in_tail_resume(",
+      "function": "in_tail_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "as B30",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B36",
+      "sketch_element": "backend dispatch",
+      "contracts": [
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail_fs.h",
+      "line": 45,
+      "anchor": "static inline void flb_tail_fs_pause(",
+      "function": "flb_tail_fs_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "as B34"
+      },
+      "carrier": "none",
+      "note": "inotify when ctx->inotify_watcher, else stat"
+    },
+    {
+      "id": "B37",
+      "sketch_element": "inotify backend pause",
+      "contracts": [
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "line": 457,
+      "anchor": "void flb_tail_fs_inotify_pause(",
+      "function": "flb_tail_fs_inotify_pause",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "as B34"
+      },
+      "carrier": "none",
+      "note": "both flb_input_collector_pause results ignored (:459, :460)"
+    },
+    {
+      "id": "B38",
+      "sketch_element": "inotify backend resume",
+      "contracts": [
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "line": 463,
+      "anchor": "void flb_tail_fs_inotify_resume(",
+      "function": "flb_tail_fs_inotify_resume",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "as B35"
+      },
+      "carrier": "none",
+      "note": "both flb_input_collector_resume results ignored (:465, :466)"
+    },
+    {
+      "id": "B39",
+      "sketch_element": "Cfs registration",
+      "contracts": [
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "line": 432,
+      "anchor": "ret = flb_input_set_collector_event(in, tail_fs_event,",
+      "function": "flb_tail_fs_inotify_init",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B40",
+      "sketch_element": "Cprogress registration",
+      "contracts": [
+        "C3"
+      ],
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "line": 444,
+      "anchor": "ret = flb_input_set_collector_time(in, in_tail_progress_check_callback,",
+      "function": "flb_tail_fs_inotify_init",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E",
+        "threaded input": "I"
+      },
+      "carrier": "none",
+      "note": ""
+    },
+    {
+      "id": "B41",
+      "sketch_element": "test collector callback: disables itself, pause, snapshot, resume, publish",
+      "contracts": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2475,
+      "anchor": "static int cb_tail_pause_test(",
+      "function": "cb_tail_pause_test",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (dispatched by flb_input_collector_fd)"
+      },
+      "carrier": "concurrency.rs (Cycle 14: sequenced-before, spawn/join and mutex release/acquire edges over a supplied trace) / QCore.Concurrency",
+      "note": "flb_input_collector_pause(test collector) at :2483 before taking test->mutex at :2484"
+    },
+    {
+      "id": "B42",
+      "sketch_element": "publication under the mutex",
+      "contracts": [
+        "C4"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2496,
+      "anchor": "test->done = FLB_TRUE;",
+      "function": "cb_tail_pause_test",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E"
+      },
+      "carrier": "QCore.MutexInvariant (checked mutex traces for the QCore task route, initially-unlocked non-recursive mutexes only; constraint 27 refuses condition variables)",
+      "note": "results written before done; pthread_cond_signal (:2497) while locked; unlock at :2498"
+    },
+    {
+      "id": "B43",
+      "sketch_element": "test collector registration on the owner",
+      "contracts": [
+        "C1"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2515,
+      "anchor": "test->collector_id = flb_input_set_collector_time(ins, cb_tail_pause_test,",
+      "function": "cb_tail_pause_test_pre_run",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "E (flb_input_pre_run_all at src/flb_engine.c:1314, before flb_input_collectors_start at :1392)"
+      },
+      "carrier": "none",
+      "note": "10 ms timer; started by flb_input_collectors_start on E"
+    },
+    {
+      "id": "B44",
+      "sketch_element": "plugin copy and test-owned data",
+      "contracts": [
+        "C5"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2556,
+      "anchor": "ins->p = &test.plugin;",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "T, before flb_start publishes the instance to E"
+      },
+      "carrier": "none",
+      "note": "ins->p and ins->data (:2557) point into T's stack frame for the engine's lifetime"
+    },
+    {
+      "id": "B45",
+      "sketch_element": "await with deadline",
+      "contracts": [
+        "C4"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2565,
+      "anchor": "ret = pthread_cond_timedwait(&test.cond, &test.mutex, &deadline);",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "T"
+      },
+      "carrier": "none",
+      "note": "rechecks test.done in a loop; a timeout or error breaks out and the check at :2570 fails; results read under the mutex until :2579"
+    },
+    {
+      "id": "B46",
+      "sketch_element": "stop and join",
+      "contracts": [
+        "C5"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2583,
+      "anchor": "ret = flb_stop(ctx->flb);",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "T"
+      },
+      "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
+      "note": "a nonzero flb_stop exits the process without freeing (:2586)"
+    },
+    {
+      "id": "B47",
+      "sketch_element": "free after join",
+      "contracts": [
+        "C5"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2588,
+      "anchor": "flb_destroy(ctx->flb);",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "non-threaded input": "T"
+      },
+      "carrier": "none",
+      "note": "then fixture removal (:2591), condvar and mutex destroy (:2595, :2596)"
+    },
+    {
+      "id": "B48",
+      "sketch_element": "flb_start",
+      "contracts": [
+        "C5"
+      ],
+      "file": "src/flb_lib.c",
+      "line": 1012,
+      "anchor": "int flb_start(flb_ctx_t *ctx)",
+      "function": "flb_start",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T"
+      },
+      "carrier": "none",
+      "note": "do_start waits for FLB_ENGINE_STARTED on config->ch_evl (a pipe read on T after E's write at src/flb_engine.c:1039)"
+    },
+    {
+      "id": "B49",
+      "sketch_element": "flb_stop",
+      "contracts": [
+        "C5"
+      ],
+      "file": "src/flb_lib.c",
+      "line": 1040,
+      "anchor": "int flb_stop(flb_ctx_t *ctx)",
+      "function": "flb_stop",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T"
+      },
+      "carrier": "none",
+      "note": "status NONE/ERROR: joins and returns 0 ignoring the join result (:1058-1059); running: flb_engine_exit then returns pthread_join's result (:1077); ctx->status is written by E (:932) and read by T without synchronization"
+    },
+    {
+      "id": "B50",
+      "sketch_element": "engine join",
+      "contracts": [
+        "C5"
+      ],
+      "file": "src/flb_lib.c",
+      "line": 1077,
+      "anchor": "ret = pthread_join(tid, NULL);",
+      "function": "flb_stop",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T joins E"
+      },
+      "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
+      "note": "no pthread_join contract exists"
+    },
+    {
+      "id": "B51",
+      "sketch_element": "input worker join",
+      "contracts": [
+        "C5"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 607,
+      "anchor": "pthread_join(tid, NULL);",
+      "function": "flb_input_thread_instance_exit",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "E joins I (flb_engine_shutdown -> flb_input_exit_all)"
+      },
+      "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
+      "note": "result ignored"
+    },
+    {
+      "id": "B52",
+      "sketch_element": "worker status publish",
+      "contracts": [
+        "C4"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 683,
+      "anchor": "static int input_thread_instance_set_status(",
+      "function": "input_thread_instance_set_status",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "I"
+      },
+      "carrier": "QCore.MutexInvariant (checked mutex traces for the QCore task route, initially-unlocked non-recursive mutexes only; constraint 27 refuses condition variables)",
+      "note": "status written and cond signalled under init_mutex"
+    },
+    {
+      "id": "B53",
+      "sketch_element": "worker status await",
+      "contracts": [
+        "C4"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 699,
+      "anchor": "static int input_thread_instance_get_status(",
+      "function": "input_thread_instance_get_status",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "E (flb_input_thread_instance_init and flb_input_thread_instance_pre_run)"
+      },
+      "carrier": "none",
+      "note": "waits in a loop on init_status == 0 under the mutex"
+    },
+    {
+      "id": "B54",
+      "sketch_element": "condvar re-init after unlock",
+      "contracts": [
+        "C4"
+      ],
+      "file": "src/flb_input_thread.c",
+      "line": 715,
+      "anchor": "pthread_cond_destroy(&thi->init_condition);",
+      "function": "input_thread_instance_get_status",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "E"
+      },
+      "carrier": "none",
+      "note": "destroy/init at :715-716 after the unlock, then init_status read without the mutex at :719; ordered after the only signal by the mutex hand-off (candidate-satisfying under that premise); constraint 27 refuses condition variables"
+    },
+    {
+      "id": "B55",
+      "sketch_element": "threaded test: unsynchronized running poll",
+      "contracts": [
+        "C1"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2440,
+      "anchor": "static int wait_tail_collectors_state(",
+      "function": "wait_tail_collectors_state",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "T reads coll->running written by I"
+      },
+      "carrier": "none",
+      "note": "50 iterations x flb_time_msleep(100)"
+    },
+    {
+      "id": "B56",
+      "sketch_element": "threaded test: pause request from T",
+      "contracts": [
+        "C2"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2634,
+      "anchor": "ret = flb_input_pause(ins);",
+      "function": "flb_test_inotify_threaded_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "T"
+      },
+      "carrier": "none",
+      "note": "success means the request was written, not applied"
+    },
+    {
+      "id": "B57",
+      "sketch_element": "threaded test: context read after start",
+      "contracts": [
+        "C1"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2629,
+      "anchor": "tail_ctx = ins->context;",
+      "function": "flb_test_inotify_threaded_pause_collectors",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "threaded input": "T reads ins->context written by I in cb_init"
+      },
+      "carrier": "none",
+      "note": "ordered, if at all, by I's set_status (mutex) -> E -> the started pipe -> T"
+    },
+    {
+      "id": "B58",
+      "sketch_element": "fixture teardown helper: unlink before stop, stop result ignored",
+      "contracts": [
+        "C5"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 286,
+      "anchor": "unlink(ctx->filepaths[i]);",
+      "function": "test_tail_ctx_destroy",
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "threads": {
+        "all": "T"
+      },
+      "carrier": "none",
+      "note": "used by the threaded test (:2644) and by the previous non-threaded test; sleep(1) then flb_stop at :292 with its result ignored"
+    },
+    {
+      "id": "B59",
+      "sketch_element": "previous non-threaded test: pause from the test thread",
+      "contracts": [
+        "C1",
+        "C2"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2497,
+      "anchor": "ret = flb_input_pause(ins);",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6~1",
+      "threads": {
+        "non-threaded input": "T, while E dispatches config->evl"
+      },
+      "carrier": "none",
+      "note": "at 90978ac6~1 (identical blob at 046accf6); T mutates E's loop through in_tail_pause -> flb_input_collector_pause -> mk_event_del"
+    },
+    {
+      "id": "B60",
+      "sketch_element": "previous non-threaded test: running read from the test thread",
+      "contracts": [
+        "C1"
+      ],
+      "file": "tests/runtime/in_tail.c",
+      "line": 2499,
+      "anchor": "TEST_CHECK(flb_input_collector_running(tail_ctx->coll_fd_fs1, ins) == FLB_FALSE);",
+      "function": "flb_test_inotify_pause_collectors",
+      "revision": "90978ac6~1",
+      "threads": {
+        "non-threaded input": "T"
+      },
+      "carrier": "none",
+      "note": ""
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "NC1",
+      "trace": "Old non-threaded test: T:start; E:dispatch || T:pause/resume",
+      "bound_path": [
+        "B59",
+        "B26",
+        "B29",
+        "B34",
+        "B37",
+        "B11",
+        "B21",
+        "B22",
+        "B25"
+      ],
+      "expected": "reject",
+      "obligation": "C1/C2: T lacks Own(L); flb_input_pause runs the plugin callback on T, which unlinks _priority_head links of E's loop",
+      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_pause_collectors at 90978ac6~1 (and at 046accf6, the same blob) pauses from T (tests/runtime/in_tail.c:2497 there)"
+    },
+    {
+      "id": "NC2",
+      "trace": "Revised test: E:callback, pause, snapshot, resume, publish; T:await, stop/join, free",
+      "bound_path": [
+        "B43",
+        "B41",
+        "B26",
+        "B29",
+        "B11",
+        "B13",
+        "B10",
+        "B42",
+        "B45",
+        "B46",
+        "B50",
+        "B47"
+      ],
+      "expected": "candidate-satisfying",
+      "obligation": "C1-C5 under the stated premises: every collector access on E; publication under test.mutex; free only after a successful join",
+      "reachable_in_pinned_tests": "yes: flb_test_inotify_pause_collectors at 90978ac6 (the intended trace; no model checks it)"
+    },
+    {
+      "id": "NC3",
+      "trace": "T:enqueue_pause; T:read Cfs.running",
+      "bound_path": [
+        "B56",
+        "B31",
+        "B55",
+        "B10",
+        "B33"
+      ],
+      "expected": "reject",
+      "obligation": "C1/C2: a successful enqueue is not completion; the running read is unsynchronized with I's write",
+      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_threaded_pause_collectors at 90978ac6 (tests/runtime/in_tail.c:2634-2636) polls coll->running from T (50 x 100 ms)"
+    },
+    {
+      "id": "NC4",
+      "trace": "E:publish done; T:free S; E:return from callback",
+      "bound_path": [
+        "B42",
+        "B45",
+        "B47"
+      ],
+      "expected": "reject",
+      "obligation": "C5: publication is not join",
+      "reachable_in_pinned_tests": "no: the revised test frees only after flb_stop (B46) returned 0, which on its running path is pthread_join's result; the previous test's test-owned storage was not callback-retained"
+    },
+    {
+      "id": "NC5",
+      "trace": "T:wait timeout; T:free S; E:late callback",
+      "bound_path": [
+        "B45",
+        "B46",
+        "B47"
+      ],
+      "expected": "reject",
+      "obligation": "C5: timeout is not cancellation",
+      "reachable_in_pinned_tests": "no: a timeout breaks the wait and takes the same flb_stop/join path; a failed flb_stop exits without freeing (tests/runtime/in_tail.c:2586). Residual: flb_stop's NONE/ERROR branch returns 0 without checking its join (src/flb_lib.c:1058)"
+    },
+    {
+      "id": "NC6",
+      "trace": "E:resume while ingestion disabled; T:assume running",
+      "bound_path": [
+        "B28",
+        "B30",
+        "B35",
+        "B38",
+        "B13",
+        "B14"
+      ],
+      "expected": "reject",
+      "obligation": "C3's missing ingestion premise: flb_input_collector_resume returns 0 at src/flb_input.c:3241 without resuming",
+      "reachable_in_pinned_tests": "no: neither test resumes after flb_engine_stop_ingestion; reachable in the engine only after stop_ingestion"
+    },
+    {
+      "id": "NC7",
+      "trace": "One backend collector fails to resume",
+      "bound_path": [
+        "B38",
+        "B13",
+        "B19",
+        "B23"
+      ],
+      "expected": "no-conclusion",
+      "obligation": "C3: no paired-running conclusion; flb_tail_fs_inotify_resume ignores both results, so the partial state is not reported",
+      "reachable_in_pinned_tests": "not driven: needs an mk_event_add or timerfd failure"
+    },
+    {
+      "id": "NC8",
+      "trace": "CV wakes before publication",
+      "bound_path": [
+        "B45",
+        "B42"
+      ],
+      "expected": "no-conclusion (wait again)",
+      "obligation": "C4: the loop rechecks test.done under the mutex; no result is read without done",
+      "reachable_in_pinned_tests": "allowed by POSIX (spurious wakeup); the revised test handles it; not an obligation failure"
+    },
+    {
+      "id": "NC9",
+      "trace": "Fixture removal before join (test_tail_ctx_destroy)",
+      "bound_path": [
+        "B58",
+        "B49"
+      ],
+      "expected": "reject",
+      "obligation": "C5's test-specific fixture rule: files are unlinked before flb_stop and the stop result is ignored",
+      "reachable_in_pinned_tests": "yes, as a candidate: the threaded test (tests/runtime/in_tail.c:2644) and the previous non-threaded test tear down through test_tail_ctx_destroy. Added by this census; not in the sketch's table"
+    }
+  ],
+  "survey": [
+    {
+      "claim": "no thread/owner/happens-before clause in resource-v1",
+      "result": "held",
+      "evidence": "pthread_mutex.qv and threads.qv state custody only ('Nothing about mutual exclusion, lock ordering, ...'); no resource-v1 predicate names a thread, loop owner or happens-before edge"
+    },
+    {
+      "claim": "condvars refused under constraint 27",
+      "result": "held",
+      "evidence": "docs/agents/concurrency.md constraint 27: condition variables are represented refusals of the mutex model. The libc provider still declares cnd_wait/cnd_timedwait as custody-only (borrowed) calls, which says nothing about wait semantics"
+    },
+    {
+      "claim": "no pthread_create/join/cond contracts",
+      "result": "held",
+      "evidence": "no .qv/.qcore under providers/ or contract/ declares pthread_create, pthread_join or any pthread_cond_* function (they appear only in providers/quirin-provider-libc/libc-names.txt, the reserved-name list)"
+    },
+    {
+      "claim": "event_reactor has dispatcher-per-base with L04/L05 but EventDriven.lean's sameBaseSingleDispatcher is a Bool premise",
+      "result": "held",
+      "evidence": "crates/qcore-core/src/event_reactor.rs: BeginDispatch records one dispatcher per base, L04ThreadInitialization, L05ConflictingAccess (the access's `synchronized` flag is supplied); proof/QCore/EventDriven.lean:131 `sameBaseSingleDispatcher : Bool`, assumed at :149 and :195"
+    },
+    {
+      "claim": "none of the sketch's files is in any current selection",
+      "result": "partly held",
+      "evidence": "flb_input.c, flb_input_thread.c, flb_lib.c, plugins/in_tail/*, tests/runtime/in_tail.c and mk_event_epoll.c are in no selection; but src/flb_engine.c (the engine dispatch, flb_engine_start/shutdown and the is_ingestion_active writers) is in system-selection.json, and lib/monkey/mk_core/mk_event.c is in the 185-unit corpus through the forced-Libevent Monkey build (so the libevent backend, not epoll)"
+    },
+    {
+      "claim": "flb_input.c:2231-2240 states loop ownership",
+      "result": "held at 66910c10 only",
+      "evidence": "the comment and assignment are at 2233-2240 at 66910c10 and at 2250-2258 at 046accf6 and 90978ac6 (flb_input.c is byte-identical at those two)"
+    },
+    {
+      "claim": "the non-threaded test at 90978ac6~1 pauses from the test thread",
+      "result": "held",
+      "evidence": "tests/runtime/in_tail.c:2497 at 90978ac6~1 (blob 2f93a552, also the 046accf6 blob)"
+    },
+    {
+      "claim": "the threaded test polls running unsynchronized (50 x 100 ms)",
+      "result": "held",
+      "evidence": "wait_tail_collectors_state, tests/runtime/in_tail.c:2440-2459 at 90978ac6: 50 iterations of flb_input_collector_running then flb_time_msleep(100)"
+    },
+    {
+      "claim": "flb_tail_fs_inotify_pause ignores both return values",
+      "result": "held",
+      "evidence": "plugins/in_tail/tail_fs_inotify.c:459-460 (and resume :465-466)"
+    },
+    {
+      "claim": "flb_input_collector_resume returns 0 without resuming when ingestion is inactive",
+      "result": "held",
+      "evidence": "src/flb_input.c:3241-3243; running stays FALSE"
+    },
+    {
+      "claim": "input_thread_instance_set/get_status re-inits its condvar after unlock",
+      "result": "held",
+      "evidence": "src/flb_input_thread.c:712 unlock, :715-716 destroy/init, :719 unlocked status read"
+    }
+  ],
+  "residuals": [
+    {
+      "id": "R1",
+      "binding": "B16",
+      "text": "flb_input_collector_destroy deletes through config->evl, not coll->evl; for a threaded input the collector's loop was thi->evl, already destroyed by I"
+    },
+    {
+      "id": "R2",
+      "binding": "B49",
+      "text": "flb_stop's NONE/ERROR branch joins but returns 0 regardless of the join result; ctx->status is a plain field written by E and read by T"
+    },
+    {
+      "id": "R3",
+      "binding": "B34",
+      "text": "in_tail_pause does not pause the scan, watcher and rotated collectors; C3 covers only the two backend collectors"
+    },
+    {
+      "id": "R4",
+      "binding": "B31",
+      "text": "flb_input_thread_instance_pause/resume return 0 when ins->thi is NULL (no worker): the live-worker premise of C2 has no source witness"
+    },
+    {
+      "id": "R5",
+      "binding": "B11",
+      "text": "flb_input_collector_pause ignores mk_event_timeout_destroy's result for time collectors"
+    },
+    {
+      "id": "R6",
+      "binding": null,
+      "text": "the delta adds a process-wide tail file budget shared across inputs (tail_file_budget.c: budget_lock plus CFL atomics); the sketch excludes other inputs, so no C1-C6 obligation covers it"
+    }
+  ]
+}

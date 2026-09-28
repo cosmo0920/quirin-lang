@@ -1,0 +1,14 @@
+{
+  "selection": "the tail-pause selection plus tests/runtime/in_tail.c (control, not a published slice)",
+  "units_by_status": {
+    "Unknown": 16,
+    "Unsafe": 1
+  },
+  "test_unit": {
+    "file": "tests/runtime/in_tail.c",
+    "status": "Unknown",
+    "reason_code": "environment-unavailable",
+    "reason": "selected source has no compilation database record: tests/runtime/in_tail.c"
+  },
+  "test_unit_functions": 0
+}

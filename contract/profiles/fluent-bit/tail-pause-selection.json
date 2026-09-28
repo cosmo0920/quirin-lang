@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "name": "fluent-bit-tail-pause",
+  "description": "Card W47-TAIL-PAUSE-BINDINGS: the Fluent Bit in_tail pause/resume slice (input control, input worker, library start/stop and the in_tail plugin), audited as a separate slice over the unchanged fluent-bit profile at the export of 90978ac6a59e96d19621108f63e115eb4cd1c576 (tree 8d1f3cd78a00fcfb4095a39d3d0b3e7eaac80be4). Every distinct compilation configuration is kept, so the static and shared variants of the core files are separate units. Excluded explicitly: plugins/in_tail/tail_scan_glob.c and tail_scan_win32.c (textually included by tail_scan.c, never compiled on their own), plugins/in_tail/win32/*.c (MSVC only), and tests/runtime/in_tail.c (the recorded prepare route configures FLB_DEV without FLB_TESTS_RUNTIME, so the compile database has no record for it, and the fluent_bit library profile does not model the test harness). This file does not change the profile's audit.json 185-unit selection and claims nothing about concurrency.",
+  "groups": [
+    {
+      "library": "fluent_bit",
+      "label": "fluent-bit-tail-pause",
+      "files": [
+        "src/flb_input.c",
+        "src/flb_input_thread.c",
+        "src/flb_lib.c",
+        "plugins/in_tail/tail.c",
+        "plugins/in_tail/tail_config.c",
+        "plugins/in_tail/tail_db.c",
+        "plugins/in_tail/tail_dockermode.c",
+        "plugins/in_tail/tail_file.c",
+        "plugins/in_tail/tail_file_budget.c",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "plugins/in_tail/tail_fs_stat.c",
+        "plugins/in_tail/tail_multiline.c",
+        "plugins/in_tail/tail_scan.c"
+      ]
+    }
+  ]
+}
