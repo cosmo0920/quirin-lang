@@ -36,7 +36,7 @@ def main() -> int:
         print(f"follow-ups {before}: already applied")
         return 0
     matrix["named_followups"] = kept
-    MATRIX.write_text(json.dumps(matrix, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    MATRIX.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"follow-ups {before} -> {len(kept)}; registered {len(added)}; retired {before - len(kept) + len(added)}")
     return 0
 

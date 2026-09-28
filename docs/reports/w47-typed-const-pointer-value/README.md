@@ -285,7 +285,30 @@ The Rust-to-Lean correspondence and Clang's printed types are review premises
 
 ## Gate
 
-[gate.json](gate.json), with exits in [gate/](gate/).
+[gate.json](gate.json), with exits in [gate/](gate/). The Rust, Lean and
+census steps ran on the code at `0e6b69cf`; later commits change docs, the
+gate record and the regenerated matrix and index only. Each step's exit was
+captured to a file, never through a pipe.
+
+- Submodule update: exit 0.
+- `run_test_binaries.py`: exit 0. **342 units, 355 summaries; 6,152 passed,
+  0 failed, 11 ignored** (`private/test-binaries/20260928T033233Z-1312543/summary.json`).
+- `cargo clean --profile dev`: exit 0.
+- fmt and clippy: exit 0 each.
+- Both reevaluation examples: exit 0.
+- `check_lean_audits.py`: exit 0, **218** audits.
+- Clang 21.1.8 recorded.
+- Census-feature gateway clippy: exit 0. Its library tests: exit 0, 628
+  passed.
+- A final `cargo clean --profile dev`: exit 0.
+
+After the matrix regeneration (`build_matrix.py . --gate gate.json`) and the
+index regeneration:
+- `unittest discover -s scripts/tests`: exit 0, **365** tests.
+- `build_docs_index.py --check`: exit 0.
+
+No `providers/` path is touched, so the provider gate does not apply;
+`provider_tests` is carried in gate.json.
 
 ## Follow-ups
 
