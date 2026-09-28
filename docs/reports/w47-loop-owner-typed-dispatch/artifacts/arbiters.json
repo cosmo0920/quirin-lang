@@ -1,0 +1,128 @@
+{
+ "binaries": {
+  "before": "464003290a52aeba7b925e4f0358c81f9ef305d4fcb93ebc7d409237ecfc8a20",
+  "after": "268340116d089528d2e57216778966d7af8b8ff559caa670883ee5292e965993"
+ },
+ "corpus": {
+  "exits": {
+   "before": "0",
+   "after": "0"
+  },
+  "identical": [
+   "monkey-source.json",
+   "resource-diagnostics.chunk-contracts.json",
+   "resource-diagnostics.contracts.json",
+   "resource-diagnostics.json",
+   "resource-diagnostics.source-effects.json"
+  ],
+  "different": [
+   "audit.log",
+   "parity.jsonl",
+   "parity.jsonl.contexts.jsonl",
+   "run.json"
+  ],
+  "resource_diagnostics_sha256": {
+   "before": "a843a690ab433b0c07be120cf62b0fed63b7b0b65554fc2854c0d04ccd331289",
+   "after": "a843a690ab433b0c07be120cf62b0fed63b7b0b65554fc2854c0d04ccd331289"
+  },
+  "compose3_vs_baseline": {
+   "before": [
+    "merged functions: {'Unknown': 4298, 'Safe': 526, 'Unsafe': 10}",
+    "merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}",
+    "merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7936, 'unsupported': 35737}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "after": [
+    "merged functions: {'Unknown': 4298, 'Safe': 526, 'Unsafe': 10}",
+    "merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}",
+    "merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7936, 'unsupported': 35737}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ]
+  }
+ },
+ "system": {
+  "exits": {
+   "before": "0",
+   "after": "0"
+  },
+  "identical": [
+   "exit",
+   "resource-diagnostics.chunk-contracts.json",
+   "resource-diagnostics.contracts.json",
+   "resource-diagnostics.json",
+   "resource-diagnostics.source-effects.json",
+   "stderr.log"
+  ],
+  "different": [
+   "console.log",
+   "resource-diagnostics.invocation.json",
+   "run.json"
+  ],
+  "resource_diagnostics_sha256": {
+   "before": "b057e5cc213281eb61b558251ac80efe235163779242487d9915b24d03059730",
+   "after": "b057e5cc213281eb61b558251ac80efe235163779242487d9915b24d03059730"
+  },
+  "compose3_vs_baseline": {
+   "before": [
+    "merged functions: {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}",
+    "merged units: {'Unknown': 7, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 4, 'unknown_alias': 1020, 'unsupported': 2888}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "after": [
+    "merged functions: {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}",
+    "merged units: {'Unknown': 7, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 4, 'unknown_alias': 1020, 'unsupported': 2888}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ]
+  }
+ },
+ "slice": {
+  "exits": {
+   "before": "0",
+   "after": "0"
+  },
+  "identical": [
+   "exit",
+   "resource-diagnostics.chunk-contracts.json",
+   "resource-diagnostics.contracts.json",
+   "resource-diagnostics.json",
+   "resource-diagnostics.source-effects.json",
+   "stderr.log"
+  ],
+  "different": [
+   "console.log",
+   "resource-diagnostics.invocation.json"
+  ],
+  "resource_diagnostics_sha256": {
+   "before": "4a911b52c7c7f8393f5cd71897a611d51a2ccd9786e2d81f651593f1356885e0",
+   "after": "4a911b52c7c7f8393f5cd71897a611d51a2ccd9786e2d81f651593f1356885e0"
+  },
+  "compose3_vs_baseline": {
+   "before": [
+    "merged functions: {'Unknown': 245, 'Safe': 24, 'Unsafe': 1}",
+    "merged units: {'Unknown': 12, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 1, 'unknown_alias': 1009, 'unsupported': 2857}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "after": [
+    "merged functions: {'Unknown': 245, 'Safe': 24, 'Unsafe': 1}",
+    "merged units: {'Unknown': 12, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 1, 'unknown_alias': 1009, 'unsupported': 2857}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ]
+  }
+ }
+}

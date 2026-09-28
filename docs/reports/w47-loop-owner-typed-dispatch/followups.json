@@ -1,0 +1,9 @@
+[
+ {
+  "id": "W47-LOOP-OWNER-UNTYPED-SITES",
+  "title": "Type the census's field dispatch sites the build's typed reading does not see",
+  "why": "W47-LOOP-OWNER-TYPED-DISPATCH keys the thread-entry census's field dispatch by the Clang record type (typed_dispatch_census.rs), but only where Clang's reading of the recorded build names the site; every other site keeps the field-keyed reading (sound, never narrower). At the 90978ac6 export (configured census) 577 of 911 field dispatch sites are untyped: 572 in files the production build does not compile (disabled or platform plugins, Monkey extras), 4 in headers no compiled unit reaches at that line, 1 in a compiled unit (lib/monkey/mk_server/mk_http.c:746, cb_upgrade); and 4 of 559 selected build units fail Clang on headers the reading does not find (plugins/processor_sql/parser/sql_parser.c, src/record_accessor/flb_ra_parser.c, src/stream_processor/parser/flb_sp_parser.c: bison-generated headers; src/flb_dump.c: backtrace.h). An untyped registration is reached by every dispatch of its field whatever the record: e.g. in_unix_socket's .cb_collect (not built) is still reached by the Go proxy's go.c:248 dispatch, which keeps flb_proxy_input_cb_collect's yield path; no declared site is measured to depend on the fallback alone (not measured). DISCHARGE: type the untyped sites (a configuration that compiles them, or a declared record for a file outside the build) or show them outside the program, measured on the census.",
+  "source": "docs/reports/w47-loop-owner-typed-dispatch/README.md",
+  "recorded_by": "W47-LOOP-OWNER-TYPED-DISPATCH"
+ }
+]
