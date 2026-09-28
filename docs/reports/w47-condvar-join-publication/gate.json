@@ -1,0 +1,13 @@
+{
+  "note": "W47-CONDVAR-JOIN-PUBLICATION card gate at base 51fb793c. Rust, Lean and provider steps ran on the tree of 32651f26 (later commits change only docs, gate records, the regenerated matrix and index): run_test_binaries.py 347 units, 360 summaries, 6,225 passed, 0 failed, 11 ignored (private/test-binaries/20260928T085833Z-3637962/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 223 audits passed (AuditCondvarJoin.lean added, 30 theorems). Provider gate: contracts.py check 0, package build 0 and verify 0 (qcore.libevent), provider Python 24 tests OK, provider cargo test 129 passed / 0 failed, provider fmt and clippy clean; quirin-audit pin --check of quirin-provider-libc (all flexible) at 66910c10, 046accf6 and the 90978ac6 export, and pin --verify-contracts over every crate, exit 0. The Python suite (365) and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/cj/gate-1/ and private/cj/gate-records/ of this worktree.",
+  "workspace_tests": 6225,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 223,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

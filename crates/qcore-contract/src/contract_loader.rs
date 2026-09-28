@@ -410,6 +410,66 @@ pub struct DeclaredLoopOwner {
 /// The loop-owner precondition's name.
 pub const LOOP_OWNER_CLAUSE: &str = "resource_loop_owner";
 
+/// What a declared thread-synchronization obligation says the call is (card
+/// **W47-CONDVAR-JOIN-PUBLICATION**, §C04.10, gateway rule 10q).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ThreadSyncOperation {
+    /// `pthread_cond_wait`: releases and reacquires the named mutex.
+    CondWait,
+    /// `pthread_cond_timedwait`: as a wait, and may return on a deadline.
+    CondTimedWait,
+    /// `pthread_cond_signal`.
+    CondSignal,
+    /// `pthread_cond_init`: only in a quiescent phase.
+    CondInit,
+    /// `pthread_cond_destroy`: only in a quiescent phase.
+    CondDestroy,
+    /// `pthread_join`: ends a thread; only a checked zero result joins.
+    Join,
+}
+
+impl ThreadSyncOperation {
+    /// The clause's spelling of the operation.
+    #[must_use]
+    pub const fn spelling(self) -> &'static str {
+        match self {
+            Self::CondWait => "cond_wait",
+            Self::CondTimedWait => "cond_timedwait",
+            Self::CondSignal => "cond_signal",
+            Self::CondInit => "cond_init",
+            Self::CondDestroy => "cond_destroy",
+            Self::Join => "join",
+        }
+    }
+
+    /// Whether the clause names a mutex after the condvar.
+    #[must_use]
+    pub const fn names_mutex(self) -> bool {
+        matches!(self, Self::CondWait | Self::CondTimedWait)
+    }
+}
+
+/// `requires resource_thread_sync(cond, mutex, cond_wait|cond_timedwait);`,
+/// `requires resource_thread_sync(cond, cond_signal|cond_init|cond_destroy);`
+/// or `requires resource_thread_sync(thread, join);` (card
+/// **W47-CONDVAR-JOIN-PUBLICATION**, §C04.10): the declaration applies at a
+/// call site only where the census discharges the obligation (a wait in a
+/// predicate loop under its mutex, a signal under the paired mutex, an
+/// `init`/`destroy` in a quiescent phase, a join whose zero result is
+/// checked). No per-unit resource route derives any of that, so there the
+/// declaration is never applied.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredThreadSync {
+    /// The condvar (a pointer parameter) or the thread (a scalar one).
+    pub parameter: usize,
+    /// The mutex a wait releases and reacquires (a pointer parameter).
+    pub mutex: Option<usize>,
+    pub operation: ThreadSyncOperation,
+}
+
+/// The thread-synchronization precondition's name.
+pub const THREAD_SYNC_CLAUSE: &str = "resource_thread_sync";
+
 /// The declared C ABI projection of one admitted declaration (card
 /// **LOADER-ABI**).
 ///
@@ -444,6 +504,9 @@ struct LoadedDeclaration {
     literal_arguments: Vec<DeclaredLiteralArgument>,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
+    /// Card W47-CONDVAR-JOIN-PUBLICATION: the declared thread-synchronization
+    /// obligation.
+    thread_sync: Option<DeclaredThreadSync>,
     abi: DeclaredAbiSignature,
     /// Card W45-CONTRACT-DEFERRED-REVIEW: every review marker, in clause
     /// order. Nonempty withholds the whole contract.
@@ -1034,6 +1097,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.loop_owner != parent_loaded.loop_owner
+            || child_loaded.thread_sync != parent_loaded.thread_sync
             || child_loaded.abi != parent_loaded.abi
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
             || child_loaded.body_checked != parent_loaded.body_checked
@@ -1118,6 +1182,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut variadic_data_tail = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
+    let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: which validity vocabulary each
@@ -1234,6 +1299,22 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     parameter,
                     operation,
                 });
+                continue;
+            }
+            // Card W47-CONDVAR-JOIN-PUBLICATION: the thread-synchronization
+            // obligation, at most once; a condvar and a mutex are pointer
+            // parameters, a joined thread a scalar one.
+            if let Some((objects, operation)) = thread_sync_clause(expression)? {
+                if thread_sync.is_some() {
+                    return Err(format!("duplicate requirement `{expression}`"));
+                }
+                thread_sync = Some(thread_sync_declaration(
+                    decl,
+                    &parameter_types,
+                    &objects,
+                    operation,
+                    |name| index(name),
+                )?);
                 continue;
             }
             // Card HASH-CLAUSE. The only other admitted precondition: the
@@ -1487,6 +1568,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         variadic_data_tail,
         literal_arguments,
         loop_owner,
+        thread_sync,
         abi: DeclaredAbiSignature {
             parameters: parameter_types,
             result: return_type.to_owned(),
@@ -1646,6 +1728,7 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
             if name == "resource_contract_v1"
                 || name == "resource_literal_argument"
                 || name == LOOP_OWNER_CLAUSE
+                || name == THREAD_SYNC_CLAUSE
             {
                 return Err(format!(
                     "unsupported review marker `{expression}`: only an `ensures normal` \
@@ -1753,6 +1836,142 @@ pub fn declared_loop_owner_obligations(
         return Ok(BTreeMap::new());
     }
     loop_owner_obligations(contracts.source_assumptions())
+}
+
+/// `resource_thread_sync(OBJECT[, MUTEX], OPERATION)`, exactly (card
+/// W47-CONDVAR-JOIN-PUBLICATION). `None` when the expression is not this clause
+/// at all; an expression that names it and is malformed rejects the module.
+fn thread_sync_clause(source: &str) -> Result<Option<(Vec<String>, ThreadSyncOperation)>, String> {
+    let tokens = token_kinds(source)?;
+    let Some(TokenKind::Word(name)) = tokens.first() else {
+        return Ok(None);
+    };
+    if name != THREAD_SYNC_CLAUSE {
+        return Ok(None);
+    }
+    let malformed = || format!("unsupported thread-synchronization requirement `{source}`");
+    let (words, operation) = match tokens.as_slice() {
+        [
+            _,
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(object),
+            TokenKind::Symbol(Symbol::Comma),
+            TokenKind::Word(operation),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] => (vec![object.clone()], operation),
+        [
+            _,
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(object),
+            TokenKind::Symbol(Symbol::Comma),
+            TokenKind::Word(mutex),
+            TokenKind::Symbol(Symbol::Comma),
+            TokenKind::Word(operation),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] => (vec![object.clone(), mutex.clone()], operation),
+        _ => return Err(malformed()),
+    };
+    let operation = match operation.as_str() {
+        "cond_wait" => ThreadSyncOperation::CondWait,
+        "cond_timedwait" => ThreadSyncOperation::CondTimedWait,
+        "cond_signal" => ThreadSyncOperation::CondSignal,
+        "cond_init" => ThreadSyncOperation::CondInit,
+        "cond_destroy" => ThreadSyncOperation::CondDestroy,
+        "join" => ThreadSyncOperation::Join,
+        _ => return Err(malformed()),
+    };
+    // A wait names its condvar and mutex; every other operation one object.
+    if words.len() != if operation.names_mutex() { 2 } else { 1 } {
+        return Err(malformed());
+    }
+    Ok(Some((words, operation)))
+}
+
+/// Check one thread-synchronization clause's parameters against the
+/// declaration's ABI projection (card W47-CONDVAR-JOIN-PUBLICATION): a condvar
+/// and a mutex are object pointers (`ptr<mut, u8>`), distinct; a joined
+/// thread is an integer scalar (`pthread_t`).
+fn thread_sync_declaration(
+    decl: &SourceDeclaration,
+    parameter_types: &[String],
+    objects: &[String],
+    operation: ThreadSyncOperation,
+    index: impl Fn(&str) -> Result<usize, String>,
+) -> Result<DeclaredThreadSync, String> {
+    let parameter = index(&objects[0])?;
+    let mutex = objects.get(1).map(|name| index(name)).transpose()?;
+    let object_pointer = |position: usize| parameter_types[position] == "ptr<mut, u8>";
+    let name = |position: usize| decl.parameters[position].name.value.clone();
+    match operation {
+        ThreadSyncOperation::Join => {
+            if !matches!(parameter_types[parameter].as_str(), "u64" | "usize") {
+                return Err(format!(
+                    "a join obligation names a thread identifier, not `{}`",
+                    name(parameter)
+                ));
+            }
+        }
+        _ => {
+            if !object_pointer(parameter) {
+                return Err(format!(
+                    "a condvar obligation names a condvar pointer, not `{}`",
+                    name(parameter)
+                ));
+            }
+        }
+    }
+    if let Some(mutex) = mutex
+        && (mutex == parameter || !object_pointer(mutex))
+    {
+        return Err(format!(
+            "a wait obligation names a distinct mutex pointer, not `{}`",
+            name(mutex)
+        ));
+    }
+    Ok(DeclaredThreadSync {
+        parameter,
+        mutex,
+        operation,
+    })
+}
+
+/// The thread-synchronization obligations `sources` declares, keyed by
+/// function name (card W47-CONDVAR-JOIN-PUBLICATION). Total-or-reject exactly
+/// as [`loop_owner_obligations`].
+pub fn thread_sync_obligations(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, DeclaredThreadSync>, String> {
+    let mut obligations = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if let Some(obligation) = loaded.thread_sync
+                && obligations.insert(decl.name.clone(), obligation).is_some()
+            {
+                return Err(format!("{context}: duplicate function contract"));
+            }
+        }
+    }
+    Ok(obligations)
+}
+
+/// The thread-synchronization obligations of an environment, rederived from
+/// its retained trusted sources (card W47-CONDVAR-JOIN-PUBLICATION).
+pub fn declared_thread_sync_obligations(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, DeclaredThreadSync>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    thread_sync_obligations(contracts.source_assumptions())
 }
 
 /// `resource_literal_argument(PARAM, LITERAL)`, exactly (card HASH-CLAUSE).

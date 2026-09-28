@@ -54,6 +54,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         "libc/pthread_mutex.qv",
         include_str!("../contracts/libc/pthread_mutex.qv"),
     ),
+    (
+        "libc/pthread_sync.qv",
+        include_str!("../contracts/libc/pthread_sync.qv"),
+    ),
     ("libc/regex.qv", include_str!("../contracts/libc/regex.qv")),
     (
         "libc/socket.qv",

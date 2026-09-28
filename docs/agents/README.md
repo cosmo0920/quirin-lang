@@ -77,6 +77,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 10n | [gateway](gateway.md#constraint-10n) | A P3 residual shape (an address, an ambiguous operand, an anonymous inline enum member, a scalar connective return) is read only after every older route and 10k refused, only where C evaluates it and never handing a linked place to a callee. |
 | 10o | [gateway](gateway.md#constraint-10o) | The never-bound closure reads every assignment wherever it stands (nested, `for` clause, later declarator, parenthesised, brace initialiser) beside its old reading; typed positions serve its join with the AST closure. |
 | 10p | [gateway](gateway.md#constraint-10p) | A loop-owned collector operation (`resource_loop_owner`) is admitted only where the thread-entry census derives every caller context on its loop's owner with no unresolved hop; every route that derives no thread refuses it. A coroutine runs on its derived resumer (hop C); a body that may yield after it is unresolved; a conditional arm is dropped only when the build configuration decides it. |
+| 10q | [gateway](gateway.md#constraint-10q) | A condition-variable call (`resource_thread_sync`) is admitted only where the census derives the lifted shape (predicate-loop wait, locked signal, quiescent init/destroy), and retained storage is released only after a checked join of every live thread; every route that derives neither refuses. |
 | 11 | [source-identity](source-identity.md#constraint-11) | Do not normalize the spelled input path (that changes __FILE__), do… |
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |
@@ -110,6 +111,6 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 24 | [evidence](evidence.md#constraint-24) | REASON-CODES-B3's sidecar reason_code tripwire test is flipped at the… |
 | 25 | [evidence](evidence.md#constraint-25) | The acceptance-matrix generator carries a section_ownership block:… |
 | 26 | [providers](providers.md#constraint-26) | Process providers have process-group containment plus the opt-in… |
-| 27 | [concurrency](concurrency.md#constraint-27) | The mutex model supports initially-unlocked non-recursive mutexes only.… |
+| 27 | [concurrency](concurrency.md#constraint-27) | The mutex model supports initially-unlocked non-recursive mutexes only; condvars are lifted only for rule 10q's derived shapes (predicate-loop wait, locked signal, quiescent init/destroy).… |
 | 28 | [evidence](evidence.md#constraint-28) | Declared profiles, observations_trusted, GuardFootprintAuthority,… |
 | 29 | [validation](validation.md#constraint-29) | A test discovers repository inputs from tracked files only; ignored and untracked content never changes a result. |

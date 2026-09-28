@@ -1,0 +1,1231 @@
+{
+ "previous_90978ac6~1": {
+  "files": 1685,
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "signal_once": {
+   "flb_chunk_pipeline_context.cond": "not derived: the condvar is signalled from more than one function",
+   "flb_downstream_worker.condition": "not derived: the condvar is signalled from more than one function",
+   "flb_downstream_worker_runtime.lifecycle_condition": "not derived: `flb_downstream_worker_runtime_foreach` is called from more than one function",
+   "flb_etw.startup_cond": "not derived: `plugins/in_etw/etw.c::etw_worker` can call `plugins/in_etw/etw.c::etw_signal_startup` twice on a path",
+   "flb_input_instance.ingress_queue_space_available": "not derived: the condvar is signalled from more than one function",
+   "flb_input_thread_instance.init_condition": "derived: signalled at most once per `src/flb_input_thread.c::input_thread` thread",
+   "flb_kube.aws_pod_service_cond": "not derived: `plugins/filter_kubernetes/kubernetes.c::cb_kube_exit` is called from more than one function",
+   "flb_log.pth_cond": "not derived: `src/flb_log.c::log_worker_collector` is called from more than one function",
+   "mk_server.pth_cond": "not derived: `mk_sched_launch_worker_loop` is called from more than one function"
+  },
+  "bound_sites": [
+   {
+    "at": "src/flb_input_thread.c:248",
+    "function": "input_thread_instance_create",
+    "kind": "init",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:693",
+    "function": "input_thread_instance_set_status",
+    "kind": "signal",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:710",
+    "function": "input_thread_instance_get_status",
+    "kind": "wait",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:715",
+    "function": "input_thread_instance_get_status",
+    "kind": "destroy",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:716",
+    "function": "input_thread_instance_get_status",
+    "kind": "init",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:719",
+    "function": "input_thread_instance_get_status",
+    "kind": "read",
+    "object": "flb_input_thread_instance.init_status",
+    "verdict": "discharged",
+    "why": null
+   }
+  ],
+  "pause_test_releases": [
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "src/flb_lib.c:216",
+    "function": "flb_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:245",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:253",
+    "function": "test_tail_ctx_create",
+    "what": "`unlink`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:262",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:286",
+    "function": "test_tail_ctx_destroy",
+    "what": "`unlink`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (no join on this path)",
+    "live": {
+     "flb_lib_worker": [
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ no join on this path"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:293",
+    "function": "test_tail_ctx_destroy",
+    "what": "`flb_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Failed @ src/flb_lib.c:1077",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 9 thread(s) (e.g. `lib/monkey/mk_core/mk_utils.c::mk_utils_worker_entry`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "src/flb_lib.c:216",
+    "function": "flb_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:245",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:253",
+    "function": "test_tail_ctx_create",
+    "what": "`unlink`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:262",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:286",
+    "function": "test_tail_ctx_destroy",
+    "what": "`unlink`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (no join on this path)",
+    "live": {
+     "flb_lib_worker": [
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ no join on this path"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:293",
+    "function": "test_tail_ctx_destroy",
+    "what": "`flb_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Failed @ src/flb_lib.c:1077",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 9 thread(s) (e.g. `lib/monkey/mk_core/mk_utils.c::mk_utils_worker_entry`) whose joins before it ends are not derived"
+    ]
+   }
+  ],
+  "other_decided_sites": [
+   {
+    "at": "include/fluent-bit/flb_stream.h:175",
+    "function": "flb_stream_acquire_lock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:77",
+    "function": "evthread_posix_lock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:134",
+    "function": "evthread_posix_cond_signal",
+    "kind": "broadcast",
+    "object": null,
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:198",
+    "function": "evthread_use_pthreads_with_flags",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "recursive-or-dynamic-mutex"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:198",
+    "function": "evthread_use_pthreads_with_flags",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "recursive-or-dynamic-mutex"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:305",
+    "function": "_pthread_cleanup_dest",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:400",
+    "function": "pthread_rwlock_timedrdlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:421",
+    "function": "pthread_rwlock_timedwrlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:843",
+    "function": "pthread_mutex_timedlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:857",
+    "function": "pthread_mutex_timedlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:975",
+    "function": "pthread_key_create",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:1076",
+    "function": "pthread_key_delete",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_server/mk_scheduler.c:407",
+    "function": "mk_sched_launch_worker_loop",
+    "kind": "signal",
+    "object": "mk_server.pth_cond",
+    "verdict": "not discharged",
+    "why": "guarded field `mk_server.pth_init at lib/monkey/mk_server/mk_scheduler.c:431` is written outside the mutex"
+   },
+   {
+    "at": "lib/monkey/mk_server/mk_scheduler.c:456",
+    "function": "mk_sched_launch_thread",
+    "kind": "wait",
+    "object": "mk_server.pth_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/filter_kubernetes/kubernetes.c:75",
+    "function": "wait_for_pod_service_map_refresh",
+    "kind": "read",
+    "object": "flb_kube.aws_pod_service_shutdown",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/filter_kubernetes/kubernetes.c:913",
+    "function": "cb_kube_exit",
+    "kind": "signal",
+    "object": "flb_kube.aws_pod_service_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1135",
+    "function": "etw_signal_startup",
+    "kind": "signal",
+    "object": "flb_etw.startup_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1146",
+    "function": "etw_wait_startup",
+    "kind": "wait",
+    "object": "flb_etw.startup_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1148",
+    "function": "etw_wait_startup",
+    "kind": "read",
+    "object": "flb_etw.startup_status",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_kubernetes_events/kubernetes_events.c:978",
+    "function": "k8s_events_collect",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "plugins/out_stackdriver/stackdriver.c:465",
+    "function": "get_google_token",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/aws/flb_aws_credentials.c:855",
+    "function": "try_lock_provider",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/flb_chunk_trace.c:110",
+    "function": "trace_pipeline_stop",
+    "kind": "signal",
+    "object": "flb_chunk_pipeline_context.cond",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_chunk_pipeline_context.flb at src/flb_chunk_trace.c:176` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_chunk_trace.c:312",
+    "function": "trace_pipeline_start",
+    "kind": "wait",
+    "object": "flb_chunk_pipeline_context.cond",
+    "verdict": "refused",
+    "why": "wait-outside-predicate-loop"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:184",
+    "function": "downstream_worker_control_event",
+    "kind": "broadcast",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:203",
+    "function": "downstream_worker_control_event",
+    "kind": "signal",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_downstream_worker.control_channel_created at src/flb_downstream_worker.c:256` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:500",
+    "function": "flb_downstream_worker_runtime_stop",
+    "kind": "wait",
+    "object": "flb_downstream_worker_runtime.lifecycle_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_downstream_worker.c:593",
+    "function": "flb_downstream_worker_runtime_foreach",
+    "kind": "wait",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "not discharged",
+    "why": "the predicate is not read under the wait's mutex"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:612",
+    "function": "flb_downstream_worker_runtime_foreach",
+    "kind": "signal",
+    "object": "flb_downstream_worker_runtime.lifecycle_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_ingest.c:370",
+    "function": "flb_input_ingress_collector",
+    "kind": "broadcast",
+    "object": "flb_input_instance.ingress_queue_space_available",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_input_ingest.c:516",
+    "function": "flb_input_ingress_destroy",
+    "kind": "broadcast",
+    "object": "flb_input_instance.ingress_queue_space_available",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_lock.c:42",
+    "function": "flb_lock_acquire",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/flb_log.c:531",
+    "function": "log_worker_collector",
+    "kind": "signal",
+    "object": "flb_log.pth_cond",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_log.pth_init at src/flb_log.c:1156` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_log.c:1172",
+    "function": "flb_log_create",
+    "kind": "wait",
+    "object": "flb_log.pth_cond",
+    "verdict": "discharged",
+    "why": null
+   }
+  ]
+ },
+ "fixed_90978ac6": {
+  "files": 1685,
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "not discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 3,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 8,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 134
+   },
+   "signal": {
+    "discharged": 5,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 6,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "signal_once": {
+   "flb_chunk_pipeline_context.cond": "not derived: the condvar is signalled from more than one function",
+   "flb_downstream_worker.condition": "not derived: the condvar is signalled from more than one function",
+   "flb_downstream_worker_runtime.lifecycle_condition": "not derived: `flb_downstream_worker_runtime_foreach` is called from more than one function",
+   "flb_etw.startup_cond": "not derived: `plugins/in_etw/etw.c::etw_worker` can call `plugins/in_etw/etw.c::etw_signal_startup` twice on a path",
+   "flb_input_instance.ingress_queue_space_available": "not derived: the condvar is signalled from more than one function",
+   "flb_input_thread_instance.init_condition": "derived: signalled at most once per `src/flb_input_thread.c::input_thread` thread",
+   "flb_kube.aws_pod_service_cond": "not derived: `plugins/filter_kubernetes/kubernetes.c::cb_kube_exit` is called from more than one function",
+   "flb_log.pth_cond": "not derived: `src/flb_log.c::log_worker_collector` is called from more than one function",
+   "mk_server.pth_cond": "not derived: `mk_sched_launch_worker_loop` is called from more than one function",
+   "tail_pause_test.cond": "not derived: `tests/runtime/in_tail.c::cb_tail_pause_test` is called from more than one function"
+  },
+  "bound_sites": [
+   {
+    "at": "src/flb_input_thread.c:248",
+    "function": "input_thread_instance_create",
+    "kind": "init",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:693",
+    "function": "input_thread_instance_set_status",
+    "kind": "signal",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:710",
+    "function": "input_thread_instance_get_status",
+    "kind": "wait",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:715",
+    "function": "input_thread_instance_get_status",
+    "kind": "destroy",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:716",
+    "function": "input_thread_instance_get_status",
+    "kind": "init",
+    "object": "flb_input_thread_instance.init_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_thread.c:719",
+    "function": "input_thread_instance_get_status",
+    "kind": "read",
+    "object": "flb_input_thread_instance.init_status",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2497",
+    "function": "cb_tail_pause_test",
+    "kind": "signal",
+    "object": "tail_pause_test.cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2550",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "init",
+    "object": "tail_pause_test.cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2565",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "wait",
+    "object": "tail_pause_test.cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2570",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "read",
+    "object": "tail_pause_test.done",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2571",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "read",
+    "object": "tail_pause_test.pause_result",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2572",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "read",
+    "object": "tail_pause_test.resume_result",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2575",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "read",
+    "object": "tail_pause_test.fs_running",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2576",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "read",
+    "object": "tail_pause_test.progress_running",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "tests/runtime/in_tail.c:2595",
+    "function": "flb_test_inotify_pause_collectors",
+    "kind": "destroy",
+    "object": "tail_pause_test.cond",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)"
+   }
+  ],
+  "pause_test_releases": [
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "src/flb_lib.c:216",
+    "function": "flb_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:245",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:253",
+    "function": "test_tail_ctx_create",
+    "what": "`unlink`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:262",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:2588",
+    "function": "flb_test_inotify_pause_collectors",
+    "what": "`flb_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: false, awaited: true } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: true, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_lib_worker` starts 9 thread(s) (e.g. `lib/monkey/mk_core/mk_utils.c::mk_utils_worker_entry`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:2591",
+    "function": "flb_test_inotify_pause_collectors",
+    "what": "`unlink`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: false, awaited: true } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: true, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:2595",
+    "function": "flb_test_inotify_pause_collectors",
+    "what": "`pthread_cond_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: false, awaited: true } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: true, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:2596",
+    "function": "flb_test_inotify_pause_collectors",
+    "what": "`pthread_mutex_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: false, awaited: true } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: true, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_pause_collectors",
+    "at": "tests/runtime/in_tail.c:2597",
+    "function": "flb_test_inotify_pause_collectors",
+    "what": "scope end of `test`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: false, awaited: true } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+      "Absent { timed_out: true, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "src/flb_lib.c:216",
+    "function": "flb_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:245",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:253",
+    "function": "test_tail_ctx_create",
+    "what": "`unlink`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:262",
+    "function": "test_tail_ctx_create",
+    "what": "`flb_destroy`",
+    "verdict": "discharged",
+    "why": null,
+    "live": {},
+    "unresolved": []
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:286",
+    "function": "test_tail_ctx_destroy",
+    "what": "`unlink`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (no join on this path)",
+    "live": {
+     "flb_lib_worker": [
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Absent { timed_out: false, awaited: false } @ no join on this path"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 4 thread(s) (e.g. `plugins/filter_kubernetes/kubernetes.c::update_pod_service_map`) whose joins before it ends are not derived"
+    ]
+   },
+   {
+    "root": "flb_test_inotify_threaded_pause_collectors",
+    "at": "tests/runtime/in_tail.c:293",
+    "function": "test_tail_ctx_destroy",
+    "what": "`flb_destroy`",
+    "verdict": "not discharged",
+    "why": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+    "live": {
+     "flb_lib_worker": [
+      "CheckedSuccess @ src/flb_lib.c:1077",
+      "Unchecked @ src/flb_lib.c:1058",
+      "Unchecked @ src/flb_lib.c:984",
+      "Unchecked @ src/flb_lib.c:999",
+      "Failed @ src/flb_lib.c:1077",
+      "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining"
+     ]
+    },
+    "unresolved": [
+     "`flb_input_pause` may start a thread through a hop the path reader does not follow",
+     "`flb_input_resume` may start a thread through a hop the path reader does not follow",
+     "`flb_lib_worker` starts 9 thread(s) (e.g. `lib/monkey/mk_core/mk_utils.c::mk_utils_worker_entry`) whose joins before it ends are not derived"
+    ]
+   }
+  ],
+  "other_decided_sites": [
+   {
+    "at": "include/fluent-bit/flb_stream.h:175",
+    "function": "flb_stream_acquire_lock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:77",
+    "function": "evthread_posix_lock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:134",
+    "function": "evthread_posix_cond_signal",
+    "kind": "broadcast",
+    "object": null,
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:198",
+    "function": "evthread_use_pthreads_with_flags",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "recursive-or-dynamic-mutex"
+   },
+   {
+    "at": "lib/monkey/mk_core/deps/libevent/evthread_pthread.c:198",
+    "function": "evthread_use_pthreads_with_flags",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "recursive-or-dynamic-mutex"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:305",
+    "function": "_pthread_cleanup_dest",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:400",
+    "function": "pthread_rwlock_timedrdlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:421",
+    "function": "pthread_rwlock_timedwrlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:843",
+    "function": "pthread_mutex_timedlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:857",
+    "function": "pthread_mutex_timedlock",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:975",
+    "function": "pthread_key_create",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_core/external/winpthreads.c:1076",
+    "function": "pthread_key_delete",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "rwlock"
+   },
+   {
+    "at": "lib/monkey/mk_server/mk_scheduler.c:407",
+    "function": "mk_sched_launch_worker_loop",
+    "kind": "signal",
+    "object": "mk_server.pth_cond",
+    "verdict": "not discharged",
+    "why": "guarded field `mk_server.pth_init at lib/monkey/mk_server/mk_scheduler.c:431` is written outside the mutex"
+   },
+   {
+    "at": "lib/monkey/mk_server/mk_scheduler.c:456",
+    "function": "mk_sched_launch_thread",
+    "kind": "wait",
+    "object": "mk_server.pth_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/filter_kubernetes/kubernetes.c:75",
+    "function": "wait_for_pod_service_map_refresh",
+    "kind": "read",
+    "object": "flb_kube.aws_pod_service_shutdown",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/filter_kubernetes/kubernetes.c:913",
+    "function": "cb_kube_exit",
+    "kind": "signal",
+    "object": "flb_kube.aws_pod_service_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1135",
+    "function": "etw_signal_startup",
+    "kind": "signal",
+    "object": "flb_etw.startup_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1146",
+    "function": "etw_wait_startup",
+    "kind": "wait",
+    "object": "flb_etw.startup_cond",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_etw/etw.c:1148",
+    "function": "etw_wait_startup",
+    "kind": "read",
+    "object": "flb_etw.startup_status",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "plugins/in_kubernetes_events/kubernetes_events.c:978",
+    "function": "k8s_events_collect",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "plugins/out_stackdriver/stackdriver.c:465",
+    "function": "get_google_token",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/aws/flb_aws_credentials.c:855",
+    "function": "try_lock_provider",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/flb_chunk_trace.c:110",
+    "function": "trace_pipeline_stop",
+    "kind": "signal",
+    "object": "flb_chunk_pipeline_context.cond",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_chunk_pipeline_context.flb at src/flb_chunk_trace.c:176` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_chunk_trace.c:312",
+    "function": "trace_pipeline_start",
+    "kind": "wait",
+    "object": "flb_chunk_pipeline_context.cond",
+    "verdict": "refused",
+    "why": "wait-outside-predicate-loop"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:184",
+    "function": "downstream_worker_control_event",
+    "kind": "broadcast",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:203",
+    "function": "downstream_worker_control_event",
+    "kind": "signal",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_downstream_worker.control_channel_created at src/flb_downstream_worker.c:256` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:500",
+    "function": "flb_downstream_worker_runtime_stop",
+    "kind": "wait",
+    "object": "flb_downstream_worker_runtime.lifecycle_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_downstream_worker.c:593",
+    "function": "flb_downstream_worker_runtime_foreach",
+    "kind": "wait",
+    "object": "flb_downstream_worker.condition",
+    "verdict": "not discharged",
+    "why": "the predicate is not read under the wait's mutex"
+   },
+   {
+    "at": "src/flb_downstream_worker.c:612",
+    "function": "flb_downstream_worker_runtime_foreach",
+    "kind": "signal",
+    "object": "flb_downstream_worker_runtime.lifecycle_condition",
+    "verdict": "discharged",
+    "why": null
+   },
+   {
+    "at": "src/flb_input_ingest.c:370",
+    "function": "flb_input_ingress_collector",
+    "kind": "broadcast",
+    "object": "flb_input_instance.ingress_queue_space_available",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_input_ingest.c:516",
+    "function": "flb_input_ingress_destroy",
+    "kind": "broadcast",
+    "object": "flb_input_instance.ingress_queue_space_available",
+    "verdict": "refused",
+    "why": "broadcast"
+   },
+   {
+    "at": "src/flb_lock.c:42",
+    "function": "flb_lock_acquire",
+    "kind": "refused",
+    "object": null,
+    "verdict": "refused",
+    "why": "try-or-timed-lock"
+   },
+   {
+    "at": "src/flb_log.c:531",
+    "function": "log_worker_collector",
+    "kind": "signal",
+    "object": "flb_log.pth_cond",
+    "verdict": "not discharged",
+    "why": "guarded field `flb_log.pth_init at src/flb_log.c:1156` is written outside the mutex"
+   },
+   {
+    "at": "src/flb_log.c:1172",
+    "function": "flb_log_create",
+    "kind": "wait",
+    "object": "flb_log.pth_cond",
+    "verdict": "discharged",
+    "why": null
+   }
+  ]
+ }
+}

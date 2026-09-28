@@ -976,6 +976,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-callee-closure-r2](w47-callee-closure-r2/README.md) | W47-CALLEE-CLOSURE-R2: callee closure and external contracts after P3 |
 
+| [w47-condvar-join-publication](w47-condvar-join-publication/README.md) | W47-CONDVAR-JOIN-PUBLICATION: condvar publication and join before release (C4–C5) |
+
 | [w47-lexical-closure-nested-assignment](w47-lexical-closure-nested-assignment/README.md) | W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT |
 
 | [w47-loop-owner-contracts](w47-loop-owner-contracts/README.md) | W47-LOOP-OWNER-CONTRACTS: loop-owner obligation over derived thread identity (C1–C3) |

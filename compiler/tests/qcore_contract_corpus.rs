@@ -629,6 +629,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // object, so `resource_borrowed` is the whole custody statement.
     ("libc/pthread_mutex.qv", "pthread_mutex_lock", 4),
     ("libc/pthread_mutex.qv", "pthread_mutex_unlock", 4),
+    // Card W47-CONDVAR-JOIN-PUBLICATION: the marker, the flexible revision,
+    // the thread-synchronization obligation, one borrowed clause per
+    // parameter and the scalar result; `pthread_join` adds its null-result
+    // literal premise.
+    ("libc/pthread_sync.qv", "pthread_cond_init", 6),
+    ("libc/pthread_sync.qv", "pthread_cond_destroy", 5),
+    ("libc/pthread_sync.qv", "pthread_cond_signal", 5),
+    ("libc/pthread_sync.qv", "pthread_cond_wait", 6),
+    ("libc/pthread_sync.qv", "pthread_cond_timedwait", 7),
+    ("libc/pthread_sync.qv", "pthread_join", 7),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qv`: neutral (2 + 1 per parameter).
     ("libc/regex.qv", "regexec", 8),
     ("libc/regex.qv", "regerror", 7),
@@ -1294,7 +1304,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 118 -> 119 by card W47-LOOP-OWNER-CONTRACTS' `fluent_bit/loop_owner.qv`.
-    assert_eq!(sources.len(), 119, "unexpected contract corpus size");
+    // 119 -> 120 by card W47-CONDVAR-JOIN-PUBLICATION's `libc/pthread_sync.qv`.
+    assert_eq!(sources.len(), 120, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

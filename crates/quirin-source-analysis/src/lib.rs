@@ -5,6 +5,8 @@
 
 pub mod chunk_contract;
 pub mod chunkio;
+// Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q).
+pub mod condvar_join_census;
 pub mod libevent;
 // Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
 pub mod loop_owner_census;

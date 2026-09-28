@@ -72,10 +72,20 @@ pub(super) const UNMET_PREFIX: &str = "qcore_premise_unmet__";
 /// escape (rule 10i) covers it.
 const LOOP_OWNER_MARK: &str = "loop_owner__";
 
+/// The mark that follows [`UNMET_PREFIX`] when the unmet premise is a declared
+/// thread-synchronization obligation (card **W47-CONDVAR-JOIN-PUBLICATION**,
+/// rule 10q), under the same reserved prefix for the same reasons.
+const THREAD_SYNC_MARK: &str = "thread_sync__";
+
 /// The callee a rewritten name stands for, for diagnostics.
 pub(super) fn unmet_callee(function: &str) -> Option<&str> {
     let callee = function.strip_prefix(UNMET_PREFIX)?;
-    Some(callee.strip_prefix(LOOP_OWNER_MARK).unwrap_or(callee))
+    Some(
+        callee
+            .strip_prefix(LOOP_OWNER_MARK)
+            .or_else(|| callee.strip_prefix(THREAD_SYNC_MARK))
+            .unwrap_or(callee),
+    )
 }
 
 /// The refusal wording for a rewritten callee: a declared loop-owner
@@ -83,6 +93,12 @@ pub(super) fn unmet_callee(function: &str) -> Option<&str> {
 /// wording byte for byte.
 pub(super) fn unmet_description(function: &str) -> Option<String> {
     let rest = function.strip_prefix(UNMET_PREFIX)?;
+    if let Some(callee) = rest.strip_prefix(THREAD_SYNC_MARK) {
+        return Some(format!(
+            "call to `{callee}` outside its declared thread-synchronization obligation (no \
+             derived thread, predicate loop or join on this route)"
+        ));
+    }
     Some(match rest.strip_prefix(LOOP_OWNER_MARK) {
         Some(callee) => format!(
             "call to `{callee}` outside its declared loop-owner obligation (no derived thread \
@@ -108,6 +124,10 @@ pub(super) struct LiteralPremises {
     /// obligation. No per-unit route derives a thread, so each of their call
     /// sites is refused here, whatever its arguments.
     loop_owner: std::collections::BTreeSet<String>,
+    /// Card W47-CONDVAR-JOIN-PUBLICATION: every callee with a declared
+    /// thread-synchronization obligation, refused at every call for the same
+    /// reason (no per-unit route derives a predicate loop or a join).
+    thread_sync: std::collections::BTreeSet<String>,
     /// Why the set is unreadable, if it is. `Some` poisons the whole set.
     malformed: Option<String>,
 }
@@ -139,6 +159,16 @@ impl LiteralPremises {
         {
             match qcore_contract::contract_loader::declared_loop_owner_obligations(contracts) {
                 Ok(declared) => premises.loop_owner.extend(declared.into_keys()),
+                Err(message) => premises.poison(&message),
+            }
+        }
+        if contracts
+            .source_assumptions()
+            .values()
+            .any(|source| source.contains(qcore_contract::contract_loader::THREAD_SYNC_CLAUSE))
+        {
+            match qcore_contract::contract_loader::declared_thread_sync_obligations(contracts) {
+                Ok(declared) => premises.thread_sync.extend(declared.into_keys()),
                 Err(message) => premises.poison(&message),
             }
         }
@@ -178,12 +208,20 @@ impl LiteralPremises {
 
     #[must_use]
     pub(super) fn is_empty(&self) -> bool {
-        self.required.is_empty() && self.loop_owner.is_empty() && self.malformed.is_none()
+        self.required.is_empty()
+            && self.loop_owner.is_empty()
+            && self.thread_sync.is_empty()
+            && self.malformed.is_none()
     }
 
     /// Whether `function` carries a declared loop-owner obligation.
     pub(super) fn loop_owner(&self, function: &str) -> bool {
         self.loop_owner.contains(function)
+    }
+
+    /// Whether `function` carries a declared thread-synchronization obligation.
+    pub(super) fn thread_sync(&self, function: &str) -> bool {
+        self.thread_sync.contains(function)
     }
 
     /// The premises declared for `function`, in declaration order.
@@ -376,6 +414,14 @@ pub(super) fn restrict_to_declared_literals(
         if !poisoned && premises.loop_owner(callee) {
             let target = rewritten.get_or_insert_with(|| tokens.to_vec());
             target[index].text = format!("{UNMET_PREFIX}{LOOP_OWNER_MARK}{callee}");
+            continue;
+        }
+        // Card W47-CONDVAR-JOIN-PUBLICATION: nor is a thread-synchronization
+        // obligation (a predicate loop, a paired mutex, a quiescent phase or
+        // a checked join), so its callee is refused at every call too.
+        if !poisoned && premises.thread_sync(callee) {
+            let target = rewritten.get_or_insert_with(|| tokens.to_vec());
+            target[index].text = format!("{UNMET_PREFIX}{THREAD_SYNC_MARK}{callee}");
             continue;
         }
         if !poisoned && premises.declared(callee).is_empty() {

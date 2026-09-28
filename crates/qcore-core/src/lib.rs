@@ -188,6 +188,9 @@ pub mod task_trace_relation;
 
 pub mod transfer;
 
+// Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q).
+pub mod condvar_join;
+
 pub mod scalar_calls;
 
 pub mod scalar_calls_c_emit;

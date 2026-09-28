@@ -1,0 +1,37 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 7,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 201,
+   "Safe": 31,
+   "Unsafe": 2
+  },
+  "diagnostic_counts": {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 7,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 201,
+   "Safe": 31,
+   "Unsafe": 2
+  },
+  "diagnostic_counts": {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": []
+}
