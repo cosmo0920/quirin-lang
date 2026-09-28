@@ -66,6 +66,42 @@
       ]
     },
     {
+      "function": "flb_config_set_property",
+      "module": "fluent_bit/input_instance.qv",
+      "contract_sha256": "d5959834cc220ec1dda21c1d871a6839b34b3714a6a70789e0b4c446a4334746",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_config.h",
+              "kind": "declaration",
+              "declaration_sha256": "bc19ae5799e61e782faf4281d9f1710fd7772ff73113e52a933954ef2ce7e971"
+            },
+            {
+              "path": "src/flb_config.c",
+              "kind": "definition",
+              "declaration_sha256": "bc19ae5799e61e782faf4281d9f1710fd7772ff73113e52a933954ef2ce7e971",
+              "body_sha256": "11120fb4ab04f0b34723f21db7fca349383bc3280fe39e4bd4587ad85b72e105"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_create",
       "module": "fluent_bit/input_instance.qv",
       "contract_sha256": "25ce56b62ea69f67cd81534b386eb2b0e4fb4980435bfb5d4fa6b362a3417e07",
@@ -1257,7 +1293,7 @@
     {
       "function": "flb_service_set",
       "module": "fluent_bit/input_instance.qv",
-      "contract_sha256": "049e71ab62a150b4f7636a86344f90867dad49dd37b5df477403fe997c18c6e3",
+      "contract_sha256": "f1dc994f2e360f0e6f43cc508499c8a5ab78ec2e2ba2a9806db5ae6fd5107f0c",
       "identities": [
         {
           "reviewed_at": [

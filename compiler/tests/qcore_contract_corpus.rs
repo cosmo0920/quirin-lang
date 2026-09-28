@@ -460,6 +460,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/input_instance.qv", "flb_input", 5),
     ("fluent_bit/input_instance.qv", "flb_input_new", 6),
     ("fluent_bit/input_instance.qv", "flb_service_set", 4),
+    // Card W47-SERVICE-PROPERTY-KEYS: the property function the census reads
+    // a keyed `flb_service_set` call through, withheld for review.
+    ("fluent_bit/input_instance.qv", "flb_config_set_property", 5),
     // Card W47-CONDVAR-JOIN-STOP-PATHS: the marker, the contract-level review
     // marker carrying the observed join behaviour, one parameter mode and the
     // scalar result; every declaration is withheld awaiting review.
