@@ -1,0 +1,320 @@
+{
+ "summary": {
+  "functions_before": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "functions_after": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "units_before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "units_after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "diagnostic_counts_before": {
+   "counted_user": 4,
+   "unknown_alias": 993,
+   "unsupported": 2892
+  },
+  "diagnostic_counts_after": {
+   "counted_user": 4,
+   "unknown_alias": 1007,
+   "unsupported": 2884
+  },
+  "status_moves": {},
+  "unit_moves": {},
+  "changed_rows": 6,
+  "attribution": {
+   "direct": 6
+  },
+  "leaves_removed_by_family": {
+   "IND": 8
+  },
+  "leaves_added_by_family": {
+   "unknown_alias": 14
+  }
+ },
+ "changed": [
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19986,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i`",
+     19986,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `storage`",
+     19996,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19986,
+     "statement",
+     "struct flb_storage_input * storage = i - > storage"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18478,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `output_plugin`",
+     18478,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18478,
+     "statement",
+     "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19986,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i`",
+     19986,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `storage`",
+     19996,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19986,
+     "statement",
+     "struct flb_storage_input * storage = i - > storage"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18478,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `output_plugin`",
+     18478,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18478,
+     "statement",
+     "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "configuration": 1,
+   "function": "flb_sched_event_handler",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18015,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18023,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `req`",
+     18016,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18024,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18015,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18023,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18015,
+     "statement",
+     "req = timer - > data"
+    ],
+    [
+     18023,
+     "statement",
+     "sched = timer - > data"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "configuration": 2,
+   "function": "flb_sched_event_handler",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18015,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18023,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `req`",
+     18016,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18024,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18015,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18023,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18015,
+     "statement",
+     "req = timer - > data"
+    ],
+    [
+     18023,
+     "statement",
+     "sched = timer - > data"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  }
+ ]
+}

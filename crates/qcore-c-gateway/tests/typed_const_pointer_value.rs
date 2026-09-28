@@ -33,7 +33,10 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(l);\n
            ensures normal resource_return_none(); };\n\
 extern fn c_use(v: i32) -> unit\n\
 contract { requires resource_contract_v1; ensures normal resource_borrowed(v);\n\
-           ensures normal resource_return_none(); };";
+           ensures normal resource_return_none(); };\n\
+extern fn c_same(a: ptr<const, u8>, b: ptr<const, u8>) -> i32\n\
+contract { requires resource_contract_v1; ensures normal resource_borrowed(a);\n\
+           ensures normal resource_borrowed(b); ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
 typedef void (*c_fn)(int); \
@@ -48,7 +51,8 @@ struct c_odds { struct c_odd rows[2]; }; \
 struct c_box *c_make(int n); \
 void c_drop(struct c_box *b); \
 void c_peek(struct c_leaf *l); \
-void c_use(int v);";
+void c_use(int v); \
+int c_same(const char *a, const char *b);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -276,4 +280,42 @@ fn every_other_cast_keeps_the_refusal() {
     ] {
         assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
     }
+}
+
+/// A measured boundary, not a rule of this card
+/// (`W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`): librdkafka's
+/// `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. W4 validates the
+/// comparator's summary (`Owned`, `Owned`) in a run whose formals are not
+/// protected, so the copies `a`, `b` are never-bound roots and the typed
+/// reads certify there; the comparator's own row, analysed with that summary
+/// in force, protects `_a`/`_b` and keeps its refusals. The wrapper certifies
+/// on the summary. Pinned so the follow-up that aligns the two runs sees
+/// what it changes.
+#[test]
+fn a_comparator_summary_validates_where_its_own_row_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let comparator = "struct c_tp { char *topic; int partition; }; \
+        int cmp(const void *_a, const void *_b) { \
+        const struct c_tp *a = _a; const struct c_tp *b = _b; \
+        int r = c_same(a->topic, b->topic); if (r) return r; \
+        else return (int)((a->partition) < (b->partition) ? -1 : ((a->partition) > (b->partition))); }";
+    let result = analyze(
+        comparator,
+        "static int w(const void *_a, const void *_b, void *opaque) { return cmp(_a, _b); }",
+    );
+    let rows = &program(&result).functions;
+    // The unit is Unknown on the comparator's row; the wrapper's row is Safe.
+    assert_eq!(format!("{:?}", rows["w"].status), "Safe");
+    assert!(rows["w"].diagnostics.is_empty());
+    assert_eq!(format!("{:?}", rows["cmp"].status), "Unknown");
+    assert!(
+        rows["cmp"].diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::Unsupported { description } if format!("unsupported:{description}") == RETURN
+        )),
+        "{:?}",
+        rows["cmp"].diagnostics
+    );
 }

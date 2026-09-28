@@ -1,0 +1,2614 @@
+{
+ "summary": {
+  "functions_before": {
+   "Unknown": 4304,
+   "Safe": 520,
+   "Unsafe": 10
+  },
+  "functions_after": {
+   "Unknown": 4304,
+   "Safe": 520,
+   "Unsafe": 10
+  },
+  "units_before": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "units_after": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "diagnostic_counts_before": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7485,
+   "unsupported": 36112
+  },
+  "diagnostic_counts_after": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7585,
+   "unsupported": 36048
+  },
+  "status_moves": {},
+  "unit_moves": {},
+  "changed_rows": 55,
+  "attribution": {
+   "direct": 55
+  },
+  "leaves_removed_by_family": {
+   "IND": 59,
+   "COND": 5
+  },
+  "leaves_added_by_family": {
+   "unknown_alias": 100
+  }
+ },
+ "changed": [
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_get_content",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2165,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2171,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2176,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2177,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2165,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2171,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2166,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2165,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2171,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2165,
+     2
+    ],
+    [
+     2171,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_get_content_end_pos",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2205,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2209,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2205,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2209,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2205,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2209,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2205,
+     2
+    ],
+    [
+     2209,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_get_content_size",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2222,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2226,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2227,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2222,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2226,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2223,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2222,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2226,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2222,
+     2
+    ],
+    [
+     2226,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_get_real_size",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2239,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2243,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2244,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2247,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2239,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2243,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2240,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2239,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2243,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2239,
+     2
+    ],
+    [
+     2243,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_is_up",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2362,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2362,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2362,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2362,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_tx_begin",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2308,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2313,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2314,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2315,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2308,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2313,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2309,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2310,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2308,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2313,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2308,
+     2
+    ],
+    [
+     2313,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_tx_rollback",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2341,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2346,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2347,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2348,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2341,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2346,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2342,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `mf`",
+     2343,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2341,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2346,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2341,
+     2
+    ],
+    [
+     2346,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_chunk.c",
+   "configuration": 1,
+   "function": "cio_chunk_write_at",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2121,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2125,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2121,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2125,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2121,
+     "statement",
+     "mf = ch - > backend"
+    ],
+    [
+     2125,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2121,
+     2
+    ],
+    [
+     2125,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_file.c",
+   "configuration": 1,
+   "function": "cio_file_scan_dump",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     3647,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3656,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3657,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3669,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     3647,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     3647,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     3647,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_file.c",
+   "configuration": 1,
+   "function": "cio_file_write_metadata",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     3507,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3511,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3512,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3515,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3517,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3521,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3522,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3529,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3530,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     3532,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     3507,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     3507,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     3507,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_meta.c",
+   "configuration": 1,
+   "function": "cio_meta_cmp",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2445,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2463,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2467,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2445,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2445,
+     "statement",
+     "struct cio_file * cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2445,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_meta.c",
+   "configuration": 1,
+   "function": "cio_meta_read",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2429,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2430,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `cf`",
+     2434,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2429,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2429,
+     "statement",
+     "cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2429,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_meta.c",
+   "configuration": 1,
+   "function": "cio_meta_size",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2405,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ch`",
+     2405,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2405,
+     "statement",
+     "struct cio_file * cf = ch - > backend"
+    ]
+   ],
+   "census_rows": [
+    [
+     2405,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cio_stream.c",
+   "configuration": 1,
+   "function": "cio_stream_delete",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2236,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `st`",
+     2236,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2236,
+     "statement",
+     "ctx = st - > parent"
+    ]
+   ],
+   "census_rows": [
+    [
+     2236,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "configuration": 1,
+   "function": "unpack_metric",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     7969,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     7983,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `decode_context`",
+     7969,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `decode_context`",
+     7983,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `summary`",
+     7990,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     7969,
+     "statement",
+     "histogram = decode_context - > map - > parent"
+    ],
+    [
+     7983,
+     "statement",
+     "summary = decode_context - > map - > parent"
+    ]
+   ],
+   "census_rows": [
+    [
+     7969,
+     2
+    ],
+    [
+     7983,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19928,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i`",
+     19928,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `storage`",
+     19938,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19928,
+     "statement",
+     "struct flb_storage_input * storage = i - > storage"
+    ]
+   ],
+   "census_rows": [
+    [
+     19928,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18446,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `output_plugin`",
+     18446,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18446,
+     "statement",
+     "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+    ]
+   ],
+   "census_rows": [
+    [
+     18446,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_core/mk_iov.c",
+   "configuration": 1,
+   "function": "mk_iov_print",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2183,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `c`",
+     2184,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2183,
+     "statement",
+     "c = mk_io - > io [ i ] . iov_base"
+    ]
+   ],
+   "census_rows": [
+    [
+     2183,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_header.c",
+   "configuration": 1,
+   "function": "cb_stream_iov_extended_free",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5907,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     5907,
+     "statement",
+     "iov = in - > buffer"
+    ]
+   ],
+   "census_rows": [
+    [
+     5907,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_header.c",
+   "configuration": 1,
+   "function": "mk_header_cb_finished",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5901,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     5901,
+     "statement",
+     "struct mk_iov * iov = in - > buffer"
+    ]
+   ],
+   "census_rows": [
+    [
+     5901,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_http.c",
+   "configuration": 1,
+   "function": "cb_stream_page_finished",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6909,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     6909,
+     "statement",
+     "mk_ptr_t * page = in - > buffer"
+    ]
+   ],
+   "census_rows": [
+    [
+     6909,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_http.c",
+   "configuration": 1,
+   "function": "mk_http_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6732,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `mime`",
+     6771,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6732,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6732,
+     "statement",
+     "mime = server - > mimetype_default"
+    ]
+   ],
+   "census_rows": [
+    [
+     6732,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_http.c",
+   "configuration": 1,
+   "function": "mk_http_session_remove",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     7051,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sr`",
+     7051,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     7051,
+     "statement",
+     "handler = sr - > stage30_handler"
+    ]
+   ],
+   "census_rows": [
+    [
+     7051,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_http_thread.c",
+   "configuration": 1,
+   "function": "thread_cb_init_vars",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6045,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `request`",
+     6045,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6045,
+     "statement",
+     "mth = request - > thread"
+    ]
+   ],
+   "census_rows": [
+    [
+     6045,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "configuration": 1,
+   "function": "mk_sched_exit",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6737,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6737,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6737,
+     "statement",
+     "ctx = server - > sched_ctx"
+    ]
+   ],
+   "census_rows": [
+    [
+     6737,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "configuration": 1,
+   "function": "mk_sched_launch_worker_loop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6638,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6638,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6638,
+     "statement",
+     "ctx = server - > sched_ctx"
+    ]
+   ],
+   "census_rows": [
+    [
+     6638,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "configuration": 1,
+   "function": "mk_sched_next_target",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6510,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6510,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6510,
+     "statement",
+     "struct mk_sched_ctx * ctx = server - > sched_ctx"
+    ]
+   ],
+   "census_rows": [
+    [
+     6510,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "configuration": 1,
+   "function": "mk_sched_worker_free",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6521,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6521,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6521,
+     "statement",
+     "struct mk_sched_ctx * ctx = server - > sched_ctx"
+    ]
+   ],
+   "census_rows": [
+    [
+     6521,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "configuration": 1,
+   "function": "mk_server_loop_balancer",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `evl`",
+     6390,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     6390,
+     "statement",
+     "struct mk_event_ctx * __ctx = evl - > data"
+    ]
+   ],
+   "census_rows": [
+    [
+     6390,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_stream.c",
+   "configuration": 1,
+   "function": "mk_channel_stream_write",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5863,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `input`",
+     5863,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `iov`",
+     5864,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     5863,
+     "statement",
+     "iov = input - > buffer"
+    ]
+   ],
+   "census_rows": [
+    [
+     5863,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "mk_server/mk_stream.c",
+   "configuration": 1,
+   "function": "mk_channel_write",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5924,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `input`",
+     5924,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `iov`",
+     5925,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     5924,
+     "statement",
+     "iov = input - > buffer"
+    ]
+   ],
+   "census_rows": [
+    [
+     5924,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "configuration": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21172,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `request`",
+     21172,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `rko_orig`",
+     21250,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21172,
+     "statement",
+     "rd_kafka_op_t * rko_orig = request - > rkbuf_opaque"
+    ]
+   ],
+   "census_rows": [
+    [
+     21172,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_get_current_leader_epoch",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21728,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     21728,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21728,
+     "condition-assignment",
+     "parpriv = rktpar - > _private"
+    ]
+   ],
+   "census_rows": [
+    [
+     21728,
+     3
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_get_leader_epoch",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21712,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     21712,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21712,
+     "condition-assignment",
+     "parpriv = rktpar - > _private"
+    ]
+   ],
+   "census_rows": [
+    [
+     21712,
+     3
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_get_topic_id",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21741,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     21741,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21741,
+     "condition-assignment",
+     "parpriv = rktpar - > _private"
+    ]
+   ],
+   "census_rows": [
+    [
+     21741,
+     3
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_update",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21659,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21667,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `dst`",
+     21667,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `dstpriv`",
+     21667,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `srcpriv`",
+     21659,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21659,
+     "condition-assignment",
+     "srcpriv = src - > _private"
+    ],
+    [
+     21667,
+     "condition-assignment",
+     "dstpriv = dst - > _private"
+    ]
+   ],
+   "census_rows": [
+    [
+     21657,
+     1
+    ],
+    [
+     21659,
+     3
+    ],
+    [
+     21661,
+     1
+    ],
+    [
+     21667,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "configuration": 1,
+   "function": "rd_kafka_purge_outdated_messages",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20086,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20086,
+     "statement",
+     "rko = rkmessages [ i ] - > _private"
+    ]
+   ],
+   "census_rows": [
+    [
+     20086,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_cyrus_close",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20642,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     20643,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20642,
+     "statement",
+     "rd_kafka_sasl_cyrus_state_t * state = rktrans - > rktrans_sasl . state"
+    ]
+   ],
+   "census_rows": [
+    [
+     20642,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_cyrus_ready",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20725,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     20728,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20725,
+     "statement",
+     "rd_kafka_sasl_cyrus_handle_t * handle = rk - > rk_sasl . handle"
+    ]
+   ],
+   "census_rows": [
+    [
+     20725,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_cyrus_term",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20746,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     20747,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20746,
+     "statement",
+     "rd_kafka_sasl_cyrus_handle_t * handle = rk - > rk_sasl . handle"
+    ]
+   ],
+   "census_rows": [
+    [
+     20746,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20715,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20715,
+     "statement",
+     "struct rd_kafka_sasl_oauthbearer_state * state = rktrans - > rktrans_sasl . state"
+    ]
+   ],
+   "census_rows": [
+    [
+     20715,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_oauthbearer_close",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20701,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     20703,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20701,
+     "statement",
+     "struct rd_kafka_sasl_oauthbearer_state * state = rktrans - > rktrans_sasl . state"
+    ]
+   ],
+   "census_rows": [
+    [
+     20701,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_oauthbearer_ready",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20891,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     20892,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20891,
+     "statement",
+     "rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle"
+    ]
+   ],
+   "census_rows": [
+    [
+     20891,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_oauthbearer_term",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20877,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     20878,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20877,
+     "statement",
+     "rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle"
+    ]
+   ],
+   "census_rows": [
+    [
+     20877,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_oauthbearer_token_refresh_tmr_cb",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20840,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rk`",
+     20840,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20840,
+     "statement",
+     "rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle"
+    ]
+   ],
+   "census_rows": [
+    [
+     20840,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_scram.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_scram_build_client_first_message",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20487,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     20498,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20487,
+     "statement",
+     "struct rd_kafka_sasl_scram_state * state = rktrans - > rktrans_sasl . state"
+    ]
+   ],
+   "census_rows": [
+    [
+     20487,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_sasl_scram.c",
+   "configuration": 1,
+   "function": "rd_kafka_sasl_scram_close",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20179,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     20180,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20179,
+     "statement",
+     "struct rd_kafka_sasl_scram_state * state = rktrans - > rktrans_sasl . state"
+    ]
+   ],
+   "census_rows": [
+    [
+     20179,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "data_msg_callback",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21531,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21531,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21531,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21531,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_key_value",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21494,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21494,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21494,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21494,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_metric",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21552,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21552,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21552,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21552,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_number_data_point",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21515,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21515,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21515,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21515,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_resource_metrics",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21591,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21591,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21591,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21591,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_scope_metrics",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21571,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21571,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21571,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21571,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "configuration": 1,
+   "function": "decode_string",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21479,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `arg`",
+     21479,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21479,
+     "statement",
+     "rd_kafka_telemetry_decode_interface_t * decode_interface = * arg"
+    ]
+   ],
+   "census_rows": [
+    [
+     21479,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "snappy.c",
+   "configuration": 1,
+   "function": "sn_compress",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20376,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20386,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `dest`",
+     20385,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `env`",
+     20376,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `env`",
+     20386,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20376,
+     "statement",
+     "fragment = env - > scratch"
+    ],
+    [
+     20386,
+     "statement",
+     "dest = env - > scratch_output"
+    ]
+   ],
+   "census_rows": [
+    [
+     20376,
+     2
+    ],
+    [
+     20386,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  }
+ ]
+}

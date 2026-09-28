@@ -1,0 +1,111 @@
+[
+ {
+  "function": "rd_kafka_DeleteAcls_result_response_matching_acls",
+  "admitted_roots": [
+   "matching_acls_cntp",
+   "result_response"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_Node_host",
+  "admitted_roots": [
+   "node"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_Node_rack",
+  "admitted_roots": [
+   "node"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_handle_mock_cluster",
+  "admitted_roots": [
+   "rk"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_messages_get",
+  "admitted_roots": [
+   "messages"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_mock_cluster_bootstraps",
+  "admitted_roots": [
+   "mcluster"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_mock_cluster_handle",
+  "admitted_roots": [
+   "mcluster"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_opaque",
+  "admitted_roots": [
+   "rk"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_share_partition_offsets_list_get",
+  "admitted_roots": [
+   "list"
+  ],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ },
+ {
+  "function": "rd_kafka_topic_partition_cmp_opaque",
+  "admitted_roots": [],
+  "disputed_names": [],
+  "nested_call_names": [],
+  "exposed": [],
+  "passes": true,
+  "root_declaration_rows": 2
+ }
+]

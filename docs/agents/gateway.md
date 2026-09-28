@@ -1027,3 +1027,35 @@ which is not a second authority.
     proved: faithful Clang extraction (trust boundary 28), and that the Rust
     loop returns a seeded, settled set. `QCore.TypedRootDeclarations`;
     [report](../reports/w47-typed-root-declaration-reader/README.md).
+
+<a id="constraint-10m"></a>
+
+10m. **A pointer value is read by its unqualified type, and a `void *`
+    bit-cast into a declared object pointer is the same pointer.** Card
+    W47-TYPED-CONST-POINTER-VALUE (`typed_const_pointer_value.rs`, hooks in
+    `typed_access_path.rs` and `typed_access_positions.rs`). (1) A pointer
+    member read through a `const` pointee, or an element of a `T *const[]`
+    member, is a `T *const` lvalue; the value read from it is the unqualified
+    `T *` (C11 6.3.2.1p2, and Clang's own `LValueToRValue` type). The typed
+    reader's value check admits a value whose canonical type (Clang's
+    `desugaredQualType`, else `qualType`) has exactly one top-level
+    qualifier, `const`, after the last declarator `*`, over a type the
+    unchanged positive pointer test admits, in every rule 10k position and in
+    P2's statements. (2) At the top of a pointer-destination statement
+    (`NAME = VALUE`, `T *NAME = VALUE`) an `ImplicitCastExpr <BitCast>` from
+    exactly `void *` to an object pointer, the destination's declared type an
+    object pointer too, reads the typed path under it as the uncast statement
+    does: P2's borrowed, target-free alias with the inner read's obligations.
+    Measured as separate steps. Every per-hop obligation, rule 5b's
+    never-bound / not-`may_bind` return premise and rule 10b's identity
+    refusal are unchanged. **Do not** erase `volatile`, `restrict` or
+    `_Atomic`, or any list but a lone `const`; do not read a qualifier by
+    trimming spellings, or erase one anywhere but the value itself (a middle
+    hop is already Clang's unqualified conversion); do not admit an explicit
+    cast, any other conversion, a cast to a function or `void` pointer, a cast
+    from another object pointer, or a cast inside a path. A `T *const`
+    destination or plain name is not this rule's (it reads values, not
+    declarations). Premises stated, not proved: faithful Clang extraction of
+    the printed type and cast kinds (trust boundary 28).
+    `QCore.TypedConstPointerValue`;
+    [report](../reports/w47-typed-const-pointer-value/README.md).

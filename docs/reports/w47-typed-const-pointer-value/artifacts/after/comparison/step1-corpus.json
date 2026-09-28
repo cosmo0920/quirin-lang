@@ -1,0 +1,3243 @@
+{
+ "summary": {
+  "functions_before": {
+   "Unknown": 4314,
+   "Safe": 510,
+   "Unsafe": 10
+  },
+  "functions_after": {
+   "Unknown": 4304,
+   "Safe": 520,
+   "Unsafe": 10
+  },
+  "units_before": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "units_after": {
+   "Unknown": 167,
+   "Safe": 6,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "diagnostic_counts_before": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7443,
+   "unsupported": 36209
+  },
+  "diagnostic_counts_after": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7485,
+   "unsupported": 36112
+  },
+  "status_moves": {
+   "Unknown -> Safe": 10
+  },
+  "unit_moves": {},
+  "changed_rows": 74,
+  "attribution": {
+   "direct": 66,
+   "cascade-or-other": 8
+  },
+  "leaves_removed_by_family": {
+   "IND": 29,
+   "COND": 53,
+   "OTHER": 7,
+   "unknown_alias": 8,
+   "RET": 9
+  },
+  "leaves_added_by_family": {
+   "unknown_alias": 50,
+   "RET": 1
+  }
+ },
+ "changed": [
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "cJSON_Compare",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     3739,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     3740,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     3728,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     3728,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     3739,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     3728,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     3740,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     3728,
+     "condition",
+     "a - > valuestring = = ( ( void * ) 0 )"
+    ],
+    [
+     3728,
+     "condition",
+     "b - > valuestring = = ( ( void * ) 0 )"
+    ],
+    [
+     3739,
+     "statement",
+     "cJSON * a_element = a - > child"
+    ],
+    [
+     3740,
+     "statement",
+     "cJSON * b_element = b - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     3728,
+     1
+    ],
+    [
+     3739,
+     1
+    ],
+    [
+     3740,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "cJSON_Duplicate_rec",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     3493,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     3473,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     3481,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     3473,
+     "condition",
+     "item - > valuestring"
+    ],
+    [
+     3481,
+     "condition",
+     "item - > string"
+    ],
+    [
+     3493,
+     "statement",
+     "child = item - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     3473,
+     1
+    ],
+    [
+     3481,
+     1
+    ],
+    [
+     3493,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "cJSON_GetArraySize",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2751,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2751,
+     "statement",
+     "child = array - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     2751,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "get_array_item",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2766,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2766,
+     "statement",
+     "current_child = array - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     2766,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "get_object_item",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2789,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2789,
+     "statement",
+     "current_element = object - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     2789,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "print_array",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2511,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2511,
+     "statement",
+     "cJSON * current_element = item - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     2511,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "print_object",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2651,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2651,
+     "statement",
+     "cJSON * current_item = item - > child"
+    ]
+   ],
+   "census_rows": [
+    [
+     2651,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "cJSON.c",
+   "configuration": 1,
+   "function": "print_value",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     2413,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `item`",
+     2413,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     2413,
+     "condition",
+     "item - > valuestring = = ( ( void * ) 0 )"
+    ]
+   ],
+   "census_rows": [
+    [
+     2413,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_write_header_v2",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19078,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19102,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19076,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19100,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19221,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19238,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19076,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19078,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19100,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19102,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ],
+    [
+     19221,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19222,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19238,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19240,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ]
+   ],
+   "census_rows": [
+    [
+     19076,
+     1
+    ],
+    [
+     19078,
+     1
+    ],
+    [
+     19100,
+     1
+    ],
+    [
+     19102,
+     1
+    ],
+    [
+     19221,
+     1
+    ],
+    [
+     19222,
+     1
+    ],
+    [
+     19238,
+     1
+    ],
+    [
+     19240,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "configuration": 1,
+   "function": "input_chunk_collect_output_references",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18613,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `label`",
+     18616,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `route`",
+     18613,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18613,
+     "statement",
+     "label = route - > label"
+    ]
+   ],
+   "census_rows": [
+    [
+     18613,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "nanopb/pb_decode.c",
+   "configuration": 1,
+   "function": "pb_message_set_to_defaults",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     858,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `iter`",
+     858,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     858,
+     "condition",
+     "iter - > descriptor - > default_value"
+    ]
+   ],
+   "census_rows": [
+    [
+     858,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "nanopb/pb_encode.c",
+   "configuration": 1,
+   "function": "encode_extension_field",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     682,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `extension`",
+     673,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `extension`",
+     682,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     682,
+     "statement",
+     "extension = extension - > next"
+    ]
+   ],
+   "census_rows": [
+    [
+     682,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "nanopb/pb_encode.c",
+   "configuration": 1,
+   "function": "pb_check_proto3_default_value",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     510,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     510,
+     "condition",
+     "field - > descriptor - > default_value"
+    ]
+   ],
+   "census_rows": [
+    [
+     510,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdbuf.c",
+   "configuration": 1,
+   "function": "do_unittest_read_verify0",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     4049,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     4054,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     4057,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     4066,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [],
+   "census_rows": [],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdbuf.c",
+   "configuration": 1,
+   "function": "rd_buf_dump",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     3961,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     3961,
+     "condition",
+     "rbuf - > rbuf_wpos"
+    ]
+   ],
+   "census_rows": [
+    [
+     3961,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdbuf.c",
+   "configuration": 1,
+   "function": "rd_slice_dump",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `slice`",
+     3989,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `seg`",
+     3990,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     3985,
+     "call-argument",
+     "slice - > buf"
+    ],
+    [
+     3985,
+     "call-argument",
+     "slice - > seg"
+    ],
+    [
+     3990,
+     "statement",
+     "seg = slice - > seg"
+    ]
+   ],
+   "census_rows": [
+    [
+     3990,
+     1
+    ]
+   ],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdbuf.c",
+   "configuration": 1,
+   "function": "rd_slice_reader0",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `slice`",
+     3767,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `slice`",
+     3770,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `slice`",
+     3774,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `slice`",
+     3779,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [],
+   "census_rows": [],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdkafka.c",
+   "configuration": 1,
+   "function": "rd_kafka_log_buf",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21207,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rk`",
+     21207,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21207,
+     "condition",
+     "! rk - > rk_logq"
+    ]
+   ],
+   "census_rows": [
+    [
+     21207,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka.c",
+   "configuration": 1,
+   "function": "rd_kafka_memberid",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     24583,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`",
+     24583,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24583,
+     "condition-assignment",
+     "rkcg = ( ( rk ) - > rk_cgrp )"
+    ]
+   ],
+   "census_rows": [
+    [
+     24583,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka.c",
+   "configuration": 1,
+   "function": "rd_kafka_messages_get",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     23085,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     23085,
+     "return",
+     "messages - > elems [ index ]"
+    ]
+   ],
+   "census_rows": [
+    [
+     23085,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka.c",
+   "configuration": 1,
+   "function": "rd_kafka_opaque",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     24637,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     24637,
+     "return",
+     "rk - > rk_conf . opaque"
+    ]
+   ],
+   "census_rows": [
+    [
+     24637,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "configuration": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsetsRequest",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     24490,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `grpoffsets`",
+     24490,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24490,
+     "statement",
+     "rd_kafka_topic_partition_list_t * offsets = grpoffsets - > partitions"
+    ]
+   ],
+   "census_rows": [
+    [
+     24490,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "configuration": 1,
+   "function": "rd_kafka_ConfigResource_get_single_broker_id",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21949,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21949,
+     "condition",
+     "config - > name = = endptr"
+    ]
+   ],
+   "census_rows": [
+    [
+     21949,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "configuration": 1,
+   "function": "rd_kafka_DeleteAcls_result_response_matching_acls",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `matching_acls_cntp`",
+     24298,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     24299,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     24300,
+     "return",
+     "result_response - > matching_acls . rl_elems"
+    ]
+   ],
+   "census_rows": [
+    [
+     24300,
+     1
+    ]
+   ],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "configuration": 1,
+   "function": "rd_kafka_Node_host",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     19789,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19789,
+     "return",
+     "node - > host"
+    ]
+   ],
+   "census_rows": [
+    [
+     19789,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_aux.c",
+   "configuration": 1,
+   "function": "rd_kafka_Node_rack",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     19795,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19795,
+     "return",
+     "node - > rack"
+    ]
+   ],
+   "census_rows": [
+    [
+     19795,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_cert.c",
+   "configuration": 1,
+   "function": "rd_kafka_conf_cert_copy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20500,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20502,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20504,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sconf`",
+     20500,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sconf`",
+     20502,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sconf`",
+     20504,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20500,
+     "condition",
+     "sconf - > ssl . key"
+    ],
+    [
+     20502,
+     "condition",
+     "sconf - > ssl . cert"
+    ],
+    [
+     20504,
+     "condition",
+     "sconf - > ssl . ca"
+    ]
+   ],
+   "census_rows": [
+    [
+     20500,
+     1
+    ],
+    [
+     20502,
+     1
+    ],
+    [
+     20504,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_copy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24842,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24842,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24842,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     24842,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_desensitize",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24754,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24754,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24754,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     24754,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24822,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24822,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24822,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     24822,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_dump",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     25282,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     25282,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     25282,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     25282,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     25245,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     25245,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     25245,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     25245,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24680,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24680,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24680,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     24680,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_set_prop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     24448,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24448,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24448,
+     "condition",
+     "prop - > unsupported"
+    ]
+   ],
+   "census_rows": [
+    [
+     24448,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_anyconf_warn_deprecated",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     26174,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     26174,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     26174,
+     "condition",
+     "prop - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     26174,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_conf_flags2str",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     25142,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     25139,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     25139,
+     "condition",
+     "prop - > s2i [ j ] . unsupported"
+    ],
+    [
+     25142,
+     "call-argument",
+     "prop - > s2i [ j ] . str"
+    ],
+    [
+     25145,
+     "call-argument",
+     "prop - > s2i [ j ] . str"
+    ]
+   ],
+   "census_rows": [
+    [
+     25139,
+     1
+    ],
+    [
+     25142,
+     1
+    ],
+    [
+     25145,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_conf_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     25269,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     25269,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     25269,
+     "condition",
+     "! conf - > topic_conf"
+    ]
+   ],
+   "census_rows": [
+    [
+     25269,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_conf_prop_find",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     24302,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24296,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24296,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24302,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24296,
+     "condition",
+     "prop - > name"
+    ],
+    [
+     24302,
+     "statement",
+     "name = prop - > sdef"
+    ]
+   ],
+   "census_rows": [
+    [
+     24296,
+     1
+    ],
+    [
+     24302,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_conf_properties_show",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     25348,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop0`",
+     25348,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     25348,
+     "condition",
+     "prop0 - > name"
+    ]
+   ],
+   "census_rows": [
+    [
+     25348,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "rd_kafka_defaultconf_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     24630,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     24630,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     24630,
+     "condition",
+     "prop - > name"
+    ],
+    [
+     24637,
+     "condition",
+     "prop - > pdef"
+    ],
+    [
+     24637,
+     "condition",
+     "prop - > sdef"
+    ],
+    [
+     24637,
+     "condition",
+     "prop - > vdef"
+    ]
+   ],
+   "census_rows": [
+    [
+     24630,
+     1
+    ],
+    [
+     24637,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "configuration": 1,
+   "function": "unittest_conf",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     26271,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     26270,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     26318,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     26251,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     26251,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     26270,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     26271,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     26318,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     26251,
+     "condition",
+     "prop - > name"
+    ],
+    [
+     26270,
+     "condition",
+     "prop - > sdef"
+    ],
+    [
+     26271,
+     "statement",
+     "val = prop - > sdef"
+    ],
+    [
+     26318,
+     "condition",
+     "prop - > unsupported"
+    ]
+   ],
+   "census_rows": [
+    [
+     26251,
+     1
+    ],
+    [
+     26270,
+     1
+    ],
+    [
+     26271,
+     1
+    ],
+    [
+     26318,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_metadata.c",
+   "configuration": 1,
+   "function": "rd_kafka_metadata_topic_match",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20868,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20868,
+     "statement",
+     "const char * topic = rkmce - > rkmce_mtopic . topic"
+    ]
+   ],
+   "census_rows": [
+    [
+     20868,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_metadata_cache.c",
+   "configuration": 1,
+   "function": "rd_kafka_metadata_cache_topic_update",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20443,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `mdt`",
+     20443,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20443,
+     "condition",
+     "mdt - > topic ! = ( ( void * ) 0 )"
+    ]
+   ],
+   "census_rows": [
+    [
+     20443,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "configuration": 1,
+   "function": "rd_kafka_handle_mock_cluster",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     23469,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     23469,
+     "return",
+     "rk - > rk_mock . cluster"
+    ]
+   ],
+   "census_rows": [
+    [
+     23469,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_cluster_bootstraps",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     23473,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     23473,
+     "return",
+     "mcluster - > bootstraps"
+    ]
+   ],
+   "census_rows": [
+    [
+     23473,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_cluster_handle",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     23466,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     23466,
+     "return",
+     "mcluster - > rk"
+    ]
+   ],
+   "census_rows": [
+    [
+     23466,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_find_by_instance_id",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21532,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21532,
+     "condition",
+     "! member - > instance_id"
+    ]
+   ],
+   "census_rows": [
+    [
+     21532,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock_cgrp.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21259,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21259,
+     "statement",
+     "rd_kafka_mock_cluster_t * mcluster = mcgrp - > cluster"
+    ]
+   ],
+   "census_rows": [
+    [
+     21259,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock_handlers.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_handle_Metadata",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     22961,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     22986,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     22961,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     22986,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     22961,
+     "statement",
+     "char * topic_name = rktpar - > topic"
+    ],
+    [
+     22986,
+     "statement",
+     "topic_name = rktpar - > topic"
+    ]
+   ],
+   "census_rows": [
+    [
+     22961,
+     1
+    ],
+    [
+     22986,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "configuration": 1,
+   "function": "rd_kafka_mock_sgrp_release_session_locks",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     22440,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     22440,
+     "condition",
+     "! session - > partitions"
+    ]
+   ],
+   "census_rows": [
+    [
+     22440,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "configuration": 1,
+   "function": "rd_kafka_Produce_result_copy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20944,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20946,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `result`",
+     20944,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `result`",
+     20946,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20944,
+     "condition",
+     "result - > errstr"
+    ],
+    [
+     20946,
+     "condition",
+     "result - > record_errors"
+    ]
+   ],
+   "census_rows": [
+    [
+     20944,
+     1
+    ],
+    [
+     20946,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "configuration": 1,
+   "function": "rd_kafka_message_errstr",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19747,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19747,
+     "condition",
+     "rkmessage - > payload"
+    ]
+   ],
+   "census_rows": [
+    [
+     19747,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_cmp",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     21967,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     21967,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     21967,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21963,
+     "call-argument",
+     "a - > topic"
+    ],
+    [
+     21963,
+     "call-argument",
+     "b - > topic"
+    ]
+   ],
+   "census_rows": [
+    [
+     21963,
+     1
+    ]
+   ],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_cmp_opaque",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_topic_partition_cmp`",
+     21996,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [],
+   "census_rows": [],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_list_add0",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21818,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21818,
+     "condition",
+     "parpriv - > rktp"
+    ]
+   ],
+   "census_rows": [
+    [
+     21818,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_list_combine_regexes",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     22748,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     22748,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `topic`",
+     22749,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `topic`",
+     22755,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `topic`",
+     22756,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     22748,
+     "statement",
+     "char * topic = rktpar - > topic"
+    ]
+   ],
+   "census_rows": [
+    [
+     22748,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_set_metadata_from_rktp_stored",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21767,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21765,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21765,
+     "condition",
+     "rktp - > rktp_stored_metadata"
+    ],
+    [
+     21767,
+     "call-argument",
+     "rktp - > rktp_stored_metadata"
+    ]
+   ],
+   "census_rows": [
+    [
+     21765,
+     1
+    ],
+    [
+     21767,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_partition_update",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21661,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `dstpriv`",
+     21661,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21657,
+     "call-argument",
+     "src - > metadata"
+    ],
+    [
+     21661,
+     "condition",
+     "! dstpriv - > rktp"
+    ],
+    [
+     21661,
+     "condition",
+     "srcpriv - > rktp"
+    ]
+   ],
+   "census_rows": [
+    [
+     21657,
+     1
+    ],
+    [
+     21659,
+     3
+    ],
+    [
+     21661,
+     1
+    ],
+    [
+     21667,
+     2
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "configuration": 1,
+   "function": "rd_kafka_toppar_get0",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20432,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20432,
+     "statement",
+     "rktp = rkt - > rkt_ua"
+    ]
+   ],
+   "census_rows": [
+    [
+     20432,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_range_assignor.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_assignment_state_new",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     19651,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `topic`",
+     19651,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19651,
+     "condition",
+     "topic - > metadata_internal - > partitions"
+    ]
+   ],
+   "census_rows": [
+    [
+     19651,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "configuration": 1,
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21782,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21784,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21786,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `group_instance_id`",
+     21784,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `member_id`",
+     21782,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `remote_assignor`",
+     21786,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     21782,
+     "statement",
+     "member_id_str = member_id - > str"
+    ],
+    [
+     21784,
+     "statement",
+     "group_instance_id_str = group_instance_id - > str"
+    ],
+    [
+     21786,
+     "statement",
+     "remote_assignor_str = remote_assignor - > str"
+    ]
+   ],
+   "census_rows": [
+    [
+     21782,
+     1
+    ],
+    [
+     21784,
+     1
+    ],
+    [
+     21786,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "configuration": 1,
+   "function": "rd_kafka_buf_write_topic_partitions",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20666,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     20666,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20666,
+     "condition",
+     "! rktpar - > metadata"
+    ]
+   ],
+   "census_rows": [
+    [
+     20666,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "configuration": 1,
+   "function": "rd_kafka_make_ListOffsetsRequest",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20900,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     20900,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     20900,
+     "statement",
+     "last_topic = rktpar - > topic"
+    ]
+   ],
+   "census_rows": [
+    [
+     20900,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "configuration": 1,
+   "function": "rd_kafka_msgbatch_handle_Produce_result_record_errors",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     23077,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     23099,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     23077,
+     "condition",
+     "presult - > record_errors"
+    ],
+    [
+     23099,
+     "condition",
+     "presult - > errstr"
+    ]
+   ],
+   "census_rows": [
+    [
+     23077,
+     1
+    ],
+    [
+     23099,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_share_acknowledgement.c",
+   "configuration": 1,
+   "function": "rd_kafka_share_acknowledge_type",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20129,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20129,
+     "condition",
+     "! rkmessage - > rkt"
+    ]
+   ],
+   "census_rows": [
+    [
+     20129,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_share_acknowledgement.c",
+   "configuration": 1,
+   "function": "rd_kafka_share_partition_offsets_list_get",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     20237,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20237,
+     "return",
+     "list - > elems [ index ]"
+    ]
+   ],
+   "census_rows": [
+    [
+     20237,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_ssl.c",
+   "configuration": 1,
+   "function": "rd_kafka_ssl_hmac",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21211,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     21211,
+     "call-argument",
+     "salt - > ptr"
+    ]
+   ],
+   "census_rows": [
+    [
+     21211,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_topic.c",
+   "configuration": 1,
+   "function": "rd_kafka_topic_info_cmp",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20890,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20892,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20890,
+     "condition",
+     "a - > partitions_internal = = ( ( void * ) 0 )"
+    ],
+    [
+     20890,
+     "condition",
+     "b - > partitions_internal = = ( ( void * ) 0 )"
+    ],
+    [
+     20892,
+     "condition",
+     "a - > partitions_internal = = ( ( void * ) 0 )"
+    ],
+    [
+     20892,
+     "condition",
+     "b - > partitions_internal = = ( ( void * ) 0 )"
+    ]
+   ],
+   "census_rows": [
+    [
+     20890,
+     1
+    ],
+    [
+     20892,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "configuration": 1,
+   "function": "rd_kafka_ensure_transactional",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20275,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20275,
+     "condition",
+     "! rk - > rk_conf . eos . transactional_id"
+    ]
+   ],
+   "census_rows": [
+    [
+     20275,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdlist.c",
+   "configuration": 1,
+   "function": "rd_list_dump",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2948,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     2949,
+     "call-argument",
+     "rl - > rl_elems"
+    ]
+   ],
+   "census_rows": [
+    [
+     2949,
+     1
+    ]
+   ],
+   "attribution": "cascade-or-other"
+  },
+  {
+   "file": "rdlist.c",
+   "configuration": 1,
+   "function": "rd_list_is_sorted",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     3112,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     3112,
+     "condition",
+     "rl - > rl_cnt < 2"
+    ],
+    [
+     3112,
+     "condition",
+     "rl - > rl_elems = = ( ( void * ) 0 )"
+    ]
+   ],
+   "census_rows": [
+    [
+     3112,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdunittest.c",
+   "configuration": 1,
+   "function": "rd_unittest",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     20547,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20547,
+     "condition",
+     "unittests [ i ] . name"
+    ],
+    [
+     20552,
+     "call-argument",
+     "unittests [ i ] . name"
+    ]
+   ],
+   "census_rows": [
+    [
+     20547,
+     1
+    ],
+    [
+     20552,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "configuration": 1,
+   "function": "unittest_fetcher_share_filter_forward",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     20329,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     20329,
+     "condition",
+     "tests [ i ] . name"
+    ],
+    [
+     20331,
+     "call-argument",
+     "tests [ i ] . name"
+    ]
+   ],
+   "census_rows": [
+    [
+     20329,
+     1
+    ],
+    [
+     20331,
+     1
+    ]
+   ],
+   "attribution": "direct"
+  },
+  {
+   "file": "rdvarint.c",
+   "configuration": 1,
+   "function": "do_test_rd_uvarint_enc_i64",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     3240,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `rd_slice_offset`",
+     3247,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [],
+   "census_rows": [],
+   "attribution": "cascade-or-other"
+  }
+ ]
+}

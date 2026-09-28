@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aaad546ee2e065a21/target/release/quirin-audit",
+    "pinned",
+    "--jobs",
+    "5",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aaad546ee2e065a21/private/cp/after1-corpus/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aaad546ee2e065a21/private/cp/after1-corpus/resource-diagnostics.json"
+  ],
+  "source_commit": "fecfb1bd",
+  "binary_sha256": "93d03b469357ab9c8986995b8e2909998a0130879d4d48e9c428d3ab67ebe648",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_AUDIT_JOBS": "5"
+  },
+  "start": "2026-09-28T03:01:58.629855+00:00",
+  "exit": 0,
+  "end": "2026-09-28T03:08:00.073965+00:00"
+}

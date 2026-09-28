@@ -179,9 +179,15 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   Clang AST where the lexical reader answers nothing
   ([W47-TYPED-ROOT-DECLARATION-READER](../../reports/w47-typed-root-declaration-reader/README.md),
   gateway 10l; no verdict moves); the twelve forecast misses it was opened for
-  refuse on the value type, not the premise (`W47-TYPED-CONST-POINTER-VALUE`),
-  and a lexical-closure blind spot is tracked as
-  `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`.
+  refuse on the value type, not the premise, and a lexical-closure blind spot
+  is tracked as `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`. The value type is
+  read since
+  [W47-TYPED-CONST-POINTER-VALUE](../../reports/w47-typed-const-pointer-value/README.md)
+  (gateway 10m): a lone top-level `const` on a pointer value is erased, and a
+  `void *` bit-cast at the top of a pointer-destination statement is the
+  uncast read. That is +10 Safe (eight of the ten named, and two summary
+  cascades); the bit-cast step moves nothing. Its summary-validation boundary
+  is `W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`.
 - **Positions:** apply P2's layer in controlling expressions (`if`, `while`,
   `for`, `?:`, `&&`/`||` with their evaluation order), in return expressions,
   and in call arguments.

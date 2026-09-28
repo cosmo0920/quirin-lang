@@ -1,0 +1,665 @@
+{
+ "summary": {
+  "functions_before": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "functions_after": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "units_before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "units_after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "diagnostic_counts_before": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported": 2908
+  },
+  "diagnostic_counts_after": {
+   "counted_user": 4,
+   "unknown_alias": 1007,
+   "unsupported": 2884
+  },
+  "status_moves": {},
+  "unit_moves": {},
+  "changed_rows": 12,
+  "attribution": {
+   "direct": 12
+  },
+  "leaves_removed_by_family": {
+   "IND": 16,
+   "COND": 8
+  },
+  "leaves_added_by_family": {
+   "unknown_alias": 22
+  }
+ },
+ "changed": [
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19986,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i`",
+     19986,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `storage`",
+     19996,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19986,
+     "statement",
+     "struct flb_storage_input * storage = i - > storage"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18478,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `output_plugin`",
+     18478,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18478,
+     "statement",
+     "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "flb_input_chunk_write_header_v2",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19113,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19137,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19111,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19135,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19258,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19275,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19111,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19113,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19135,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19137,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ],
+    [
+     19258,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19259,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19275,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19277,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 1,
+   "function": "input_chunk_collect_output_references",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18645,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `label`",
+     18648,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `route`",
+     18645,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18645,
+     "statement",
+     "label = route - > label"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19986,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i`",
+     19986,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `storage`",
+     19996,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     19986,
+     "statement",
+     "struct flb_storage_input * storage = i - > storage"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18478,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `output_plugin`",
+     18478,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18478,
+     "statement",
+     "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "flb_input_chunk_write_header_v2",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19113,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19137,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19111,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19135,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19258,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19275,
+     1
+    ]
+   ],
+   "added": [],
+   "newly_admitted_rows": [
+    [
+     19111,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19113,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19135,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19137,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ],
+    [
+     19258,
+     "condition",
+     "routes [ index ] . label ! = ( ( void * ) 0 )"
+    ],
+    [
+     19259,
+     "call-argument",
+     "routes [ index ] . label"
+    ],
+    [
+     19275,
+     "condition",
+     "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+    ],
+    [
+     19277,
+     "call-argument",
+     "routes [ index ] . plugin_name"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configuration": 2,
+   "function": "input_chunk_collect_output_references",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18645,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `label`",
+     18648,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `route`",
+     18645,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18645,
+     "statement",
+     "label = route - > label"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "configuration": 1,
+   "function": "flb_sched_event_handler",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18015,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18023,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `req`",
+     18016,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18024,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18015,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18023,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18015,
+     "statement",
+     "req = timer - > data"
+    ],
+    [
+     18023,
+     "statement",
+     "sched = timer - > data"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "configuration": 2,
+   "function": "flb_sched_event_handler",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18015,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18023,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `req`",
+     18016,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18024,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18015,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `timer`",
+     18023,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     18015,
+     "statement",
+     "req = timer - > data"
+    ],
+    [
+     18023,
+     "statement",
+     "sched = timer - > data"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_task.c",
+   "configuration": 1,
+   "function": "task_collect_output_references",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17361,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `label`",
+     17364,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `route`",
+     17361,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     17361,
+     "statement",
+     "label = route - > label"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  },
+  {
+   "file": "src/flb_task.c",
+   "configuration": 2,
+   "function": "task_collect_output_references",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17361,
+     1
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `label`",
+     17364,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `route`",
+     17361,
+     1
+    ]
+   ],
+   "newly_admitted_rows": [
+    [
+     17361,
+     "statement",
+     "label = route - > label"
+    ]
+   ],
+   "census_rows": [],
+   "attribution": "direct"
+  }
+ ]
+}
