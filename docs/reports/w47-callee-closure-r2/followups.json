@@ -1,0 +1,23 @@
+[
+  {
+    "id": "W47-EXTERNAL-RESIDUAL-RANKING-R2",
+    "title": "Round-2 external ranking after P3: 30 functions blocked by one external callee alone and 53 by one external callee plus one other blocker, none reachable by a decision-free contract",
+    "why": "MEASURED by card W47-CALLEE-CLOSURE-R2 (scripts/closure_r2.py over its AFTER baseline, docs/reports/w47-callee-closure-r2/artifacts/after/corpus/; 367 external callees, 2,113 uncontracted external call sites). ALONE: 30 Unknown functions, exactly W46-EXTERNAL-RESIDUAL-RANKING's 30 in its classes (cfl in-place reallocation 3; Monkey event-backend internals 7; libc declined by earlier cards 9; compiler builtins 6; librdkafka refcount drop/add 2; OpenSSL/libcurl outside the audited source 2; a function-pointer formal called by name 1). P3 exposed three more (cfl_arena_calloc 2, rd_file_read 1), which this card declared. PLUS ONE: 53 distinct Unknown functions whose blockers are one external callee plus either one other callee (22 rows) or one non-call leaf (38 rows); the other blocker is itself a declined class (pthread_setspecific, abort, the va builtins, getrlimit/setrlimit, regcomp/regfree, the arena constructor pair cfl_arena_create_with_options/cfl_arena_options_init), a refcount drop (rd_kafka_enq_once_trigger 6, each with an unknown_alias leaf), a retained field allocation (rd_kafka_topic_partition_get_private 3), a callee in a return expression (bsearch, fabs), or an access/alias leaf the contract does not remove. No external callee blocks 3 or more functions alone except cfl_sds_cat_safe (3). DISCHARGE: per class, the named follow-up or a product decision, each measured by an arbiter; re-rank after W47-TYPED-ROOT-DECLARATION-READER lands.",
+    "source": "docs/reports/w47-callee-closure-r2/README.md",
+    "recorded_by": "W47-CALLEE-CLOSURE-R2"
+  },
+  {
+    "id": "W47-ARENA-INTERIOR-READING",
+    "title": "cfl_arena_calloc's result is declared interior to its arena, reading the interior extent as the storage the arena owns rather than the bytes of struct cfl_arena",
+    "why": "Card W47-CALLEE-CLOSURE-R2 declared cfl_arena_calloc (quirin-provider-cfl, cfl/sds_lifetime.qv) with resource_return_interior(arena, nullable). Contract spec C04.3 describes the interior extent as a pointer into the object p points to (strchr, memchr); an arena allocation points into a chunk the arena owns and frees on cfl_arena_destroy, not into struct cfl_arena itself. The six consumer rules of C04.3.1 all hold for it (non-owning; releasing it is an invalid free, not a release of the arena; releasing the arena invalidates it; nullness its own), and the only other v1 mode, resource_return_none(), was measured admitting a use of the result after its base is released as Safe (docs/reports/w47-callee-closure-r2/artifacts/probe/). 2 functions moved to Safe rest on the declaration (initialize_attribute_list, initialize_summary_value_at_quantile_list). cfl_arena_reset, which invalidates the result without releasing the arena, is undeclared, so a caller of it is refused. DISCHARGE: the user confirms the reading (a sentence in C04.3.1 naming storage a borrowed argument owns and releases), or a pool/arena result mode with gateway and Lean parity replaces it, then an arbiter.",
+    "source": "docs/reports/w47-callee-closure-r2/README.md",
+    "recorded_by": "W47-CALLEE-CLOSURE-R2"
+  },
+  {
+    "id": "W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL",
+    "title": "An owned-nullable summary loses a result that is NULL whenever an argument is NULL, and one artifact leak follows",
+    "why": "MEASURED by card W47-CALLEE-CLOSURE-R2: rd_kafka_oidc_assertion_read_from_file (lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c:651-656) returns NULL when file_path is NULL and otherwise rd_file_read's owned nullable buffer. Its validated summary is owned/nullable, so ut_sasl_oauthbearer_oidc_assertion_parse_from_file's `result = rd_kafka_oidc_assertion_read_from_file(NULL); RD_UT_ASSERT(result == NULL, ...)` (:1599-1600) carries a leak on the assertion's failure arm, which C cannot reach: 1 leak leaf, an artifact by reading. The function is provisional Unsafe independently through the real test-path leak at :1605. DISCHARGE: an argument-conditional nullness in inferred summaries (result NULL when parameter k is NULL), with gateway and Lean parity, or a measured decision that such leaves stay; then an arbiter.",
+    "source": "docs/reports/w47-callee-closure-r2/README.md",
+    "recorded_by": "W47-CALLEE-CLOSURE-R2"
+  }
+]

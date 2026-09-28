@@ -939,6 +939,16 @@ which is not a second authority.
     no-return call or a handle kind stays undeclared with its reason, and a
     system library outside the audited source has no pinnable identity.
     [Report](../reports/w46-external-callee-contracts/README.md).
+    W47-CALLEE-CLOSURE-R2 adds that a pointer result is declared with the mode
+    that keeps what the body makes it depend on: an allocation inside storage
+    a borrowed argument owns and releases (`cfl_arena_calloc`) is
+    `resource_return_interior` of that argument, never
+    `resource_return_none()`, which forgets the dependence and was measured
+    admitting a use after the base's release as `Safe`; the interior extent is
+    then read as the storage the base owns, a stated premise
+    (`W47-ARENA-INTERIOR-READING`). Rank on the post-access-path corpus before
+    contracting: P3 exposed callees no earlier ranking saw
+    ([report](../reports/w47-callee-closure-r2/README.md)).
 
 <a id="constraint-10k"></a>
 

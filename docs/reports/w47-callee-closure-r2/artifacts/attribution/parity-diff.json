@@ -1,0 +1,211 @@
+{
+ "before_rows": 92362,
+ "after_rows": 92408,
+ "before_sorted_sha256": "4f4f1214a4522a5064bf54e039bbd0bb50b1c21590dc033676e58de4b1d147c9",
+ "after_sorted_sha256": "fd2ce635746f5dee5393826bc5291fefea50e3fb1ecef5af4f31658c45057c46",
+ "added": [
+  {
+   "function": "append_sample_to_metric",
+   "line": 9270,
+   "position": "call-argument",
+   "count": 4
+  },
+  {
+   "function": "append_sample_to_metric",
+   "line": 9295,
+   "position": "call-argument",
+   "count": 4
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8539,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8540,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8541,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8542,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8543,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8544,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8548,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8558,
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8562,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_histogram_data_point",
+   "line": 8573,
+   "count": 1
+  },
+  {
+   "function": "initialize_string_attribute",
+   "line": 8238,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_string_attribute",
+   "line": 8251,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8488,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8489,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8490,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8491,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8492,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8495,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8507,
+   "position": "call-argument",
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8514,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_value_at_quantile",
+   "line": 8446,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_value_at_quantile",
+   "line": 8447,
+   "count": 1
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21732,
+   "position": "call-argument",
+   "count": 3
+  },
+  {
+   "function": "initialize_string_attribute",
+   "line": 8245,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_data_point",
+   "line": 8506,
+   "position": "condition",
+   "count": 1
+  },
+  {
+   "function": "initialize_attribute_list",
+   "line": 8266,
+   "count": 2
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8412,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8413,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8415,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8420,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8424,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8429,
+   "count": 1
+  },
+  {
+   "function": "initialize_numerical_data_point",
+   "line": 8433,
+   "count": 1
+  },
+  {
+   "function": "initialize_string_attribute",
+   "line": 8249,
+   "count": 1
+  },
+  {
+   "function": "initialize_summary_value_at_quantile_list",
+   "line": 8455,
+   "count": 2
+  }
+ ],
+ "removed": [
+  {
+   "function": "rd_kafka_oidc_assertion_read_from_file",
+   "line": 21640,
+   "count": 1
+  }
+ ]
+}

@@ -968,6 +968,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-access-path-positions](w47-access-path-positions/README.md) | W47-ACCESS-PATH-POSITIONS |
 
+| [w47-callee-closure-r2](w47-callee-closure-r2/README.md) | W47-CALLEE-CLOSURE-R2: callee closure and external contracts after P3 |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
