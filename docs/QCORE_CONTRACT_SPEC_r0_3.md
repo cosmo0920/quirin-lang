@@ -80,7 +80,7 @@ The selected source set MUST be nonempty. Every selected source MUST parse as a 
 Every extern declaration MUST satisfy all of the following:
 
 1. Its entire signature belongs to the admitted ABI projection, with unique parameter names and no usage annotations, generics, effects, extra signature syntax, or ignored tail tokens.
-2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted precondition is the literal-argument premise of C04.5; every other `requires` spelling is rejected.
+2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted preconditions are the literal-argument premise of C04.5, the checked-specification marker of C06.3 and the loop-owner obligation of C04.9; every other `requires` spelling is rejected.
 3. Every other clause is an admitted `ensures normal` predicate call. Each parameter receives exactly one mode and the result receives exactly one result mode.
 4. Parameter/result types, nullability arguments, ownership references and return references meet the compatibility rules below.
 
@@ -245,7 +245,7 @@ Each refused shape leaves the function without a summary, so its calls stay unco
 
 Only normal C returns are represented by v1 postconditions. A C routine returning null or a negative integer has still returned normally; it has not taken a QCore typed-error exit. Error-specific ownership behavior can be modeled only where a supported mode explicitly represents it, such as nullable acquisition or the specified reallocation relation.
 
-General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
+General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 is a call-site precondition, not a synchronization clause. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
 **Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
@@ -395,6 +395,23 @@ Both name `resource_borrowed` pointer parameters, which keep that mode for the A
 3. **Unlink.** `resource_unpublished` restores the body's custody only for an identity published on every path reaching the call and still published; every other unlink refuses, an untracked entry included.
 
 A derived summary states custody only, so it is compared with a declaration's custody projection; the container and counted-user clauses are not part of that comparison. The Lean model is `QCore.ContainerPublication`.
+
+### C04.9. The loop-owner obligation
+
+Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p). A collector or loop operation reads or mutates state that only the thread waiting on the loop may touch: Monkey's userspace priority-queue links and a collector's `running` flag are not protected by the kernel's own `epoll_ctl` thread safety. A resource-v1 declaration MAY carry, beside the selector, at most one
+
+```qcore
+requires resource_loop_owner(p, read);
+requires resource_loop_owner(p, mutate);
+```
+
+`p` names an admitted pointer parameter: the input instance whose collectors attach to the loop `L` (`coll->evl`, which is `thi->evl` for a threaded instance and `config->evl` otherwise). `read` or `mutate` says what the operation does to loop-owned state. Any other spelling, a second clause, a non-pointer or unknown parameter, or a review marker wrapping the clause rejects the **whole module**; the obligation is deferred only by deferring the whole contract (C06.1). An inherited declaration carries exactly its parent's obligation (C15). The clause adds no custody mode and nothing to the environment's serialized form; a consumer rederives it from the retained texts (`declared_loop_owner_obligations`), as C04.5's premise is.
+
+**Meaning.** The declaration applies at a call site only where the obligation is **discharged**: every derived context of the calling function runs on `owner(L)` for the mode it fixes — the single derived thread of the engine loop's dispatcher for a non-threaded instance, of the worker loop's dispatcher for a threaded one — and no path to the caller is unresolved. A consumer that derives no thread identity MUST treat the obligation as undischarged at every call and refuse the call as it refuses an uncontracted one; the gateway's per-unit resource route is such a consumer, so on it the clause can only refuse. The thread-entry census (rule 10p) is the consumer that can discharge it. Its derivation follows direct calls and the hop kinds of the W47-TAIL-PAUSE-BINDINGS census (A, S, V, V\*, R, L, F); every other function-pointer hop, a macro that names a function and a field read as a value leave the reached functions unresolved. One resolved context off its owner refuses the call; an unresolved or absent context withholds the discharge. A refusal is `Unknown`, never a validated reachable violation and never an upstream defect claim.
+
+**Completion meanings and paired collectors.** The public pause/resume dispatches a plugin callback and stays undeclared (C04.4, rule 10j); its two completion meanings are the census kernel's: a non-threaded instance discharges "callback finished", a threaded one only "request enqueued", and no return code alone discharges "applied". Two collector operations of one callback (the tail backend's pair) state a joint state only at the callback boundary, only when both results are known to have succeeded on the owner, and a resume's running state only under an active-ingestion premise. Registration (`flb_input_set_collector_*`) and `mk_event_add`/`mk_event_timeout_create` retain a callback or the caller's event, which v1 cannot state, and stay undeclared.
+
+The Lean model is `QCore.LoopOwner`; it derives, for this route, the single-dispatcher premise `QCore.EventDriven` otherwise takes as supplied.
 
 ## C05. Manifests and immutable assumptions
 

@@ -1,6 +1,6 @@
 //! Derived thread identity and the loop-owner obligation (card
 //! **W47-LOOP-OWNER-CONTRACTS**, gateway rule 10p, contract specification
-//! §C04.10).
+//! §C04.9).
 //!
 //! # What this kernel decides
 //!

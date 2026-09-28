@@ -385,7 +385,7 @@ pub struct DeclaredLiteralArgument {
 
 /// What a declared loop-owner obligation says the operation does to the loop
 /// its instance's collectors attach to (card **W47-LOOP-OWNER-CONTRACTS**,
-/// §C04.10).
+/// §C04.9).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LoopOwnerOperation {
     /// Reads loop-owned state (a collector's `running` flag).
@@ -395,7 +395,7 @@ pub enum LoopOwnerOperation {
 }
 
 /// `requires resource_loop_owner(p, read|mutate);` (card
-/// **W47-LOOP-OWNER-CONTRACTS**, §C04.10): the declaration applies at a call
+/// **W47-LOOP-OWNER-CONTRACTS**, §C04.9): the declaration applies at a call
 /// site only where the call's derived thread is exactly the owner of the loop
 /// that the instance at `p` attaches its collectors to. No per-unit resource
 /// route derives a thread, so there the declaration is never applied; only the

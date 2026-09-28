@@ -166,6 +166,7 @@ import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedRootDeclarations
 import QCore.TypedConstPointerValue
 import QCore.LexicalClosureNestedAssignment
+import QCore.LoopOwner
 import QCore.SummaryValidationPremises
 import QCore.AssignmentDestinationSuffix
 import QCore.SubObjectStore

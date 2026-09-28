@@ -1191,3 +1191,49 @@ which is not a second authority.
     faithful Clang extraction (trust boundary 28), and that the Rust loops
     return seeded, settled sets. `QCore.LexicalClosureNestedAssignment`;
     [report](../reports/w47-lexical-closure-nested-assignment/README.md).
+
+<a id="constraint-10p"></a>
+
+10p. **A loop-owned collector operation is admitted only on a derived path
+    whose thread is its loop's owner, and every route that derives no thread
+    refuses it.** Card W47-LOOP-OWNER-CONTRACTS (`qcore_core::loop_owner`,
+    `thread_entry_census.rs`, the hook in `legacy_literal_premise.rs`;
+    contract specification C04.9). `requires resource_loop_owner(p,
+    read|mutate);` on `flb_input_collector_{running,pause,resume,delete}`
+    (`fluent_bit/loop_owner.qv`, pinned at `66910c10`, `046accf6` and the
+    `90978ac6` export) is discharged only where every derived context of the
+    caller runs on `owner(L)` for the mode it fixes (the single derived
+    thread of the engine loop's dispatcher `flb_input_collector_fd` for a
+    non-threaded instance, of the worker loop's `input_collector_fd` for a
+    threaded one) and no path to the caller is unresolved. (1) The per-unit
+    resource route derives no thread, so it rewrites every call of such a
+    callee under the literal premise's reserved prefix with a loop-owner mark
+    and refuses it (`outside its declared loop-owner obligation`): the clause
+    only refuses there. (2) The thread-entry census reads one program's files
+    lexically and derives contexts through direct calls and hops A (the test
+    table), S (spawn wrappers: a new thread named by its entry; an
+    unresolved spawner roots it in every mode), V/V\* (field-keyed callback
+    registration and dispatch, the revised test's copied vtable included), R
+    (collector registration on `cb_collect`), L (the two loop dispatchers fix
+    the mode) and F (a call in an `if (flb_input_is_threaded(x))` arm
+    requires that mode). An address taken anywhere else, a name in a macro
+    body, a hop field read as a value and an unstructured conditional group
+    make the reached functions unresolved; a parameter of the same name
+    shadows a function. One resolved non-owner context refuses the site; an
+    unresolved or absent context withholds the discharge; nothing here is
+    `Unsafe`. C2 (an enqueue discharges only "request available") and C3 (a
+    paired-collector state only at the callback boundary with both results
+    succeeded, a resume's running state only under active ingestion) are the
+    kernel's; the public pause/resume, registration and `mk_event_*` stay
+    undeclared (rule 10j). **Do not** apply a loop-owner declaration on a
+    route that derives no thread, treat an unresolved hop or a missing
+    caller as discharged, name a spawned thread after its spawner, or relax a
+    refusal because another context discharges. Premises stated, not proved
+    (trust boundary 28): the lexical reading of the files and the hop
+    tables; that nothing outside the read files names a read function; that
+    a function stored in a field is called only through that field's name;
+    P-INSTANCE (along a derived path the instance a collector operation names
+    is the one whose mode the path fixed, `ctx->ins`); and that the threaded
+    flag is immutable after init. `QCore.LoopOwner` derives, for this route,
+    the single-dispatcher premise `QCore.EventDriven` takes as supplied;
+    [report](../reports/w47-loop-owner-contracts/README.md).

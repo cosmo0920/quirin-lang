@@ -370,8 +370,9 @@ class LoadPathManifest(unittest.TestCase):
         namespaces = [c["namespace"] for c in manifest["crates"]]
         self.assertEqual(len(namespaces), len(set(namespaces)))
         # Combined W46 cards: 54 selected modules, 219 resource declarations, 118 corpus modules.
+        # 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 54)
+        self.assertEqual(sum(len(view) for view in views.values()), 55)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 16)
         # The real inventories: exactly the two crates that inherit carry pins.

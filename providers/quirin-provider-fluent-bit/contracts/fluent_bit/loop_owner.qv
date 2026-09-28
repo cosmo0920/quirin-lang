@@ -1,7 +1,7 @@
 module contract;
 
 // W47-LOOP-OWNER-CONTRACTS (gateway rule 10p, contract specification
-// §C04.10). The collector operations of src/flb_input.c, each with a declared
+// §C04.9). The collector operations of src/flb_input.c, each with a declared
 // loop-owner obligation.
 //
 // ## The obligation
