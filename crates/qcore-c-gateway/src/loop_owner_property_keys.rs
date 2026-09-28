@@ -1078,10 +1078,10 @@ impl StepB<'_> {
             // From the label to the first `break;` at the switch's depth.
             let mut depth = 0usize;
             let mut end = close;
-            for i in *from..close {
-                match texts[i] {
+            for (i, text) in texts.iter().enumerate().take(close).skip(*from) {
+                match *text {
                     "{" | "(" => depth += 1,
-                    "}" | ")" => depth -= 1,
+                    "}" | ")" => depth = depth.saturating_sub(1),
                     "break" if depth == 0 => {
                         end = i;
                         break;
