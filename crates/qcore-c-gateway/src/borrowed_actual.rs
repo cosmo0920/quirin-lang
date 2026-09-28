@@ -109,6 +109,15 @@ impl UntrackedBases {
     pub(crate) fn never_bound(&self, name: &str) -> bool {
         self.readable && !self.risky.contains(name)
     }
+
+    /// Card **W47-TYPED-ROOT-DECLARATION-READER** (rule 10l): the lexical
+    /// closure's risky set, computed whether or not the declaration reader
+    /// read the function. Where it did not, [`Self::never_bound`] still
+    /// answers `false`; this set is only ever joined into a more
+    /// conservative answer ([`crate::typed_root_declarations`]).
+    pub(crate) fn lexical_risky(&self) -> &BTreeSet<String> {
+        &self.risky
+    }
 }
 
 /// Bound on the monotone descent below; each round adds at least one name.
@@ -126,9 +135,11 @@ pub(crate) fn untracked_bases(
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> UntrackedBases {
-    if !types.is_readable() {
-        return UntrackedBases::default();
-    }
+    // Card W47-TYPED-ROOT-DECLARATION-READER: the closure is computed even
+    // where the declaration reader refused, and kept unreadable, so
+    // `never_bound` answers exactly as before; with no declared types no
+    // field read is admitted, so the closure is only more conservative there.
+    let readable = types.is_readable();
     let mut risky = protected_formals.clone();
     seed_addresses_and_writes(body, &mut risky);
     seed_call_arguments(body, contracts, variadic_tails, &mut risky);
@@ -141,10 +152,7 @@ pub(crate) fn untracked_bases(
             break;
         }
     }
-    UntrackedBases {
-        risky,
-        readable: true,
-    }
+    UntrackedBases { risky, readable }
 }
 
 /// `&name`, `name++`, `--name` and `name op= …` all bind or escape the name.

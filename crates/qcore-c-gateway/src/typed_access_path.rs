@@ -166,6 +166,14 @@ pub(crate) fn record_position_legacy(
     }));
 }
 
+/// Card **W47-TYPED-ROOT-DECLARATION-READER**: one side-by-side row of
+/// another reader's answers (rule 10l's `root-declarations`).
+pub(crate) fn record_row(value: Value) {
+    if parity_enabled() {
+        write_parity(value);
+    }
+}
+
 fn write_parity(mut value: Value) {
     let Some((source_sha256, dialect, frontend_sha256, frontend_debug)) =
         ANALYSED_SOURCE.with(|cell| {

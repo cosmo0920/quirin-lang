@@ -170,10 +170,19 @@ fn an_untouched_root_certifies_when_only_the_ast_answers() {
     for body in [
         "char *w(struct c_box *b, int (*cb)(int)) { return b->item->leaf->name; }",
         "struct c_item *w(struct c_box *b, int (*cb)(int)) { return b->item; }",
-        "char *w(struct c_box *b, int (*cb)(int)) { int n = b->flag; c_use(n); return b->item->leaf->name; }",
     ] {
         assert_eq!(outcome(body), safe(), "{body}");
     }
+    // Rule 10l serves the typed positions only: a statement the older
+    // routes read keeps the lexical answer, whose unread declarations leave
+    // `b` unresolved there.
+    assert_eq!(
+        outcome(
+            "char *w(struct c_box *b, int (*cb)(int)) { int n = b->flag; c_use(n); \
+             return b->item->leaf->name; }"
+        ),
+        ("Unknown", vec!["unknown_alias:b".to_owned()])
+    );
 }
 
 /// The same body with a formal the lexical reader reads is the lexical
@@ -280,13 +289,17 @@ fn the_redeclared_typedef_control_refuses_for_its_const_pointee() {
         outcome_with(twice, "char *w(g_t *node) { return node->host; }"),
         safe()
     );
-    let (status, keys) = outcome_with(twice, "const char *w(const g_t *node) { return node->host; }");
+    let (status, keys) = outcome_with(
+        twice,
+        "const char *w(const g_t *node) { return node->host; }",
+    );
     assert_eq!(status, "Unknown");
     assert_eq!(keys, vec![RETURN.to_owned()]);
 }
 
-/// A K&R definition, and a root that is not a declaration of this function (a
-/// file-scope object), are not answered.
+/// A K&R definition, an implicitly declared callee (which C11 Clang rejects)
+/// and a root that is not a declaration of this function (a file-scope
+/// object) are not answered.
 #[test]
 fn an_unprototyped_definition_or_a_non_local_root_keeps_the_refusal() {
     if !clang_available() {
@@ -295,6 +308,10 @@ fn an_unprototyped_definition_or_a_non_local_root_keeps_the_refusal() {
     assert_refused(
         "",
         "char *w(b, cb) struct c_box *b; int (*cb)(int); { return b->item->leaf->name; }",
+    );
+    assert_refused(
+        "",
+        "char *w(struct c_box *b, int (*cb)(int)) { c_mystery(b); return b->item->leaf->name; }",
     );
     assert_refused(
         "struct c_box *c_global;",
