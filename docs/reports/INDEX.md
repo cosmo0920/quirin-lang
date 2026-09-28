@@ -428,6 +428,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [provider-contract-packaging](provider-contract-packaging/README.md) | Provider-owned Quirin contracts |
 
+| [provider-py-dual-stem-fixture](provider-py-dual-stem-fixture/README.md) | PROVIDER-PY-DUAL-STEM-FIXTURE-STALE |
+
 ## Q
 
 | Card directory | Original report title |
