@@ -98,7 +98,7 @@ bound: a modeled access can still fail its obligations.
 | P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High (landed: [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md), +60 Safe with the enum arm; residuals registered) | P2 | The same layer in conditions, returns and call arguments |
 | P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
 | P5 | FIELD-CUSTODY | Candidate only | High | P0; the owned-field Lean model | Pointer-valued stores into fields; not scheduled |
-| P6 | ALIAS-RESIDUALS | Candidate only | Medium (planning) | P1's overlap figures | The 1,359 functions blocked by `unknown_alias`; a separate plan |
+| P6 | ALIAS-RESIDUALS | Measurement, then semantic cards | Medium (measured: [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md)); High (the cards below) | P3 landed; P4 for yield | 7,440 corpus leaves classified, 0 unclassified; only 8 functions blocked by `unknown_alias` alone; four ranked cards, see P6 below |
 
 P1 is the only card that can be dispatched now, once P0 lands. Each later card's
 brief must carry P1's function lists and predictions.
@@ -192,6 +192,40 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
 - **External callees:** rank them by the functions they would unblock alone.
   Contract the top ones in their provider crates, where they are reviewed and
   pinned in revision mode, and checked, never trusted.
+
+### P6: ALIAS-RESIDUALS
+- **Status:** measured by
+  [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md)
+  on the integrated wave-47 baseline (`3ba72320`, archived there; corpus
+  diagnostics byte-identical to P3's AFTER). Every `unknown_alias` leaf is
+  classified from its own function's Clang AST: corpus 7,440 and system 985,
+  0 unclassified.
+- **Finding.** Of 4,318 Unknown corpus functions, 1,922 carry an alias leaf,
+  but only **8** are blocked by alias alone and 352 by alias plus exactly one
+  other family (IND 232, UNC 76). The in-corpus closure adds nothing. Alias
+  cards therefore remove leaves; their functions move only beside the IND
+  (P3 residuals) and UNC (P4) work.
+- **Groups** (leaves / functions / exclusive / alone / plus one family):
+
+  | Group | Leaves | Functions | Exclusive | Alone | +1 |
+  |---|---:|---:|---:|---:|---:|
+  | formals the never-bound closure refuses because an uncontracted callee's actual mentions them | 2,350 | 732 | 399 | 0 | 108 |
+  | non-pointer names | 930 | 329 | 83 | 4 | 10 |
+  | poisoned by a later refusal | 900 | 365 | 130 | 0 | 39 |
+  | unguarded derived locals | 746 | 298 | 72 | 0 | 10 |
+  | unguarded uncontracted results | 705 | 360 | 147 | 0 | 6 |
+  | unguarded borrowed path reads | 503 | 236 | 78 | 1 | 14 |
+  | unguarded contracted allocator results | 442 | 178 | 123 | 0 | 8 |
+  | formal copies | 176 | 162 | 85 | 0 | 56 |
+  | smaller groups | 688 | | | 1 | |
+
+- **Ranked cards** (report §6, each registered with its size):
+  1. `W47-ALIAS-TYPED-SCALAR-NAMES` (High).
+  2. `W47-ALIAS-FORMAL-COPY` (High).
+  3. `W47-ALIAS-CALLEE-BORROWED-CLOSURE` (High; pair with P4).
+  4. `W47-ALIAS-NONNULL-ALLOCATOR-RESULTS` (High, provider).
+
+  The rest is sized in `W47-ALIAS-FLOW-RESIDUALS`.
 
 ## 4. Acceptance for every card
 Each card must have:
