@@ -95,6 +95,11 @@ pub(crate) struct UntrackedBases {
     /// False when the declaration reader refused this function, in which case
     /// nothing at all is admitted.
     readable: bool,
+    /// Card **W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT** (rule 10o): the names
+    /// only the nested-assignment reading bound (parity only).
+    nested: BTreeSet<String>,
+    /// Rule 10o's census of this body (parity only).
+    census: crate::lexical_nested_assignment::NestedCensus,
 }
 
 impl UntrackedBases {
@@ -118,6 +123,17 @@ impl UntrackedBases {
     pub(crate) fn lexical_risky(&self) -> &BTreeSet<String> {
         &self.risky
     }
+
+    /// Rule 10o (parity only): the names the old statement reading left
+    /// unbound and the nested-assignment reading binds.
+    pub(crate) fn nested_bindings(&self) -> &BTreeSet<String> {
+        &self.nested
+    }
+
+    /// Rule 10o (parity only): the assignments the statement reading skipped.
+    pub(crate) fn nested_census(&self) -> &crate::lexical_nested_assignment::NestedCensus {
+        &self.census
+    }
 }
 
 /// Bound on the monotone descent below; each round adds at least one name.
@@ -139,20 +155,109 @@ pub(crate) fn untracked_bases(
     // where the declaration reader refused, and kept unreadable, so
     // `never_bound` answers exactly as before; with no declared types no
     // field read is admitted, so the closure is only more conservative there.
-    let readable = types.is_readable();
+    let mut readable = types.is_readable();
     let mut risky = protected_formals.clone();
     seed_addresses_and_writes(body, &mut risky);
     seed_call_arguments(body, contracts, variadic_tails, &mut risky);
+    // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): the seeds and
+    // assignments the statement reading skips — a parenthesised operand of
+    // `&`, `++`, `--` or a compound assignment, and every simple assignment
+    // nested in a condition, a `for` clause, a comma or `?:` operand, a later
+    // declarator, a parenthesised destination or a brace initialiser — are
+    // read beside it; the old reading is unchanged, so the set only grows.
+    // Parity only: the old reading alone, so the names only rule 10o binds
+    // are recorded exactly.
+    let old = crate::typed_access_path::parity_enabled().then(|| {
+        let mut old = risky.clone();
+        for _ in 0..CLOSURE_ROUNDS {
+            let before = old.len();
+            close_over_assignments(body, model, types, &mut old);
+            if old.len() == before {
+                break;
+            }
+        }
+        old
+    });
+    risky.extend(seed_nested(body, &risky));
+    let assignments = crate::lexical_nested_assignment::assignments(body);
     // Monotone descent: an assignment can only *add* to the refused set, and a
-    // base that becomes refused can only refuse more assignments.
-    for _ in 0..CLOSURE_ROUNDS {
+    // base that becomes refused can only refuse more assignments. Each round
+    // that does not settle adds a destination, so `assignments + 1` rounds
+    // always settle; the old bound is kept as the floor, and a loop that does
+    // not settle refuses the whole function (rule 10o, fail-closed).
+    let rounds = CLOSURE_ROUNDS.max(assignments.len() + 1);
+    let mut settled = false;
+    for _ in 0..rounds {
         let before = risky.len();
         close_over_assignments(body, model, types, &mut risky);
+        close_over_nested_assignments(body, &assignments, model, types, &mut risky);
         if risky.len() == before {
+            settled = true;
             break;
         }
     }
-    UntrackedBases { risky, readable }
+    if !settled {
+        readable = false;
+    }
+    let nested = old.map_or_else(BTreeSet::new, |old| {
+        risky.difference(&old).cloned().collect()
+    });
+    UntrackedBases {
+        risky,
+        readable,
+        nested,
+        census: crate::lexical_nested_assignment::census(body),
+    }
+}
+
+/// Rule 10o: the parenthesised whole-object writes and addresses the seeds
+/// above do not spell (`&(p)`, `(p)++`, `++(p)`, `(p) op= …`), not already
+/// seeded.
+fn seed_nested(body: &[&str], risky: &BTreeSet<String>) -> BTreeSet<String> {
+    crate::lexical_nested_assignment::parenthesised_writes(body)
+        .into_iter()
+        .filter(|name| !risky.contains(name))
+        .collect()
+}
+
+/// Rule 10o: refuse the destination of every assignment the statement reading
+/// skipped whose value is not provably free of tracked identities, by the same
+/// test [`close_over_assignments`] applies.
+fn close_over_nested_assignments(
+    body: &[&str],
+    assignments: &[crate::lexical_nested_assignment::Assignment<'_>],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    risky: &mut BTreeSet<String>,
+) {
+    for assignment in assignments {
+        if risky.contains(assignment.destination) {
+            continue;
+        }
+        let right = &body[assignment.value.clone()];
+        if opaque_value(right, model, types, risky) {
+            risky.insert(assignment.destination.to_owned());
+        }
+    }
+}
+
+/// Whether an assignment's value may carry a tracked identity: anything but
+/// an admitted field read that holds an `&`, a call or a refused name. An
+/// empty value (a statement expression's opening `(` aside) holds nothing.
+fn opaque_value(
+    right: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    risky: &BTreeSet<String>,
+) -> bool {
+    if admitted_access(right, 0, model, types, risky) == Some(right.len()) {
+        return false;
+    }
+    right
+        .iter()
+        .enumerate()
+        .any(|(index, text)| *text == "&" || (is_name(text) && right.get(index + 1) == Some(&"(")))
+        || right.iter().any(|text| risky.contains(*text))
 }
 
 /// `&name`, `name++`, `--name` and `name op= …` all bind or escape the name.
@@ -989,6 +1094,61 @@ mod tests {
         assert!(!fixture.types.is_readable());
         assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
         assert!(!opaque_read(&fixture, "base -> one"));
+    }
+
+    /// Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): an assignment
+    /// the old statement reading skipped binds its destination: nested in a
+    /// condition or a loop header, in a `for` clause, a comma or `?:` operand,
+    /// a later declarator, a parenthesised (macro-expanded) destination, a
+    /// brace initialiser; and a parenthesised increment or address.
+    #[test]
+    fn a_nested_assignment_binds_its_destination() {
+        for body in [
+            "if ( ! ( other = unknown_callee ( n ) ) ) return ;",
+            "while ( ( other = unknown_callee ( n ) ) ) { }",
+            "for ( other = unknown_callee ( n ) ; other ; ) { }",
+            "for ( ; n ; other = unknown_callee ( n ) ) { }",
+            "if ( ( n = 0 , other = unknown_callee ( n ) ) ) { }",
+            "n = n ? ( other = unknown_callee ( n ) ) != 0 : 0 ;",
+            "if ( ! ( ( other ) = unknown_callee ( n ) ) ) return ;",
+            "struct rec * fresh = unknown_callee ( n ) , * alias = fresh ; other = alias ;",
+            "if ( ( other = base ) ) { } drop ( base ) ;",
+            "held = & ( other ) ;",
+            "( other ) ++ ;",
+            "struct rec copy = { unknown_callee ( n ) } ; other = copy . one ;",
+        ] {
+            let fixture = fixture(body);
+            assert!(!fixture.bases.never_bound("other"), "{body}");
+            assert!(
+                spans(&fixture, "borrow ( other -> one , other -> two ) ;").is_empty(),
+                "{body}"
+            );
+        }
+        // A compound assignment in a condition was seeded before and still is.
+        assert!(
+            !fixture("if ( ( other += 1 ) ) { }")
+                .bases
+                .never_bound("other")
+        );
+    }
+
+    /// Rule 10o's positive controls: a nested assignment from an admitted
+    /// field read, or from a call-free, `&`-free value over untouched names,
+    /// binds nothing, and an untouched base stays admissible.
+    #[test]
+    fn a_nested_assignment_from_an_admitted_read_binds_nothing() {
+        for body in [
+            "if ( ( held = base -> one ) ) { }",
+            "for ( n = 0 ; n < 4 ; n = n + 1 ) { }",
+            "if ( ( n = base -> state ) ) { }",
+        ] {
+            let fixture = fixture(body);
+            assert!(fixture.bases.never_bound("base"), "{body}");
+            assert!(
+                !spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty(),
+                "{body}"
+            );
+        }
     }
 
     /// Non-vacuity: with every premise satisfied the whitelist does admit, so

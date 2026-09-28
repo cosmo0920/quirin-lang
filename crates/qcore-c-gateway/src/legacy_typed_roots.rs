@@ -3,11 +3,14 @@
 //! reader where it read the function, and otherwise from the Clang AST
 //! ([`crate::typed_root_declarations`]) joined with the lexical closure.
 //!
-//! * **never bound**: the lexical answer where the declaration reader read the
-//!   function (unchanged); otherwise a formal or automatic local declared
-//!   once that neither the AST closure nor the lexical closure binds.
+//! * **never bound**: where the declaration reader read the function, the
+//!   lexical answer joined with the AST closure (rule 10o: a spelling the AST
+//!   closure binds is bound wherever the AST reader answers the function);
+//!   otherwise a formal or automatic local declared once that neither the AST
+//!   closure nor the lexical closure binds.
 //! * **pointer root** (rule 5b's premise for a returned pointer): never bound,
-//!   and neither the lexical `may_bind` nor the AST's names it.
+//!   and neither the lexical `may_bind` nor the AST's names it (rule 10o: in
+//!   every function the AST reader answers).
 //! * **declared local** (an assignment operand's destination): every lexical
 //!   `yes` stands; a name the lexical reader does not type is a declared local
 //!   when the AST finds one automatic, non-formal declaration of it whose type
@@ -44,19 +47,31 @@ impl Parser<'_> {
         self.typed_types.is_readable()
     }
 
-    /// Rule 10l: the never-bound premise of a typed position.
+    /// Card **W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT** (rule 10o): the join
+    /// of the two closures where the lexical reader answers — the lexical
+    /// never-bound answer (its closure now reading every assignment), unless
+    /// the AST closure binds the spelling in a function it answers. Where the
+    /// AST reader refuses the function, the lexical answer stands.
+    pub(super) fn joined_never_bound(&self, name: &str) -> bool {
+        self.typed_bases.never_bound(name) && !self.typed_roots().binds(name)
+    }
+
+    /// Rules 10l and 10o: the never-bound premise of a typed position.
     pub(super) fn position_never_bound(&self, name: &str) -> bool {
         if self.lexical_answers() {
-            return self.typed_bases.never_bound(name);
+            return self.joined_never_bound(name);
         }
         self.typed_roots()
             .served_never_bound(name, self.typed_bases.lexical_risky())
     }
 
-    /// Rule 10l: rule 5b's premise for a pointer handed out of the body.
+    /// Rules 10l and 10o: rule 5b's premise for a pointer handed out of the
+    /// body.
     pub(super) fn position_pointer_root(&self, name: &str) -> bool {
         if self.lexical_answers() {
-            return self.typed_bases.never_bound(name) && !self.typed_types.may_bind(name);
+            return self.joined_never_bound(name)
+                && !self.typed_types.may_bind(name)
+                && !self.typed_roots().names_may_bind(name);
         }
         self.position_never_bound(name)
             && !self.typed_types.may_bind(name)
@@ -86,6 +101,7 @@ impl Parser<'_> {
             let lexical_ungated = !lexical_risky.contains(&name);
             let ast = roots.ast_never_bound(&name);
             let served = self.position_never_bound(&name);
+            let nested = self.typed_bases.nested_bindings().contains(&name);
             let lexical_may_bind = self.typed_types.may_bind(&name);
             let ast_may_bind = roots.may_bind(&name);
             // As the assignment-operand hook reads them: never a formal.
@@ -97,6 +113,14 @@ impl Parser<'_> {
             let mut kinds = Vec::new();
             if lexical && lexical_never_bound && !ast {
                 kinds.push("ast-binds-lexical-never-bound");
+            }
+            // Rule 10o: the served (joined) answer never calls a name the AST
+            // closure binds never bound; recorded if it ever does.
+            if served && roots.binds(&name) {
+                kinds.push("served-never-bound-ast-binds");
+            }
+            if nested {
+                kinds.push("nested-reading-binds");
             }
             if !lexical_ungated && ast {
                 kinds.push("lexical-binds-ast-never-bound");
@@ -126,6 +150,8 @@ impl Parser<'_> {
                 "lexical_closure_never_bound": lexical_ungated,
                 "ast_never_bound": ast,
                 "served_never_bound": served,
+                "nested_reading_binds": nested,
+                "ast_binds": roots.binds(&name),
                 "lexical_may_bind": lexical_may_bind,
                 "ast_may_bind": ast_may_bind,
                 "lexical_declared_local": lexical_declared,
@@ -140,6 +166,11 @@ impl Parser<'_> {
             "served": if lexical { "lexical" } else if roots.answers() { "ast" } else { "none" },
             "names": names,
             "disagreements": disagreements,
+            "nested_census": {
+                "unread_by_statement": self.typed_bases.nested_census().unread_by_statement,
+                "parenthesised": self.typed_bases.nested_census().parenthesised,
+                "nested_member_stores": self.typed_bases.nested_census().nested_member_stores,
+            },
         }));
     }
 }
