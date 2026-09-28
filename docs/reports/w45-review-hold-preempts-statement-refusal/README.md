@@ -104,7 +104,7 @@ on `main`.
 
 | Shape | Declarations in force | BEFORE (held) | AFTER (held) |
 |---|---|---|---|
-| `i = k_input_new((*ctx)->config, …)` (the observed shape) | `Unknown` (access refusal) | `Pending` | **`Unknown`**, standing reason names the refusal |
+| `i = k_input_new((*ctx)->config, …)` (the shape the instance-flow branch reported) | `Unknown` (access refusal) | `Pending` | **`Unknown`**, standing reason names the refusal |
 | the same with a formal actual | `Safe` | `Pending` | `Pending` |
 | `k_close(h, 0); k_close(h, 0);` | `Unsafe` (double release) | `Pending` | **`Unknown`**, standing `double release candidate, not validated` |
 | open and forget | `Unsafe` (leak) | `Pending` | **`Unknown`**, standing leak candidate |
@@ -113,8 +113,8 @@ on `main`.
 | an unrelated held declaration | as without it | byte-identical | byte-identical |
 
 Each row is checked under both holds (review and pin mismatch), on the unit
-route, the single-function entry and the Clang production route (unit
-verdict).
+route; the argument-access and plain shapes also on the single-function entry
+and the Clang production route (unit verdict).
 
 **Corrections to existing pins** (each was an instance of the defect; none
 is a `Safe` move):
@@ -148,7 +148,7 @@ arbiters (the common brief's commands, `--jobs 8`) into fresh directories
 under `private/rh/`. BEFORE is the base tree `fefb9199` (an archive of the
 commit unpacked into the session scratchpad, outside `qcore-c/`; release binary
 `2fc22203…`), AFTER this worktree at `6f33cfa7` (binary `2eb2ef03…`; the tip
-differs from it only by `rustfmt` layout, comments and records). The first
+differs from it only by `rustfmt` layout, comments, tests and records). The first
 BEFORE corpus run exited 1 (`could not verify Cycle 18 Libevent source:
 GitUnavailable`: the archive leaves `third_party/libevent` empty); it is kept
 as a failed attempt and discarded, and the corpus was rerun (`before-corpus`)
