@@ -1274,6 +1274,35 @@ which is not a second authority.
     `owner L` runs on `owner L`; an undetermined resumer never discharges), the
     gating and the configured reading;
     [report](../reports/w47-loop-owner-coroutine-hop/README.md).
+    **Amendment (W47-LOOP-OWNER-TYPED-DISPATCH): type-keyed V and a plugin
+    copy's instance flag.** The census may read Clang's typed AST of each
+    recorded compile command (`typed_dispatch_census.rs`): a field dispatch
+    then reaches only registrants stored in the record type Clang resolved for
+    its field (typedefs resolved; an anonymous record by the typedef naming it),
+    a collector registration is keyed by the record its registration function
+    stores the callback parameter in, and a site with no typed fact keeps the
+    field-keyed reading. A dispatch through a union field, an anonymous record
+    no typedef names, or an explicit cast on its object path or callee reaches
+    nothing and makes every registrant of the field unresolved; a store of a
+    converted function makes it unresolved. A collector registrant registered
+    outside `plugins/` is derived to run no coroutine only when it is
+    registered on the first parameter of a callback stored only in a local
+    plugin copy whose every use is modelled (a whole copy, field stores,
+    numeric `.flags` writes, one `X->p = &copy`, no escape of its holder) and
+    whose flags derive none, **and** the instance `X` is created once in that
+    function by `flb_input_new` with a literal plugin name whose one
+    descriptor derives none, `runs_in_coroutine` being written by the
+    constructor alone. **Do not** key a site the typed reading does not name,
+    attribute an unmatched dispatch to any record, or take a copy's flags for
+    the instance's (the route switch reads the flag set at creation).
+    Premises added (trust boundary 28): the recorded build's commands are the
+    program's; C's effective-type rule; the test is typed with the library's
+    arguments and a configured test header; and P-CALLBACK-INSTANCE (a
+    callback stored in an input plugin object's field runs with an instance
+    whose `p` is that object). `QCore.LoopOwner` proves type-keyed dispatch a
+    sub-relation of field-keyed dispatch that removes only cross-type edges or
+    refuses, and the route dropped only when both flags derive none;
+    [report](../reports/w47-loop-owner-typed-dispatch/README.md).
 
 <a id="constraint-10q"></a>
 

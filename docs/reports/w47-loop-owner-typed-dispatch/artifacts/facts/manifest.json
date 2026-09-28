@@ -1,0 +1,22 @@
+{
+ "fixed-test.json": {
+  "bytes": 25604,
+  "file": "fixed-test.json.gz",
+  "sha256": "dfe888102af5f93ffbd6a2344d188286ad56db76b84ed2554bbffa707eb82723"
+ },
+ "inputs.sha256": {
+  "bytes": 925,
+  "file": "inputs.sha256.gz",
+  "sha256": "b887605a21ec63388268a2504971e4b9d8ca96d17ad35a10b6dd2cfc59fbef77"
+ },
+ "library.json": {
+  "bytes": 319275,
+  "file": "library.json.gz",
+  "sha256": "1bf9b9cec5cc2a4c722803d7e25901231987630a9062b11cfc94dd5c53876b7a"
+ },
+ "previous-test.json": {
+  "bytes": 25505,
+  "file": "previous-test.json.gz",
+  "sha256": "d3643fb368571edc9a72ef26f55b3c8e49cba2e15d1290069a3555225693367d"
+ }
+}

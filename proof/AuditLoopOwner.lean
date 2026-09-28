@@ -34,11 +34,21 @@ flags run no coroutine is not dispatched through the hop; an underived flag
 keeps it. The configured reading keeps the arm any agreeing build takes, drops
 a decided-false arm, and reads nothing after a decided-true arm.
 
+**Typed dispatch** (card W47-LOOP-OWNER-TYPED-DISPATCH). Type-keyed
+dispatch is a sub-relation of field-keyed dispatch, equal to it where no typed
+fact exists; a call through record `T` reaches no registrant stored only in
+another record; every removed edge is cross-type or belongs to an unmatched
+dispatch, whose registrants are unresolved and never discharged. A runtime
+plugin copy's instance drops the coroutine route only when both the creating
+plugin's flag and the copy's derive none; a copy written with the coroutine
+flag, or an underived part, keeps it.
+
 The lexical census reading, the hop tables, P-INSTANCE and the Rust
 correspondence are trust boundary 28's premises, pinned by
 `crates/qcore-core/tests/unit/loop_owner.rs`,
 `crates/quirin-source-analysis/tests/loop_owner_census.rs` and
-`crates/quirin-source-analysis/tests/loop_owner_coroutine.rs`. -/
+`crates/quirin-source-analysis/tests/loop_owner_coroutine.rs` and
+`crates/quirin-source-analysis/tests/loop_owner_typed_dispatch.rs`. -/
 
 -- Derived ownership.
 #print axioms QCore.LoopOwner.a_step_keeps_the_thread
@@ -85,3 +95,16 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.the_taken_arm_is_read
 #print axioms QCore.LoopOwner.a_decided_false_arm_is_not_read
 #print axioms QCore.LoopOwner.nothing_after_a_decided_arm_is_read
+
+-- Typed dispatch: a sub-relation that only removes cross-type edges.
+#print axioms QCore.LoopOwner.type_keyed_is_a_sub_relation
+#print axioms QCore.LoopOwner.an_untyped_dispatch_is_field_keyed
+#print axioms QCore.LoopOwner.a_call_through_a_record_reaches_only_its_registrants
+#print axioms QCore.LoopOwner.a_removed_edge_is_cross_type_or_refused
+#print axioms QCore.LoopOwner.an_unmatched_dispatch_never_discharges
+
+-- Step B: the instance flag of a runtime plugin copy.
+#print axioms QCore.LoopOwner.no_coroutine_needs_both
+#print axioms QCore.LoopOwner.a_coroutine_copy_keeps_the_route
+#print axioms QCore.LoopOwner.an_underived_part_keeps_the_route
+#print axioms QCore.LoopOwner.the_route_is_dropped_only_when_both_derive_none

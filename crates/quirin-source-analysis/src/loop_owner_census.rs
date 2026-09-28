@@ -13,8 +13,9 @@ use std::collections::BTreeMap;
 
 use qcore_c_gateway::thread_entry_census::{
     BuildConfiguration, CensusFile, CensusReading, HopTables, ReadEffect, ReadHop, ReadMode,
-    read_program_configured,
+    read_program_typed,
 };
+use qcore_c_gateway::typed_dispatch_census::TypedFacts;
 use qcore_contract::contract_loader::{DeclaredLoopOwner, LoopOwnerOperation};
 use qcore_core::loop_owner::{
     Context, Derived, Edge, HopKind, Mode, ModeEffect, OwnerVerdict, Owners, ThreadProgram,
@@ -138,7 +139,22 @@ pub fn census_configured(
     hops: &HopTables,
     configuration: Option<&BuildConfiguration>,
 ) -> Census {
-    let reading = read_program_configured(files, hops, configuration);
+    census_typed(files, obligations, hops, configuration, None)
+}
+
+/// [`census_configured`] with typed dispatch (card
+/// W47-LOOP-OWNER-TYPED-DISPATCH): a field dispatch reaches only the
+/// registrants the typed reading stored in the same record type; with no
+/// typed facts it is exactly [`census_configured`].
+#[must_use]
+pub fn census_typed(
+    files: &[CensusFile],
+    obligations: &BTreeMap<String, DeclaredLoopOwner>,
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+    typed: Option<&TypedFacts>,
+) -> Census {
+    let reading = read_program_typed(files, hops, configuration, typed);
     let program = thread_program(&reading);
     let derived = derive(&program);
     let owners = Owners::from_dispatchers(

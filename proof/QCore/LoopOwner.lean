@@ -631,4 +631,186 @@ theorem nothing_after_a_decided_arm_is_read (known : List Truth) :
   | nil => rfl
   | cons c rest ih => simp [keptArms, ih]
 
+/-! ## Typed field dispatch (card W47-LOOP-OWNER-TYPED-DISPATCH)
+
+A registration stores a callee in a field; the typed reading keys it by the
+record type Clang resolved (`record`), or by none when no typed fact names the
+site (`any`: the field-keyed reading). A dispatch through a field is typed by
+the records Clang resolved for it, untyped, or unmatched (a cast, a union, an
+anonymous record). Type-keyed dispatch is a sub-relation of field-keyed
+dispatch (`type_keyed_is_a_sub_relation`), so it only removes edges; an untyped
+dispatch is exactly the field-keyed one (`an_untyped_dispatch_is_field_keyed`);
+a call through record `T` never reaches a registrant stored only in another
+record (`a_call_through_a_record_reaches_only_its_registrants`); every removed
+edge is a cross-type one or belongs to an unmatched dispatch, whose every
+registrant is unresolved and so never discharged
+(`a_removed_edge_is_cross_type_or_refused`,
+`an_unmatched_dispatch_never_discharges`). -/
+
+inductive Keyed where
+  | any
+  | record (name : String)
+  deriving DecidableEq, Repr
+
+inductive Typing where
+  | untyped
+  | records (names : List String)
+  | unmatched
+  deriving DecidableEq, Repr
+
+structure Registration (α : Type) where
+  field : String
+  callee : α
+  keys : List Keyed
+
+def keyReached (names : List String) : Keyed → Bool
+  | .any => true
+  | .record r => names.contains r
+
+/-- Whether a dispatch typed `typing` reaches a registration keyed `keys`. -/
+def reaches (typing : Typing) (keys : List Keyed) : Bool :=
+  match typing with
+  | .untyped => true
+  | .records names => keys.any (keyReached names)
+  | .unmatched => false
+
+/-- Field-keyed dispatch: every registrant of the field. -/
+def fieldKeyed {α : Type} (regs : List (Registration α)) (field : String) : List α :=
+  (regs.filter fun r => r.field == field).map (·.callee)
+
+/-- Type-keyed dispatch. -/
+def typeKeyed {α : Type} (regs : List (Registration α)) (field : String) (typing : Typing) :
+    List α :=
+  (regs.filter fun r => r.field == field && reaches typing r.keys).map (·.callee)
+
+/-- The registrants an unmatched dispatch leaves unresolved: all of the field's. -/
+def unmatchedUnresolved {α : Type} (regs : List (Registration α)) (field : String) :
+    Typing → List α
+  | .unmatched => fieldKeyed regs field
+  | _ => []
+
+theorem type_keyed_is_a_sub_relation {α : Type} {regs : List (Registration α)}
+    {field : String} {typing : Typing} {c : α} (h : c ∈ typeKeyed regs field typing) :
+    c ∈ fieldKeyed regs field := by
+  simp only [typeKeyed, fieldKeyed, List.mem_map, List.mem_filter, Bool.and_eq_true] at h ⊢
+  obtain ⟨r, ⟨hr, hf, _⟩, hc⟩ := h
+  exact ⟨r, ⟨hr, hf⟩, hc⟩
+
+theorem an_untyped_dispatch_is_field_keyed {α : Type} (regs : List (Registration α))
+    (field : String) : typeKeyed regs field .untyped = fieldKeyed regs field := by
+  simp [typeKeyed, fieldKeyed, reaches]
+
+/-- A registration stored only in records other than the dispatch's is never
+reached. -/
+theorem a_call_through_a_record_reaches_only_its_registrants
+    {names : List String} {keys : List Keyed}
+    (hkeys : ∀ k ∈ keys, ∃ u, k = .record u ∧ u ∉ names) :
+    reaches (.records names) keys = false := by
+  simp only [reaches, List.any_eq_false]
+  intro k hk
+  obtain ⟨u, rfl, hu⟩ := hkeys k hk
+  simp [keyReached, hu]
+
+/-- An edge the typed reading removes is a cross-type one, or its dispatch is
+unmatched and the callee is unresolved. -/
+theorem a_removed_edge_is_cross_type_or_refused {α : Type} {regs : List (Registration α)}
+    {field : String} {typing : Typing} {c : α}
+    (hfield : c ∈ fieldKeyed regs field) (htyped : c ∉ typeKeyed regs field typing) :
+    (typing = .unmatched ∧ c ∈ unmatchedUnresolved regs field typing) ∨
+      ∃ names, typing = .records names ∧
+        ∀ r ∈ regs, r.field = field → r.callee = c →
+          ∀ k ∈ r.keys, ∃ u, k = .record u ∧ u ∉ names := by
+  cases typing with
+  | untyped => exact absurd (by rw [an_untyped_dispatch_is_field_keyed]; exact hfield) htyped
+  | unmatched => exact Or.inl ⟨rfl, hfield⟩
+  | records names =>
+    refine Or.inr ⟨names, rfl, ?_⟩
+    intro r hr hf hc k hk
+    have hnot : reaches (.records names) r.keys = false := by
+      cases hreach : reaches (.records names) r.keys with
+      | false => rfl
+      | true =>
+        exfalso
+        apply htyped
+        simp only [typeKeyed, List.mem_map, List.mem_filter, Bool.and_eq_true]
+        exact ⟨r, ⟨hr, by simp [hf], hreach⟩, hc⟩
+    simp only [reaches, List.any_eq_false] at hnot
+    have hk' := hnot k hk
+    cases k with
+    | any => simp [keyReached] at hk'
+    | record u => exact ⟨u, rfl, by simpa [keyReached] using hk'⟩
+
+/-- An unmatched dispatch leaves every registrant of its field unresolved, and
+an operation in one is never discharged. -/
+theorem an_unmatched_dispatch_never_discharges {α : Type} [DecidableEq α]
+    {regs : List (Registration α)} {field : String} {c : α}
+    (hfield : c ∈ fieldKeyed regs field) (owners : Owners) (contexts : List Context)
+    (unresolved : Bool) :
+    siteVerdict owners contexts
+      (unresolved || (unmatchedUnresolved regs field .unmatched).contains c) ≠ .discharged := by
+  have h : (unmatchedUnresolved regs field .unmatched).contains c = true := by
+    simpa [unmatchedUnresolved] using hfield
+  rw [h, Bool.or_true]
+  exact unresolved_is_never_discharged owners contexts
+
+/-! ### Step B: the instance flag of a runtime plugin copy
+
+The route switch reads the instance's own coroutine flag, which its
+constructor sets from the plugin it was created from; a runtime copy of the
+plugin installed on the instance is joined with it conservatively. The route
+is dropped only when both derive no coroutine
+(`the_route_is_dropped_only_when_both_derive_none`); a copy written with the
+coroutine flag, or either part underived, keeps it
+(`a_coroutine_copy_keeps_the_route`, `an_underived_part_keeps_the_route`). -/
+
+def joinFlag : Option Bool → Option Bool → Option Bool
+  | some true, _ => some true
+  | _, some true => some true
+  | some false, some false => some false
+  | _, _ => none
+
+/-- The flag of an instance created from `creating` and running a copy whose
+flags derive `copy`. -/
+def instanceFlag (creating copy : Option Bool) : Option Bool := joinFlag creating copy
+
+theorem no_coroutine_needs_both (creating copy : Option Bool) :
+    instanceFlag creating copy = some false ↔ creating = some false ∧ copy = some false := by
+  cases creating with
+  | none => cases copy with
+    | none => simp [instanceFlag, joinFlag]
+    | some b => cases b <;> simp [instanceFlag, joinFlag]
+  | some a => cases a <;> cases copy with
+    | none => simp [instanceFlag, joinFlag]
+    | some b => cases b <;> simp [instanceFlag, joinFlag]
+
+theorem a_coroutine_copy_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    (creating : Option Bool) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag creating (some true)) registrants := by
+  have : instanceFlag creating (some true) = some true := by
+    cases creating with
+    | none => rfl
+    | some a => cases a <;> rfl
+  simp [coroutineDispatched, this, hr]
+
+theorem an_underived_part_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    {creating copy : Option Bool} (hpart : creating = none ∨ copy = none) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag creating copy) registrants := by
+  have hne : instanceFlag creating copy ≠ some false := by
+    intro h
+    obtain ⟨h1, h2⟩ := (no_coroutine_needs_both creating copy).mp h
+    rcases hpart with h | h <;> simp_all
+  simp [coroutineDispatched, hr, hne]
+
+theorem the_route_is_dropped_only_when_both_derive_none {α : Type} {registrants : List α}
+    {r : α} {creating copy : Option Bool} (hr : r ∈ registrants)
+    (hdropped : r ∉ coroutineDispatched (fun _ => instanceFlag creating copy) registrants) :
+    creating = some false ∧ copy = some false := by
+  apply (no_coroutine_needs_both creating copy).mp
+  cases h : instanceFlag creating copy with
+  | none => exact absurd (by simp [coroutineDispatched, hr, h]) hdropped
+  | some b =>
+    cases b with
+    | false => rfl
+    | true => exact absurd (by simp [coroutineDispatched, hr, h]) hdropped
+
 end QCore.LoopOwner

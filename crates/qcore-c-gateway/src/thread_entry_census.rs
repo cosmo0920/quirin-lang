@@ -142,6 +142,12 @@ pub struct CensusReading {
     pub coroutine_bodies: Vec<(usize, usize)>,
     /// Functions that yield their coroutine without ending it, with where.
     pub yields: BTreeMap<usize, String>,
+    /// Card W47-LOOP-OWNER-TYPED-DISPATCH: field dispatch sites by how the
+    /// typed reading keyed them (`untyped`, `typed`, `unmatched`), and
+    /// Step B's derivation for each collector registrant registered outside
+    /// a plugin directory.
+    pub dispatch_typing: BTreeMap<String, Vec<String>>,
+    pub instance_flags: BTreeMap<usize, InstanceFlag>,
 }
 
 impl CensusReading {
@@ -192,6 +198,18 @@ pub struct HopTables {
     pub plugin_flags_field: &'static str,
     pub coroutine_flag: &'static str,
     pub plugin_root: &'static str,
+    /// The record a collector registration stores its callback in (card
+    /// W47-LOOP-OWNER-TYPED-DISPATCH): used only when the typed reading shows
+    /// a parameter stored in [`HopTables::collector_field`] of that record.
+    pub collector_record: &'static str,
+    /// The instance's plugin field, the instance's coroutine flag (written
+    /// only by the constructor, from the creating plugin's flags), the
+    /// instance constructor with its plugin-name argument, and the
+    /// descriptor's name field (Step B).
+    pub instance_plugin_field: &'static str,
+    pub instance_flag_field: &'static str,
+    pub instance_constructor: (&'static str, usize),
+    pub plugin_name_field: &'static str,
 }
 
 /// One coroutine constructor whose resumers the census derives (hop C).
@@ -250,7 +268,45 @@ pub const FLUENT_BIT_HOPS: HopTables = HopTables {
     plugin_flags_field: "flags",
     coroutine_flag: "FLB_INPUT_CORO",
     plugin_root: "plugins/",
+    // src/flb_input.c:2245 (`coll->cb_collect = cb` in collector_create).
+    collector_record: "struct flb_input_collector",
+    // src/flb_input.c:490, :501, :625-626 (flb_input_new: `instance->p =
+    // plugin`, runs_in_coroutine from the creating plugin's flags), read by
+    // the route switch at src/flb_input.c:3313 and src/flb_input_thread.c:162.
+    instance_plugin_field: "p",
+    instance_flag_field: "runs_in_coroutine",
+    instance_constructor: ("flb_input_new", 1),
+    plugin_name_field: "name",
 };
+
+impl HopTables {
+    /// The typed facts this census reads besides dispatches and stores.
+    #[must_use]
+    pub fn typed_options(&self) -> crate::typed_dispatch_census::TypedOptions {
+        crate::typed_dispatch_census::TypedOptions {
+            literal_calls: vec![(
+                self.instance_constructor.0.to_owned(),
+                self.instance_constructor.1,
+            )],
+            named_objects: vec![(
+                format!("struct {}", self.plugin_descriptor),
+                self.plugin_name_field.to_owned(),
+            )],
+            aliases: BTreeMap::new(),
+        }
+    }
+}
+
+/// Step B's derivation of one collector registrant's coroutine flag when its
+/// plugin directory does not decide it (card W47-LOOP-OWNER-TYPED-DISPATCH).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct InstanceFlag {
+    /// `Some(false)` only when both the instance's creating plugin and the
+    /// plugin copy it runs are derived to run no coroutine.
+    pub derived: Option<bool>,
+    /// What the derivation rests on, or where it stopped.
+    pub reason: String,
+}
 
 /// The build a configured reading is for: the macros each translation unit's
 /// compile command defines, and the macro prefixes the build configuration
@@ -563,6 +619,8 @@ struct Definition {
     /// Parameter names, which shadow a function of the same name inside the
     /// definition.
     parameters: BTreeSet<String>,
+    /// The first parameter's name, when the list has one (Step B).
+    first_parameter: Option<String>,
 }
 
 struct Scan {
@@ -691,6 +749,7 @@ fn scan_file(
                             header: name,
                             body: (body, index),
                             parameters: parameter_names(&tokens, name + 1, body),
+                            first_parameter: first_parameter_name(&tokens, name + 1),
                         });
                     }
                     statement_start = index + 1;
@@ -793,6 +852,27 @@ fn parameter_names(tokens: &[Token], open: usize, end: usize) -> BTreeSet<String
         }
     }
     names
+}
+
+/// The first parameter's name: the identifier directly before the list's
+/// first `,` or its `)` (a plain declarator only; a function-pointer or array
+/// parameter gives none).
+fn first_parameter_name(tokens: &[Token], open: usize) -> Option<String> {
+    let close = crate::legacy_c::matching(tokens, open, "(", ")")?;
+    let mut depth = 0usize;
+    for index in open + 1..=close {
+        match tokens[index].text.as_str() {
+            "(" | "[" => depth += 1,
+            ")" | "]" if depth > 0 => depth -= 1,
+            "," | ")" if depth == 0 => {
+                let name = tokens.get(index.checked_sub(1)?)?.text.as_str();
+                return (is_identifier(name) && index - 1 > open && name != "void")
+                    .then(|| name.to_owned());
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 /// The names written in `#define` replacement lists (the tokenizer skips
@@ -1001,6 +1081,110 @@ pub fn read_program_configured(
     hops: &HopTables,
     configuration: Option<&BuildConfiguration>,
 ) -> CensusReading {
+    read_program_typed(files, hops, configuration, None)
+}
+
+/// What one lexical registration is keyed by (card
+/// W47-LOOP-OWNER-TYPED-DISPATCH): the record the typed reading stored it in,
+/// or [`Keyed::Any`] when no typed fact names the site (the field-keyed
+/// reading: every dispatch of the field reaches it).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum Keyed {
+    Any,
+    Record(String),
+}
+
+/// How one lexical field dispatch is typed.
+#[derive(Clone, Debug)]
+enum Typing {
+    /// No typed fact: every registrant of the field.
+    Untyped,
+    /// Only registrants keyed by one of these records (or by none).
+    Records(BTreeSet<String>),
+    /// A cast, a union, an anonymous record: no registrant is attributed, and
+    /// every registrant of the field is unresolved.
+    Unmatched(BTreeSet<String>),
+}
+
+fn dispatch_typing(
+    typed: Option<&crate::typed_dispatch_census::TypedFacts>,
+    path: &str,
+    line: usize,
+    field: &str,
+) -> Typing {
+    use crate::typed_dispatch_census::{TypedRecord, dispatch_key};
+    let Some(records) = typed.and_then(|t| t.dispatches.get(&dispatch_key(path, line, field)))
+    else {
+        return Typing::Untyped;
+    };
+    let unmatched = records
+        .iter()
+        .filter_map(|record| match record {
+            TypedRecord::Unmatched(why) => Some(why.clone()),
+            TypedRecord::Record(_) => None,
+        })
+        .collect::<BTreeSet<_>>();
+    if !unmatched.is_empty() {
+        return Typing::Unmatched(unmatched);
+    }
+    Typing::Records(
+        records
+            .iter()
+            .filter_map(|record| match record {
+                TypedRecord::Record(key) => Some(key.clone()),
+                TypedRecord::Unmatched(_) => None,
+            })
+            .collect(),
+    )
+}
+
+/// The keys of one lexical store `x->F = f` / `.F = f`, and why it is
+/// unmatched when it is.
+fn store_keys(
+    typed: Option<&crate::typed_dispatch_census::TypedFacts>,
+    path: &str,
+    line: usize,
+    field: &str,
+    function: &str,
+) -> (BTreeSet<Keyed>, BTreeSet<String>) {
+    use crate::typed_dispatch_census::{TypedRecord, store_key};
+    let Some(typed) = typed else {
+        return (BTreeSet::from([Keyed::Any]), BTreeSet::new());
+    };
+    let records = [field, ""]
+        .iter()
+        .filter_map(|f| typed.stores.get(&store_key(path, line, f, function)))
+        .flatten()
+        .collect::<BTreeSet<_>>();
+    let mut keys = BTreeSet::new();
+    let mut unmatched = BTreeSet::new();
+    for record in records {
+        match record {
+            TypedRecord::Record(key) => {
+                keys.insert(Keyed::Record(key.clone()));
+            }
+            TypedRecord::Unmatched(why) => {
+                unmatched.insert(why.clone());
+            }
+        }
+    }
+    if keys.is_empty() || !unmatched.is_empty() {
+        keys.insert(Keyed::Any);
+    }
+    (keys, unmatched)
+}
+
+/// [`read_program_configured`] with typed dispatch (card
+/// W47-LOOP-OWNER-TYPED-DISPATCH): a field dispatch reaches only the
+/// registrants stored in the same record type, when the typed reading names
+/// both. Without typed facts the reading is exactly the field-keyed one.
+#[must_use]
+pub fn read_program_typed(
+    files: &[CensusFile],
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+    typed: Option<&crate::typed_dispatch_census::TypedFacts>,
+) -> CensusReading {
     let macros = files
         .iter()
         .map(|source| macro_definitions(&source.text))
@@ -1110,9 +1294,32 @@ pub fn read_program_configured(
             unresolved.entry(*id).or_default().insert(reason.clone());
         }
     };
-    let mut registrants: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
-    // (caller, field, effect, file, position of the field name)
-    let mut dispatches: Vec<(usize, String, ReadEffect, usize, usize)> = Vec::new();
+    // field -> registrant -> what its registrations are keyed by.
+    let mut registrants: BTreeMap<String, BTreeMap<usize, BTreeSet<Keyed>>> = BTreeMap::new();
+    let collector_keys = typed.map_or_else(
+        || BTreeSet::from([Keyed::Any]),
+        |typed| {
+            if typed.parameter_stores.iter().any(|store| {
+                store.record == hops.collector_record && store.field == hops.collector_field
+            }) {
+                BTreeSet::from([Keyed::Record(hops.collector_record.to_owned())])
+            } else {
+                BTreeSet::from([Keyed::Any])
+            }
+        },
+    );
+    // (caller, field, effect, file, position of the field name, typing)
+    let mut dispatches: Vec<(usize, String, ReadEffect, usize, usize, Typing)> = Vec::new();
+    // Step B: (registrant, registering function, instance argument, file).
+    let mut collector_registrations: Vec<(usize, usize, Option<String>, usize)> = Vec::new();
+    // Step B: (stored function, field, file, position of the field name).
+    let mut field_stores: Vec<(usize, String, usize, usize)> = Vec::new();
+    // Step B: the functions storing the instance's coroutine flag.
+    let mut flag_writers: BTreeSet<Option<usize>> = BTreeSet::new();
+    // Step B: descriptor object -> its coroutine flag.
+    let mut descriptor_objects: BTreeMap<String, Option<bool>> = BTreeMap::new();
+    // Step B: functions whose address is taken or named in a macro.
+    let mut taken: BTreeSet<usize> = BTreeSet::new();
     let mut poisoned_fields: BTreeMap<String, String> = BTreeMap::new();
     let mut edges = BTreeSet::new();
     // Direct edges with where they were read, so hop C can place an entry's
@@ -1155,6 +1362,7 @@ pub fn read_program_configured(
         for (name, line) in macro_names(&files[file].text) {
             let ids = resolve(file, &name);
             if !ids.is_empty() {
+                taken.extend(ids.iter().copied());
                 escape(&ids, format!("named in a macro at {path}:{line}"));
             }
         }
@@ -1226,16 +1434,18 @@ pub fn read_program_configured(
                 let Some(end) = crate::legacy_c::matching(tokens, position + 4, "{", "}") else {
                     continue;
                 };
-                descriptor_flags
-                    .entry(dir.clone())
-                    .or_default()
-                    .push(descriptor_flag(
-                        tokens,
-                        position + 4,
-                        end,
-                        hops,
-                        &numeric_macros,
-                    ));
+                let flag = descriptor_flag(tokens, position + 4, end, hops, &numeric_macros);
+                descriptor_flags.entry(dir.clone()).or_default().push(flag);
+                // Step B: the same object name twice (two builds' variants)
+                // keeps only a flag both agree on.
+                descriptor_objects
+                    .entry(at(position + 2).to_owned())
+                    .and_modify(|seen| {
+                        if *seen != flag {
+                            *seen = None;
+                        }
+                    })
+                    .or_insert(flag);
             }
         }
         for position in 0..tokens.len() {
@@ -1265,7 +1475,15 @@ pub fn read_program_configured(
                                     *dispatcher == caller_name && text == hops.collector_field
                                 })
                                 .map_or(ReadEffect::Keep, |(_, mode)| ReadEffect::Dispatch(*mode));
-                            dispatches.push((caller, text.to_owned(), effect, file, position));
+                            let typing = dispatch_typing(typed, path, tokens[position].line, text);
+                            dispatches.push((
+                                caller,
+                                text.to_owned(),
+                                effect,
+                                file,
+                                position,
+                                typing,
+                            ));
                         }
                     }
                     Some("=") => {
@@ -1284,9 +1502,33 @@ pub fn read_program_configured(
                                             .insert(path.clone());
                                     }
                                 }
-                                registrants.entry(text.to_owned()).or_default().extend(ids);
+                                let line = tokens[position + 2].line;
+                                let (keys, unmatched) = store_keys(typed, path, line, text, value);
+                                for why in unmatched {
+                                    escape(
+                                        &ids,
+                                        format!(
+                                            "stored in `{text}` at {path}:{line} through an \
+                                             unmatched record type ({why})"
+                                        ),
+                                    );
+                                }
+                                let slot = registrants.entry(text.to_owned()).or_default();
+                                for id in &ids {
+                                    slot.entry(*id).or_default().extend(keys.iter().cloned());
+                                    field_stores.push((*id, text.to_owned(), file, position));
+                                }
                                 consumed.insert(position + 2);
                             }
+                        }
+                        if text == hops.instance_flag_field {
+                            flag_writers.insert(owner_of[position]);
+                        }
+                    }
+                    Some(_) if text == hops.instance_flag_field => {
+                        // Any other write form (`|=`, `++`, …) or a read.
+                        if !matches!(next, Some("==" | "&&" | ")" | ";" | "?")) {
+                            flag_writers.insert(None);
                         }
                     }
                     Some("==" | "&&" | "?" | "[" | "." | "->" | "++") | None => {}
@@ -1347,7 +1589,14 @@ pub fn read_program_configured(
                                     registrants
                                         .entry(hops.collector_field.to_owned())
                                         .or_default()
-                                        .insert(id);
+                                        .entry(id)
+                                        .or_default()
+                                        .extend(collector_keys.iter().cloned());
+                                    let instance = ranges
+                                        .first()
+                                        .filter(|(start, end)| end - start == 1)
+                                        .map(|(start, _)| tokens[*start].text.clone());
+                                    collector_registrations.push((id, caller, instance, file));
                                 }
                             }
                         }
@@ -1442,6 +1691,7 @@ pub fn read_program_configured(
             // Any other occurrence of a defined function's name escapes.
             let ids = resolve(file, text);
             if !ids.is_empty() {
+                taken.extend(ids.iter().copied());
                 let line = tokens[position].line;
                 escape(&ids, format!("address of `{text}` taken at {path}:{line}"));
             }
@@ -1496,31 +1746,99 @@ pub fn read_program_configured(
             bodies.insert((edge.caller, edge.callee));
         }
     }
+    // Step B (card W47-LOOP-OWNER-TYPED-DISPATCH): a collector registrant
+    // registered outside a plugin directory, on an instance whose plugin is a
+    // runtime copy.
+    let instance_flags = derive_instance_flags(&StepB {
+        files,
+        hops,
+        typed,
+        definitions: &definitions,
+        scans: &scans,
+        index: &index,
+        registrants: &registrants,
+        collector_registrations: &collector_registrations,
+        field_stores: &field_stores,
+        direct_edges: &edges,
+        spawns: &spawns,
+        taken: &taken,
+        flag_writers: &flag_writers,
+        descriptor_objects: &descriptor_objects,
+        numeric_macros: &numeric_macros,
+        functions: &program.functions,
+    });
     // Which inputs run their collectors in a coroutine, from their plugin
-    // directory's descriptor flags; undecided when a registration is outside
-    // a plugin directory or the directory's descriptors disagree.
+    // directory's descriptor flags, else from Step B; undecided when a
+    // registration is outside a plugin directory and Step B does not derive
+    // it, or the directory's descriptors disagree.
     let runs_in_coroutine = |id: usize| -> Option<bool> {
-        let mut value = None;
-        for path in collector_sites.get(&id)? {
-            for flag in descriptor_flags.get(&plugin_dir(path)?)? {
-                let flag = (*flag)?;
-                if value.is_some_and(|v| v != flag) {
-                    return None;
+        let from_directory = || {
+            let mut value = None;
+            for path in collector_sites.get(&id)? {
+                for flag in descriptor_flags.get(&plugin_dir(path)?)? {
+                    let flag = (*flag)?;
+                    if value.is_some_and(|v| v != flag) {
+                        return None;
+                    }
+                    value = Some(flag);
                 }
-                value = Some(flag);
             }
-        }
-        value
+            value
+        };
+        from_directory().or_else(|| instance_flags.get(&id).and_then(|flag| flag.derived))
     };
-    // Field dispatch edges (hops V, V*, R, L).
-    for (caller, field, effect, file, position) in &dispatches {
+    // Field dispatch edges (hops V, V*, R, L), keyed by record type when the
+    // typed reading names both the dispatch and the registration.
+    let mut dispatch_typing_tally: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for (caller, field, effect, file, position, typing) in &dispatches {
         let hop = if field == hops.collector_field {
             ReadHop::CollectorRegistry
         } else {
             ReadHop::Vtable
         };
+        let kind = match typing {
+            Typing::Untyped => "untyped",
+            Typing::Records(_) => "typed",
+            Typing::Unmatched(_) => "unmatched",
+        };
+        dispatch_typing_tally
+            .entry(kind.to_owned())
+            .or_default()
+            .push(format!(
+                "{}:{}:{field}",
+                files[*file].path, scans[*file].tokens[*position].line
+            ));
+        if let Typing::Unmatched(why) = typing {
+            let ids = registrants
+                .get(field)
+                .into_iter()
+                .flat_map(BTreeMap::keys)
+                .copied()
+                .collect::<Vec<_>>();
+            let line = scans[*file].tokens[*position].line;
+            escape(
+                &ids,
+                format!(
+                    "dispatched through `{field}` at {}:{line}, whose record type is not \
+                     matched ({})",
+                    files[*file].path,
+                    why.iter().cloned().collect::<Vec<_>>().join("; ")
+                ),
+            );
+            continue;
+        }
         let (callers, body) = placed(*caller, *file, *position);
-        for callee in registrants.get(field).into_iter().flatten() {
+        for (callee, keys) in registrants.get(field).into_iter().flatten() {
+            let reached = match typing {
+                Typing::Untyped | Typing::Unmatched(_) => true,
+                Typing::Records(records) => keys.iter().any(|key| match key {
+                    Keyed::Any => true,
+                    Keyed::Record(record) => records.contains(record),
+                }),
+            };
+            if !reached {
+                continue;
+            }
             // An input whose descriptors run no coroutine is never
             // dispatched from a coroutine entry.
             if body && field == hops.collector_field && runs_in_coroutine(*callee) == Some(false) {
@@ -1636,7 +1954,7 @@ pub fn read_program_configured(
     // A primitive run other than by a direct call (a field registrant, or a
     // coroutine body itself) yields where it runs.
     for primitive in &primitives {
-        if registrants.values().any(|set| set.contains(primitive))
+        if registrants.values().any(|set| set.contains_key(primitive))
             || bodies.iter().any(|(_, body)| body == primitive)
         {
             yields.entry(*primitive).or_insert_with(|| {
@@ -1651,7 +1969,7 @@ pub fn read_program_configured(
         let ids = registrants
             .get(field)
             .into_iter()
-            .flatten()
+            .flat_map(BTreeMap::keys)
             .copied()
             .collect::<Vec<_>>();
         escape(&ids, format!("field `{field}` read as a value at {at}"));
@@ -1663,6 +1981,8 @@ pub fn read_program_configured(
     program.calls = calls;
     program.coroutine_bodies = bodies.into_iter().collect();
     program.yields = yields;
+    program.dispatch_typing = dispatch_typing_tally;
+    program.instance_flags = instance_flags;
     let dispatcher = |mode: ReadMode| {
         let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
@@ -1681,6 +2001,494 @@ pub fn read_program_configured(
     program.engine_dispatcher = dispatcher(ReadMode::NonThreaded);
     program.worker_dispatcher = dispatcher(ReadMode::Threaded);
     program
+}
+
+/// What Step B reads (card W47-LOOP-OWNER-TYPED-DISPATCH).
+struct StepB<'a> {
+    files: &'a [CensusFile],
+    hops: &'a HopTables,
+    typed: Option<&'a crate::typed_dispatch_census::TypedFacts>,
+    definitions: &'a [Definition],
+    scans: &'a [Scan],
+    index: &'a BTreeMap<String, usize>,
+    registrants: &'a BTreeMap<String, BTreeMap<usize, BTreeSet<Keyed>>>,
+    collector_registrations: &'a [(usize, usize, Option<String>, usize)],
+    field_stores: &'a [(usize, String, usize, usize)],
+    direct_edges: &'a BTreeSet<ReadEdge>,
+    spawns: &'a BTreeSet<(usize, usize)>,
+    taken: &'a BTreeSet<usize>,
+    flag_writers: &'a BTreeSet<Option<usize>>,
+    descriptor_objects: &'a BTreeMap<String, Option<bool>>,
+    numeric_macros: &'a BTreeSet<String>,
+    functions: &'a [String],
+}
+
+/// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the
+/// coroutine flag, `None` underived; with the reason.
+type Derivation = Result<bool, String>;
+
+/// Join two derivations of one flag: the coroutine flag anywhere wins, an
+/// underived one withholds a "no coroutine".
+fn join_flags(a: Derivation, b: Derivation) -> Derivation {
+    match (a, b) {
+        (Ok(true), _) | (_, Ok(true)) => Ok(true),
+        (Err(why), _) | (_, Err(why)) => Err(why),
+        (Ok(false), Ok(false)) => Ok(false),
+    }
+}
+
+/// The coroutine flag an `A | B | …` operand list sets: `Ok(true)` when an
+/// operand is the flag, `Ok(false)` when every operand is a number or a
+/// numeric macro, an error otherwise.
+fn flags_operands(texts: &[&str], hops: &HopTables, numeric: &BTreeSet<String>) -> Derivation {
+    let mut value = false;
+    for (index, text) in texts.iter().enumerate() {
+        if index % 2 == 1 {
+            if *text != "|" {
+                return Err(format!(
+                    "a flags value this reading cannot evaluate (`{text}`)"
+                ));
+            }
+        } else if *text == hops.coroutine_flag {
+            value = true;
+        } else if !(text.chars().all(|c| c.is_ascii_digit()) || numeric.contains(*text)) {
+            return Err(format!(
+                "a flags operand this reading cannot evaluate (`{text}`)"
+            ));
+        }
+    }
+    if texts.len() % 2 == 1 {
+        Ok(value)
+    } else {
+        Err("an empty or unfinished flags value".to_owned())
+    }
+}
+
+impl StepB<'_> {
+    fn definition_at(&self, file: usize, position: usize) -> Option<&Definition> {
+        self.scans[file]
+            .definitions
+            .iter()
+            .map(|d| &self.definitions[*d])
+            .find(|d| d.body.0 <= position && position <= d.body.1)
+    }
+
+    fn texts(&self, file: usize) -> Vec<&str> {
+        self.scans[file]
+            .tokens
+            .iter()
+            .map(|t| t.text.as_str())
+            .collect()
+    }
+
+    /// The instance flag of local `instance` in `g`: only an instance assigned
+    /// once, from the listed constructor with a plugin name the typed reading
+    /// reads, whose one descriptor of that name decides its flag; and only when
+    /// the flag field is written by the constructor alone.
+    fn instance_flag(&self, g: &Definition, instance: &str) -> Derivation {
+        let constructor = self.hops.instance_constructor.0;
+        let writers = self
+            .flag_writers
+            .iter()
+            .map(|writer| writer.map(|id| self.functions[id].as_str()))
+            .collect::<BTreeSet<_>>();
+        if writers != BTreeSet::from([Some(constructor)]) {
+            return Err(format!(
+                "`{}` is written other than by `{constructor}` alone",
+                self.hops.instance_flag_field
+            ));
+        }
+        if g.parameters.contains(instance) {
+            return Err(format!("the instance `{instance}` is a parameter"));
+        }
+        let texts = self.texts(g.file);
+        let path = &self.files[g.file].path;
+        let mut creation = None;
+        for k in g.body.0..=g.body.1 {
+            if texts[k] != instance || matches!(texts[k - 1], "." | ">") {
+                continue;
+            }
+            if texts[k - 1] == "&" && texts[k - 2] != "&" {
+                return Err(format!("the address of the instance `{instance}` is taken"));
+            }
+            if texts[k + 1] == "=" && texts[k + 2] != "=" {
+                if creation.is_some() {
+                    return Err(format!("the instance `{instance}` is assigned twice"));
+                }
+                creation = Some(k + 2);
+            }
+        }
+        let Some(start) = creation else {
+            return Err(format!("the instance `{instance}` is never assigned here"));
+        };
+        if texts[start] != constructor || texts[start + 1] != "(" {
+            return Err(format!(
+                "the instance `{instance}` is not tied to its creation: it is assigned from \
+                 `{}` at {path}:{}, not from `{constructor}`",
+                texts[start], self.scans[g.file].tokens[start].line
+            ));
+        }
+        let line = self.scans[g.file].tokens[start].line;
+        let literals = self
+            .typed
+            .and_then(|typed| {
+                typed
+                    .literal_calls
+                    .get(&crate::typed_dispatch_census::literal_call_key(
+                        path,
+                        line,
+                        constructor,
+                    ))
+            })
+            .cloned()
+            .unwrap_or_default();
+        let [literal] = literals.iter().collect::<Vec<_>>()[..] else {
+            return Err(format!(
+                "the plugin name `{constructor}` creates `{instance}` from at {path}:{line} is \
+                 not one literal the typed reading reads"
+            ));
+        };
+        let record = format!("struct {}", self.hops.plugin_descriptor);
+        let objects = self
+            .typed
+            .and_then(|typed| {
+                typed
+                    .named_objects
+                    .get(&crate::typed_dispatch_census::named_object_key(
+                        &record,
+                        self.hops.plugin_name_field,
+                        literal,
+                    ))
+            })
+            .cloned()
+            .unwrap_or_default();
+        let [object] = objects.iter().collect::<Vec<_>>()[..] else {
+            return Err(format!(
+                "not exactly one descriptor declares the plugin name \"{literal}\""
+            ));
+        };
+        match self.descriptor_objects.get(object.as_str()) {
+            Some(Some(flag)) => Ok(*flag),
+            _ => Err(format!("the descriptor `{object}`'s flags are not derived")),
+        }
+    }
+
+    /// The copy of a plugin at local object path `base` in `g`, installed on
+    /// one instance: its flag joined with the instance's. Any use of the copy
+    /// or its object this reading does not model leaves it underived.
+    fn copy_flag(&self, g: &Definition, base: &[&str]) -> Derivation {
+        let texts = self.texts(g.file);
+        let root = base[0];
+        let hops = self.hops;
+        if g.parameters.contains(root) {
+            return Err(format!("the copy's object `{root}` is a parameter"));
+        }
+        let mut sources: Vec<Derivation> = Vec::new();
+        let mut installed: BTreeSet<String> = BTreeSet::new();
+        let mut declared = false;
+        let mut blockers: Vec<String> = Vec::new();
+        let statement_end = |from: usize| {
+            (from..=g.body.1)
+                .find(|i| texts[*i] == ";")
+                .unwrap_or(g.body.1)
+        };
+        for k in g.body.0..=g.body.1 {
+            if texts[k] != root || matches!(texts[k - 1], "." | ">") {
+                continue;
+            }
+            let path_matches = base
+                .iter()
+                .enumerate()
+                .all(|(i, part)| texts.get(k + 2 * i) == Some(part))
+                && (1..base.len()).all(|i| texts.get(k + 2 * i - 1) == Some(&"."));
+            if !path_matches {
+                // The object holding the copy: a declaration, another member
+                // or a by-value use leave the copy alone; its address does not.
+                if !declared && is_identifier(texts[k - 1]) && texts[k - 1] != "return" {
+                    declared = true;
+                    if texts[k + 1] == "=" {
+                        let end = statement_end(k + 2);
+                        if !matches!(texts[k + 2..end], ["{", "0", "}"] | ["{", "}"]) {
+                            blockers.push(format!("`{root}` is initialized from a value"));
+                            continue;
+                        }
+                        sources.push(Ok(false));
+                    }
+                    continue;
+                }
+                if texts[k - 1] == "&" && texts[k - 2] != "&" && texts[k + 1] != "." {
+                    blockers.push(format!(
+                        "the object `{root}` holding the copy escapes (its address is taken)"
+                    ));
+                    continue;
+                }
+                if texts[k + 1] == "=" && texts[k + 2] != "=" {
+                    blockers.push(format!("`{root}` is assigned whole"));
+                    continue;
+                }
+                continue;
+            }
+            if !declared {
+                blockers.push(format!("`{root}` is not a local object of this function"));
+                continue;
+            }
+            let after = k + 2 * base.len() - 1;
+            if texts[k - 1] == "&" && texts[k - 2] != "&" {
+                // `X->p = &copy;` installs it; `memcpy(&copy, &D, …)` copies D.
+                if k >= 6
+                    && texts[k - 2] == "="
+                    && texts[k - 3] == hops.instance_plugin_field
+                    && texts[k - 4] == ">"
+                    && texts[k - 5] == "-"
+                    && is_identifier(texts[k - 6])
+                    && texts[after] == ";"
+                {
+                    installed.insert(texts[k - 6].to_owned());
+                } else if k >= 3
+                    && texts[k - 3] == "memcpy"
+                    && texts[k - 2] == "("
+                    && texts[after] == ","
+                    && texts[after + 1] == "&"
+                    && is_identifier(texts[after + 2])
+                    && texts[after + 3] == ","
+                {
+                    sources.push(self.descriptor_source(texts[after + 2]));
+                } else {
+                    blockers.push("the copy's address is passed on".to_owned());
+                    continue;
+                }
+                continue;
+            }
+            if (texts[k - 1] == "+" && texts[k - 2] == "+")
+                || (texts[k - 1] == "-" && texts[k - 2] == "-")
+            {
+                blockers.push("the copy is updated in place".to_owned());
+                continue;
+            }
+            match (texts[after], texts[after + 1]) {
+                ("=", next) if next != "=" => {
+                    let end = statement_end(after + 1);
+                    match &texts[after + 1..end] {
+                        ["*", instance, "-", ">", field]
+                            if *field == hops.instance_plugin_field && is_identifier(instance) =>
+                        {
+                            sources.push(self.instance_flag(g, instance));
+                        }
+                        [descriptor] if is_identifier(descriptor) => {
+                            sources.push(self.descriptor_source(descriptor));
+                        }
+                        other => {
+                            blockers
+                                .push(format!("the copy is assigned from `{}`", other.join(" ")));
+                            continue;
+                        }
+                    }
+                }
+                (".", field) if field == hops.plugin_flags_field => {
+                    let op = texts[after + 2];
+                    let next = texts[after + 3];
+                    if op == "=" && next != "=" {
+                        let end = statement_end(after + 3);
+                        sources.push(flags_operands(
+                            &texts[after + 3..end],
+                            hops,
+                            self.numeric_macros,
+                        ));
+                    } else if op == "|" && next == "=" {
+                        let end = statement_end(after + 4);
+                        match flags_operands(&texts[after + 4..end], hops, self.numeric_macros) {
+                            Ok(false) => {}
+                            other => sources.push(other),
+                        }
+                    } else if matches!(
+                        (op, next),
+                        ("&" | "^" | "+" | "-" | "*" | "/" | "%", "=")
+                            | ("+", "+")
+                            | ("-", "-")
+                            | ("<", "<")
+                            | (">", ">")
+                    ) {
+                        blockers.push("the copy's flags are updated in place".to_owned());
+                        continue;
+                    }
+                }
+                _ => {}
+            }
+        }
+        let installed = installed.iter().collect::<Vec<_>>();
+        let instance = match installed[..] {
+            [instance] => self.instance_flag(g, instance),
+            _ => Err("the copy is not installed on exactly one instance".to_owned()),
+        };
+        if sources.is_empty() {
+            blockers.push("the copy is never initialized".to_owned());
+        }
+        for derivation in sources.iter().chain(std::iter::once(&instance)) {
+            if let Err(why) = derivation
+                && !blockers.contains(why)
+            {
+                blockers.push(why.clone());
+            }
+        }
+        if !blockers.is_empty() {
+            return Err(blockers.join("; "));
+        }
+        let copied = sources.into_iter().reduce(join_flags).unwrap_or(Ok(true));
+        join_flags(copied, instance)
+    }
+
+    fn descriptor_source(&self, name: &str) -> Derivation {
+        match self.descriptor_objects.get(name) {
+            Some(Some(flag)) => Ok(*flag),
+            _ => Err(format!(
+                "the copy's source `{name}` is not a derived descriptor"
+            )),
+        }
+    }
+
+    /// Step B for one registration: `registrant` registered in `function` on
+    /// that function's first parameter, `function` stored only in fields of
+    /// plugin copies.
+    fn registration(&self, function: usize, instance: Option<&str>) -> Derivation {
+        let name = &self.functions[function];
+        let definitions = self
+            .definitions
+            .iter()
+            .filter(|d| self.index[&d.census_name] == function)
+            .collect::<Vec<_>>();
+        let [definition] = definitions[..] else {
+            return Err(format!("`{name}` is not defined once"));
+        };
+        let Some(parameter) = definition.first_parameter.as_deref() else {
+            return Err(format!("`{name}` has no named first parameter"));
+        };
+        if instance != Some(parameter) {
+            return Err(format!(
+                "the registration in `{name}` is not on its first parameter"
+            ));
+        }
+        let texts = self.texts(definition.file);
+        if (definition.body.0..=definition.body.1).any(|k| {
+            texts[k] == parameter
+                && !matches!(texts[k - 1], "." | ">")
+                && texts[k + 1] == "="
+                && texts[k + 2] != "="
+        }) {
+            return Err(format!("`{name}` reassigns its instance parameter"));
+        }
+        if self.taken.contains(&function)
+            || self.spawns.iter().any(|(_, entry)| *entry == function)
+            || self
+                .direct_edges
+                .iter()
+                .any(|edge| edge.callee == function && edge.hop == ReadHop::Direct)
+        {
+            return Err(format!(
+                "`{name}` is called or named other than through a plugin field"
+            ));
+        }
+        let stores = self
+            .field_stores
+            .iter()
+            .filter(|(id, ..)| *id == function)
+            .collect::<Vec<_>>();
+        let registered = self
+            .registrants
+            .values()
+            .filter(|set| set.contains_key(&function))
+            .count();
+        if stores.is_empty()
+            || registered
+                != stores
+                    .iter()
+                    .map(|(_, f, ..)| f)
+                    .collect::<BTreeSet<_>>()
+                    .len()
+        {
+            return Err(format!(
+                "`{name}` is not registered only through plugin fields"
+            ));
+        }
+        let mut flag: Derivation = Ok(false);
+        for (_, _, file, position) in stores {
+            let texts = self.texts(*file);
+            if texts[position - 1] != "." {
+                return Err(format!(
+                    "`{name}` is stored through a pointer, not in a local plugin copy"
+                ));
+            }
+            let mut start = position - 1;
+            while start >= 2 && texts[start] == "." && is_identifier(texts[start - 1]) {
+                start -= 2;
+            }
+            let base = texts[start + 1..position - 1]
+                .iter()
+                .copied()
+                .filter(|t| *t != ".")
+                .collect::<Vec<_>>();
+            if base.is_empty() || matches!(texts[start], "-" | ">" | ")" | "]") {
+                return Err(format!(
+                    "`{name}` is stored through a pointer, not in a local plugin copy"
+                ));
+            }
+            let Some(g) = self.definition_at(*file, *position) else {
+                return Err(format!("`{name}` is stored outside a function"));
+            };
+            flag = join_flags(flag, self.copy_flag(g, &base));
+        }
+        flag
+    }
+}
+
+/// Step B (card W47-LOOP-OWNER-TYPED-DISPATCH): the coroutine flag of each
+/// collector registrant registered outside a plugin directory. The route
+/// switch reads the instance's flag, set by its constructor from the plugin it
+/// was created from, so a registrant registered in a callback of a runtime
+/// plugin copy is derived to run no coroutine only when the copy's own flags
+/// and the flag of the one instance it is installed on both derive none.
+fn derive_instance_flags(step: &StepB<'_>) -> BTreeMap<usize, InstanceFlag> {
+    // registrant -> (registering function, instance argument, file).
+    type Registrations<'r> = Vec<(usize, Option<&'r str>, usize)>;
+    let mut by_registrant: BTreeMap<usize, Registrations<'_>> = BTreeMap::new();
+    for (registrant, function, instance, file) in step.collector_registrations {
+        by_registrant
+            .entry(*registrant)
+            .or_default()
+            .push((*function, instance.as_deref(), *file));
+    }
+    let mut flags = BTreeMap::new();
+    for (registrant, registrations) in by_registrant {
+        if registrations
+            .iter()
+            .all(|(_, _, file)| step.files[*file].path.starts_with(step.hops.plugin_root))
+        {
+            continue;
+        }
+        let stored = step.field_stores.iter().any(|(id, ..)| *id == registrant);
+        let derivation = if stored {
+            Err(format!(
+                "`{}` is also stored in a field",
+                step.functions[registrant]
+            ))
+        } else {
+            registrations
+                .iter()
+                .map(|(function, instance, _)| step.registration(*function, *instance))
+                .reduce(join_flags)
+                .unwrap_or_else(|| Err("no registration".to_owned()))
+        };
+        let (derived, reason) = match derivation {
+            Ok(false) => (
+                Some(false),
+                "the copy's flags and its instance's creating plugin derive no coroutine"
+                    .to_owned(),
+            ),
+            Ok(true) => (Some(true), "the coroutine flag is derived".to_owned()),
+            Err(why) => (None, why),
+        };
+        flags.insert(registrant, InstanceFlag { derived, reason });
+    }
+    flags
 }
 
 /// Macros every definition of which writes no name (a number): a flags
