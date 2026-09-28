@@ -178,8 +178,11 @@ filename-keyed manifest; the new baseline for the next card),
 `compare-{corpus,system,slice}.json` ([`scripts/compare.py`](scripts/compare.py)),
 `callers-before/`, `census/` and `census-summary.json`. BEFORE reproduces all
 three baselines (corpus `resource-diagnostics.json` byte-identical; system and
-slice 0 mismatches under `compose3.py`). Binary SHA-256s: BEFORE `5a1b8adc…`,
-final AFTER in `artifacts/after/binary.sha256`.
+slice 0 mismatches under `compose3.py`). Binary SHA-256s: BEFORE `5a1b8adc…` (base),
+final AFTER `164fd872…` (built at `a905ef44`; a first AFTER at `86c882fc`,
+binary `21f8a30a…`, gave byte-identical `resource-diagnostics.json` on all
+three routes: only formatting and clippy changes lie between them).
+`finalize.sh` writes the comparisons and archives.
 
 ## 5. Lean
 

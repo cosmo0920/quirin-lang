@@ -1,0 +1,302 @@
+{
+ "before": {
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 245,
+   "Safe": 24,
+   "Unsafe": 1
+  },
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  }
+ },
+ "after": {
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  "function_rows": {
+   "Unknown": 245,
+   "Safe": 24,
+   "Unsafe": 1
+  },
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_ingress_primitives_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_destroy` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17862,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17862,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_ingress_primitives_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17883,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17883,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_destroy` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     18864,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18864,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_exit",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17506,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `pthread_join`",
+     17506,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17268,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17268,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_get_status",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_destroy` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17582,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17583,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `pthread_cond_wait` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17579,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17579,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17582,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17583,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_set_status",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_cond_signal` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     17568,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17568,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "do_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     19016,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     19027,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `pthread_join`",
+     19016,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `pthread_join`",
+     19027,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "flb_stop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     19064,
+     1
+    ],
+    [
+     "unsupported",
+     "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+     19076,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `pthread_join`",
+     19064,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `pthread_join`",
+     19076,
+     1
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,300 @@
+[
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_ingress_primitives_destroy",
+  "callee": "pthread_cond_destroy",
+  "line": 78,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_ingress_primitives_init",
+  "callee": "pthread_cond_init",
+  "line": 106,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_instance_destroy",
+  "callee": "pthread_cond_destroy",
+  "line": 1335,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_ingress_primitives_destroy",
+  "callee": "pthread_cond_destroy",
+  "line": 78,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_ingress_primitives_init",
+  "callee": "pthread_cond_init",
+  "line": 106,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_instance_destroy",
+  "callee": "pthread_cond_destroy",
+  "line": 1335,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_create",
+  "callee": "pthread_cond_init",
+  "line": 248,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_exit",
+  "callee": "pthread_join",
+  "line": 607,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_set_status",
+  "callee": "pthread_cond_signal",
+  "line": 693,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_wait",
+  "line": 710,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_destroy",
+  "line": 715,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_init",
+  "line": 716,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_create",
+  "callee": "pthread_cond_init",
+  "line": 248,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_exit",
+  "callee": "pthread_join",
+  "line": 607,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_set_status",
+  "callee": "pthread_cond_signal",
+  "line": 693,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_wait",
+  "line": 710,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_destroy",
+  "line": 715,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread_instance_get_status",
+  "callee": "pthread_cond_init",
+  "line": 716,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_create",
+  "callee": "flb_stop",
+  "line": 215,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_stop`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "mk_utils_worker_spawn",
+  "line": 969,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_utils_worker_spawn`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "pthread_join",
+  "line": 984,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "pthread_join",
+  "line": 999,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_stop",
+  "callee": "pthread_join",
+  "line": 1058,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_stop",
+  "callee": "pthread_join",
+  "line": 1077,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_create",
+  "callee": "flb_stop",
+  "line": 215,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `flb_stop`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "mk_utils_worker_spawn",
+  "line": 969,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_utils_worker_spawn`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "pthread_join",
+  "line": 984,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "do_start",
+  "callee": "pthread_join",
+  "line": 999,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_stop",
+  "callee": "pthread_join",
+  "line": 1058,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_stop",
+  "callee": "pthread_join",
+  "line": 1077,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `pthread_join`"
+  ]
+ }
+]

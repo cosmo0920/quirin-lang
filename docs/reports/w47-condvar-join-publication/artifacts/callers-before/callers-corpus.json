@@ -1,0 +1,96 @@
+[
+ {
+  "file": "mk_core/mk_utils.c",
+  "function": "mk_utils_worker_spawn",
+  "callee": "pthread_create",
+  "line": 284,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_clock.c",
+  "function": "mk_clock_exit",
+  "callee": "pthread_join",
+  "line": 133,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_lib.c",
+  "function": "mk_start",
+  "callee": "mk_utils_worker_spawn",
+  "line": 193,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_utils_worker_spawn`"
+  ]
+ },
+ {
+  "file": "mk_server/mk_lib.c",
+  "function": "mk_stop",
+  "callee": "pthread_join",
+  "line": 290,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_launch_worker_loop",
+  "callee": "pthread_cond_signal",
+  "line": 407,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_launch_thread",
+  "callee": "pthread_create",
+  "line": 445,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_launch_thread",
+  "callee": "pthread_cond_wait",
+  "line": 456,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_init",
+  "callee": "pthread_cond_init",
+  "line": 491,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_workers_join",
+  "callee": "pthread_join",
+  "line": 917,
+  "declared_by_this_card": true,
+  "status": "Unknown",
+  "leaves": []
+ },
+ {
+  "file": "mk_server/monkey.c",
+  "function": "mk_server_setup",
+  "callee": "mk_utils_worker_spawn",
+  "line": 216,
+  "declared_by_this_card": false,
+  "status": "Unknown",
+  "leaves": [
+   "call to uncontracted function `mk_utils_worker_spawn`"
+  ]
+ }
+]
