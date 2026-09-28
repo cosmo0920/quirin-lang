@@ -49,6 +49,9 @@ pub mod source_call_use;
 #[cfg(feature = "indirect-census")]
 pub mod sub_object_store_census;
 pub mod teardown_source;
+// Card W47-CONDVAR-JOIN-PUBLICATION (rule 10q): condvar publication and
+// join-before-release, read lexically.
+pub mod condvar_census;
 // Card W47-LOOP-OWNER-CONTRACTS (rule 10p): derived thread identity.
 pub mod thread_entry_census;
 #[cfg(feature = "indirect-census")]

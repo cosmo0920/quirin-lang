@@ -5,6 +5,7 @@
     "providers/quirin-provider-libc/contracts/libc/errno.qv",
     "providers/quirin-provider-libc/contracts/libc/memory.qv",
     "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+    "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
     "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
     "providers/quirin-provider-libc/contracts/libc/math.qv",
     "providers/quirin-provider-libc/contracts/libc/process.qv",

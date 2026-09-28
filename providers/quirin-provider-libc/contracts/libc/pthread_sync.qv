@@ -1,0 +1,131 @@
+module contract;
+
+// Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q, contract specification
+// C04.10, constraint 27 as amended). Every contract here is `revision
+// flexible` (C06.2), as every libc contract is: it binds by name and declared
+// signature, and the libc/C-standard ABI premise is the run's one standing
+// assumption.
+//
+// POSIX condition variables and thread join -- resource-projection vocabulary
+// version 1, with the thread-synchronization obligation of C04.10.
+//
+// ## Read from the declarations in the analysed units
+//
+//   extern int pthread_cond_init (pthread_cond_t *__restrict __cond,
+//                                 const pthread_condattr_t *__restrict __cond_attr)
+//     __THROW __nonnull ((1));
+//   extern int pthread_cond_destroy (pthread_cond_t *__cond) __THROW __nonnull ((1));
+//   extern int pthread_cond_signal (pthread_cond_t *__cond) __THROWNL __nonnull ((1));
+//   extern int pthread_cond_wait (pthread_cond_t *__restrict __cond,
+//                                 pthread_mutex_t *__restrict __mutex)
+//     __nonnull ((1, 2));
+//   extern int pthread_cond_timedwait (pthread_cond_t *__restrict __cond,
+//                                      pthread_mutex_t *__restrict __mutex,
+//                                      const struct timespec *__restrict __abstime)
+//     __nonnull ((1, 2, 3));
+//   extern int pthread_join (pthread_t __th, void **__thread_return);
+//
+// (`/usr/include/pthread.h:219`, `:1112-1148` on the audited host.)
+// `pthread_t` is `unsigned long int` (`u64`); a `restrict` after the last `*`
+// qualifies the parameter object and is dropped (C04.1).
+//
+// ## The obligation, which is the point
+//
+// Each declaration carries `requires resource_thread_sync(...)`: it applies at
+// a call site only where a consumer DISCHARGES the obligation -- a wait inside
+// a loop that rechecks a predicate under the mutex it names, a signal while
+// the condvar's paired mutex is held, an init/destroy in a quiescent phase, a
+// join whose zero result the path checks (rule 10q). The per-unit resource
+// route derives no thread, predicate loop or join, so there every call of
+// these functions is refused, exactly as an uncontracted call is; only the
+// census route can discharge the obligation.
+//
+// ## The custody statement, and only it
+//
+// None of these calls allocates, frees, reallocates or takes custody of a
+// heap object: the condvar, the mutex, the attribute object and the deadline
+// are caller storage on both sides of the call (`resource_borrowed`), the
+// thread identifier is a scalar, and every result is an `int`
+// (`resource_return_none()`). `pthread_join` writes the joined thread's exit
+// value through `thread_return` when it is not null; that value's custody is
+// the thread's, which v1 cannot state, so the declaration applies only where
+// the actual is the null pointer constant (`resource_literal_argument`).
+// `pthread_cond_init`/`pthread_cond_destroy` open and close an in-place
+// lifecycle that v1 cannot state either (libc/threads.qv declines
+// `mtx_init`/`mtx_destroy` on that ground); here the lifecycle is the
+// obligation's quiescent-phase check, and the borrowed modes say only that no
+// heap custody moves.
+//
+// ## Deliberately NOT declared (constraint 27 keeps them refused)
+//
+//   `pthread_create` retains `arg` and runs a callback (rule 10j); the census
+//   reads it as the spawn hop. `pthread_cond_broadcast`, the C11 `cnd_*`
+//   calls (libc/threads.qv's custody declarations are unchanged),
+//   `pthread_rwlock_*`, `pthread_mutex_trylock`/`timedlock` and the
+//   attribute and static-initialiser shapes stay as they were.
+//
+// ## What this says nothing about
+//
+// Nothing here is a mutual-exclusion, ordering, deadlock, liveness or
+// error-return claim, and nothing is Safe because of it: the obligation can
+// only refuse on a route that does not discharge it.
+
+extern fn pthread_cond_init(cond: ptr<mut, u8>, attr: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(cond, cond_init);
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_cond_destroy(cond: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(cond, cond_destroy);
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_cond_signal(cond: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(cond, cond_signal);
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_cond_wait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(cond, mutex, cond_wait);
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_cond_timedwait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>, abstime: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(cond, mutex, cond_timedwait);
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_borrowed(abstime);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_join(thread: u64, thread_return: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_thread_sync(thread, join);
+    requires resource_literal_argument(thread_return, 0);
+    ensures normal resource_borrowed(thread);
+    ensures normal resource_borrowed(thread_return);
+    ensures normal resource_return_none();
+};
