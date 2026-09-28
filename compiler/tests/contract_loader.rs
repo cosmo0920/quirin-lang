@@ -85,7 +85,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 55);
+    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 56);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -177,6 +178,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // typedef (`pthread_mutex_t *`) and withdrew them at every call site.
         ("pthread_mutex_lock", 1),
         ("pthread_mutex_unlock", 1),
+        // Card W47-CONDVAR-JOIN-PUBLICATION: every parameter borrowed, no
+        // result custody; the thread-synchronization obligation is a
+        // call-site precondition, not a custody mode.
+        ("pthread_cond_init", 2),
+        ("pthread_cond_destroy", 1),
+        ("pthread_cond_signal", 1),
+        ("pthread_cond_wait", 2),
+        ("pthread_cond_timedwait", 3),
+        ("pthread_join", 2),
         // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER adds the third declaration that
         // card wrote and then measured at payoff zero, now that the blocker it
         // named — the address-of-a-member actual refusing the statement before
@@ -1022,7 +1032,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // Combined W46 cards plus six metric getters and five routing queries:
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 55);
+    // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 56);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1247,7 +1258,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 118 -> 119: card W47-LOOP-OWNER-CONTRACTS adds
     // `fluent_bit/loop_owner.qv`, entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 119, "corpus module count");
+    // 119 -> 120: card W47-CONDVAR-JOIN-PUBLICATION adds
+    // `libc/pthread_sync.qv`, entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 120, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1406,9 +1419,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 54 -> 55 and 232 -> 236 by card W47-LOOP-OWNER-CONTRACTS: the four
     // collector operations of `fluent_bit/loop_owner.qv`, each with a declared
     // loop-owner obligation. Rejected unchanged.
+    // 55 -> 56 and 236 -> 242 by card W47-CONDVAR-JOIN-PUBLICATION: the six
+    // declarations of `libc/pthread_sync.qv`, each with a declared
+    // thread-synchronization obligation. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (55, 236, 216)
+        (56, 242, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

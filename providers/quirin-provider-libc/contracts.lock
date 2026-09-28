@@ -257,6 +257,36 @@
       "contract_sha256": "9b1bce57ad14220dc0ee1c6418eedc599b6da2e983d90fb3fbc157faf9eac26e"
     },
     {
+      "function": "pthread_cond_destroy",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "e09398e33d618bff53e549ba766ea2ae601d6f9d6de0617876d212ea04474a1f"
+    },
+    {
+      "function": "pthread_cond_init",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "68f8fd9acb55b1721468f210a29442e466752ee46d1e7e5a7fb3af69608573ff"
+    },
+    {
+      "function": "pthread_cond_signal",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "4929d1eff6c58eed539937a0f48cb07bae61b45ece587e5dfc69c457613e6c74"
+    },
+    {
+      "function": "pthread_cond_timedwait",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "7ac19fe84abf1e0ecaa359386512d4e27a32b5446b7bc80e204ebdd4a5a2d6a4"
+    },
+    {
+      "function": "pthread_cond_wait",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "b37cb296050923ca642c162a06360f721e220d340e1e5e6ff50f265a005cdd74"
+    },
+    {
+      "function": "pthread_join",
+      "module": "libc/pthread_sync.qv",
+      "contract_sha256": "b0bcd47946387052e4a59c1c90d1d142ba360ce9b9b5deba0595a85648ab3b15"
+    },
+    {
       "function": "pthread_kill",
       "module": "libc/threads.qv",
       "contract_sha256": "01f51ee40dc97836fa730f2496b418ff393bc92722c621c6a8e69310a5ed98d0"
