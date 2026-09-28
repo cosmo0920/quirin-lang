@@ -18,6 +18,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: the length query
     // (`lib/cfl/src/cfl_sds.c:193-200`): marker, borrowed string, `none`.
     ("cfl/sds_lifetime.qv", "cfl_sds_len", 3),
+    // Card W47-CALLEE-CLOSURE-R2: the zeroed arena allocation
+    // (`lib/cfl/src/cfl_arena.c:354-371`): marker, borrowed arena, count and
+    // size, and a nullable result interior to the arena.
+    ("cfl/sds_lifetime.qv", "cfl_arena_calloc", 5),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -847,6 +851,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W46-EXTERNAL-CALLEE-CONTRACTS: the atomic counter read
     // (`src/rdatomic.h:100-112`): marker, borrowed counter, `none`.
     ("librdkafka/memory.qv", "rd_atomic32_get", 3),
+    // Card W47-CALLEE-CLOSURE-R2: the whole-file reader
+    // (`src/rd.h:472-521`): marker, three borrowed arguments, and a
+    // nullable owned `rd_malloc` buffer.
+    ("librdkafka/memory.qv", "rd_file_read", 5),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",
