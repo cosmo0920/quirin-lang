@@ -41,6 +41,9 @@ inductive BindingEvent where
   | compound (n : Nat)
   /-- The object root of a sub-object store `s.f = …`. -/
   | subObjectStore (n : Nat)
+  /-- A formal the function's own contract or a custody use protects: it
+  holds a tracked identity at entry. -/
+  | protectedFormal (n : Nat)
   /-- The roots of an actual at a position its contract does not declare
   `Borrowed` (every position of an uncontracted or indirect callee). -/
   | custodyActual (roots : List Nat)
@@ -58,6 +61,7 @@ def seeds : BindingEvent → List Nat
   | .incDec n => [n]
   | .compound n => [n]
   | .subObjectStore n => [n]
+  | .protectedFormal n => [n]
   | .custodyActual roots => roots
   | _ => []
 

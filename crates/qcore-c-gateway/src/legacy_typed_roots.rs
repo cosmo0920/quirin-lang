@@ -30,6 +30,7 @@ impl Parser<'_> {
                         &index.enums,
                         self.contracts,
                         &self.variadic_tails,
+                        &self.protected_formals,
                     )
                     .ok()
                 })
@@ -87,9 +88,12 @@ impl Parser<'_> {
             let served = self.position_never_bound(&name);
             let lexical_may_bind = self.typed_types.may_bind(&name);
             let ast_may_bind = roots.may_bind(&name);
-            let lexical_declared = self.typed_types.declared_is_scalar(&name)
-                || self.typed_types.pointer_kind(&name).is_some();
-            let ast_declared = roots.declared_local(&name);
+            // As the assignment-operand hook reads them: never a formal.
+            let formal = self.formal_parameters.contains(&name);
+            let lexical_declared = !formal
+                && (self.typed_types.declared_is_scalar(&name)
+                    || self.typed_types.pointer_kind(&name).is_some());
+            let ast_declared = !formal && roots.declared_local(&name);
             let mut kinds = Vec::new();
             if lexical && lexical_never_bound && !ast {
                 kinds.push("ast-binds-lexical-never-bound");
@@ -115,6 +119,9 @@ impl Parser<'_> {
             }
             names.push(serde_json::json!({
                 "name": name,
+                "formal": formal,
+                "ast_answered": roots.answered(&name),
+                "ast_binding": roots.binding_reason(&name),
                 "lexical_never_bound": lexical_never_bound,
                 "lexical_closure_never_bound": lexical_ungated,
                 "ast_never_bound": ast,

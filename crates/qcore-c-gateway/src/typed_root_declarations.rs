@@ -73,6 +73,8 @@ struct Facts {
     /// Spellings of referenced objects this function does not declare.
     foreign: BTreeSet<String>,
     risky: BTreeSet<String>,
+    /// The first reason each risky name was bound (parity only).
+    reasons: BTreeMap<String, &'static str>,
     bound: BTreeSet<String>,
 }
 
@@ -96,6 +98,7 @@ impl RootDeclarations {
         enums: &EnumFacts,
         contracts: &ResourceContracts,
         variadic_tails: &BTreeSet<String>,
+        protected_formals: &BTreeSet<String>,
     ) -> Result<Self, Refusal> {
         let body = children(function)
             .iter()
@@ -120,6 +123,12 @@ impl RootDeclarations {
         let mut ids = BTreeSet::new();
         for formal in &formals {
             facts.declare(formal, DeclarationKind::Formal, enums, &mut ids);
+        }
+        // A formal the function's own contract (or a custody use) protects
+        // holds a tracked identity at entry.
+        for name in protected_formals {
+            facts.mark(name, "protected-formal");
+            facts.bound.insert(name.clone());
         }
         let mut walk = Walk {
             enums,
@@ -151,7 +160,7 @@ impl RootDeclarations {
                     continue;
                 }
                 if values.iter().any(|value| opaque(value, &facts)) {
-                    facts.risky.insert(destination.clone());
+                    facts.mark(destination, "assignment");
                     added = true;
                 }
             }
@@ -216,6 +225,17 @@ impl RootDeclarations {
         })
     }
 
+    /// Whether the reader answers for `name` at all (one formal or automatic
+    /// local, no other object of that spelling).
+    pub(crate) fn answered(&self, name: &str) -> bool {
+        self.unique(name).is_some()
+    }
+
+    /// The first reason the AST closure binds `name` (parity only).
+    pub(crate) fn binding_reason(&self, name: &str) -> Option<&'static str> {
+        self.facts.as_ref()?.reasons.get(name).copied()
+    }
+
     /// Every name this function declares (for the parity record).
     pub(crate) fn declared_names(&self) -> Vec<String> {
         self.facts
@@ -226,6 +246,12 @@ impl RootDeclarations {
 }
 
 impl Facts {
+    fn mark(&mut self, name: &str, reason: &'static str) {
+        if self.risky.insert(name.to_owned()) {
+            self.reasons.insert(name.to_owned(), reason);
+        }
+    }
+
     fn declare(
         &mut self,
         node: &Value,
@@ -260,8 +286,8 @@ struct Walk<'a, 'f> {
 }
 
 impl<'a> Walk<'a, '_> {
-    fn bind(&mut self, name: &str) {
-        self.facts.risky.insert(name.to_owned());
+    fn bind(&mut self, name: &str, reason: &'static str) {
+        self.facts.mark(name, reason);
         self.facts.bound.insert(name.to_owned());
     }
 
@@ -313,7 +339,7 @@ impl<'a> Walk<'a, '_> {
                         }
                         _ => {
                             if let Some(root) = object_root(left) {
-                                self.bind(root);
+                                self.bind(root, "sub-object-store");
                             }
                         }
                     }
@@ -321,14 +347,19 @@ impl<'a> Walk<'a, '_> {
             }
             "CompoundAssignOperator" => {
                 if let Some(root) = children(node).first().and_then(object_root) {
-                    self.bind(root);
+                    self.bind(root, "compound-assignment");
                 }
             }
             "UnaryOperator"
                 if matches!(node["opcode"].as_str(), Some("++") | Some("--") | Some("&")) =>
             {
+                let reason = if node["opcode"].as_str() == Some("&") {
+                    "address"
+                } else {
+                    "increment"
+                };
                 if let Some(root) = children(node).first().and_then(object_root) {
-                    self.bind(root);
+                    self.bind(root, reason);
                 }
             }
             "CallExpr" => self.call(node),
@@ -364,7 +395,7 @@ impl<'a> Walk<'a, '_> {
             let mut roots = Vec::new();
             variables(actual, &mut roots, true);
             for root in roots {
-                self.facts.risky.insert(root.to_owned());
+                self.facts.mark(root, "custody-actual");
             }
         }
     }
@@ -499,6 +530,7 @@ contract { requires resource_contract_v1; ensures normal resource_released(b, no
             &index.function,
             &index.enums,
             &contracts,
+            &BTreeSet::new(),
             &BTreeSet::new(),
         )
     }

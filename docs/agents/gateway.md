@@ -983,3 +983,37 @@ which is not a second authority.
     (trust boundary 28), and that a never-bound root reaches no tracked
     place (P2's premise). `QCore.TypedAccessPathPositions`;
     [report](../reports/w47-access-path-positions/README.md).
+
+<a id="constraint-10l"></a>
+
+10l. **A typed position's root premises are read from the Clang AST only
+    where the lexical declaration reader answers nothing, and never less
+    conservatively than the lexical closure.** Card
+    W47-TYPED-ROOT-DECLARATION-READER (`typed_root_declarations.rs`, hooks in
+    `legacy_typed_roots.rs`). Rule 10k's never-bound, `may_bind` and
+    declared-local premises are the lexical answers wherever
+    `FunctionTypes` read the function, unchanged. Where it did not, a name is
+    answered only when the function's `FunctionDecl` declares it exactly once,
+    as a formal or an automatic local, and no reference names another object
+    of that spelling; it is never bound when neither the AST closure (the
+    object root of a `&` operand, an increment, a compound assignment or a
+    sub-object store; every variable of an actual at a position its contract
+    does not declare `Borrowed`, except an `->` base; an assignment or
+    initialiser whose value holds a call, an address, a statement expression,
+    a bound name or an undeclared one, to its fixed point) nor the lexical
+    closure, computed there too, binds it. A returned pointer's root is also
+    named by neither `may_bind` (rule 5b). A declared local is one automatic,
+    non-formal declaration of a type the typed reader reads; every lexical
+    `yes` stands. An unprototyped (K&R) definition, inline assembly, a block,
+    a block-scope `typedef`, a missing body or AST, and an unsettled closure
+    answer nothing. **Do not** serve the AST answer where the lexical reader
+    answered, drop the lexical closure from the join, answer a shadowed,
+    `static` or file-scope name, or relax the pointer-return premise to
+    never-bound alone. The twelve forecast misses that motivated this card
+    were measured to refuse **with every premise granted** (a `T *const`
+    value, a rule 5j array decay, a `void *` bit-cast), so it moves none of
+    them (`W47-TYPED-CONST-POINTER-VALUE`). Parity runs record both readers
+    per function (`position: "root-declarations"`). Premises stated, not
+    proved: faithful Clang extraction (trust boundary 28), and that the Rust
+    loop returns a seeded, settled set. `QCore.TypedRootDeclarations`;
+    [report](../reports/w47-typed-root-declaration-reader/README.md).
