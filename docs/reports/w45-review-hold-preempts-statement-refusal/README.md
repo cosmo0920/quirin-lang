@@ -69,7 +69,7 @@ accusing. So the reasons are **re-derived**
   exactly once. So the change can only move a `Pending` row to `Unknown`.
 
 The held-call diagnostics stay, so the `pending_human_review` tally, the unit
-reason's held-call component and its reason code are unchanged (see §6 for
+reason's held-call component and its reason code are unchanged (see §9 for
 the code).
 
 ## 3. The other holds (task item 3)
@@ -134,7 +134,11 @@ is a `Safe` move):
   end-to-end test's `user_drop` `Pending → Unknown` with reasons
   `contract-pin-mismatch, unsupported`, and `compare`'s coverage-lost reasons
   follow. `contract_revision_identities.rs`: revision C drops the release,
-  `user_drop` `Pending → Unknown`. The W45-CONTRACT-REVISION-MODE report's
+  `user_drop` `Pending → Unknown`. `sr5_pending_gates.rs` used the
+  `dropped-release` mutation to make its `Pending` control, which is now
+  `Unknown`; its control is now a body change that keeps the release
+  (the identities test's revision B), `Pending` as before, and the gate it
+  pins is unchanged. The W45-CONTRACT-REVISION-MODE report's
   harness table is frozen evidence of its checkpoint and is not edited.
 
 ## 5. Corpus, system and slice
