@@ -40,7 +40,7 @@ use crate::neutral_position::ExpressionRole;
 use crate::typed_access_path::{StatementIndex, StatementPlan, record_position};
 
 impl Parser<'_> {
-    fn typed_positions_index(&self) -> Option<&StatementIndex> {
+    pub(super) fn typed_positions_index(&self) -> Option<&StatementIndex> {
         let function = &self.typed_path_function;
         self.typed_path_index
             .get_or_init(|| StatementIndex::read(function))
@@ -50,9 +50,10 @@ impl Parser<'_> {
     /// The premise a pointer read handed out of the body by `return`
     /// requires of every root: the custody closure proves it never bound, and
     /// the declaration reader's `may_bind` over-approximation (constraint 5b)
-    /// does not name it.
+    /// does not name it. Rule 10l serves both from the AST where the lexical
+    /// declaration reader answers nothing.
     fn pointer_root(&self, name: &str) -> bool {
-        self.typed_bases.never_bound(name) && !self.typed_types.may_bind(name)
+        self.position_pointer_root(name)
     }
 
     /// The read of one admitted plan with no destination and no frame.
@@ -92,7 +93,7 @@ impl Parser<'_> {
         let line = tokens.first()?.line;
         let plan = self
             .typed_positions_index()?
-            .condition(&texts, line, |name| self.typed_bases.never_bound(name));
+            .condition(&texts, line, |name| self.position_never_bound(name));
         record_position(
             &self.typed_path_function,
             line,
@@ -145,8 +146,7 @@ impl Parser<'_> {
         } else {
             end - 1
         };
-        let declared = self.typed_types.declared_is_scalar(name)
-            || self.typed_types.pointer_kind(name).is_some();
+        let declared = self.position_declared_local(name);
         if !declared
             || self.descriptor_names.contains(name)
             || self.formal_parameters.contains(name)
@@ -168,7 +168,7 @@ impl Parser<'_> {
         let plan = self
             .typed_positions_index()?
             .assignment(&statement_texts, line, |candidate| {
-                self.typed_bases.never_bound(candidate)
+                self.position_never_bound(candidate)
             });
         record_position(
             &self.typed_path_function,
@@ -248,7 +248,7 @@ impl Parser<'_> {
         let plan = self.typed_positions_index()?.returned(
             &texts,
             line,
-            |name| self.typed_bases.never_bound(name),
+            |name| self.position_never_bound(name),
             |name| self.pointer_root(name),
         );
         record_position(
@@ -274,7 +274,7 @@ impl Parser<'_> {
         let plan =
             self.typed_positions_index()?
                 .argument(callee, index, arity, argument, line, |name| {
-                    self.typed_bases.never_bound(name)
+                    self.position_never_bound(name)
                 });
         record_position(
             &self.typed_path_function,
@@ -302,7 +302,7 @@ impl Parser<'_> {
         }
         let candidate = self.typed_positions_index().and_then(|typed| {
             typed.argument(callee, index, arity, argument, line, |name| {
-                self.typed_bases.never_bound(name)
+                self.position_never_bound(name)
             })
         });
         crate::typed_access_path::record_position_legacy(
@@ -332,7 +332,7 @@ impl Parser<'_> {
         let Some(line) = tokens.first().map(|token| token.line) else {
             return;
         };
-        let never_bound = |name: &str| self.typed_bases.never_bound(name);
+        let never_bound = |name: &str| self.position_never_bound(name);
         let candidate = self
             .typed_positions_index()
             .and_then(|index| match position {

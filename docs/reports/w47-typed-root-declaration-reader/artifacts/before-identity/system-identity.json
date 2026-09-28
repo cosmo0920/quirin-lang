@@ -1,0 +1,51 @@
+{
+ "parity.jsonl": {
+  "baseline_sha256": "df6eaa726f3bcfcf706a49f5f1085fb745ff8e2449d29e326b320e05c6d069ec",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "df6eaa726f3bcfcf706a49f5f1085fb745ff8e2449d29e326b320e05c6d069ec",
+  "sorted_rows": true
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "baseline_sha256": "cce3afac57e38b4e2f7e472becc7e9b82f79ac3b52f0a8d0f267593b2bffdcb5",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "cce3afac57e38b4e2f7e472becc7e9b82f79ac3b52f0a8d0f267593b2bffdcb5",
+  "sorted_rows": true
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.contracts.json": {
+  "baseline_sha256": "d8d4fea1ee093ea390de8f11e40ebfda41ebc29fa1ed9528ceec22bb8cde2447",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "f9b023c02e91383a2ad62a84cc1683d9520cacda56c03c222c573b6715c7cd26",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.invocation.json": {
+  "baseline_sha256": "c7ce500779f0d7d5f89347380ac63fae44738307e5a2d255e5708476164a9e67",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "463e22facbe4990eea02ba9ed16ea06e9dea718d9826f8052ffa5160b8425357",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.json": {
+  "baseline_sha256": "eced6c753c7e3262bc6249905714cb1c854ab047216e8a583fe6086741516c28",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "9256ef6c7ca6e056a9313a546337a9b9a0a6d0627a38cf66ab617d67506a1d62",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.source-effects.json": {
+  "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+  "sorted_rows": false
+ }
+}

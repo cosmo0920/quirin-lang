@@ -1,0 +1,89 @@
+/results[16]/bounds/resource_contracts:4ac71eed0b35b81830cdb39a
+   present
+   absent
+/results[16]/bounds/resource_contracts:6bd426bbce97aea9314d90a6
+   absent
+   present
+/results[16]/evidence/coverage[0]
+   'resource_contracts:4ac71eed0b35b81830cdb39a'
+   'resource_contracts:6bd426bbce97aea9314d90a6'
+/results[16]/evidence/unit/build_digest
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[16]/import_identity/configuration_digest
+   '48b7c8020f5edc2dd53d80435cce7088d9474ac290a195774d97204d7b71d1d9'
+   'deeca12bdf3cb79adde4fa2f9c150a48a4c0e05e253bc3346d8501613e16f7af'
+/results[16]/import_identity/helpers/cio_error_reset/configuration_digest
+   '48b7c8020f5edc2dd53d80435cce7088d9474ac290a195774d97204d7b71d1d9'
+   'deeca12bdf3cb79adde4fa2f9c150a48a4c0e05e253bc3346d8501613e16f7af'
+/results[16]/task/contract_sources/qcore:boolean-field-import:v1
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[16]/task/obligations[0]/obligation_id
+   'resource_contracts:4ac71eed0b35b81830cdb39a'
+   'resource_contracts:6bd426bbce97aea9314d90a6'
+/results[16]/task/unit/build_digest
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[16]/witness/task_digest
+   'fcc7a80d009431b411211c77555654abeb3ebf542dcd59d5f13f19ffe903088f'
+   'e1ef38b3857a50951c2d3249bf43fe22eb80eb3c906308761c1f981d0cc504bb'
+/results[24]/bounds/resource_contracts:215e88e9bdb946bbf6cff256
+   absent
+   present
+/results[24]/bounds/resource_contracts:adb286926c97899c5fcb077c
+   present
+   absent
+/results[24]/evidence/coverage[0]
+   'resource_contracts:adb286926c97899c5fcb077c'
+   'resource_contracts:215e88e9bdb946bbf6cff256'
+/results[24]/evidence/unit/build_digest
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[24]/import_identity/configuration_digest
+   '48b7c8020f5edc2dd53d80435cce7088d9474ac290a195774d97204d7b71d1d9'
+   'deeca12bdf3cb79adde4fa2f9c150a48a4c0e05e253bc3346d8501613e16f7af'
+/results[24]/import_identity/helpers/cio_error_reset/configuration_digest
+   '48b7c8020f5edc2dd53d80435cce7088d9474ac290a195774d97204d7b71d1d9'
+   'deeca12bdf3cb79adde4fa2f9c150a48a4c0e05e253bc3346d8501613e16f7af'
+/results[24]/task/contract_sources/qcore:boolean-field-import:v1
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[24]/task/obligations[0]/obligation_id
+   'resource_contracts:adb286926c97899c5fcb077c'
+   'resource_contracts:215e88e9bdb946bbf6cff256'
+/results[24]/task/unit/build_digest
+   'c3007bf934eb3042ebdd37dcf5ae9851075b2003cf2024d6dd6eb78c74f97796'
+   '6009cfcd51155cce4491704fa609338366da9dc9b5dd85dafac25b72045c02b1'
+/results[24]/witness/task_digest
+   'e5dd67791ae1bf46bc84975592e68edf0c6947b29a3d0b7a923c629430ad6212'
+   'd531357b6c6365d6a054b794b70b1f0d98604773546b47141270133417b27389'
+/results[63]/bounds/resource_contracts:12cc485ff5182310efd2dd30
+   absent
+   present
+/results[63]/bounds/resource_contracts:9c659193a1d12fbaf7b11be7
+   present
+   absent
+/results[63]/evidence/coverage[0]
+   'resource_contracts:9c659193a1d12fbaf7b11be7'
+   'resource_contracts:12cc485ff5182310efd2dd30'
+/results[63]/evidence/unit/build_digest
+   '505a7b95c4dfa1519d26cfa2540b368b6ccf84477118a34313085f9984bb065d'
+   '8d741a6c6aacac019ad364a7e69da83c514f6af332ac2821bb10a6c2f8e12f87'
+/results[63]/import_identity/configuration_digest
+   '9fda8b318251b938e2576e2274a468248ed685d19de94ee9ba1fa87f508d9856'
+   '7d07be2edf9982a25e4d3d4c29687fd51061ff2f4ef6cfaef541f1b17fe41055'
+/results[63]/task/contract_sources/qcore:boolean-field-import:v1
+   '505a7b95c4dfa1519d26cfa2540b368b6ccf84477118a34313085f9984bb065d'
+   '8d741a6c6aacac019ad364a7e69da83c514f6af332ac2821bb10a6c2f8e12f87'
+/results[63]/task/obligations[0]/obligation_id
+   'resource_contracts:9c659193a1d12fbaf7b11be7'
+   'resource_contracts:12cc485ff5182310efd2dd30'
+/results[63]/task/unit/build_digest
+   '505a7b95c4dfa1519d26cfa2540b368b6ccf84477118a34313085f9984bb065d'
+   '8d741a6c6aacac019ad364a7e69da83c514f6af332ac2821bb10a6c2f8e12f87'
+/results[63]/witness/task_digest
+   '9a5b6b76269a8b88c382d877e67417c17bcb419cec96acd7f451e947bcd68a9c'
+   '5dd1c5951ec05f4932e59c0fd18089ea5286a1db8e3614d3abe924c4fc03e716'
+total differences: 29
+by last key: {'resource_contracts:4ac71eed0b35b81830cdb39a': 1, 'resource_contracts:6bd426bbce97aea9314d90a6': 1, 'coverage[]': 3, 'build_digest': 6, 'configuration_digest': 5, 'qcore:boolean-field-import:v1': 3, 'obligation_id': 3, 'task_digest': 3, 'resource_contracts:215e88e9bdb946bbf6cff256': 1, 'resource_contracts:adb286926c97899c5fcb077c': 1, 'resource_contracts:12cc485ff5182310efd2dd30': 1, 'resource_contracts:9c659193a1d12fbaf7b11be7': 1}

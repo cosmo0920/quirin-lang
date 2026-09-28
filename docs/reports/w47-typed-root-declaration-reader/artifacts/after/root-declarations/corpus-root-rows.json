@@ -1,0 +1,648 @@
+{
+ "distinct_function_records": 6969,
+ "records_differing_between_analyses": 94,
+ "served": {
+  "lexical": 6731,
+  "ast": 230,
+  "none": 8
+ },
+ "declared_names": 30677,
+ "disagreement_kinds": {
+  "ast-binds-lexical-never-bound": {
+   "names": 1095,
+   "functions": 515
+  },
+  "ast-declared-only": {
+   "names": 3044,
+   "functions": 1339
+  },
+  "ast-may-bind-only": {
+   "names": 175,
+   "functions": 128
+  },
+  "lexical-binds-ast-never-bound": {
+   "names": 448,
+   "functions": 308
+  },
+  "lexical-declared-only": {
+   "names": 1405,
+   "functions": 511
+  },
+  "lexical-may-bind-only": {
+   "names": 768,
+   "functions": 448
+  }
+ },
+ "changed_functions_by_served": {
+  "ast": 24,
+  "lexical": 15
+ },
+ "changed_functions": [
+  {
+   "function": "compare_fqname",
+   "library": "cmetrics",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 5980, \"origin\": \"cmt_filter.c:526\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_committed",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23932, \"origin\": \"rdkafka.c:5387\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23954, \"origin\": \"rdkafka.c:5421\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rk`\", \"line\": 23932, \"origin\": \"rdkafka.c:5387\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 23932, \"origin\": \"rdkafka.c:5387\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rko`\", \"line\": 23954, \"origin\": \"rdkafka.c:5421\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_consumer_close_q",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23800, \"origin\": \"rdkafka.c:5161\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rk`\", \"line\": 23800, \"origin\": \"rdkafka.c:5161\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 23800, \"origin\": \"rdkafka.c:5161\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_consumer_poll",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23789, \"origin\": \"rdkafka.c:5137\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rk`\", \"line\": 23789, \"origin\": \"rdkafka.c:5137\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 23789, \"origin\": \"rdkafka.c:5137\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_poll_set_consumer",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23782, \"origin\": \"rdkafka.c:5126\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 23782, \"origin\": \"rdkafka.c:5126\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_share_poll",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 23109, \"origin\": \"rdkafka.c:3958\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rk`\", \"line\": 23109, \"origin\": \"rdkafka.c:3958\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 23109, \"origin\": \"rdkafka.c:3958\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_broker_monitor_add",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 24165, \"origin\": \"rdkafka_broker.c:6468\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_buf_push0",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkbuf`\", \"line\": 19669, \"origin\": \"rdkafka_buf.c:96\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_cgrp_assignment_clear_lost",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20390, \"origin\": \"rdkafka_cgrp.c:157\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_cgrp_assignment_set_lost",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 20373, \"origin\": \"rdkafka_cgrp.c:124\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20378, \"origin\": \"rdkafka_cgrp.c:131\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_consumer_group_metadata",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 24583, \"origin\": \"rdkafka_cgrp.c:7775\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 24583, \"origin\": \"rdkafka_cgrp.c:7775\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msetr`\", \"line\": 20038, \"origin\": \"rdkafka_msgset_reader.c:836\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msetr`\", \"line\": 20065, \"origin\": \"rdkafka_msgset_reader.c:903\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20034, \"origin\": \"rdkafka_msgset_reader.c:819\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20050, \"origin\": \"rdkafka_msgset_reader.c:861\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20062, \"origin\": \"rdkafka_msgset_reader.c:899\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20066, \"origin\": \"rdkafka_msgset_reader.c:904\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20074, \"origin\": \"rdkafka_msgset_reader.c:929\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20079, \"origin\": \"rdkafka_msgset_reader.c:950\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_msgset_writer_select_MsgVersion",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msetw`\", \"line\": 19733, \"origin\": \"rdkafka_msgset_writer.c:195\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msetw`\", \"line\": 19738, \"origin\": \"rdkafka_msgset_writer.c:200\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msetw`\", \"line\": 19744, \"origin\": \"rdkafka_msgset_writer.c:209\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19694, \"origin\": \"rdkafka_msgset_writer.c:123\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19698, \"origin\": \"rdkafka_msgset_writer.c:127\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19703, \"origin\": \"rdkafka_msgset_writer.c:132\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkb`\", \"line\": 19694, \"origin\": \"rdkafka_msgset_writer.c:123\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkb`\", \"line\": 19698, \"origin\": \"rdkafka_msgset_writer.c:127\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkb`\", \"line\": 19703, \"origin\": \"rdkafka_msgset_writer.c:132\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_commit",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20351, \"origin\": \"rdkafka_offset.c:395\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rk`\", \"line\": 20351, \"origin\": \"rdkafka_offset.c:395\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 20351, \"origin\": \"rdkafka_offset.c:395\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_commit0",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 20328, \"origin\": \"rdkafka_offset.c:363\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 20328, \"origin\": \"rdkafka_offset.c:363\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_cmp",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `a`\", \"line\": 21924, \"origin\": \"rdkafka_partition.c:3335\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `a`\", \"line\": 21926, \"origin\": \"rdkafka_partition.c:3342\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `b`\", \"line\": 21928, \"origin\": \"rdkafka_partition.c:3345\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `b`\", \"line\": 21933, \"origin\": \"rdkafka_partition.c:3351\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_find0",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rktparlist`\", \"line\": 22019, \"origin\": \"rdkafka_partition.c:3479\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_find_by_id0",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rktparlist`\", \"line\": 22033, \"origin\": \"rdkafka_partition.c:3501\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_match",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rktparlist`\", \"line\": 22561, \"origin\": \"rdkafka_partition.c:4402\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_topic_partition_list_sum",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rktparlist`\", \"line\": 22660, \"origin\": \"rdkafka_partition.c:4563\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_q_cb_event_enable",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkq`\", \"line\": 20411, \"origin\": \"rdkafka_queue.c:1175\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_handle_Produce_parse",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22724, \"origin\": \"rdkafka_request.c:3961\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22736, \"origin\": \"rdkafka_request.c:3978\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22738, \"origin\": \"rdkafka_request.c:3981\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22740, \"origin\": \"rdkafka_request.c:3984\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22766, \"origin\": \"rdkafka_request.c:4016\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 22776, \"origin\": \"rdkafka_request.c:4035\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "unittest_ssl",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in for-loop condition\", \"line\": 21258, \"origin\": \"rdkafka_ssl.c:2206\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "ut_populate_member_owned_partitions_generation",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkgm`\", \"line\": 22423, \"origin\": \"rdkafka_sticky_assignor.c:2207\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_kafka_assign0",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19680, \"origin\": \"rdkafka_subscription.c:218\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19680, \"origin\": \"rdkafka_subscription.c:218\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_assignment",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19754, \"origin\": \"rdkafka_subscription.c:322\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19754, \"origin\": \"rdkafka_subscription.c:322\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_assignment_lost",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19726, \"origin\": \"rdkafka_subscription.c:282\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19726, \"origin\": \"rdkafka_subscription.c:282\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_rebalance_protocol",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19734, \"origin\": \"rdkafka_subscription.c:294\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19734, \"origin\": \"rdkafka_subscription.c:294\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_share_subscribe",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19644, \"origin\": \"rdkafka_subscription.c:162\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19644, \"origin\": \"rdkafka_subscription.c:162\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkshare`\", \"line\": 19644, \"origin\": \"rdkafka_subscription.c:162\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_subscribe",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19613, \"origin\": \"rdkafka_subscription.c:118\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19613, \"origin\": \"rdkafka_subscription.c:118\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_subscription",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19774, \"origin\": \"rdkafka_subscription.c:350\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19774, \"origin\": \"rdkafka_subscription.c:350\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_unsubscribe",
+   "library": "librdkafka",
+   "served": [
+    "lexical"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19566, \"origin\": \"rdkafka_subscription.c:42\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rkcg`\", \"line\": 19566, \"origin\": \"rdkafka_subscription.c:42\"}"
+   ]
+  },
+  {
+   "function": "rd_kafka_timers_run",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19750, \"origin\": \"rdkafka_timer.c:354\"}"
+   ],
+   "added": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rtmr`\", \"line\": 19750, \"origin\": \"rdkafka_timer.c:354\"}"
+   ]
+  },
+  {
+   "function": "rd_list_cmp",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `a`\", \"line\": 3229, \"origin\": \"rdlist.c:435\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_list_find_duplicate",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rl`\", \"line\": 3195, \"origin\": \"rdlist.c:390\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_list_is_sorted",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rl`\", \"line\": 3114, \"origin\": \"rdlist.c:280\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rl`\", \"line\": 3116, \"origin\": \"rdlist.c:283\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_list_sort",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `rl`\", \"line\": 3102, \"origin\": \"rdlist.c:264\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "rd_msghdr_print",
+   "library": "librdkafka",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `msg`\", \"line\": 19654, \"origin\": \"rdlog.c:84\"}"
+   ],
+   "added": []
+  },
+  {
+   "function": "http_parser_transfer_encoding_chunked",
+   "library": "monkey-libevent",
+   "served": [
+    "ast"
+   ],
+   "removed": [
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `p`\", \"line\": 5808, \"origin\": \"mk_server/mk_http_parser.c:549\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `p`\", \"line\": 5809, \"origin\": \"mk_server/mk_http_parser.c:555\"}",
+    "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `p`\", \"line\": 5865, \"origin\": \"mk_server/mk_http_parser.c:639\"}",
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 5837, \"origin\": \"mk_server/mk_http_parser.c:596\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 5820, \"origin\": \"mk_server/mk_http_parser.c:570\"}",
+    "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 5867, \"origin\": \"mk_server/mk_http_parser.c:644\"}"
+   ],
+   "added": []
+  }
+ ],
+ "examples": {
+  "ast-binds-lexical-never-bound": [
+   "LZ4F_calloc",
+   "LZ4F_compressFrameBound",
+   "LZ4F_free",
+   "LZ4F_getBlockSize",
+   "LZ4F_getErrorName",
+   "LZ4F_malloc",
+   "LZ4F_updateDict",
+   "LZ4HC_FindLongerMatch",
+   "LZ4_clearHash",
+   "LZ4_getPositionOnHash",
+   "LZ4_putIndexOnHash",
+   "LZ4_putPositionOnHash",
+   "XXH_mult64to128",
+   "add_static_labels",
+   "append_context"
+  ],
+  "ast-declared-only": [
+   "ConsumerGenerationPair_cmp_generation",
+   "ConsumerGenerationPair_destroy",
+   "ConsumerGenerationPair_new",
+   "ConsumerPair_cmp",
+   "ConsumerPair_free",
+   "ConsumerPair_hash",
+   "ConsumerPair_new",
+   "LZ4F_compressBegin_usingCDict",
+   "LZ4F_compressBound_internal",
+   "LZ4F_compressEnd",
+   "LZ4F_compressFrameBound",
+   "LZ4F_compressFrame_usingCDict",
+   "LZ4F_compressUpdateImpl",
+   "LZ4F_decodeHeader",
+   "LZ4F_decompress"
+  ],
+  "ast-may-bind-only": [
+   "LZ4F_getBlockSize",
+   "XXH_mult64to128",
+   "areSubscriptionsIdentical",
+   "balance",
+   "cJSON_ParseWithLengthOpts",
+   "calculate_connection_creation_rate",
+   "calculate_connection_creation_total",
+   "calculate_consumer_assigned_partitions",
+   "calculate_consumer_commit_latency_avg",
+   "calculate_consumer_commit_latency_max",
+   "calculate_consumer_fetch_latency_avg",
+   "calculate_consumer_fetch_latency_max",
+   "calculate_consumer_poll_idle_ratio_avg",
+   "calculate_consumer_rebalance_latency_avg",
+   "calculate_consumer_rebalance_latency_max"
+  ],
+  "lexical-binds-ast-never-bound": [
+   "ConsumerPair_new",
+   "LZ4F_updateDict",
+   "LZ4HC_rotatePattern",
+   "LZ4_compress_generic_validated",
+   "LZ4_loadDict",
+   "LZ4_prepareTable",
+   "XXH3_digest_long",
+   "add_item_to_array",
+   "advance_iterator",
+   "append_histogram_metric_value",
+   "append_summary_metric_value",
+   "append_to_ring_buffer",
+   "areSubscriptionsIdentical",
+   "assignToMembers",
+   "cJSON_CreateArrayReference"
+  ],
+  "lexical-declared-only": [
+   "LZ4F_compressUpdateImpl",
+   "LZ4F_getBlockSize",
+   "LZ4F_getErrorName",
+   "LZ4F_updateDict",
+   "LZ4HC_InsertAndGetWiderMatch",
+   "LZ4HC_compress_hashChain",
+   "LZ4HC_compress_optimal",
+   "LZ4_compress_generic_validated",
+   "LZ4_memcpy_using_offset",
+   "LZ4_putIndexOnHash",
+   "XXH3_digest_long",
+   "_invalid_topic_cb",
+   "_mk_event_channel_create",
+   "_mk_event_timeout_create",
+   "append_bucket_metric"
+  ],
+  "lexical-may-bind-only": [
+   "ConsumerGenerationPair_new",
+   "LZ4F_createCompressionContext_advanced",
+   "LZ4F_createDecompressionContext_advanced",
+   "LZ4F_decompress_usingDict",
+   "LZ4_compress_fast_continue",
+   "LZ4_compress_forceExtDict",
+   "LZ4_compress_generic_validated",
+   "LZ4_decompress_fast_continue",
+   "LZ4_decompress_safe_continue",
+   "LZ4_loadDict",
+   "LZ4_prepareTable",
+   "LZ4_saveDict",
+   "LZ4_saveDictHC",
+   "LZ4_setStreamDecode",
+   "PartitionMemberInfo_new"
+  ]
+ }
+}

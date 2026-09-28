@@ -54,8 +54,10 @@ mod typed_access_path;
 // Card W47-ACCESS-PATH-POSITIONS: the typed reader in condition operands,
 // returns and call actuals.
 mod typed_access_positions;
+// Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 mod typed_field_access;
+mod typed_root_declarations;
 pub mod typed_source;
 pub mod typed_source_match;
 mod variadic_nested;

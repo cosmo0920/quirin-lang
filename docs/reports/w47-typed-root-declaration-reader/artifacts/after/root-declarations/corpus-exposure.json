@@ -1,0 +1,4623 @@
+[
+ {
+  "function": "LZ4_clearHash",
+  "root": "hashTable",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 531,
+    "position": "statement",
+    "texts": "hashTable [ h ] = 0"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 532,
+    "position": "statement",
+    "texts": "hashTable [ h ] = 0"
+   }
+  ]
+ },
+ {
+  "function": "append_sample_to_metric",
+  "root": "label_value",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 9176,
+    "position": "condition",
+    "texts": "label_value - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 9344,
+    "position": "condition",
+    "texts": "label_value - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "calculate_label_set_hash",
+  "root": "label_value",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6642,
+    "position": "condition",
+    "texts": "label_value - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "cio_scan_stream_files",
+  "root": "ent",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 2283,
+    "position": "condition",
+    "texts": "ent - > d_name [ 0 ] = = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "cio_scan_streams",
+  "root": "ent",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 2329,
+    "position": "condition",
+    "texts": "ent - > d_name [ 0 ] = = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "cio_utils_recursive_delete",
+  "root": "curr",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 2226,
+    "position": "condition",
+    "texts": "curr - > fts_info"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 2231,
+    "position": "call-argument",
+    "texts": "curr - > fts_accpath"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 2246,
+    "position": "call-argument",
+    "texts": "curr - > fts_path"
+   }
+  ]
+ },
+ {
+  "function": "compute_metric_hash",
+  "root": "label_value",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7269,
+    "position": "condition",
+    "texts": "label_value - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "ctr_encode_msgpack_create",
+  "root": "resource_span",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7108,
+    "position": "condition",
+    "texts": "resource_span - > schema_url"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7109,
+    "position": "call-argument",
+    "texts": "resource_span - > schema_url"
+   }
+  ]
+ },
+ {
+  "function": "ctr_encode_text_create",
+  "root": "resource_span",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7088,
+    "position": "condition",
+    "texts": "resource_span - > schema_url"
+   }
+  ]
+ },
+ {
+  "function": "decode_data_point_labels",
+  "root": "current_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7511,
+    "position": "condition",
+    "texts": "current_label - > name ! = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "decode_labels",
+  "root": "current_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6563,
+    "position": "condition",
+    "texts": "current_label - > name ! = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "flb_task_get_route_data",
+  "root": "route",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13482,
+    "position": "condition",
+    "texts": "route - > out = = o_ins"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13483,
+    "position": "statement",
+    "texts": "* records = route - > records"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13484,
+    "position": "statement",
+    "texts": "* bytes = route - > bytes"
+   }
+  ]
+ },
+ {
+  "function": "flb_task_get_route_status",
+  "root": "route",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13430,
+    "position": "condition",
+    "texts": "route - > out = = o_ins"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13431,
+    "position": "statement",
+    "texts": "result = route - > status"
+   }
+  ]
+ },
+ {
+  "function": "flb_task_set_route_status",
+  "root": "route",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13446,
+    "position": "condition",
+    "texts": "route - > out = = o_ins"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13447,
+    "position": "statement",
+    "texts": "route - > status = new_status"
+   }
+  ]
+ },
+ {
+  "function": "format_attributes",
+  "root": "p",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6838,
+    "position": "call-argument",
+    "texts": "p - > key"
+   }
+  ]
+ },
+ {
+  "function": "format_attributes",
+  "root": "v",
+  "ast_binding": "assignment:bound-name:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6841,
+    "position": "condition",
+    "texts": "v - > type = = 7"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6844,
+    "position": "condition",
+    "texts": "v - > type = = 1"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6847,
+    "position": "condition",
+    "texts": "v - > type = = 2"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6850,
+    "position": "condition",
+    "texts": "v - > type = = 4"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6853,
+    "position": "condition",
+    "texts": "v - > type = = 9"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6856,
+    "position": "condition",
+    "texts": "v - > type = = 10"
+   }
+  ]
+ },
+ {
+  "function": "format_metric",
+  "root": "label_v",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5861,
+    "position": "condition",
+    "texts": "label_v - > name = = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5999,
+    "position": "condition",
+    "texts": "label_v - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6020,
+    "position": "condition",
+    "texts": "label_v - > name = = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6100,
+    "position": "condition",
+    "texts": "label_v - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6128,
+    "position": "condition",
+    "texts": "label_v - > name ! = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "format_metric_labels",
+  "root": "label_v",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5815,
+    "position": "condition",
+    "texts": "label_v - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "format_scope_spans",
+  "root": "scope_span",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7061,
+    "position": "condition",
+    "texts": "scope_span - > schema_url"
+   }
+  ]
+ },
+ {
+  "function": "format_span",
+  "root": "link",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7002,
+    "position": "call-argument",
+    "texts": "link - > trace_state"
+   }
+  ]
+ },
+ {
+  "function": "initialize_temporary_metric",
+  "root": "source_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5636,
+    "position": "condition",
+    "texts": "source_label - > name = = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6054,
+    "position": "condition",
+    "texts": "source_label - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "metric_labels_match",
+  "root": "label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5618,
+    "position": "condition",
+    "texts": "label - > name ! = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "metrics_check_label_value_existence",
+  "root": "label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5742,
+    "position": "condition",
+    "texts": "label - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "mk_config_listen_parse",
+  "root": "listener",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6061,
+    "position": "condition",
+    "texts": "listener - > val [ 0 ] = = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "mk_fifo_queue_get",
+  "root": "q",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Safe"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 5229,
+    "position": "condition",
+    "texts": "q - > id = = id"
+   }
+  ]
+ },
+ {
+  "function": "mk_http_index_lookup",
+  "root": "entry",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6498,
+    "position": "statement",
+    "texts": "buf [ off + entry - > len ] = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "mk_plugin_cap",
+  "root": "plugin",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Safe"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6545,
+    "position": "condition",
+    "texts": "plugin - > capabilities & cap"
+   }
+  ]
+ },
+ {
+  "function": "mk_plugin_load",
+  "root": "tmp",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6124,
+    "position": "condition",
+    "texts": "tmp - > load_type = = 0"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6126,
+    "position": "call-argument",
+    "texts": "tmp - > shortname"
+   }
+  ]
+ },
+ {
+  "function": "mk_plugin_preworker_calls",
+  "root": "node",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6444,
+    "position": "condition",
+    "texts": "node - > thread_key"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6448,
+    "position": "call-argument",
+    "texts": "node - > shortname"
+   }
+  ]
+ },
+ {
+  "function": "mk_sched_conn_pending_output",
+  "root": "input",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6888,
+    "position": "condition",
+    "texts": "input - > bytes_total > 0"
+   }
+  ]
+ },
+ {
+  "function": "mk_vhost_fdt_table_lookup",
+  "root": "fdt_host",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6030,
+    "position": "condition",
+    "texts": "fdt_host - > host = = host"
+   }
+  ]
+ },
+ {
+  "function": "mk_vhost_get",
+  "root": "entry_alias",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6469,
+    "position": "condition",
+    "texts": "entry_alias - > len = = host . len"
+   }
+  ]
+ },
+ {
+  "function": "mk_vhost_init",
+  "root": "ent",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6431,
+    "position": "condition",
+    "texts": "ent - > d_name [ 0 ] = = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "mk_vhost_map_handlers",
+  "root": "h_handler",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6356,
+    "position": "call-argument",
+    "texts": "h_handler - > name"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6360,
+    "position": "call-argument",
+    "texts": "h_handler - > name"
+   }
+  ]
+ },
+ {
+  "function": "pack_basic_header",
+  "root": "slabel",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7055,
+    "position": "call-argument",
+    "texts": "slabel - > key"
+   }
+  ]
+ },
+ {
+  "function": "pack_cfl_variant_kvlist",
+  "root": "kvpair",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6609,
+    "position": "call-argument",
+    "texts": "kvpair - > key"
+   }
+  ]
+ },
+ {
+  "function": "pack_events",
+  "root": "event",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6910,
+    "position": "condition",
+    "texts": "event - > name"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6911,
+    "position": "call-argument",
+    "texts": "event - > name"
+   }
+  ]
+ },
+ {
+  "function": "pack_header",
+  "root": "label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7089,
+    "position": "condition",
+    "texts": "label - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7090,
+    "position": "call-argument",
+    "texts": "label - > name"
+   }
+  ]
+ },
+ {
+  "function": "pack_kvlist",
+  "root": "kvpair",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6804,
+    "position": "call-argument",
+    "texts": "kvpair - > key"
+   }
+  ]
+ },
+ {
+  "function": "pack_links",
+  "root": "link",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6944,
+    "position": "condition",
+    "texts": "link - > trace_state"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6945,
+    "position": "call-argument",
+    "texts": "link - > trace_state"
+   }
+  ]
+ },
+ {
+  "function": "pack_metric",
+  "root": "label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7274,
+    "position": "condition",
+    "texts": "label - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7275,
+    "position": "call-argument",
+    "texts": "label - > name"
+   }
+  ]
+ },
+ {
+  "function": "pack_metric",
+  "root": "slabel",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7267,
+    "position": "call-argument",
+    "texts": "slabel - > key"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7268,
+    "position": "call-argument",
+    "texts": "slabel - > val"
+   }
+  ]
+ },
+ {
+  "function": "pack_scope_spans",
+  "root": "scope_span",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7064,
+    "position": "condition",
+    "texts": "scope_span - > schema_url"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7065,
+    "position": "call-argument",
+    "texts": "scope_span - > schema_url"
+   }
+  ]
+ },
+ {
+  "function": "pack_static_labels",
+  "root": "static_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7324,
+    "position": "call-argument",
+    "texts": "static_label - > key"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 7325,
+    "position": "call-argument",
+    "texts": "static_label - > val"
+   }
+  ]
+ },
+ {
+  "function": "pb_decode_inner",
+  "root": "fields_seen",
+  "ast_binding": "compound-assignment",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "false",
+      "true"
+     ]
+    ],
+    "line": 986,
+    "position": "condition",
+    "texts": "fields_seen . bitfield [ i ] ! = allbits"
+   },
+   {
+    "chains": [
+     [
+      "false",
+      "true"
+     ]
+    ],
+    "line": 991,
+    "position": "condition",
+    "texts": "fields_seen . bitfield [ req_field_count > > 5 ] ! = ( allbits > > ( uint_least8_t ) ( 32 - ( req_field_count & 31 ) ) )"
+   }
+  ]
+ },
+ {
+  "function": "populatePotentialMaps",
+  "root": "rkgm",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22043,
+    "position": "statement",
+    "texts": "const char * consumer = rkgm - > rkgm_member_id - > str"
+   }
+  ]
+ },
+ {
+  "function": "rd_addrinfo_prepare",
+  "root": "snode",
+  "ast_binding": "sub-object-store",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 4026,
+    "position": "statement",
+    "texts": "snode [ nodelen ] = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "rd_avl_rotate",
+  "root": "odirmap",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19570,
+    "position": "statement",
+    "texts": "const int odir = odirmap [ dir ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_AclOperation_name",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23267,
+    "position": "return",
+    "texts": "names [ operation ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_AclPermissionType_name",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23275,
+    "position": "return",
+    "texts": "names [ permission_type ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ApiKey2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13272,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13273,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13274,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13350,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13750,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13784,
+    "position": "return",
+    "texts": "names [ ApiKey ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ConfigResource_get_single_broker_id",
+  "root": "config",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21942,
+    "position": "condition",
+    "texts": "config - > restype ! = RD_KAFKA_RESOURCE_BROKER"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ConfigSource_name",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21777,
+    "position": "return",
+    "texts": "names [ confsource ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ResourcePatternType_name",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21786,
+    "position": "return",
+    "texts": "names [ resource_pattern_type ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ResourceType_name",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21793,
+    "position": "return",
+    "texts": "names [ restype ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_Uuid_str",
+  "root": "bytes",
+  "ast_binding": "sub-object-store",
+  "status": [
+   "Safe"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25154,
+    "position": "statement",
+    "texts": "bytes [ i ] = ( uuid - > most_significant_bits > > ( 8 * j ) ) & 0xFF"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25155,
+    "position": "statement",
+    "texts": "bytes [ 8 + i ] = ( uuid - > least_significant_bits > > ( 8 * j ) ) & 0xFF"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_assignor_rebalance_protocol_check",
+  "root": "rkas",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20455,
+    "position": "condition",
+    "texts": "! rkas - > rkas_enabled"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20458,
+    "position": "statement",
+    "texts": "rebalance_protocol = rkas - > rkas_protocol"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20459,
+    "position": "condition",
+    "texts": "rebalance_protocol ! = rkas - > rkas_protocol"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_broker_buf_enq0",
+  "root": "prev",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21509,
+    "position": "condition",
+    "texts": "prev - > rkbuf_prio < rkbuf - > rkbuf_prio"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21510,
+    "position": "condition",
+    "texts": "prev - > rkbuf_corrid = = 0"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_broker_share_acknowledge_reply",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21518,
+    "position": "condition",
+    "texts": "batch - > rktpar - > err = = RD_KAFKA_RESP_ERR__IN_PROGRESS"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21520,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = RD_KAFKA_RESP_ERR_INVALID_RECORD_STATE"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_broker_share_fetch_reply",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21563,
+    "position": "condition",
+    "texts": "batch - > rktpar - > err = = RD_KAFKA_RESP_ERR__IN_PROGRESS"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21565,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = RD_KAFKA_RESP_ERR_INVALID_RECORD_STATE"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_broker_share_rpc",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22074,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = RD_KAFKA_RESP_ERR_INVALID_SHARE_SESSION_EPOCH"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_cert_new",
+  "root": "valid",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20229,
+    "position": "condition",
+    "texts": "! valid [ type ] [ encoding ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_compression2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 16506,
+    "position": "return",
+    "texts": "names [ compr ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 16507,
+    "position": "return",
+    "texts": "names [ compr ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 16584,
+    "position": "return",
+    "texts": "names [ compr ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_conf_set_ssl_cert",
+  "root": "cert_map",
+  "ast_binding": "assignment:address:initialiser",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20456,
+    "position": "statement",
+    "texts": "certp = cert_map [ cert_type ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_confsource2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 17046,
+    "position": "return",
+    "texts": "names [ source ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_cooperative_protocol_adjust_assignment",
+  "root": "pmi",
+  "ast_binding": "assignment:bound-name:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21231,
+    "position": "condition",
+    "texts": "! pmi - > members_match"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_coord_cache_find",
+  "root": "cce",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20166,
+    "position": "condition",
+    "texts": "cce - > cce_coordtype = = coordtype"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20170,
+    "position": "condition",
+    "texts": "( ( cce ) - > cce_link . tqe_next ) ! = ( ( ( void * ) 0 ) )"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_dump0",
+  "root": "rkt",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24551,
+    "position": "call-argument",
+    "texts": "( rkt - > rkt_topic ) - > str"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24552,
+    "position": "call-argument",
+    "texts": "rkt - > rkt_partition_cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24555,
+    "position": "condition",
+    "texts": "rkt - > rkt_ua"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_dump0",
+  "root": "rktp",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24540,
+    "position": "call-argument",
+    "texts": "( rktp - > rktp_rkt - > rkt_topic ) - > str"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24541,
+    "position": "call-argument",
+    "texts": "rktp - > rktp_partition"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24560,
+    "position": "call-argument",
+    "texts": "rktp - > rktp_partition"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_features2str",
+  "root": "ret",
+  "ast_binding": "address",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19841,
+    "position": "statement",
+    "texts": "* ret [ reti ] = __qcore_literal__"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_header_get",
+  "root": "hdr",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19682,
+    "position": "statement",
+    "texts": "* sizep = hdr - > rkhdr_value_size"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_header_get_last",
+  "root": "hdr",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19660,
+    "position": "condition",
+    "texts": "hdr - > rkhdr_name_size = = name_size"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19663,
+    "position": "statement",
+    "texts": "* sizep = hdr - > rkhdr_value_size"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_idemp_state2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19074,
+    "position": "return",
+    "texts": "names [ state ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19075,
+    "position": "return",
+    "texts": "names [ state ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19585,
+    "position": "return",
+    "texts": "names [ state ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_interceptors_on_acknowledgement_queue",
+  "root": "rkm",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19893,
+    "position": "statement",
+    "texts": "rkm - > rkm_rkmessage . err = force_err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata_cache_dump",
+  "root": "rkmce",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20723,
+    "position": "call-argument",
+    "texts": "( int ) ( ( now - rkmce - > rkmce_ts_insert ) / 1000 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20724,
+    "position": "call-argument",
+    "texts": "( int ) ( ( rkmce - > rkmce_ts_expires - now ) / 1000 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20725,
+    "position": "call-argument",
+    "texts": "rkmce - > rkmce_mtopic . partition_cnt"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata_cache_hint",
+  "root": "rkmce",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20537,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__NOENT"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20537,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__WAIT_CACHE"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20538,
+    "position": "condition",
+    "texts": "rkmce - > rkmce_mtopic . err ! = RD_KAFKA_RESP_ERR__NOENT"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20541,
+    "position": "statement",
+    "texts": "rkmce - > rkmce_mtopic . err = err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata_cache_topic_partition_get",
+  "root": "mtopic",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20667,
+    "position": "condition",
+    "texts": "mtopic - > err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata_cache_topics_to_list",
+  "root": "rkmce",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20704,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__NOENT"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20704,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__WAIT_CACHE"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata_topic_match",
+  "root": "rkmce",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20870,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__NOENT"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20870,
+    "position": "condition",
+    "texts": "( ( rkmce ) - > rkmce_mtopic . err ) = = RD_KAFKA_RESP_ERR__WAIT_CACHE"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_error_stack_cnt",
+  "root": "errstack",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22815,
+    "position": "statement",
+    "texts": "* cntp = errstack - > cnt"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_find",
+  "root": "mrkb",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21374,
+    "position": "condition",
+    "texts": "mrkb - > id = = broker_id"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_set_host_port",
+  "root": "mrkb",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22993,
+    "position": "condition",
+    "texts": "mrkb - > id = = broker_id"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22996,
+    "position": "statement",
+    "texts": "mrkb - > port = port"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_cgrp_consumer_member_next_assignment_can_bump_epoch",
+  "root": "other_member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21400,
+    "position": "condition",
+    "texts": "other_member - > current_assignment"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21401,
+    "position": "statement",
+    "texts": "other_current_assignment_cnt = other_member - > current_assignment - > cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21403,
+    "position": "condition",
+    "texts": "other_member - > returned_assignment"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21404,
+    "position": "statement",
+    "texts": "other_returned_assignment_cnt = other_member - > returned_assignment - > cnt"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_cgrps_classic_connection_closed",
+  "root": "member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21147,
+    "position": "condition",
+    "texts": "member - > conn = = mconn"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21149,
+    "position": "condition",
+    "texts": "member - > resp"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_cluster_new",
+  "root": "mrkb",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23455,
+    "position": "call-argument",
+    "texts": "mrkb - > port"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_cluster_reassign_partitions",
+  "root": "mtopic",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22070,
+    "position": "condition",
+    "texts": "i < mtopic - > partition_cnt"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_coord_find",
+  "root": "mcoord",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22601,
+    "position": "condition",
+    "texts": "mcoord - > type = = type"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_EndTxn",
+  "root": "mtxnp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23667,
+    "position": "condition",
+    "texts": "mtxnp - > first_offset < 0"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23676,
+    "position": "statement",
+    "texts": "mabort - > first_offset = mtxnp - > first_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_ListOffsets",
+  "root": "mset",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22601,
+    "position": "statement",
+    "texts": "leader_epoch = mset - > leader_epoch"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_Metadata",
+  "root": "mrkb",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22897,
+    "position": "condition",
+    "texts": "! mrkb - > in_metadata"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22897,
+    "position": "condition",
+    "texts": "! mrkb - > up"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_ShareAcknowledge",
+  "root": "node_endpoints",
+  "ast_binding": "sub-object-store",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25444,
+    "position": "condition",
+    "texts": "node_endpoints [ k ] = = mpart - > leader"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25470,
+    "position": "statement",
+    "texts": "rd_kafka_mock_broker_t * nb = node_endpoints [ k ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "root": "node_endpoints",
+  "ast_binding": "sub-object-store",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25112,
+    "position": "condition",
+    "texts": "node_endpoints [ k ] = = mpart - > leader"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 25152,
+    "position": "statement",
+    "texts": "rd_kafka_mock_broker_t * nb = node_endpoints [ k ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "root": "s",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24825,
+    "position": "condition",
+    "texts": "s - > node_id = = mconn - > broker - > id"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_msgset_find",
+  "root": "mset",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21441,
+    "position": "condition",
+    "texts": "mset - > first_offset < = offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21441,
+    "position": "condition",
+    "texts": "offset < = mset - > last_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_offset_is_aborted",
+  "root": "mabort",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24354,
+    "position": "condition",
+    "texts": "mabort - > pid_id = = pid_id"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24355,
+    "position": "condition",
+    "texts": "offset > = mabort - > first_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24356,
+    "position": "condition",
+    "texts": "offset < = mabort - > last_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_partition_assign_replicas",
+  "root": "mrkb",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21732,
+    "position": "condition",
+    "texts": "mrkb - > in_metadata"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21748,
+    "position": "condition",
+    "texts": "! mrkb - > in_metadata"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21759,
+    "position": "condition",
+    "texts": "! mrkb - > in_metadata"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_partition_offset_for_leader_epoch",
+  "root": "mset",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21716,
+    "position": "condition",
+    "texts": "mset - > leader_epoch = = leader_epoch"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_partition_update_lso",
+  "root": "mtxn",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21512,
+    "position": "condition",
+    "texts": "mtxn - > state ! = RD_KAFKA_MOCK_TXN_ONGOING"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_partition_update_lso",
+  "root": "mtxnp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21515,
+    "position": "condition",
+    "texts": "mtxnp - > first_offset > = 0"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21516,
+    "position": "condition",
+    "texts": "mtxnp - > partition = = mpart - > id"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21519,
+    "position": "statement",
+    "texts": "min_offset = mtxnp - > first_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sgrp_partmeta_find",
+  "root": "pmeta",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24255,
+    "position": "condition",
+    "texts": "pmeta - > partition ! = partition"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sgrp_partmeta_get",
+  "root": "state",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24277,
+    "position": "condition",
+    "texts": "state - > offset > = log_start"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24279,
+    "position": "condition",
+    "texts": "state - > state = = RD_KAFKA_MOCK_SGRP_RECORD_ACQUIRED"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24282,
+    "position": "statement",
+    "texts": "state - > state = RD_KAFKA_MOCK_SGRP_RECORD_ARCHIVED"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24286,
+    "position": "statement",
+    "texts": "state - > lock_expiry_ts = 0"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sgrp_record_state_find",
+  "root": "state",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24318,
+    "position": "condition",
+    "texts": "state - > offset = = offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_assignment_recalculate",
+  "root": "member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ],
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22185,
+    "position": "statement",
+    "texts": "member - > previous_member_epoch = member - > member_epoch"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22163,
+    "position": "condition",
+    "texts": "member - > assignment"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22186,
+    "position": "statement",
+    "texts": "member - > member_epoch = mshgrp - > group_epoch"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_collect_subscribed_topics",
+  "root": "member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22066,
+    "position": "condition",
+    "texts": "! member - > subscribed_topic_names"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+  "root": "member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22095,
+    "position": "condition",
+    "texts": "member - > subscribed_topic_names"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_auto_offset_reset",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22367,
+    "position": "statement",
+    "texts": "mshgrp - > auto_offset_reset = auto_offset_reset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_isolation_level",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22328,
+    "position": "statement",
+    "texts": "mshgrp - > isolation_level = level"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_max_delivery_attempts",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22307,
+    "position": "statement",
+    "texts": "mshgrp - > max_delivery_attempts = max_attempts"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_max_fetch_sessions",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22347,
+    "position": "statement",
+    "texts": "mshgrp - > max_fetch_sessions = max_fetch_sessions"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_max_record_locks",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22357,
+    "position": "statement",
+    "texts": "mshgrp - > max_record_locks = max_record_locks"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_max_size",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22337,
+    "position": "statement",
+    "texts": "mshgrp - > max_size = max_size"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_record_lock_duration",
+  "root": "mshgrp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22317,
+    "position": "statement",
+    "texts": "mshgrp - > record_lock_duration_ms = lock_duration_ms"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegrps_connection_closed",
+  "root": "member",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22513,
+    "position": "condition",
+    "texts": "member - > conn = = mconn"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_txn_partition_find",
+  "root": "mtxnp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21470,
+    "position": "condition",
+    "texts": "mtxnp - > partition = = partition"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_msg_wire_size",
+  "root": "overheads",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 13652,
+    "position": "statement",
+    "texts": "size = overheads [ MsgVersion ] + rkm - > rkm_rkmessage . len + rkm - > rkm_rkmessage . key_len"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_msgq_dump",
+  "root": "rkm",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20783,
+    "position": "call-argument",
+    "texts": "rkm - > rkm_rkmessage . offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20783,
+    "position": "call-argument",
+    "texts": "rkm - > rkm_rkmessage . partition"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20784,
+    "position": "call-argument",
+    "texts": "( int ) rkm - > rkm_rkmessage . len"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_msgq_set_metadata",
+  "root": "rkm",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20369,
+    "position": "statement",
+    "texts": "rkm - > rkm_broker_id = broker_id"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20372,
+    "position": "statement",
+    "texts": "rkm - > rkm_timestamp = timestamp"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20373,
+    "position": "statement",
+    "texts": "rkm - > rkm_tstype = RD_KAFKA_TIMESTAMP_LOG_APPEND_TIME"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20375,
+    "position": "condition",
+    "texts": "rkm - > rkm_status ! = RD_KAFKA_MSG_STATUS_NOT_PERSISTED"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20377,
+    "position": "statement",
+    "texts": "rkm - > rkm_status = status"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_op_new0",
+  "root": "op2size",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19879,
+    "position": "statement",
+    "texts": "size_t tsize = op2size [ type & ~ ( ( int ) ( 1 < < 29 ) | ( int ) ( 1 < < 30 ) ) ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_q_concat0",
+  "root": "rko",
+  "ast_binding": "assignment:address:nested",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 14977,
+    "position": "condition",
+    "texts": "( ( rko ) - > rko_link . tqe_next ) ! = ( ( ( void * ) 0 ) )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 15055,
+    "position": "condition",
+    "texts": "( ( rko ) - > rko_link . tqe_next ) ! = ( ( ( void * ) 0 ) )"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_q_dump",
+  "root": "rko",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20514,
+    "position": "call-argument",
+    "texts": "rko - > rko_flags"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20514,
+    "position": "call-argument",
+    "texts": "rko - > rko_prio"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20514,
+    "position": "call-argument",
+    "texts": "rko - > rko_version"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20515,
+    "position": "call-argument",
+    "texts": "rko - > rko_len"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20518,
+    "position": "call-argument",
+    "texts": "rko - > rko_replyq . q"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_q_last",
+  "root": "rko",
+  "ast_binding": "assignment:address:nested",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 15236,
+    "position": "condition",
+    "texts": "! rko - > rko_err"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 15236,
+    "position": "condition",
+    "texts": "rko - > rko_type = = op_type"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_q_move_cnt",
+  "root": "rko",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19856,
+    "position": "condition",
+    "texts": "( ( rko ) - > rko_link . tqe_next ) ! = ( ( ( void * ) 0 ) )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19857,
+    "position": "condition",
+    "texts": "! rko - > rko_prio"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_sasl_recv",
+  "root": "rktrans",
+  "ast_binding": "custody-actual",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20789,
+    "position": "call-argument",
+    "texts": "rktrans - > rktrans_rkb - > rkb_logname"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20789,
+    "position": "condition",
+    "texts": "( ( rktrans - > rktrans_rkb ) - > rkb_rk - > rk_conf ) . debug & ( 0x200 )"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_ack_all",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19723,
+    "position": "condition",
+    "texts": "k < entry - > types_cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19724,
+    "position": "condition",
+    "texts": "entry - > types [ k ] = = RD_KAFKA_SHARE_INTERNAL_ACK_ACQUIRED"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19726,
+    "position": "statement",
+    "texts": "entry - > types [ k ] = RD_KAFKA_SHARE_INTERNAL_ACK_ACCEPT"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_acks_clear_during_broker_decommission",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20345,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = RD_KAFKA_RESP_ERR_SHARE_SESSION_NOT_FOUND"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20357,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = RD_KAFKA_RESP_ERR_SHARE_SESSION_NOT_FOUND"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_build_ack_details",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19950,
+    "position": "condition",
+    "texts": "j < entry - > types_cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19951,
+    "position": "statement",
+    "texts": "rd_kafka_share_internal_acknowledgement_type run_type = entry - > types [ j ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19953,
+    "position": "statement",
+    "texts": "int64_t run_start = entry - > start_offset + j"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19955,
+    "position": "condition",
+    "texts": "k < entry - > types_cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19956,
+    "position": "condition",
+    "texts": "entry - > types [ k ] = = run_type"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19958,
+    "position": "statement",
+    "texts": "int64_t run_end = entry - > start_offset + k - 1"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_build_inflight_acks_map",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19694,
+    "position": "condition",
+    "texts": "k < entry - > types_cnt"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19695,
+    "position": "condition",
+    "texts": "entry - > types [ k ] = = RD_KAFKA_SHARE_INTERNAL_ACK_ACQUIRED"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_build_partition_offsets_list",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20207,
+    "position": "condition",
+    "texts": "off < = entry - > end_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20207,
+    "position": "statement",
+    "texts": "off = entry - > start_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_commit_sync_apply_result",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20331,
+    "position": "statement",
+    "texts": "dst - > err = batch - > rktpar - > err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_commit_sync_timeout_cb",
+  "root": "rkb",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23197,
+    "position": "condition",
+    "texts": "! rkb - > rkb_pending_commit_sync . sync_ack_details"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23199,
+    "position": "condition",
+    "texts": "! rkb - > rkb_share_async_ack_details"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23209,
+    "position": "statement",
+    "texts": "rkb - > rkb_pending_commit_sync . abs_timeout = 0"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 23210,
+    "position": "statement",
+    "texts": "rkb - > rkb_pending_commit_sync . commit_sync_request_id = 0"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_fetch_op_reply_and_update_ack_details_with_err",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19771,
+    "position": "condition",
+    "texts": "batch - > rktpar - > err = = RD_KAFKA_RESP_ERR__IN_PROGRESS"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19773,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = err"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19777,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_fetch_reply_handle",
+  "root": "fetch_size_rko",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 21232,
+    "position": "condition",
+    "texts": "fetch_size_rko - > rko_type = = RD_KAFKA_OP_FETCH"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_fetch_reply_op",
+  "root": "batch",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22875,
+    "position": "condition",
+    "texts": "batch - > rktpar - > err = = RD_KAFKA_RESP_ERR__IN_PROGRESS"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22877,
+    "position": "statement",
+    "texts": "batch - > rktpar - > err = rko_orig - > rko_err"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_find_ack_batch_by_id",
+  "root": "existing",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19755,
+    "position": "condition",
+    "texts": "existing - > rktpar - > partition = = partition"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_share_find_entry_for_offset",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20848,
+    "position": "condition",
+    "texts": "offset > = entry - > start_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20849,
+    "position": "condition",
+    "texts": "offset < = entry - > end_offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_ssl_probe_and_set_default_ca_location",
+  "root": "paths",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20699,
+    "position": "condition-assignment",
+    "texts": "path = paths [ i ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_stats_emit_broker_reqs",
+  "root": "filter",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22024,
+    "position": "condition",
+    "texts": "filter [ 2 ] [ i ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22024,
+    "position": "condition",
+    "texts": "filter [ rkb - > rkb_rk - > rk_type ] [ i ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 22027,
+    "position": "condition",
+    "texts": "filter [ 3 ] [ i ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_telemetry_state2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19127,
+    "position": "return",
+    "texts": "names [ state ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_toppar_lag_handle_Offset",
+  "root": "rktpar",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20266,
+    "position": "condition",
+    "texts": "! rktpar - > err"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20268,
+    "position": "statement",
+    "texts": "rktp - > rktp_lo_offset = rktpar - > offset"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_txn_state2str",
+  "root": "names",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19106,
+    "position": "return",
+    "texts": "names [ state ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19107,
+    "position": "return",
+    "texts": "names [ state ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19617,
+    "position": "return",
+    "texts": "names [ state ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_type2str",
+  "root": "types",
+  "ast_binding": "not-answered",
+  "status": [],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19646,
+    "position": "return",
+    "texts": "types [ type ]"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_use_rack_aware_assignment",
+  "root": "member",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20593,
+    "position": "condition",
+    "texts": "member - > rkgm_rack_id"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 20594,
+    "position": "condition",
+    "texts": "( ( member - > rkgm_rack_id ) - > len ) = = - 1"
+   }
+  ]
+ },
+ {
+  "function": "rd_kafka_version_str",
+  "root": "ret",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24730,
+    "position": "condition",
+    "texts": "* ret"
+   }
+  ]
+ },
+ {
+  "function": "rd_map_alloc_buckets",
+  "root": "bucket_sizes",
+  "ast_binding": "not-answered",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 3064,
+    "position": "statement",
+    "texts": "buckets . cnt = bucket_sizes [ 0 ]"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 3068,
+    "position": "statement",
+    "texts": "buckets . cnt = bucket_sizes [ i ]"
+   }
+  ]
+ },
+ {
+  "function": "set_up_time_series_for_label_set",
+  "root": "label_value",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6776,
+    "position": "condition",
+    "texts": "label_value - > name ! = ( ( void * ) 0 )"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6847,
+    "position": "condition",
+    "texts": "label_value - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "summary_label_keys_match",
+  "root": "left_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6118,
+    "position": "condition",
+    "texts": "left_label - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "summary_label_keys_match",
+  "root": "right_label",
+  "ast_binding": "assignment:statement-expression:statement",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 6118,
+    "position": "condition",
+    "texts": "right_label - > name = = ( ( void * ) 0 )"
+   }
+  ]
+ },
+ {
+  "function": "ut_ack_get_type",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19673,
+    "position": "condition",
+    "texts": "offset > = entry - > start_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19674,
+    "position": "condition",
+    "texts": "offset < = entry - > end_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19675,
+    "position": "statement",
+    "texts": "int64_t idx = offset - entry - > start_offset"
+   }
+  ]
+ },
+ {
+  "function": "ut_ack_set_gap",
+  "root": "entry",
+  "ast_binding": "assignment:call:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19650,
+    "position": "condition",
+    "texts": "offset > = entry - > start_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19651,
+    "position": "condition",
+    "texts": "offset < = entry - > end_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19652,
+    "position": "statement",
+    "texts": "int64_t idx = offset - entry - > start_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 19653,
+    "position": "statement",
+    "texts": "entry - > types [ idx ] = RD_KAFKA_SHARE_INTERNAL_ACK_GAP"
+   }
+  ]
+ },
+ {
+  "function": "ut_mock_txn_lso_calculation",
+  "root": "mtxnp",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24160,
+    "position": "statement",
+    "texts": "mtxnp - > first_offset = 5"
+   }
+  ]
+ },
+ {
+  "function": "ut_mock_txn_offset_is_aborted",
+  "root": "a",
+  "ast_binding": "assignment:address:nested",
+  "status": [
+   "Unknown"
+  ],
+  "rows": [
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24227,
+    "position": "condition",
+    "texts": "5 > = a - > first_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24227,
+    "position": "condition",
+    "texts": "a - > pid_id = = 1000"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24228,
+    "position": "condition",
+    "texts": "5 < = a - > last_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24236,
+    "position": "condition",
+    "texts": "7 > = a - > first_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24236,
+    "position": "condition",
+    "texts": "a - > pid_id = = 1000"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24237,
+    "position": "condition",
+    "texts": "7 < = a - > last_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24245,
+    "position": "condition",
+    "texts": "11 > = a - > first_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24245,
+    "position": "condition",
+    "texts": "a - > pid_id = = 1000"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24246,
+    "position": "condition",
+    "texts": "11 < = a - > last_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24254,
+    "position": "condition",
+    "texts": "7 > = a - > first_offset"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24254,
+    "position": "condition",
+    "texts": "a - > pid_id = = 2000"
+   },
+   {
+    "chains": [
+     [
+      "true",
+      "true"
+     ]
+    ],
+    "line": 24255,
+    "position": "condition",
+    "texts": "7 < = a - > last_offset"
+   }
+  ]
+ }
+]

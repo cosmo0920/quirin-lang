@@ -119,6 +119,12 @@ mod condition_desugar;
 #[path = "legacy_typed_positions.rs"]
 mod typed_positions;
 
+// Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l): the typed positions'
+// never-bound, `may_bind` and declared-local premises, from the Clang AST
+// where the lexical declaration reader answers nothing. Hooks are thin.
+#[path = "legacy_typed_roots.rs"]
+mod typed_roots;
+
 // Card W44-LEAK-PIN-AUDIT: the refused-escape rule, the cast return
 // (`RETURN-CAST-PLACE-NOT-ESCAPED`) and the leak-witness census.
 #[path = "legacy_refused_operands.rs"]
@@ -3065,7 +3071,10 @@ fn build_function_cfg_with(
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
+        typed_root_declarations: std::cell::OnceCell::new(),
     };
+    // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
+    parser.record_typed_root_parity();
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
     let statements =
@@ -4349,6 +4358,8 @@ struct Parser<'a> {
     /// Card W47-ACCESS-PATH-POSITIONS: how many condition operands the typed
     /// reader decided so far; a call-free plan is kept only if it grew.
     typed_position_uses: std::cell::Cell<usize>,
+    /// Card W47-TYPED-ROOT-DECLARATION-READER: the AST reader's answers.
+    typed_root_declarations: std::cell::OnceCell<crate::typed_root_declarations::RootDeclarations>,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,

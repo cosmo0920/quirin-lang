@@ -1,0 +1,188 @@
+/contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qv/module/sha256
+   '661dbb51f45552bcb357022f70be035745727284d6f66ded9ee6e3bbf330ecbe'
+   'd042af2e4a9302d8a207d782e5c3850ae8614daf611d439881a0f7b4cfe93dd6'
+/contract_inclusion/modules/qcore-provider-librdkafka:librdkafka/memory.qv/included/quirin-provider-libc:libc/string.qv/source
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/contract_inclusion/modules/qcore-provider-librdkafka:librdkafka/memory.qv/module/sha256
+   'd0840a069b939f3aefc250207bef4178424841f8aa6ec705bc9d7315d18b0886'
+   '2944c3e92acabcebbaad731ffa84fea4e6c5fb4cd6c72971037cbd2b13740b39'
+/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_memory.qv/module/sha256
+   '237565176dcba6ea0549d2cc6b50fcf8744da8e6742c2d4f6745ade9cf59f71e'
+   'f92199433b85460cecb19378502bde580905cbd78ece9cf3e77358038fd02731'
+/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_string.qv/included/quirin-provider-libc:libc/string.qv/source
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_string.qv/module/sha256
+   '5011aca45d0f12a1c62fd2794f71b5cedc30a97603843076b256db61b2256e49'
+   '96b8a3d7d096007699ea1d5970d19779b35c5c8f89a6cea67354725e90530ee1'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts.lock/sha256
+   '493189808d5764099866612348646bfed6cc97e5be58101f08a3fecca0da2bdc'
+   'bceada1cfa294c41d6a5fe1521ce54bbc9562fd0932d478434875dea09ef8232'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock/sha256
+   'e95983873d8de61a09f662c404b63a3e5303aacd28ce96944715116ab2cba956'
+   'd82d67127068181930b0cea73d0f7b7df99e7a5e86d1bfe6234f99251ed4fd6a'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts.lock/sha256
+   '576cac4e34f2177b9af0af56ae07ead07249e341695c43f95ff060c1c2a27216'
+   'fdd26531561fc12c7e96ab5390f3b047a32cc669d8b00a7d6ea7ca28c6173fcc'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-chunkio/contracts.lock/sha256
+   '0abeb648bb1be088cdd3bd356158918a9fc5874caa52d1576a99ffc7009e53dc'
+   '7d9ce4b1f69a7e44c787f8b41f4e33dfbee7ce8be20e53faf14494d8d92ccd72'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-cmetrics/contracts.lock/sha256
+   '00b909fb6bcd67ee1121f660c3eedf9c8da374f7f2e53ad47733d8aa0e068ebc'
+   '206a5fc701c1d3149d7bfa241ab89b418da9773fead882ff9a04de39064435a0'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-ctraces/contracts.lock/sha256
+   'b29d843623b88e4d2000f52e8b5c96404e843435a85867b38a5e3646e5787691'
+   'ea09b87cca988b383f8a97ada017f31de4afac3a534a14e81d1df472bcfec04a'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-libevent/contracts.lock/sha256
+   '493189808d5764099866612348646bfed6cc97e5be58101f08a3fecca0da2bdc'
+   'bceada1cfa294c41d6a5fe1521ce54bbc9562fd0932d478434875dea09ef8232'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-librdkafka/contracts.lock/sha256
+   'e95983873d8de61a09f662c404b63a3e5303aacd28ce96944715116ab2cba956'
+   'd82d67127068181930b0cea73d0f7b7df99e7a5e86d1bfe6234f99251ed4fd6a'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-cfl/contracts.lock/sha256
+   'ef0d2cbfda8eb723e68b2a24b0263d4283faf6acd60005fef8843efd9218cc61'
+   'a8376b0f4c856d4d36d38a7169f57648fe5cf33c75c656a73936f5ba33fe29de'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-fluent-bit/contracts.lock/sha256
+   '576cac4e34f2177b9af0af56ae07ead07249e341695c43f95ff060c1c2a27216'
+   'fdd26531561fc12c7e96ab5390f3b047a32cc669d8b00a7d6ea7ca28c6173fcc'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-libc/contracts.lock/sha256
+   'ede6ad62d6d7adfcafb0250164f38cea127ddd6949af7eb76142140e99a2370f'
+   '5f8af260a3611b2c20dcb8e90694a7416caa1d978d3978a85fbb32995c8867fe'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-mpack/contracts.lock/sha256
+   'ad7d8bdd8f4b95edec00a475ea8f0ee33ca265a28010035cfc37be1ff9ebb8e4'
+   'd460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd'
+/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-msgpack/contracts.lock/sha256
+   '7f612c6f09ec1adca6cfd958fdab2a96d7f72f704a6d741b47bc79d24bb7ea9a'
+   '88fac09dabb280ad2707ccbd029da1a8a4121468f50494061e91622462887f56'
+/contract_revision/pinned_in_force[47]/module_sha256
+   '59830753b30f1782d1a0486c17db290bc3436280646585ec8c51a2dfda6fef33'
+   '15998cb292da3993e3cb714f96aeb26f340ef45782a7388d7556f26122c09d5b'
+/contract_revision/pinned_in_force[49]/module_sha256
+   '59830753b30f1782d1a0486c17db290bc3436280646585ec8c51a2dfda6fef33'
+   '15998cb292da3993e3cb714f96aeb26f340ef45782a7388d7556f26122c09d5b'
+/contract_revision/pinned_in_force[62]/module_sha256
+   '59830753b30f1782d1a0486c17db290bc3436280646585ec8c51a2dfda6fef33'
+   '15998cb292da3993e3cb714f96aeb26f340ef45782a7388d7556f26122c09d5b'
+/contract_revision/pinned_in_force[71]/module_sha256
+   '59830753b30f1782d1a0486c17db290bc3436280646585ec8c51a2dfda6fef33'
+   '15998cb292da3993e3cb714f96aeb26f340ef45782a7388d7556f26122c09d5b'
+/contract_revision/pinned_in_force[72]/module_sha256
+   '59830753b30f1782d1a0486c17db290bc3436280646585ec8c51a2dfda6fef33'
+   '15998cb292da3993e3cb714f96aeb26f340ef45782a7388d7556f26122c09d5b'
+/contract_revision/pinned_in_force[73]/module_sha256
+   'b00fed34352ef6234bc8be39c3bc3d8a85d0161a11aaf8b2571248273d402b32'
+   '4dd6cabf3f584a58dabe75c7f2bacca92e98131f3d8d81d5e2ee573f2c8e16c9'
+/contract_revision/pinned_in_force[74]/module_sha256
+   'b00fed34352ef6234bc8be39c3bc3d8a85d0161a11aaf8b2571248273d402b32'
+   '4dd6cabf3f584a58dabe75c7f2bacca92e98131f3d8d81d5e2ee573f2c8e16c9'
+/contract_revision/pinned_in_force[88]/module_sha256
+   '16c1c612b02dea676e0bedf583ccbafd1f44e2f838b4869e481d3ffe5e386255'
+   'a7fcdb05dd67e542ba8e94431fdbcdb573764fe32a58024f53acc97e592ddd81'
+/contract_revision/pinned_in_force[89]/module_sha256
+   '16c1c612b02dea676e0bedf583ccbafd1f44e2f838b4869e481d3ffe5e386255'
+   'a7fcdb05dd67e542ba8e94431fdbcdb573764fe32a58024f53acc97e592ddd81'
+/contract_revision/pinned_in_force[90]/module_sha256
+   '16c1c612b02dea676e0bedf583ccbafd1f44e2f838b4869e481d3ffe5e386255'
+   'a7fcdb05dd67e542ba8e94431fdbcdb573764fe32a58024f53acc97e592ddd81'
+/contract_revision/pinned_in_force[105]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[106]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[107]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[110]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[111]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[112]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/contract_revision/pinned_in_force[113]/module_sha256
+   'becf00cf00059f28cad8fb7929d735e8ef40b0e52238b8bd537bd7ef78a66461'
+   '60dc10ab784b17ca263c4cadb7ba4fad789bc7e432a250dbd64733163df97ae3'
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv
+   "module contract;\n\n// ChunkIO chunk content size — resource-projection vocabulary v1.\n//\n// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPTION about one up
+   "module contract;\n\n// ChunkIO chunk content size — resource-projection vocabulary v1.\n//\n// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPTION about one up
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv
+   "module contract;\n\n// CMetrics metric value accessors — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. TWO TRUSTED ASSUMPTIONS
+   "module contract;\n\n// CMetrics metric value accessors — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. TWO TRUSTED ASSUMPTIONS
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv
+   'module contract;\n\n// Monkey diagnostic logging — resource-projection vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about 
+   'module contract;\n\n// Monkey diagnostic logging — resource-projection vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about 
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv
+   "module contract;\n\n// librdkafka's public allocator-free entry point — resource-projection\n// vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE 
+   "module contract;\n\n// librdkafka's public allocator-free entry point — resource-projection\n// vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE 
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv
+   'module contract;\n\n// LZ4 stream state reset — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one
+   'module contract;\n\n// LZ4 stream state reset — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv
+   'module contract;\n\n// librdkafka topic-partition list ordering — resource-projection vocabulary\n// version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTE
+   'module contract;\n\n// librdkafka topic-partition list ordering — resource-projection vocabulary\n// version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTE
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv
+   "module contract;\n\n// CFL dynamic-string release — resource-projection vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about
+   "module contract;\n\n// CFL dynamic-string release — resource-projection vocabulary version 1.\n//\n// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv
+   "module contract;\n\n// CFL wall-clock reading — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one
+   "module contract;\n\n// CFL wall-clock reading — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv
+   'module contract;\n\n// Fluent Bit input-chunk destructor — resource-projection vocabulary version 1.\n//\n// Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED. This mo
+   'module contract;\n\n// Fluent Bit input-chunk destructor — resource-projection vocabulary version 1.\n//\n// Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED. This mo
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv
+   "module contract;\n\n// Fluent Bit direct-route array destructor — resource-projection vocabulary\n// version 1.\n//\n// Card AOM-DESTROY-SIBLINGS. This module 
+   "module contract;\n\n// Fluent Bit direct-route array destructor — resource-projection vocabulary\n// version 1.\n//\n// Card AOM-DESTROY-SIBLINGS. This module 
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv
+   "module contract;\n\n// W46-FLUENT-EVENT-CONTRACT-GAPS. At Fluent Bit\n// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 flb_input_chunk.c:3128\n// and 046accf6aded79
+   "module contract;\n\n// W46-FLUENT-EVENT-CONTRACT-GAPS. At Fluent Bit\n// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 flb_input_chunk.c:3128\n// and 046accf6aded79
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv
+   "module contract;\n\n// Fluent Bit input-chunk size queries — resource-projection vocabulary v1.\n//\n// Card W29-CORPUS-CONTRACTS. TWO TRUSTED ASSUMPTIONS abou
+   "module contract;\n\n// Fluent Bit input-chunk size queries — resource-projection vocabulary v1.\n//\n// Card W29-CORPUS-CONTRACTS. TWO TRUSTED ASSUMPTIONS abou
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv
+   "module contract;\n\n// Fluent Bit input-instance total chunk size — resource-projection vocabulary v1.\n//\n// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPT
+   "module contract;\n\n// Fluent Bit input-instance total chunk size — resource-projection vocabulary v1.\n//\n// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPT
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv
+   "module contract;\n\n// Fluent Bit storage backlog (`plugins/in_storage_backlog/sb.c`): the custody\n// interface of the twelve backlog functions, as CHECKED SP
+   "module contract;\n\n// Fluent Bit storage backlog (`plugins/in_storage_backlog/sb.c`): the custody\n// interface of the twelve backlog functions, as CHECKED SP
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   'module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+   "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and de
+/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv
+   'module contract;\n\n// mpack writer primitives — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. FOUR TRUSTED ASSUMPTIONS about 
+   'module contract;\n\n// mpack writer primitives — resource-projection vocabulary version 1.\n//\n// Card W37-CORPUS-CONTRACTS-4. FOUR TRUSTED ASSUMPTIONS about 
+/sources/qcore-provider-libevent:monkey/memory.qv
+   "module contract;\n                                                  \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve th
+   "module contract;\n                                               \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the C
+/sources/qcore-provider-librdkafka:librdkafka/memory.qv
+   "module contract;\n                                                  \n                                                  \n\n// Trusted resource-projection assu
+   "module contract;\n                                               \n                                               \n\n// Trusted resource-projection assumption
+/sources/quirin-provider-fluent-bit:fluent_bit/resource_memory.qv
+   "module contract;\n                                                  \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve th
+   "module contract;\n                                               \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the C
+/sources/quirin-provider-fluent-bit:fluent_bit/resource_string.qv
+   "module contract;\n                                                  \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n//\n// Card CONTRACT
+   "module contract;\n                                               \n\n// Trusted resource-projection assumptions, vocabulary version 1.\n//\n// Card CONTRACT-IN
+total differences: 62
+by last key: {'sha256': 17, 'source': 2, 'module_sha256': 17, 'chunk_sizes.qv': 1, 'metric_values.qv': 1, 'logging.qv': 1, 'kafka_mem.qv': 1, 'lz4_stream.qv': 1, 'topic_partition.qv': 1, 'sds_lifetime.qv': 1, 'time.qv': 1, 'input_chunk_destroy.qv': 1, 'input_chunk_destroy_direct_routes.qv': 1, 'input_chunk_is_up.qv': 1, 'input_chunk_sizes.qv': 1, 'input_chunk_total_size.qv': 1, 'storage_backlog.qv': 1, 'errno.qv': 1, 'process.qv': 1, 'socket.qv': 1, 'stdio.qv': 1, 'string.qv': 1, 'threads.qv': 1, 'unistd.qv': 1, 'writer.qv': 1, 'memory.qv': 2, 'resource_memory.qv': 1, 'resource_string.qv': 1}

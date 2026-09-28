@@ -1,0 +1,227 @@
+/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[0]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[0]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[0]/compile_configuration/inventory_sha256
+   '55f55fd035f0608eef92e0b8190b298c54c5b10dc4c3614ff9577a76b13c59fe'
+   'e7e5247794fbcf54b77fadfce01d3232cd3beff4de6db9f009decb6a96870840'
+/units[1]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[1]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[1]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[1]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[1]/compile_configuration/inventory_sha256
+   '8d5870cb0f91fb7cef502c2d9c09a5d2420b055ec12186bf43895e703586a749'
+   '9d41cffa3235f19e290accd6b15e9fdcb8dee38866c8bdab588252fb36d517ad'
+/units[2]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[2]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[2]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[2]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[2]/compile_configuration/inventory_sha256
+   'f4acacc57fc97a4bb7f21717a9722b713ed9af36c3ef5fb3eff9dd55b8b351b2'
+   '1692b139e72d3ebff6f69293d0efbe03033a31de6820efe3f9948dcf6d9b8348'
+/units[3]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[3]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[3]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[3]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[3]/compile_configuration/inventory_sha256
+   '686c346af4bb1c862b29cc19ab73a607ca4e95d03631ed3f979ee4c87de2ce6e'
+   'f0dc23ff318f353fe3880a404b5361668ea02a3d3e4f552934ca35d54ce56557'
+/units[4]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[4]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[4]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[4]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[4]/compile_configuration/inventory_sha256
+   '7ea5e54581ed325b29914352070b4e59a56858ad0ab3185aff2bc2ec134e07d7'
+   '19a9e49b7a8c9afca13625cfe06a718b18f5c965b6b1a9abf951ae8129dfb5fc'
+/units[5]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[5]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[5]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[5]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[5]/compile_configuration/inventory_sha256
+   '199dcdb7cb8705cd086164c8f43cdff70e133de43229aaf54a2f9621463291c1'
+   '5b95f28f16fe3c84a42ec43654a434d2da79579a2668cc6b18b8d4748eaa0fea'
+/units[6]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[6]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[6]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[6]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[6]/compile_configuration/inventory_sha256
+   'f3e0daa8536c04a9ec5605b3f4a26716e8be88dcf8d30524b7828dbf9b3423dc'
+   '960fda788adf66c2461d16575eb4d4442e2380982c41eddc2b88ad2dfa2efb6f'
+/units[7]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[7]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[7]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[7]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[7]/compile_configuration/inventory_sha256
+   'd20b9acea1ec444c6d9e0ee07b7f8d614dca2abe66b75dfcedce5dd72fc039f5'
+   '84ecf56152fa14d63a99598337b77bb298809edf4e37ae05e05833581e126088'
+/units[8]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[8]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[8]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[8]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[8]/compile_configuration/inventory_sha256
+   'f26defe7b34995c5e3beaba8de0e9eedab46cf0d9ce97c29c4928eb4613edb3e'
+   '7b910505700ff1540bbbbbd252b02ae4f9f01e5e4bec08c030620f9700a0d17e'
+/units[9]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[9]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[9]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[9]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[9]/compile_configuration/inventory_sha256
+   'aa8da7640e259c6bf9ab4b9a1e094575a82b4d9287aac9239657af1b734984ea'
+   '44a41a914e37daa362d26f85e6f6c9a47b3d11b02938578ecb84e660be0d3d8f'
+/units[10]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[10]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[10]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[10]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[10]/compile_configuration/inventory_sha256
+   '37dc35080cf81332edbd6df962fdb97bc451a1e2a8cb814eed806138fce0c570'
+   'a335ae7f29d7e2257f533ebb3465f9c2bec94b3e7717818a32740201fdfb09ab'
+/units[11]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[11]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[11]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[11]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[11]/compile_configuration/inventory_sha256
+   '54784acb608f49c9db2303835d9df22c1ee3d58b69848089df4b4aaf26472106'
+   '47cb95c9df6e8c96348eef8e3c1fd9a83cbacb32b45dfe60e012310b51799a32'
+/units[12]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[12]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[12]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[12]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[12]/compile_configuration/inventory_sha256
+   '38bdbbd63c30d8288cb0b5d82450f37c8732744b72a977da58d5dbf784eb67fe'
+   '98d4d54b2a7028d37cb29321f95c8dca8de1bd84379426209741186b81c1e16f'
+/units[13]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[13]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[13]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[13]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[13]/compile_configuration/inventory_sha256
+   'b8817ddbb5c16376c7577fa03ce4d000b7311df14d6226d11ea5204dbd2c125e'
+   '9912f1b99ca09322f8a75631c885cec9686f0acf58ad02bbc11ce601cd3edd77'
+/units[14]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[14]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[14]/compile_configuration/dependencies/resource_contract_manifest
+   '12637818487c10347b1052ae08d7c743cd9c0b10400ab73b34b4d8b3a42abf60'
+   'edd6616eab9a3f0d084265c0b8701a53d5e3ed2f85f033656460526af12ecd19'
+/units[14]/compile_configuration/dependencies/resource_contract_sources
+   '1c249a585f659f437975054c07e17d0b86bf5f519ace2b1129c9f4620fe2ee2d'
+   '1716fb3619362b0a3796a0c2c782b3d41838653fcaf0481d8aa0db2d6d11ba23'
+/units[14]/compile_configuration/inventory_sha256
+   'd4888ea96ffa337a2c78acf47619f731f6ec2100d1979f73acd8f95ec22d1b78'
+   '61322f4642f122f3b58e87c9edf254e02626f78e1af19dffd9456aa879297fd8'
+total differences: 75
+by last key: {'resource_contract_manifest': 30, 'resource_contract_sources': 30, 'inventory_sha256': 15}

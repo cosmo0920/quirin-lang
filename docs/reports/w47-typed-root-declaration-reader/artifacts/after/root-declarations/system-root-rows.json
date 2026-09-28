@@ -1,0 +1,119 @@
+{
+ "distinct_function_records": 385,
+ "records_differing_between_analyses": 12,
+ "served": {
+  "lexical": 379,
+  "none": 4,
+  "ast": 2
+ },
+ "declared_names": 1641,
+ "disagreement_kinds": {
+  "ast-binds-lexical-never-bound": {
+   "names": 207,
+   "functions": 69
+  },
+  "ast-declared-only": {
+   "names": 26,
+   "functions": 17
+  },
+  "ast-may-bind-only": {
+   "names": 1,
+   "functions": 1
+  },
+  "lexical-binds-ast-never-bound": {
+   "names": 32,
+   "functions": 12
+  },
+  "lexical-declared-only": {
+   "names": 12,
+   "functions": 9
+  },
+  "lexical-may-bind-only": {
+   "names": 98,
+   "functions": 47
+  }
+ },
+ "changed_functions_by_served": {},
+ "changed_functions": [],
+ "examples": {
+  "ast-binds-lexical-never-bound": [
+   "cb_queue_chunks",
+   "dlq_stream_total_size",
+   "engine_has_fluentbit_logs_input",
+   "flb_engine_adaptive_flush_interval",
+   "flb_engine_dispatch",
+   "flb_engine_drain_ring_buffer_signal_channel",
+   "flb_engine_evl_get",
+   "flb_engine_flush",
+   "flb_engine_get_chunk_backpressure_percent",
+   "flb_engine_reschedule_retries",
+   "flb_input_chunk_destroy",
+   "flb_input_chunk_destroy_corrupted",
+   "flb_input_chunk_find_space_new_data",
+   "flb_input_chunk_has_other_routes",
+   "flb_input_chunk_has_overlimit_routes"
+  ],
+  "ast-declared-only": [
+   "cb_queue_chunks",
+   "flb_input_chunk_get_direct_routes",
+   "flb_input_chunk_map",
+   "flb_input_chunk_write_header_v2",
+   "flb_output_exit",
+   "flb_output_set_property",
+   "flb_sched_timer_cb_create",
+   "flb_sched_timer_coro_cb_create",
+   "flb_storage_quarantine_chunk",
+   "flb_task_create",
+   "flb_task_running_print",
+   "handle_dlq_if_available",
+   "input_chunk_append_raw",
+   "input_chunk_collect_output_references",
+   "task_collect_output_references"
+  ],
+  "ast-may-bind-only": [
+   "flb_engine_adaptive_flush_interval"
+  ],
+  "lexical-binds-ast-never-bound": [
+   "append_to_ring_buffer",
+   "cfl_list_size",
+   "flb_bucket_queue_seek",
+   "flb_input_chunk_get_projected_write_size",
+   "flb_input_chunk_release_space",
+   "flb_log_check",
+   "flb_sched_request_create",
+   "flb_sched_timer_cb_create",
+   "handle_output_event",
+   "mk_list_size",
+   "sort_chunk_cmp",
+   "update_logs_tag_records_metrics"
+  ],
+  "lexical-declared-only": [
+   "cb_sb_init",
+   "flb_engine_adaptive_flush_interval",
+   "flb_engine_drain_ring_buffer_signal_channel",
+   "flb_engine_start",
+   "flb_input_chunk_create",
+   "flb_storage_quarantine_chunk",
+   "handle_output_events",
+   "metrics_append_input",
+   "update_logs_tag_records_metrics"
+  ],
+  "lexical-may-bind-only": [
+   "__cfl_list_add",
+   "__cfl_list_del",
+   "__mk_list_add",
+   "__mk_list_del",
+   "append_to_ring_buffer",
+   "dlq_stream_total_size",
+   "engine_has_fluentbit_logs_input",
+   "flb_coro_create",
+   "flb_engine_get_chunk_backpressure_percent",
+   "flb_input_chunk_map",
+   "flb_input_chunk_ring_buffer_collector",
+   "flb_log_check",
+   "flb_output_get_instance",
+   "flb_output_net_default",
+   "flb_output_new"
+  ]
+ }
+}
