@@ -6738,8 +6738,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined runtime #import and contract-load-path gate at70d29367; 339 Rust units/352 summaries, 11 ignored, zero failed. All nine commands exit0. Private logs /home/cosmo/.codex/worktrees/audit-checkpoint-batches/qcore-c/private/runtime-source-imports-gate-20260927T142437Z. Provider129 and packages5 are carried from the completed EXT-02/03 provider gate; no provider files changed or new provider run claimed. Clang recorded for this run. First failed integrated gate and exact corrections retained. All five pinned audit artifacts byte-identical; no new safety coverage claim.",
-  "workspace_tests": 6122,
+  "note": "W47-CALLEE-CLOSURE-R2, 2026-09-28. Standing gate plus provider gate by scripts/gate.sh at a7dc1a9e in this card's worktree, CARGO_INCREMENTAL=0, every exit in its own file (gate/steps.txt), no pipe; logs private under private/w47cc/gate2/. submodule 0 (libevent d82464a2); run_test_binaries.py 0: 340 units, 353 summaries; 6126 passed; 0 failed; 11 ignored (private/test-binaries/20260928T012132Z-446140/summary.json); cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 216; unittest discover -s scripts/tests 0 (365 OK); build_docs_index.py --check 0. Provider gate: cargo test (providers) 0, 43 summaries, 129 passed, 0 failed, 1 ignored; provider cargo clean --profile dev 0; provider fmt 0; provider clippy 0; providers/contracts.py check 0; package.py build 0 and verify 0 for all five packages; python3 -m unittest discover -s providers/tests exit 1: 24 tests, 23 passed, 1 failure, test_dual_extension_same_stem_is_refused_before_manifest_selection, which fails on the base since f4018a92 (its fixture now writes the same memory.qv it means to duplicate; providers/contracts.py, package.py and providers/tests are byte-identical to 3ba72320; registered PROVIDER-PY-DUAL-STEM-FIXTURE-STALE, not fixed in passing). clang --version 0 in this worktree. The first gate at 0a22d79d (private/w47cc/gate1/, gate/attempt1-steps.txt) failed: runner exit 101 (6125 passed, 1 failed: qcore-verifier-host execution_quota a_forced_override_never_weakens_an_execution, Io(Broken pipe) under load, 5 of 5 passes alone, private/w47cc/logs/quota-iso-*.log), fmt 1 and provider fmt 1 on this card's new control file (formatting only, fixed in a7dc1a9e), provider Python 1 (the same base failure); every other step exited 0. The Python count and docs index were re-run after the matrix regeneration with this file.",
+  "workspace_tests": 6126,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 216,
@@ -6967,7 +6967,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-callee-closure-r2/gate.json)"
  },
  "named_followups": [
   {

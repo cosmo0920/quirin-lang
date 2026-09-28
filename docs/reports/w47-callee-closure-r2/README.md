@@ -361,9 +361,80 @@ blockers. It does not wait on contracts.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/). It records the standing gate
-and the provider gate by [`scripts/gate.sh`](scripts/gate.sh), with every exit
-in its own file and private logs.
+[`scripts/gate.sh`](scripts/gate.sh) runs the standing gate and the provider
+gate, writing every exit to its own file ([gate.json](gate.json),
+[gate/steps.txt](gate/steps.txt)). The logs are private under
+`private/w47cc/gate2/`. The final run is at `a7dc1a9e`.
+
+**Standing gate:**
+
+- `run_test_binaries.py` exits 0: 340 units, 353 summaries, **6,126 passed,
+  0 failed**, 11 ignored;
+- fmt, clippy and both reevaluation examples exit 0;
+- **216** Lean audits pass;
+- Python: **365** OK;
+- the docs index check exits 0.
+
+**Provider gate:**
+
+- `cargo test` exits 0: **129 passed**, 0 failed, 1 ignored;
+- fmt, clippy and `contracts.py check` exit 0;
+- all five packages build and verify, exit 0;
+- `unittest discover -s providers/tests` exits **1**. Of 24 tests, 23 pass.
+
+The one provider Python failure is
+`test_dual_extension_same_stem_is_refused_before_manifest_selection`, and it
+fails on the base:
+
+- `f4018a92` changed its Tree fixture to create `libc/memory.qv`, the very
+  sibling the test writes, so no second stem exists;
+- the provider Python sources are byte-identical to `3ba72320`, and the test
+  uses only a temporary tree;
+- it is registered as `PROVIDER-PY-DUAL-STEM-FIXTURE-STALE` and not fixed in
+  passing.
+
+**First attempt** (`0a22d79d`, [attempt1-steps.txt](gate/attempt1-steps.txt)).
+It failed on three counts:
+
+- the runner exited 101: `qcore-verifier-host`'s
+  `a_forced_override_never_weakens_an_execution` failed with
+  `Io(Broken pipe)` under load. That is constraint 16's signature on a row
+  not listed there. It passed 5 of 5 runs alone, and the row was not
+  weakened;
+- rustfmt, in both workspaces, on this card's new control file (fixed,
+  formatting only);
+- the same provider Python failure.
+
+**Targeted runs before the arbiter:** the card's controls plus the W46
+controls pass (4 + 6). `contract_loader`, `qcore_contract_corpus` and
+`contract_inherit_qcore_provider` pass after the 230 → 232 re-pin.
+
+## 7a. The census's formal-argument class
+
+The integrator asked for this cross-reference.
+`W47-ALIAS-RESIDUALS-CENSUS` measures a class of 2,350 leaves in 732
+functions: a formal the never-bound closure refuses, named in the arguments
+of an uncontracted call. The census was not re-run here, but reading the
+call sites shows which of this card's sites fall in that shape:
+
+- **`cfl_arena_calloc`:** 10 of the 13 removed call sites pass the caller's
+  own `arena` formal directly (`cmt_encode_opentelemetry.c`: 1950, 1960,
+  2006, 2174, 2216, 2236, 2267, 2332, 2359, 2378). The other 3 (3236, 3262,
+  3289) pass `get_context_arena(context)`, and those became `nested call`
+  refusals.
+- **`rd_file_read`:** both sites pass a formal, `file_path` (`:655`) and
+  `jwt_template_file_path` (`:276`).
+
+The declarations turn those formals into `Borrowed` actuals of a contracted
+callee. Two effects follow:
+
+- the two list initialisers become `Safe`, with the arena formal as the
+  derived result's base;
+- the other `initialize_*` bodies trade the call leaf for an alias leaf at
+  their `return`.
+
+Whether each of these 12 sites is among the census's 2,350 is for the census
+to confirm against its own rows.
 
 ## 8. Follow-ups
 
