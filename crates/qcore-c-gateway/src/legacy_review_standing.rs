@@ -18,8 +18,10 @@
 //! accepting the held declaration would leave the same statement's argument
 //! refusal, or a violation, standing: a verdict below the function's real
 //! standing (`Pending < Unknown`).
-//! Observed: `src/flb_lib.c::flb_input` over a review-held `flb_input_new`,
-//! whose statement also reads `ctx->config`.
+//! Measured in this repository's own pinned tests: `k_close(0)` held for a
+//! pin mismatch (the literal actual does not match the declaration), a double
+//! release and a leak held for review, and the revision-mode fixture's
+//! callers of a body a re-pin as written would leave refuted.
 //!
 //! # The fix, and why it is here
 //!

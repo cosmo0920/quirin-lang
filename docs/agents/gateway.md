@@ -966,8 +966,8 @@ which is not a second authority.
     statement's other refusal (the classifier checks the hold first) and has
     no effect, so a row was `Pending` although accepting the declaration would
     leave the statement's argument refusal or a violation standing
-    (`flb_input` over a review-held `flb_input_new`; `k_close(0)` beside a
-    pin mismatch). A unit with a `Pending` row is analysed a second time under
+    (`k_close(0)` beside a pin mismatch, a double release held for review, a
+    caller of a body a re-pin would leave refuted). A unit with a `Pending` row is analysed a second time under
     `ResourceContracts::with_human_holds_in_force` (every declaration awaiting
     review or withheld for a pin mismatch in force as written, nothing held),
     and every `Pending` row is joined with each reason above `Pending` its

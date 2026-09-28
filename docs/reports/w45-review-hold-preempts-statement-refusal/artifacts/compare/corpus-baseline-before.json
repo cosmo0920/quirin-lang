@@ -1,0 +1,47 @@
+{
+ "baseline": {
+  "diagnostic_counts": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7936,
+   "unsupported": 35737
+  },
+  "functions": {
+   "Safe": 526,
+   "Unknown": 4298,
+   "Unsafe": 10
+  },
+  "units": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ },
+ "differing_json_paths": [],
+ "differing_top_level_keys": [],
+ "differing_unit_keys": {},
+ "function_leaf_moves": [],
+ "function_status_moves": [],
+ "resource_diagnostics_identical": true,
+ "run": {
+  "diagnostic_counts": {
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7936,
+   "unsupported": 35737
+  },
+  "functions": {
+   "Safe": 526,
+   "Unknown": 4298,
+   "Unsafe": 10
+  },
+  "units": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ },
+ "unit_status_moves": []
+}

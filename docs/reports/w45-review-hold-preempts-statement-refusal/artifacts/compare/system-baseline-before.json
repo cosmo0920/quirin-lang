@@ -1,0 +1,47 @@
+{
+ "baseline": {
+  "diagnostic_counts": {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  },
+  "functions": {
+   "Safe": 31,
+   "Unknown": 201,
+   "Unsafe": 2
+  },
+  "units": {
+   "Unknown": 7,
+   "Unsafe": 1
+  }
+ },
+ "differing_json_paths": [
+  "/units[]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+  "/units[]/compile_configuration/dependencies/resource_contract_sources",
+  "/units[]/compile_configuration/inventory_sha256"
+ ],
+ "differing_top_level_keys": [],
+ "differing_unit_keys": {
+  "compile_configuration": 15
+ },
+ "function_leaf_moves": [],
+ "function_status_moves": [],
+ "resource_diagnostics_identical": false,
+ "run": {
+  "diagnostic_counts": {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  },
+  "functions": {
+   "Safe": 31,
+   "Unknown": 201,
+   "Unsafe": 2
+  },
+  "units": {
+   "Unknown": 7,
+   "Unsafe": 1
+  }
+ },
+ "unit_status_moves": []
+}

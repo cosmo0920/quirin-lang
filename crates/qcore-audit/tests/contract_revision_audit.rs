@@ -447,7 +447,10 @@ fn the_mutation_table() {
                 if *status == "Pending" {
                     assert_eq!(found.2, ["contract-pin-mismatch"], "{name}");
                 } else {
-                    assert!(found.2.iter().any(|r| r == "contract-pin-mismatch"), "{name}");
+                    assert!(
+                        found.2.iter().any(|r| r == "contract-pin-mismatch"),
+                        "{name}"
+                    );
                     assert!(
                         found
                             .2

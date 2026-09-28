@@ -1,0 +1,453 @@
+{
+ "if-before": {
+  "functions": {
+   "Pending": 2,
+   "Safe": 37,
+   "Unknown": 364,
+   "Unsafe": 1
+  },
+  "rows": [
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Pending",
+    "diagnostics": 1,
+    "first_diagnostics": [
+     {
+      "line": 18474,
+      "description": "call to `flb_input_new` whose declared contract awaits human review (awaiting-human-review)"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Pending",
+    "diagnostics": 1,
+    "first_diagnostics": [
+     {
+      "line": 18474,
+      "description": "call to `flb_input_new` whose declared contract awaits human review (awaiting-human-review)"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   }
+  ]
+ },
+ "if-after": {
+  "functions": {
+   "Pending": 2,
+   "Safe": 37,
+   "Unknown": 364,
+   "Unsafe": 1
+  },
+  "rows": [
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Pending",
+    "diagnostics": 1,
+    "first_diagnostics": [
+     {
+      "line": 18474,
+      "description": "call to `flb_input_new` whose declared contract awaits human review (awaiting-human-review)"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Pending",
+    "diagnostics": 1,
+    "first_diagnostics": [
+     {
+      "line": 18474,
+      "description": "call to `flb_input_new` whose declared contract awaits human review (awaiting-human-review)"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   }
+  ]
+ },
+ "if-accepted": {
+  "functions": {
+   "Safe": 39,
+   "Unknown": 364,
+   "Unsafe": 1
+  },
+  "rows": [
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_input.c",
+    "function": "flb_input_new",
+    "status": "Unknown",
+    "diagnostics": 186,
+    "first_diagnostics": [
+     {
+      "line": 18064,
+      "description": "braced initializer, expression, or declaration is not modeled"
+     },
+     {
+      "line": 18065,
+      "description": "call to uncontracted function `pthread_mutexattr_init`"
+     },
+     {
+      "line": 18069,
+      "description": "unresolved resource identity `input`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Safe",
+    "diagnostics": 0,
+    "first_diagnostics": []
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "diagnostics": 12,
+    "first_diagnostics": [
+     {
+      "line": 18411,
+      "description": "call to uncontracted function `flb_config_init`"
+     },
+     {
+      "line": 18416,
+      "description": "unresolved resource identity `config`"
+     },
+     {
+      "line": 18418,
+      "description": "indirect memory access is outside the resource projection"
+     }
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_input",
+    "status": "Safe",
+    "diagnostics": 0,
+    "first_diagnostics": []
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_service_set",
+    "status": "Unknown",
+    "diagnostics": 7,
+    "first_diagnostics": [
+     {
+      "line": 18785,
+      "description": "call to uncontracted function `__builtin_va_start`"
+     },
+     {
+      "line": 18786,
+      "description": "unmodeled call, aggregate or indirect access in loop condition"
+     },
+     {
+      "line": 18787,
+      "description": "call to uncontracted function `__builtin_va_arg`"
+     }
+    ]
+   }
+  ]
+ }
+}

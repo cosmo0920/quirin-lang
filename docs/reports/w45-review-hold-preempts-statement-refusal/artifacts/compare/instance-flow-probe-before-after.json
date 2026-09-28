@@ -1,0 +1,45 @@
+{
+ "baseline": {
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  },
+  "functions": {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  },
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  }
+ },
+ "differing_json_paths": [],
+ "differing_top_level_keys": [],
+ "differing_unit_keys": {
+  "compile_configuration": 3
+ },
+ "function_leaf_moves": [],
+ "function_status_moves": [],
+ "resource_diagnostics_identical": true,
+ "run": {
+  "diagnostic_counts": {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  },
+  "functions": {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  },
+  "units": {
+   "Unknown": 12,
+   "Unsafe": 1
+  }
+ },
+ "unit_status_moves": []
+}

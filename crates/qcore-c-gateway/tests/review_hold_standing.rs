@@ -4,7 +4,7 @@
 //! (`docs/reports/w45-review-hold-preempts-statement-refusal/README.md`).
 //!
 //! Before the card the held call's `Pending` refusal replaced its statement's
-//! other refusal and stopped the path, so a function whose accepted
+//! other refusal and the held call had no effect, so a function whose accepted
 //! declaration would still leave it `Unknown` (or alleging a violation) was
 //! published `Pending`, below its real standing. A `Pending` row is now
 //! joined with every reason its function carries with the held declarations
@@ -13,9 +13,11 @@
 //!
 //! **The family is held out.** A `k_*` API unrelated to every production
 //! library, declared inline: no fixture file and no production contract moves.
-//! `k_input`/`k_input_new` mirror the observed instance's shape
-//! (`src/flb_lib.c::flb_input` over a review-held `flb_input_new`) without its
-//! names. Every `Safe` below is `Safe` for a synthetic declared custody
+//! `k_input_new` has the shape W47-LOOP-OWNER-INSTANCE-FLOW reported
+//! (`flb_input` over a review-held `flb_input_new`), with an actual the
+//! projection refuses even under the declaration; the real `flb_input` is
+//! `Safe` with its declaration accepted, so it stays `Pending` (report §6).
+//! Every `Safe` below is `Safe` for a synthetic declared custody
 //! projection under the premises the fixture names, and every `Unsafe` is
 //! provisional.
 
@@ -78,7 +80,7 @@ const ARGUMENT_ACCESS: &str = "int w(struct k_ctx **ctx, const char *input, void
 /// The same call with a plain formal: nothing but the hold is open.
 const PLAIN_ACTUAL: &str = "int w(struct k_config *config, const char *input, void *data) \
      { void *i; i = k_input_new(config, input, data, 1); if (!i) { return -1; } return 0; }";
-/// A refusal later on the path the held call stops.
+/// A refusal later on the path, which the held analysis records itself.
 const LATER_REFUSAL: &str = "int w(struct k_config *config, const char *input, void *data, struct k_ctx *x) \
      { void *i; i = k_input_new(config, input, data, 1); x->next->next = x; if (!i) { return -1; } return 0; }";
 
@@ -174,7 +176,10 @@ fn no_violation(row: &LegacyFunctionSummary) -> bool {
 fn controls_with_every_declaration_in_force() {
     let bare = load(BARE);
     assert_eq!(w(&analyse(BALANCED, &bare)).status, AnalysisStatus::Safe);
-    assert_eq!(w(&analyse(PLAIN_ACTUAL, &bare)).status, AnalysisStatus::Safe);
+    assert_eq!(
+        w(&analyse(PLAIN_ACTUAL, &bare)).status,
+        AnalysisStatus::Safe
+    );
     assert_eq!(w(&analyse(TWICE, &bare)).status, AnalysisStatus::Unsafe);
     assert_eq!(w(&analyse(LEAKED, &bare)).status, AnalysisStatus::Unsafe);
     // The argument access and the later store refuse on their own.
@@ -224,7 +229,12 @@ fn a_held_call_does_not_mask_its_statements_argument_refusal() {
 fn a_later_refusal_on_the_path_is_recorded_by_the_held_analysis() {
     for contracts in [deferred("k_input_new"), pin_withheld("k_input_new")] {
         let row = analyse(LATER_REFUSAL, &contracts);
-        assert_eq!(w(&row).status, AnalysisStatus::Unknown, "{:?}", w(&row).diagnostics);
+        assert_eq!(
+            w(&row).status,
+            AnalysisStatus::Unknown,
+            "{:?}",
+            w(&row).diagnostics
+        );
         assert!(standing(w(&row)).is_empty(), "{:?}", w(&row).diagnostics);
         assert_eq!(held(w(&row)), ["k_input_new"]);
     }
@@ -239,7 +249,12 @@ fn a_violation_the_accepted_declaration_would_allege_keeps_the_row_unknown() {
         for contracts in [deferred(callee), pin_withheld(callee)] {
             let row = analyse(body, &contracts);
             let row = w(&row);
-            assert_eq!(row.status, AnalysisStatus::Unknown, "{body}: {:?}", row.diagnostics);
+            assert_eq!(
+                row.status,
+                AnalysisStatus::Unknown,
+                "{body}: {:?}",
+                row.diagnostics
+            );
             assert!(no_violation(row), "{body}: {:?}", row.diagnostics);
             assert!(
                 standing(row)
@@ -262,7 +277,12 @@ fn a_row_whose_only_reason_is_the_hold_stays_pending() {
         for contracts in [deferred(callee), pin_withheld(callee)] {
             let summary = analyse(body, &contracts);
             let row = w(&summary);
-            assert_eq!(row.status, AnalysisStatus::Pending, "{body}: {:?}", row.diagnostics);
+            assert_eq!(
+                row.status,
+                AnalysisStatus::Pending,
+                "{body}: {:?}",
+                row.diagnostics
+            );
             assert_eq!(summary.status, AnalysisStatus::Pending);
             assert!(standing(row).is_empty());
             assert_eq!(held(row), [callee]);
@@ -307,7 +327,9 @@ fn a_standing_reason_is_never_read_as_a_held_call() {
     for description in standing(w(&row)) {
         assert!(held_call(&description).is_none());
         assert!(pin_hold::held_call(&description).is_none());
-        assert!(!qcore_c_gateway::legacy_c::verdict::is_held_call(&description));
+        assert!(!qcore_c_gateway::legacy_c::verdict::is_held_call(
+            &description
+        ));
     }
 }
 

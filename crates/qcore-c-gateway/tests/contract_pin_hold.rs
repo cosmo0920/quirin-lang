@@ -129,7 +129,12 @@ fn a_withheld_pin_accuses_nothing() {
     );
     for (body, names, callee, status) in [
         (TWICE, vec!["k_close"], "k_close", AnalysisStatus::Unknown),
-        (BALANCED, vec!["k_close"], "k_close", AnalysisStatus::Pending),
+        (
+            BALANCED,
+            vec!["k_close"],
+            "k_close",
+            AnalysisStatus::Pending,
+        ),
         (LEAKED, vec!["k_open"], "k_open", AnalysisStatus::Unknown),
     ] {
         let summary = analyse(body, &withheld(&names));

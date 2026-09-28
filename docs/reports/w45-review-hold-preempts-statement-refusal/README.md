@@ -17,9 +17,10 @@ below its real standing:
 1. **The held refusal replaces the statement's other refusal.** The statement
    classifier checks the hold before the lexical access gate
    (`legacy_c.rs`, the `W45-CONTRACT-DEFERRED-REVIEW` hook), and a statement
-   reports one refusal. `i_ins = flb_input_new(ctx->config, …)` reported only
-   the held call, although with `flb_input_new` accepted the `ctx->config`
-   actual keeps `indirect memory access is outside the resource projection`.
+   reports one refusal. `i = k_input_new((*ctx)->config, …)` reports only the
+   held call, although with `k_input_new` accepted the `(*ctx)->config` actual
+   keeps `indirect memory access is outside the resource projection`
+   (fixture, §4).
 2. **The held call has no effect.** Nothing the accepted declaration would
    make of the path is seen: a second release, a leak, an argument the
    declaration does not admit (`k_close(0)` against `resource_released(h, …)`:
@@ -35,10 +36,7 @@ below its real standing:
 
 A refusal on a **later** statement is not masked: the refused statement's
 writes are havocked and the path goes on, so the held analysis records it
-(fixture `a_later_refusal_on_the_path_is_recorded_by_the_held_analysis`). The
-`pending_human_review` section's `meaning` says a path stops at its first
-refused statement; that holds for the second held call it counts
-(`W45-REVIEW-HELD-CALL-SITE-COUNT`), not for every refusal.
+(fixture `a_later_refusal_on_the_path_is_recorded_by_the_held_analysis`).
 
 ## 2. Where the fix belongs, and the mechanism
 
@@ -96,8 +94,13 @@ diagnostic per declaration and continues, so it masks nothing.
 ## 4. Fixture before and after
 
 `crates/qcore-c-gateway/tests/review_hold_standing.rs` (held-out `k_*` family,
-9 tests). BEFORE is the base tree's behaviour of the same shapes (the base
-tests below, which pinned it).
+9 tests). BEFORE and AFTER were measured with one probe,
+[`fixture_before_after.rs`](scripts/fixture_before_after.rs), run in the base
+tree and in this worktree by
+[`fixture_before_after.sh`](scripts/fixture_before_after.sh) (exit 0 both);
+its rows are [`artifacts/fixture/before.txt`](artifacts/fixture/before.txt)
+and [`after.txt`](artifacts/fixture/after.txt). BEFORE reproduces the defect
+on `main`.
 
 | Shape | Declarations in force | BEFORE (held) | AFTER (held) |
 |---|---|---|---|
@@ -136,13 +139,106 @@ is a `Safe` move):
 
 ## 5. Corpus, system and slice
 
-MEASUREMENT
+[`scripts/measure.sh`](scripts/measure.sh) `PHASE TREE` runs the three
+arbiters (the common brief's commands, `--jobs 8`) into fresh directories
+under `private/rh/`. BEFORE is the base tree `fefb9199` (an archive of the
+commit unpacked into the session scratchpad, outside `qcore-c/`; release binary
+`2fc22203…`), AFTER this worktree at `6f33cfa7` (binary `2eb2ef03…`; the tip
+differs from it only by `rustfmt` layout, comments and records). The first
+BEFORE corpus run exited 1 (`could not verify Cycle 18 Libevent source:
+GitUnavailable`: the archive leaves `third_party/libevent` empty); it is kept
+as a failed attempt and discarded, and the corpus was rerun (`before-corpus`)
+with that directory linked to this worktree's checkout of the pinned
+`d82464a2`. Comparisons: [`artifacts/compare/`](artifacts/compare/)
+([`compare.py`](scripts/compare.py): statuses, leaf multisets, unit keys and
+every differing JSON path; [`before_after.py`](scripts/before_after.py): raw
+files), written by [`compare_all.sh`](scripts/compare_all.sh).
+
+| Route | Baseline (condvar integration) | BEFORE | AFTER |
+|---|---|---|---|
+| corpus (185 units, `66910c10`) | 526 / 10 / 4,298 functions; units 6 / 8 / 167 / 4 | `resource-diagnostics.json` **byte-identical** to the baseline | **byte-identical** to BEFORE and the baseline |
+| system (`046accf6`) | 31 / 2 / 201; units 7 Unknown / 1 Unsafe | 0 status, 0 leaf moves vs baseline | 0 status, 0 leaf moves vs BEFORE |
+| tail-pause slice (`90978ac6`) | 24 / 1 / 245; units 12 Unknown / 1 Unsafe | 0 status, 0 leaf moves vs baseline | 0 status, 0 leaf moves vs BEFORE |
+
+Functions are Safe / Unsafe / Unknown (unique by library, file and function);
+**0 Pending** on every route and side. The system and slice
+`resource-diagnostics.json` differ from BEFORE (and BEFORE from the baseline)
+only at `compile_configuration/…/resource_contract_sources` and
+`inventory_sha256`, digests over the measured tree's paths. The other corpus
+files: `audit.log` equal once the run directory is named alike, both parity
+streams equal once sorted, the contract sidecar equal once the tree root is
+named alike, `resource-diagnostics.source-effects.json` differing only in
+identity digests (`build_digest`, `configuration_digest`, `task_digest`, the
+`resource_contracts:` obligation id), `run.json` in paths, binary hash and
+times; system and slice `console.log` differ only in the `preparation:`
+wall-clock line (validation policy: a measurement).
+
+**No function moves**, so there is no attribution to give, no Safe →
+non-Safe move and no correction on the routes, and no leak or violation is
+added or removed. This is the proof the brief asks for that `main` has nothing
+this card changes: the second analysis runs only for a unit with a `Pending`
+row, and no route has one. The baseline stays the condvar integration
+archive; nothing new is archived.
 
 ## 6. The two in-flight branches
 
-BRANCHES
+**W47-LOOP-OWNER-INSTANCE-FLOW** (`worktree-agent-aa0821f6bf47bd9c0`). Its
+report registers this card on `src/flb_lib.c::flb_input` (slice, both
+variants) moving `Unknown → Pending`, and reads the held statement as masking
+`ctx->config`'s argument refusal. Measured here without merging code: an
+archive of this card's tip in the scratchpad, overwritten with that branch's
+four contract-data files (`input_instance.qv`, the fluent-bit provider's
+`contracts.lock`, `providers/contract-load-path.json`,
+`cycle19-resource-contracts.json`; [`overlay_branch_contracts.sh`](scripts/overlay_branch_contracts.sh)
+lists them), whose code changes are census-only and never run on the
+per-unit routes; the slice run by
+[`branch_contracts_probe.sh`](scripts/branch_contracts_probe.sh) with each
+binary. Rows: [`artifacts/instance-flow-probe.json`](artifacts/instance-flow-probe.json).
 
-## 7. Lean
+| Run | `flb_input` (×2) | Slice rows (every variant) |
+|---|---|---|
+| base binary (`if-before`) | **Pending**, one held call | 37 Safe / 1 Unsafe / 364 Unknown / 2 Pending: the branch's figure reproduced |
+| this card (`if-after`) | **Pending**, unchanged | identical `resource-diagnostics.json` |
+| declarations accepted as written, flexible ([`accept_as_written.py`](scripts/accept_as_written.py), `if-accepted`) | **Safe**, no diagnostic | 39 Safe / 1 Unsafe / 364 Unknown |
+
+With `flb_input_new` in force its `config` position is `Borrowed`, and the
+typed reading admits `ctx->config` there; the refusal the branch saw is the
+argument gate of an **uncontracted** callee, which the accepted declaration
+removes. So `flb_input` is not an instance of this defect: under the rule as
+amended, accepting the held declarations as written would make it `Safe`,
+and it stays `Pending` (my prediction, `Unknown` at 90%, was wrong; §7). What
+is questionable about that `Pending` is different: the marker on
+`resource_borrowed(config)` itself says the clause is `retained, not borrowed`
+and `must not be unwrapped as written`, so acceptance as written is not a
+resolution the marker allows. That is registered, not decided here
+(`W45-REVIEW-HOLD-UNACCEPTABLE-AS-WRITTEN`, a product decision). The branch's
+system move (`flb_storage_create`, a reworded `Unknown` leaf) is not
+`Pending`, so this card does not read it.
+
+**W47-CONDVAR-JOIN-STOP-PATHS** (`worktree-agent-a1c83288552269c3a`).
+`flb_output_exit` (system), `flb_input_instance_exit` and `flb_create`
+(slice) reword a leaf to the held call and stay `Unknown` on other leaves.
+None is `Pending`, so this card never reads them and their bytes do not
+change; whether a held statement also replaced a refusal there moves
+attribution only (the row is `Unknown` either way). Not measured on a
+combined tree (predicted by construction: `settle` reads `Pending` rows only).
+
+Per function, merged with this card: `flb_input` stays `Pending` (measured);
+`flb_storage_create`, `flb_output_exit`, `flb_input_instance_exit`,
+`flb_create` stay `Unknown` with unchanged leaves.
+
+## 7. Prediction against outcome
+
+| Prediction | Outcome |
+|---|---|
+| corpus, system, slice at `main`: no movement (99%) | **held**: corpus byte-identical; system and slice 0 status and 0 leaf moves (only the tree-path digests differ) |
+| BEFORE reproduces the baseline (95%) | **held** for the corpus (byte-identical) on the second attempt (the first failed on the archive's empty libevent submodule), system and slice (0 moves) |
+| instance-flow `flb_input` `Pending → Unknown` (90%) | **wrong**: `Pending` before and after; `Safe` with the declaration accepted as written (the `ctx->config` refusal belonged to the uncontracted call) |
+| instance-flow `flb_storage_create`, corpus rows unchanged (99%) | not re-measured on a combined system run; unchanged by construction (not `Pending`) |
+| condvar stop-paths rows unchanged (99%) | unchanged by construction (not `Pending`); not re-measured |
+
+
+## 8. Lean
 
 `QCore.ReviewHoldStanding` (`proof/QCore/ReviewHoldStanding.lean`), audited
 in `proof/AuditReviewHoldStanding.lean`: 22 theorems, no placeholders, no
@@ -166,35 +262,37 @@ Pending then join Pending (cap r) else h`; `standing` (what `settle` appends).
   Rust fold over the held reasons plus the standing reasons is exactly
   `publish`.
 - `an_unknown_hold_absorbs_every_refusal`: the other holds (§3).
-- `Row.the_observed_shape_is_unknown`, `Row.an_alleged_violation_is_unknown`.
+- `Row.a_held_call_beside_a_standing_refusal_is_unknown`, `Row.an_alleged_violation_is_unknown`.
 
 Premises stated, not proved: which reasons each Rust analysis records, and
 that the second analysis is the held one with the holds lifted (pinned by the
 fixture tests); a declaration another unit's body would refute once accepted
 is not seen (`W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION`).
 
-## 8. Records and follow-ups
+## 9. Records and follow-ups
 
 Gateway rule 10i amended and its router row; language spec §L21.2 and
 contract spec C06.1/C06.2 sentences; STATUS verdict and follow-up rows;
 [wave-47.md](../../development/increments/wave-47.md) paragraph.
 [`scripts/update_ledger.py`](scripts/update_ledger.py) (idempotent) applies
-[`followups.json`](followups.json): 551 → 553.
+[`followups.json`](followups.json): 551 → 554.
 
 - Retires `W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL`, which
   W47-LOOP-OWNER-INSTANCE-FLOW registers on its branch; it is not registered
   on `main`, so the retirement is a no-op here and says so. **Integrator:**
   re-run the script after merging that branch.
 - Registers `W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION` (size 0 on the three
-  routes at `main`) and `W45-HELD-UNIT-REASON-CODE-NAMES-HOLD-FIRST` (an
-  `Unknown` unit with a held call keeps the human-resolvable unit
-  `reason_code`, since `ReasonCategory::classify` names the held premise
-  first; the verdict is unaffected; size 0 at `main`).
+  routes at `main`), `W45-REVIEW-HOLD-UNACCEPTABLE-AS-WRITTEN` (1 slice
+  function, 2 variants, on the instance-flow branch only; §6) and
+  `W45-HELD-UNIT-REASON-CODE-NAMES-HOLD-FIRST` (an `Unknown` unit with a held
+  call keeps the human-resolvable unit `reason_code`, since
+  `ReasonCategory::classify` names the held premise first; the verdict is
+  unaffected; size 0 at `main`).
 
 A census build (`indirect-census`, off by default) records the second
 analysis's streams too for a unit with a `Pending` row; no such unit exists on
 the routes today.
 
-## 9. Gate
+## 10. Gate
 
 GATE

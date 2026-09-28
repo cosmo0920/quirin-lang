@@ -2666,16 +2666,17 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // only if its function carries no other reason with every held
     // declaration in force; a unit without a `Pending` row is untouched and
     // analysed once.
-    let moved = review_standing::settle_with(&mut analysis.summary.functions, contracts, |resolved| {
-        analyze_translation_unit_under_holds(
-            source,
-            entry,
-            resolved,
-            selected_functions,
-            typed_context,
-        )
-        .map(|resolved| resolved.summary.functions)
-    });
+    let moved =
+        review_standing::settle_with(&mut analysis.summary.functions, contracts, |resolved| {
+            analyze_translation_unit_under_holds(
+                source,
+                entry,
+                resolved,
+                selected_functions,
+                typed_context,
+            )
+            .map(|resolved| resolved.summary.functions)
+        });
     if moved {
         analysis.summary.status = verdict::unit_status(
             analysis.summary.functions.values(),

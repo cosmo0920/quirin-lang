@@ -1,0 +1,15 @@
+same-modulo-run-dir audit.log
+same      monkey-source.json
+same-sorted parity.jsonl
+same-sorted parity.jsonl.contexts.jsonl
+same      resource-diagnostics.chunk-contracts.json
+differs   resource-diagnostics.contracts.json: 533 line(s); first:
+    -         "module": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-implementation-wave-47-681db5/c8ef992e-a75f-4250-b4e1-07e6e5477601/scratchpad/rh-base/compiler/../contract/pr
+    +         "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a699eb30a516b6732/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdk
+same      resource-diagnostics.json
+differs   resource-diagnostics.source-effects.json: 26 line(s); first:
+    -         "resource_contracts:5cfd640a9c68933e4f0fac6e": {
+    +         "resource_contracts:762a1c2e12e81db98af5bc40": {
+differs   run.json: 4 line(s); first:
+    -     "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-implementation-wave-47-681db5/c8ef992e-a75f-4250-b4e1-07e6e5477601/scratchpad/rh-base/target/release/quirin-audit",
+    +     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a699eb30a516b6732/target/release/quirin-audit",

@@ -369,7 +369,9 @@ fn a_genuine_hold_is_still_pending() {
     assert_eq!(status(&summary, "subject"), AnalysisStatus::Pending);
     // Beside a source-spelled prefix the function joins to `Unknown`.
     let summary = analyse(
-        &format!("{HELD_DECLS}void subject(void *p) {{ k_close(p); qcore_pin_mismatch__zz(0); }}\n"),
+        &format!(
+            "{HELD_DECLS}void subject(void *p) {{ k_close(p); qcore_pin_mismatch__zz(0); }}\n"
+        ),
         "subject",
         &pinned(),
     );

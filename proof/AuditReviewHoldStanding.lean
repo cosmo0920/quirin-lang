@@ -13,7 +13,7 @@ from a held row and never `Unsafe` through the second analysis.
 
 **Pending only from the hold.** A published `Pending` row has every reason of
 both analyses `Safe` or `Pending`, and a held link for a human-resolvable
-reason; the observed shape (a held call beside a standing refusal) and an
+reason; a held call beside a standing refusal and an
 alleged violation of the accepted declaration are `Unknown`.
 
 **A held call never removes another reason.** On a row the hold touched,
@@ -56,5 +56,5 @@ that the second analysis is the held one with the holds lifted — is pinned by
 #print axioms QCore.ReviewHoldStanding.Row.a_held_call_never_removes_another_reason
 #print axioms QCore.ReviewHoldStanding.Row.never_below_the_verdict_without_the_rewrite
 #print axioms QCore.ReviewHoldStanding.Row.never_lowers_the_held_verdict
-#print axioms QCore.ReviewHoldStanding.Row.the_observed_shape_is_unknown
+#print axioms QCore.ReviewHoldStanding.Row.a_held_call_beside_a_standing_refusal_is_unknown
 #print axioms QCore.ReviewHoldStanding.Row.an_alleged_violation_is_unknown

@@ -258,10 +258,10 @@ theorem never_lowers_the_held_verdict (row : Row) :
     row.heldVerdict.rank ≤ row.published.rank :=
   publish_never_lowers _ _
 
-/-- The observed shape: one held call whose statement also carries a refusal
+/-- The defect's shape: one held call whose statement also carries a refusal
 that stands with the declaration in force. Before the card the row was
 `Pending`; it is published `Unknown`. -/
-theorem the_observed_shape_is_unknown (c : Category) (refusal : Category)
+theorem a_held_call_beside_a_standing_refusal_is_unknown (c : Category) (refusal : Category)
     (resolvable : Category.isHumanResolvable c = true) :
     (Row.mk [Link.held c] [Link.unresolved refusal]).heldVerdict = .pending ∧
       (Row.mk [Link.held c] [Link.unresolved refusal]).published = .unknown := by

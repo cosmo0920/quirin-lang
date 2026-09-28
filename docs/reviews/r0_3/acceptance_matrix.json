@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 551
+  "named_followups": 554
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6742,7 +6742,7 @@
   "workspace_tests": 6250,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 223,
+  "lean_audits": 224,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6912,6 +6912,7 @@
    "AuditReturnExpressionFamilies.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
+   "AuditReviewHoldStanding.lean",
    "AuditRuntimeImports.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
@@ -6974,7 +6975,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-loop-owner-typed-dispatch/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -10785,6 +10786,13 @@
    "id": "W45-HELD-UNIT-REASON-CODE-NAMES-HOLD-FIRST",
    "title": "An Unknown unit with a held call publishes a human-resolvable reason code",
    "why": "qcore_schemas::reason::ReasonCategory::classify names the held premise first: a unit summary with at least one held call classifies as awaiting-human-review (or contract-pin-mismatch), on the ground that what the projection leaves open downstream of a held call is not a statement about the source. Since W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL a row can be Unknown because of a reason that stands without the hold (a statement refusal, a body that refutes the accepted declaration), which is about the source; its unit is Unknown and still carries the human-resolvable reason_code (measured: crates/qcore-audit/tests/contract_revision_audit.rs, user_drop Unknown in a unit coded contract-pin-mismatch). The same combination already existed for a unit with one Pending and one Unknown function. The verdict is not affected (the unit status is the fold of its rows). Size: 0 units on the corpus, system and tail-pause slice at main fefb9199 (no held call). DISCHARGE: a unit summary that counts standing reasons (review_standing::is_standing_reason) apart and a classifier that names a human-resolvable category only for a Pending unit, with the reason-code totality tests updated.",
+   "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+   "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
+  },
+  {
+   "id": "W45-REVIEW-HOLD-UNACCEPTABLE-AS-WRITTEN",
+   "title": "A held clause its own marker says must not be accepted as written keeps its callers Pending",
+   "why": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL keeps a row Pending only when its function carries no other reason with every held declaration accepted as written. W47-LOOP-OWNER-INSTANCE-FLOW's input_instance.qv holds flb_input_new's `resource_borrowed(config)` and `resource_borrowed(data)` with the reason `retained, not borrowed: ... so this clause must not be unwrapped as written`: the marker itself says acceptance as written is not a resolution, and v1 has no retained mode (rule 10j), so the realistic outcomes of the review are a rejected clause (the call uncontracted, Unknown) or a new mode. Measured by this card's probe (the branch's four contract-data files over this card's tip, no branch code; report section 6): src/flb_lib.c::flb_input is Pending before and after the fix and Safe with the declarations accepted as written, so the fix correctly leaves it Pending under its definition, while the claim that a named human act alone stands between it and Safe rests on accepting a clause its author marked false. Size: 1 slice function (2 variants), on that branch only; 0 on main. DISCHARGE: a product decision on such markers (for example a marker kind that states the clause is known not to hold, whose callers are Unknown, never Pending), with its contract-spec text, gateway rule and fixture.",
    "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
    "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
   }
