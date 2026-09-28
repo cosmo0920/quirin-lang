@@ -382,7 +382,21 @@ premise that macro invocations on the region call no hazard
 
 ## 12. Gate
 
-@GATE@
+[`scripts/gate.py`](scripts/gate.py) runs `rust`, then `records`. Exits are
+in [gate/](gate/) and figures in [gate.json](gate.json). Every step exited
+0, on the first run:
+
+- submodule; fmt clean; the Rust suite: 353 units / 366 summaries, **6,300
+  passed, 0 failed**, 11 ignored; clippy clean; both probes 0;
+- **224 Lean audits** (no new audit module);
+- the provider gate: provider cargo test 129 passed / 0 failed / 1 ignored;
+  provider fmt and clippy clean; `contracts.py check` 0; package build and
+  all five verifies 0; provider Python 24 tests OK;
+- `pin --check` at the three trees: 2 recorded for this card's declarations
+  and 4 for the module's others, 0 not in force, 0 stale at each tree;
+  `pin --verify-contracts` 0;
+- the `records` phase, after the ledger, matrix and index regeneration: 365
+  Python tests OK, docs index 0, Clang 21.1.8 recorded.
 
 **Files likely to conflict** with the parallel cards:
 

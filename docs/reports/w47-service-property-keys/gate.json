@@ -1,0 +1,13 @@
+{
+  "note": "W47-SERVICE-PROPERTY-KEYS card gate at base ec4c9d4a. The rust phase ran on the tree of 96f49bb0 (its code identical to 207120f6 and the final tip), log private/sk/gate-rust of this worktree: run_test_binaries.py 353 units, 366 summaries, 6,300 passed, 0 failed, 11 ignored (private/test-binaries/20260928T192500Z-1597204/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditLoopOwner.lean 53 -> 66 theorems, no new audit module). providers/ changed (fluent_bit/input_instance.qv and its lock), so the provider gate ran: provider cargo test 129 passed / 0 failed / 1 ignored, provider fmt and clippy clean, contracts.py check 0, package build and all 5 package verifies 0, provider Python 24 tests OK, pin --check at 66910c10, 046accf6 and the 90978ac6 export (34155955): this card's 2 declarations 2 recorded / 0 not in force / 0 stale, the module's other 4 declarations 4 recorded / 0 not in force, pin --verify-contracts 0. The records phase (private/sk/gate-records) ran after the ledger, matrix and index regeneration: 365 Python tests OK, docs index 0. Clang 21.1.8 recorded in this worktree. No gate step failed. Exits in gate/.",
+  "workspace_tests": 6300,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
