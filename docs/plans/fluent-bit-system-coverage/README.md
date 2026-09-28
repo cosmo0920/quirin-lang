@@ -223,6 +223,25 @@ This is an ordered candidate inventory, not a dispatchable omnibus card:
 Each selected candidate needs its own pinned slice, dependency list, accepting
 and refusing controls, semantic/proof scope and production acceptance condition.
 
+**Input pause/resume concurrency (candidate 5; bound, not implemented).**
+[W47-TAIL-PAUSE-BINDINGS](../../reports/w47-tail-pause-bindings/README.md)
+binds a design sketch of in_tail pause/resume contracts C1–C6 to Fluent Bit
+`90978ac6` and measures its own slice (`tail-pause-selection.json`: 0 / 1 / 15
+units, no concurrency verdict). The slice, its 60 bindings and its 9 negative
+cases are the baseline for two cards:
+
+1. `W47-LOOP-OWNER-CONTRACTS` (C1–C3): a derived thread-entry census, a
+   loop-owner vocabulary for collectors and `mk_event_*`, and C2's "enqueue is
+   not completion".
+2. `W47-CONDVAR-JOIN-PUBLICATION` (C4–C5): condvar publication and
+   join-before-release, which amends constraint 27. It follows card 1, whose
+   thread inventory it needs.
+
+C6, a request/acknowledgement API, waits for an upstream API
+(`W47-TAIL-REQUEST-CONTROL-API`). Each card must reject its named negative
+cases and freeze a prediction that names the corpus callers of
+`flb_input_pause`/`resume` in `flb_input_chunk.c`.
+
 ## Implementation acceptance and wave integration
 
 Every future brief must attach base/HEAD, owned and planned paths, applicable
