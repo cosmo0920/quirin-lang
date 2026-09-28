@@ -1,7 +1,11 @@
 //! Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated
 //! on the typed-root premises its function's reported row reads.
 //!
-//! PROBE: exploratory outcomes, replaced by the pinned controls.
+//! The negative controls were written and run at the base first
+//! (`docs/reports/w47-summary-validation-protected-formals/`): each caller
+//! below that now refuses was `Safe` there, on a summary whose own row
+//! refused. The fixtures use a generic `c_*` surface: `Safe` here is `Safe`
+//! over synthetic trusted test assumptions and promotes nothing.
 
 use std::collections::BTreeMap;
 
@@ -99,9 +103,6 @@ fn rows(source: &str) -> BTreeMap<String, (String, Vec<String>)> {
     if let UnrestrictedLegacyResult::Safe(certificate) = &result {
         check_legacy_safety_certificate(certificate)
             .expect("a Safe result carries a certificate that rechecks");
-        for record in &certificate.summaries {
-            eprintln!("  SUMMARY {record:?}");
-        }
     }
     program(&result)
         .functions
@@ -119,53 +120,149 @@ fn rows(source: &str) -> BTreeMap<String, (String, Vec<String>)> {
         .collect()
 }
 
+/// Every published summary's function and contract, when the unit is Safe.
+fn summaries(source: &str) -> Vec<String> {
+    match analyze(source) {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate
+            .summaries
+            .iter()
+            .map(|record| format!("{}: {:?}", record.function, record.contract.parameters))
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+fn row<'a>(
+    rows: &'a BTreeMap<String, (String, Vec<String>)>,
+    name: &str,
+) -> (&'a str, Vec<&'a str>) {
+    let (status, keys) = rows
+        .get(name)
+        .unwrap_or_else(|| panic!("missing row `{name}`"));
+    (status.as_str(), keys.iter().map(String::as_str).collect())
+}
+
+const UNCONTRACTED_CMP: &str = "unsupported:call to uncontracted function `cmp`";
+const UNCONTRACTED_GET: &str = "unsupported:call to uncontracted function `get`";
+const UNCONTRACTED_MID: &str = "unsupported:call to uncontracted function `mid`";
+
+/// librdkafka's `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. The
+/// comparator's summary (`Owned`, `Owned`) seeds `_a` and `_b` as entry
+/// resources; its own row, analysed with that summary in force, protects
+/// them, binds the copies `a` and `b` and refuses the reads through them. At
+/// the base the summary was validated with neither formal protected, so the
+/// copies were never-bound roots there and the wrapper certified on it. Now
+/// the summary is checked on the reported premises, refuses, and the wrapper's
+/// call is uncontracted.
+const COMPARATOR: &str = "\
+    int cmp(const void *_a, const void *_b) { \
+    const struct c_tp *a = _a; const struct c_tp *b = _b; \
+    int r = c_same(a->topic, b->topic); if (r) return r; \
+    else return (int)((a->partition) < (b->partition) ? -1 : ((a->partition) > (b->partition))); } \
+    static int w(const void *_a, const void *_b, void *opaque) { return cmp(_a, _b); }";
+
 #[test]
-fn probe() {
+fn a_summary_validated_through_a_copy_of_a_protected_formal_serves_no_caller() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows(COMPARATOR);
+    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_CMP]));
+    let (status, keys) = row(&rows, "cmp");
+    assert_eq!(status, "Unknown", "{keys:?}");
+}
+
+/// The same shape with one formal, whose copy is read in a `Borrowed` actual.
+#[test]
+fn a_copy_read_in_a_call_actual_serves_no_caller() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows(
+        "int get(const void *_p) { const struct c_tp *p = _p; return c_same(p->topic, p->topic); } \
+         int w(const void *q) { return get(q); }",
+    );
+    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_GET]));
+    assert_eq!(row(&rows, "get").0, "Unknown");
+}
+
+/// A withdrawn summary cascades: the middle function's body now holds an
+/// uncontracted call, so it derives no summary either, and the outer caller
+/// refuses on the middle call.
+#[test]
+fn a_withdrawn_summary_withdraws_its_callers_summaries() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows(
+        "int get(const void *_p) { const struct c_tp *p = _p; return c_same(p->topic, p->topic); } \
+         int mid(const void *q) { return get(q); } \
+         int w(const void *q) { return mid(q); }",
+    );
+    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_MID]));
+    assert_eq!(row(&rows, "mid"), ("Unknown", vec![UNCONTRACTED_GET]));
+}
+
+/// Positive controls. A copy of a seeded formal whose reads the reported run
+/// also admits (a scalar read through the tracked alias) still validates on
+/// the protected premises, and the caller certifies on the `Owned` summary.
+#[test]
+fn a_copy_whose_reads_certify_under_protection_still_validates() {
     if !clang_available() {
         return;
     }
     for source in [
-        // cmp / cmp_opaque
-        "int cmp(const void *_a, const void *_b) { \
-         const struct c_tp *a = _a; const struct c_tp *b = _b; \
-         int r = c_same(a->topic, b->topic); if (r) return r; \
-         else return (int)((a->partition) < (b->partition) ? -1 : ((a->partition) > (b->partition))); } \
-         static int w(const void *_a, const void *_b, void *opaque) { return cmp(_a, _b); }",
-        // one-formal void* getter
         "int get(const void *_p) { const struct c_leaf *p = _p; return p->weight; } \
          int w(const void *q) { return get(q); }",
-        // one-formal typed copy getter
         "int get(struct c_leaf *_p) { struct c_leaf *p = _p; return p->weight; } \
          int w(struct c_leaf *q) { return get(q); }",
-        // genuinely read-only formal
-        "int get(struct c_leaf *l) { return l->weight; } \
-         int w(struct c_leaf *q) { return get(q); }",
-        // released through a lexically protected formal
-        "void drop2(struct c_box *b) { c_drop(b); } \
-         int w(void) { struct c_box *b = c_make(1); if (!b) return 0; drop2(b); return 1; }",
-        // copy passed to a borrowed callee
-        "void k(struct c_leaf *_l) { struct c_leaf *l = _l; c_peek(l); } \
-         int w(struct c_leaf *q) { k(q); return 0; }",
-        // copy of a formal, then read through the copy and release the formal
-        "void kd(struct c_box *_b) { struct c_box *b = _b; int f = b->flag; c_drop(_b); } \
-         int w(void) { struct c_box *b = c_make(1); if (!b) return 0; kd(b); return 1; }",
-        // cmp with one formal
-        "int cmp1(const void *_a, int k) { \
-         const struct c_tp *a = _a; \
-         int r = c_same(a->topic, a->topic); if (r) return r; \
-         else return a->partition; } \
-         int w(const void *_a) { return cmp1(_a, 1); }",
-        // copy read in a call actual
-        "int get(const void *_p) { const struct c_tp *p = _p; return c_same(p->topic, p->topic); } \
-         int w(const void *q) { return get(q); }",
-        // two-level cascade
-        "int get(const void *_p) { const struct c_leaf *p = _p; return p->weight; } \
-         int mid(const void *q) { return get(q); } \
-         int w(const void *q) { return mid(q); }",
     ] {
-        eprintln!("SOURCE {source}");
-        for (name, row) in rows(source) {
-            eprintln!("  {name}: {row:?}");
-        }
+        let rows = rows(source);
+        assert_eq!(row(&rows, "w"), ("Safe", vec![]), "{source}");
+        assert_eq!(row(&rows, "get"), ("Safe", vec![]), "{source}");
+        assert!(
+            summaries(source).contains(&"get: [Owned { nullable: false }]".to_owned()),
+            "{source}"
+        );
+    }
+}
+
+/// A genuinely read-only formal (`Borrowed`, nothing to protect), a formal
+/// the body releases (already protected lexically) and a copy handed to a
+/// `Borrowed` callee keep their summaries and their callers' Safe.
+#[test]
+fn read_only_released_and_forwarded_formals_still_validate() {
+    if !clang_available() {
+        return;
+    }
+    for (source, summary) in [
+        (
+            "int get(struct c_leaf *l) { return l->weight; } \
+             int w(struct c_leaf *q) { return get(q); }",
+            "get: [Borrowed]",
+        ),
+        (
+            "void drop2(struct c_box *b) { c_drop(b); } \
+             int w(void) { struct c_box *b = c_make(1); if (!b) return 0; drop2(b); return 1; }",
+            "drop2: [Released { nullable: false }]",
+        ),
+        (
+            "void kd(struct c_box *_b) { struct c_box *b = _b; int f = b->flag; c_drop(_b); } \
+             int w(void) { struct c_box *b = c_make(1); if (!b) return 0; kd(b); return 1; }",
+            "kd: [Released { nullable: false }]",
+        ),
+        (
+            "void k(struct c_leaf *_l) { struct c_leaf *l = _l; c_peek(l); } \
+             int w(struct c_leaf *q) { k(q); return 0; }",
+            "k: [Owned { nullable: false }]",
+        ),
+    ] {
+        let rows = rows(source);
+        assert!(
+            rows.values()
+                .all(|(status, keys)| status == "Safe" && keys.is_empty()),
+            "{source}: {rows:?}"
+        );
+        assert!(summaries(source).contains(&summary.to_owned()), "{source}");
     }
 }

@@ -284,17 +284,15 @@ fn every_other_cast_keeps_the_refusal() {
     }
 }
 
-/// A measured boundary, not a rule of this card
-/// (`W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`): librdkafka's
-/// `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. W4 validates the
-/// comparator's summary (`Owned`, `Owned`) in a run whose formals are not
-/// protected, so the copies `a`, `b` are never-bound roots and the typed
-/// reads certify there; the comparator's own row, analysed with that summary
-/// in force, protects `_a`/`_b` and keeps its refusals. The wrapper certifies
-/// on the summary. Pinned so the follow-up that aligns the two runs sees
-/// what it changes.
+/// librdkafka's `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. This
+/// card pinned the wrapper `Safe` on a comparator summary (`Owned`, `Owned`)
+/// validated with neither formal protected, while the comparator's own row,
+/// analysed with that summary in force, protected `_a`/`_b` and refused.
+/// `W47-SUMMARY-VALIDATION-PROTECTED-FORMALS` (gateway rule 4b) now validates
+/// the summary on the reported premises: it refuses, and the wrapper's call is
+/// uncontracted. The fixture keeps this card's const-pointer reads.
 #[test]
-fn a_comparator_summary_validates_where_its_own_row_refuses() {
+fn a_comparator_summary_is_withdrawn_where_its_own_row_refuses() {
     if !clang_available() {
         return;
     }
@@ -308,16 +306,33 @@ fn a_comparator_summary_validates_where_its_own_row_refuses() {
         "static int w(const void *_a, const void *_b, void *opaque) { return cmp(_a, _b); }",
     );
     let rows = &program(&result).functions;
-    // The unit is Unknown on the comparator's row; the wrapper's row is Safe.
-    assert_eq!(format!("{:?}", rows["w"].status), "Safe");
-    assert!(rows["w"].diagnostics.is_empty());
+    assert_eq!(format!("{:?}", rows["w"].status), "Unknown");
+    assert_eq!(
+        rows["w"]
+            .diagnostics
+            .iter()
+            .map(|diagnostic| format!("{:?}", diagnostic.kind))
+            .collect::<Vec<_>>(),
+        vec![format!(
+            "{:?}",
+            LegacyDiagnosticKind::Unsupported {
+                description: "call to uncontracted function `cmp`".into()
+            }
+        )]
+    );
+    // With no summary in force the comparator's row is its contract-free
+    // analysis: the formals and their copies are unresolved identities, and
+    // the return family's refusal it showed under the summary is gone.
     assert_eq!(format!("{:?}", rows["cmp"].status), "Unknown");
-    assert!(
-        rows["cmp"].diagnostics.iter().any(|diagnostic| matches!(
-            &diagnostic.kind,
-            LegacyDiagnosticKind::Unsupported { description } if format!("unsupported:{description}") == RETURN
-        )),
-        "{:?}",
-        rows["cmp"].diagnostics
+    assert_eq!(
+        rows["cmp"]
+            .diagnostics
+            .iter()
+            .map(|diagnostic| match &diagnostic.kind {
+                LegacyDiagnosticKind::UnknownAlias { variable } => variable.as_str(),
+                other => panic!("unexpected comparator leaf {other:?}"),
+            })
+            .collect::<Vec<_>>(),
+        vec!["_a", "_b", "a", "b"]
     );
 }

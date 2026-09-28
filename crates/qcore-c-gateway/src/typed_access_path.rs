@@ -177,7 +177,29 @@ pub(crate) fn record_row(value: Value) {
     }
 }
 
+thread_local! {
+    static PARITY_MUTED: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Card **W47-SUMMARY-VALIDATION-PROTECTED-FORMALS**: run `f` without
+/// writing parity rows. The W4 re-check rebuilds a body's CFG a second time;
+/// its readers' rows would repeat the first build's under other premises.
+/// Nothing but the stream is affected.
+pub(crate) fn without_parity_rows<T>(f: impl FnOnce() -> T) -> T {
+    struct Restore(bool);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            PARITY_MUTED.with(|muted| muted.set(self.0));
+        }
+    }
+    let _restore = Restore(PARITY_MUTED.with(|muted| muted.replace(true)));
+    f()
+}
+
 fn write_parity(mut value: Value) {
+    if PARITY_MUTED.with(std::cell::Cell::get) {
+        return;
+    }
     let Some((source_sha256, dialect, frontend_sha256, frontend_debug)) =
         ANALYSED_SOURCE.with(|cell| {
             let context = cell.borrow();

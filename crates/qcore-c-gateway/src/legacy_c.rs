@@ -2921,7 +2921,13 @@ pub(crate) fn build_function_cfg_under_own_contract(
     own: &ResourceFunctionContract,
     admit_derived_returns: bool,
 ) -> Result<LegacyCfg, LegacyCError> {
-    build_function_cfg_with(tokens, function, contracts, admit_derived_returns, Some(own))
+    build_function_cfg_with(
+        tokens,
+        function,
+        contracts,
+        admit_derived_returns,
+        Some(own),
+    )
 }
 
 fn build_function_cfg_with(

@@ -424,15 +424,18 @@ fn infer_contextual_component(
         if !observations_match_contract(&contract, &entry, &summary, &observations) {
             return None;
         }
-        let _ = premises::contextual_under_reported_premises(
+        // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS (rule 4b): the
+        // combined CFG rebuilt with the candidate in force, which is also the
+        // one the reported run reads.
+        let combined = premises::contextual_under_reported_premises(
             tokens,
             name,
             &zero_environment,
             &lower,
             descriptor,
             &contract,
-            combined.clone(),
-        );
+            combined,
+        )?;
         published.insert(name.clone(), (contract, combined));
     }
     Some(published)
@@ -480,7 +483,9 @@ fn infer_live_entry_summary(
     let parameters = function_parameters(tokens, function)?;
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
     let candidate = infer_cfg_summary(&parameters, cfg.clone())?;
-    let _ = premises::validates_under_reported_premises(
+    // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the premises the
+    // function's reported row reads (rule 4b).
+    premises::validates_under_reported_premises(
         tokens,
         function,
         environment,
@@ -488,8 +493,8 @@ fn infer_live_entry_summary(
         &candidate,
         premises::Route::LiveEntry,
         &cfg,
-    );
-    Some(candidate)
+    )
+    .then_some(candidate)
 }
 
 fn infer_cfg_summary(
@@ -633,7 +638,8 @@ fn infer_removed_wrapper(
             candidate = nullable;
         }
     }
-    let _ = premises::validates_under_reported_premises(
+    // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS (rule 4b).
+    premises::validates_under_reported_premises(
         tokens,
         function,
         environment,
@@ -641,8 +647,8 @@ fn infer_removed_wrapper(
         &candidate,
         premises::Route::RemovedWrapper,
         &cfg,
-    );
-    Some(candidate)
+    )
+    .then_some(candidate)
 }
 
 /// Formals the body stores through (`*out = …`). Reading this off the CFG

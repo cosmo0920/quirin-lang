@@ -172,7 +172,8 @@ pub(crate) fn infer_derived_result_summary(
     let out = out_parameter_candidates(&cfg, &parameters);
     let base = select_base(&cfg, &parameters, &out)?;
     let candidate = infer_for_base(&cfg, &parameters, &out, base)?;
-    let _ = super::premises::validates_under_reported_premises(
+    // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS (rule 4b).
+    if super::premises::validates_under_reported_premises(
         tokens,
         function,
         environment,
@@ -180,8 +181,11 @@ pub(crate) fn infer_derived_result_summary(
         &candidate,
         super::premises::Route::DerivedResult,
         &cfg,
-    );
-    Ok(candidate)
+    ) {
+        Ok(candidate)
+    } else {
+        Err(DerivedRefusal::ValidationFailed)
+    }
 }
 
 /// Does some exit escape a place a derived-result call assigned? Structural:

@@ -42,6 +42,7 @@ use crate::legacy_c::recursion::{self, ContextFunction};
 use crate::legacy_c::{
     EntryCustody, LegacyCfg, Token, analyze_cfg_with_entry, build_function_cfg_under_own_contract,
 };
+use crate::typed_access_path::without_parity_rows;
 
 /// Which W4 route proposed the candidate.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -96,18 +97,20 @@ pub(super) fn validates_under_reported_premises(
     if own.is_empty() {
         return true;
     }
-    let rebuilt = build_function_cfg_under_own_contract(
-        tokens,
-        function,
-        environment,
-        candidate,
-        route == Route::DerivedResult,
-    );
-    let (cfg_changed, validates) = match rebuilt {
-        Err(_) => (true, false),
-        Ok(cfg) if &cfg == inferred_on => (false, true),
-        Ok(cfg) => (true, validates_on(cfg, parameters, candidate)),
-    };
+    // The rebuild's readers would repeat the first build's parity rows.
+    let (cfg_changed, validates) = without_parity_rows(|| {
+        match build_function_cfg_under_own_contract(
+            tokens,
+            function,
+            environment,
+            candidate,
+            route == Route::DerivedResult,
+        ) {
+            Err(_) => (true, false),
+            Ok(cfg) if &cfg == inferred_on => (false, true),
+            Ok(cfg) => (true, validates_on(cfg, parameters, candidate)),
+        }
+    });
     record(function, route, candidate, &own, cfg_changed, validates);
     validates
 }
@@ -147,29 +150,32 @@ pub(super) fn contextual_under_reported_premises(
     if own.is_empty() || nonzero_environment.contract(function).is_some() {
         return Some(combined);
     }
-    let rebuilt = recursion::contextual_cfg_under(
-        tokens,
-        function,
-        zero_environment,
-        descriptor,
-        true,
-        Some(candidate),
-    )
-    .zip(recursion::contextual_cfg_under(
-        tokens,
-        function,
-        nonzero_environment,
-        descriptor,
-        false,
-        Some(candidate),
-    ))
-    .map(|(zero, nonzero)| recursion::combine(zero, nonzero));
-    let decision = match rebuilt {
-        None => None,
-        Some(cfg) if cfg == combined => Some((false, cfg)),
-        Some(cfg) => validates_on(cfg.clone(), &descriptor.parameters, candidate)
-            .then_some((true, cfg)),
-    };
+    let decision = without_parity_rows(|| {
+        let rebuilt = recursion::contextual_cfg_under(
+            tokens,
+            function,
+            zero_environment,
+            descriptor,
+            true,
+            Some(candidate),
+        )
+        .zip(recursion::contextual_cfg_under(
+            tokens,
+            function,
+            nonzero_environment,
+            descriptor,
+            false,
+            Some(candidate),
+        ))
+        .map(|(zero, nonzero)| recursion::combine(zero, nonzero));
+        match rebuilt {
+            None => None,
+            Some(cfg) if cfg == combined => Some((false, cfg)),
+            Some(cfg) => {
+                validates_on(cfg.clone(), &descriptor.parameters, candidate).then_some((true, cfg))
+            }
+        }
+    });
     let cfg_changed = decision.as_ref().is_none_or(|(changed, _)| *changed);
     record_with_label(
         function,
@@ -190,7 +196,14 @@ fn record(
     cfg_changed: bool,
     validates: bool,
 ) {
-    record_with_label(function, route.label(), candidate, own, cfg_changed, validates);
+    record_with_label(
+        function,
+        route.label(),
+        candidate,
+        own,
+        cfg_changed,
+        validates,
+    );
 }
 
 fn record_with_label(
