@@ -6738,8 +6738,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W47-TYPED-CONST-POINTER-VALUE card gate. Rust, Lean and census-feature steps ran on the code at 0e6b69cf (later commits change docs, the gate record and the regenerated matrix/index only); the Python suite and docs-index check ran after the matrix and index regeneration at the recorded head. run_test_binaries.py: 342 units, 355 summaries, 6,152 passed, 0 failed, 11 ignored (private/test-binaries/20260928T033233Z-1312543/summary.json); census-feature gateway clippy 0 and library tests 628 passed. No providers/ path is touched, so the provider gate is not run; provider_tests (129) is carried from the preceding matrix, not measured here. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/cp/gate-final/ of this worktree.",
-  "workspace_tests": 6152,
+  "note": "Integration gate for wave-47 round 2a (integrate/w47-r2a-land: main a6b0e215 [W47-TYPED-CONST-POINTER-VALUE] + merge 78529381 [W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT] + one pinned-test update), measured by the integrator; every exit captured to a file. The full gate at 78529381 (private/w47-int-e/gate-78529381 of the w47-int-c worktree): every step 0 except run_test_binaries.py (6,162 passed / 1 failed / 11 ignored): typed_const_pointer_value::a_const_pointer_value_from_a_bound_root_is_not_safe pinned Unknown [branch] for `if (!(b = c_make(n))) return 0; return b->item;`, written before rule 10o closed the nested-assignment gap; the merged tree also refuses the return (Unknown [branch, return]), the stricter composition. The pin was updated in the landing commit; the full run_test_binaries.py rerun on it: 343 units, 356 summaries, 6,163 passed / 0 failed / 11 ignored; gateway fmt and clippy 0. Provider Rust 129 passed / 0 failed / 1 ignored; provider Python 24 OK; 219 Lean audits; 365 root Python tests; contracts.py check, five package builds/verifies, reevaluation probe/followup, docs index: 0. Release build, corpus arbiter and system slice: 0 (the test-only change does not touch the analyzer binary). compose3.py (base = round-1 integration artifacts, A = W47-TYPED-CONST-POINTER-VALUE AFTER, B = W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT AFTER): system COMPOSES (0 mismatches); corpus verdicts compose (516 / 10 / 4,308, 0 status mismatches) with four Unknown functions interacting at the leaf level, each in the stricter direction (integration-confirmation.md).",
+  "workspace_tests": 6163,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 219,
@@ -6970,7 +6970,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-lexical-closure-nested-assignment/integration/gate.json)"
  },
  "named_followups": [
   {

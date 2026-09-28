@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for wave-47 round 2a (integrate/w47-r2a-land: main a6b0e215 [W47-TYPED-CONST-POINTER-VALUE] + merge 78529381 [W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT] + one pinned-test update), measured by the integrator; every exit captured to a file. The full gate at 78529381 (private/w47-int-e/gate-78529381 of the w47-int-c worktree): every step 0 except run_test_binaries.py (6,162 passed / 1 failed / 11 ignored): typed_const_pointer_value::a_const_pointer_value_from_a_bound_root_is_not_safe pinned Unknown [branch] for `if (!(b = c_make(n))) return 0; return b->item;`, written before rule 10o closed the nested-assignment gap; the merged tree also refuses the return (Unknown [branch, return]), the stricter composition. The pin was updated in the landing commit; the full run_test_binaries.py rerun on it: 343 units, 356 summaries, 6,163 passed / 0 failed / 11 ignored; gateway fmt and clippy 0. Provider Rust 129 passed / 0 failed / 1 ignored; provider Python 24 OK; 219 Lean audits; 365 root Python tests; contracts.py check, five package builds/verifies, reevaluation probe/followup, docs index: 0. Release build, corpus arbiter and system slice: 0 (the test-only change does not touch the analyzer binary). compose3.py (base = round-1 integration artifacts, A = W47-TYPED-CONST-POINTER-VALUE AFTER, B = W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT AFTER): system COMPOSES (0 mismatches); corpus verdicts compose (516 / 10 / 4,308, 0 status mismatches) with four Unknown functions interacting at the leaf level, each in the stricter direction (integration-confirmation.md).",
+ "workspace_tests": 6163,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 365,
+ "lean_audits": 219,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

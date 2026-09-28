@@ -1,0 +1,47 @@
+{
+ "audit.log": {
+  "file": "audit.log.gz",
+  "sha256": "6a5d58dd71692e4a6ef2bdabff33d8dc45c53d4505bc6125ae97dac5028acf7f",
+  "bytes": 134187
+ },
+ "monkey-source.json": {
+  "file": "monkey-source.json.gz",
+  "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "bytes": 1665950
+ },
+ "parity.jsonl": {
+  "file": "parity.jsonl.gz",
+  "sha256": "86a8fc1abe4d56e300363ee0c9b1b29288a1b1dfd30a2fbe263bd15fbd5d3a3d",
+  "bytes": 102163523
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "file": "parity.jsonl.contexts.jsonl.gz",
+  "sha256": "a53c9bcffaab65390b88de3603397db8ad731bf6af5638d73391c5539feda644",
+  "bytes": 39028
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "file": "resource-diagnostics.chunk-contracts.json.gz",
+  "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "bytes": 4186178
+ },
+ "resource-diagnostics.contracts.json": {
+  "file": "resource-diagnostics.contracts.json.gz",
+  "sha256": "7e28308c561b714dc77d147ab9efb324b11cc2e04681ba39075a2af6840ca511",
+  "bytes": 617514
+ },
+ "resource-diagnostics.json": {
+  "file": "resource-diagnostics.json.gz",
+  "sha256": "3fd4fb9923dd36d49dd7e38920347fe50d62587a8faef54becfb10cf4b58916e",
+  "bytes": 11323952
+ },
+ "resource-diagnostics.source-effects.json": {
+  "file": "resource-diagnostics.source-effects.json.gz",
+  "sha256": "3d12fd942ca8ca936a256fa8c11b28cc13d7f9884dfb1a582886283cef2acfc5",
+  "bytes": 118505
+ },
+ "run.json": {
+  "file": "run.json.gz",
+  "sha256": "b7eb70c90ec6d52a88b2c4e653c12916f42fa45ea5346f90805bdc561b8364ae",
+  "bytes": 1155
+ }
+}

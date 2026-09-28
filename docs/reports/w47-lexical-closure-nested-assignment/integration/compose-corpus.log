@@ -1,0 +1,10 @@
+merged functions: {'Unknown': 4308, 'Safe': 516, 'Unsafe': 10}
+merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}
+merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7746, 'unsupported': 36154}
+functions/leaves touched by both cards: 3 [('leaf-overlap', 'rdkafka_admin.c', 'rd_kafka_ConfigResource_get_single_broker_id'), ('leaf-overlap', 'rdkafka_fetcher.c', 'rd_kafka_share_fetch_reply_handle'), ('leaf-overlap', 'rdkafka_mock_handlers.c', 'rd_kafka_mock_handle_Metadata')]
+mismatches: 4
+  ('leaves', ('rdkafka_admin.c', 'rd_kafka_ConfigResource_get_single_broker_id'))
+  ('leaves', ('rdkafka_metadata.c', 'rd_kafka_metadata_topic_match'))
+  ('leaves', ('rdkafka_mock_cgrp.c', 'rd_kafka_mock_cgrp_consumer_member_find_by_instance_id'))
+  ('leaves', ('rdunittest.c', 'rd_unittest'))
+DOES NOT COMPOSE

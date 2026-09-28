@@ -212,8 +212,8 @@ fn a_const_pointer_middle_hop_keeps_its_premises() {
 
 /// Rule 5b's premise is unchanged: a `const`-qualified pointer value whose
 /// root the body binds is never handed out, and neither is one whose root is
-/// bound from a call in an assignment nested in a condition (the disputed
-/// class `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT` tracks).
+/// bound from a call in an assignment nested in a condition (closed by
+/// `W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT`, rule 10o).
 #[test]
 fn a_const_pointer_value_from_a_bound_root_is_not_safe() {
     if !clang_available() {
@@ -232,9 +232,11 @@ fn a_const_pointer_value_from_a_bound_root_is_not_safe() {
             "{body}"
         );
     }
+    // Since rule 10o the closure reads the assignment in the condition, so `b`
+    // is bound and the return keeps its refusal as well.
     let nested = "struct c_item *w(int n) { const struct c_box *b; if (!(b = c_make(n))) return 0; \
         return b->item; }";
-    assert_eq!(outcome(nested), unknown(&[BRANCH]));
+    assert_eq!(outcome(nested), unknown(&[BRANCH, RETURN]));
 }
 
 /// Step 2: `NAME = PATH` where `PATH` is a `void *` member and `NAME` an
