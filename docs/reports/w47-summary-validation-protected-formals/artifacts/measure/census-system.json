@@ -1,0 +1,757 @@
+{
+ "ambiguous_sources": [
+  {
+   "graph_functions": 18,
+   "matches": [
+    "src/flb_engine_dispatch.c",
+    "src/flb_engine_dispatch.c"
+   ],
+   "source_sha256": "3da3f17f89ec23a03db9ff8c3bf3f40e273414f0f8a2afa64fe41c3e04b44cff"
+  },
+  {
+   "graph_functions": 83,
+   "matches": [
+    "src/flb_input_chunk.c",
+    "src/flb_input_chunk.c"
+   ],
+   "source_sha256": "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+  },
+  {
+   "graph_functions": 35,
+   "matches": [
+    "src/flb_task.c",
+    "src/flb_task.c"
+   ],
+   "source_sha256": "836398727589a7cd8951fd8663a940f4b2ecb99faa1778fa791ed89e85e13312"
+  },
+  {
+   "graph_functions": 75,
+   "matches": [
+    "src/flb_output.c",
+    "src/flb_output.c"
+   ],
+   "source_sha256": "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de"
+  },
+  {
+   "graph_functions": 54,
+   "matches": [
+    "src/flb_scheduler.c",
+    "src/flb_scheduler.c"
+   ],
+   "source_sha256": "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204"
+  },
+  {
+   "graph_functions": 31,
+   "matches": [
+    "src/flb_storage.c",
+    "src/flb_storage.c"
+   ],
+   "source_sha256": "eab3242cf290c79425934bdc538f70fb836a6cf78c5edf269e9873404c44e8fb"
+  },
+  {
+   "graph_functions": 61,
+   "matches": [
+    "src/flb_engine.c",
+    "src/flb_engine.c"
+   ],
+   "source_sha256": "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+  }
+ ],
+ "conflicts": [],
+ "forecast_safe_moves": [],
+ "non_safe_rows_with_summary": [
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "flb_log_check_level",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine_dispatch.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_buf_paused",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_paused",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_log_check_level",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_buf_paused",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_input_paused",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_log_check_level",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_task.c",
+   "function": "flb_router_match_type",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_task.c",
+   "function": "flb_router_match_type",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_config_map_has_dynamic_env",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_stream_get_flags",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_stream_set_flags",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_deactivate_route",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_config_map_has_dynamic_env",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_sds_len",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_stream_get_flags",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_stream_set_flags",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_deactivate_route",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_output.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_get_type",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_storage.c",
+   "function": "msgpack_sbuffer_init",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_storage.c",
+   "function": "flb_storage_get_type",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_storage.c",
+   "function": "msgpack_sbuffer_init",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_bucket_queue_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_simd_info",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_bucket_queue_is_empty",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_output_is_threaded",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_simd_info",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_task_acquire_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "flb_task_release_lock",
+   "premise": [],
+   "status": "not reported"
+  },
+  {
+   "all_borrowed": true,
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "file": "src/flb_engine.c",
+   "function": "mk_list_is_empty",
+   "premise": [],
+   "status": "not reported"
+  }
+ ],
+ "totals": {
+  "cfg_changed": 2,
+  "decisions": 4,
+  "forecast_safe_moves": 0,
+  "non_safe_rows_with_summary": 62,
+  "route:live-entry": 4,
+  "summaries": 172,
+  "units_with_derivation": 15,
+  "withdrawn_decisions": 0,
+  "withdrawn_functions": 0
+ },
+ "units": [
+  {
+   "decisions": [],
+   "file": "plugins/in_storage_backlog/sb.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48",
+   "summaries": 8,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_engine_dispatch.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "3da3f17f89ec23a03db9ff8c3bf3f40e273414f0f8a2afa64fe41c3e04b44cff",
+   "summaries": 6,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_engine_dispatch.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "3da3f17f89ec23a03db9ff8c3bf3f40e273414f0f8a2afa64fe41c3e04b44cff",
+   "summaries": 6,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_input_chunk.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52",
+   "summaries": 18,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_input_chunk.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52",
+   "summaries": 18,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_task.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "836398727589a7cd8951fd8663a940f4b2ecb99faa1778fa791ed89e85e13312",
+   "summaries": 4,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_task.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "836398727589a7cd8951fd8663a940f4b2ecb99faa1778fa791ed89e85e13312",
+   "summaries": 4,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_output.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de",
+   "summaries": 19,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_output.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de",
+   "summaries": 19,
+   "withdrawn": []
+  },
+  {
+   "decisions": [
+    {
+     "candidate": "ResourceFunctionContract { parameters: [Consumed { nullable: false }, Borrowed], result: None }",
+     "cfg_changed": true,
+     "function": "schedule_request_wait",
+     "own_protected": [
+      "request"
+     ],
+     "reported_status": "Safe",
+     "route": "live-entry",
+     "validates_under_reported_premises": true
+    }
+   ],
+   "file": "src/flb_scheduler.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204",
+   "summaries": 11,
+   "withdrawn": []
+  },
+  {
+   "decisions": [
+    {
+     "candidate": "ResourceFunctionContract { parameters: [Consumed { nullable: false }, Borrowed], result: None }",
+     "cfg_changed": true,
+     "function": "schedule_request_wait",
+     "own_protected": [
+      "request"
+     ],
+     "reported_status": "Safe",
+     "route": "live-entry",
+     "validates_under_reported_premises": true
+    }
+   ],
+   "file": "src/flb_scheduler.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204",
+   "summaries": 11,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_storage.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "eab3242cf290c79425934bdc538f70fb836a6cf78c5edf269e9873404c44e8fb",
+   "summaries": 10,
+   "withdrawn": []
+  },
+  {
+   "decisions": [],
+   "file": "src/flb_storage.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "eab3242cf290c79425934bdc538f70fb836a6cf78c5edf269e9873404c44e8fb",
+   "summaries": 10,
+   "withdrawn": []
+  },
+  {
+   "decisions": [
+    {
+     "candidate": "ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None }",
+     "cfg_changed": false,
+     "function": "flb_engine_exit_status",
+     "own_protected": [
+      "config"
+     ],
+     "reported_status": "Safe",
+     "route": "live-entry",
+     "validates_under_reported_premises": true
+    }
+   ],
+   "file": "src/flb_engine.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27",
+   "summaries": 14,
+   "withdrawn": []
+  },
+  {
+   "decisions": [
+    {
+     "candidate": "ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None }",
+     "cfg_changed": false,
+     "function": "flb_engine_exit_status",
+     "own_protected": [
+      "config"
+     ],
+     "reported_status": "Safe",
+     "route": "live-entry",
+     "validates_under_reported_premises": true
+    }
+   ],
+   "file": "src/flb_engine.c",
+   "library": "fluent-bit-system",
+   "reaching_withdrawn": [],
+   "source_sha256": "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27",
+   "summaries": 14,
+   "withdrawn": []
+  }
+ ],
+ "withdrawn": []
+}

@@ -1,0 +1,15 @@
+test a_copy_read_in_a_call_actual_serves_no_caller ... FAILED
+test a_withdrawn_summary_withdraws_its_callers_summaries ... FAILED
+test a_summary_validated_through_a_copy_of_a_protected_formal_serves_no_caller ... FAILED
+test a_copy_whose_reads_certify_under_protection_still_validates ... ok
+test read_only_released_and_forwarded_formals_still_validate ... ok
+thread 'a_copy_read_in_a_call_actual_serves_no_caller' (2449198) panicked at crates/qcore-c-gateway/tests/summary_validation_premises.rs:180:5:
+  left: ("Safe", [])
+ right: ("Unknown", ["unsupported:call to uncontracted function `get`"])
+thread 'a_withdrawn_summary_withdraws_its_callers_summaries' (2449201) panicked at crates/qcore-c-gateway/tests/summary_validation_premises.rs:197:5:
+  left: ("Safe", [])
+ right: ("Unknown", ["unsupported:call to uncontracted function `mid`"])
+thread 'a_summary_validated_through_a_copy_of_a_protected_formal_serves_no_caller' (2449200) panicked at crates/qcore-c-gateway/tests/summary_validation_premises.rs:165:5:
+  left: ("Safe", [])
+ right: ("Unknown", ["unsupported:call to uncontracted function `cmp`"])
+test result: FAILED. 2 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
