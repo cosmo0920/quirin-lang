@@ -242,7 +242,6 @@ pub(crate) fn derive_custody_summaries(
         .iter()
         .map(|name| (name.clone(), direct_calls(tokens, name, &candidates)))
         .collect::<BTreeMap<_, _>>();
-    premises::record_graph(&graph);
 
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
@@ -364,6 +363,7 @@ pub(crate) fn derive_custody_summaries(
             });
         }
     }
+    premises::record_derivation(&graph, &derivation.inferred, contracts);
     derivation
 }
 

@@ -215,14 +215,35 @@ fn record_with_label(
     }));
 }
 
-/// The unit's direct-call graph over the derivation's candidates, recorded
-/// once per derivation so a withdrawn summary's callers can be named.
-pub(super) fn record_graph(graph: &BTreeMap<String, BTreeSet<String>>) {
+/// The unit's direct-call graph over the derivation's candidates and every
+/// summary the derivation validated (whether a declaration overrode it),
+/// recorded once per derivation so a withdrawn summary's callers, and every
+/// published summary's own row, can be named.
+pub(super) fn record_derivation(
+    graph: &BTreeMap<String, BTreeSet<String>>,
+    inferred: &BTreeMap<String, ResourceFunctionContract>,
+    declared: &ResourceContracts,
+) {
     if !crate::typed_access_path::parity_enabled() {
         return;
     }
+    let summaries = inferred
+        .iter()
+        .map(|(name, contract)| {
+            serde_json::json!({
+                "function": name,
+                "contract": format!("{contract:?}"),
+                "declared": declared.contract(name).is_some(),
+                "all_borrowed": contract
+                    .parameters
+                    .iter()
+                    .all(|mode| matches!(mode, ResourceParameterMode::Borrowed)),
+            })
+        })
+        .collect::<Vec<_>>();
     crate::typed_access_path::record_row(serde_json::json!({
         "position": "summary-premises-graph",
         "graph": graph,
+        "summaries": summaries,
     }));
 }
