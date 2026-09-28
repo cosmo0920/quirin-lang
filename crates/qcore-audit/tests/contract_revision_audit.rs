@@ -223,8 +223,9 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
     let before = tree.read("before/r.contracts.json")["contract_revision"].clone();
     assert_eq!(before["counts"]["pinned_in_force"], 10);
     assert_eq!(before["contracts"]["box_drop"]["status"], "pinned-in-force");
-    // A body change: `box_drop` is out of force and its caller is Pending
-    // (card W45-USER-CONTRACT-PLUGINS; it was Unknown).
+    // A body change: `box_drop` is out of force and its caller is held (card
+    // W45-USER-CONTRACT-PLUGINS made it Pending; card
+    // W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL keeps it Unknown, below).
     tree.mutate(&edits(&mutation("dropped-release")));
     let check = tree.pin(&["--check"]);
     assert_eq!(check.status.code(), Some(1));
@@ -244,8 +245,12 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
         .iter()
         .find(|(name, ..)| name == "user_drop")
         .unwrap();
-    assert_eq!(user_drop.1, "Pending");
-    assert_eq!(user_drop.2, ["contract-pin-mismatch"]);
+    // Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: `Unknown`, not
+    // `Pending`. The re-pin below shows why: with the declaration back in
+    // force its body conflicts with it, so no re-pin alone makes `user_drop`
+    // `Safe`, and that standing reason is recorded beside the held call.
+    assert_eq!(user_drop.1, "Unknown");
+    assert_eq!(user_drop.2, ["contract-pin-mismatch", "unsupported"]);
     assert_eq!(
         tree.read("after/r.json")["units"][0]["reason_code"],
         "contract-pin-mismatch"
@@ -272,7 +277,7 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
     assert_eq!(lost["function"], "user_drop");
     assert_eq!(
         lost["reasons"],
-        serde_json::json!(["contract-pin-mismatch"])
+        serde_json::json!(["contract-pin-mismatch", "unsupported"])
     );
     assert_eq!(
         report["contracts_in_force"]["removed"][0]["function"],
@@ -395,19 +400,25 @@ fn the_mutation_table() {
         ),
         // Card W45-USER-CONTRACT-PLUGINS: a caller whose only unresolved
         // diagnostic is the held call is `Pending` (a re-pin after review
-        // resolves it); it was `Unknown`.
+        // resolves it); it was `Unknown`. Card
+        // W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: only where the re-pin
+        // as written would leave it `Safe`, which is the flexible row above
+        // (`premature-destroy`); `dropped-release` and `changed-transfer`
+        // leave the re-pinned declaration refuted by its own body, so their
+        // callers are `Unknown` with that reason standing beside the held
+        // call (they were `Pending`: corrections).
         ("rename-local", true, &[("box_count", "Safe")]),
         ("reorder-independent", true, &[("box_two", "Safe")]),
         (
             "dropped-release",
             true,
-            &[("box_drop", "Safe"), ("user_drop", "Pending")],
+            &[("box_drop", "Safe"), ("user_drop", "Unknown")],
         ),
         ("missing-counter-rollback", true, &[("box_count", "Unsafe")]),
         (
             "changed-transfer",
             true,
-            &[("box_keep", "Safe"), ("user_keep", "Pending")],
+            &[("box_keep", "Safe"), ("user_keep", "Unknown")],
         ),
         (
             "premature-destroy",
@@ -431,7 +442,20 @@ fn the_mutation_table() {
                 "{name} pinned={pinned} {function}: {found:?}"
             );
             if *pinned && function.starts_with("user_") {
-                assert_eq!(found.2, ["contract-pin-mismatch"], "{name}");
+                // The held call is always named; a `Pending` row carries
+                // nothing else, an `Unknown` one its standing reasons.
+                if *status == "Pending" {
+                    assert_eq!(found.2, ["contract-pin-mismatch"], "{name}");
+                } else {
+                    assert!(found.2.iter().any(|r| r == "contract-pin-mismatch"), "{name}");
+                    assert!(
+                        found
+                            .2
+                            .iter()
+                            .all(|r| r == "contract-pin-mismatch" || r == "unsupported"),
+                        "{name}: {found:?}"
+                    );
+                }
             }
         }
         let section = tree.read("r.contracts.json")["contract_revision"].clone();

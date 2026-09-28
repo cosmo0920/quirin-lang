@@ -353,10 +353,26 @@ fn a_source_spelled_prefix_is_unknown_never_pending() {
 
 #[test]
 fn a_genuine_hold_is_still_pending() {
+    // Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: `k_close(0);` was this
+    // test's held call until that card, and it is one of the card's own
+    // instances: with the declaration in force the literal actual does not
+    // match the contract (`arguments do not match resource contract`), so no
+    // re-pin alone makes it `Safe` and it is now `Unknown`. A formal actual is
+    // the genuine hold.
     let summary = held("k_close(0);", &pinned());
+    assert_eq!(status(&summary, "subject"), AnalysisStatus::Unknown);
+    let summary = analyse(
+        &format!("{HELD_DECLS}void subject(void *p) {{ k_close(p); }}\n"),
+        "subject",
+        &pinned(),
+    );
     assert_eq!(status(&summary, "subject"), AnalysisStatus::Pending);
     // Beside a source-spelled prefix the function joins to `Unknown`.
-    let summary = held("k_close(0); qcore_pin_mismatch__zz(0);", &pinned());
+    let summary = analyse(
+        &format!("{HELD_DECLS}void subject(void *p) {{ k_close(p); qcore_pin_mismatch__zz(0); }}\n"),
+        "subject",
+        &pinned(),
+    );
     assert_eq!(status(&summary, "subject"), AnalysisStatus::Unknown);
 }
 
@@ -615,6 +631,9 @@ fn a_held_call_beside_an_unread_definition_is_unknown() {
         return;
     }
     let scope = LegacyFunctionScope::MainSourceDefinitions;
+    // Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: the held call takes a
+    // formal; `k_close(0)` does not match the declaration in force and is
+    // `Unknown` since that card (see `a_genuine_hold_is_still_pending`).
     let unit = |body: &str| {
         c11(
             &format!("void k_close(void *);\n{body}\n"),
@@ -623,17 +642,17 @@ fn a_held_call_beside_an_unread_definition_is_unknown() {
         )
     };
     assert_eq!(
-        unit("void subject(void) { k_close(0); }").verdict(),
+        unit("void subject(void *p) { k_close(p); }").verdict(),
         Verdict::Pending
     );
     for (reason, body) in [
         (
             "an `#if 0` definition",
-            "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void) { k_close(0); }",
+            "#if 0\nint dead(void) { return 0; }\n#endif\nvoid subject(void *p) { k_close(p); }",
         ),
         (
             "a K&R definition",
-            "int kr(a) int a; { return a; }\nvoid subject(void) { k_close(0); }",
+            "int kr(a) int a; { return a; }\nvoid subject(void *p) { k_close(p); }",
         ),
     ] {
         let result = unit(body);

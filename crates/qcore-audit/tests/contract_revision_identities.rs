@@ -275,13 +275,17 @@ fn a_pin_holds_at_every_reviewed_revision_and_nowhere_else() {
         mismatches(&section),
         [("box_drop".to_owned(), "source-changed".to_owned())]
     );
-    // Card W45-USER-CONTRACT-PLUGINS: a caller resting only on the held call
-    // is Pending (it was Unknown).
+    // Card W45-USER-CONTRACT-PLUGINS made a caller resting only on the held
+    // call Pending (it was Unknown). Card
+    // W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL corrects this one back to
+    // Unknown: C drops `box_drop`'s release, so a re-pin as written would
+    // leave the declaration refuted by its own body and the call withdrawn;
+    // the reason that would stand is recorded beside the held call.
     assert_eq!(
         tree.status("at-c/r.json", "user_drop"),
         (
-            "Pending".to_owned(),
-            vec!["contract-pin-mismatch".to_owned()]
+            "Unknown".to_owned(),
+            vec!["contract-pin-mismatch".to_owned(), "unsupported".to_owned()]
         )
     );
     let detail = section["pin_mismatches"][0]["detail"]

@@ -151,7 +151,11 @@ fn a_deferred_clause_is_never_silently_dropped() {
     }
 }
 
-/// A would-be provisional `Unsafe` through a deferred contract is `Pending`.
+/// A would-be provisional `Unsafe` through a deferred contract is never
+/// alleged. Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL corrects its
+/// verdict from `Pending` to `Unknown`: accepting the declaration would allege
+/// the violation, so no human act alone stands between the row and `Safe`.
+/// `BALANCED`, whose accepted declaration decides it `Safe`, stays `Pending`.
 #[test]
 fn a_deferred_contract_accuses_nothing() {
     // The deferred release: the double release the bare contract alleges, and
@@ -162,10 +166,13 @@ fn a_deferred_contract_accuses_nothing() {
         function(&analyse(TWICE, &bare), "w").status,
         AnalysisStatus::Unsafe
     );
-    for body in [TWICE, BALANCED] {
+    for (body, status) in [
+        (TWICE, AnalysisStatus::Unknown),
+        (BALANCED, AnalysisStatus::Pending),
+    ] {
         let summary = analyse(body, &deferred);
         let w = function(&summary, "w");
-        assert_eq!(w.status, AnalysisStatus::Pending, "{body}");
+        assert_eq!(w.status, status, "{body}");
         assert!(!held(w).is_empty(), "{body}");
         assert!(
             w.diagnostics.iter().all(|diagnostic| matches!(
@@ -187,8 +194,16 @@ fn a_deferred_contract_accuses_nothing() {
         "    ensures normal resource_review_pending(resource_return_owned(nullable), \"why\");",
     ));
     let summary = analyse(LEAKED, &open_deferred);
-    assert_eq!(function(&summary, "w").status, AnalysisStatus::Pending);
+    assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
     assert_eq!(held(function(&summary, "w")), ["k_open"]);
+    assert!(
+        function(&summary, "w")
+            .diagnostics
+            .iter()
+            .all(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Unsupported { .. })),
+        "the leak is not alleged: {:?}",
+        function(&summary, "w").diagnostics
+    );
 }
 
 #[test]

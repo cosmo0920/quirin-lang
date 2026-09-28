@@ -111,7 +111,11 @@ fn safe_in_force_and_pending_for_a_pin_mismatch() {
     )));
 }
 
-/// A would-be provisional `Unsafe` through a withheld contract is `Pending`.
+/// A would-be provisional `Unsafe` through a withheld contract is never
+/// alleged. Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL corrects its
+/// verdict from `Pending` to `Unknown`: a re-pin would allege the violation,
+/// so no human act alone stands between the row and `Safe`. `BALANCED`, which
+/// the re-pinned declaration decides `Safe`, stays `Pending`.
 #[test]
 fn a_withheld_pin_accuses_nothing() {
     let bare = load(BARE);
@@ -123,14 +127,14 @@ fn a_withheld_pin_accuses_nothing() {
         function(&analyse(LEAKED, &bare), "w").status,
         AnalysisStatus::Unsafe
     );
-    for (body, names, callee) in [
-        (TWICE, vec!["k_close"], "k_close"),
-        (BALANCED, vec!["k_close"], "k_close"),
-        (LEAKED, vec!["k_open"], "k_open"),
+    for (body, names, callee, status) in [
+        (TWICE, vec!["k_close"], "k_close", AnalysisStatus::Unknown),
+        (BALANCED, vec!["k_close"], "k_close", AnalysisStatus::Pending),
+        (LEAKED, vec!["k_open"], "k_open", AnalysisStatus::Unknown),
     ] {
         let summary = analyse(body, &withheld(&names));
         let w = function(&summary, "w");
-        assert_eq!(w.status, AnalysisStatus::Pending, "{body}");
+        assert_eq!(w.status, status, "{body}");
         assert_eq!(held(w), [callee], "{body}");
         assert!(
             w.diagnostics.iter().all(|diagnostic| matches!(

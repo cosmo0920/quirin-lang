@@ -67,6 +67,12 @@ pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
 #[path = "legacy_pin_hold.rs"]
 pub mod pin_hold;
 
+// Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: a `Pending` row is joined
+// with every reason its function would carry with the held declarations in
+// force, so a held call never masks another reason.
+#[path = "legacy_review_standing.rs"]
+pub mod review_standing;
+
 // Card W45-REFUTED-CONTRACT-WITHDRAWAL: a declared contract its own analysed
 // body refutes is withdrawn from every caller, in its unit and, through the
 // audit's refutation table, in every other unit.
@@ -1922,6 +1928,25 @@ fn analyze_legacy_c_tokens(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
+    let summary = analyze_legacy_c_tokens_under_holds(tokens, function, contracts)?;
+    // Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: the same settlement as
+    // the translation-unit route, over this entry's one row.
+    let mut rows = BTreeMap::from([(summary.function.clone(), summary)]);
+    review_standing::settle_with(&mut rows, contracts, |resolved| {
+        analyze_legacy_c_tokens_under_holds(tokens, function, resolved)
+            .map(|resolved| BTreeMap::from([(resolved.function.clone(), resolved)]))
+    });
+    Ok(rows
+        .into_values()
+        .next()
+        .expect("the entry's one row is kept"))
+}
+
+fn analyze_legacy_c_tokens_under_holds(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyFunctionSummary, LegacyCError> {
     // Card LOADER-ABI. This single-function entry point does not pass through
     // the translation-unit pass, so it applies the withdrawal itself: a
     // declaration this unit's own C declaration contradicts is not applied
@@ -2624,6 +2649,43 @@ pub(crate) mod container_publication;
 pub mod counted_users;
 
 fn analyze_legacy_c_translation_unit_selected_partial(
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+    selected_functions: Option<&[String]>,
+    typed_context: (CCompilerDialect, Option<&LegacyCertificateRequest>),
+) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
+    let mut analysis = analyze_translation_unit_under_holds(
+        source,
+        entry,
+        contracts,
+        selected_functions,
+        typed_context,
+    )?;
+    // Card W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL: a `Pending` row stands
+    // only if its function carries no other reason with every held
+    // declaration in force; a unit without a `Pending` row is untouched and
+    // analysed once.
+    let moved = review_standing::settle_with(&mut analysis.summary.functions, contracts, |resolved| {
+        analyze_translation_unit_under_holds(
+            source,
+            entry,
+            resolved,
+            selected_functions,
+            typed_context,
+        )
+        .map(|resolved| resolved.summary.functions)
+    });
+    if moved {
+        analysis.summary.status = verdict::unit_status(
+            analysis.summary.functions.values(),
+            !analysis.projection_failures.is_empty(),
+        );
+    }
+    Ok(analysis)
+}
+
+fn analyze_translation_unit_under_holds(
     source: &str,
     entry: &str,
     contracts: &ResourceContracts,
