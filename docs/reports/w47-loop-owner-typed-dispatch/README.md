@@ -256,7 +256,29 @@ DISCHARGE clause is met.
 
 ## 10. Gate
 
-GATE_PLACEHOLDER
+[`scripts/gate.py`](scripts/gate.py) `rust` then `records`; exits in
+[gate/](gate/), figures in [gate.json](gate.json). All steps exit 0 (Rust,
+Lean and provider-test steps on `6a668cad`, code unchanged since `61cd5dda`):
+submodule; fmt clean; the Rust suite 348 units / 361 summaries, **6,223
+passed, 0 failed**, 11 ignored (+10: this card's fixtures); clippy clean; both
+probes 0; **222 Lean audits** (no new audit module); the provider cargo test
+once for the matrix figure (129 passed; no `providers/` change, so the
+provider gate is not due and no pin is due). The Python suite and docs-index
+check ran after the matrix and index regeneration. After the gate, the final
+release examples (`typed_dispatch_facts` `6dc2e441…`, `loop_owner_census`
+`3e9785f0…`) reproduced the archived facts (identical but for the scratch path
+of the previous test's copy) and all four archived census readings byte for
+byte, and, without typed facts, the coroutine-hop archive byte for byte.
+
+**Files likely to conflict** with the parallel W47-CONDVAR-JOIN-PUBLICATION:
+`docs/agents/gateway.md` (the 10p amendment beside its new 10q),
+`docs/agents/README.md` (the 10p row), `docs/STATUS.md`,
+`docs/development/increments/wave-47.md`, `docs/reports/INDEX.md`,
+`docs/reviews/r0_3/acceptance_matrix.json` (gate block and follow-ups),
+`crates/qcore-c-gateway/src/lib.rs` (one new module line) and
+`crates/qcore-c-gateway/Cargo.toml` (`serde_json`'s `unbounded_depth`
+feature). Module counts: Lean audits 222, contract modules 119 (both
+unchanged by this card).
 
 ## Reproduce
 

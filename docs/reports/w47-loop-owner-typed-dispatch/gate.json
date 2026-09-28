@@ -1,0 +1,13 @@
+{
+  "note": "W47-LOOP-OWNER-TYPED-DISPATCH card gate at base 27854776. Rust, Lean and provider-test steps ran on the tree of 6a668cad (code unchanged since 61cd5dda; later commits change only docs, report records, the regenerated matrix and index): run_test_binaries.py 348 units, 361 summaries, 6,223 passed, 0 failed, 11 ignored (private/test-binaries/20260928T095811Z-3976627/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 222 audits passed (AuditLoopOwner.lean 34 -> 43 theorems, no new audit module). No providers/ change, so the provider gate is not due; the provider cargo test ran once to measure this figure: 129 passed / 0 failed. The Python suite and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/td/gate-1/ and private/td/gate-records/ of this worktree.",
+  "workspace_tests": 6223,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 222,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
