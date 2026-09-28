@@ -33,6 +33,22 @@ import sys
 
 ORDER = {"Safe": 0, "Pending": 1, "Unknown": 2, "Unsafe": 3}
 
+# Read by hand (README, "Attribution"): header `static inline` bodies whose
+# typed rows the join refuses (`route`, a `container_of` element), so their
+# validated summaries no longer serve a caller; and the corpus function the
+# join moved. A leaf naming one, or read at a call of one, is a cascade.
+CASCADE_CALLEES = {"flb_task_get_route_data", "flb_task_get_route_status",
+                   "flb_task_set_route_status", "flb_task_set_route_data",
+                   "mk_fifo_queue_get"}
+# (function, line) of the calls read by hand, in the pinned sources: a leaf
+# there whose description names no callee (the refused statement's own leaf,
+# or an alias it hands on).
+CASCADE_SITES = {("mk_fifo_worker_read", 5394), ("flb_output_task_flush_error", 17877),
+                 ("record_retry_failure_metrics", 17442), ("record_retry_failure_metrics", 17443),
+                 ("record_retry_failure_metrics", 17438), ("handle_output_event", 19387),
+                 ("flb_input_chunk_drop_task_route", 18301),
+                 ("flb_input_chunk_drop_task_route", 18269)}
+
 
 def open_any(path):
     if path.exists():
@@ -192,6 +208,10 @@ def main():
                             kind = "alias-root:join"
                         elif root in fact["nested"]:
                             kind = "alias-root:nested"
+                    if kind == "unexplained" and (
+                            any(f"`{m}`" in d["description"] for m in CASCADE_CALLEES)
+                            or (name, d["line"]) in CASCADE_SITES):
+                        kind = "summary-cascade"
                     if kind == "unexplained" and any(f"`{m}`" in d["description"] for m in moved):
                         kind = "summary-cascade"
                     if kind == "unexplained" and "formal" in d["description"]:

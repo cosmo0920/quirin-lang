@@ -1,0 +1,126 @@
+{
+ "admitted_typed_rows": 24717,
+ "served_never_bound_while_ast_binds": [],
+ "lexical_never_bound_while_ast_binds_by_class": {
+  "bound-name": 24,
+  "statement-expression": 127,
+  "sub-object-store": 22
+ },
+ "examples": {
+  "sub-object-store": [
+   "rd_kafka_Uuid_str:bytes",
+   "rd_kafka_mock_handle_ShareAcknowledge:node_endpoints",
+   "rd_kafka_mock_handle_ShareFetch:node_endpoints",
+   "rd_addrinfo_prepare:snode"
+  ],
+  "statement-expression": [
+   "flb_task_get_route_data:route",
+   "flb_task_get_route_status:route",
+   "flb_task_set_route_status:route",
+   "append_sample_to_metric:label_value",
+   "decode_data_point_labels:current_label",
+   "compute_metric_hash:label_value",
+   "mk_http_index_lookup:entry",
+   "calculate_label_set_hash:label_value",
+   "set_up_time_series_for_label_set:label_value",
+   "summary_label_keys_match:left_label",
+   "summary_label_keys_match:right_label",
+   "decode_labels:current_label",
+   "mk_sched_conn_pending_output:input",
+   "format_metric_labels:label_v",
+   "initialize_temporary_metric:source_label",
+   "format_metric:label_v",
+   "mk_vhost_fdt_table_lookup:fdt_host",
+   "mk_vhost_get:entry_alias",
+   "mk_plugin_cap:plugin",
+   "mk_plugin_load:tmp",
+   "mk_plugin_preworker_calls:node",
+   "metrics_check_label_value_existence:label",
+   "pack_header:label",
+   "pack_metric:label",
+   "pack_events:event",
+   "pack_links:link",
+   "pack_scope_spans:scope_span",
+   "ctr_encode_msgpack_create:resource_span",
+   "metric_labels_match:label",
+   "format_scope_spans:scope_span",
+   "ctr_encode_text_create:resource_span",
+   "mk_fifo_queue_get:q"
+  ],
+  "bound-name": [
+   "format_attributes:v"
+  ]
+ },
+ "nested_census": {
+  "unread_by_statement": 8737,
+  "nested_member_stores": 3649,
+  "analyses": 17850
+ },
+ "parenthesised_destinations": {
+  "records": 803,
+  "distinct": 72,
+  "top": [
+   [
+    "tmp",
+    88
+   ],
+   [
+    "_tmp",
+    62
+   ],
+   [
+    "rkb",
+    60
+   ],
+   [
+    "member",
+    57
+   ],
+   [
+    "rkt",
+    37
+   ],
+   [
+    "_rkb_",
+    36
+   ],
+   [
+    "mshgrp",
+    30
+   ],
+   [
+    "rkm",
+    25
+   ],
+   [
+    "mrkb",
+    24
+   ],
+   [
+    "rktp",
+    22
+   ],
+   [
+    "mtopic",
+    19
+   ],
+   [
+    "rkbuf",
+    18
+   ],
+   [
+    "state",
+    18
+   ],
+   [
+    "mtxnp",
+    15
+   ],
+   [
+    "consumer",
+    12
+   ]
+  ],
+  "formals": []
+ }
+}

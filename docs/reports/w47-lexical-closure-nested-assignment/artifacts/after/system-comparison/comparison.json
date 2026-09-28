@@ -1,0 +1,109 @@
+{
+ "functions": {
+  "before": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "after": {
+   "Unknown": 384,
+   "Safe": 60,
+   "Unsafe": 4
+  }
+ },
+ "units": {
+  "before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  }
+ },
+ "leaf_families": {
+  "before": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported:COND": 418,
+   "unsupported:IND": 1348,
+   "unsupported:OTHER": 418,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 715
+  },
+  "after": {
+   "counted_user": 4,
+   "unknown_alias": 998,
+   "unsupported:COND": 424,
+   "unsupported:IND": 1350,
+   "unsupported:OTHER": 412,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 719
+  }
+ },
+ "move_counts": {
+  "Safe->Unknown": 3
+ },
+ "moves": [
+  {
+   "library": "fluent-bit-system",
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "backlog"
+   ],
+   "nested": [
+    "__mptr",
+    "backlog_iterator"
+   ],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "ins"
+   ],
+   "nested": [
+    "__mptr",
+    "head"
+   ],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "before": "Safe",
+   "after": "Unknown",
+   "join": [
+    "ins"
+   ],
+   "nested": [
+    "__mptr",
+    "head"
+   ],
+   "leaf_reasons": {
+    "typed-row:join": 1
+   }
+  }
+ ],
+ "changed_functions": 19,
+ "leaf_attribution": {
+  "added|unknown_alias|summary-cascade": 4,
+  "added|unknown_alias|typed-row:join": 9,
+  "added|unsupported:COND|summary-cascade": 6,
+  "added|unsupported:IND|summary-cascade": 2,
+  "added|unsupported:UNC|summary-cascade": 4,
+  "removed|unsupported:OTHER|summary-cascade": 6
+ }
+}

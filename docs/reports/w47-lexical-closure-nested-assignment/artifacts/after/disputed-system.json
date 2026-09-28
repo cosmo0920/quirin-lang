@@ -1,0 +1,31 @@
+{
+ "admitted_typed_rows": 3502,
+ "served_never_bound_while_ast_binds": [],
+ "lexical_never_bound_while_ast_binds_by_class": {
+  "statement-expression": 498
+ },
+ "examples": {
+  "statement-expression": [
+   "engine_has_fluentbit_logs_input:ins",
+   "flb_engine_get_chunk_backpressure_percent:ins",
+   "flb_output_new:plugin",
+   "flb_task_set_route_status:route",
+   "flb_task_set_route_data:route",
+   "flb_task_get_route_data:route",
+   "flb_task_get_route_status:route",
+   "flb_task_retry_count:retry",
+   "sb_find_segregated_backlog_by_output_plugin_instance:backlog"
+  ]
+ },
+ "nested_census": {
+  "unread_by_statement": 2928,
+  "nested_member_stores": 0,
+  "analyses": 4540
+ },
+ "parenthesised_destinations": {
+  "records": 0,
+  "distinct": 0,
+  "top": [],
+  "formals": []
+ }
+}

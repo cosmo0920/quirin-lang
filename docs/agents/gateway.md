@@ -1027,3 +1027,46 @@ which is not a second authority.
     proved: faithful Clang extraction (trust boundary 28), and that the Rust
     loop returns a seeded, settled set. `QCore.TypedRootDeclarations`;
     [report](../reports/w47-typed-root-declaration-reader/README.md).
+    Amended by rule 10o: where both readers answer, a spelling the AST closure
+    binds is bound (the join only refuses more).
+
+<a id="constraint-10o"></a>
+
+10o. **The never-bound premise reads every assignment of the body, and a
+    typed position serves the join of the lexical and AST closures.** Card
+    W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (`lexical_nested_assignment.rs`,
+    hooks in `borrowed_actual.rs`, `legacy_typed_roots.rs`). The lexical
+    custody closure (`untracked_bases`, every consumer of `never_bound`: C02-P,
+    O04-B08 values, rules 5j and 5l, W44 actuals, P2/P3) read one assignment
+    per `;{}` run, its first top-level `=`. It now also reads, beside that
+    unchanged reading, every simple `=` wherever it stands — nested in a
+    condition or loop header, a `for` clause, a comma or `?:` operand, a later
+    declarator, a parenthesised (macro-expanded) destination `(p) = …`, a
+    scalar or array declarator's brace initialiser — with the rest of its
+    group as the value, and seeds `&(p)`, `(p)++`, `++(p)`, `(p) op= …`; the
+    closure iterates to its fixed point (at least `assignments + 1` rounds)
+    and refuses the function if it does not settle. A statement-expression
+    value is still read as its opening `(` (rule 5l's `container_of`). The
+    same reader feeds `may_bind` (parenthesised writes), O04-B08's premises 3
+    and 5 (a nested, later-declarator or parenthesised alias or second
+    binding of a store base) and the protected-formal alias closure (the
+    aliases its run-first reading skipped). At every P2 statement and P3
+    position of a function the lexical reader reads, a root is never bound
+    only when the extended lexical closure says so **and** the rule-10l AST
+    closure does not bind its spelling (file-scope objects included) wherever
+    the AST reader answers the function; a pointer root also needs neither
+    `may_bind` (lexical, or the AST's spelling). Where the AST reader refuses
+    the function the lexical answer stands; where the lexical reader answers
+    nothing, rule 10l is unchanged. **Do not** drop the old statement reading
+    (the superset reading is monotone by construction), serve a lexical
+    answer the AST closure contradicts at a typed position, or read a
+    statement expression's value past its `(` in the lexical closure without
+    a measured re-pin of rule 5l. The join withdraws Safe functions whose
+    typed rows rest on classes the AST closure reads more conservatively than
+    rules 5l and 5i (a `container_of` element, the admitted store's own
+    sub-object root, a static array initialiser in `may_bind`);
+    `W47-JOIN-AST-CONSERVATIVE-CLASSES` tracks restoring them. Premises
+    stated, not proved: the token reader's extraction of assignments and
+    faithful Clang extraction (trust boundary 28), and that the Rust loops
+    return seeded, settled sets. `QCore.LexicalClosureNestedAssignment`;
+    [report](../reports/w47-lexical-closure-nested-assignment/README.md).

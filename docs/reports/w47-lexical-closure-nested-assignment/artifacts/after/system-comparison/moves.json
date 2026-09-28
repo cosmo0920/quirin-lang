@@ -1,0 +1,65 @@
+[
+ {
+  "unit": 0,
+  "library": "fluent-bit-system",
+  "file": "plugins/in_storage_backlog/sb.c",
+  "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "backlog"
+  ],
+  "nested": [
+   "__mptr",
+   "backlog_iterator"
+  ],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `backlog`\", \"line\": 17924, \"origin\": \"plugins/in_storage_backlog/sb.c:206\"}"
+  ]
+ },
+ {
+  "unit": 7,
+  "library": "fluent-bit-system",
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_get_chunk_backpressure_percent",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "ins"
+  ],
+  "nested": [
+   "__mptr",
+   "head"
+  ],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `ins`\", \"line\": 19135, \"origin\": \"src/flb_engine.c:297\"}"
+  ]
+ },
+ {
+  "unit": 8,
+  "library": "fluent-bit-system",
+  "file": "src/flb_engine.c",
+  "function": "flb_engine_get_chunk_backpressure_percent",
+  "before": "Safe",
+  "after": "Unknown",
+  "join": [
+   "ins"
+  ],
+  "nested": [
+   "__mptr",
+   "head"
+  ],
+  "leaf_reasons": {
+   "typed-row:join": 1
+  },
+  "after_leaves": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `ins`\", \"line\": 19135, \"origin\": \"src/flb_engine.c:297\"}"
+  ]
+ }
+]

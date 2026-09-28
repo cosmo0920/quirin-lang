@@ -24,6 +24,7 @@ import sys
 
 census = collections.Counter()
 parenthesised = collections.Counter()
+parenthesised_formals = collections.Counter()
 # Each analysis writes its root-declarations row before its typed rows (the
 # stream is folded in unit order), so a typed row belongs to the last
 # root-declarations row of its function: a function analysed several times
@@ -43,8 +44,11 @@ for line in open(sys.argv[1]):
         census["unread_by_statement"] += nested.get("unread_by_statement", 0)
         census["nested_member_stores"] += nested.get("nested_member_stores", 0)
         census["analyses"] += 1
+        formals = {n["name"] for n in row.get("names", []) if n.get("formal")}
         for name in nested.get("parenthesised", []):
             parenthesised[name] += 1
+            if name in formals:
+                parenthesised_formals[f'{row["function"]}:{name}'] += 1
     elif row.get("old_route") == "old_refusal" and row.get("new_admitted"):
         rows.append((row, current.get(row.get("function"))))
 
@@ -64,8 +68,9 @@ for row, entry in rows:
             reason = entry["reasons"].get(root, "file-scope or not answered")
             klass = reason.split(":")[1] if reason.startswith("assignment:") else reason
             lexical[klass] += 1
-            if len(lexical_examples[klass]) < 8:
-                lexical_examples[klass].append(f'{row["function"]}:{root}')
+            example = f'{row["function"]}:{root}'
+            if example not in lexical_examples[klass]:
+                lexical_examples[klass].append(example)
 
 out = {
     "admitted_typed_rows": len(rows),
@@ -74,7 +79,8 @@ out = {
     "examples": dict(lexical_examples),
     "nested_census": dict(census),
     "parenthesised_destinations": {"records": sum(parenthesised.values()), "distinct": len(parenthesised),
-                                   "top": parenthesised.most_common(15)},
+                                   "top": parenthesised.most_common(15),
+                                   "formals": sorted(parenthesised_formals)},
 }
 json.dump(out, open(sys.argv[2], "w"), indent=1)
 print(json.dumps({k: v for k, v in out.items() if k != "examples"}, indent=1))
