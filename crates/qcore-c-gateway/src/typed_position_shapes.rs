@@ -359,13 +359,12 @@ fn walk(index: &StatementIndex, node: &Value, out: &mut BTreeSet<&'static str>) 
             "=" => {
                 out.insert("assignment");
             }
-            "+" | "-" => {
+            "+" | "-"
                 if children(node)
                     .iter()
-                    .any(|child| qual(child).is_some_and(|t| t.contains('*')))
-                {
-                    out.insert("pointer-arithmetic");
-                }
+                    .any(|child| qual(child).is_some_and(|t| t.contains('*'))) =>
+            {
+                out.insert("pointer-arithmetic");
             }
             _ => {}
         },
