@@ -1,0 +1,17 @@
+Wave-47 round-7 integration gate (a1e8d831) — verdict identity leaf-diff
+Scope: slice (docs/reports/w47-loop-owner-instance-flow/integration/artifacts/slice vs private/w47-int-k/gate-a1e8d831/slice)
+compose3.py BASE=BASE=BASE=MERGED reported 2 leaf mismatches, both in expected classes:
+
+1. src/flb_lib.c :: flb_create — expected class "flb_create x2"
+   line 18447
+   old: unsupported | call to uncontracted function `flb_destroy`
+   new: unsupported | call to `flb_destroy` whose declared contract awaits human review (awaiting-human-review)
+   Function status unchanged (still Unknown). Matches expected: "call to uncontracted function `flb_destroy`" -> "awaiting human review".
+
+2. src/flb_lib.c :: flb_service_set — expected class "flb_service_set x2"
+   line 18792
+   old: unsupported | indirect memory access is outside the resource projection
+   new: unsupported | call to `flb_config_set_property` whose declared contract awaits human review (awaiting-human-review)
+   Function status unchanged (still Unknown). Matches expected: the held flb_config_set_property call (flb_config.c:691) reported in place of that statement's argument refusal.
+
+No other leaves or unit/function statuses differ (corpus and system scopes: 0 mismatches, COMPOSES). No mismatch outside these two expected classes.
