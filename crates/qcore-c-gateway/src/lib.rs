@@ -56,6 +56,8 @@ mod typed_access_path;
 mod typed_access_positions;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
+// Card W47-TYPED-CONST-POINTER-VALUE (rule 10m).
+mod typed_const_pointer_value;
 mod typed_field_access;
 mod typed_root_declarations;
 pub mod typed_source;

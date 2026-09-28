@@ -330,13 +330,18 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
 /// A typedef redeclared as C11 permits (librdkafka declares `rd_kafka_Node_t`
 /// in `rdkafka.h` and again with its body in `rdkafka_aux.h`): with one
 /// declaration an older lexical route admits the getter; with two it falls
-/// to the typed reader, which refuses `node->host` because through a `const`
-/// pointee it is a `char *const` value, not because of a declaration premise
-/// (W47-TYPED-ROOT-DECLARATION-READER measured the premise granted; see
-/// `typed_root_declarations.rs`'s `the_redeclared_typedef_control_refuses_for_its_const_pointee`,
-/// and `W47-TYPED-CONST-POINTER-VALUE`). Never relaxed here.
+/// to the typed reader. Through the `const` pointee `node->host` is a
+/// `char *const` value, which the typed reader refused until
+/// W47-TYPED-CONST-POINTER-VALUE (rule 10m) erased that top-level `const`
+/// (W47-TYPED-ROOT-DECLARATION-READER had measured the declaration premise
+/// granted; see `typed_root_declarations.rs`'s
+/// `the_redeclared_typedef_control_certifies_with_its_const_pointee`). Renamed
+/// from `a_redeclared_typedef_formal_keeps_the_pointer_return_refusal`, whose
+/// cause rule 10m removed; the pointer-return refusals it guarded are pinned
+/// by `a_return_through_a_released_or_tracked_root_is_not_safe` and by
+/// `typed_const_pointer_value.rs`.
 #[test]
-fn a_redeclared_typedef_formal_keeps_the_pointer_return_refusal() {
+fn a_redeclared_typedef_formal_reads_its_const_pointer_return() {
     if !clang_available() {
         return;
     }
@@ -345,7 +350,7 @@ fn a_redeclared_typedef_formal_keeps_the_pointer_return_refusal() {
     assert_eq!(outcome(once), safe());
     let twice = "typedef struct g_s g_t; typedef struct g_s { char *host; } g_t; \
         const char *w(const g_t *node) { return node->host; }";
-    assert_eq!(outcome(twice), unknown(&[RETURN]));
+    assert_eq!(outcome(twice), safe());
 }
 
 /// Step B, the owner-aware enum arm: an anonymous enum typedef member is a

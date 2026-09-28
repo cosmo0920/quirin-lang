@@ -273,14 +273,15 @@ fn a_redeclared_typedef_certifies_only_when_it_is_one_type() {
     );
 }
 
-/// The P3 control `a_redeclared_typedef_formal_keeps_the_pointer_return_refusal`
-/// refuses for a reason outside the declaration reader: `node->host` through
-/// a `const` pointee is a `char *const` value, which the typed reader does not
-/// read as a pointer. With a non-`const` formal the same doubly declared
-/// typedef certifies under the lexical answer; recorded as
-/// `W47-TYPED-CONST-POINTER-VALUE`, not relaxed here.
+/// The P3 control (now `a_redeclared_typedef_formal_reads_its_const_pointer_return`)
+/// refused for a reason outside the declaration reader: `node->host` through
+/// a `const` pointee is a `char *const` value, which the typed reader did not
+/// read as a pointer until W47-TYPED-CONST-POINTER-VALUE (rule 10m). With a
+/// non-`const` formal the same doubly declared typedef certifies under the
+/// lexical answer, and since rule 10m so does the `const` one: the premise
+/// answer is the same in both, only the value's qualifier differed.
 #[test]
-fn the_redeclared_typedef_control_refuses_for_its_const_pointee() {
+fn the_redeclared_typedef_control_certifies_with_its_const_pointee() {
     if !clang_available() {
         return;
     }
@@ -289,12 +290,13 @@ fn the_redeclared_typedef_control_refuses_for_its_const_pointee() {
         outcome_with(twice, "char *w(g_t *node) { return node->host; }"),
         safe()
     );
-    let (status, keys) = outcome_with(
-        twice,
-        "const char *w(const g_t *node) { return node->host; }",
+    assert_eq!(
+        outcome_with(
+            twice,
+            "const char *w(const g_t *node) { return node->host; }"
+        ),
+        safe()
     );
-    assert_eq!(status, "Unknown");
-    assert_eq!(keys, vec![RETURN.to_owned()]);
 }
 
 /// A K&R definition, an implicitly declared callee (which C11 Clang rejects)

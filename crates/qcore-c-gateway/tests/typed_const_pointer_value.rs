@@ -6,7 +6,8 @@
 //! The controls were written before the change and run at the base
 //! (`docs/reports/w47-typed-const-pointer-value/`). Each fixture reaches the
 //! typed reader only after every older route refused it (an indexed or
-//! embedded path, or a doubly declared typedef). Every test asserts the
+//! embedded path; the doubly declared typedef of P3's control is in
+//! `access_path_positions.rs`). Every test asserts the
 //! status and the complete diagnostic vector of `w`. The fixtures use a
 //! generic `c_*` surface: `Safe` here is `Safe` over synthetic trusted test
 //! assumptions and promotes nothing.
@@ -174,27 +175,6 @@ fn a_const_qualified_pointer_value_is_read_in_every_position() {
     }
 }
 
-/// The P3 control's getter (`W47-ACCESS-PATH-POSITIONS`): with the typedef
-/// declared twice (C11 permits it; librdkafka does it for `rd_kafka_Node_t`)
-/// the older lexical route refuses `node->host` and the typed reader decides.
-/// Its value is `char *const` through the `const` pointee, which this card
-/// admits, so the getter certifies with and without the `const`.
-#[test]
-fn a_redeclared_typedef_getter_reads_its_const_pointer_value() {
-    if !clang_available() {
-        return;
-    }
-    let twice = "typedef struct g_s g_t; typedef struct g_s { char *host; } g_t;";
-    assert_eq!(
-        outcome_with(twice, "const char *w(const g_t *node) { return node->host; }"),
-        safe()
-    );
-    assert_eq!(
-        outcome_with(twice, "char *w(g_t *node) { return node->host; }"),
-        safe()
-    );
-}
-
 /// Unlisted top-level qualifiers stay refused: `volatile`, `const volatile`,
 /// `restrict` and `_Atomic`. Only a lone `const` is erased.
 #[test]
@@ -265,7 +245,8 @@ fn a_void_pointer_bit_cast_is_a_borrowed_read() {
     let assigned = "int w(const struct c_box *b) { const struct c_leaf *l; \
         if (!(l = b->opaque)) return -1; return l->weight; }";
     assert_eq!(outcome(assigned), unknown(&["unknown_alias:l"]));
-    let declared = "int w(struct c_box *b) { struct c_leaf *l = b->conf.opaque; c_peek(l); return 0; }";
+    let declared =
+        "int w(struct c_box *b) { struct c_leaf *l = b->conf.opaque; c_peek(l); return 0; }";
     assert_eq!(outcome(declared), safe());
 }
 

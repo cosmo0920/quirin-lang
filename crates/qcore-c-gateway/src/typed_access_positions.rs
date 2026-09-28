@@ -35,6 +35,7 @@ use serde_json::Value;
 
 use crate::typed_access_path::{Reader, StatementIndex, StatementPlan, is_pointer};
 use crate::typed_c_ast::{children, kind};
+use crate::typed_const_pointer_value::pointer_value;
 
 /// What a call actual turned out to be.
 #[derive(Clone, Debug)]
@@ -202,7 +203,7 @@ impl Reader<'_> {
             return Some(false);
         }
         let value = strip_pointer_value(node)?;
-        if !is_pointer(value) {
+        if !pointer_value(value) {
             return None;
         }
         match kind(value) {

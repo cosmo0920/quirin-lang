@@ -17,8 +17,11 @@ use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
 use crate::indirect_chain_access::AccessChain;
+// Card W47-TYPED-CONST-POINTER-VALUE (rule 10m): the value check and the
+// pointer-destination source.
 use crate::legacy_c::{C11TranslationUnit, CCompilerDialect, LegacyCertificateRequest, tokenize};
 use crate::typed_c_ast::{children, kind, translation_unit_ast_with};
+use crate::typed_const_pointer_value::{pointer_source, pointer_value};
 use crate::typed_field_access::TypedScalarPlan;
 
 pub(crate) const PARITY_PATH: &str = "QCORE_TYPED_PATH_PARITY";
@@ -842,7 +845,7 @@ impl Reader<'_> {
                 if let Some(destination) = pointer_name(&pair[0]) {
                     self.plan.scalar.destination = Some(destination.to_owned());
                     self.plan.borrowed_destination = true;
-                    return self.path(strip(&pair[1])?, false, true);
+                    return self.path(pointer_source(&pair[1], &pair[0])?, false, true);
                 }
                 self.store(&pair[0])?;
                 self.expression(&pair[1])
@@ -889,7 +892,7 @@ impl Reader<'_> {
                 self.plan.scalar.destination = Some(name);
                 if pointer {
                     self.plan.borrowed_destination = true;
-                    self.path(strip(&children(decl)[0])?, false, true)
+                    self.path(pointer_source(&children(decl)[0], decl)?, false, true)
                 } else {
                     self.expression(&children(decl)[0])
                 }
@@ -985,7 +988,7 @@ impl Reader<'_> {
     }
 
     pub(crate) fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
-        if !(self.scalar(node) || (pointer_read && !store && is_pointer(node))) {
+        if !(self.scalar(node) || (pointer_read && !store && pointer_value(node))) {
             return None;
         }
         let mut steps = Vec::new();
@@ -1137,13 +1140,16 @@ pub(crate) fn is_scalar(node: &Value) -> bool {
 }
 
 pub(crate) fn is_pointer(node: &Value) -> bool {
-    qual(node).is_some_and(|text| {
-        text.trim_end().ends_with('*')
-            && !text.contains("union ")
-            && !text.contains("volatile")
-            && !text.contains("_Atomic")
-            && !text.contains("(")
-    })
+    qual(node).is_some_and(is_pointer_type)
+}
+
+/// The positive pointer test on a type's text (`is_pointer`'s own).
+pub(crate) fn is_pointer_type(text: &str) -> bool {
+    text.trim_end().ends_with('*')
+        && !text.contains("union ")
+        && !text.contains("volatile")
+        && !text.contains("_Atomic")
+        && !text.contains("(")
 }
 
 fn pointer_name(node: &Value) -> Option<&str> {
