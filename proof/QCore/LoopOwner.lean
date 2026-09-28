@@ -1024,4 +1024,208 @@ theorem the_old_test_path_is_never_discharged {owners : Owners} {contexts : List
   rw [a_non_owner_context_refuses hc hl hn]
   simp
 
+/-! ### The keys a property setter carries (card W47-SERVICE-PROPERTY-KEYS)
+
+A setter call `S(ctx, K1, V1, …, Kn, Vn, NULL)` hands its keys, in order, to a
+property function that runs, for every key-table entry the key matches, that
+entry's arm (a handler, or a scalar store), besides a part common to every
+key. The census reads the call as reaching the common part and the reach of
+every entry some key matches — only when the argument list is a
+NULL-terminated sequence of literal key/value pairs and every key matches an
+entry; any other list, or a key no entry matches, keeps every branch
+(`every`, the whole call). The run covered is any prefix of the keys: the
+setter stops at the first failing key. Case variants match the same entries
+under the derived comparison (ASCII case folding). A read reach that holds a
+hazard is a mutation on the list-head path, so the route is kept. The old
+test's path is refused by `the_old_test_path_is_never_discharged`, which
+does not depend on the instance flag this reading feeds. -/
+
+/-- One variadic argument as the typed reading records it. -/
+inductive Arg where
+  | str (text : String)
+  | null
+  | other
+  deriving DecidableEq, Repr
+
+/-- The literal keys of a NULL-terminated key/value tail, or none. -/
+def literalKeys : List Arg → Option (List String)
+  | [.null] => some []
+  | .str k :: v :: rest => if v = .null then none else (literalKeys rest).map (k :: ·)
+  | _ => none
+
+/-- One key-table entry and what its arm reaches. -/
+structure KeyEntry (α : Type) where
+  key : String
+  reach : List α
+
+/-- The entries a key matches under the derived comparison. -/
+def matchingEntries {α : Type} (eq : String → String → Bool) (table : List (KeyEntry α))
+    (k : String) : List (KeyEntry α) :=
+  table.filter (fun e => eq e.key k)
+
+/-- What the census reads a setter call as reaching. -/
+def keyedReach {α : Type} (eq : String → String → Bool) (table : List (KeyEntry α))
+    (common every : List α) (args : List Arg) : List α :=
+  match literalKeys args with
+  | none => every
+  | some keys =>
+    if keys.all (fun k => !(matchingEntries eq table k).isEmpty) then
+      common ++ keys.flatMap (fun k => (matchingEntries eq table k).flatMap KeyEntry.reach)
+    else every
+
+/-- What a run over the processed keys `done` reaches. -/
+def keyRun {α : Type} (eq : String → String → Bool) (table : List (KeyEntry α))
+    (common : List α) (done : List String) : List α :=
+  common ++ done.flatMap (fun k => (matchingEntries eq table k).flatMap KeyEntry.reach)
+
+theorem literalKeys_cons_str {k : String} {v : Arg} {rest : List Arg} {keys : List String}
+    (h : literalKeys (.str k :: v :: rest) = some keys) :
+    v ≠ .null ∧ ∃ tail, literalKeys rest = some tail ∧ keys = k :: tail := by
+  unfold literalKeys at h
+  by_cases hv : v = .null
+  · simp [hv] at h
+  · simp only [hv, ite_false] at h
+    cases hr : literalKeys rest with
+    | none => simp [hr] at h
+    | some tail =>
+      simp only [hr, Option.map_some, Option.some.injEq] at h
+      exact ⟨hv, tail, rfl, h.symm⟩
+
+/-- A read key list is NULL-terminated, with one value after each key and no
+other null argument: exactly `2n + 1` arguments for `n` keys, the last null. -/
+theorem a_read_key_list_is_null_terminated_and_paired :
+    ∀ (args : List Arg) (keys : List String), literalKeys args = some keys →
+      args.length = 2 * keys.length + 1 ∧ args.getLast? = some .null
+  | [], _, h => by simp [literalKeys] at h
+  | [.null], keys, h => by
+    simp only [literalKeys, Option.some.injEq] at h
+    subst h; simp
+  | [.str _], _, h => by simp [literalKeys] at h
+  | [.other], _, h => by simp [literalKeys] at h
+  | .null :: _ :: _, _, h => by simp [literalKeys] at h
+  | .other :: _ :: _, _, h => by simp [literalKeys] at h
+  | .str k :: v :: rest, keys, h => by
+    obtain ⟨_, tail, htail, hkeys⟩ := literalKeys_cons_str h
+    obtain ⟨hlen, hlast⟩ := a_read_key_list_is_null_terminated_and_paired rest tail htail
+    subst hkeys
+    refine ⟨by simp [hlen]; omega, ?_⟩
+    cases rest with
+    | nil => simp at hlen
+    | cons r rs =>
+      simp only [List.getLast?_cons_cons] at hlast ⊢
+      exact hlast
+
+/-- An argument list the census cannot read keeps every branch. -/
+theorem an_unreadable_argument_keeps_every_branch {α : Type} {eq : String → String → Bool}
+    {table : List (KeyEntry α)} {common every : List α} {args : List Arg}
+    (h : literalKeys args = none) : keyedReach eq table common every args = every := by
+  simp [keyedReach, h]
+
+theorem a_non_literal_key_is_unreadable (rest : List Arg) :
+    literalKeys (.other :: rest) = none := by
+  cases rest <;> simp [literalKeys]
+
+theorem an_odd_list_is_unreadable (k : String) : literalKeys [.str k, .null] = none := by
+  simp [literalKeys]
+
+theorem an_unterminated_list_is_unreadable (k v : String) :
+    literalKeys [.str k, .str v] = none := by
+  simp [literalKeys]
+
+/-- A key no entry of the derived table matches keeps every branch. -/
+theorem a_key_absent_from_the_table_keeps_every_branch {α : Type}
+    {eq : String → String → Bool} {table : List (KeyEntry α)} {common every : List α}
+    {args : List Arg} {keys : List String} {k : String}
+    (hk : literalKeys args = some keys) (hin : k ∈ keys)
+    (hnone : matchingEntries eq table k = []) :
+    keyedReach eq table common every args = every := by
+  have hnot : ¬ (keys.all (fun k => !(matchingEntries eq table k).isEmpty) = true) := by
+    intro hall
+    have := List.all_eq_true.mp hall k hin
+    simp [hnone] at this
+  simp only [keyedReach, hk]
+  simp [hnot]
+
+/-- A literal key sequence whose keys all match reaches only the common part
+and its keys' matched entries' reach. -/
+theorem a_literal_key_sequence_reaches_only_its_keys_effects {α : Type}
+    {eq : String → String → Bool} {table : List (KeyEntry α)} {common every : List α}
+    {args : List Arg} {keys : List String} {x : α}
+    (hk : literalKeys args = some keys)
+    (hall : keys.all (fun k => !(matchingEntries eq table k).isEmpty) = true)
+    (hx : x ∈ keyedReach eq table common every args) :
+    x ∈ common ∨ ∃ k ∈ keys, ∃ e ∈ table, eq e.key k = true ∧ x ∈ e.reach := by
+  simp only [keyedReach, hk, hall, ite_true, List.mem_append, List.mem_flatMap] at hx
+  rcases hx with hx | ⟨k, hk', e, he, hxe⟩
+  · exact Or.inl hx
+  · simp only [matchingEntries, List.mem_filter] at he
+    exact Or.inr ⟨k, hk', e, he.1, he.2, hxe⟩
+
+/-- The reading covers every run: whatever prefix of the keys the setter
+processes before it stops, what that run reaches is read, provided the whole
+call's reach covers the common part and every entry's reach. -/
+theorem the_key_reading_covers_the_run {α : Type} {eq : String → String → Bool}
+    {table : List (KeyEntry α)} {common every : List α} {args : List Arg}
+    {keys done : List String}
+    (hevery : ∀ x, (x ∈ common ∨ ∃ e ∈ table, x ∈ e.reach) → x ∈ every)
+    (hk : literalKeys args = some keys) (hdone : done <+: keys) :
+    ∀ x ∈ keyRun eq table common done, x ∈ keyedReach eq table common every args := by
+  intro x hx
+  simp only [keyRun, List.mem_append, List.mem_flatMap] at hx
+  simp only [keyedReach, hk]
+  split
+  · simp only [List.mem_append, List.mem_flatMap]
+    rcases hx with hx | ⟨k, hkd, e, he, hxe⟩
+    · exact Or.inl hx
+    · exact Or.inr ⟨k, hdone.subset hkd, e, he, hxe⟩
+  · apply hevery
+    rcases hx with hx | ⟨_, _, e, he, hxe⟩
+    · exact Or.inl hx
+    · simp only [matchingEntries, List.mem_filter] at he
+      exact Or.inr ⟨e, he.1, hxe⟩
+
+/-- A matched key's hazard (the `Plugins_File` registration) stays in the
+read reach. -/
+theorem a_matched_hazard_stays_read {α : Type} {eq : String → String → Bool}
+    {table : List (KeyEntry α)} {common every : List α} {args : List Arg}
+    {keys : List String} {k : String} {e : KeyEntry α} {h : α}
+    (hevery : ∀ x, (x ∈ common ∨ ∃ e ∈ table, x ∈ e.reach) → x ∈ every)
+    (hk : literalKeys args = some keys) (hin : k ∈ keys) (he : e ∈ table)
+    (hmatch : eq e.key k = true) (hh : h ∈ e.reach) :
+    h ∈ keyedReach eq table common every args := by
+  apply the_key_reading_covers_the_run hevery hk (List.prefix_refl keys)
+  simp only [keyRun, List.mem_append, List.mem_flatMap]
+  exact Or.inr ⟨k, hin, e, by simp [matchingEntries, List.mem_filter, he, hmatch], hh⟩
+
+/-- The derived comparison: equality after ASCII case folding. -/
+def foldKey (s : String) : List Char := s.toList.map Char.toLower
+
+def foldEq (a b : String) : Bool := foldKey a == foldKey b
+
+/-- Case variants match the same entries. -/
+theorem a_case_variant_matches_the_same_entries {α : Type} (table : List (KeyEntry α))
+    {a b : String} (h : foldKey a = foldKey b) :
+    matchingEntries foldEq table a = matchingEntries foldEq table b := by
+  unfold matchingEntries foldEq
+  simp [h]
+
+/-- The setter call as a list-head path event: a read reach holding a hazard
+is a mutation the single-creation derivation does not admit. -/
+def setterEvent {α : Type} (hazard : α → Bool) (reach : List α) : PathEvent :=
+  if reach.any hazard then .mutate else .other
+
+theorem a_key_reach_holding_a_hazard_keeps_the_route {α : Type} {hazard : α → Bool}
+    {reach : List α} {x : α} {before after : List PathEvent}
+    (hx : x ∈ reach) (hh : hazard x = true) :
+    headDerivation (before ++ setterEvent hazard reach :: after) = none := by
+  have hany : reach.any hazard = true := List.any_eq_true.mpr ⟨x, hx, hh⟩
+  apply an_unmodelled_mutation_keeps_the_route
+  simp [setterEvent, hany]
+
+theorem a_key_reach_without_a_hazard_leaves_the_one_creation {α : Type}
+    {hazard : α → Bool} {reach : List α} {flag : Bool}
+    (h : reach.any hazard = false) :
+    headDerivation [setterEvent hazard reach, .create flag] = some flag := by
+  simp [setterEvent, h, headDerivation, mutates, created]
+
 end QCore.LoopOwner

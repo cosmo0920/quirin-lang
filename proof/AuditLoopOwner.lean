@@ -133,3 +133,18 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.an_escape_that_writes_the_flag_or_the_instance_keeps_the_route
 #print axioms QCore.LoopOwner.the_route_is_dropped_only_through_one_non_coroutine_creation
 #print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged
+
+-- The keys a property setter carries (card W47-SERVICE-PROPERTY-KEYS).
+#print axioms QCore.LoopOwner.literalKeys_cons_str
+#print axioms QCore.LoopOwner.a_read_key_list_is_null_terminated_and_paired
+#print axioms QCore.LoopOwner.an_unreadable_argument_keeps_every_branch
+#print axioms QCore.LoopOwner.a_non_literal_key_is_unreadable
+#print axioms QCore.LoopOwner.an_odd_list_is_unreadable
+#print axioms QCore.LoopOwner.an_unterminated_list_is_unreadable
+#print axioms QCore.LoopOwner.a_key_absent_from_the_table_keeps_every_branch
+#print axioms QCore.LoopOwner.a_literal_key_sequence_reaches_only_its_keys_effects
+#print axioms QCore.LoopOwner.the_key_reading_covers_the_run
+#print axioms QCore.LoopOwner.a_matched_hazard_stays_read
+#print axioms QCore.LoopOwner.a_case_variant_matches_the_same_entries
+#print axioms QCore.LoopOwner.a_key_reach_holding_a_hazard_keeps_the_route
+#print axioms QCore.LoopOwner.a_key_reach_without_a_hazard_leaves_the_one_creation
