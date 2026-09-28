@@ -1,0 +1,32 @@
+{
+ "archive": "docs/reports/w47-callee-closure-r2/integration/artifacts/corpus",
+ "files": {
+  "monkey-source.json": {
+   "archive": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true,
+   "run": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11"
+  },
+  "parity.jsonl (sorted rows)": {
+   "archive_rows": 110438,
+   "identical": true,
+   "run_rows": 110438
+  },
+  "parity.jsonl.contexts.jsonl (sorted rows)": {
+   "archive_rows": 9,
+   "identical": true,
+   "run_rows": 9
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "archive": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true,
+   "run": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+  },
+  "resource-diagnostics.json": {
+   "archive": "ff8cb96ab34c1a9123cfcafd4545f46e1277dee6a54597ff20b62adf6a8d7d05",
+   "identical": true,
+   "run": "ff8cb96ab34c1a9123cfcafd4545f46e1277dee6a54597ff20b62adf6a8d7d05"
+  }
+ },
+ "identical": true,
+ "run": "private/pos/shapes/corpus"
+}

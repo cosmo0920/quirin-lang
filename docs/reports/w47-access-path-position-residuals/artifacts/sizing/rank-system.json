@@ -1,0 +1,338 @@
+{
+ "alone": {
+  "strict": {
+   "array-value": [
+    "src/flb_output.c::flb_output_name"
+   ],
+   "cast": [
+    "plugins/in_storage_backlog/sb.c::sb_get_context"
+   ],
+   "implicit-conversion": [
+    "src/flb_engine.c::calculate_chunk_capacity_percent"
+   ]
+  },
+  "with-alias": {
+   "array-value": [
+    "src/flb_output.c::flb_output_name"
+   ],
+   "cast": [
+    "plugins/in_storage_backlog/sb.c::sb_get_context"
+   ],
+   "implicit-conversion": [
+    "src/flb_engine.c::calculate_chunk_capacity_percent"
+   ]
+  }
+ },
+ "function_names_defined_in_several_units": 0,
+ "ranking": [
+  {
+   "alone_strict": 1,
+   "alone_with_alias": 1,
+   "rows": 3,
+   "rows_by_position": {
+    "call-argument": 2,
+    "return": 1
+   },
+   "shape": "cast"
+  },
+  {
+   "alone_strict": 1,
+   "alone_with_alias": 1,
+   "rows": 1,
+   "rows_by_position": {
+    "return": 1
+   },
+   "shape": "array-value"
+  },
+  {
+   "alone_strict": 1,
+   "alone_with_alias": 1,
+   "rows": 1,
+   "rows_by_position": {
+    "return": 1
+   },
+   "shape": "implicit-conversion"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 70,
+   "rows_by_position": {
+    "call-argument": 52,
+    "condition": 16,
+    "return": 2
+   },
+   "shape": "root-premise"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 37,
+   "rows_by_position": {
+    "call-argument": 37
+   },
+   "shape": "call+function-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 33,
+   "rows_by_position": {
+    "call-argument": 33
+   },
+   "shape": "array-decay+array-value"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 20,
+   "rows_by_position": {
+    "call-argument": 18,
+    "condition": 2
+   },
+   "shape": "address+aggregate-value"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 6,
+   "rows_by_position": {
+    "call-argument": 6
+   },
+   "shape": "address"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 6,
+   "rows_by_position": {
+    "condition": 6
+   },
+   "shape": "function-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 4,
+   "rows_by_position": {
+    "condition": 4
+   },
+   "shape": "aggregate-value+cast+const-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 4,
+   "rows_by_position": {
+    "call-argument": 4
+   },
+   "shape": "aggregate-value+const-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 3,
+   "rows_by_position": {
+    "call-argument": 3
+   },
+   "shape": "address+cast"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 2,
+   "rows_by_position": {
+    "call-argument": 2
+   },
+   "shape": "aggregate-value+cast"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 2,
+   "rows_by_position": {
+    "call-argument": 2
+   },
+   "shape": "aggregate-value+pointer-arithmetic"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 1,
+   "rows_by_position": {
+    "condition": 1
+   },
+   "shape": "aggregate-value+cast+function-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 1,
+   "rows_by_position": {
+    "call-argument": 1
+   },
+   "shape": "array-decay+call+function-pointer+string"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 1,
+   "rows_by_position": {
+    "condition": 1
+   },
+   "shape": "cast+function-pointer"
+  },
+  {
+   "alone_strict": 0,
+   "alone_with_alias": 0,
+   "rows": 1,
+   "rows_by_position": {
+    "call-argument": 1
+   },
+   "shape": "sizeof-operand"
+  }
+ ],
+ "refused_rows": 196,
+ "refused_rows_without_shape_row": 0,
+ "rows_by_position": {
+  "call-argument": 161,
+  "condition": 30,
+  "return": 5
+ },
+ "run": "private/pos/shapes/system",
+ "tally": [
+  {
+   "functions": 23,
+   "position": "call-argument",
+   "rows": 52,
+   "shape": "root-premise"
+  },
+  {
+   "functions": 11,
+   "position": "call-argument",
+   "rows": 37,
+   "shape": "call+function-pointer"
+  },
+  {
+   "functions": 16,
+   "position": "call-argument",
+   "rows": 33,
+   "shape": "array-decay+array-value"
+  },
+  {
+   "functions": 10,
+   "position": "call-argument",
+   "rows": 18,
+   "shape": "address+aggregate-value"
+  },
+  {
+   "functions": 9,
+   "position": "condition",
+   "rows": 16,
+   "shape": "root-premise"
+  },
+  {
+   "functions": 4,
+   "position": "condition",
+   "rows": 6,
+   "shape": "function-pointer"
+  },
+  {
+   "functions": 3,
+   "position": "call-argument",
+   "rows": 6,
+   "shape": "address"
+  },
+  {
+   "functions": 1,
+   "position": "condition",
+   "rows": 4,
+   "shape": "aggregate-value+cast+const-pointer"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 4,
+   "shape": "aggregate-value+const-pointer"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 3,
+   "shape": "address+cast"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 2,
+   "shape": "aggregate-value+pointer-arithmetic"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 2,
+   "shape": "aggregate-value+cast"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 2,
+   "shape": "cast"
+  },
+  {
+   "functions": 2,
+   "position": "condition",
+   "rows": 2,
+   "shape": "address+aggregate-value"
+  },
+  {
+   "functions": 2,
+   "position": "return",
+   "rows": 2,
+   "shape": "root-premise"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 1,
+   "shape": "sizeof-operand"
+  },
+  {
+   "functions": 1,
+   "position": "return",
+   "rows": 1,
+   "shape": "array-value"
+  },
+  {
+   "functions": 1,
+   "position": "return",
+   "rows": 1,
+   "shape": "implicit-conversion"
+  },
+  {
+   "functions": 1,
+   "position": "call-argument",
+   "rows": 1,
+   "shape": "array-decay+call+function-pointer+string"
+  },
+  {
+   "functions": 1,
+   "position": "return",
+   "rows": 1,
+   "shape": "cast"
+  },
+  {
+   "functions": 1,
+   "position": "condition",
+   "rows": 1,
+   "shape": "aggregate-value+cast+function-pointer"
+  },
+  {
+   "functions": 1,
+   "position": "condition",
+   "rows": 1,
+   "shape": "cast+function-pointer"
+  }
+ ],
+ "unknown_functions": 199
+}

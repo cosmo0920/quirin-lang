@@ -1,0 +1,30 @@
+{
+ "forecast": {
+  "1-address-values": {
+   "strict": [],
+   "with-alias": []
+  },
+  "2-controlling-scope-match": {
+   "strict": [],
+   "with-alias": []
+  },
+  "3-anonymous-enum-member": {
+   "strict": [],
+   "with-alias": []
+  },
+  "4-return-connective": {
+   "strict": [],
+   "with-alias": []
+  }
+ },
+ "rows_by_first_step": {
+  "1-address-values": 26,
+  "none": 170
+ },
+ "steps": [
+  "1-address-values",
+  "2-controlling-scope-match",
+  "3-anonymous-enum-member",
+  "4-return-connective"
+ ]
+}
