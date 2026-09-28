@@ -74,7 +74,7 @@ struct Facts {
     foreign: BTreeSet<String>,
     risky: BTreeSet<String>,
     /// The first reason each risky name was bound (parity only).
-    reasons: BTreeMap<String, &'static str>,
+    reasons: BTreeMap<String, String>,
     bound: BTreeSet<String>,
 }
 
@@ -155,12 +155,12 @@ impl RootDeclarations {
         let mut settled = false;
         for _ in 0..=assignments.len() {
             let mut added = false;
-            for (destination, values) in &assignments {
+            for (destination, values, place) in &assignments {
                 if facts.risky.contains(destination) {
                     continue;
                 }
-                if values.iter().any(|value| opaque(value, &facts)) {
-                    facts.mark(destination, "assignment");
+                if let Some(value) = values.iter().find_map(|value| opaque(value, &facts)) {
+                    facts.mark(destination, &format!("assignment:{value}:{place}"));
                     added = true;
                 }
             }
@@ -232,8 +232,8 @@ impl RootDeclarations {
     }
 
     /// The first reason the AST closure binds `name` (parity only).
-    pub(crate) fn binding_reason(&self, name: &str) -> Option<&'static str> {
-        self.facts.as_ref()?.reasons.get(name).copied()
+    pub(crate) fn binding_reason(&self, name: &str) -> Option<&str> {
+        self.facts.as_ref()?.reasons.get(name).map(String::as_str)
     }
 
     /// Every name this function declares (for the parity record).
@@ -246,9 +246,9 @@ impl RootDeclarations {
 }
 
 impl Facts {
-    fn mark(&mut self, name: &str, reason: &'static str) {
+    fn mark(&mut self, name: &str, reason: &str) {
         if self.risky.insert(name.to_owned()) {
-            self.reasons.insert(name.to_owned(), reason);
+            self.reasons.insert(name.to_owned(), reason.to_owned());
         }
     }
 
@@ -279,8 +279,9 @@ struct Walk<'a, 'f> {
     variadic_tails: &'a BTreeSet<String>,
     facts: &'f mut Facts,
     ids: &'f mut BTreeSet<String>,
-    /// `(destination, values)` of every plain assignment and initialiser.
-    assignments: Vec<(String, Vec<&'a Value>)>,
+    /// `(destination, values, place)` of every plain assignment and
+    /// initialiser; `place` says where it stands (parity only).
+    assignments: Vec<(String, Vec<&'a Value>, &'static str)>,
     /// `(spelling, id)` of every variable reference.
     references: Vec<(String, String)>,
 }
@@ -292,6 +293,12 @@ impl<'a> Walk<'a, '_> {
     }
 
     fn node(&mut self, node: &'a Value) -> Result<(), Refusal> {
+        self.node_at(node, false)
+    }
+
+    /// `statement`: `node` is a whole statement of a block, a `case` or a
+    /// label (parity only: where an assignment stands).
+    fn node_at(&mut self, node: &'a Value, statement: bool) -> Result<(), Refusal> {
         match kind(node) {
             "GCCAsmStmt" | "MSAsmStmt" => return Err(Refusal::InlineAssembly),
             "BlockExpr" => return Err(Refusal::Block),
@@ -308,7 +315,8 @@ impl<'a> Walk<'a, '_> {
                     let values = children(node).iter().collect::<Vec<_>>();
                     if !values.is_empty() {
                         self.facts.bound.insert(name.to_owned());
-                        self.assignments.push((name.to_owned(), values));
+                        self.assignments
+                            .push((name.to_owned(), values, "initialiser"));
                     }
                 }
             }
@@ -334,7 +342,8 @@ impl<'a> Walk<'a, '_> {
                         Some(target) if kind(target) == "DeclRefExpr" && is_object(target) => {
                             if let Some(name) = target["referencedDecl"]["name"].as_str() {
                                 self.facts.bound.insert(name.to_owned());
-                                self.assignments.push((name.to_owned(), vec![right]));
+                                let place = if statement { "statement" } else { "nested" };
+                                self.assignments.push((name.to_owned(), vec![right], place));
                             }
                         }
                         _ => {
@@ -365,8 +374,12 @@ impl<'a> Walk<'a, '_> {
             "CallExpr" => self.call(node),
             _ => {}
         }
+        let block = matches!(
+            kind(node),
+            "CompoundStmt" | "CaseStmt" | "DefaultStmt" | "LabelStmt"
+        );
         for child in children(node) {
-            self.node(child)?;
+            self.node_at(child, block)?;
         }
         Ok(())
     }
@@ -476,23 +489,29 @@ fn variables<'v>(node: &'v Value, out: &mut Vec<&'v str>, roots: bool) {
     }
 }
 
-/// A value that may carry a tracked identity: a call, an address, a statement
-/// expression, a bound name, or a name this function does not declare.
-fn opaque(node: &Value, facts: &Facts) -> bool {
+/// Whether a value may carry a tracked identity, and why: a call, an address,
+/// a statement expression, a bound name, or a name this function does not
+/// declare.
+fn opaque(node: &Value, facts: &Facts) -> Option<&'static str> {
     match kind(node) {
-        "CallExpr" | "StmtExpr" => return true,
-        "UnaryOperator" if node["opcode"].as_str() == Some("&") => return true,
+        "CallExpr" => return Some("call"),
+        "StmtExpr" => return Some("statement-expression"),
+        "UnaryOperator" if node["opcode"].as_str() == Some("&") => return Some("address"),
         "DeclRefExpr" if is_object(node) => {
             let Some(name) = node["referencedDecl"]["name"].as_str() else {
-                return true;
+                return Some("unnamed");
             };
-            return facts.risky.contains(name)
-                || facts.foreign.contains(name)
-                || !facts.declarations.contains_key(name);
+            if facts.risky.contains(name) {
+                return Some("bound-name");
+            }
+            if facts.foreign.contains(name) || !facts.declarations.contains_key(name) {
+                return Some("undeclared-name");
+            }
+            return None;
         }
         _ => {}
     }
-    children(node).iter().any(|child| opaque(child, facts))
+    children(node).iter().find_map(|child| opaque(child, facts))
 }
 
 #[cfg(test)]
