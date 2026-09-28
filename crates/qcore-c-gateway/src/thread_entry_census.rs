@@ -148,6 +148,10 @@ pub struct CensusReading {
     /// a plugin directory.
     pub dispatch_typing: BTreeMap<String, Vec<String>>,
     pub instance_flags: BTreeMap<usize, InstanceFlag>,
+    /// Card W47-SERVICE-PROPERTY-KEYS: each keyed setter call Step B's
+    /// list-head region read (`PATH:LINE SETTER`), with its derived table and
+    /// per-key reach, or why its keys are not read.
+    pub property_keys: BTreeMap<String, Vec<String>>,
 }
 
 impl CensusReading {
@@ -167,6 +171,12 @@ use crate::legacy_c::{
 #[path = "loop_owner_instance.rs"]
 mod loop_owner_instance;
 pub use loop_owner_instance::{FLUENT_BIT_INSTANCE_FLOW, InstanceFlowTables};
+
+// Card W47-SERVICE-PROPERTY-KEYS: the keys a variadic property setter
+// carries, read by Step B's list-head region.
+#[path = "loop_owner_property_keys.rs"]
+mod loop_owner_property_keys;
+pub use loop_owner_property_keys::{FLUENT_BIT_PROPERTY_KEYS, PropertyKeyTables};
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -300,6 +310,8 @@ impl HopTables {
             )],
             aliases: BTreeMap::new(),
             member_fields: Vec::new(),
+            argument_calls: Vec::new(),
+            key_tables: Vec::new(),
         }
     }
 
@@ -318,6 +330,21 @@ impl HopTables {
                 .map(|(wrapper, argument)| ((*wrapper).to_owned(), *argument)),
         );
         options.member_fields = flow.member_fields(self);
+        options
+    }
+
+    /// [`HopTables::instance_flow_options`] with the property-key facts (card
+    /// W47-SERVICE-PROPERTY-KEYS): the setters' argument lists, the keyed
+    /// branches' comparisons and the key tables.
+    #[must_use]
+    pub fn property_key_options(
+        &self,
+        flow: &InstanceFlowTables,
+        keys: &PropertyKeyTables,
+    ) -> crate::typed_dispatch_census::TypedOptions {
+        let mut options = self.instance_flow_options(flow);
+        options.argument_calls = keys.argument_calls();
+        options.key_tables = keys.key_tables.iter().map(|t| (*t).to_owned()).collect();
         options
     }
 }
@@ -656,6 +683,9 @@ struct Scan {
     /// Token indices of file-scope declarations' names.
     declarations: BTreeSet<usize>,
     unstructured: bool,
+    /// Card W47-SERVICE-PROPERTY-KEYS: the token positions a conditional
+    /// directive the reading kept stands at (an undecided group's arms).
+    directives: Vec<usize>,
 }
 
 const KEYWORDS: &[&str] = &[
@@ -708,6 +738,7 @@ fn scan_file(
         headers: BTreeSet::new(),
         declarations: BTreeSet::new(),
         unstructured: false,
+        directives: marks.iter().map(|(index, _)| *index).collect(),
     };
     let mut depth = 0usize;
     let mut frames: Vec<(usize, Vec<usize>, bool)> = Vec::new();
@@ -1815,7 +1846,18 @@ pub fn read_program_typed(
     // Step B (card W47-LOOP-OWNER-TYPED-DISPATCH): a collector registrant
     // registered outside a plugin directory, on an instance whose plugin is a
     // runtime copy.
-    let instance_flags = derive_instance_flags(&StepB {
+    // Card W47-SERVICE-PROPERTY-KEYS: every macro's replacement-list names,
+    // over every read file.
+    let mut macro_bodies: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for (defines, _) in &macros {
+        for (name, words) in defines {
+            macro_bodies
+                .entry(name.clone())
+                .or_default()
+                .extend(words.iter().cloned());
+        }
+    }
+    let step_b = StepB {
         files,
         hops,
         typed,
@@ -1836,7 +1878,12 @@ pub fn read_program_typed(
         reach: &reach,
         dispatch_sites: &dispatch_sites,
         notes: std::cell::RefCell::new(BTreeSet::new()),
-    });
+        keys: &FLUENT_BIT_PROPERTY_KEYS,
+        macro_bodies: &macro_bodies,
+        property_readings: std::cell::RefCell::new(BTreeMap::new()),
+    };
+    let instance_flags = derive_instance_flags(&step_b);
+    let property_keys = step_b.property_readings.take();
     // Which inputs run their collectors in a coroutine, from their plugin
     // directory's descriptor flags, else from Step B; undecided when a
     // registration is outside a plugin directory and Step B does not derive
@@ -2053,6 +2100,7 @@ pub fn read_program_typed(
     program.yields = yields;
     program.dispatch_typing = dispatch_typing_tally;
     program.instance_flags = instance_flags;
+    program.property_keys = property_keys;
     let dispatcher = |mode: ReadMode| {
         let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
@@ -2221,6 +2269,10 @@ struct StepB<'a> {
     reach: &'a loop_owner_instance::Reach,
     dispatch_sites: &'a [loop_owner_instance::DispatchSite],
     notes: std::cell::RefCell<BTreeSet<String>>,
+    /// Card W47-SERVICE-PROPERTY-KEYS.
+    keys: &'a PropertyKeyTables,
+    macro_bodies: &'a BTreeMap<String, BTreeSet<String>>,
+    property_readings: std::cell::RefCell<BTreeMap<String, Vec<String>>>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the
