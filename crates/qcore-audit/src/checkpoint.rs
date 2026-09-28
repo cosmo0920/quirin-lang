@@ -46,7 +46,9 @@ pub const FORMAT_VERSION: u16 = 1;
 /// The version of the section schemas this build writes and reads.
 // Card W45-REFUTED-CONTRACT-WITHDRAWAL: schema 2 adds the refutation
 // table's digest to the contract set of every unit's identity.
-pub const SCHEMA_VERSION: u32 = 3;
+// Card W47-REVIEW-HOLD-CONCRETE-REASON: schema 4 adds each pending-review
+// marker's category to the global section.
+pub const SCHEMA_VERSION: u32 = 4;
 /// The sections of a schema-1 file, in file order.
 pub const SECTIONS: [&str; 10] = [
     "identity",
@@ -118,7 +120,7 @@ fn unhex(text: &str) -> Result<[u8; 32], String> {
 }
 
 // ---------------------------------------------------------------------------
-// Section schemas (schema version 3): typed binary recursive values and
+// Section schemas (schema version 4): typed binary recursive values and
 // closed numeric status/verdict codes, with optional YAML/TOML inspection.
 // ---------------------------------------------------------------------------
 
@@ -444,6 +446,9 @@ pub struct PendingMarkerRecord {
     pub clause: Option<String>,
     pub reason: String,
     pub owner: Option<String>,
+    /// Card W47-REVIEW-HOLD-CONCRETE-REASON (schema 4): the marker's
+    /// published category (`qcore_schemas::contract::ReviewDisposition`).
+    pub category: String,
     pub module: String,
     pub module_sha256: Option<String>,
 }
@@ -1373,6 +1378,7 @@ mod tests {
                     clause: None,
                     reason: "r".into(),
                     owner: None,
+                    category: "must-be-rewritten-before-acceptance".into(),
                     module: "m".into(),
                     module_sha256: None,
                 }],
@@ -1617,7 +1623,7 @@ mod tests {
     #[test]
     fn old_and_future_schema_versions_are_refused() {
         let sections = sample().encode_sections().unwrap();
-        for version in [2, SCHEMA_VERSION + 1] {
+        for version in [2, 3, SCHEMA_VERSION + 1] {
             let header = Header {
                 schema_version: version,
                 sections: sections

@@ -65,7 +65,7 @@ whole-run report bytes without storing pretty JSON in the `.qo`.
 | 44+*H* | Σ lengths | the sections, concatenated in manifest order; the file ends exactly after the last |
 
 Every section is its schema type encoded with [postcard](https://postcard.jamesmunns.com/wire-format)
-1.x and must decode with no bytes left over. Schema **3** has exactly the ten
+1.x and must decode with no bytes left over. Schema **4** has exactly the ten
 sections above. Postcard encodes unsigned integers and enum discriminants as
 base-128 varints, signed integers as zigzag varints, Booleans as one byte,
 strings as a varint byte length followed by UTF-8, and arrays/maps as a
@@ -75,7 +75,9 @@ IEEE-754 binary64 bit pattern as a `u64` varint, retaining negative zero and
 adjacent finite values exactly. Non-finite bit patterns and duplicate object
 keys are refused on read.
 
-The recursive `BinaryValue` tags are stable for schema 3:
+The recursive `BinaryValue` tags are stable since schema 3 (schema 4, card
+W47-REVIEW-HOLD-CONCRETE-REASON, adds only each pending-review marker's
+`category` to the `global` section):
 
 | Code | Payload |
 |---:|---|
@@ -92,9 +94,10 @@ The recursive `BinaryValue` tags are stable for schema 3:
 `ResultSection.verdict` uses codes 0 Safe, 1 Pending, 2 Unknown, 3 Unsafe.
 `CertificateRecord.outcome` uses 0 PublishedSafe, 1 BindingRefused,
 2 NotPublished. Unknown codes are refused. Schema 2 files, which held pretty
-JSON strings and group-level checkpoints, are deliberately refused by this
-reader; `--resume` recomputes their units as schema 3 files and leaves the old
-files untouched. Schema 1 was already refused.
+JSON strings and group-level checkpoints, and schema 3 files, whose markers
+carry no category, are deliberately refused by this reader; `--resume`
+recomputes their units as schema 4 files and leaves the old files untouched.
+Schema 1 was already refused.
 
 The **content digest** of a checkpoint is the SHA-256 of the postcard encoding
 of `(schema_version, manifest entries except provenance)`. Every section but

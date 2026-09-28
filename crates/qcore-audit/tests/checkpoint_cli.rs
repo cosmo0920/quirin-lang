@@ -339,7 +339,7 @@ fn per_configuration_checkpoints_match_whole_and_resume_independently() {
     let summary = fixture.dump(&[sample_path]);
     succeeded(&summary);
     let summary: serde_json::Value = serde_json::from_slice(&summary.stdout).unwrap();
-    assert_eq!(summary["schema_version"], 3);
+    assert_eq!(summary["schema_version"], 4);
     assert_eq!(summary["units"].as_array().unwrap().len(), 1);
     let full = fixture.dump(&["--full", sample_path]);
     succeeded(&full);
@@ -462,6 +462,103 @@ fn compose_requires_every_distinct_checkpoint_and_round_trips_text() {
             bytes
         );
     }
+}
+
+/// Card W47-REVIEW-HOLD-CONCRETE-REASON: a held row's concrete review reasons
+/// are part of the row, so per-unit checkpoints and their composition publish
+/// them exactly as the whole run does, and a `Pending` row never loses them.
+#[test]
+fn a_held_rows_concrete_reasons_survive_checkpoints_and_composition() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang);
+    let held = HEAP
+        .replace(
+            "requires resource_contract_v1;\n",
+            "requires resource_contract_v1;\nrequires resource_revision(flexible);\n",
+        )
+        .replace(
+            "ensures normal resource_released(p, nonnull);",
+            "ensures normal resource_review_pending(resource_released(p, nonnull), \
+             \"released only on success\", rewrite_before_acceptance);",
+        );
+    assert_ne!(held, HEAP);
+    fs::write(fixture.path("contracts/heap.qcore"), &held).unwrap();
+    succeeded(&fixture.run("whole", &["--jobs", "2"]));
+    succeeded(&fixture.run("ck", &["--jobs", "2", "--checkpoint-dir", "qo"]));
+    assert_eq!(fixture.outputs("ck"), fixture.outputs("whole"));
+    let mut args = vec!["compose".to_owned()];
+    args.extend(
+        checkpoint_paths(&fixture, "qo")
+            .iter()
+            .map(|path| path.to_str().unwrap().to_owned()),
+    );
+    args.extend(
+        [
+            "--report",
+            "composed/report.json",
+            "--monkey-source-report",
+            "composed/monkey-source.json",
+        ]
+        .map(str::to_owned),
+    );
+    let composed = fixture.checkpoint(&args.iter().map(String::as_str).collect::<Vec<_>>());
+    succeeded(&composed);
+    assert_eq!(fixture.outputs("composed"), fixture.outputs("whole"));
+    let report: serde_json::Value =
+        serde_json::from_slice(&fs::read(fixture.path("composed/report.json")).unwrap()).unwrap();
+    let expected = json!([{
+        "declaration": "dispose",
+        "module": "contracts/heap.qcore",
+        "scope": "clause",
+        "clause": "ensures normal resource_released(p, nonnull)",
+        "reason": "released only on success",
+        "owner": null,
+        "category": "must-be-rewritten-before-acceptance",
+        "reason_code": "awaiting-human-review",
+    }]);
+    let (mut holding, mut pending) = (0, 0);
+    for unit in report["units"].as_array().unwrap() {
+        for function in unit["functions"].as_array().into_iter().flatten() {
+            let holds = function["diagnostics"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|diagnostic| {
+                    diagnostic["description"]
+                        .as_str()
+                        .is_some_and(|text| text.starts_with("call to `dispose` whose declared"))
+                });
+            if holds {
+                holding += 1;
+                let mut published = function["review_holds"].clone();
+                // The module key is the path the run loaded it from.
+                assert!(
+                    published[0]["module"]
+                        .as_str()
+                        .unwrap()
+                        .ends_with("contracts/heap.qcore"),
+                    "{function}"
+                );
+                published[0]["module"] = json!("contracts/heap.qcore");
+                assert_eq!(published, expected, "{function}");
+                pending += usize::from(function["status"] == "Pending");
+            } else {
+                assert!(function.get("review_holds").is_none(), "{function}");
+            }
+        }
+    }
+    assert!(holding > 0 && pending > 0, "{holding} {pending}");
+    let sidecar: serde_json::Value = serde_json::from_slice(
+        &fs::read(fixture.path("composed/report.contracts.json")).unwrap(),
+    )
+    .unwrap();
+    let section = &sidecar["pending_human_review"];
+    assert_eq!(section["rewrite_markers"], 1);
+    assert_eq!(
+        section["entries"][0]["category"],
+        "must-be-rewritten-before-acceptance"
+    );
+    assert!(console(&composed).contains("1 marker(s) must be rewritten before acceptance"));
 }
 
 #[test]

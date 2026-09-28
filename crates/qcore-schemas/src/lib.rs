@@ -24,7 +24,8 @@ pub mod witness;
 pub use contract::{
     ContainerEffect, ContractTrust, CountedUserClauses, DerivedExtent, PendingHumanReview,
     ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode, ResourceSummaryRecord, ReviewDeferral, ReviewScope, UserEffect,
+    ResourceReturnMode, ResourceSummaryRecord, ReviewDeferral, ReviewDisposition, ReviewScope,
+    UserEffect,
     UserExitClause, UserOperation,
 };
 pub use contract_revision::{

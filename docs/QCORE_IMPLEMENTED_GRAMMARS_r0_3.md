@@ -2516,7 +2516,9 @@ contract_review_marker =
     "resource_review_pending", "(", review_note, ")" ;
 clause_review_marker =
     "resource_review_pending", "(", resource_predicate, ",", review_note, ")" ;
-review_note = STRING, [",", STRING] ;  (* reason, then optional owner *)
+review_note = STRING, [",", STRING], [",", "rewrite_before_acceptance"] ;
+  (* reason, then optional owner, then the optional disposition of card
+     W47-REVIEW-HOLD-CONCRETE-REASON, contract specification C06.1 *)
 literal_argument_premise =
     "resource_literal_argument", "(", IDENT, ",", integer_literal, ")" ;
 integer_literal = ["-"], DIGITS ;

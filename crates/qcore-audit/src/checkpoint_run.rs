@@ -496,6 +496,7 @@ fn global_section(
                 clause: marker.clause,
                 reason: marker.reason,
                 owner: marker.owner,
+                category: marker.category,
                 module: marker.module,
                 module_sha256: marker.module_sha256,
             })

@@ -34,6 +34,11 @@ declaration nobody has accepted.
 * **The Rust fold is `publish`.** Folding the held reasons with the standing
   reasons appended (`Row.settled`, what `settle` records) is exactly
   `Row.published`.
+* **The concrete reason** (`ConcreteReason`, card
+  W47-REVIEW-HOLD-CONCRETE-REASON). A row holding a call names every marker
+  of every held declaration, reason verbatim, with its category; nothing
+  else is named, an unnamed hold publishes nothing, the category and the
+  reasons never change a verdict, and composition keeps every reason.
 * **The other holds.** A hold whose reason is not human-resolvable
   (`qcore_refuted_by_body__`, the ABI and mode withdrawals, the literal
   premise's marks) is `Unknown`, which absorbs every refusal it preempts: the
@@ -281,5 +286,312 @@ theorem an_alleged_violation_is_unknown (c : Category)
   decide
 
 end Row
+
+/-! ## The concrete reason of every review hold, on the row it holds
+
+Card **W47-REVIEW-HOLD-CONCRETE-REASON** (gateway rule 10i as amended,
+contract specification §C06.1; user decision 2026-09-29). The model of
+`crates/qcore-audit/src/review_hold_reasons.rs` and of the loader's marker
+reading (`review_marker` in `crates/qcore-contract/src/contract_loader.rs`).
+
+A row holding a call to a declaration awaiting review publishes, beside its
+verdict, every marker of every held declaration: the reason verbatim and a
+category read from the marker's structure (a trailing
+`rewrite_before_acceptance`). Proved: the loader refuses a blank reason and
+keeps a loaded one verbatim; the published reasons contain every held
+declaration's every marker and nothing the environment does not declare; a
+held callee with no withheld declaration or no marker publishes nothing
+(fail-closed); the verdict is the fold of the row's values whatever its
+reasons and categories, so adding reasons never changes it and a published
+`Pending` row stays `Pending` with every hold named; composing rows (the
+report merge, the checkpoint composition) keeps every row's reasons.
+
+Premises stated, not proved: the held callees are exactly the ones the
+gateway's minted refusal names (rule 10i), and a checkpoint stores and
+renders a row's members verbatim (pinned by
+`crates/qcore-audit/tests/checkpoint_cli.rs`). -/
+
+namespace ConcreteReason
+
+/-- What resolving a marker takes, read from its structure. -/
+inductive Disposition where
+  | acceptableAsWrittenAfterReview
+  | mustBeRewrittenBeforeAcceptance
+  deriving DecidableEq, Repr
+
+/-- One review marker as the loader records it: its reason text and whether
+it ends with `rewrite_before_acceptance`. -/
+structure Marker where
+  reason : String
+  rewrite : Bool
+  deriving DecidableEq, Repr
+
+def Marker.category (m : Marker) : Disposition :=
+  if m.rewrite then .mustBeRewrittenBeforeAcceptance else .acceptableAsWrittenAfterReview
+
+theorem Marker.category_eq_rewrite_iff (m : Marker) :
+    m.category = .mustBeRewrittenBeforeAcceptance ↔ m.rewrite = true := by
+  unfold Marker.category
+  cases m.rewrite <;> simp
+
+/-- A reason no one could read: empty after trimming (every character, if
+any, is white space). -/
+def blank (reason : String) : Bool := reason.all Char.isWhitespace
+
+/-- The loader's reading of one marker: a blank reason refuses (the module
+is rejected whole); otherwise the reason is kept verbatim. -/
+def load (reason : String) (rewrite : Bool) : Option Marker :=
+  if blank reason then none else some ⟨reason, rewrite⟩
+
+theorem a_blank_reason_is_refused {reason : String} (rewrite : Bool)
+    (isBlank : blank reason = true) : load reason rewrite = none := by
+  simp [load, isBlank]
+
+theorem a_loaded_marker_keeps_its_reason_verbatim {reason : String} {rewrite : Bool}
+    {m : Marker} (loaded : load reason rewrite = some m) :
+    m.reason = reason ∧ blank m.reason = false ∧ m.rewrite = rewrite := by
+  unfold load at loaded
+  by_cases b : blank reason = true
+  · simp [b] at loaded
+  · simp [b] at loaded
+    subst loaded
+    exact ⟨rfl, by simpa using b, rfl⟩
+
+/-- One published hold: the held declaration and one of its markers. -/
+structure Hold where
+  declaration : String
+  marker : Marker
+  deriving DecidableEq, Repr
+
+/-- The environment: the markers of each declaration withheld for review,
+`none` for a name it does not withhold. -/
+abbrev Env := String → Option (List Marker)
+
+/-- `row_review_holds`: every marker of every held callee, in order; `none`
+when some callee is not withheld or is withheld with no marker. -/
+def holdsOf (env : Env) : List String → Option (List Hold)
+  | [] => some []
+  | d :: ds =>
+    match env d, holdsOf env ds with
+    | some (m :: ms), some rest => some ((m :: ms).map (Hold.mk d) ++ rest)
+    | _, _ => none
+
+/-- Every marker of every held declaration is published. -/
+theorem holdsOf_names_every_marker {env : Env} {ds : List String} {hs : List Hold}
+    (published : holdsOf env ds = some hs) {d : String} (held : d ∈ ds) {ms : List Marker}
+    (withheld : env d = some ms) {m : Marker} (marked : m ∈ ms) : Hold.mk d m ∈ hs := by
+  induction ds generalizing hs with
+  | nil => simp at held
+  | cons e es ih =>
+    cases he : env e with
+    | none => simp [holdsOf, he] at published
+    | some es' =>
+      cases es' with
+      | nil => simp [holdsOf, he] at published
+      | cons n ns =>
+        cases hr : holdsOf env es with
+        | none => simp [holdsOf, he, hr] at published
+        | some rest =>
+          simp only [holdsOf, he, hr, Option.some.injEq] at published
+          subst published
+          rcases List.mem_cons.mp held with same | tail
+          · subst same
+            rw [he, Option.some.injEq] at withheld
+            subst withheld
+            exact List.mem_append_left _ (List.mem_map.mpr ⟨m, marked, rfl⟩)
+          · exact List.mem_append_right _ (ih hr tail)
+
+/-- Nothing is published that the environment does not declare. -/
+theorem holdsOf_invents_nothing {env : Env} {ds : List String} {hs : List Hold}
+    (published : holdsOf env ds = some hs) {h : Hold} (member : h ∈ hs) :
+    h.declaration ∈ ds ∧ ∃ ms, env h.declaration = some ms ∧ h.marker ∈ ms := by
+  induction ds generalizing hs with
+  | nil =>
+    simp only [holdsOf, Option.some.injEq] at published
+    subst published
+    simp at member
+  | cons e es ih =>
+    cases he : env e with
+    | none => simp [holdsOf, he] at published
+    | some es' =>
+      cases es' with
+      | nil => simp [holdsOf, he] at published
+      | cons n ns =>
+        cases hr : holdsOf env es with
+        | none => simp [holdsOf, he, hr] at published
+        | some rest =>
+          simp only [holdsOf, he, hr, Option.some.injEq] at published
+          subst published
+          rcases List.mem_append.mp member with here | later
+          · obtain ⟨m, marked, rfl⟩ := List.mem_map.mp here
+            exact ⟨List.mem_cons_self .., n :: ns, he, marked⟩
+          · obtain ⟨inTail, ms, withheld, marked⟩ := ih hr later
+            exact ⟨List.mem_cons_of_mem _ inTail, ms, withheld, marked⟩
+
+/-- Fail-closed: a held callee the environment does not withhold, or
+withholds with no marker, publishes no row at all. -/
+theorem holdsOf_refuses_an_unnamed_hold {env : Env} {ds : List String} {d : String}
+    (held : d ∈ ds) (unnamed : env d = none ∨ env d = some []) : holdsOf env ds = none := by
+  induction ds with
+  | nil => simp at held
+  | cons e es ih =>
+    rcases List.mem_cons.mp held with same | tail
+    · subst same
+      rcases unnamed with u | u <;> simp [holdsOf, u]
+    · have rest := ih tail
+      cases he : env e with
+      | none => simp [holdsOf, he]
+      | some es' =>
+        cases es' with
+        | nil => simp [holdsOf, he]
+        | cons n ns => simp [holdsOf, he, rest]
+
+/-- A row holding at least one call names at least one concrete reason. -/
+theorem holdsOf_nonempty {env : Env} {d : String} {ds : List String} {hs : List Hold}
+    (published : holdsOf env (d :: ds) = some hs) : hs ≠ [] := by
+  cases he : env d with
+  | none => simp [holdsOf, he] at published
+  | some ms =>
+    cases ms with
+    | nil => simp [holdsOf, he] at published
+    | cons n ns =>
+      cases hr : holdsOf env ds with
+      | none => simp [holdsOf, he, hr] at published
+      | some rest =>
+        simp only [holdsOf, he, hr, Option.some.injEq] at published
+        subst published
+        simp
+
+/-- A published row: the values its verdict folds and the holds it lists. -/
+structure Published where
+  values : List V
+  holds : List Hold
+
+def Published.verdict (p : Published) : V := fold p.values
+
+/-- `annotate_unit` on one row. -/
+def annotate (env : Env) (callees : List String) (values : List V) : Option Published :=
+  (holdsOf env callees).map (Published.mk values)
+
+theorem annotate_holds {env : Env} {cs : List String} {values : List V} {p : Published}
+    (annotated : annotate env cs values = some p) :
+    p.values = values ∧ holdsOf env cs = some p.holds := by
+  unfold annotate at annotated
+  cases h : holdsOf env cs with
+  | none => simp [h] at annotated
+  | some hs =>
+    simp only [h, Option.map_some, Option.some.injEq] at annotated
+    subst annotated
+    exact ⟨rfl, rfl⟩
+
+/-- The annotation never changes a verdict. -/
+theorem annotation_keeps_the_verdict {env : Env} {cs : List String} {values : List V}
+    {p : Published} (annotated : annotate env cs values = some p) :
+    p.verdict = fold values := by
+  unfold Published.verdict
+  rw [(annotate_holds annotated).1]
+
+/-- Adding reasons never changes the verdict value. -/
+theorem adding_reasons_never_changes_the_verdict (p : Published) (extra : List Hold) :
+    (Published.mk p.values (p.holds ++ extra)).verdict = fold p.values := by
+  rfl
+
+/-- The category never enters the verdict: two environments that differ in
+anything (a disposition included) annotate a row to the same verdict. -/
+theorem the_category_never_changes_the_verdict {env env' : Env} {cs : List String}
+    {values : List V} {p p' : Published} (annotated : annotate env cs values = some p)
+    (annotated' : annotate env' cs values = some p') : p.verdict = p'.verdict := by
+  rw [annotation_keeps_the_verdict annotated, annotation_keeps_the_verdict annotated']
+
+/-- The reasons of a published row contain every held declaration's every
+marker, reason verbatim and category with it. -/
+theorem every_hold_names_its_concrete_reason {env : Env} {cs : List String}
+    {values : List V} {p : Published} (annotated : annotate env cs values = some p)
+    {d : String} (held : d ∈ cs) {ms : List Marker} (withheld : env d = some ms)
+    {m : Marker} (marked : m ∈ ms) : Hold.mk d m ∈ p.holds :=
+  holdsOf_names_every_marker (annotate_holds annotated).2 held withheld marked
+
+/-- Two holds on one row: both are listed. -/
+theorem two_holds_on_one_row_list_both {env : Env} {d₁ d₂ : String} {m₁ m₂ : Marker}
+    {values : List V} {p : Published} (annotated : annotate env [d₁, d₂] values = some p)
+    (first : env d₁ = some [m₁]) (second : env d₂ = some [m₂]) :
+    Hold.mk d₁ m₁ ∈ p.holds ∧ Hold.mk d₂ m₂ ∈ p.holds :=
+  ⟨every_hold_names_its_concrete_reason annotated (by simp) first (by simp),
+    every_hold_names_its_concrete_reason annotated (by simp) second (by simp)⟩
+
+/-- Fail-closed: a row holding a call whose reason the environment cannot
+name is not published. -/
+theorem an_unnamed_hold_is_not_published {env : Env} {cs : List String} {values : List V}
+    {d : String} (held : d ∈ cs) (unnamed : env d = none ∨ env d = some []) :
+    annotate env cs values = none := by
+  simp [annotate, holdsOf_refuses_an_unnamed_hold held unnamed]
+
+/-- Every published reason was declared, loaded non-blank, and is kept verbatim. -/
+theorem every_published_reason_is_a_loaded_one {env : Env}
+    (loaded : ∀ d ms, env d = some ms → ∀ m ∈ ms, blank m.reason = false)
+    {cs : List String} {values : List V} {p : Published}
+    (annotated : annotate env cs values = some p) {h : Hold} (member : h ∈ p.holds) :
+    h.declaration ∈ cs ∧ blank h.marker.reason = false := by
+  obtain ⟨held, ms, withheld, marked⟩ :=
+    holdsOf_invents_nothing (annotate_holds annotated).2 member
+  exact ⟨held, loaded _ _ withheld _ marked⟩
+
+/-- The user decision, end to end: a row the held-call standing rule
+publishes `Pending` (`Row.published`), annotated over what `settle` records
+(`Row.settled`), stays `Pending` and names every hold's concrete reason,
+and a row holding at least one call names at least one. -/
+theorem a_pending_row_stays_pending_and_names_every_hold (row : Row) {env : Env}
+    {cs : List String} {p : Published} (annotated : annotate env cs row.settled = some p)
+    (pending : row.published = .pending) :
+    p.verdict = .pending ∧
+      (∀ d ∈ cs, ∀ ms, env d = some ms → ∀ m ∈ ms, Hold.mk d m ∈ p.holds) ∧
+      (cs ≠ [] → p.holds ≠ []) := by
+  refine ⟨?_, fun d held ms withheld m marked =>
+    every_hold_names_its_concrete_reason annotated held withheld marked, ?_⟩
+  · rw [annotation_keeps_the_verdict annotated, Row.the_settled_fold_is_published, pending]
+  · intro nonempty
+    obtain ⟨d, ds, rfl⟩ := List.exists_cons_of_ne_nil nonempty
+    exact holdsOf_nonempty (annotate_holds annotated).2
+
+/-! ### Composition keeps every row's reasons -/
+
+def Published.reasoned (p : Published) : Reasoned Hold := ⟨p.verdict, p.holds⟩
+
+/-- Rows composed into a unit, a report or a checkpoint composition: the join. -/
+def compose : List (Reasoned Hold) → Reasoned Hold
+  | [] => Reasoned.identity
+  | r :: rs => Reasoned.join r (compose rs)
+
+theorem compose_value (rs : List (Reasoned Hold)) :
+    (compose rs).value = fold (rs.map Reasoned.value) := by
+  induction rs with
+  | nil => rfl
+  | cons r rs ih => simp [compose, Reasoned.join, fold, ih]
+
+theorem compose_append (a b : List (Reasoned Hold)) :
+    compose (a ++ b) = Reasoned.join (compose a) (compose b) := by
+  induction a with
+  | nil => simp [compose, Reasoned.identity_join]
+  | cons r rs ih => simp [compose, ih, Reasoned.join_assoc]
+
+/-- A report merge (`AuditReport::absorb`) or a checkpoint composition never
+loses a row's reason. -/
+theorem composition_never_loses_a_reason {rs : List (Reasoned Hold)} {r : Reasoned Hold}
+    (member : r ∈ rs) {h : Hold} (named : h ∈ r.reasons) : h ∈ (compose rs).reasons := by
+  induction rs with
+  | nil => simp at member
+  | cons s ss ih =>
+    rcases List.mem_cons.mp member with same | later
+    · subst same
+      exact Reasoned.join_keeps_reasons _ _ h (Or.inl named)
+    · exact Reasoned.join_keeps_reasons _ _ h (Or.inr (ih later))
+
+/-- Merging two reports keeps both reports' reasons. -/
+theorem a_merge_keeps_both_reports_reasons (a b : List (Reasoned Hold)) :
+    (compose (a ++ b)).reasons = (compose a).reasons ++ (compose b).reasons := by
+  rw [compose_append]
+  rfl
+
+end ConcreteReason
 
 end QCore.ReviewHoldStanding

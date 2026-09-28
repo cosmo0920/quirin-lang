@@ -268,7 +268,8 @@ use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 mod counted_users;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
-    ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewScope,
+    ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
+    ReviewScope,
 };
 
 /// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
@@ -1586,6 +1587,11 @@ pub const BODY_CHECKED_MARKER: &str = "resource_body_checked";
 /// The clause introducer of a review marker (card W45-CONTRACT-DEFERRED-REVIEW).
 pub const REVIEW_MARKER: &str = "resource_review_pending";
 
+/// The optional last argument of a review marker stating that the text must
+/// be rewritten before it can be accepted (card
+/// W47-REVIEW-HOLD-CONCRETE-REASON, contract spec §C06.1).
+pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
+
 /// A second contract-level marker, or a contract-level marker beside a
 /// clause-level one: the contract-level marker already defers every clause.
 const DUPLICATE_REVIEW_MARKER: &str =
@@ -1593,9 +1599,10 @@ const DUPLICATE_REVIEW_MARKER: &str =
 
 /// One review marker, parsed.
 enum ReviewMarker {
-    /// `requires resource_review_pending("REASON"[, "OWNER"]);`
+    /// `requires resource_review_pending("REASON"[, "OWNER"][, rewrite_before_acceptance]);`
     Contract(ReviewDeferral),
-    /// `ensures normal resource_review_pending(CLAUSE, "REASON"[, "OWNER"]);`
+    /// `ensures normal resource_review_pending(CLAUSE, "REASON"[, "OWNER"][,
+    /// rewrite_before_acceptance]);`
     /// with `inner` the wrapped clause's expression text.
     Clause {
         inner: String,
@@ -1627,7 +1634,8 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
     let malformed = || {
         format!(
             "malformed review marker `{expression}`: write `requires {REVIEW_MARKER}(\"REASON\"[, \
-             \"OWNER\"]);` or `ensures normal {REVIEW_MARKER}(CLAUSE, \"REASON\"[, \"OWNER\"]);`"
+             \"OWNER\"][, {REWRITE_BEFORE_ACCEPTANCE}]);` or `ensures normal \
+             {REVIEW_MARKER}(CLAUSE, \"REASON\"[, \"OWNER\"][, {REWRITE_BEFORE_ACCEPTANCE}]);`"
         )
     };
     let missing_reason =
@@ -1677,6 +1685,19 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
         }
         _ => (None, arguments),
     };
+    // Card W47-REVIEW-HOLD-CONCRETE-REASON: one optional trailing word, after
+    // the reason and the owner, states that the text must be rewritten before
+    // it can be accepted. Any other word, or this one anywhere else, is
+    // malformed (the literal loop below refuses it).
+    let (strings, disposition) = match strings {
+        [rest @ .., comma, last]
+            if comma.kind == TokenKind::Symbol(Symbol::Comma)
+                && matches!(&last.kind, TokenKind::Word(word) if word == REWRITE_BEFORE_ACCEPTANCE) =>
+        {
+            (rest, ReviewDisposition::MustBeRewrittenBeforeAcceptance)
+        }
+        _ => (strings, ReviewDisposition::AcceptableAsWrittenAfterReview),
+    };
     let mut literals = Vec::new();
     for (index, token) in strings.iter().enumerate() {
         match (index % 2, &token.kind) {
@@ -1714,6 +1735,7 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
             scope: ReviewScope::Contract,
             reason,
             owner,
+            disposition,
         }))),
         (None, false) => Err(format!(
             "a contract-level review marker is a requirement: write `requires {expression};`"
@@ -1742,6 +1764,7 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
                     },
                     reason,
                     owner,
+                    disposition,
                 },
                 inner,
             }))
@@ -1753,12 +1776,13 @@ fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker
 /// declaration carries exactly its parent's review markers. Elaboration copies
 /// the parent's clauses with each parameter renamed by position, so a
 /// clause-level marker's recorded clause text is compared after that renaming
-/// rather than byte for byte; the scope kind, reason and owner must be equal.
+/// rather than byte for byte; the scope kind, reason, owner and disposition must be equal.
 fn review_inherited(child: &[ReviewDeferral], parent: &[ReviewDeferral]) -> bool {
     child.len() == parent.len()
         && child.iter().zip(parent).all(|(child, parent)| {
             child.reason == parent.reason
                 && child.owner == parent.owner
+                && child.disposition == parent.disposition
                 && matches!(
                     (&child.scope, &parent.scope),
                     (ReviewScope::Contract, ReviewScope::Contract)

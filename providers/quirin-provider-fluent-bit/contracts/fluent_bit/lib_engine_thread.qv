@@ -44,6 +44,16 @@ module contract;
 // `resource_borrowed` does not say: that clause is exactly what a reviewer
 // must settle.
 //
+// W47-REVIEW-HOLD-CONCRETE-REASON: two markers end with
+// `rewrite_before_acceptance` (contract specification C06.1), because their
+// own reasons say the text as written is not what the body does:
+// `flb_start` retains `ctx` until the engine thread is joined, which
+// `resource_borrowed(ctx)` denies, and `flb_downstream_worker_runtime_stop`
+// does not free `runtime` on its `-1` return, which
+// `resource_released(runtime, nullable)` asserts on every return. The other
+// three state custody the reasons do not contradict and stay plain. The
+// category is published on every row holding the call and changes no verdict.
+//
 // Nothing here is a verified race, a verified defect or an `Unsafe` claim. A
 // "candidate" names an upstream path whose confirmation needs a native
 // reproduction.
@@ -51,7 +61,7 @@ module contract;
 extern fn flb_start(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, lib/monkey/mk_core/mk_utils.c:316-318), and stores its identifier in ctx->config->worker (:973). On both failure returns after the spawn (:980-986, :994-1001) it joins the thread with the result ignored and sets ctx->status to FLB_LIB_ERROR. It returns 0 without setting FLB_LIB_OK when the notification loop finds no started or failed value (:1008). ctx is handed to the engine thread until that thread is joined; v1 cannot state a thread start, a join or that retention.", "qcore-c integrator");
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, lib/monkey/mk_core/mk_utils.c:316-318), and stores its identifier in ctx->config->worker (:973). On both failure returns after the spawn (:980-986, :994-1001) it joins the thread with the result ignored and sets ctx->status to FLB_LIB_ERROR. It returns 0 without setting FLB_LIB_OK when the notification loop finds no started or failed value (:1008). ctx is handed to the engine thread until that thread is joined; v1 cannot state a thread start, a join or that retention.", "qcore-c integrator", rewrite_before_acceptance);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_none();
 };
@@ -83,7 +93,7 @@ contract {
 extern fn flb_downstream_worker_runtime_stop(runtime: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_review_pending("Read at 90978ac6 (src/flb_downstream_worker.c), not derived by the census: called from one of its own workers it returns -1 without joining (:491-492, which avoids a self join) and without freeing the runtime; otherwise it waits for active operations under the lifecycle mutex, wakes every worker and joins each created worker with the result ignored (:520) before destroying the runtime's synchronisation objects and freeing it. The runtime is freed on that path and not on the -1 return, which v1 cannot state per path.", "qcore-c integrator");
+    requires resource_review_pending("Read at 90978ac6 (src/flb_downstream_worker.c), not derived by the census: called from one of its own workers it returns -1 without joining (:491-492, which avoids a self join) and without freeing the runtime; otherwise it waits for active operations under the lifecycle mutex, wakes every worker and joins each created worker with the result ignored (:520) before destroying the runtime's synchronisation objects and freeing it. The runtime is freed on that path and not on the -1 return, which v1 cannot state per path.", "qcore-c integrator", rewrite_before_acceptance);
     ensures normal resource_released(runtime, nullable);
     ensures normal resource_return_none();
 };

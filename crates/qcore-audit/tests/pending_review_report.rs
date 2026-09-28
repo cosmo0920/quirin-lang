@@ -159,6 +159,68 @@ fn the_contracts_route_lists_the_pending_review_and_what_it_holds() {
         entry["module_sha256"],
         qcore_schemas::sha256_hex(PENDING.as_bytes())
     );
+    assert_eq!(entry["category"], "acceptable-as-written-after-review");
+    // Card W47-REVIEW-HOLD-CONCRETE-REASON: the Pending row itself names the
+    // held declaration, its clause, the reason verbatim and the category; the
+    // row without a held call carries no such member.
+    let functions = unit["functions"].as_array().unwrap();
+    let held = functions
+        .iter()
+        .find(|function| function["function"] == "held")
+        .unwrap();
+    assert_eq!(held["status"], "Pending");
+    assert_eq!(
+        held["review_holds"],
+        json!([{
+            "declaration": "dispose",
+            "module": entry["module"],
+            "scope": "clause",
+            "clause": "ensures normal resource_released(p, nonnull)",
+            "reason": "frees p?",
+            "owner": "owner",
+            "category": "acceptable-as-written-after-review",
+            "reason_code": "awaiting-human-review",
+        }])
+    );
+    let quiet = functions
+        .iter()
+        .find(|function| function["function"] == "quiet")
+        .unwrap();
+    assert!(quiet.get("review_holds").is_none(), "{quiet}");
+}
+
+#[test]
+fn a_marker_stating_the_text_must_be_rewritten_stays_pending_and_says_so() {
+    if !clang_available() {
+        return;
+    }
+    let rewrite = PENDING.replace(
+        "\"frees p?\", \"owner\")",
+        "\"retained, not released\", \"owner\", rewrite_before_acceptance)",
+    );
+    let fixture = Fixture::new(&rewrite);
+    let console = stdout(&fixture.run());
+    assert!(
+        console.contains("held Pending (awaiting-human-review); 1 marker(s) must be rewritten"),
+        "{console}"
+    );
+    let report = fixture.read("out/report.json");
+    // The verdict is unchanged by the category (user decision 2026-09-29).
+    assert_eq!(report["units"][0]["status"], "Pending");
+    let held = &report["units"][0]["functions"][0];
+    assert_eq!(held["function"], "held");
+    assert_eq!(held["status"], "Pending");
+    assert_eq!(held["review_holds"][0]["reason"], "retained, not released");
+    assert_eq!(
+        held["review_holds"][0]["category"],
+        "must-be-rewritten-before-acceptance"
+    );
+    let section = &fixture.read("out/report.contracts.json")["pending_human_review"];
+    assert_eq!(section["rewrite_markers"], 1);
+    assert_eq!(
+        section["entries"][0]["category"],
+        "must-be-rewritten-before-acceptance"
+    );
 }
 
 #[test]

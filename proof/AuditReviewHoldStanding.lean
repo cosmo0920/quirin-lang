@@ -27,7 +27,16 @@ and absorbs every refusal it preempts.
 
 The Rust boundary — that `review_standing::settle` records these reasons and
 that the second analysis is the held one with the holds lifted — is pinned by
-`crates/qcore-c-gateway/tests/review_hold_standing.rs`. -/
+`crates/qcore-c-gateway/tests/review_hold_standing.rs`.
+
+**The concrete reason** (card W47-REVIEW-HOLD-CONCRETE-REASON). A row holding
+a call names every marker of every held declaration, reason verbatim, with a
+category read from the marker's structure; the annotation is fail-closed on a
+hold the environment cannot name, never changes a verdict, keeps a published
+`Pending` row `Pending`, and survives composition. The Rust boundary is pinned
+by `crates/qcore-audit/src/review_hold_reasons.rs`'s tests,
+`crates/qcore-audit/tests/pending_review_report.rs` and
+`crates/qcore-audit/tests/checkpoint_cli.rs`. -/
 
 -- The cap and the published verdict.
 #print axioms QCore.ReviewHoldStanding.cap_rank_le
@@ -58,3 +67,30 @@ that the second analysis is the held one with the holds lifted — is pinned by
 #print axioms QCore.ReviewHoldStanding.Row.never_lowers_the_held_verdict
 #print axioms QCore.ReviewHoldStanding.Row.a_held_call_beside_a_standing_refusal_is_unknown
 #print axioms QCore.ReviewHoldStanding.Row.an_alleged_violation_is_unknown
+
+-- Card W47-REVIEW-HOLD-CONCRETE-REASON: the concrete reason of every review
+-- hold on the row it holds (the loader keeps a reason verbatim and refuses a
+-- blank one; every held declaration's every marker is published and nothing
+-- else; an unnamed hold publishes nothing); the category and the reasons never
+-- change a verdict, a published Pending row stays Pending naming every hold,
+-- and composition keeps every row's reasons.
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.Marker.category_eq_rewrite_iff
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.a_blank_reason_is_refused
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.a_loaded_marker_keeps_its_reason_verbatim
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.holdsOf_names_every_marker
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.holdsOf_invents_nothing
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.holdsOf_refuses_an_unnamed_hold
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.holdsOf_nonempty
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.annotate_holds
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.annotation_keeps_the_verdict
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.adding_reasons_never_changes_the_verdict
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.the_category_never_changes_the_verdict
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.every_hold_names_its_concrete_reason
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.two_holds_on_one_row_list_both
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.an_unnamed_hold_is_not_published
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.every_published_reason_is_a_loaded_one
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.a_pending_row_stays_pending_and_names_every_hold
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.compose_value
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.compose_append
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.composition_never_loses_a_reason
+#print axioms QCore.ReviewHoldStanding.ConcreteReason.a_merge_keeps_both_reports_reasons

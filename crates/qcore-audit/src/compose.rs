@@ -158,6 +158,7 @@ pub fn compose(
                 clause: marker.clause.clone(),
                 reason: marker.reason.clone(),
                 owner: marker.owner.clone(),
+                category: marker.category.clone(),
                 module: marker.module.clone(),
                 module_sha256: marker.module_sha256.clone(),
             })

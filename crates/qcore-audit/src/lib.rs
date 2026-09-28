@@ -30,6 +30,8 @@ pub mod pinned_cli;
 pub mod pinned_route;
 // Card W45-CONTRACT-DEFERRED-REVIEW: the pending-review report section.
 pub mod pending_review;
+// Card W47-REVIEW-HOLD-CONCRETE-REASON: each held row's concrete review reasons.
+pub mod review_hold_reasons;
 // Card W45-CONTRACT-REVISION-MODE: source identities, contract locks, the pin
 // evaluation and its report section.
 pub mod c_identity;

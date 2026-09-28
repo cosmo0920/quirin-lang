@@ -20,14 +20,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::legacy_c::{AWAITING_HUMAN_REVIEW, held_call};
-use qcore_schemas::contract::{ResourceContracts, ReviewScope};
+use qcore_schemas::contract::{ResourceContracts, ReviewDisposition, ReviewScope};
 use qcore_schemas::sha256_hex;
 use serde_json::{Value, json};
 
 use crate::report::AuditReport;
 
 /// What the section means, carried in the section itself.
-pub const MEANING: &str = "declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each is loaded and validated but withheld, discharges nothing and accuses nothing, and every call site that would apply it is held with reason code `awaiting-human-review`, and a function whose only unresolved diagnostics are held calls is Pending, never Safe; a clause-level marker holds exactly the call sites a contract-level one does, because a contract is applied as one conjunction; `held_functions` counts analysed functions with at least one recorded held call of the declaration, and `held_call_sites` counts the held-call refusals the analysis recorded; the analysis of a path stops at its first refused statement, so a later call site on the same path records no refusal of its own and the count is a lower bound on textual call sites";
+pub const MEANING: &str = "declared contracts, or clauses of them, marked `resource_review_pending` (contract spec C06): each is loaded and validated but withheld, discharges nothing and accuses nothing, and every call site that would apply it is held with reason code `awaiting-human-review`, and a function whose only unresolved diagnostics are held calls is Pending, never Safe; a clause-level marker holds exactly the call sites a contract-level one does, because a contract is applied as one conjunction; `held_functions` counts analysed functions with at least one recorded held call of the declaration, and `held_call_sites` counts the held-call refusals the analysis recorded; the analysis of a path stops at its first refused statement, so a later call site on the same path records no refusal of its own and the count is a lower bound on textual call sites; `category` is read from the marker's structure, never from its prose: `must-be-rewritten-before-acceptance` when the marker ends with `rewrite_before_acceptance` (its author states that the text as written is not what the body does, so unwrapping it is not a resolution), `acceptable-as-written-after-review` otherwise, and `rewrite_markers` counts the former; the category never changes a verdict; every function row holding such a call lists each held declaration's markers, reasons verbatim, in its `review_holds` member";
 
 /// The `pending_human_review` section for one finished report.
 #[must_use]
@@ -98,6 +98,9 @@ pub struct PendingMarker {
     pub clause: Option<String>,
     pub reason: String,
     pub owner: Option<String>,
+    /// Card W47-REVIEW-HOLD-CONCRETE-REASON: the marker's
+    /// [`ReviewDisposition`] spelling.
+    pub category: String,
     pub module: String,
     pub module_sha256: Option<String>,
 }
@@ -130,6 +133,7 @@ pub fn markers(contracts: &ResourceContracts) -> PendingMarkers {
                 clause,
                 reason: deferral.reason.clone(),
                 owner: deferral.owner.clone(),
+                category: deferral.disposition.as_str().to_owned(),
                 module: pending.module.clone(),
                 module_sha256: digest.clone(),
             });
@@ -154,6 +158,7 @@ pub fn render(markers: &PendingMarkers, held: &HeldCalls) -> Value {
                 "clause": marker.clause,
                 "reason": marker.reason,
                 "owner": marker.owner,
+                "category": marker.category,
                 "module": marker.module,
                 "module_sha256": marker.module_sha256,
                 "held_functions": held.functions.get(&marker.function).map_or(0, BTreeSet::len),
@@ -167,11 +172,17 @@ pub fn render(markers: &PendingMarkers, held: &HeldCalls) -> Value {
         .flatten()
         .collect::<BTreeSet<_>>()
         .len();
+    let rewrite = ReviewDisposition::MustBeRewrittenBeforeAcceptance.as_str();
     json!({
         "meaning": MEANING,
         "reason_code": AWAITING_HUMAN_REVIEW,
         "declarations": markers.declarations,
         "markers": markers.markers.len(),
+        "rewrite_markers": markers
+            .markers
+            .iter()
+            .filter(|marker| marker.category == rewrite)
+            .count(),
         "held_functions": held_functions,
         "held_call_sites": held.call_sites.values().sum::<usize>(),
         "entries": entries,
@@ -184,11 +195,13 @@ pub fn tally(section: &Value) -> String {
     let count = |key: &str| section[key].as_u64().unwrap_or_default();
     format!(
         "pending human review: {} declaration(s), {} marker(s); {} function(s) and {} call \
-         site(s) held Pending ({AWAITING_HUMAN_REVIEW})",
+         site(s) held Pending ({AWAITING_HUMAN_REVIEW}); {} marker(s) must be rewritten before \
+         acceptance",
         count("declarations"),
         count("markers"),
         count("held_functions"),
         count("held_call_sites"),
+        count("rewrite_markers"),
     )
 }
 
@@ -240,7 +253,8 @@ contract {
         assert_eq!(
             tally(&value),
             "pending human review: 0 declaration(s), 0 marker(s); 0 function(s) and 0 call \
-             site(s) held Pending (awaiting-human-review)"
+             site(s) held Pending (awaiting-human-review); 0 marker(s) must be rewritten before \
+             acceptance"
         );
     }
 
@@ -290,6 +304,8 @@ contract {
         );
         assert_eq!(entry["reason"], "why");
         assert_eq!(entry["owner"], "cosmo");
+        assert_eq!(entry["category"], "acceptable-as-written-after-review");
+        assert_eq!(value["rewrite_markers"], 0);
         assert_eq!(entry["module"], "k.qcore");
         assert_eq!(
             entry["module_sha256"],

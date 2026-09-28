@@ -238,6 +238,7 @@ pub fn project_unit_into(
             file,
             inventory,
             source_functions,
+            contracts,
         },
         result,
         locations.as_ref(),
@@ -366,6 +367,7 @@ pub fn project_prepared_unit_into(
             file,
             inventory,
             source_functions,
+            contracts,
         },
         result,
         Some(prepared.locations()),
@@ -400,6 +402,9 @@ struct ProjectionContext<'a> {
     file: &'a str,
     inventory: &'a SourceDefinitionInventory,
     source_functions: &'a [String],
+    /// The environment the unit was analysed under (card
+    /// W47-REVIEW-HOLD-CONCRETE-REASON: it names each held call's reasons).
+    contracts: &'a ResourceContracts,
 }
 
 fn record_projection(
@@ -415,6 +420,7 @@ fn record_projection(
         file,
         inventory,
         source_functions,
+        contracts,
     } = context;
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
@@ -458,6 +464,13 @@ fn record_projection(
         })
     });
     let detail = report.record(library, file, source_functions, &result, locations);
+    // Card W47-REVIEW-HOLD-CONCRETE-REASON: every row holding a call names
+    // each held declaration's review reasons; additive, and fail-closed on a
+    // hold whose reason the environment cannot name.
+    if let Some(row) = report.last_unit_mut() {
+        crate::review_hold_reasons::annotate_unit(row, contracts)
+            .map_err(|error| format!("{library}/{file}: {error}"))?;
+    }
     report.record_enumeration(inventory);
     // Card W45-USER-CONTRACT-PLUGINS: the unit is tallied and printed under
     // the verdict its row publishes, which is the result's own verdict unless

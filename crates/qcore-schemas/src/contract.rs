@@ -434,6 +434,40 @@ pub enum ReviewScope {
     Clause { clause: String },
 }
 
+/// What resolving a review marker takes (card
+/// W47-REVIEW-HOLD-CONCRETE-REASON, contract spec §C06.1): read from the
+/// marker's structure, never from its reason's prose.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ReviewDisposition {
+    /// A plain marker: the resolution it offers is a person's review and then
+    /// unwrapping the clause (or contract) as written.
+    #[default]
+    AcceptableAsWrittenAfterReview,
+    /// `…, rewrite_before_acceptance)`: the marker's author states that the
+    /// text as written is not what the body does, so unwrapping it is not a
+    /// resolution; the text must be rewritten first.
+    MustBeRewrittenBeforeAcceptance,
+}
+
+impl ReviewDisposition {
+    /// The published category spelling.
+    #[must_use]
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::AcceptableAsWrittenAfterReview => "acceptable-as-written-after-review",
+            Self::MustBeRewrittenBeforeAcceptance => "must-be-rewritten-before-acceptance",
+        }
+    }
+
+    /// `true` for the default (plain) marker; its serialized form omits the
+    /// field, so every environment written before the card is byte-identical.
+    #[must_use]
+    pub fn is_plain(&self) -> bool {
+        *self == Self::AcceptableAsWrittenAfterReview
+    }
+}
+
 /// One review marker as written: what it defers, why, and who owns it.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ReviewDeferral {
@@ -444,6 +478,10 @@ pub struct ReviewDeferral {
     /// The optional reviewer or owner, exactly as its string literal spells it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub owner: Option<String>,
+    /// Card W47-REVIEW-HOLD-CONCRETE-REASON: whether the marker's author
+    /// states that the text must be rewritten before it can be accepted.
+    #[serde(default, skip_serializing_if = "ReviewDisposition::is_plain")]
+    pub disposition: ReviewDisposition,
 }
 
 /// A declared contract that is withheld because it awaits human review (card

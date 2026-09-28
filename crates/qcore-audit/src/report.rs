@@ -203,6 +203,12 @@ impl AuditReport {
         &self.units
     }
 
+    /// The most recent unit row, to attach what its own unit derives (card
+    /// W47-REVIEW-HOLD-CONCRETE-REASON: `review_holds`).
+    pub(crate) fn last_unit_mut(&mut self) -> Option<&mut Value> {
+        self.units.last_mut()
+    }
+
     /// The four-value verdict the most recent unit row publishes, `None` when
     /// there is no row or its status is not a verdict (a gateway failure, a
     /// data-only unit). Card W45-USER-CONTRACT-PLUGINS.

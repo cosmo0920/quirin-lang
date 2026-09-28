@@ -33,6 +33,11 @@ module contract;
 // is the observation itself. Resolving one is a person's decision that the
 // observation holds AND that v1 can say it; unwrapping a clause whose reason
 // says "retained" would state a false borrow and is not a resolution.
+// W47-REVIEW-HOLD-CONCRETE-REASON: those three markers end with
+// `rewrite_before_acceptance` (contract specification C06.1), so every row
+// holding the call publishes them as `must-be-rewritten-before-acceptance`;
+// the other markers are `acceptable-as-written-after-review`. The category
+// changes no verdict: a caller whose only open reason is a hold stays Pending.
 
 // The context the test's list is read from (P-FRESH-CONTEXT,
 // P-REGISTERED-DESCRIPTORS). `flb_create` allocates the context
@@ -62,7 +67,7 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(input);
-    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the created instance (instance->data, src/flb_input.c:496) and passed to the plugin's callbacks; v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the created instance (instance->data, src/flb_input.c:496) and passed to the plugin's callbacks; v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written", rewrite_before_acceptance);
     ensures normal resource_review_pending(resource_return_none(), "P-HEAD-INSTANCE: a result >= 0 means flb_input_new created at least one instance on ctx->config's input list (src/flb_lib.c:268-278); the test reads that list's head without checking it (tests/runtime/in_tail.c:2551-2552), so the census states that the creation succeeded");
 };
 
@@ -79,9 +84,9 @@ contract {
 extern fn flb_input_new(config: ptr<mut, u8>, input: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
-    ensures normal resource_review_pending(resource_borrowed(config), "retained, not borrowed: the created instance keeps config (instance->config, src/flb_input.c:408) and is linked into config->inputs (:677); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_review_pending(resource_borrowed(config), "retained, not borrowed: the created instance keeps config (instance->config, src/flb_input.c:408) and is linked into config->inputs (:677); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written", rewrite_before_acceptance);
     ensures normal resource_borrowed(input);
-    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the instance (instance->data, src/flb_input.c:496); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written");
+    ensures normal resource_review_pending(resource_borrowed(data), "retained, not borrowed: data is stored in the instance (instance->data, src/flb_input.c:496); v1 has no retained-pointer mode (rule 10j), so this clause must not be unwrapped as written", rewrite_before_acceptance);
     ensures normal resource_borrowed(public_only);
     ensures normal resource_review_pending(resource_return_interior(config, nullable), "creation: one instance per registered input plugin whose name matches input ignoring ASCII case, each appended to config->inputs (src/flb_input.c:677) with p set to that plugin (:490) and runs_in_coroutine set from its FLB_INPUT_CORO flag (:501, :626) and written nowhere else; the last is returned; v1 states neither list membership nor the flag");
 };

@@ -1,0 +1,16 @@
+[
+ {
+  "id": "W47-PIN-MISMATCH-ROW-REASON",
+  "title": "Name each contract-pin-mismatch hold's concrete reason on the row it holds",
+  "why": "W47-REVIEW-HOLD-CONCRETE-REASON (gateway rule 10i as amended) makes every published function row that records a review-held call carry `review_holds`: each held declaration's markers, reasons verbatim, with a structural category. A call held for a contract-pin mismatch (C06.2, `qcore_pin_mismatch__`, reason code contract-pin-mismatch, Pending under the standing rule) carries no review marker, so the row lists nothing for it: the declaration, its mismatch reason (no-lock, not-in-lock, contract-changed, source-changed) and the pinned and found sites are published only in the contract sidecar's run-wide `contract_revision` section. Size: 0 rows on the corpus (66910c10), system (046accf6) and tail-pause slice (90978ac6 export) at this card's tip, where every pin is in force (131 of 131). DISCHARGE: a `pin_holds` member (or `review_holds` entries of a pin kind) naming each withheld declaration and its mismatch reason on every row holding such a call, additive, fail-closed on a hold the pin evaluation cannot name, with Lean parity; measured on the three routes.",
+  "source": "docs/reports/w47-review-hold-concrete-reason/README.md",
+  "recorded_by": "W47-REVIEW-HOLD-CONCRETE-REASON"
+ },
+ {
+  "id": "W47-EXTERN-ROUTE-REVIEW-CATEGORY",
+  "title": "Carry a held declaration's marker category into the checked extern-call refusal",
+  "why": "W47-REVIEW-HOLD-CONCRETE-REASON publishes each review marker's category (`acceptable-as-written-after-review` or `must-be-rewritten-before-acceptance`, from a trailing `rewrite_before_acceptance`, contract specification C06.1) on audit rows and in the pending_human_review section. The checked extern-call route (`source.extern-call.v1`, `qcore_contract::extern_bridge::pending_review_refusal`, Q023) still names the module and the reasons joined by `; ` but not the category or which clause each reason defers. Size: no audit route reaches it (0 corpus, system or slice rows); compiler examples and fixtures only. DISCHARGE: the Q023 refusal lists each marker's clause, reason and category, with its pinned test updated.",
+  "source": "docs/reports/w47-review-hold-concrete-reason/README.md",
+  "recorded_by": "W47-REVIEW-HOLD-CONCRETE-REASON"
+ }
+]

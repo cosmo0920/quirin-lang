@@ -20,7 +20,8 @@ use qcore_contract::contract_loader::{
 };
 use qcore_contract::extern_bridge::pending_review_refusal;
 use qcore_schemas::contract::{
-    ContractTrust, ResourceContracts, ResourceParameterMode, ReviewDeferral, ReviewScope,
+    ContractTrust, ResourceContracts, ResourceParameterMode, ReviewDeferral, ReviewDisposition,
+    ReviewScope,
 };
 
 const BARE: &str = "module contract;
@@ -83,6 +84,7 @@ fn a_contract_level_marker_withholds_the_validated_contract() {
             scope: ReviewScope::Contract,
             reason: "the size argument is unverified".into(),
             owner: Some("cosmo".into()),
+            disposition: ReviewDisposition::AcceptableAsWrittenAfterReview,
         }]
     );
     // The environment reproduces itself from its retained text, and a
@@ -129,6 +131,7 @@ fn a_clause_level_marker_withholds_the_whole_contract_and_names_the_clause() {
             },
             reason: "is the handle really freed on the error path?".into(),
             owner: None,
+            disposition: ReviewDisposition::AcceptableAsWrittenAfterReview,
         }]
     );
     check_source_assumptions(&deferred).unwrap();
@@ -414,9 +417,150 @@ fn a_child_inheriting_a_deferred_clause_is_deferred_for_that_clause() {
             },
             reason: "clause".into(),
             owner: None,
+            disposition: ReviewDisposition::AcceptableAsWrittenAfterReview,
         }]
     );
     check_source_assumptions(&contracts).unwrap();
+}
+
+/// Card W47-REVIEW-HOLD-CONCRETE-REASON: a child inherits a parent's
+/// disposition with its marker, so it can never shed "must be rewritten".
+#[test]
+fn a_child_inherits_the_rewrite_disposition() {
+    let parent = PARENT_CLAUSE.replace("\"clause\")", "\"clause\", rewrite_before_acceptance)");
+    let contracts = inherited(&parent);
+    let child = &contracts.pending_review()["app_free"];
+    assert_eq!(
+        child.deferrals[0].disposition,
+        ReviewDisposition::MustBeRewrittenBeforeAcceptance
+    );
+    assert_eq!(
+        contracts.pending_review()["free"].deferrals[0].disposition,
+        ReviewDisposition::MustBeRewrittenBeforeAcceptance
+    );
+    check_source_assumptions(&contracts).unwrap();
+}
+
+// ---------------------------------------------------------------------------
+// The rewrite disposition (card W47-REVIEW-HOLD-CONCRETE-REASON)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn a_trailing_rewrite_word_marks_the_marker_and_nothing_else() {
+    let bare = load(BARE).unwrap();
+    for (text, scope, owner) in [
+        (
+            contract_deferred(
+                "requires resource_review_pending(\"retained, not freed\", rewrite_before_acceptance);",
+            ),
+            ReviewScope::Contract,
+            None,
+        ),
+        (
+            contract_deferred(
+                "requires resource_review_pending(\"retained, not freed\", \"cosmo\", \
+                 rewrite_before_acceptance);",
+            ),
+            ReviewScope::Contract,
+            Some("cosmo".to_owned()),
+        ),
+        (
+            clause_replaced(
+                "ensures normal resource_released(h, nonnull);",
+                "ensures normal resource_review_pending(resource_released(h, nonnull), \
+                 \"retained, not freed\", rewrite_before_acceptance);",
+            ),
+            ReviewScope::Clause {
+                clause: "ensures normal resource_released(h, nonnull)".into(),
+            },
+            None,
+        ),
+    ] {
+        let deferred = load(&text).unwrap();
+        let pending = &deferred.pending_review()["k_close"];
+        // Withheld exactly as a plain marker withholds: the category changes
+        // no contract and no consumer's view.
+        assert!(deferred.contract("k_close").is_none());
+        assert_eq!(&pending.contract, bare.contract("k_close").unwrap());
+        assert_eq!(
+            pending.deferrals,
+            vec![ReviewDeferral {
+                scope,
+                reason: "retained, not freed".into(),
+                owner,
+                disposition: ReviewDisposition::MustBeRewrittenBeforeAcceptance,
+            }]
+        );
+        check_source_assumptions(&deferred).unwrap();
+        let json = serde_json::to_string(&deferred).unwrap();
+        assert!(
+            json.contains("\"disposition\":\"must-be-rewritten-before-acceptance\""),
+            "{json}"
+        );
+        assert_eq!(
+            serde_json::from_str::<ResourceContracts>(&json).unwrap(),
+            deferred
+        );
+    }
+    // A plain marker serializes exactly as before the card.
+    let plain = load(&contract_deferred("requires resource_review_pending(\"why\");")).unwrap();
+    let json = serde_json::to_string(&plain).unwrap();
+    assert!(!json.contains("disposition"), "{json}");
+    assert_eq!(
+        plain.pending_review()["k_close"].deferrals[0].disposition,
+        ReviewDisposition::AcceptableAsWrittenAfterReview
+    );
+}
+
+#[test]
+fn a_misplaced_or_unknown_disposition_refuses_the_module() {
+    for marker in [
+        // The word stands last, after the reason and the owner.
+        "requires resource_review_pending(rewrite_before_acceptance, \"why\");",
+        "requires resource_review_pending(\"why\", rewrite_before_acceptance, \"cosmo\");",
+        // Twice.
+        "requires resource_review_pending(\"why\", rewrite_before_acceptance, \
+         rewrite_before_acceptance);",
+        // Another word.
+        "requires resource_review_pending(\"why\", accept_as_written);",
+        "requires resource_review_pending(\"why\", rewrite);",
+        // Not a word: a string in the owner position is an owner, so a third
+        // string is refused as ever.
+        "requires resource_review_pending(\"why\", \"cosmo\", \"rewrite_before_acceptance\");",
+        // Trailing comma.
+        "requires resource_review_pending(\"why\", rewrite_before_acceptance,);",
+    ] {
+        let error = refused(&contract_deferred(marker));
+        assert!(error.contains("review marker"), "{marker}: {error}");
+    }
+}
+
+#[test]
+fn a_disposition_is_no_reason() {
+    // Fail-closed: the word never stands in for the mandatory reason.
+    for marker in [
+        "requires resource_review_pending(, rewrite_before_acceptance);",
+        "requires resource_review_pending(\"\", rewrite_before_acceptance);",
+        "requires resource_review_pending(\"  \", rewrite_before_acceptance);",
+    ] {
+        let error = refused(&contract_deferred(marker));
+        assert!(
+            error.contains("no reason") || error.contains("empty reason"),
+            "{marker}: {error}"
+        );
+    }
+    for replacement in [
+        "ensures normal resource_review_pending(resource_released(h, nonnull), \
+         rewrite_before_acceptance);",
+        "ensures normal resource_review_pending(resource_released(h, nonnull), \"\", \
+         rewrite_before_acceptance);",
+    ] {
+        let error = refused(&clause_replaced(
+            "ensures normal resource_released(h, nonnull);",
+            replacement,
+        ));
+        assert!(error.contains("review marker"), "{replacement}: {error}");
+    }
 }
 
 // ---------------------------------------------------------------------------

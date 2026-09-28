@@ -987,6 +987,25 @@ which is not a second authority.
     refute once accepted is not seen (`W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION`).
     `QCore.ReviewHoldStanding`;
     [report](../reports/w45-review-hold-preempts-statement-refusal/README.md).
+    **Amendment (W47-REVIEW-HOLD-CONCRETE-REASON; user decision 2026-09-29):
+    a held row names the act it awaits.** Every published function row that
+    records a review-held call carries `review_holds`: each held
+    declaration (name order), each of its markers (clause order), with the
+    reason verbatim and a category read from the marker's structure — a
+    trailing `rewrite_before_acceptance` (contract specification §C06.1)
+    is `must-be-rewritten-before-acceptance`, a plain marker
+    `acceptable-as-written-after-review` (`review_hold_reasons.rs`, hooked
+    after `AuditReport::record` in `projection.rs`, so every route and a
+    checkpoint composition carry it). A marker whose own reason says the text
+    as written is false carries the word; its callers **stay `Pending`** under
+    the standing rule above. **Do not** read the category from a reason's
+    prose, let it enter a verdict or the second analysis, or publish a held
+    row whose callee the environment cannot name (a missing declaration or
+    marker fails the run). Additive: a row without a held call is
+    byte-identical; the `.qo` schema is 4. Contract-pin-mismatch holds carry
+    no marker and are not listed (`W47-PIN-MISMATCH-ROW-REASON`).
+    `QCore.ReviewHoldStanding.ConcreteReason`;
+    [report](../reports/w47-review-hold-concrete-reason/README.md).
 
 <a id="constraint-10j"></a>
 
