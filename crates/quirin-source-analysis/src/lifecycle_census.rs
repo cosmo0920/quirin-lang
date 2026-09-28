@@ -28,8 +28,8 @@ use qcore_c_gateway::condvar_census::{
 };
 use qcore_contract::contract_loader::{DeclaredLifecycle, LifecycleOperation};
 use qcore_core::paired_lifecycle::{
-    BodyJoin, BodyPath, Clause, ClauseStatus, Operation, StartOutcome, State,
-    ends_started_status, no_effect_status, precondition_status, step,
+    BodyJoin, BodyPath, Clause, ClauseStatus, Operation, StartOutcome, State, ends_started_status,
+    no_effect_status, precondition_status, step,
 };
 
 /// The creators whose result starts a context's history (a binding table of
@@ -81,6 +81,10 @@ pub struct CallCheck {
     pub governed: BTreeSet<(Clause, ClauseStatus)>,
 }
 
+/// Per clause and declared stop (or `None` for a precondition): the status a
+/// caller's call is governed by.
+pub type ClauseStatuses = BTreeMap<(Clause, Option<String>), ClauseStatus>;
+
 /// The lifecycle decisions of one program.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct LifecycleCensus {
@@ -88,7 +92,7 @@ pub struct LifecycleCensus {
     pub clauses: Vec<ClauseCheck>,
     /// Per clause and declared stop (or `None` for a precondition): the
     /// status a caller's call is governed by.
-    pub status: BTreeMap<(Clause, Option<String>), ClauseStatus>,
+    pub status: ClauseStatuses,
     pub calls: Vec<CallCheck>,
     /// The declared destroys run after a successful start: whether a body
     /// joins anything (the precondition L6 is load-bearing where none does).
@@ -149,12 +153,13 @@ fn combine(statuses: &[ClauseStatus]) -> ClauseStatus {
 }
 
 /// Decide every clause from the body readings.
-fn check_clauses(
-    bodies: &[LifecycleBodyReading],
-) -> (Vec<ClauseCheck>, BTreeMap<(Clause, Option<String>), ClauseStatus>) {
+fn check_clauses(bodies: &[LifecycleBodyReading]) -> (Vec<ClauseCheck>, ClauseStatuses) {
     let mut checks = Vec::new();
     let mut per: BTreeMap<(Clause, Option<String>), Vec<ClauseStatus>> = BTreeMap::new();
-    for clause in [Clause::StartRequiresUnstarted, Clause::DestroyRequiresUnstarted] {
+    for clause in [
+        Clause::StartRequiresUnstarted,
+        Clause::DestroyRequiresUnstarted,
+    ] {
         checks.push(ClauseCheck {
             clause,
             function: None,
@@ -273,10 +278,7 @@ pub fn release_violations(release: &ReleaseReading) -> BTreeSet<String> {
     violations
 }
 
-fn check_call(
-    reading: &LifecycleCallReading,
-    status: &BTreeMap<(Clause, Option<String>), ClauseStatus>,
-) -> CallCheck {
+fn check_call(reading: &LifecycleCallReading, status: &ClauseStatuses) -> CallCheck {
     let mut check = CallCheck {
         reading: reading.clone(),
         states: BTreeSet::new(),
@@ -316,9 +318,11 @@ fn check_call(
             Some((_, Err(violation))) => {
                 format!("an earlier call on the key violated the lifecycle: {violation}")
             }
-            Some((history, Ok(_))) => match history.iter().rev().find(|(e, _)| {
-                matches!(e, ReadLifeEvent::Destroy | ReadLifeEvent::Create)
-            }) {
+            Some((history, Ok(_))) => match history
+                .iter()
+                .rev()
+                .find(|(e, _)| matches!(e, ReadLifeEvent::Destroy | ReadLifeEvent::Create))
+            {
                 Some((ReadLifeEvent::Destroy, site)) => {
                     format!("the key's instance was destroyed at {site} on a path")
                 }

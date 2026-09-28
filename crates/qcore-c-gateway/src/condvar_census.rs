@@ -2319,12 +2319,12 @@ impl C5<'_> {
             if let Some((key, operation)) = &lifecycle
                 && *operation != qcore_contract::contract_loader::LifecycleOperation::Start
             {
-                let event = if *operation == qcore_contract::contract_loader::LifecycleOperation::Stop
-                {
-                    ReadLifeEvent::Stop
-                } else {
-                    ReadLifeEvent::Destroy
-                };
+                let event =
+                    if *operation == qcore_contract::contract_loader::LifecycleOperation::Stop {
+                        ReadLifeEvent::Stop
+                    } else {
+                        ReadLifeEvent::Destroy
+                    };
                 for ((global, _), _) in &mut current {
                     global
                         .histories
@@ -2398,9 +2398,7 @@ impl C5<'_> {
                     if self.trace {
                         let kind = match &thread {
                             None => ReadTraceJoin::Unresolved,
-                            Some(t) if !global.threads.contains_key(t) => {
-                                ReadTraceJoin::NotStarted
-                            }
+                            Some(t) if !global.threads.contains_key(t) => ReadTraceJoin::NotStarted,
                             Some(t) if !matches!(global.threads.get(t), Some(Joined::Live(_))) => {
                                 ReadTraceJoin::Repeated
                             }

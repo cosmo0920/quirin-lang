@@ -185,22 +185,26 @@ pub struct Transition {
 /// # Errors
 ///
 /// The violated precondition, as a caller-facing reason.
-pub fn step(state: State, operation: Operation, outcome: StartOutcome) -> Result<Transition, String> {
+pub fn step(
+    state: State,
+    operation: Operation,
+    outcome: StartOutcome,
+) -> Result<Transition, String> {
     let pass = |next: State, governed_by: Vec<Clause>| Ok(Transition { next, governed_by });
     match (operation, state) {
-        (_, State::Destroyed) => Err(format!(
-            "{} of a destroyed context",
-            operation.spelling()
-        )),
-        (Operation::Start, State::Created | State::Stopped) => {
-            pass(State::Started(outcome), vec![Clause::StartRequiresUnstarted])
-        }
+        (_, State::Destroyed) => Err(format!("{} of a destroyed context", operation.spelling())),
+        (Operation::Start, State::Created | State::Stopped) => pass(
+            State::Started(outcome),
+            vec![Clause::StartRequiresUnstarted],
+        ),
         (Operation::Start, State::Started(_)) => Err(format!(
             "start of a context in state `{}` without a stop ({})",
             state.label(),
             Clause::StartRequiresUnstarted.name()
         )),
-        (Operation::Stop, State::Created) => pass(State::Created, vec![Clause::StopUnstartedNoEffect]),
+        (Operation::Stop, State::Created) => {
+            pass(State::Created, vec![Clause::StopUnstartedNoEffect])
+        }
         (Operation::Stop, State::Started(StartOutcome::Succeeded)) => {
             pass(State::Stopped, vec![Clause::StopEndsStarted])
         }
@@ -209,9 +213,14 @@ pub fn step(state: State, operation: Operation, outcome: StartOutcome) -> Result
         }
         (Operation::Stop, State::Started(StartOutcome::Undecided)) => pass(
             State::Stopped,
-            vec![Clause::StopEndsStarted, Clause::StopAfterFailedStartNoEffect],
+            vec![
+                Clause::StopEndsStarted,
+                Clause::StopAfterFailedStartNoEffect,
+            ],
         ),
-        (Operation::Stop, State::Stopped) => pass(State::Stopped, vec![Clause::StopAfterStopNoEffect]),
+        (Operation::Stop, State::Stopped) => {
+            pass(State::Stopped, vec![Clause::StopAfterStopNoEffect])
+        }
         (Operation::Destroy, State::Created | State::Stopped) => {
             pass(State::Destroyed, vec![Clause::DestroyRequiresUnstarted])
         }
@@ -357,7 +366,10 @@ pub fn ends_started_status(paths: &[BodyPath]) -> ClauseStatus {
             reason: if path.joins.is_empty() {
                 "a followed path returns without a join".to_owned()
             } else {
-                format!("a followed path joins otherwise ({})", describe(&path.joins))
+                format!(
+                    "a followed path joins otherwise ({})",
+                    describe(&path.joins)
+                )
             },
         };
     }

@@ -1,0 +1,59 @@
+{
+ "amend": [
+  {
+   "id": "W47-ENGINE-THREAD-JOIN-CANDIDATES",
+   "title": "Candidate upstream engine-thread join issues (not verified)",
+   "why": "Read at Fluent Bit 90978ac6 (bodies identical at 046accf6 and 66910c10) and recorded as candidates only, never Unsafe: (i) after a flb_start whose engine thread reported FLB_ENGINE_FAILED or whose notification read failed, do_start joins the thread (src/flb_lib.c:984, :999) and sets FLB_LIB_ERROR, and a following flb_stop joins it again on its status branch (:1058), undefined under POSIX; the fixed in_tail test calls flb_stop whatever flb_start returned; (ii) ctx->status is written by the engine thread (:932) and read by flb_stop (:1049) without synchronisation; (iii) when flb_start fails before spawning (flb_fips_init, or mk_utils_worker_spawn failing), flb_stop's status branch joins ctx->config->worker, which do_start never wrote; (iv) flb_output_thread_pool_destroy skips the join of a worker whose stop command cannot be written and frees its parameters (src/flb_output_thread.c:640-644) before destroying the pool; (v) a second flb_stop after a start and a stop joins the joined engine thread again (:1058 or :1077). W47-FLB-LIB-LIFECYCLE checked the user's paired lifecycle (flb_stop has no effect after the first; declared in fluent_bit/lib_engine_thread.qv) against flb_stop's body at the three trees: L3 (a stop after a stop joins nothing), L4 (a stop after a failed start joins nothing) and L5 (a stop of a never-started context joins nothing) are each refuted on every followed path, because every feasible path of flb_stop joins ctx->config->worker and none clears it; (i), (iii) and (v) are those refutations, (v) new. DISCHARGE: for each, a native reproduction (forced engine start failure, a double flb_stop, a failed pipe write, a TSan run of flb_stop against engine exit) confirming or refuting it, recorded beside this report; no candidate becomes a defect claim without one.",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS",
+   "amended_by": "W47-FLB-LIB-LIFECYCLE"
+  },
+  {
+   "id": "W47-LIB-ENGINE-THREAD-REVIEW",
+   "title": "Review the engine-thread contracts awaiting review",
+   "why": "fluent_bit/lib_engine_thread.qv declares flb_start, flb_stop, flb_destroy (added by W47-FLB-LIB-LIFECYCLE), flb_input_thread_instance_exit, flb_output_thread_pool_destroy and flb_downstream_worker_runtime_stop, each with a contract-level resource_review_pending marker whose reason records the observed behaviour, pinned at 90978ac6, 046accf6 and 66910c10. flb_start, flb_stop and flb_destroy also carry `requires resource_lifecycle(ctx, start|stop|destroy)` (C04.11), which the rule 10q census now checks against the bodies (L1 and L6 in force as preconditions, L2 in force, L3-L5 refuted) and which refuses every per-unit call once the review hold is lifted. What stays for a reviewer is the custody part: flb_start hands ctx to the engine thread, which resource_borrowed does not say; flb_destroy's nullable release of ctx is not derived to be its whole effect; the three shutdown joiners' behaviour is read, not derived. The six declarations are withheld: every call that would apply them is held awaiting human review. DISCHARGE: a reviewer settles each custody clause (edits it to what the body does and removes the marker, or deletes the declaration), or a thread-retention vocabulary lets the census check it; re-pinned and measured on the three routes.",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS",
+   "amended_by": "W47-FLB-LIB-LIFECYCLE"
+  },
+  {
+   "id": "W47-CONDVAR-JOIN-PREMISES",
+   "title": "Derive the condvar census's stated premises",
+   "why": "Rule 10q states, and does not prove: P-SYNC-INSTANCE (a field-keyed condvar, mutex or guarded field names one object per instance, and a waiter and its signaller name the same one: the worker handshake's thi->init_condition is per input instance); P-JOIN-IDENTITY (a thread identifier stored in a field is the one the same context spawned: flb_stop's ctx->config->worker is do_start's tid); P-RETAIN (the test's published storage and the fixture are retained only by threads that run the tail input's or the test's code, taken from the loop-owner census's contexts, whose field-keyed V over-approximates); P-CHECK (acutest's TEST_CHECK is its argument's truth, read from tests/lib/acutest/acutest.h:85 and :662-722). W47-CONDVAR-JOIN-STOP-PATHS adds P-DEREF (an execution that dereferences a null pointer is not analysed: it excludes flb_stop's !ctx->config return at src/flb_lib.c:1063, the only one of 450 null tests excluded), P-POSIX-JOIN (pthread_join returns 0 unless its target is not joinable, already joined, awaited by another joiner, the caller, or in a join cycle through it) and the declared-type reader's scope (a local declaration shadows a file-scope one). W47-FLB-LIB-LIFECYCLE adds P-LIFECYCLE-INSTANCE (a lifecycle context is named by one key per instance at a time: a field key of its declared struct type or a frame-local name, created where a creator's result is assigned; flb_create is the one creator, a binding table entry). DISCHARGE: a data-flow derivation of the instance, the thread identifier and the retained storage (points-to over the published address), or narrower premises with their readings pinned; P-DEREF and P-POSIX-JOIN are the C and POSIX standards' own statements and stay named.",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-PUBLICATION",
+   "amended_by": "W47-FLB-LIB-LIFECYCLE"
+  }
+ ],
+ "residual_r2": {
+  "id": "W47-TAIL-PAUSE-BINDING-RESIDUALS",
+  "old": "after a failed flb_start that joined the engine thread the status branch joins it again, a candidate in W47-ENGINE-THREAD-JOIN-CANDIDATES)",
+  "new": "after a failed flb_start that joined the engine thread the status branch joins it again, a candidate in W47-ENGINE-THREAD-JOIN-CANDIDATES; W47-FLB-LIB-LIFECYCLE checked the paired lifecycle against the body: a stop after a failed start is not without effect, L4 is refuted and withdrawn, and the second join stands)"
+ },
+ "register": [
+  {
+   "id": "W47-LIFECYCLE-PATH-FEASIBILITY",
+   "title": "Lifecycle states on paths past a helper's null return are undetermined",
+   "why": "W47-FLB-LIB-LIFECYCLE derives each declared lifecycle call's context state per path. The path reader follows both arms of a test it cannot decide, so after test_tail_ctx_create returned NULL (having destroyed ctx->flb at tests/runtime/in_tail.c:245 or :262, or before creating it) the root continues past its `if (!TEST_CHECK(ctx != NULL))` guard on paths that cannot run: there the key's history has no creation or ends in a destroy, and the call's state is undetermined (never a violation). Measured: 37 undetermined call sites at 90978ac6, 35 at 90978ac6~1; every one of the 46 roots conforms where derived and none is derived fully conforming, the fixed pause test included (its start, stop and destroy are undetermined on those paths only). A first reading that treated those histories as violations moved 90 releases; the undetermined reading moves none. DISCHARGE: track a helper's null return (`return NULL`) into the caller's test so those arms are pruned, measured on the census (the release readings must be re-attributed).",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-FLB-LIB-LIFECYCLE",
+   "amended_by": null
+  },
+  {
+   "id": "W47-CONDVAR-JOIN-RESPAWN-COLLAPSE",
+   "title": "A second spawn of a live entry collapses into the first thread",
+   "why": "The rule 10q path reader keys a thread by its entry, so spawning an entry whose thread is still live on the path overwrites it: one later join looks like it ended both (fixture: a double start then one checked stop discharges without the lifecycle; crates/quirin-source-analysis/tests/condvar_join_lifecycle.rs nc_a_double_start_is_refused). W47-FLB-LIB-LIFECYCLE closes it only for the declared lifecycle start (a double start violates L1 and refuses every release after it). DISCHARGE: an unresolved mark (or a per-spawn-site identity) whenever an entry is spawned while a thread of it is live on the path, measured on the census at both revisions.",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-FLB-LIB-LIFECYCLE",
+   "amended_by": null
+  },
+  {
+   "id": "W47-LIFECYCLE-CREATOR-CONTRACT",
+   "title": "The lifecycle's creator is a binding table, not a checked clause",
+   "why": "W47-FLB-LIB-LIFECYCLE starts a context's history where flb_create's result is assigned (quirin_source_analysis::lifecycle_census::FLUENT_BIT_LIFECYCLE_CREATORS), a lexical binding of trust boundary 28: flb_create's declaration (fluent_bit/input_instance.qv) takes no parameter a `resource_lifecycle(ctx, ...)` clause could name. DISCHARGE: a result-side lifecycle clause for a creator, checked against its body (the returned context fresh and never started), replacing the table; measured on the census.",
+   "source": "docs/reports/w47-flb-lib-lifecycle/README.md",
+   "recorded_by": "W47-FLB-LIB-LIFECYCLE",
+   "amended_by": null
+  }
+ ]
+}

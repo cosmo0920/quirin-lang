@@ -153,10 +153,9 @@ impl C5<'_> {
     /// field key of a declared struct base, or a frame-local name.
     fn context_key(&self, definition: usize, words: &[&str]) -> Option<String> {
         match words {
-            [name] if is_identifier(name) && !KEYWORDS.contains(name) => Some(format!(
-                "{}::{name}",
-                self.definitions[definition].census
-            )),
+            [name] if is_identifier(name) && !KEYWORDS.contains(name) => {
+                Some(format!("{}::{name}", self.definitions[definition].census))
+            }
             [base, "->" | ".", field] if is_identifier(field) => {
                 self.types.get(*base).map(|ty| format!("{ty}.{field}"))
             }

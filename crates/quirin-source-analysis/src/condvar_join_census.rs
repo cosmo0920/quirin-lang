@@ -713,8 +713,7 @@ fn census_inner(
             let site = release_site(reading_release);
             // Card W47-FLB-LIB-LIFECYCLE: a violated lifecycle precondition
             // refuses the release first; it never discharges one.
-            let lifecycle_violations =
-                crate::lifecycle_census::release_violations(reading_release);
+            let lifecycle_violations = crate::lifecycle_census::release_violations(reading_release);
             let verdict = qcore_core::paired_lifecycle::lifecycle_gate(&lifecycle_violations)
                 .join(release_verdict(&site));
             let premises = release_premises(&site);

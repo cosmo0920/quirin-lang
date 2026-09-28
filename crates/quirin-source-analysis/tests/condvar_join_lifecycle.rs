@@ -240,7 +240,10 @@ fn release<'a>(census: &'a Census, what: &str) -> &'a ReleaseVerdict {
 }
 
 fn lifecycle(census: &Census) -> &LifecycleCensus {
-    census.lifecycle.as_ref().expect("lifecycle roles were given")
+    census
+        .lifecycle
+        .as_ref()
+        .expect("lifecycle roles were given")
 }
 
 fn status(census: &Census, clause: Clause, function: Option<&str>) -> ClauseStatus {
@@ -279,7 +282,8 @@ void test_case(void)
     )
 }
 
-const FIXED: &str = "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
+const FIXED: &str =
+    "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
 
 #[test]
 fn nc_a_double_start_is_refused() {
@@ -312,7 +316,9 @@ fn nc_a_double_start_is_refused() {
 #[test]
 fn nc_a_stop_that_joins_again_after_a_failed_start_refutes_l4() {
     let census = run(
-        &shape("    ret = start_failing(e, &b, 1);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }"),
+        &shape(
+            "    ret = start_failing(e, &b, 1);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }",
+        ),
         "stop",
     );
     assert!(
@@ -392,7 +398,9 @@ fn a_stop_that_joins_on_some_paths_only_holds_its_clause() {
     // of the status test, so after a stop some followed paths join again and
     // some do not: neither in force nor refuted.
     let census = run(
-        &shape("    ret = start(e, &b, 0);\n    ret = stop_once(e);\n    if (ret != 0) {\n        exit(1);\n    }"),
+        &shape(
+            "    ret = start(e, &b, 0);\n    ret = stop_once(e);\n    if (ret != 0) {\n        exit(1);\n    }",
+        ),
         "stop_once",
     );
     assert!(
@@ -459,7 +467,10 @@ fn the_lifecycle_clause_loads_and_a_malformed_one_rejects_the_module() {
         );
         let sources = BTreeMap::from([("m.qv".to_owned(), text)]);
         assert!(lifecycle_obligations(&sources).is_err(), "{clause}");
-        assert!(load_resource_contract_sources(&sources).is_err(), "{clause}");
+        assert!(
+            load_resource_contract_sources(&sources).is_err(),
+            "{clause}"
+        );
     }
 }
 
@@ -478,15 +489,17 @@ fn the_production_module_declares_the_three_roles() {
     assert_eq!(declared.len(), 3);
     assert_eq!(declared["flb_start"].operation, LifecycleOperation::Start);
     assert_eq!(declared["flb_stop"].operation, LifecycleOperation::Stop);
-    assert_eq!(declared["flb_destroy"].operation, LifecycleOperation::Destroy);
+    assert_eq!(
+        declared["flb_destroy"].operation,
+        LifecycleOperation::Destroy
+    );
 }
 
 #[test]
 fn every_resource_route_refuses_a_declared_lifecycle_call() {
     let text = module("stop");
-    let contracts =
-        load_resource_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text)]))
-            .expect("resource-v1 loads the module");
+    let contracts = load_resource_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text)]))
+        .expect("resource-v1 loads the module");
     assert!(contracts.contract("stop").is_some());
     if qcore_c_gateway::clang_command().is_err() {
         return;

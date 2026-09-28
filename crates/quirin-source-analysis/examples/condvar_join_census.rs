@@ -19,14 +19,12 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::CensusFile;
 use qcore_c_gateway::condvar_census::ReadTraceJoin;
+use qcore_c_gateway::thread_entry_census::CensusFile;
 use qcore_contract::contract_loader::lifecycle_obligations;
 use qcore_core::condvar_join::{DescendantEvidence, JoinEvidence, SyncVerdict, join_succeeds};
 use qcore_core::paired_lifecycle::ClauseStatus;
-use quirin_source_analysis::condvar_join_census::{
-    FLUENT_BIT_SYNC, census, census_with_lifecycle,
-};
+use quirin_source_analysis::condvar_join_census::{FLUENT_BIT_SYNC, census, census_with_lifecycle};
 use quirin_source_analysis::lifecycle_census::{
     FLUENT_BIT_LIFECYCLE_CREATORS, LifecycleCensus, governing_at,
 };
@@ -71,13 +69,15 @@ fn main() {
     // Card W47-FLB-LIB-LIFECYCLE: `--lifecycle-module=PATH` reads the declared
     // lifecycle obligations from that contract module.
     let mut lifecycle_module: Option<String> = None;
-    arguments.retain(|argument| match argument.strip_prefix("--lifecycle-module=") {
-        Some(path) => {
-            lifecycle_module = Some(path.to_owned());
-            false
-        }
-        None => true,
-    });
+    arguments.retain(
+        |argument| match argument.strip_prefix("--lifecycle-module=") {
+            Some(path) => {
+                lifecycle_module = Some(path.to_owned());
+                false
+            }
+            None => true,
+        },
+    );
     let [root, test, paths @ ..] = arguments.as_slice() else {
         eprintln!(
             "usage: condvar_join_census [--lifecycle-module=MODULE] SOURCE_ROOT OVERRIDE_TEST|- \

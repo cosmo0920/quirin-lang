@@ -434,6 +434,24 @@ A condvar and a mutex name `ptr<mut, u8>` parameters, distinct; a wait names bot
 
 The Lean model is `QCore.CondvarJoin`.
 
+### C04.11. The paired lifecycle obligation
+
+Card W47-FLB-LIB-LIFECYCLE (gateway rule 10q as amended). A library whose context is started and stopped in pairs (Fluent Bit's `flb_start`/`flb_stop`/`flb_destroy`) states an API contract no custody mode says: which calls are permitted in which state, and what a stop does after the first. A resource-v1 declaration MAY carry, beside the selector, at most one
+
+```qcore
+requires resource_lifecycle(ctx, start);
+requires resource_lifecycle(ctx, stop);
+requires resource_lifecycle(ctx, destroy);
+```
+
+`ctx` names a `ptr<mut, u8>` parameter, the context. Any other spelling or operation, a second clause, a wrong or unknown parameter, or a review marker wrapping the clause rejects the **whole module**. An inherited declaration carries exactly its parent's obligation (C15). The clause adds no custody mode and nothing to the environment's serialized form; a consumer rederives it from the retained texts (`declared_lifecycle_obligations`).
+
+**The state machine.** A context is *created*, *started* by a start (on a path, with the value the start returned: 0, nonzero or undecided), *stopped*, or *destroyed*. A start is permitted only from created or stopped (L1); a destroy only from created or stopped (L6); nothing is permitted after a destroy. A stop from created leaves it created, and from any started state or stopped goes to stopped. The effect clauses are: L2, the first stop after a start that returned 0 joins the thread that start began, exactly once; L3, L4 and L5, a stop after a stop, after a start that returned nonzero, and of a never-started context joins nothing.
+
+**Checked, never trusted.** L1 and L6 are preconditions on the caller: they only refuse, so they are in force by construction. Each effect clause is checked against the declared stop's body, run by the path reader from the state it speaks about, and is **in force** only where every followed path satisfies it with nothing unresolved; it is **refuted** where every followed path contradicts it (the reader follows every arm it cannot decide, so only a contradiction on every path is a refutation); otherwise it is **held**. Only an in-force clause may be applied; a refuted clause is withdrawn from every caller in the sense of C06.4 (the caller's stop is read from the body), and a held one applies nowhere. A refutation names a candidate upstream path, never a verified defect. A consumer that derives no context state MUST refuse every call of a declared function as it refuses an uncontracted one; the gateway's per-unit resource route is such a consumer. The census of rule 10q is the consumer that reads the states: a call whose context's derived state violates L1 or L6 on a path refuses every release that path reaches; a state it cannot derive (no creation on the path, a key whose instance was destroyed) decides nothing. A context is named by one key per instance (P-LIFECYCLE-INSTANCE, stated), entering *created* where a creator's result is assigned to it.
+
+The Lean model is `QCore.CondvarJoin` (section `Lifecycle`).
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

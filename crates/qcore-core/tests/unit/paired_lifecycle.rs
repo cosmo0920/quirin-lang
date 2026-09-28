@@ -115,7 +115,8 @@ fn a_contradiction_on_some_paths_only_is_held_not_refuted() {
 #[test]
 fn an_unresolved_reading_holds_the_clause() {
     let mut open = path(&[]);
-    open.unresolved.insert("a hop the reader does not follow".to_owned());
+    open.unresolved
+        .insert("a hop the reader does not follow".to_owned());
     assert!(matches!(
         no_effect_status(&[open.clone()]),
         ClauseStatus::Held { .. }
@@ -127,7 +128,10 @@ fn an_unresolved_reading_holds_the_clause() {
         ClauseStatus::Held { .. }
     ));
     assert!(matches!(no_effect_status(&[]), ClauseStatus::Held { .. }));
-    assert!(matches!(ends_started_status(&[]), ClauseStatus::Held { .. }));
+    assert!(matches!(
+        ends_started_status(&[]),
+        ClauseStatus::Held { .. }
+    ));
 }
 
 #[test]
@@ -205,18 +209,28 @@ fn the_paired_sequences_are_accepted() {
 #[test]
 fn the_governing_clauses_follow_the_start_outcome() {
     let governed = |outcome| {
-        step(State::Started(outcome), Operation::Stop, StartOutcome::Undecided)
-            .unwrap()
-            .governed_by
+        step(
+            State::Started(outcome),
+            Operation::Stop,
+            StartOutcome::Undecided,
+        )
+        .unwrap()
+        .governed_by
     };
-    assert_eq!(governed(StartOutcome::Succeeded), vec![Clause::StopEndsStarted]);
+    assert_eq!(
+        governed(StartOutcome::Succeeded),
+        vec![Clause::StopEndsStarted]
+    );
     assert_eq!(
         governed(StartOutcome::Failed),
         vec![Clause::StopAfterFailedStartNoEffect]
     );
     assert_eq!(
         governed(StartOutcome::Undecided),
-        vec![Clause::StopEndsStarted, Clause::StopAfterFailedStartNoEffect]
+        vec![
+            Clause::StopEndsStarted,
+            Clause::StopAfterFailedStartNoEffect
+        ]
     );
     assert_eq!(
         step(State::Stopped, Operation::Stop, StartOutcome::Undecided)
