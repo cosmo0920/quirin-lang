@@ -1,0 +1,3708 @@
+{
+ "after_tally": {
+  "broadcast": {
+   "refused (broadcast)": 4,
+   "unresolved": 1
+  },
+  "destroy": {
+   "discharged": 1,
+   "unresolved": 11
+  },
+  "init": {
+   "discharged": 2,
+   "unresolved": 9
+  },
+  "read": {
+   "discharged": 3,
+   "unresolved": 15
+  },
+  "refused": {
+   "refused (recursive-or-dynamic-mutex)": 2,
+   "refused (rwlock)": 5,
+   "refused (try-or-timed-lock)": 8
+  },
+  "release": {
+   "discharged": 97,
+   "not discharged": 131
+  },
+  "signal": {
+   "discharged": 4,
+   "not discharged": 4,
+   "unresolved": 3
+  },
+  "wait": {
+   "discharged": 5,
+   "not discharged": 1,
+   "refused (wait-outside-predicate-loop)": 1,
+   "unresolved": 6
+  }
+ },
+ "before_tally": {
+  "broadcast": {
+   "refused (broadcast)": 4,
+   "unresolved": 1
+  },
+  "destroy": {
+   "discharged": 1,
+   "unresolved": 11
+  },
+  "init": {
+   "discharged": 2,
+   "unresolved": 9
+  },
+  "read": {
+   "discharged": 3,
+   "unresolved": 15
+  },
+  "refused": {
+   "refused (recursive-or-dynamic-mutex)": 2,
+   "refused (rwlock)": 5,
+   "refused (try-or-timed-lock)": 8
+  },
+  "release": {
+   "discharged": 97,
+   "not discharged": 131
+  },
+  "signal": {
+   "discharged": 4,
+   "not discharged": 4,
+   "unresolved": 3
+  },
+  "wait": {
+   "discharged": 5,
+   "not discharged": 1,
+   "refused (wait-outside-predicate-loop)": 1,
+   "unresolved": 6
+  }
+ },
+ "changes": {
+  "releases": [
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "CheckedSuccess @ src/flb_lib.c:1077",
+     "Failed @ src/flb_lib.c:1077",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "src/flb_lib.c",
+     216,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     245,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     253,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     262,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2730,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2749,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2761,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "CheckedSuccess @ src/flb_lib.c:1077",
+     "Failed @ src/flb_lib.c:1077",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2775,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2789,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2803,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     2804,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:1008 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:965 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:971 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "CheckedSuccess @ src/flb_lib.c:1077",
+     "Failed @ src/flb_lib.c:1077",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "src/flb_lib.c",
+     216,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     245,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     253,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     262,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:1008 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:965 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:971 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3045,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3064,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3088,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3117,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3124,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3138,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_compare_filename",
+     "tests/runtime/in_tail.c",
+     3139,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "CheckedSuccess @ src/flb_lib.c:1077",
+     "Failed @ src/flb_lib.c:1077",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "src/flb_lib.c",
+     216,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     245,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     253,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     262,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2859,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:1008 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:965 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `src/flb_lib.c::do_start` at src/flb_lib.c:971 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2878,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2903,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2932,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_log_destroy` at src/flb_log.c:1366 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_log_destroy` at src/flb_log.c:1366 without joining",
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2947,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2974,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2991,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_db_delete_stale_file",
+     "tests/runtime/in_tail.c",
+     2992,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_exclude_path",
+     "tests/runtime/in_tail.c",
+     1633,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_exclude_path",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_exclude_path",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_ignore_older",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_ignore_older",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_dockermode",
+     "tests/runtime/in_tail.c",
+     644,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_dockermode_firstline_detection",
+     "tests/runtime/in_tail.c",
+     644,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_dockermode_multiple_lines",
+     "tests/runtime/in_tail.c",
+     644,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_dockermode_splitted_line",
+     "tests/runtime/in_tail.c",
+     644,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_dockermode_splitted_multiple_lines",
+     "tests/runtime/in_tail.c",
+     644,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_big5",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_gb18030",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_gbk",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_sjis",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1250",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1251",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1252",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1253",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1254",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1255",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_generic_enc_win1256",
+     "tests/runtime/in_tail.c",
+     764,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     2160,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     2168,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     2179,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     2191,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     2245,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     2252,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     2260,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     2274,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     2291,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     2335,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     2342,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     2350,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     2363,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     2379,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_issue_3943",
+     "tests/runtime/in_tail.c",
+     1387,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_issue_3943",
+     "tests/runtime/in_tail.c",
+     1389,
+     "scope end of `result`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_multiline_json_and_regex",
+     "tests/runtime/in_tail.c",
+     1470,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_multiline_json_and_regex",
+     "tests/runtime/in_tail.c",
+     1472,
+     "scope end of `result`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_skip_long_lines",
+     "tests/runtime/in_tail.c",
+     1077,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_skip_long_lines",
+     "tests/runtime/in_tail.c",
+     1080,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_skip_long_lines",
+     "tests/runtime/in_tail.c",
+     1081,
+     "scope end of `result`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines",
+     "tests/runtime/in_tail.c",
+     1227,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines",
+     "tests/runtime/in_tail.c",
+     1230,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines",
+     "tests/runtime/in_tail.c",
+     1231,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines_utf8",
+     "tests/runtime/in_tail.c",
+     1304,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines_utf8",
+     "tests/runtime/in_tail.c",
+     1307,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_truncate_long_lines_utf8",
+     "tests/runtime/in_tail.c",
+     1308,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16be_c",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16be_j",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16be_subdivision_flags",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16le_c",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16le_j",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_in_tail_utf16le_subdivision_flags",
+     "tests/runtime/in_tail.c",
+     917,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_pause_collectors",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_pause_collectors",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_threaded_pause_collectors",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_threaded_pause_collectors",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_watcher_false",
+     "tests/runtime/in_tail.c",
+     2437,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_watcher_false",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_inotify_watcher_false",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_multiline_offset_key",
+     "tests/runtime/in_tail.c",
+     1884,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_multiline_offset_key",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_multiline_offset_key",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_offset_key",
+     "tests/runtime/in_tail.c",
+     1799,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_offset_key",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_offset_key",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_parser",
+     "tests/runtime/in_tail.c",
+     2620,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_parser",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_parser",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_comma",
+     "tests/runtime/in_tail.c",
+     1524,
+     "scope end of `unused`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_comma",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_comma",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_key",
+     "tests/runtime/in_tail.c",
+     1583,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_key",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_path_key",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines",
+     "tests/runtime/in_tail.c",
+     1953,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines_crlf",
+     "tests/runtime/in_tail.c",
+     2022,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines_crlf",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_skip_empty_lines_crlf",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_tag_regex",
+     "tests/runtime/in_tail.c",
+     2682,
+     "scope end of `expected`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "change": "evidence",
+    "flb_lib_worker_paths_added": [
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:984",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:999"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_tag_regex",
+     "tests/runtime/in_tail.c",
+     286,
+     "`unlink`"
+    ]
+   },
+   {
+    "after": {
+     "reason": "`flb_lib_worker` is joined a second time on a path (src/flb_lib.c:1058): a join of a thread that is no longer joinable ends nothing",
+     "verdict": "not discharged"
+    },
+    "before": {
+     "reason": "released before any join of `flb_lib_worker` (returned from `flb_stop` at src/flb_lib.c:1063 without joining)",
+     "verdict": "not discharged"
+    },
+    "change": "reason",
+    "flb_lib_worker_paths_added": [
+     "Repeated @ src/flb_lib.c:1058",
+     "Repeated @ src/flb_lib.c:1077",
+     "UncheckedFirst { wrapper: \"mk_utils_worker_spawn\" } @ src/flb_lib.c:1058"
+    ],
+    "flb_lib_worker_paths_removed": [
+     "Absent { timed_out: false, awaited: false } @ returned from `flb_stop` at src/flb_lib.c:1063 without joining",
+     "Unchecked @ src/flb_lib.c:1058",
+     "Unchecked @ src/flb_lib.c:984",
+     "Unchecked @ src/flb_lib.c:999"
+    ],
+    "key": [
+     "flb_test_tag_regex",
+     "tests/runtime/in_tail.c",
+     293,
+     "`flb_destroy`"
+    ]
+   }
+  ],
+  "sites": []
+ },
+ "counts": {
+  "releases": {
+   "evidence": 19,
+   "reason": 112,
+   "unchanged": 97
+  },
+  "sites": {
+   "unchanged": 85
+  }
+ },
+ "null_tests": 450,
+ "null_tests_excluded": [
+  "src/flb_lib.c:1062 ctx->config (true when null)"
+ ],
+ "releases_that_keep_the_config_branch": 0,
+ "releases_that_lost_the_config_branch": 113,
+ "releases_with_a_repeated_join": 104,
+ "verdict_moves": {}
+}

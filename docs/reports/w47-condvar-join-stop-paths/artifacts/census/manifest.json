@@ -1,0 +1,47 @@
+{
+ "build.exit": {
+  "bytes": 2,
+  "file": "build.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "build.log": {
+  "bytes": 0,
+  "file": "build.log.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "fixed.exit": {
+  "bytes": 2,
+  "file": "fixed.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "fixed.json": {
+  "bytes": 1390354,
+  "file": "fixed.json.gz",
+  "sha256": "5195d5f8e4d0e18fb47e8061336798d3e473cadaab1c90b2760c8573919f7ff8"
+ },
+ "fixed.stderr": {
+  "bytes": 0,
+  "file": "fixed.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "previous.exit": {
+  "bytes": 2,
+  "file": "previous.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "previous.json": {
+  "bytes": 1370820,
+  "file": "previous.json.gz",
+  "sha256": "fdd6dbe60558cca4f153469c600a210c99f3fe7638e224b18a14a50eb6ee190f"
+ },
+ "previous.stderr": {
+  "bytes": 0,
+  "file": "previous.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "tests.sha256": {
+  "bytes": 389,
+  "file": "tests.sha256.gz",
+  "sha256": "d837561406b6e43e036cb4f278ef343332910e557ff74836998e3d305af6d6ed"
+ }
+}

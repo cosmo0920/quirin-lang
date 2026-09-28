@@ -1,0 +1,55 @@
+{
+ "amend": [
+  {
+   "id": "W47-CONDVAR-JOIN-DESCENDANT-JOINS",
+   "title": "A live thread's own children: derive their joins before it ends",
+   "why": "W47-CONDVAR-JOIN-STOP-PATHS (rule 10q amended) now decides every descendant of a live retaining thread from its parent's own entry, run by the path reader to its exit: joined (checked, or an unchecked first join whose POSIX cases are excluded), never joined (not discharged), or unresolved with the reason. Measured at 90978ac6 on the fixed in_tail test: 4 retaining descendants at the non-engine releases (downstream_worker_thread, input_thread, output_thread, update_pod_service_map; parents flb_lib_worker, input_thread, downstream_worker_thread) and 9 at flb_destroy (adding do_reload, etw_worker, log_worker_collector and the wrapper-internal entries mk_utils_worker_entry and step_callback, which are decided under their callers' entries); none is derived joined. flb_lib_worker's run carries 8 reasons: three bodies the path reader does not nest into (flb_stop, flb_chunk_trace_destroy, trace_chunk_context_destroy), four calls that may start a thread through a hop it does not follow (flb_custom_init_all, flb_input_chunk_set_limits, flb_processor_destroy, trace_pipeline_shutdown), and its 200,000-step budget; input_thread 4 such hops; downstream_worker_thread and trace_chunk_pipeline_thread are not read (goto, src/flb_downstream_worker.c:244, src/flb_chunk_trace.c:179). The shutdown joins, read and not derived, all ignore their result: src/flb_input_thread.c:607, src/flb_output_thread.c:646, src/flb_downstream_worker.c:520, plugins/filter_kubernetes/kubernetes.c:916 (recorded as contracts awaiting review in fluent_bit/lib_engine_thread.qv). DISCHARGE: the engine thread's path to its exit read within budget (a CFG reading of goto, the nesting limit, the named hops), and each retaining child's join derived checked or POSIX-admitted, measured on the census.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-PUBLICATION",
+   "amended_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  },
+  {
+   "id": "W47-CONDVAR-JOIN-PREMISES",
+   "title": "Derive the condvar census's stated premises",
+   "why": "Rule 10q states, and does not prove: P-SYNC-INSTANCE (a field-keyed condvar, mutex or guarded field names one object per instance, and a waiter and its signaller name the same one: the worker handshake's thi->init_condition is per input instance); P-JOIN-IDENTITY (a thread identifier stored in a field is the one the same context spawned: flb_stop's ctx->config->worker is do_start's tid); P-RETAIN (the test's published storage and the fixture are retained only by threads that run the tail input's or the test's code, taken from the loop-owner census's contexts, whose field-keyed V over-approximates); P-CHECK (acutest's TEST_CHECK is its argument's truth, read from tests/lib/acutest/acutest.h:85 and :662-722). W47-CONDVAR-JOIN-STOP-PATHS adds P-DEREF (an execution that dereferences a null pointer is not analysed: it excludes flb_stop's !ctx->config return at src/flb_lib.c:1063, the only one of 450 null tests excluded), P-POSIX-JOIN (pthread_join returns 0 unless its target is not joinable, already joined, awaited by another joiner, the caller, or in a join cycle through it) and the declared-type reader's scope (a local declaration shadows a file-scope one). DISCHARGE: a data-flow derivation of the instance, the thread identifier and the retained storage (points-to over the published address), or narrower premises with their readings pinned; P-DEREF and P-POSIX-JOIN are the C and POSIX standards' own statements and stay named.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-PUBLICATION",
+   "amended_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  }
+ ],
+ "residual_r2": {
+  "id": "W47-TAIL-PAUSE-BINDING-RESIDUALS",
+  "old": "R2 flb_stop's NONE/ERROR branch returns 0 without checking its join, and ctx->status is a plain field written by E (src/flb_lib.c:932) and read by T;",
+  "new": "R2 flb_stop's NONE/ERROR branch returns 0 without checking its join, and ctx->status is a plain field written by E (src/flb_lib.c:932) and read by T (decided by W47-CONDVAR-JOIN-STOP-PATHS: the !ctx->config return is derived infeasible; the status branch's first join is not derived successful, its busy and join-cycle POSIX cases open; after a failed flb_start that joined the engine thread the status branch joins it again, a candidate in W47-ENGINE-THREAD-JOIN-CANDIDATES);"
+ },
+ "register": [
+  {
+   "id": "W47-CONDVAR-JOIN-INSTANCE-IDENTITY",
+   "title": "Tell one engine instance's joins from another's",
+   "why": "The unchecked first join of flb_lib_worker on flb_stop's status branch (src/flb_lib.c:1058) is not derived successful because its POSIX busy case is open: the census names a thread by its entry, and 7 reached join sites may name the same identifier off the test thread. Four are flb_stop's and do_start's own joins (:984, :999, :1058, :1077), reached on six other threads (flb_lib_worker, input_thread, output_thread, downstream_worker_thread, trace_chunk_pipeline_thread, mk_sched_launch_worker_loop) through the chunk-trace pipeline's own flb_stop/flb_start of the context it creates; three read an identity the reader does not (lib/monkey/mk_server/mk_clock.c:133 `mk_clock_tid` from pthread_self, plugins/filter_throttle_size/throttle_size.c:756 a cast, plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 a vendored test in the file set). DISCHARGE: derive that the chunk-trace pipeline's context is a different flb_create allocation from the test's (allocation freshness of the flb field of its context) and read the three identities, measured on the census.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  },
+  {
+   "id": "W47-CONDVAR-JOIN-SELF-IDENTIFIER",
+   "title": "pthread_self sites on unresolved paths keep the join-cycle case open",
+   "why": "The join-cycle POSIX case of every unchecked first join by the test thread stays open: 6 reached pthread_self() sites may keep the joiner's identifier because some path to them is unresolved: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103 and five in lib/monkey/mk_core/external/winpthreads.c (:445, :462, :474, :1089, :1099), a Windows-only file the unconfigured census reads. DISCHARGE: the loop-owner census's configured reading (W47-LOOP-OWNER-COROUTINE-HOP) applied to the condvar census's file set, and the paths to evthread_pthread.c closed, measured on the census.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  },
+  {
+   "id": "W47-ENGINE-THREAD-JOIN-CANDIDATES",
+   "title": "Candidate upstream engine-thread join issues (not verified)",
+   "why": "Read at Fluent Bit 90978ac6 (bodies identical at 046accf6 and 66910c10) and recorded as candidates only, never Unsafe: (i) after a flb_start whose engine thread reported FLB_ENGINE_FAILED or whose notification read failed, do_start joins the thread (src/flb_lib.c:984, :999) and sets FLB_LIB_ERROR, and a following flb_stop joins it again on its status branch (:1058), undefined under POSIX; the fixed in_tail test calls flb_stop whatever flb_start returned; (ii) ctx->status is written by the engine thread (:932) and read by flb_stop (:1049) without synchronisation; (iii) when flb_start fails before spawning (flb_fips_init, or mk_utils_worker_spawn failing), flb_stop's status branch joins ctx->config->worker, which do_start never wrote; (iv) flb_output_thread_pool_destroy skips the join of a worker whose stop command cannot be written and frees its parameters (src/flb_output_thread.c:640-644) before destroying the pool. DISCHARGE: for each, a native reproduction (forced engine start failure, a failed pipe write, a TSan run of flb_stop against engine exit) confirming or refuting it, recorded beside this report; no candidate becomes a defect claim without one.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  },
+  {
+   "id": "W47-LIB-ENGINE-THREAD-REVIEW",
+   "title": "Review the five engine-thread contracts awaiting review",
+   "why": "fluent_bit/lib_engine_thread.qv declares flb_start, flb_stop, flb_input_thread_instance_exit, flb_output_thread_pool_destroy and flb_downstream_worker_runtime_stop, each with a contract-level resource_review_pending marker whose reason records the observed thread behaviour (join on a branch, ignored result, return without a join, the candidates of W47-ENGINE-THREAD-JOIN-CANDIDATES), pinned at 90978ac6, 046accf6 and 66910c10. v1 has no clause for a thread start, a join or a thread's retention of an argument, so the declarations are withheld: every call that would apply them is held awaiting human review (measured in the report's arbiter comparison). DISCHARGE: a reviewer settles each (edits the clauses to what the body does and removes the marker, or deletes the declaration), or a thread-lifecycle vocabulary lets the census check the behaviour against the body; re-pinned and measured on the three routes.",
+   "source": "docs/reports/w47-condvar-join-stop-paths/README.md",
+   "recorded_by": "W47-CONDVAR-JOIN-STOP-PATHS"
+  }
+ ]
+}

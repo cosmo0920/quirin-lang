@@ -1356,3 +1356,51 @@ which is not a second authority.
     context by every live thread); and acutest's per-test fork. A refusal is
     `Unknown`, never `Unsafe` or an upstream defect claim. `QCore.CondvarJoin`;
     [report](../reports/w47-condvar-join-publication/README.md).
+    **Amendment (W47-CONDVAR-JOIN-STOP-PATHS): stop paths, POSIX joins and
+    descendants.** (1) The path reader drops the null arm of a field test
+    (`!X->F`, `X->F == NULL`) only where the kernel's
+    `null_branch_excluded` admits it: an earlier top-level statement on every
+    path to the test in the same function dereferences `X->F` (not in a
+    call's arguments, under `sizeof` or beside a conditional operator),
+    `X` and `X->F` are never assigned and `&X` never taken there, `X`'s
+    declared type is read, and every store of `F` into an object of that
+    type in the file set is a pre-publication store (into a local holding a
+    table allocator's result that no call, store or return has received on a
+    path to it), with no address of the field and no whole-object write of
+    the type; an unread base type anywhere fails it. (2) A join of a thread
+    the path already joined is **repeated** and never ends it. An unchecked
+    **first** join (of a thread the path started, recorded with its spawn
+    wrapper) counts as successful only where `join_succeeds` admits all four
+    POSIX exclusions: *joinable* (the wrapper's body calls `pthread_create`
+    once through its out-parameter with a null or `PTHREAD_CREATE_JOINABLE`
+    attribute and names no detach, and no reached detach may name the
+    thread), *not busy* (no reached join that may name it runs off the
+    joining thread or on a path some hop leaves unresolved), *not self* and
+    *no cycle* (no reached `pthread_self()` that may keep its value runs on
+    the joining thread or on an unresolved path; one passed straight to
+    `pthread_equal`/`pthread_kill` is not kept). It stays "not checked"
+    otherwise. (3) Each spawned entry is run on its own thread to its exit
+    (bounded by a step budget whose exhaustion is unresolved); a live
+    retaining thread's descendants are decided per parent: *joined* (every
+    exit path joined it by a checked or admitted first join, nothing
+    unresolved, and so its own descendants), *never joined* (no reached join
+    may name it and every join identity is read: not discharged), or
+    unresolved with the reason (a spawn wrapper's own internal entry is
+    unresolved, never never-joined). **Do not** exclude a null arm on a
+    dereference the build may drop (a macro argument), read an unchecked
+    join as a checked one, count a join whose POSIX case is open, or treat an
+    unread join identity as naming another thread. Premises added (trust
+    boundary 28): **P-DEREF** (an execution that dereferences a null pointer
+    is not analysed) and **P-POSIX-JOIN** (`pthread_join` returns 0 unless
+    its target is not joinable, already joined, awaited by another joiner,
+    the caller, or in a join cycle through it; the default and the
+    `PTHREAD_CREATE_JOINABLE` detach states are joinable); the declared-type
+    reader's scope (a local declaration shadows a file-scope one; a name
+    declared by a declaration the reader cannot split is unread) and C's
+    effective-type rule. Every decision names the premises it used
+    (`release_premises`). `QCore.CondvarJoin` proves the dropped arm's
+    derivation, the four-case join rule, the repeated join and the
+    descendant block; the observed engine-thread facts are recorded as
+    Fluent Bit contracts awaiting review (`fluent_bit/lib_engine_thread.qv`,
+    §C06.1: withheld, never `Safe`);
+    [report](../reports/w47-condvar-join-stop-paths/README.md).

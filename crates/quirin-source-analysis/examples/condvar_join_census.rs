@@ -206,7 +206,7 @@ fn main() {
         "entry_exits": result.reading.entry_exits.iter().map(|(entry, exit)| (entry.clone(), serde_json::json!({
             "started": exit.live.keys().collect::<Vec<_>>(),
             "unresolved_count": exit.unresolved.len(),
-            "unresolved": exit.unresolved.iter().take(3).collect::<Vec<_>>(),
+            "unresolved": exit.unresolved.iter().collect::<Vec<_>>(),
         }))).collect::<BTreeMap<_, _>>(),
         "tally": tally,
         "sites": sites,
