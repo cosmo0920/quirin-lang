@@ -125,6 +125,11 @@ mod typed_positions;
 #[path = "legacy_typed_roots.rs"]
 mod typed_roots;
 
+// Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
+// C's evaluation order admits. Hooks are thin.
+#[path = "legacy_typed_residuals.rs"]
+mod typed_residuals;
+
 // Card W44-LEAK-PIN-AUDIT: the refused-escape rule, the cast return
 // (`RETURN-CAST-PLACE-NOT-ESCAPED`) and the leak-witness census.
 #[path = "legacy_refused_operands.rs"]
@@ -6020,6 +6025,14 @@ impl Parser<'_> {
                 let returned_evaluation = (!strict && !untracked_pointer)
                     .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
+                // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n). Asked last.
+                if !strict
+                    && !untracked_pointer
+                    && returned_evaluation.is_none()
+                    && let Some(desugared) = self.typed_connective_return(&expression, line)
+                {
+                    return Ok(desugared);
+                }
                 #[cfg(feature = "indirect-census")]
                 if !strict && !untracked_pointer && returned_evaluation.is_none() {
                     self.census_return(line, &texts);

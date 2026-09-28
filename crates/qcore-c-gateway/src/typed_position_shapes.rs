@@ -14,7 +14,9 @@ use std::collections::BTreeSet;
 
 use serde_json::Value;
 
-use crate::typed_access_path::{StatementIndex, StatementPlan, is_scalar, qual, record_row};
+use crate::typed_access_path::{
+    EnumFacts, StatementIndex, StatementPlan, is_scalar, qual, record_row,
+};
 use crate::typed_c_ast::{children, kind};
 
 /// The kind of position a residual row describes.
@@ -53,9 +55,9 @@ pub(crate) fn anonymous_enum_spelling(text: &str) -> bool {
     // An owner-qualified desugared spelling: `enum S::(unnamed at …)`.
     let rest = match rest.find("::(") {
         Some(at)
-            if rest[..at]
-                .split("::")
-                .all(|part| !part.is_empty() && part.chars().all(|c| c == '_' || c.is_ascii_alphanumeric())) =>
+            if rest[..at].split("::").all(|part| {
+                !part.is_empty() && part.chars().all(|c| c == '_' || c.is_ascii_alphanumeric())
+            }) =>
         {
             &rest[at + 2..]
         }
@@ -69,6 +71,255 @@ pub(crate) fn anonymous_enum_spelling(text: &str) -> bool {
         || inner.starts_with("anonymous at ")
         || inner.starts_with("anonymous enum at "))
         && !inner.contains(['(', ')', '*', '['])
+}
+
+/// Step 1 of rule 10n: an address `&PATH` is a pointer value.
+pub(crate) const ADDRESS_ARM: bool = true;
+
+/// `(&X)->f` read as `X.f`: the base of an arrow member that is, through
+/// parentheses, the address of a place. Anything else is returned unchanged.
+pub(crate) fn arrow_through_address(base: &Value, arrow: bool) -> (&Value, bool) {
+    if !ADDRESS_ARM || !arrow {
+        return (base, arrow);
+    }
+    let mut cursor = base;
+    while kind(cursor) == "ParenExpr" {
+        let Some(inner) = children(cursor).first() else {
+            return (base, arrow);
+        };
+        cursor = inner;
+    }
+    if kind(cursor) != "UnaryOperator" || cursor["opcode"].as_str() != Some("&") {
+        return (base, arrow);
+    }
+    let Some(mut place) = children(cursor).first() else {
+        return (base, arrow);
+    };
+    while kind(place) == "ParenExpr" {
+        let Some(inner) = children(place).first() else {
+            return (base, arrow);
+        };
+        place = inner;
+    }
+    if matches!(kind(place), "MemberExpr" | "ArraySubscriptExpr") {
+        (place, false)
+    } else {
+        (base, arrow)
+    }
+}
+
+impl crate::typed_access_path::Reader<'_> {
+    /// `&PATH`: every hop of `PATH` is checked exactly as its read would be
+    /// (each dereferenced root and link), and the final place is not read.
+    /// `PATH` is a member or subscript place; the address of a whole object
+    /// (`&name`) or of `*p` is refused.
+    pub(crate) fn address(&mut self, node: &Value, handed_to_a_callee: bool) -> Option<()> {
+        if !ADDRESS_ARM || kind(node) != "UnaryOperator" || node["opcode"].as_str() != Some("&") {
+            return None;
+        }
+        let mut place = children(node).first()?;
+        if handed_to_a_callee {
+            // O04-B09B10's shape: `& BASE -> FIELD` (or `.`) exactly, a member
+            // and never an element or a parenthesized place, since the callee
+            // may write through it.
+            if kind(place) != "MemberExpr" {
+                return None;
+            }
+        } else {
+            while kind(place) == "ParenExpr" {
+                place = children(place).first()?;
+            }
+            if !matches!(kind(place), "MemberExpr" | "ArraySubscriptExpr") {
+                return None;
+            }
+        }
+        // O04-B09B10's disjointness premise, on Clang's type: the place is an
+        // object that is not a pointer, an array or a function pointer, and
+        // not volatile or atomic, so a callee writing through the address
+        // reaches no member this projection links.
+        let place_type = qual(place)?;
+        if place_type.contains(['*', '[', '('])
+            || place_type.contains("volatile")
+            || place_type.contains("_Atomic")
+        {
+            return None;
+        }
+        self.address_target = true;
+        let read = self.path(place, false, false);
+        self.address_target = false;
+        read
+    }
+}
+
+/// Step 2 of rule 10n: an ambiguous operand is matched within the
+/// controlling expressions and returned values of the body.
+pub(crate) const SCOPE_MATCH: bool = true;
+
+/// Collect every expression node inside a controlling expression (`if`,
+/// `while`, `do`, `switch`, a `for` condition) or a `return` value of the
+/// body, in Clang's own child slots, each with whether it sits in a Boolean
+/// leaf position: its nearest non-wrapper parent is the slot itself, `&&`,
+/// `||`, `!`, a `?:` or `__builtin_expect` (the positions rule 5h's parse
+/// makes a leaf of).
+fn scoped<'a>(node: &'a Value, out: &mut Vec<(&'a Value, bool)>) {
+    let inner = children(node);
+    let slot = match kind(node) {
+        // C has no `if`/`switch` initialiser or condition variable; Clang
+        // flags them, and a flagged statement contributes no slot.
+        "IfStmt" | "SwitchStmt"
+            if node["hasInit"].as_bool() != Some(true)
+                && node["hasVar"].as_bool() != Some(true) =>
+        {
+            inner.first()
+        }
+        "WhileStmt" if node["hasVar"].as_bool() != Some(true) => inner.first(),
+        "DoStmt" => inner.get(1),
+        "ForStmt" if inner.len() == 5 => inner.get(2),
+        "ReturnStmt" => inner.first(),
+        _ => None,
+    };
+    if let Some(slot) = slot {
+        every_expression(slot, true, out);
+    }
+    for child in inner {
+        scoped(child, out);
+    }
+}
+
+fn boolean_parent(node: &Value) -> bool {
+    match kind(node) {
+        "BinaryOperator" => matches!(node["opcode"].as_str(), Some("&&" | "||")),
+        "UnaryOperator" => node["opcode"].as_str() == Some("!"),
+        "ConditionalOperator" => true,
+        "CallExpr" => children(node).first().is_some_and(|callee| {
+            let mut callee = callee;
+            while kind(callee) == "ImplicitCastExpr" {
+                match children(callee).first() {
+                    Some(inner) => callee = inner,
+                    None => return false,
+                }
+            }
+            callee["referencedDecl"]["name"].as_str() == Some("__builtin_expect")
+        }),
+        _ => false,
+    }
+}
+
+fn every_expression<'a>(node: &'a Value, leaf: bool, out: &mut Vec<(&'a Value, bool)>) {
+    out.push((node, leaf));
+    let transparent = matches!(
+        kind(node),
+        "ParenExpr" | "ImplicitCastExpr" | "ConstantExpr" | "FullExpr" | "ExprWithCleanups"
+    );
+    let below = if transparent {
+        leaf
+    } else {
+        boolean_parent(node)
+    };
+    for child in children(node) {
+        every_expression(child, below, out);
+    }
+}
+
+/// The one candidate inside a controlling expression or a returned value;
+/// among several such, the one in a Boolean leaf position. Anything else
+/// (none, or several survivors) refuses.
+pub(crate) fn controlling_scope<'a>(
+    body: &'a Value,
+    candidates: &[&'a Value],
+) -> Option<&'a Value> {
+    if !SCOPE_MATCH {
+        return None;
+    }
+    let mut scope = Vec::new();
+    scoped(body, &mut scope);
+    let inside = candidates
+        .iter()
+        .filter_map(|node| {
+            scope
+                .iter()
+                .find(|(scoped, _)| std::ptr::eq(*scoped, *node))
+                .map(|(_, leaf)| (*node, *leaf))
+        })
+        .collect::<Vec<_>>();
+    match inside.as_slice() {
+        [(node, _)] => Some(node),
+        [_, _, ..] => {
+            let mut leaves = inside.iter().filter(|(_, leaf)| *leaf);
+            let (node, _) = leaves.next()?;
+            leaves.next().is_none().then_some(*node)
+        }
+        [] => None,
+    }
+}
+
+/// Step 3 of rule 10n: an inline anonymous enumeration member is a scalar.
+pub(crate) const ANONYMOUS_ENUM_ARM: bool = true;
+
+/// Collect, from one `RecordDecl`, the `FieldDecl` ids whose type is an
+/// anonymous enumeration defined inline in the same record: Clang places the
+/// unnamed `EnumDecl` immediately before the field(s) it declares
+/// (`enum { A, B } state;`, or `enum { A, B } a, b;`), and each such field's
+/// type spells `enum (unnamed … at …)`. Anything else between the two ends
+/// the run: positive structural evidence, never a spelling alone.
+pub(crate) fn collect_anonymous_enum_members(record: &Value, out: &mut BTreeSet<String>) {
+    if record["completeDefinition"].as_bool() != Some(true)
+        || record["tagUsed"].as_str() != Some("struct")
+    {
+        return;
+    }
+    let mut open = false;
+    for child in children(record) {
+        match kind(child) {
+            "EnumDecl" => {
+                open = child["name"].as_str().is_none_or(str::is_empty)
+                    && children(child)
+                        .iter()
+                        .all(|constant| kind(constant) == "EnumConstantDecl");
+            }
+            "FieldDecl"
+                if open
+                    && child["isBitfield"].as_bool() != Some(true)
+                    && child["type"]["qualType"]
+                        .as_str()
+                        .is_some_and(anonymous_enum_spelling) =>
+            {
+                if let Some(id) = child["id"].as_str() {
+                    out.insert(id.to_owned());
+                }
+            }
+            _ => open = false,
+        }
+    }
+}
+
+/// Whether `node` is a read of an inline anonymous enumeration member: its
+/// own type spells an anonymous enumeration, and through parentheses and
+/// value-preserving implicit casts it is a `MemberExpr` of a member
+/// [`collect_anonymous_enum_members`] proved. Its value is an integer
+/// constant of the enumeration: no resource identity.
+pub(crate) fn anonymous_enum_member(enums: &EnumFacts, node: &Value) -> bool {
+    if !ANONYMOUS_ENUM_ARM || !qual(node).is_some_and(anonymous_enum_spelling) {
+        return false;
+    }
+    let mut cursor = node;
+    loop {
+        match kind(cursor) {
+            "ParenExpr" => {}
+            "ImplicitCastExpr"
+                if matches!(cursor["castKind"].as_str(), Some("LValueToRValue" | "NoOp")) => {}
+            "MemberExpr" => {
+                return cursor["referencedMemberDecl"]
+                    .as_str()
+                    .is_some_and(|id| enums.anonymous_members.contains(id));
+            }
+            _ => return false,
+        }
+        let Some(inner) = children(cursor).first() else {
+            return false;
+        };
+        cursor = inner;
+    }
 }
 
 fn value_type(node: &Value, out: &mut BTreeSet<&'static str>) {
@@ -138,15 +389,19 @@ fn walk(index: &StatementIndex, node: &Value, out: &mut BTreeSet<&'static str>) 
         }
         "CStyleCastExpr" => {
             let scalar_to_scalar = is_scalar(node)
-                && children(node).first().is_some_and(|inner| {
-                    is_scalar(inner) || index.enums.is_enum(inner)
-                });
+                && children(node)
+                    .first()
+                    .is_some_and(|inner| is_scalar(inner) || index.enums.is_enum(inner));
             if !scalar_to_scalar {
                 out.insert("cast");
             }
         }
         "ImplicitCastExpr" => match node["castKind"].as_str().unwrap_or("") {
-            "LValueToRValue" | "NoOp" | "IntegralCast" | "BitCast" | "NullToPointer"
+            "LValueToRValue"
+            | "NoOp"
+            | "IntegralCast"
+            | "BitCast"
+            | "NullToPointer"
             | "FunctionToPointerDecay" => {}
             "ArrayToPointerDecay" => {
                 out.insert("array-decay");
