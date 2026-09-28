@@ -235,6 +235,83 @@ NEGATIVE_CASES = [
      "reachable_in_pinned_tests": "yes, as a candidate: the threaded test (tests/runtime/in_tail.c:2644) and the previous non-threaded test tear down through test_tail_ctx_destroy. Added by this census; not in the sketch's table"},
 ]
 
+# Static thread derivation (user decision 2026-09-28: derive thread identity from
+# the call graph back to each thread's entry, as deep as possible; anything
+# unresolved stays Unknown). Each binding lists the indirect hops its thread
+# attribution crosses beyond direct calls; a direct-call-only path needs none.
+HOPS = {
+    "A": "acutest test table: main -> TEST_LIST (tests/runtime/in_tail.c:3230) -> test function pointer; acutest forks a child per test by default (acutest.h:1123), so T is the child's main thread",
+    "S": "spawn-argument flow: a function pointer carried through a heap record to the new thread (mk_worker_start.callback, mk_utils.c:307 -> :290; for I also flb_tp_thread.params.func, flb_thread_pool.c:84 -> :123, and flb_worker.func, flb_worker.c:60 -> :43)",
+    "V": "plugin vtable: ins->p->cb_* resolved from the static initializer in_tail_plugin (plugins/in_tail/tail.c:867)",
+    "V*": "runtime vtable replacement: the revised test copies the plugin into T's stack (`test.plugin = *ins->p`, tests/runtime/in_tail.c:2554), overrides cb_pre_run (:2555) and publishes it through ins->p (:2556) before flb_start; resolving it needs field-sensitive flow of a stack struct copy published to another thread",
+    "R": "collector registry: coll->cb_collect resolved from the flb_input_set_collector_* call sites that register it",
+    "L": "loop dispatch: an event is dispatched by the thread that waits on its loop (mk_event_wait on config->evl by E, on thi->evl by I), and the fd-to-collector match (flb_input_collector_fd / input_collector_fd) selects the collector",
+    "F": "threaded-flag fork: flb_input_is_threaded(ins) is runtime configuration (property `threaded`); the derivation forks both values, and a discharge needs the premise that the flag is immutable after init so the same value selects coll->evl and the pause branch; the tests fix it by literals passed to flb_input_set",
+}
+
+# binding id -> (hops, resolution). "resolved": every hop is of a resolvable
+# kind above; "resolved with V*": resolved only if the runtime vtable
+# replacement is followed, otherwise Unknown; "no caller": no call on the
+# sketch's paths, so no thread is attributed.
+DERIVATION = {
+    "B01": ("A", "resolved"), "B02": ("A, S", "resolved"), "B03": ("S", "resolved"),
+    "B04": ("S, F", "resolved"), "B05": ("S, V, F", "resolved"), "B06": ("S, V, F", "resolved"),
+    "B07": ("S, V, F (the revised test's registration: V*)", "resolved"),
+    "B08": ("S, V, F", "resolved"), "B09": ("S, F", "resolved"),
+    "B10": ("A (previous and threaded tests); S, L, R, V* (revised test)", "resolved with V*"),
+    "B11": ("A, V (previous test); S, L, R, V*, V (revised test); S, L, V, F (threaded)", "resolved with V*"),
+    "B12": ("-", "no caller"),
+    "B13": ("A, V (previous test); S, L, R, V*, V (revised test); S, L, V, F (threaded)", "resolved with V*"),
+    "B14": ("as B13", "resolved with V*"), "B15": ("S, L", "resolved"), "B16": ("S", "resolved"),
+    "B17": ("S, L", "resolved"), "B18": ("S, L, F", "resolved"),
+    "B19": ("inherits its caller's", "resolved"), "B20": ("inherits its caller's", "resolved"),
+    "B21": ("inherits its caller's", "resolved"), "B22": ("inherits its caller's", "resolved"),
+    "B23": ("inherits its caller's", "resolved"), "B24": ("inherits its caller's", "resolved"),
+    "B25": ("S, F", "resolved"),
+    "B26": ("A (previous and threaded tests); S (shutdown); S, L, R, V* (revised test); S, L, R, V, F (flb_input_chunk.c callers from collect callbacks)", "resolved with V*"),
+    "B27": ("as B26", "resolved with V*"),
+    "B28": ("A (previous and threaded tests); S, L, R, V* (revised test)", "resolved with V*"),
+    "B29": ("V over B26's paths", "resolved with V*"), "B30": ("V over B28's paths", "resolved with V*"),
+    "B31": ("A (threaded test); S (shutdown)", "resolved"), "B32": ("A", "resolved"),
+    "B33": ("S, L, F", "resolved"), "B34": ("V over B29's paths", "resolved with V*"),
+    "B35": ("V over B30's paths", "resolved with V*"), "B36": ("as B34", "resolved with V*"),
+    "B37": ("as B34", "resolved with V*"), "B38": ("as B35", "resolved with V*"),
+    "B39": ("S, V, F", "resolved"), "B40": ("S, V, F", "resolved"),
+    "B41": ("S, L, R, V*", "resolved with V*"), "B42": ("S, L, R, V*", "resolved with V*"),
+    "B43": ("S, V*", "resolved with V*"), "B44": ("A", "resolved"), "B45": ("A", "resolved"),
+    "B46": ("A", "resolved"), "B47": ("A", "resolved"), "B48": ("A", "resolved"),
+    "B49": ("A (the E-side write of ctx->status: S)", "resolved"), "B50": ("A", "resolved"),
+    "B51": ("S, F", "resolved"), "B52": ("S, F", "resolved"), "B53": ("S, F", "resolved"),
+    "B54": ("S, F", "resolved"), "B55": ("A", "resolved"), "B56": ("A", "resolved"),
+    "B57": ("A (the I-side write of ins->context: S, V, F)", "resolved"), "B58": ("A", "resolved"),
+    "B59": ("A", "resolved"), "B60": ("A", "resolved"),
+}
+
+UNRESOLVED = [
+    "V* (runtime plugin replacement through T's stack) is the one hop the revised test's C1-C4 events need beyond the resolvable kinds; a derivation without field-sensitive flow of the stack copy leaves B41-B43 and the revised-test paths of B10, B11, B13, B14, B26-B30 and B34-B38 Unknown, and NC2 then gives no conclusion rather than candidate-satisfying",
+    "F is decided per instance only by configuration data flow (the literal `threaded`, `true` in the threaded test); without it both threads are attributed, which suffices to refuse but not to discharge; a discharge also needs the flag-immutability premise",
+    "any function pointer outside the hop kinds A, S, V, R, L (processors, notification delivery, scheduler timer callbacks, output flush coroutines, other plugins' callbacks) stays Unknown; none is on the C1-C5 events bound here, but the flb_input_chunk.c append path reaches processor callbacks",
+    "coroutine inputs (runs_in_coroutine) resume on the dispatching thread only by premise; in_tail is not a coroutine input (flags 0, tail.c:878), so the census does not need it",
+    "acutest's fork-per-test puts each test in its own process; process identity is outside the thread model and is stated as a premise, not derived",
+    "happens-before is not derived by any hop: a resolved thread says who runs an event, never how two threads' events are ordered (the pipe hand-offs flb_engine_started -> do_start and the worker command pipe, and the mutex edges, are C4/C5's subject)",
+]
+
+OLD_VS_FIXED = {
+    "NC1": ("present as a candidate: flb_test_inotify_pause_collectors pauses and resumes the non-threaded input from T while E dispatches (:2497, :2503)",
+            "absent: the non-threaded test pauses and resumes inside a collector callback on E (:2487, :2490)"),
+    "NC2": ("absent: the previous test has no callback, publication or wait",
+            "present: the intended trace; candidate-satisfying under the stated premises, not verified"),
+    "NC3": ("present as a candidate: flb_test_inotify_threaded_pause_collectors (:2547-2549 there) enqueues from T and polls coll->running",
+            "present as a candidate: that test is unchanged (:2634-2636)"),
+    "NC4": ("not applicable: no callback-retained test storage", "absent: frees only after flb_stop returned 0"),
+    "NC5": ("not applicable: no wait with a deadline", "absent: a timeout takes the same stop/join path; residual R2 in flb_stop"),
+    "NC6": ("absent", "absent"),
+    "NC7": ("not driven", "not driven"),
+    "NC8": ("not applicable: no condition variable", "handled: the wait loop rechecks test.done under the mutex"),
+    "NC9": ("present as a candidate in both pause tests (both tear down through test_tail_ctx_destroy)",
+            "absent from the non-threaded test (flb_stop, flb_destroy, then unlink: :2583-2591); present as a candidate in the threaded test (:2644)"),
+}
+
 SURVEY = [
     {"claim": "no thread/owner/happens-before clause in resource-v1", "result": "held",
      "evidence": "pthread_mutex.qv and threads.qv state custody only ('Nothing about mutual exclusion, lock ordering, ...'); no resource-v1 predicate names a thread, loop owner or happens-before edge"},
@@ -298,6 +375,19 @@ def main():
         if missing:
             print(f"{case['id']}: unknown bindings {missing}")
             return 1
+    if set(DERIVATION) != ids or set(OLD_VS_FIXED) != {c["id"] for c in NEGATIVE_CASES}:
+        print("derivation or old/fixed table does not cover exactly the bindings and cases")
+        return 1
+    for entry in BINDINGS:
+        hops, resolution = DERIVATION[entry["id"]]
+        entry["derivation"] = {"hops": hops, "resolution": resolution}
+    for case in NEGATIVE_CASES:
+        old, fixed = OLD_VS_FIXED[case["id"]]
+        case["at_90978ac6~1"] = old
+        case["at_90978ac6"] = fixed
+    summary = {}
+    for _hops, resolution in DERIVATION.values():
+        summary[resolution] = summary.get(resolution, 0) + 1
     files = sorted({e["file"] for e in BINDINGS if e["revision"] == COMMIT})
     document = {
         "schema": "w47-tail-pause-bindings/1",
@@ -310,6 +400,13 @@ def main():
             "file_sha256": {f: sha256(root / f) for f in files},
         },
         "threads": THREADS,
+        "derivation": {
+            "decision": "user decision 2026-09-28: thread identity is derived statically from the call graph back to each thread's entry, as deep as possible; anything unresolved stays Unknown",
+            "hop_kinds": HOPS,
+            "summary": summary,
+            "unresolved": UNRESOLVED,
+        },
+        "comparison": "negative cases at 90978ac6~1 (previous test) and 90978ac6 (the user's fix): source-reading observations of which traces the test source contains; candidates only, never a verified race or a verified fix",
         "bindings": BINDINGS,
         "negative_cases": NEGATIVE_CASES,
         "survey": SURVEY,

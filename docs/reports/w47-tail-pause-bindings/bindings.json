@@ -29,6 +29,32 @@
     "E": "engine thread: mk_utils_worker_spawn(flb_lib_worker) at src/flb_lib.c:969 -> pthread_create at lib/monkey/mk_core/mk_utils.c:318 -> mk_utils_worker_entry -> flb_lib_worker -> flb_engine_start (src/flb_engine.c:1120), which owns config->evl (set at src/flb_engine.c:1150)",
     "I": "input worker (threaded=true only): flb_input_thread_instance_init -> flb_tp_thread_start (src/flb_thread_pool.c:119) -> flb_worker_create -> mk_utils_worker_spawn(step_callback) -> input_thread (src/flb_input_thread.c:318), which owns thi->evl (flb_engine_evl_set at src/flb_input_thread.c:337)"
   },
+  "derivation": {
+    "decision": "user decision 2026-09-28: thread identity is derived statically from the call graph back to each thread's entry, as deep as possible; anything unresolved stays Unknown",
+    "hop_kinds": {
+      "A": "acutest test table: main -> TEST_LIST (tests/runtime/in_tail.c:3230) -> test function pointer; acutest forks a child per test by default (acutest.h:1123), so T is the child's main thread",
+      "S": "spawn-argument flow: a function pointer carried through a heap record to the new thread (mk_worker_start.callback, mk_utils.c:307 -> :290; for I also flb_tp_thread.params.func, flb_thread_pool.c:84 -> :123, and flb_worker.func, flb_worker.c:60 -> :43)",
+      "V": "plugin vtable: ins->p->cb_* resolved from the static initializer in_tail_plugin (plugins/in_tail/tail.c:867)",
+      "V*": "runtime vtable replacement: the revised test copies the plugin into T's stack (`test.plugin = *ins->p`, tests/runtime/in_tail.c:2554), overrides cb_pre_run (:2555) and publishes it through ins->p (:2556) before flb_start; resolving it needs field-sensitive flow of a stack struct copy published to another thread",
+      "R": "collector registry: coll->cb_collect resolved from the flb_input_set_collector_* call sites that register it",
+      "L": "loop dispatch: an event is dispatched by the thread that waits on its loop (mk_event_wait on config->evl by E, on thi->evl by I), and the fd-to-collector match (flb_input_collector_fd / input_collector_fd) selects the collector",
+      "F": "threaded-flag fork: flb_input_is_threaded(ins) is runtime configuration (property `threaded`); the derivation forks both values, and a discharge needs the premise that the flag is immutable after init so the same value selects coll->evl and the pause branch; the tests fix it by literals passed to flb_input_set"
+    },
+    "summary": {
+      "resolved": 42,
+      "resolved with V*": 17,
+      "no caller": 1
+    },
+    "unresolved": [
+      "V* (runtime plugin replacement through T's stack) is the one hop the revised test's C1-C4 events need beyond the resolvable kinds; a derivation without field-sensitive flow of the stack copy leaves B41-B43 and the revised-test paths of B10, B11, B13, B14, B26-B30 and B34-B38 Unknown, and NC2 then gives no conclusion rather than candidate-satisfying",
+      "F is decided per instance only by configuration data flow (the literal `threaded`, `true` in the threaded test); without it both threads are attributed, which suffices to refuse but not to discharge; a discharge also needs the flag-immutability premise",
+      "any function pointer outside the hop kinds A, S, V, R, L (processors, notification delivery, scheduler timer callbacks, output flush coroutines, other plugins' callbacks) stays Unknown; none is on the C1-C5 events bound here, but the flb_input_chunk.c append path reaches processor callbacks",
+      "coroutine inputs (runs_in_coroutine) resume on the dispatching thread only by premise; in_tail is not a coroutine input (flags 0, tail.c:878), so the census does not need it",
+      "acutest's fork-per-test puts each test in its own process; process identity is outside the thread model and is stated as a premise, not derived",
+      "happens-before is not derived by any hop: a resolved thread says who runs an event, never how two threads' events are ordered (the pipe hand-offs flb_engine_started -> do_start and the worker command pipe, and the mutex edges, are C4/C5's subject)"
+    ]
+  },
+  "comparison": "negative cases at 90978ac6~1 (previous test) and 90978ac6 (the user's fix): source-reading observations of which traces the test source contains; candidates only, never a verified race or a verified fix",
   "bindings": [
     {
       "id": "B01",
@@ -46,7 +72,11 @@
         "all": "T spawns E"
       },
       "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
-      "note": "the only spawn of the engine thread; tid stored in config->worker at :973"
+      "note": "the only spawn of the engine thread; tid stored in config->worker at :973",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B02",
@@ -63,7 +93,11 @@
         "all": "T (engine) or E (input workers via flb_worker_create)"
       },
       "carrier": "none",
-      "note": "joinable thread; no pthread_create contract exists (libc provider declares none)"
+      "note": "joinable thread; no pthread_create contract exists (libc provider declares none)",
+      "derivation": {
+        "hops": "A, S",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B03",
@@ -80,7 +114,11 @@
         "non-threaded input": "E"
       },
       "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
-      "note": "the engine loop is created and published by E before any collector starts"
+      "note": "the engine loop is created and published by E before any collector starts",
+      "derivation": {
+        "hops": "S",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B04",
@@ -97,7 +135,11 @@
         "threaded input": "E creates it (flb_input_init_all on E); I runs it from src/flb_input_thread.c:421"
       },
       "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
-      "note": "created on E during input init, dispatched only by I: a pre-publication phase the sketch calls quiescent"
+      "note": "created on E during input init, dispatched only by I: a pre-publication phase the sketch calls quiescent",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B05",
@@ -114,7 +156,11 @@
         "threaded input": "I (for a threaded input, cb_init and cb_pre_run both run on I: src/flb_input_thread.c:369, :409)"
       },
       "carrier": "none",
-      "note": "collector-to-loop attachment; no Quirin vocabulary names a loop owner"
+      "note": "collector-to-loop attachment; no Quirin vocabulary names a loop owner",
+      "derivation": {
+        "hops": "S, V, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B06",
@@ -131,7 +177,11 @@
         "non-threaded input": "E (cb_init and cb_pre_run run on E)"
       },
       "carrier": "none",
-      "note": "the survey's flb_input.c:2231-2240 is this text at 66910c10 (2233-2240); at 046accf6 and 90978ac6 it is 2250-2258 (file identical at both)"
+      "note": "the survey's flb_input.c:2231-2240 is this text at 66910c10 (2233-2240); at 046accf6 and 90978ac6 it is 2250-2258 (file identical at both)",
+      "derivation": {
+        "hops": "S, V, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B07",
@@ -149,7 +199,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": "list insertion into ins->collectors at :2267 without a lock"
+      "note": "list insertion into ins->collectors at :2267 without a lock",
+      "derivation": {
+        "hops": "S, V, F (the revised test's registration: V*)",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B08",
@@ -167,7 +221,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "S, V, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B09",
@@ -185,7 +243,11 @@
         "threaded input": "I via flb_input_thread_collectors_start (src/flb_input_thread.c:405)"
       },
       "carrier": "none",
-      "note": "timer: mk_event_timeout_create on coll->evl; fd: mk_event_add"
+      "note": "timer: mk_event_timeout_create on coll->evl; fd: mk_event_add",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B10",
@@ -203,7 +265,11 @@
         "threaded input": "T (threaded test poll)"
       },
       "carrier": "none",
-      "note": "plain int read of coll->running; no atomic, no lock"
+      "note": "plain int read of coll->running; no atomic, no lock",
+      "derivation": {
+        "hops": "A (previous and threaded tests); S, L, R, V* (revised test)",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B11",
@@ -222,7 +288,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": "timer: fd_timer=-1 then mk_event_timeout_destroy (result ignored); fd: mk_event_del, -1 on failure; running=FALSE only on the success path"
+      "note": "timer: fd_timer=-1 then mk_event_timeout_destroy (result ignored); fd: mk_event_del, -1 on failure; running=FALSE only on the success path",
+      "derivation": {
+        "hops": "A, V (previous test); S, L, R, V*, V (revised test); S, L, V, F (threaded)",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B12",
@@ -240,7 +310,11 @@
         "threaded input": "I"
       },
       "carrier": "contract: libc pthread_mutex.qv (custody of mutex storage only, not mutual exclusion or protected data)",
-      "note": "the only collector-list mutation under config->collectors_mutex; not called in the sketch's paths"
+      "note": "the only collector-list mutation under config->collectors_mutex; not called in the sketch's paths",
+      "derivation": {
+        "hops": "-",
+        "resolution": "no caller"
+      }
     },
     {
       "id": "B13",
@@ -259,7 +333,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": "already-running returns -1 (logged error)"
+      "note": "already-running returns -1 (logged error)",
+      "derivation": {
+        "hops": "A, V (previous test); S, L, R, V*, V (revised test); S, L, V, F (threaded)",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B14",
@@ -277,7 +355,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": "returns 0 without resuming and without setting running: success at the API is not a running-state promise"
+      "note": "returns 0 without resuming and without setting running: success at the API is not a running-state promise",
+      "derivation": {
+        "hops": "as B13",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B15",
@@ -294,7 +376,11 @@
         "all": "E (engine stop path, src/flb_engine.c:1477)"
       },
       "carrier": "none",
-      "note": "also src/flb_engine.c:1670 (flb_engine_shutdown, E) and src/flb_config.c:302 (init); read on I by a threaded resume with no synchronization"
+      "note": "also src/flb_engine.c:1670 (flb_engine_shutdown, E) and src/flb_config.c:302 (init); read on I by a threaded resume with no synchronization",
+      "derivation": {
+        "hops": "S, L",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B16",
@@ -313,7 +399,11 @@
         "threaded input": "E after flb_input_thread_instance_exit joined I"
       },
       "carrier": "none",
-      "note": "deletes through config->evl, not coll->evl (:3146, :3150): for a threaded input the collector was attached to thi->evl, which I destroyed before exiting (binding residual, not a defect claim)"
+      "note": "deletes through config->evl, not coll->evl (:3146, :3150): for a threaded input the collector was attached to thi->evl, which I destroyed before exiting (binding residual, not a defect claim)",
+      "derivation": {
+        "hops": "S",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B17",
@@ -330,7 +420,11 @@
         "non-threaded input": "E (flb_engine_handle_event, src/flb_engine.c:1002)"
       },
       "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
-      "note": "linear scan of config->inputs x ins->collectors; runs cb_collect synchronously on E (in_tail is not a coroutine input)"
+      "note": "linear scan of config->inputs x ins->collectors; runs cb_collect synchronously on E (in_tail is not a coroutine input)",
+      "derivation": {
+        "hops": "S, L",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B18",
@@ -347,7 +441,11 @@
         "threaded input": "I"
       },
       "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "S, L, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B19",
@@ -364,7 +462,11 @@
         "all": "caller's thread"
       },
       "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
-      "note": "delegates to _mk_event_add"
+      "note": "delegates to _mk_event_add",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B20",
@@ -381,7 +483,11 @@
         "all": "caller's thread"
       },
       "carrier": "none",
-      "note": "the userspace intrusive link the sketch names; epoll_ctl (:138) is thread-safe, this unlink is not"
+      "note": "the userspace intrusive link the sketch names; epoll_ctl (:138) is thread-safe, this unlink is not",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B21",
@@ -398,7 +504,11 @@
         "all": "caller's thread"
       },
       "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
-      "note": "returns -1 on an unregistered event"
+      "note": "returns -1 on an unregistered event",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B22",
@@ -415,7 +525,11 @@
         "all": "caller's thread"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B23",
@@ -432,7 +546,11 @@
         "all": "caller's thread"
       },
       "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
-      "note": "timerfd backend (MK_HAVE_TIMERFD_CREATE) at mk_event_epoll.c:190"
+      "note": "timerfd backend (MK_HAVE_TIMERFD_CREATE) at mk_event_epoll.c:190",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B24",
@@ -449,7 +567,11 @@
         "all": "caller's thread"
       },
       "carrier": "contract: monkey wrapper_paths.qv declares _mk_event_add/_del/_timeout_* for the Unix/Libevent backend only (syntax-preserved specifications, outside the resource manifest); nothing for the epoll backend",
-      "note": "_mk_event_del then close(event->fd); returns 0 regardless"
+      "note": "_mk_event_del then close(event->fd); returns 0 regardless",
+      "derivation": {
+        "hops": "inherits its caller's",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B25",
@@ -467,7 +589,11 @@
         "threaded input": "I (src/flb_input_thread.c:422)"
       },
       "carrier": "event_reactor.rs (dispatcher per base, L04/L05, explore_activation_orders; cross-thread use and synchronization are supplied premises) / QCore.EventDriven (sameBaseSingleDispatcher is a Bool premise)",
-      "note": "pops _priority_head links the pause/resume paths unlink"
+      "note": "pops _priority_head links the pause/resume paths unlink",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B26",
@@ -485,7 +611,11 @@
         "threaded input": "T (threaded test) or E (flb_input_pause_all at shutdown)"
       },
       "carrier": "none",
-      "note": "branches: already buffer-paused -> -1; threaded -> flb_input_thread_instance_pause; non-threaded -> flb_input_plugin_pause"
+      "note": "branches: already buffer-paused -> -1; threaded -> flb_input_thread_instance_pause; non-threaded -> flb_input_plugin_pause",
+      "derivation": {
+        "hops": "A (previous and threaded tests); S (shutdown); S, L, R, V* (revised test); S, L, R, V, F (flb_input_chunk.c callers from collect callbacks)",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B27",
@@ -502,7 +632,11 @@
         "all": "as B26"
       },
       "carrier": "none",
-      "note": "added by 058c2c3c7 (between 66910c10 and 046accf6): an already buffer-paused input passes on to the pause callback only while shutting down with FLB_INPUT_SHUTDOWN_FLUSH, which only in_emitter sets; for in_tail it reduces to the 66910c10 test"
+      "note": "added by 058c2c3c7 (between 66910c10 and 046accf6): an already buffer-paused input passes on to the pause callback only while shutting down with FLB_INPUT_SHUTDOWN_FLUSH, which only in_emitter sets; for in_tail it reduces to the 66910c10 test",
+      "derivation": {
+        "hops": "as B26",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B28",
@@ -520,7 +654,11 @@
         "threaded input": "T"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "A (previous and threaded tests); S, L, R, V* (revised test)",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B29",
@@ -538,7 +676,11 @@
         "threaded input": "I (handle_input_event)"
       },
       "carrier": "none",
-      "note": "void cb_pause returns nothing: ret stays 0; the paused gauge is set on the caller's thread"
+      "note": "void cb_pause returns nothing: ret stays 0; the paused gauge is set on the caller's thread",
+      "derivation": {
+        "hops": "V over B26's paths",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B30",
@@ -556,7 +698,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "V over B28's paths",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B31",
@@ -574,7 +720,11 @@
         "threaded input": "T or E"
       },
       "carrier": "none",
-      "note": "returns 0 when ins->thi is NULL (:532) and 0 on a successful write: enqueue, not completion"
+      "note": "returns 0 when ins->thi is NULL (:532) and 0 on a successful write: enqueue, not completion",
+      "derivation": {
+        "hops": "A (threaded test); S (shutdown)",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B32",
@@ -592,7 +742,11 @@
         "threaded input": "T"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B33",
@@ -609,7 +763,11 @@
         "threaded input": "I (src/flb_input_thread.c:475)"
       },
       "carrier": "none",
-      "note": "pause/resume failures are logged only; no acknowledgement to the sender"
+      "note": "pause/resume failures are logged only; no acknowledgement to the sender",
+      "derivation": {
+        "hops": "S, L, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B34",
@@ -628,7 +786,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": "pauses static, pending, docker/multiline flush and the fs backend; scan, watcher and rotated collectors are not paused"
+      "note": "pauses static, pending, docker/multiline flush and the fs backend; scan, watcher and rotated collectors are not paused",
+      "derivation": {
+        "hops": "V over B29's paths",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B35",
@@ -647,7 +809,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "V over B30's paths",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B36",
@@ -664,7 +830,11 @@
         "all": "as B34"
       },
       "carrier": "none",
-      "note": "inotify when ctx->inotify_watcher, else stat"
+      "note": "inotify when ctx->inotify_watcher, else stat",
+      "derivation": {
+        "hops": "as B34",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B37",
@@ -681,7 +851,11 @@
         "all": "as B34"
       },
       "carrier": "none",
-      "note": "both flb_input_collector_pause results ignored (:459, :460)"
+      "note": "both flb_input_collector_pause results ignored (:459, :460)",
+      "derivation": {
+        "hops": "as B34",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B38",
@@ -698,7 +872,11 @@
         "all": "as B35"
       },
       "carrier": "none",
-      "note": "both flb_input_collector_resume results ignored (:465, :466)"
+      "note": "both flb_input_collector_resume results ignored (:465, :466)",
+      "derivation": {
+        "hops": "as B35",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B39",
@@ -716,7 +894,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "S, V, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B40",
@@ -734,7 +916,11 @@
         "threaded input": "I"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "S, V, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B41",
@@ -754,7 +940,11 @@
         "non-threaded input": "E (dispatched by flb_input_collector_fd)"
       },
       "carrier": "concurrency.rs (Cycle 14: sequenced-before, spawn/join and mutex release/acquire edges over a supplied trace) / QCore.Concurrency",
-      "note": "flb_input_collector_pause(test collector) at :2483 before taking test->mutex at :2484"
+      "note": "flb_input_collector_pause(test collector) at :2483 before taking test->mutex at :2484",
+      "derivation": {
+        "hops": "S, L, R, V*",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B42",
@@ -771,7 +961,11 @@
         "non-threaded input": "E"
       },
       "carrier": "QCore.MutexInvariant (checked mutex traces for the QCore task route, initially-unlocked non-recursive mutexes only; constraint 27 refuses condition variables)",
-      "note": "results written before done; pthread_cond_signal (:2497) while locked; unlock at :2498"
+      "note": "results written before done; pthread_cond_signal (:2497) while locked; unlock at :2498",
+      "derivation": {
+        "hops": "S, L, R, V*",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B43",
@@ -788,7 +982,11 @@
         "non-threaded input": "E (flb_input_pre_run_all at src/flb_engine.c:1314, before flb_input_collectors_start at :1392)"
       },
       "carrier": "none",
-      "note": "10 ms timer; started by flb_input_collectors_start on E"
+      "note": "10 ms timer; started by flb_input_collectors_start on E",
+      "derivation": {
+        "hops": "S, V*",
+        "resolution": "resolved with V*"
+      }
     },
     {
       "id": "B44",
@@ -805,7 +1003,11 @@
         "non-threaded input": "T, before flb_start publishes the instance to E"
       },
       "carrier": "none",
-      "note": "ins->p and ins->data (:2557) point into T's stack frame for the engine's lifetime"
+      "note": "ins->p and ins->data (:2557) point into T's stack frame for the engine's lifetime",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B45",
@@ -822,7 +1024,11 @@
         "non-threaded input": "T"
       },
       "carrier": "none",
-      "note": "rechecks test.done in a loop; a timeout or error breaks out and the check at :2570 fails; results read under the mutex until :2579"
+      "note": "rechecks test.done in a loop; a timeout or error breaks out and the check at :2570 fails; results read under the mutex until :2579",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B46",
@@ -839,7 +1045,11 @@
         "non-threaded input": "T"
       },
       "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
-      "note": "a nonzero flb_stop exits the process without freeing (:2586)"
+      "note": "a nonzero flb_stop exits the process without freeing (:2586)",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B47",
@@ -856,7 +1066,11 @@
         "non-threaded input": "T"
       },
       "carrier": "none",
-      "note": "then fixture removal (:2591), condvar and mutex destroy (:2595, :2596)"
+      "note": "then fixture removal (:2591), condvar and mutex destroy (:2595, :2596)",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B48",
@@ -873,7 +1087,11 @@
         "all": "T"
       },
       "carrier": "none",
-      "note": "do_start waits for FLB_ENGINE_STARTED on config->ch_evl (a pipe read on T after E's write at src/flb_engine.c:1039)"
+      "note": "do_start waits for FLB_ENGINE_STARTED on config->ch_evl (a pipe read on T after E's write at src/flb_engine.c:1039)",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B49",
@@ -890,7 +1108,11 @@
         "all": "T"
       },
       "carrier": "none",
-      "note": "status NONE/ERROR: joins and returns 0 ignoring the join result (:1058-1059); running: flb_engine_exit then returns pthread_join's result (:1077); ctx->status is written by E (:932) and read by T without synchronization"
+      "note": "status NONE/ERROR: joins and returns 0 ignoring the join result (:1058-1059); running: flb_engine_exit then returns pthread_join's result (:1077); ctx->status is written by E (:932) and read by T without synchronization",
+      "derivation": {
+        "hops": "A (the E-side write of ctx->status: S)",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B50",
@@ -907,7 +1129,11 @@
         "all": "T joins E"
       },
       "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
-      "note": "no pthread_join contract exists"
+      "note": "no pthread_join contract exists",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B51",
@@ -924,7 +1150,11 @@
         "threaded input": "E joins I (flb_engine_shutdown -> flb_input_exit_all)"
       },
       "carrier": "task_execution (spawn/join ledger of the QCore task route; no C binding) / QCore.TaskExecution",
-      "note": "result ignored"
+      "note": "result ignored",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B52",
@@ -941,7 +1171,11 @@
         "threaded input": "I"
       },
       "carrier": "QCore.MutexInvariant (checked mutex traces for the QCore task route, initially-unlocked non-recursive mutexes only; constraint 27 refuses condition variables)",
-      "note": "status written and cond signalled under init_mutex"
+      "note": "status written and cond signalled under init_mutex",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B53",
@@ -958,7 +1192,11 @@
         "threaded input": "E (flb_input_thread_instance_init and flb_input_thread_instance_pre_run)"
       },
       "carrier": "none",
-      "note": "waits in a loop on init_status == 0 under the mutex"
+      "note": "waits in a loop on init_status == 0 under the mutex",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B54",
@@ -975,7 +1213,11 @@
         "threaded input": "E"
       },
       "carrier": "none",
-      "note": "destroy/init at :715-716 after the unlock, then init_status read without the mutex at :719; ordered after the only signal by the mutex hand-off (candidate-satisfying under that premise); constraint 27 refuses condition variables"
+      "note": "destroy/init at :715-716 after the unlock, then init_status read without the mutex at :719; ordered after the only signal by the mutex hand-off (candidate-satisfying under that premise); constraint 27 refuses condition variables",
+      "derivation": {
+        "hops": "S, F",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B55",
@@ -992,7 +1234,11 @@
         "threaded input": "T reads coll->running written by I"
       },
       "carrier": "none",
-      "note": "50 iterations x flb_time_msleep(100)"
+      "note": "50 iterations x flb_time_msleep(100)",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B56",
@@ -1009,7 +1255,11 @@
         "threaded input": "T"
       },
       "carrier": "none",
-      "note": "success means the request was written, not applied"
+      "note": "success means the request was written, not applied",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B57",
@@ -1026,7 +1276,11 @@
         "threaded input": "T reads ins->context written by I in cb_init"
       },
       "carrier": "none",
-      "note": "ordered, if at all, by I's set_status (mutex) -> E -> the started pipe -> T"
+      "note": "ordered, if at all, by I's set_status (mutex) -> E -> the started pipe -> T",
+      "derivation": {
+        "hops": "A (the I-side write of ins->context: S, V, F)",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B58",
@@ -1043,7 +1297,11 @@
         "all": "T"
       },
       "carrier": "none",
-      "note": "used by the threaded test (:2644) and by the previous non-threaded test; sleep(1) then flb_stop at :292 with its result ignored"
+      "note": "used by the threaded test (:2644) and by the previous non-threaded test; sleep(1) then flb_stop at :292 with its result ignored",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B59",
@@ -1061,7 +1319,11 @@
         "non-threaded input": "T, while E dispatches config->evl"
       },
       "carrier": "none",
-      "note": "at 90978ac6~1 (identical blob at 046accf6); T mutates E's loop through in_tail_pause -> flb_input_collector_pause -> mk_event_del"
+      "note": "at 90978ac6~1 (identical blob at 046accf6); T mutates E's loop through in_tail_pause -> flb_input_collector_pause -> mk_event_del",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     },
     {
       "id": "B60",
@@ -1078,7 +1340,11 @@
         "non-threaded input": "T"
       },
       "carrier": "none",
-      "note": ""
+      "note": "",
+      "derivation": {
+        "hops": "A",
+        "resolution": "resolved"
+      }
     }
   ],
   "negative_cases": [
@@ -1098,7 +1364,9 @@
       ],
       "expected": "reject",
       "obligation": "C1/C2: T lacks Own(L); flb_input_pause runs the plugin callback on T, which unlinks _priority_head links of E's loop",
-      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_pause_collectors at 90978ac6~1 (and at 046accf6, the same blob) pauses from T (tests/runtime/in_tail.c:2497 there)"
+      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_pause_collectors at 90978ac6~1 (and at 046accf6, the same blob) pauses from T (tests/runtime/in_tail.c:2497 there)",
+      "at_90978ac6~1": "present as a candidate: flb_test_inotify_pause_collectors pauses and resumes the non-threaded input from T while E dispatches (:2497, :2503)",
+      "at_90978ac6": "absent: the non-threaded test pauses and resumes inside a collector callback on E (:2487, :2490)"
     },
     {
       "id": "NC2",
@@ -1119,7 +1387,9 @@
       ],
       "expected": "candidate-satisfying",
       "obligation": "C1-C5 under the stated premises: every collector access on E; publication under test.mutex; free only after a successful join",
-      "reachable_in_pinned_tests": "yes: flb_test_inotify_pause_collectors at 90978ac6 (the intended trace; no model checks it)"
+      "reachable_in_pinned_tests": "yes: flb_test_inotify_pause_collectors at 90978ac6 (the intended trace; no model checks it)",
+      "at_90978ac6~1": "absent: the previous test has no callback, publication or wait",
+      "at_90978ac6": "present: the intended trace; candidate-satisfying under the stated premises, not verified"
     },
     {
       "id": "NC3",
@@ -1133,7 +1403,9 @@
       ],
       "expected": "reject",
       "obligation": "C1/C2: a successful enqueue is not completion; the running read is unsynchronized with I's write",
-      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_threaded_pause_collectors at 90978ac6 (tests/runtime/in_tail.c:2634-2636) polls coll->running from T (50 x 100 ms)"
+      "reachable_in_pinned_tests": "yes, as a candidate: flb_test_inotify_threaded_pause_collectors at 90978ac6 (tests/runtime/in_tail.c:2634-2636) polls coll->running from T (50 x 100 ms)",
+      "at_90978ac6~1": "present as a candidate: flb_test_inotify_threaded_pause_collectors (:2547-2549 there) enqueues from T and polls coll->running",
+      "at_90978ac6": "present as a candidate: that test is unchanged (:2634-2636)"
     },
     {
       "id": "NC4",
@@ -1145,7 +1417,9 @@
       ],
       "expected": "reject",
       "obligation": "C5: publication is not join",
-      "reachable_in_pinned_tests": "no: the revised test frees only after flb_stop (B46) returned 0, which on its running path is pthread_join's result; the previous test's test-owned storage was not callback-retained"
+      "reachable_in_pinned_tests": "no: the revised test frees only after flb_stop (B46) returned 0, which on its running path is pthread_join's result; the previous test's test-owned storage was not callback-retained",
+      "at_90978ac6~1": "not applicable: no callback-retained test storage",
+      "at_90978ac6": "absent: frees only after flb_stop returned 0"
     },
     {
       "id": "NC5",
@@ -1157,7 +1431,9 @@
       ],
       "expected": "reject",
       "obligation": "C5: timeout is not cancellation",
-      "reachable_in_pinned_tests": "no: a timeout breaks the wait and takes the same flb_stop/join path; a failed flb_stop exits without freeing (tests/runtime/in_tail.c:2586). Residual: flb_stop's NONE/ERROR branch returns 0 without checking its join (src/flb_lib.c:1058)"
+      "reachable_in_pinned_tests": "no: a timeout breaks the wait and takes the same flb_stop/join path; a failed flb_stop exits without freeing (tests/runtime/in_tail.c:2586). Residual: flb_stop's NONE/ERROR branch returns 0 without checking its join (src/flb_lib.c:1058)",
+      "at_90978ac6~1": "not applicable: no wait with a deadline",
+      "at_90978ac6": "absent: a timeout takes the same stop/join path; residual R2 in flb_stop"
     },
     {
       "id": "NC6",
@@ -1172,7 +1448,9 @@
       ],
       "expected": "reject",
       "obligation": "C3's missing ingestion premise: flb_input_collector_resume returns 0 at src/flb_input.c:3241 without resuming",
-      "reachable_in_pinned_tests": "no: neither test resumes after flb_engine_stop_ingestion; reachable in the engine only after stop_ingestion"
+      "reachable_in_pinned_tests": "no: neither test resumes after flb_engine_stop_ingestion; reachable in the engine only after stop_ingestion",
+      "at_90978ac6~1": "absent",
+      "at_90978ac6": "absent"
     },
     {
       "id": "NC7",
@@ -1185,7 +1463,9 @@
       ],
       "expected": "no-conclusion",
       "obligation": "C3: no paired-running conclusion; flb_tail_fs_inotify_resume ignores both results, so the partial state is not reported",
-      "reachable_in_pinned_tests": "not driven: needs an mk_event_add or timerfd failure"
+      "reachable_in_pinned_tests": "not driven: needs an mk_event_add or timerfd failure",
+      "at_90978ac6~1": "not driven",
+      "at_90978ac6": "not driven"
     },
     {
       "id": "NC8",
@@ -1196,7 +1476,9 @@
       ],
       "expected": "no-conclusion (wait again)",
       "obligation": "C4: the loop rechecks test.done under the mutex; no result is read without done",
-      "reachable_in_pinned_tests": "allowed by POSIX (spurious wakeup); the revised test handles it; not an obligation failure"
+      "reachable_in_pinned_tests": "allowed by POSIX (spurious wakeup); the revised test handles it; not an obligation failure",
+      "at_90978ac6~1": "not applicable: no condition variable",
+      "at_90978ac6": "handled: the wait loop rechecks test.done under the mutex"
     },
     {
       "id": "NC9",
@@ -1207,7 +1489,9 @@
       ],
       "expected": "reject",
       "obligation": "C5's test-specific fixture rule: files are unlinked before flb_stop and the stop result is ignored",
-      "reachable_in_pinned_tests": "yes, as a candidate: the threaded test (tests/runtime/in_tail.c:2644) and the previous non-threaded test tear down through test_tail_ctx_destroy. Added by this census; not in the sketch's table"
+      "reachable_in_pinned_tests": "yes, as a candidate: the threaded test (tests/runtime/in_tail.c:2644) and the previous non-threaded test tear down through test_tail_ctx_destroy. Added by this census; not in the sketch's table",
+      "at_90978ac6~1": "present as a candidate in both pause tests (both tear down through test_tail_ctx_destroy)",
+      "at_90978ac6": "absent from the non-threaded test (flb_stop, flb_destroy, then unlink: :2583-2591); present as a candidate in the threaded test (:2644)"
     }
   ],
   "survey": [

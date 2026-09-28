@@ -153,6 +153,56 @@ carry only part of the obligation:
 * `pthread_mutex.qv` (1): custody only.
 * Cycle 14 `concurrency.rs` (1): supplied traces.
 
+### 2.1 How deep static thread derivation goes at `90978ac6`
+
+The user decided (2026-09-28) that thread identity is derived statically from
+the call graph back to each thread's entry, as deep as possible, and that
+anything unresolved stays Unknown. The table below sizes that decision against
+the 60 bindings. `bindings.json` → `derivation` holds each binding's hops and
+resolution. Beyond direct calls, an attribution crosses these hop kinds:
+
+| Hop | What must be followed |
+|---|---|
+| A | acutest's test table: `main` → `TEST_LIST` (`in_tail.c:3230`) → the test function pointer. acutest forks a child per test, so T is that child's main thread |
+| S | spawn-argument flow: a function pointer carried through a heap record into the new thread. For E: `mk_worker_start.callback` (`mk_utils.c:307` → `:290`). For I, additionally `flb_tp_thread.params.func` and `flb_worker.func` |
+| V | the plugin vtable `ins->p->cb_*`, from the static initializer `in_tail_plugin` (`tail.c:867`) |
+| V* | the revised test's runtime vtable replacement. It copies the plugin into T's stack (`in_tail.c:2554`), overrides `cb_pre_run` (`:2555`) and publishes it through `ins->p` (`:2556`) before `flb_start` |
+| R | the collector registry: `coll->cb_collect`, taken from the `flb_input_set_collector_*` call sites |
+| L | loop dispatch: an event runs on the thread that waits on its loop (E for `config->evl`, I for `thi->evl`) |
+| F | the runtime `threaded` flag. The derivation forks both values, and a discharge also needs the premise that the flag is immutable after init |
+
+**Result.**
+
+| Resolution | Bindings | Where |
+|---|---|---|
+| resolved (hops A, S, V, R, L, F only) | 42 | all C5 events (11/11), all T-side and I-side test and handshake events, spawn sites, loop creation and dispatch, registration, the shutdown paths |
+| resolved only if V* is followed | 17 | the revised test's callback, publication and registration (B41–B43), and the revised-test paths of the collector and pause/resume events: B10, B11, B13, B14, B26–B30, B34–B38 |
+| no caller on these paths | 1 | B12, `flb_input_collector_delete` |
+
+By contract, counted as resolved / V*-dependent / no caller:
+
+* C1: 22 / 5 / 1
+* C2: 5 / 8
+* C3: 3 / 9
+* C4: 4 / 2
+* C5: 11 / 0
+
+These stay Unknown under the decision:
+
+* V*, unless the derivation follows a field-sensitive stack-struct copy
+  published to another thread. Without it, NC2 gives *no conclusion* instead
+  of candidate-satisfying.
+* F without configuration data flow. Both threads are then attributed, which
+  is enough to refuse but not to discharge.
+* Every function pointer outside the hop kinds: processors, notification
+  delivery, scheduler timers, output flush coroutines and other plugins'
+  callbacks. None is on a bound C1–C5 event, but `flb_input_chunk.c`'s append
+  path reaches processor callbacks.
+* The same-thread resumption of coroutine inputs, which in_tail does not need.
+* Process identity under acutest's fork. This is a stated premise.
+* Happens-before. A resolved thread says who runs an event, never how two
+  threads' events are ordered. Ordering is C4/C5's subject.
+
 ## 3. Negative cases
 
 `bindings.json` → `negative_cases` lists each case's bound path as binding ids.
@@ -170,6 +220,33 @@ trace is a candidate, not an observed failure.
 | NC7 | one backend collector fails to resume | no conclusion (partial state; both results ignored at `tail_fs_inotify.c:465-466`) | not driven (needs an `mk_event_add` or timerfd failure) |
 | NC8 | CV wakes before publication | wait again; no result claim | allowed by POSIX; the revised loop rechecks `test.done` |
 | NC9 | fixture removal before join (`test_tail_ctx_destroy`) | reject C5's test-specific fixture rule (unlink at `:286` before `flb_stop` at `:292`, whose result is ignored) | **yes (candidate)**: the threaded test and the previous non-threaded test tear down through it. Added by this census; not in the sketch |
+
+### 3.1 The previous test against the user's fix
+
+`90978ac6` is the user's Fluent Bit PR fix: the first real upstream fix this
+project has checked. The table reads each negative case in the test source at
+`90978ac6~1`, the previous test (the same blob as at `046accf6`), and at
+`90978ac6`, the fix. Every entry is a source-reading observation of which trace
+the test contains, and a candidate. None is a verified race or a verified fix.
+
+| Case | `90978ac6~1` (previous test) | `90978ac6` (fixed test) |
+|---|---|---|
+| NC1 | present (candidate): the non-threaded input is paused and resumed from T while E dispatches (`:2497`, `:2503`) | absent: pause and resume run inside a collector callback on E (`:2487`, `:2490`) |
+| NC2 | absent: no callback, publication or wait | present: the intended trace, candidate-satisfying under the stated premises (and only if V* is followed, §2.1); not verified |
+| NC3 | present (candidate): the threaded test enqueues from T and polls `coll->running` (`:2547-2549`) | present (candidate): the threaded test is unchanged (`:2634-2636`) |
+| NC4 | not applicable: no callback-retained test storage | absent: frees only after `flb_stop` returned 0 |
+| NC5 | not applicable: no deadline wait | absent: a timeout takes the stop/join path (residual R2 in `flb_stop`) |
+| NC6 | absent | absent |
+| NC7 | not driven | not driven |
+| NC8 | not applicable | handled: the wait loop rechecks `test.done` under the mutex |
+| NC9 | present (candidate) in both pause tests (`test_tail_ctx_destroy`) | absent from the non-threaded test (`flb_stop`, `flb_destroy`, then unlink, `:2583-2591`); present (candidate) in the threaded test (`:2644`) |
+
+**Observation.** In the non-threaded test the fix removes the two candidate
+traces NC1 and NC9 and introduces the NC2 shape. In the threaded test, the
+candidates NC3 and NC9 remain at `90978ac6`. A checker from
+`W47-LOOP-OWNER-CONTRACTS` and `W47-CONDVAR-JOIN-PUBLICATION` should turn each
+row into a measured verdict pair. Until then the table is a reading, not
+evidence.
 
 ## 4. Slice cut and measurement
 
@@ -345,6 +422,12 @@ semantics, Lean and checker gaps.
      is Unknown.
   2. Loop dispatch runs a callback on the loop's owner. This replaces
      `sameBaseSingleDispatcher : Bool` with a theorem over the derived owner.
+* **Derivation scope** (user decision, §2.1). Thread identity is derived
+  statically through direct calls and the hop kinds A, S, V, R, L and F; every
+  other hop is Unknown. The card must decide whether it follows V*, the
+  revised test's stack-copied vtable. If it does not, the fixed test's C1–C3
+  events stay Unknown and NC2 gives no conclusion. The card must state that
+  outcome in its prediction.
 * **Must reject** NC1, NC3 and NC6. **Must give no conclusion** on NC7.
   **Must accept, as a control,** the NC2 path's collector operations on E.
 * **Size.** A new thread-entry census module and a loop-owner vocabulary in
@@ -373,8 +456,34 @@ semantics, Lean and checker gaps.
 * **Soundness premise.** The joined set covers every thread that reaches the
   storage, taken from the loop-owner card's inventory. So this card follows
   W47-LOOP-OWNER-CONTRACTS.
+* **The narrowed lift of constraint 27** (user decision: lift only what this
+  track needs). The card lifts exactly these refusals:
+  1. `pthread_cond_wait` and `pthread_cond_timedwait`, admitted only inside a
+     loop that rechecks a predicate, where both the predicate and the guarded
+     results are read under the same mutex the wait releases and reacquires
+     (`in_tail.c:2563-2569`; `flb_input_thread.c:708-711`). A timed wait's
+     nonzero return leaves the loop with no result claim.
+  2. `pthread_cond_signal` while the waiter's mutex is held (`in_tail.c:2497`,
+     `flb_input_thread.c:691`).
+  3. `pthread_cond_init`/`pthread_cond_destroy`, only in quiescent phases:
+     before publication, and after the last signal is ordered by the mutex
+     (the test's `:2550`/`:2595`; the worker's re-init at
+     `flb_input_thread.c:715-716`, an accept control only if that ordering is
+     derived).
+
+  **These stay refused:**
+  * `pthread_cond_broadcast`;
+  * a wait outside a predicate loop;
+  * a signal without the mutex;
+  * one condvar used with two mutexes;
+  * statically initialised condvars;
+  * C11 `cnd_*` waits (the libc custody declarations are unchanged);
+  * rwlocks;
+  * try/timed mutex locks;
+  * recursive and dynamic mutex shapes.
 * **Needs:**
-  * a deliberate amendment of constraint 27;
+  * that narrowed amendment of constraint 27, recorded in `concurrency.md`
+    with the list above;
   * `pthread_cond_*` and `pthread_join` contracts in `quirin-provider-libc`,
     pinned;
   * a condvar edge in `QCore.Concurrency` and a join-release theorem.
