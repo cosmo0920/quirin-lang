@@ -1,0 +1,39 @@
+{
+ "summary": {
+  "functions_before": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "functions_after": {
+   "Unknown": 381,
+   "Safe": 63,
+   "Unsafe": 4
+  },
+  "units_before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "units_after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "diagnostic_counts_before": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported": 2908
+  },
+  "diagnostic_counts_after": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported": 2908
+  },
+  "status_moves": {},
+  "unit_moves": {},
+  "changed_rows": 0,
+  "attribution": {},
+  "leaves_removed_by_family": {},
+  "leaves_added_by_family": {}
+ },
+ "changed": []
+}

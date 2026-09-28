@@ -1,0 +1,14 @@
+W47CP	flb_input_chunk_protect	19986	statement	2	struct flb_storage_input * storage = i - > storage
+W47CP	flb_input_chunk_release_space_compound	18478	statement	2	storage_backlog_instance = output_plugin - > config - > storage_input_plugin
+W47CP	flb_input_chunk_write_header_v2	19111	condition	1	routes [ index ] . label ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19113	call-argument:strlen:0	1	routes [ index ] . label
+W47CP	flb_input_chunk_write_header_v2	19135	condition	1	routes [ index ] . plugin_name ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19137	call-argument:strlen:0	1	routes [ index ] . plugin_name
+W47CP	flb_input_chunk_write_header_v2	19258	condition	1	routes [ index ] . label ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19259	call-argument:memcpy:1	1	routes [ index ] . label
+W47CP	flb_input_chunk_write_header_v2	19275	condition	1	routes [ index ] . plugin_name ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19277	call-argument:memcpy:1	1	routes [ index ] . plugin_name
+W47CP	flb_sched_event_handler	18015	statement	2	req = timer - > data
+W47CP	flb_sched_event_handler	18023	statement	2	sched = timer - > data
+W47CP	input_chunk_collect_output_references	18645	statement	1	label = route - > label
+W47CP	task_collect_output_references	17361	statement	1	label = route - > label

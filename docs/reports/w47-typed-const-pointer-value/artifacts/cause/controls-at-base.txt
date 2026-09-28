@@ -1,0 +1,58 @@
+# Controls run at the base 66be515f, before any analyzer change.
+# 1. cargo test -p qcore-c-gateway --test typed_const_pointer_value (exit 101: the positive
+#    controls fail at the base as expected; every negative control passes).
+
+test a_void_pointer_bit_cast_is_a_borrowed_read ... FAILED
+test a_redeclared_typedef_getter_reads_its_const_pointer_value ... FAILED
+test a_const_qualified_pointer_value_is_read_in_every_position ... FAILED
+test a_const_pointer_value_from_a_bound_root_is_not_safe ... ok
+test a_const_pointer_middle_hop_keeps_its_premises ... ok
+test a_volatile_restrict_or_atomic_pointer_value_refuses ... ok
+test every_other_cast_keeps_the_refusal ... ok
+thread 'a_void_pointer_bit_cast_is_a_borrowed_read'  panicked at crates/qcore-c-gateway/tests/typed_const_pointer_value.rs:267:5:
+  left: ("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"])
+ right: ("Unknown", ["unknown_alias:l"])
+thread 'a_redeclared_typedef_getter_reads_its_const_pointer_value'  panicked at crates/qcore-c-gateway/tests/typed_const_pointer_value.rs:188:5:
+  left: ("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"])
+ right: ("Safe", [])
+thread 'a_const_qualified_pointer_value_is_read_in_every_position'  panicked at crates/qcore-c-gateway/tests/typed_const_pointer_value.rs:173:9:
+  left: ("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"])
+ right: ("Safe", [])
+test result: FAILED. 4 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+
+# 2. Temporary probe (scripts/make_probe.py, never committed): every fixture's status and
+#    complete diagnostic vector at the base.
+
+PROBE P-slots-return: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE P-conf-opaque: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE P-cells-name: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE P-rows-cname: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE P-cond: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE P-actual: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE P-decl: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE P-assign: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE N-vname: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE N-cvname: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE N-rname: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE N-aname: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE M-formal: Ok(("Safe", []))
+PROBE M-tracked: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE R-bound1: Ok(("Unsafe", ["leak", "unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE R-bound2: Ok(("Unsafe", ["leak", "unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE R-nested: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE B-assigned: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE B-assigned-nc: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE B-declared: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE B-stmt: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE B-declared-idx: Ok(("Safe", []))
+PROBE X-explicit: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE X-fnptr: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE X-midpath: Ok(("Safe", []))
+PROBE X-int: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE X-nonvoid: Ok(("Safe", []))
+PROBE X-midpath2: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE X-midpath3: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE X-nonvoid2: Ok(("Unknown", ["unsupported:indirect memory access is outside the resource projection"]))
+PROBE X-nonvoid3: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]))
+PROBE T-twice-const: Ok(("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"]))
+PROBE T-twice: Ok(("Safe", []))

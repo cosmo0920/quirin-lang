@@ -1,0 +1,65 @@
+{
+ "run": "private/cp/before-corpus",
+ "baseline": "private/cp/baseline-corpus",
+ "files": {
+  "resource-diagnostics.json": {
+   "run": "ff8cb96ab34c1a9123cfcafd4545f46e1277dee6a54597ff20b62adf6a8d7d05",
+   "baseline": "ff8cb96ab34c1a9123cfcafd4545f46e1277dee6a54597ff20b62adf6a8d7d05",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "run": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "baseline": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "run": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "baseline": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "run": "f6bb15da582d0e59c166432ad0c66a801236cb2a601dd56674c5e1e466da64e2",
+   "baseline": "7e28308c561b714dc77d147ab9efb324b11cc2e04681ba39075a2af6840ca511",
+   "identical": false,
+   "normalised_identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "run": "5dcf0115c702026e76c689bdf9905b73e5c43f99bad8cf6440913840ceaf4f1e",
+   "baseline": "3d12fd942ca8ca936a256fa8c11b28cc13d7f9884dfb1a582886283cef2acfc5",
+   "identical": false,
+   "normalised_identical": false,
+   "normalised_differing_leaves": 29,
+   "normalised_by_key": {
+    "resource_contracts:1775f806d3f68d9191d664c3": 1,
+    "resource_contracts:c409da8e6b5b044ed3bd7d3d": 1,
+    "coverage[]": 3,
+    "build_digest": 6,
+    "configuration_digest": 5,
+    "qcore:boolean-field-import:v1": 3,
+    "obligation_id": 3,
+    "task_digest": 3,
+    "resource_contracts:3a43d0bb51337078ee732b3d": 1,
+    "resource_contracts:491637cb49e57009e2f25fcb": 1,
+    "resource_contracts:663dba5605d1db2bb74d3388": 1,
+    "resource_contracts:b1863ba7ca1871da17d480c9": 1
+   }
+  },
+  "parity.jsonl.contexts.jsonl": {
+   "run": "2c2fc8182d54bc63e09ad5ede9d5aa68dc1f6afb314ad075ca858744326c5e69",
+   "baseline": "a53c9bcffaab65390b88de3603397db8ad731bf6af5638d73391c5539feda644",
+   "identical": false,
+   "normalised_identical": false,
+   "normalised_differing_leaves": 4,
+   "normalised_by_key": {
+    "frontend_debug": 2,
+    "frontend_sha256": 2
+   }
+  }
+ },
+ "parity_sorted_identical": true,
+ "parity_rows": {
+  "run": 110438,
+  "baseline": 110438
+ },
+ "verdict_bearing_identical": true
+}

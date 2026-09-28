@@ -1,0 +1,63 @@
+{
+ "run": "private/cp/before-system",
+ "baseline": "private/cp/baseline-system",
+ "files": {
+  "resource-diagnostics.json": {
+   "run": "c3a79846b36270e4dcec93ee88ff8ca9ade9ea46f9f767f510ed7fb527f3e2e8",
+   "baseline": "4ec3a1fb5aef5975a8c12b8e93ff8844c0817040f268e6471c4e49f770920ff1",
+   "identical": false,
+   "normalised_identical": false,
+   "normalised_differing_leaves": 45,
+   "normalised_by_key": {
+    "resource_contract_sources": 30,
+    "inventory_sha256": 15
+   }
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "run": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "baseline": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "run": "ae05c2fc23fc099feac7edd8abdb82ac962563c770bae6457f22fea2bab0f628",
+   "baseline": "1f6dc6e63b8635ef9f6cc1970237ea2fa91a8d6fe4f02ca191ff1da9595810cc",
+   "identical": false,
+   "normalised_identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "run": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "baseline": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "identical": true
+  },
+  "resource-diagnostics.invocation.json": {
+   "run": "e5cf274f6e023e3812324922fad903183c65e28c04c0ad9741ddb1f31bc44aea",
+   "baseline": "4a5ec27055bb05f63d392399975674536f03d7f8a575e8611c76a99ba57da4cb",
+   "identical": false,
+   "normalised_identical": false,
+   "normalised_differing_leaves": 5,
+   "normalised_by_key": {
+    "argv[]": 2,
+    "effective": 1,
+    "requested": 1,
+    "report": 1
+   }
+  },
+  "parity.jsonl.contexts.jsonl": {
+   "run": "8e3b76512b4cba7f540c47170bebe7b1762dbf5b9b3fb0c83d2637ec9cdc38b3",
+   "baseline": "1775f7dfc544eb518c7c3a5589ab2e3d525bc2311c3a08f37397736745f9e73d",
+   "identical": false,
+   "normalised_identical": false,
+   "normalised_differing_leaves": 16,
+   "normalised_by_key": {
+    "frontend_debug": 8,
+    "frontend_sha256": 8
+   }
+  }
+ },
+ "parity_sorted_identical": true,
+ "parity_rows": {
+  "run": 23484,
+  "baseline": 23484
+ },
+ "verdict_bearing_identical": false
+}

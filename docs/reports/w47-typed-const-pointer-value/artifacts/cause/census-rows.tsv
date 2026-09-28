@@ -1,0 +1,221 @@
+W47CP	cb_stream_iov_extended_free	5907	statement	2	iov = in - > buffer
+W47CP	cb_stream_page_finished	6909	statement	2	mk_ptr_t * page = in - > buffer
+W47CP	cio_chunk_get_content	2165	statement	2	mf = ch - > backend
+W47CP	cio_chunk_get_content	2171	statement	2	cf = ch - > backend
+W47CP	cio_chunk_get_content_end_pos	2205	statement	2	mf = ch - > backend
+W47CP	cio_chunk_get_content_end_pos	2209	statement	2	cf = ch - > backend
+W47CP	cio_chunk_get_content_size	2222	statement	2	mf = ch - > backend
+W47CP	cio_chunk_get_content_size	2226	statement	2	cf = ch - > backend
+W47CP	cio_chunk_get_real_size	2239	statement	2	mf = ch - > backend
+W47CP	cio_chunk_get_real_size	2243	statement	2	cf = ch - > backend
+W47CP	cio_chunk_is_up	2362	statement	2	cf = ch - > backend
+W47CP	cio_chunk_tx_begin	2308	statement	2	mf = ch - > backend
+W47CP	cio_chunk_tx_begin	2313	statement	2	cf = ch - > backend
+W47CP	cio_chunk_tx_rollback	2341	statement	2	mf = ch - > backend
+W47CP	cio_chunk_tx_rollback	2346	statement	2	cf = ch - > backend
+W47CP	cio_chunk_write_at	2121	statement	2	mf = ch - > backend
+W47CP	cio_chunk_write_at	2125	statement	2	cf = ch - > backend
+W47CP	cio_file_scan_dump	3647	statement	2	cf = ch - > backend
+W47CP	cio_file_write_metadata	3507	statement	2	cf = ch - > backend
+W47CP	cio_meta_cmp	2445	statement	2	struct cio_file * cf = ch - > backend
+W47CP	cio_meta_read	2429	statement	2	cf = ch - > backend
+W47CP	cio_meta_size	2405	statement	2	struct cio_file * cf = ch - > backend
+W47CP	cio_stream_delete	2236	statement	2	ctx = st - > parent
+W47CP	cJSON_Compare	3728	condition	1	a - > valuestring = = ( ( void * ) 0 )
+W47CP	cJSON_Compare	3739	statement	1	cJSON * a_element = a - > child
+W47CP	cJSON_Compare	3740	statement	1	cJSON * b_element = b - > child
+W47CP	cJSON_Duplicate_rec	3473	condition	1	item - > valuestring
+W47CP	cJSON_Duplicate_rec	3481	condition	1	item - > string
+W47CP	cJSON_Duplicate_rec	3493	statement	1	child = item - > child
+W47CP	cJSON_GetArraySize	2751	statement	1	child = array - > child
+W47CP	data_msg_callback	21531	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_key_value	21494	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_metric	21552	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_number_data_point	21515	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_resource_metrics	21591	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_scope_metrics	21571	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	decode_static_field	686	condition	1	field - > submsg_desc - > default_value ! = ( ( void * ) 0 )
+W47CP	decode_string	21479	statement	2	rd_kafka_telemetry_decode_interface_t * decode_interface = * arg
+W47CP	encode_extension_field	682	statement	1	extension = extension - > next
+W47CP	flb_input_chunk_protect	19928	statement	2	struct flb_storage_input * storage = i - > storage
+W47CP	flb_input_chunk_release_space_compound	18446	statement	2	storage_backlog_instance = output_plugin - > config - > storage_input_plugin
+W47CP	flb_input_chunk_write_header_v2	19076	condition	1	routes [ index ] . label ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19078	call-argument:strlen:0	1	routes [ index ] . label
+W47CP	flb_input_chunk_write_header_v2	19100	condition	1	routes [ index ] . plugin_name ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19102	call-argument:strlen:0	1	routes [ index ] . plugin_name
+W47CP	flb_input_chunk_write_header_v2	19221	condition	1	routes [ index ] . label ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19222	call-argument:memcpy:1	1	routes [ index ] . label
+W47CP	flb_input_chunk_write_header_v2	19238	condition	1	routes [ index ] . plugin_name ! = ( ( void * ) 0 )
+W47CP	flb_input_chunk_write_header_v2	19240	call-argument:memcpy:1	1	routes [ index ] . plugin_name
+W47CP	get_array_item	2766	statement	1	current_child = array - > child
+W47CP	get_object_item	2789	statement	1	current_element = object - > child
+W47CP	input_chunk_collect_output_references	18613	statement	1	label = route - > label
+W47CP	mk_channel_stream_write	5863	statement	2	iov = input - > buffer
+W47CP	mk_channel_write	5924	statement	2	iov = input - > buffer
+W47CP	_mk_event_del	3400	statement	2	ev_map = event - > data
+W47CP	_mk_event_wait_2	3562	statement	2	struct mk_event_ctx * ctx = loop - > data
+W47CP	mk_header_cb_finished	5901	statement	2	struct mk_iov * iov = in - > buffer
+W47CP	mk_http_init	6732	statement	2	mime = server - > mimetype_default
+W47CP	mk_http_session_remove	7051	statement	2	handler = sr - > stage30_handler
+W47CP	mk_iov_print	2183	statement	2	c = mk_io - > io [ i ] . iov_base
+W47CP	mk_lib_worker	6520	statement	2	struct mk_event_ctx * __ctx = server - > lib_evl - > data
+W47CP	mk_sched_exit	6737	statement	2	ctx = server - > sched_ctx
+W47CP	mk_sched_launch_worker_loop	6638	statement	2	ctx = server - > sched_ctx
+W47CP	mk_sched_next_target	6510	statement	2	struct mk_sched_ctx * ctx = server - > sched_ctx
+W47CP	mk_sched_worker_free	6521	statement	2	struct mk_sched_ctx * ctx = server - > sched_ctx
+W47CP	mk_server_loop_balancer	6390	statement	2	struct mk_event_ctx * __ctx = evl - > data
+W47CP	mk_server_worker_loop	6436	statement	2	struct mk_event_ctx * __ctx = evl - > data
+W47CP	mk_server_worker_loop	6469	statement	2	struct mk_event_ctx * __ctx = evl - > data
+W47CP	mk_start	6552	statement	2	struct mk_event_ctx * __ctx = server - > lib_evl_start - > data
+W47CP	pb_check_proto3_default_value	510	condition	1	field - > descriptor - > default_value
+W47CP	pb_field_set_to_default	821	condition	1	field - > submsg_desc - > default_value ! = ( ( void * ) 0 )
+W47CP	pb_message_set_to_defaults	858	condition	1	iter - > descriptor - > default_value
+W47CP	print_array	2511	statement	1	cJSON * current_element = item - > child
+W47CP	print_object	2651	statement	1	cJSON * current_item = item - > child
+W47CP	print_value	2413	condition	1	item - > valuestring = = ( ( void * ) 0 )
+W47CP	rd_buf_dump	3961	condition	1	rbuf - > rbuf_wpos
+W47CP	rd_buf_get_write_iov	3721	statement	1	seg = rbuf - > rbuf_wpos
+W47CP	rd_buf_write_pos	13006	statement	1	const rd_segment_t * seg = rbuf - > rbuf_wpos
+W47CP	rd_buf_write_pos	13007	statement	1	const rd_segment_t * seg = rbuf - > rbuf_wpos
+W47CP	rd_buf_write_pos	13484	statement	1	const rd_segment_t * seg = rbuf - > rbuf_wpos
+W47CP	rd_buf_write_pos	3045	statement	1	const rd_segment_t * seg = rbuf - > rbuf_wpos
+W47CP	rd_kafka_AlterConsumerGroupOffsetsRequest	24490	statement	1	rd_kafka_topic_partition_list_t * offsets = grpoffsets - > partitions
+W47CP	rd_kafka_anyconf_copy	24842	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_desensitize	24754	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_destroy	24822	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_dump	25282	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_get	25245	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_set	24680	condition	1	prop - > name
+W47CP	rd_kafka_anyconf_set_prop	24448	condition	1	prop - > unsupported
+W47CP	rd_kafka_anyconf_warn_deprecated	26174	condition	1	prop - > name
+W47CP	rd_kafka_buf_write_topic_partitions	20666	condition	1	! rktpar - > metadata
+W47CP	rd_kafka_ClusterDescription_new	26327	call-argument:rd_strdup:0	1	mdi - > cluster_id
+W47CP	rd_kafka_conf_cert_copy	20500	condition	1	sconf - > ssl . key
+W47CP	rd_kafka_conf_cert_copy	20502	condition	1	sconf - > ssl . cert
+W47CP	rd_kafka_conf_cert_copy	20504	condition	1	sconf - > ssl . ca
+W47CP	rd_kafka_conf_flags2str	25139	condition	1	prop - > s2i [ j ] . unsupported
+W47CP	rd_kafka_conf_flags2str	25142	call-argument:strlen:0	1	prop - > s2i [ j ] . str
+W47CP	rd_kafka_conf_flags2str	25145	call-argument:snprintf:4	1	prop - > s2i [ j ] . str
+W47CP	rd_kafka_conf_get	25269	condition	1	! conf - > topic_conf
+W47CP	rd_kafka_ConfigResource_get_single_broker_id	21949	condition	1	config - > name = = endptr
+W47CP	rd_kafka_conf_properties_show	25348	condition	1	prop0 - > name
+W47CP	rd_kafka_conf_prop_find	24296	condition	1	prop - > name
+W47CP	rd_kafka_conf_prop_find	24302	statement	1	name = prop - > sdef
+W47CP	rd_kafka_conf_ssl_passwd_cb	20169	condition	1	! conf - > ssl . key_password
+W47CP	rd_kafka_conf_ssl_passwd_cb	20171	call-argument:strlen:0	1	conf - > ssl . key_password
+W47CP	rd_kafka_conf_ssl_passwd_cb	20172	call-argument:memcpy:1	1	conf - > ssl . key_password
+W47CP	rd_kafka_ConsumerGroupHeartbeatRequest	21782	statement	1	member_id_str = member_id - > str
+W47CP	rd_kafka_ConsumerGroupHeartbeatRequest	21784	statement	1	group_instance_id_str = group_instance_id - > str
+W47CP	rd_kafka_ConsumerGroupHeartbeatRequest	21786	statement	1	remote_assignor_str = remote_assignor - > str
+W47CP	rd_kafka_defaultconf_set	24630	condition	1	prop - > name
+W47CP	rd_kafka_defaultconf_set	24637	condition	1	prop - > sdef
+W47CP	rd_kafka_DeleteAcls_result_response_matching_acls	24300	return	1	result_response - > matching_acls . rl_elems
+W47CP	rd_kafka_ensure_transactional	20275	condition	1	! rk - > rk_conf . eos . transactional_id
+W47CP	rd_kafka_handle_mock_cluster	23469	return	1	rk - > rk_mock . cluster
+W47CP	rd_kafka_log_buf	21207	condition	1	! rk - > rk_logq
+W47CP	rd_kafka_make_ListOffsetsRequest	20900	statement	1	last_topic = rktpar - > topic
+W47CP	rd_kafka_memberid	24583	condition-assignment	1	rkcg = ( ( rk ) - > rk_cgrp )
+W47CP	rd_kafka_message2rko	14732	statement	2	rd_kafka_op_t * rko = rkmessage - > _private
+W47CP	rd_kafka_message_errstr	19747	condition	1	rkmessage - > payload
+W47CP	rd_kafka_message_leader_epoch	20760	condition	1	! rkmessage - > rkt
+W47CP	rd_kafka_messages_get	23085	return	1	messages - > elems [ index ]
+W47CP	rd_kafka_metadata_cache_dump	20722	call-argument:fprintf:2	1	rkmce - > rkmce_mtopic . topic
+W47CP	rd_kafka_metadata_cache_topic_update	20443	condition	1	mdt - > topic ! = ( ( void * ) 0 )
+W47CP	rd_kafka_metadata_topic_match	20868	statement	1	const char * topic = rkmce - > rkmce_mtopic . topic
+W47CP	rd_kafka_mock_cgrp_classic_get	21133	call-argument:rd_strndup:0	1	( ProtocolType ) - > str
+W47CP	rd_kafka_mock_cgrp_classic_member_add	21061	call-argument:rd_strndup:0	1	( GroupInstanceId ) - > str
+W47CP	rd_kafka_mock_cgrp_consumer_member_find_by_instance_id	21532	condition	1	! member - > instance_id
+W47CP	rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range	21259	statement	1	rd_kafka_mock_cluster_t * mcluster = mcgrp - > cluster
+W47CP	rd_kafka_mock_cluster_bootstraps	23473	return	1	mcluster - > bootstraps
+W47CP	rd_kafka_mock_cluster_handle	23466	return	1	mcluster - > rk
+W47CP	rd_kafka_mock_handle_Metadata	22961	statement	1	char * topic_name = rktpar - > topic
+W47CP	rd_kafka_mock_handle_Metadata	22986	statement	1	topic_name = rktpar - > topic
+W47CP	rd_kafka_mock_pid_new	23343	call-argument:memcpy:1	1	TransactionalId - > str
+W47CP	rd_kafka_mock_sgrp_acquire_available_offsets	24442	call-argument:rd_strndup:0	1	( member_id ) - > str
+W47CP	rd_kafka_mock_sgrp_release_session_locks	22440	condition	1	! session - > partitions
+W47CP	rd_kafka_msgbatch_handle_Produce_result_record_errors	23077	condition	1	presult - > record_errors
+W47CP	rd_kafka_msgbatch_handle_Produce_result_record_errors	23099	condition	1	presult - > errstr
+W47CP	rd_kafka_msg_wire_size	13653	condition	1	rkm - > rkm_headers
+W47CP	rd_kafka_msg_wire_size	13654	call-argument:rd_kafka_headers_serialized_size:0	1	rkm - > rkm_headers
+W47CP	rd_kafka_Node_host	19789	return	1	node - > host
+W47CP	rd_kafka_Node_rack	19795	return	1	node - > rack
+W47CP	rd_kafka_opaque	24637	return	1	rk - > rk_conf . opaque
+W47CP	rd_kafka_Produce_result_copy	20944	condition	1	result - > errstr
+W47CP	rd_kafka_Produce_result_copy	20946	condition	1	result - > record_errors
+W47CP	rd_kafkap_str_cmp	13331	call-argument:memcmp:0	1	a - > str
+W47CP	rd_kafkap_str_cmp	13331	call-argument:memcmp:1	1	b - > str
+W47CP	rd_kafkap_str_cmp	13332	call-argument:memcmp:0	1	a - > str
+W47CP	rd_kafkap_str_cmp	13332	call-argument:memcmp:1	1	b - > str
+W47CP	rd_kafkap_str_cmp_str	13341	call-argument:memcmp:0	1	a - > str
+W47CP	rd_kafkap_str_cmp_str	13342	call-argument:memcmp:0	1	a - > str
+W47CP	rd_kafkap_str_cmp_str	13853	call-argument:memcmp:0	1	a - > str
+W47CP	rd_kafkap_str_cmp_str2	13351	call-argument:memcmp:1	1	b - > str
+W47CP	rd_kafka_purge_outdated_messages	20086	statement	2	rko = rkmessages [ i ] - > _private
+W47CP	rd_kafka_sasl_cyrus_close	20642	statement	2	rd_kafka_sasl_cyrus_state_t * state = rktrans - > rktrans_sasl . state
+W47CP	rd_kafka_sasl_cyrus_ready	20725	statement	2	rd_kafka_sasl_cyrus_handle_t * handle = rk - > rk_sasl . handle
+W47CP	rd_kafka_sasl_cyrus_term	20746	statement	2	rd_kafka_sasl_cyrus_handle_t * handle = rk - > rk_sasl . handle
+W47CP	rd_kafka_sasl_oauthbearer_build_client_first_message	20715	statement	2	struct rd_kafka_sasl_oauthbearer_state * state = rktrans - > rktrans_sasl . state
+W47CP	rd_kafka_sasl_oauthbearer_close	20701	statement	2	struct rd_kafka_sasl_oauthbearer_state * state = rktrans - > rktrans_sasl . state
+W47CP	rd_kafka_sasl_oauthbearer_ready	20891	statement	2	rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle
+W47CP	rd_kafka_sasl_oauthbearer_term	20877	statement	2	rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle
+W47CP	rd_kafka_sasl_oauthbearer_token_refresh_tmr_cb	20840	statement	2	rd_kafka_sasl_oauthbearer_handle_t * handle = rk - > rk_sasl . handle
+W47CP	rd_kafka_sasl_scram_build_client_final_message	20339	call-argument:snprintf:6	1	server_first_msg - > ptr
+W47CP	rd_kafka_sasl_scram_build_client_first_message	20487	statement	2	struct rd_kafka_sasl_scram_state * state = rktrans - > rktrans_sasl . state
+W47CP	rd_kafka_sasl_scram_close	20179	statement	2	struct rd_kafka_sasl_scram_state * state = rktrans - > rktrans_sasl . state
+W47CP	rd_kafka_share_ack_batch_entry_copy	19628	call-argument:memcpy:1	1	src - > types
+W47CP	rd_kafka_share_acknowledge_type	20129	condition	1	! rkmessage - > rkt
+W47CP	rd_kafka_share_fetch_reply_handle	21172	statement	2	rd_kafka_op_t * rko_orig = request - > rkbuf_opaque
+W47CP	rd_kafka_share_partition_offsets_list_get	20237	return	1	list - > elems [ index ]
+W47CP	rd_kafka_ssl_hmac	21211	call-argument:memcpy:1	1	salt - > ptr
+W47CP	rd_kafka_topic_assignment_state_new	19651	condition	1	topic - > metadata_internal - > partitions
+W47CP	rd_kafka_topic_info_cmp	20890	condition	1	a - > partitions_internal = = ( ( void * ) 0 )
+W47CP	rd_kafka_topic_info_cmp	20892	condition	1	a - > partitions_internal = = ( ( void * ) 0 )
+W47CP	rd_kafka_topic_name_safe	17726	condition	1	! rkt - > rkt_topic
+W47CP	rd_kafka_topic_partition_cmp	21963	call-argument:strcmp:0	1	a - > topic
+W47CP	rd_kafka_topic_partition_cmp	21963	call-argument:strcmp:1	1	b - > topic
+W47CP	rd_kafka_topic_partition_get_current_leader_epoch	21728	condition-assignment	3	parpriv = rktpar - > _private
+W47CP	rd_kafka_topic_partition_get_leader_epoch	21712	condition-assignment	3	parpriv = rktpar - > _private
+W47CP	rd_kafka_topic_partition_get_private	18770	condition-assignment	2	parpriv = rktpar - > _private
+W47CP	rd_kafka_topic_partition_get_topic_id	21741	condition-assignment	3	parpriv = rktpar - > _private
+W47CP	rd_kafka_topic_partition_list_add0	21818	condition	1	parpriv - > rktp
+W47CP	rd_kafka_topic_partition_list_combine_regexes	22748	statement	1	char * topic = rktpar - > topic
+W47CP	rd_kafka_topic_partition_set_metadata_from_rktp_stored	21765	condition	1	rktp - > rktp_stored_metadata
+W47CP	rd_kafka_topic_partition_set_metadata_from_rktp_stored	21767	call-argument:memcpy:1	1	rktp - > rktp_stored_metadata
+W47CP	rd_kafka_topic_partition_toppar	18785	condition-assignment	3	parpriv = rktpar - > _private
+W47CP	rd_kafka_topic_partition_update	21657	call-argument:memcpy:1	1	src - > metadata
+W47CP	rd_kafka_topic_partition_update	21659	condition-assignment	3	srcpriv = src - > _private
+W47CP	rd_kafka_topic_partition_update	21661	condition	1	srcpriv - > rktp
+W47CP	rd_kafka_topic_partition_update	21667	condition-assignment	2	dstpriv = dst - > _private
+W47CP	rd_kafka_toppar_get0	20432	statement	1	rktp = rkt - > rkt_ua
+W47CP	rd_list_dump	2949	call-argument:printf:5	1	rl - > rl_elems
+W47CP	rd_list_is_sorted	3112	condition	1	rl - > rl_elems = = ( ( void * ) 0 )
+W47CP	rd_segment_dump	3946	call-argument:fprintf:4	1	seg - > seg_p
+W47CP	rd_slice_abs_offset	13064	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	13065	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	13066	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	13142	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	13542	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	13576	condition	1	! slice - > seg
+W47CP	rd_slice_abs_offset	3103	condition	1	! slice - > seg
+W47CP	rd_slice_dump	3990	statement	1	seg = slice - > seg
+W47CP	rd_slice_offset	13069	condition	1	! slice - > seg
+W47CP	rd_slice_offset	13070	condition	1	! slice - > seg
+W47CP	rd_slice_offset	13071	condition	1	! slice - > seg
+W47CP	rd_slice_offset	13147	condition	1	! slice - > seg
+W47CP	rd_slice_offset	13547	condition	1	! slice - > seg
+W47CP	rd_slice_offset	13581	condition	1	! slice - > seg
+W47CP	rd_slice_offset	3108	condition	1	! slice - > seg
+W47CP	rd_slice_pos	3097	condition	1	! slice - > seg
+W47CP	rd_unittest	20547	condition	1	unittests [ i ] . name
+W47CP	rd_unittest	20552	call-argument:fprintf:2	1	unittests [ i ] . name
+W47CP	sn_compress	20376	statement	2	fragment = env - > scratch
+W47CP	sn_compress	20386	statement	2	dest = env - > scratch_output
+W47CP	thread_cb_init_vars	6045	statement	2	mth = request - > thread
+W47CP	unittest_conf	26251	condition	1	prop - > name
+W47CP	unittest_conf	26270	condition	1	prop - > sdef
+W47CP	unittest_conf	26271	statement	1	val = prop - > sdef
+W47CP	unittest_conf	26318	condition	1	prop - > unsupported
+W47CP	unittest_fetcher_share_filter_forward	20329	condition	1	tests [ i ] . name
+W47CP	unittest_fetcher_share_filter_forward	20331	call-argument:fprintf:2	1	tests [ i ] . name
+W47CP	unpack_metric	7969	statement	2	histogram = decode_context - > map - > parent
+W47CP	unpack_metric	7983	statement	2	summary = decode_context - > map - > parent

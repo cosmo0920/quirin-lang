@@ -1,0 +1,976 @@
+[
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "status": "Unknown",
+  "leaves": 8,
+  "rows": [
+   {
+    "line": 19986,
+    "position": "statement",
+    "bits": 2,
+    "texts": "struct flb_storage_input * storage = i - > storage"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "IND@19986",
+    "IND@19988",
+    "OTHER:call to uncontracted function `flb_input_pause`@19989",
+    "unknown_alias@19990",
+    "COND@19993",
+    "IND@20003",
+    "OTHER:call to uncontracted function `flb_input_pause`@20004",
+    "unknown_alias@20005"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "IND@19988",
+    "OTHER:call to uncontracted function `flb_input_pause`@19989",
+    "unknown_alias@19990",
+    "COND@19993",
+    "IND@20003",
+    "OTHER:call to uncontracted function `flb_input_pause`@20004",
+    "unknown_alias@20005"
+   ],
+   "covered_lines": [
+    19986
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_release_space_compound",
+  "status": "Unknown",
+  "leaves": 7,
+  "rows": [
+   {
+    "line": 18478,
+    "position": "statement",
+    "bits": 2,
+    "texts": "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "IND@18478",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18483",
+    "OTHER:call to uncontracted function `sb_release_output_queue_space@18490",
+    "IND@18495",
+    "unknown_alias@18503",
+    "unknown_alias@18505",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18506"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18483",
+    "OTHER:call to uncontracted function `sb_release_output_queue_space@18490",
+    "IND@18495",
+    "unknown_alias@18503",
+    "unknown_alias@18505",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18506"
+   ],
+   "covered_lines": [
+    18478
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_write_header_v2",
+  "status": "Unknown",
+  "leaves": 37,
+  "rows": [
+   {
+    "line": 19111,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . label ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19113,
+    "position": "call-argument:strlen:0",
+    "bits": 1,
+    "texts": "routes [ index ] . label"
+   },
+   {
+    "line": 19135,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19137,
+    "position": "call-argument:strlen:0",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name"
+   },
+   {
+    "line": 19258,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . label ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19259,
+    "position": "call-argument:memcpy:1",
+    "bits": 1,
+    "texts": "routes [ index ] . label"
+   },
+   {
+    "line": 19275,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19277,
+    "position": "call-argument:memcpy:1",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 8,
+   "blocking": [
+    "OTHER:C operator `sizeof` requires type/operand analysis@19072",
+    "OTHER:unrecognized assignment destination@19134",
+    "OTHER:unrecognized assignment destination@19154",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19157",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19160",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19162",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19165",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19169",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19178",
+    "OTHER:call has an unmodeled formal address or borrowed expression@19220",
+    "unknown_alias@19221",
+    "unknown_alias@19223",
+    "unknown_alias@19224",
+    "unknown_alias@19226",
+    "unknown_alias@19227",
+    "unknown_alias@19231",
+    "unknown_alias@19232",
+    "unknown_alias@19233",
+    "unknown_alias@19234",
+    "unknown_alias@19237",
+    "unknown_alias@19238",
+    "OTHER:unrecognized assignment destination@19240",
+    "unknown_alias@19252",
+    "unknown_alias@19253",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19254",
+    "unknown_alias@19268",
+    "unknown_alias@19269",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19270",
+    "IND@19276",
+    "OTHER:call to uncontracted function `cio_meta_write`@19283"
+   ],
+   "covered_lines": [
+    19111,
+    19113,
+    19135,
+    19137,
+    19258,
+    19259,
+    19275
+   ],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 8,
+   "blocking": [
+    "OTHER:C operator `sizeof` requires type/operand analysis@19072",
+    "OTHER:unrecognized assignment destination@19134",
+    "OTHER:unrecognized assignment destination@19154",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19157",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19160",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19162",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19165",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19169",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19178",
+    "OTHER:call has an unmodeled formal address or borrowed expression@19220",
+    "unknown_alias@19221",
+    "unknown_alias@19223",
+    "unknown_alias@19224",
+    "unknown_alias@19226",
+    "unknown_alias@19227",
+    "unknown_alias@19231",
+    "unknown_alias@19232",
+    "unknown_alias@19233",
+    "unknown_alias@19234",
+    "unknown_alias@19237",
+    "unknown_alias@19238",
+    "OTHER:unrecognized assignment destination@19240",
+    "unknown_alias@19252",
+    "unknown_alias@19253",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19254",
+    "unknown_alias@19268",
+    "unknown_alias@19269",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19270",
+    "IND@19276",
+    "OTHER:call to uncontracted function `cio_meta_write`@19283"
+   ],
+   "covered_lines": [
+    19111,
+    19113,
+    19135,
+    19137,
+    19258,
+    19259,
+    19275
+   ],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "input_chunk_collect_output_references",
+  "status": "Unknown",
+  "leaves": 16,
+  "rows": [
+   {
+    "line": 18645,
+    "position": "statement",
+    "bits": 1,
+    "texts": "label = route - > label"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@18643",
+    "COND@18660",
+    "IND@18669",
+    "COND@18670",
+    "COND@18675",
+    "COND@18690",
+    "COND@18710",
+    "OTHER:unmodeled increment or decrement expression@18713",
+    "IND@18719",
+    "COND@18720",
+    "COND@18725",
+    "OTHER:unmodeled increment or decrement expression@18730",
+    "COND@18737",
+    "OTHER:unmodeled increment or decrement expression@18739",
+    "OTHER:store through `*out_matches` without an out-parameter contra@18743"
+   ],
+   "covered_lines": [
+    18645
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@18643",
+    "COND@18660",
+    "IND@18669",
+    "COND@18670",
+    "COND@18675",
+    "COND@18690",
+    "COND@18710",
+    "OTHER:unmodeled increment or decrement expression@18713",
+    "IND@18719",
+    "COND@18720",
+    "COND@18725",
+    "OTHER:unmodeled increment or decrement expression@18730",
+    "COND@18737",
+    "OTHER:unmodeled increment or decrement expression@18739",
+    "OTHER:store through `*out_matches` without an out-parameter contra@18743"
+   ],
+   "covered_lines": [
+    18645
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_protect",
+  "status": "Unknown",
+  "leaves": 8,
+  "rows": [
+   {
+    "line": 19986,
+    "position": "statement",
+    "bits": 2,
+    "texts": "struct flb_storage_input * storage = i - > storage"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "IND@19986",
+    "IND@19988",
+    "OTHER:call to uncontracted function `flb_input_pause`@19989",
+    "unknown_alias@19990",
+    "COND@19993",
+    "IND@20003",
+    "OTHER:call to uncontracted function `flb_input_pause`@20004",
+    "unknown_alias@20005"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "IND@19988",
+    "OTHER:call to uncontracted function `flb_input_pause`@19989",
+    "unknown_alias@19990",
+    "COND@19993",
+    "IND@20003",
+    "OTHER:call to uncontracted function `flb_input_pause`@20004",
+    "unknown_alias@20005"
+   ],
+   "covered_lines": [
+    19986
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_release_space_compound",
+  "status": "Unknown",
+  "leaves": 7,
+  "rows": [
+   {
+    "line": 18478,
+    "position": "statement",
+    "bits": 2,
+    "texts": "storage_backlog_instance = output_plugin - > config - > storage_input_plugin"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "IND@18478",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18483",
+    "OTHER:call to uncontracted function `sb_release_output_queue_space@18490",
+    "IND@18495",
+    "unknown_alias@18503",
+    "unknown_alias@18505",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18506"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18483",
+    "OTHER:call to uncontracted function `sb_release_output_queue_space@18490",
+    "IND@18495",
+    "unknown_alias@18503",
+    "unknown_alias@18505",
+    "OTHER:call to uncontracted function `flb_input_chunk_release_space@18506"
+   ],
+   "covered_lines": [
+    18478
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_write_header_v2",
+  "status": "Unknown",
+  "leaves": 37,
+  "rows": [
+   {
+    "line": 19111,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . label ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19113,
+    "position": "call-argument:strlen:0",
+    "bits": 1,
+    "texts": "routes [ index ] . label"
+   },
+   {
+    "line": 19135,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19137,
+    "position": "call-argument:strlen:0",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name"
+   },
+   {
+    "line": 19258,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . label ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19259,
+    "position": "call-argument:memcpy:1",
+    "bits": 1,
+    "texts": "routes [ index ] . label"
+   },
+   {
+    "line": 19275,
+    "position": "condition",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name ! = ( ( void * ) 0 )"
+   },
+   {
+    "line": 19277,
+    "position": "call-argument:memcpy:1",
+    "bits": 1,
+    "texts": "routes [ index ] . plugin_name"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 8,
+   "blocking": [
+    "OTHER:C operator `sizeof` requires type/operand analysis@19072",
+    "OTHER:unrecognized assignment destination@19134",
+    "OTHER:unrecognized assignment destination@19154",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19157",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19160",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19162",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19165",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19169",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19178",
+    "OTHER:call has an unmodeled formal address or borrowed expression@19220",
+    "unknown_alias@19221",
+    "unknown_alias@19223",
+    "unknown_alias@19224",
+    "unknown_alias@19226",
+    "unknown_alias@19227",
+    "unknown_alias@19231",
+    "unknown_alias@19232",
+    "unknown_alias@19233",
+    "unknown_alias@19234",
+    "unknown_alias@19237",
+    "unknown_alias@19238",
+    "OTHER:unrecognized assignment destination@19240",
+    "unknown_alias@19252",
+    "unknown_alias@19253",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19254",
+    "unknown_alias@19268",
+    "unknown_alias@19269",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19270",
+    "IND@19276",
+    "OTHER:call to uncontracted function `cio_meta_write`@19283"
+   ],
+   "covered_lines": [
+    19111,
+    19113,
+    19135,
+    19137,
+    19258,
+    19259,
+    19275
+   ],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 8,
+   "blocking": [
+    "OTHER:C operator `sizeof` requires type/operand analysis@19072",
+    "OTHER:unrecognized assignment destination@19134",
+    "OTHER:unrecognized assignment destination@19154",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19157",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19160",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19162",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19165",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19169",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19178",
+    "OTHER:call has an unmodeled formal address or borrowed expression@19220",
+    "unknown_alias@19221",
+    "unknown_alias@19223",
+    "unknown_alias@19224",
+    "unknown_alias@19226",
+    "unknown_alias@19227",
+    "unknown_alias@19231",
+    "unknown_alias@19232",
+    "unknown_alias@19233",
+    "unknown_alias@19234",
+    "unknown_alias@19237",
+    "unknown_alias@19238",
+    "OTHER:unrecognized assignment destination@19240",
+    "unknown_alias@19252",
+    "unknown_alias@19253",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19254",
+    "unknown_alias@19268",
+    "unknown_alias@19269",
+    "OTHER:C operator `sizeof` requires type/operand analysis@19270",
+    "IND@19276",
+    "OTHER:call to uncontracted function `cio_meta_write`@19283"
+   ],
+   "covered_lines": [
+    19111,
+    19113,
+    19135,
+    19137,
+    19258,
+    19259,
+    19275
+   ],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_input_chunk.c",
+  "function": "input_chunk_collect_output_references",
+  "status": "Unknown",
+  "leaves": 16,
+  "rows": [
+   {
+    "line": 18645,
+    "position": "statement",
+    "bits": 1,
+    "texts": "label = route - > label"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@18643",
+    "COND@18660",
+    "IND@18669",
+    "COND@18670",
+    "COND@18675",
+    "COND@18690",
+    "COND@18710",
+    "OTHER:unmodeled increment or decrement expression@18713",
+    "IND@18719",
+    "COND@18720",
+    "COND@18725",
+    "OTHER:unmodeled increment or decrement expression@18730",
+    "COND@18737",
+    "OTHER:unmodeled increment or decrement expression@18739",
+    "OTHER:store through `*out_matches` without an out-parameter contra@18743"
+   ],
+   "covered_lines": [
+    18645
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@18643",
+    "COND@18660",
+    "IND@18669",
+    "COND@18670",
+    "COND@18675",
+    "COND@18690",
+    "COND@18710",
+    "OTHER:unmodeled increment or decrement expression@18713",
+    "IND@18719",
+    "COND@18720",
+    "COND@18725",
+    "OTHER:unmodeled increment or decrement expression@18730",
+    "COND@18737",
+    "OTHER:unmodeled increment or decrement expression@18739",
+    "OTHER:store through `*out_matches` without an out-parameter contra@18743"
+   ],
+   "covered_lines": [
+    18645
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_task.c",
+  "function": "task_collect_output_references",
+  "status": "Unknown",
+  "leaves": 16,
+  "rows": [
+   {
+    "line": 17361,
+    "position": "statement",
+    "bits": 1,
+    "texts": "label = route - > label"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@17359",
+    "COND@17376",
+    "IND@17385",
+    "COND@17386",
+    "COND@17391",
+    "COND@17406",
+    "COND@17426",
+    "OTHER:unmodeled increment or decrement expression@17429",
+    "IND@17435",
+    "COND@17436",
+    "COND@17441",
+    "OTHER:unmodeled increment or decrement expression@17446",
+    "COND@17453",
+    "OTHER:unmodeled increment or decrement expression@17455",
+    "OTHER:store through `*out_matches` without an out-parameter contra@17459"
+   ],
+   "covered_lines": [
+    17361
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@17359",
+    "COND@17376",
+    "IND@17385",
+    "COND@17386",
+    "COND@17391",
+    "COND@17406",
+    "COND@17426",
+    "OTHER:unmodeled increment or decrement expression@17429",
+    "IND@17435",
+    "COND@17436",
+    "COND@17441",
+    "OTHER:unmodeled increment or decrement expression@17446",
+    "COND@17453",
+    "OTHER:unmodeled increment or decrement expression@17455",
+    "OTHER:store through `*out_matches` without an out-parameter contra@17459"
+   ],
+   "covered_lines": [
+    17361
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_task.c",
+  "function": "task_collect_output_references",
+  "status": "Unknown",
+  "leaves": 16,
+  "rows": [
+   {
+    "line": 17361,
+    "position": "statement",
+    "bits": 1,
+    "texts": "label = route - > label"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@17359",
+    "COND@17376",
+    "IND@17385",
+    "COND@17386",
+    "COND@17391",
+    "COND@17406",
+    "COND@17426",
+    "OTHER:unmodeled increment or decrement expression@17429",
+    "IND@17435",
+    "COND@17436",
+    "COND@17441",
+    "OTHER:unmodeled increment or decrement expression@17446",
+    "COND@17453",
+    "OTHER:unmodeled increment or decrement expression@17455",
+    "OTHER:store through `*out_matches` without an out-parameter contra@17459"
+   ],
+   "covered_lines": [
+    17361
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  },
+  "step2": {
+   "census_rows": 1,
+   "blocking": [
+    "OTHER:store through `*out_matches` without an out-parameter contra@17359",
+    "COND@17376",
+    "IND@17385",
+    "COND@17386",
+    "COND@17391",
+    "COND@17406",
+    "COND@17426",
+    "OTHER:unmodeled increment or decrement expression@17429",
+    "IND@17435",
+    "COND@17436",
+    "COND@17441",
+    "OTHER:unmodeled increment or decrement expression@17446",
+    "COND@17453",
+    "OTHER:unmodeled increment or decrement expression@17455",
+    "OTHER:store through `*out_matches` without an out-parameter contra@17459"
+   ],
+   "covered_lines": [
+    17361
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_event_handler",
+  "status": "Unknown",
+  "leaves": 22,
+  "rows": [
+   {
+    "line": 18015,
+    "position": "statement",
+    "bits": 2,
+    "texts": "req = timer - > data"
+   },
+   {
+    "line": 18023,
+    "position": "statement",
+    "bits": 2,
+    "texts": "sched = timer - > data"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_sched_ctx_get`@17988",
+    "IND@18002",
+    "IND@18003",
+    "OTHER:unsupported assignment expression@18010",
+    "unknown_alias@18011",
+    "unknown_alias@18014",
+    "IND@18015",
+    "IND@18017",
+    "OTHER:call to uncontracted function `flb_sched_request_destroy`@18019",
+    "unknown_alias@18022",
+    "IND@18023",
+    "OTHER:call to uncontracted function `schedule_request_promote`@18025",
+    "unknown_alias@18027",
+    "unknown_alias@18028",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_disable`@18029",
+    "IND@18030",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_destroy`@18031",
+    "unknown_alias@18033",
+    "unknown_alias@18034",
+    "unknown_alias@18035",
+    "IND@18036",
+    "IND@18039"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 2,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_sched_ctx_get`@17988",
+    "IND@18002",
+    "IND@18003",
+    "OTHER:unsupported assignment expression@18010",
+    "unknown_alias@18011",
+    "unknown_alias@18014",
+    "IND@18017",
+    "OTHER:call to uncontracted function `flb_sched_request_destroy`@18019",
+    "unknown_alias@18022",
+    "OTHER:call to uncontracted function `schedule_request_promote`@18025",
+    "unknown_alias@18027",
+    "unknown_alias@18028",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_disable`@18029",
+    "IND@18030",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_destroy`@18031",
+    "unknown_alias@18033",
+    "unknown_alias@18034",
+    "unknown_alias@18035",
+    "IND@18036",
+    "IND@18039"
+   ],
+   "covered_lines": [
+    18015,
+    18023
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ },
+ {
+  "library": "fluent-bit-system",
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_event_handler",
+  "status": "Unknown",
+  "leaves": 22,
+  "rows": [
+   {
+    "line": 18015,
+    "position": "statement",
+    "bits": 2,
+    "texts": "req = timer - > data"
+   },
+   {
+    "line": 18023,
+    "position": "statement",
+    "bits": 2,
+    "texts": "sched = timer - > data"
+   }
+  ],
+  "ambiguous_name": true,
+  "step1": {
+   "census_rows": 0,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_sched_ctx_get`@17988",
+    "IND@18002",
+    "IND@18003",
+    "OTHER:unsupported assignment expression@18010",
+    "unknown_alias@18011",
+    "unknown_alias@18014",
+    "IND@18015",
+    "IND@18017",
+    "OTHER:call to uncontracted function `flb_sched_request_destroy`@18019",
+    "unknown_alias@18022",
+    "IND@18023",
+    "OTHER:call to uncontracted function `schedule_request_promote`@18025",
+    "unknown_alias@18027",
+    "unknown_alias@18028",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_disable`@18029",
+    "IND@18030",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_destroy`@18031",
+    "unknown_alias@18033",
+    "unknown_alias@18034",
+    "unknown_alias@18035",
+    "IND@18036",
+    "IND@18039"
+   ],
+   "covered_lines": [],
+   "binding_positions": [],
+   "direct_candidate": false,
+   "forecast": "no change"
+  },
+  "step2": {
+   "census_rows": 2,
+   "blocking": [
+    "OTHER:call to uncontracted function `flb_sched_ctx_get`@17988",
+    "IND@18002",
+    "IND@18003",
+    "OTHER:unsupported assignment expression@18010",
+    "unknown_alias@18011",
+    "unknown_alias@18014",
+    "IND@18017",
+    "OTHER:call to uncontracted function `flb_sched_request_destroy`@18019",
+    "unknown_alias@18022",
+    "OTHER:call to uncontracted function `schedule_request_promote`@18025",
+    "unknown_alias@18027",
+    "unknown_alias@18028",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_disable`@18029",
+    "IND@18030",
+    "OTHER:call to uncontracted function `flb_sched_timer_cb_destroy`@18031",
+    "unknown_alias@18033",
+    "unknown_alias@18034",
+    "unknown_alias@18035",
+    "IND@18036",
+    "IND@18039"
+   ],
+   "covered_lines": [
+    18015,
+    18023
+   ],
+   "binding_positions": [
+    "statement"
+   ],
+   "direct_candidate": false,
+   "forecast": "leaf exchange"
+  }
+ }
+]
