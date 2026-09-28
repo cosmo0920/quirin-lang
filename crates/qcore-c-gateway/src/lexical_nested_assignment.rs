@@ -114,6 +114,28 @@ fn destination<'a>(body: &[&'a str], equal: usize) -> Option<(&'a str, bool)> {
         let open = opening_of(body, before)?;
         return sole_name(&body[open..=before]).map(|name| (name, true));
     }
+    // An array declarator's brace initialiser, `T name [ N ] = { … }`: a
+    // store `a [ i ] = v` never has a brace value.
+    if text == "]" && body.get(equal + 1) == Some(&"{") {
+        let mut depth = 0usize;
+        for index in (0..=before).rev() {
+            match body[index] {
+                "]" => depth += 1,
+                "[" => {
+                    depth = depth.checked_sub(1)?;
+                    if depth == 0 {
+                        let name = *body.get(index.checked_sub(1)?)?;
+                        if name == "]" {
+                            // Another dimension: `name [ M ] [ N ] = { … }`.
+                            continue;
+                        }
+                        return (is_name(name)).then_some((name, false));
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
     None
 }
 
@@ -400,6 +422,13 @@ mod tests {
             read("struct s v = { f(), 0 };"),
             vec![pair("v", "{ f ( ) , 0 }")]
         );
+        assert_eq!(
+            read("t **m[2] = { &c->a, &c->b };"),
+            vec![pair("m", "{ & c - > a , & c - > b }")]
+        );
+        assert_eq!(read("int m[2][3] = { 0 };"), vec![pair("m", "{ 0 }")]);
+        // A subscripted store is not a declarator.
+        assert_eq!(read("m[i] = f();"), Vec::new());
     }
 
     #[test]

@@ -85,8 +85,15 @@ def typed_rows(rows):
 
 
 def roots_of(entry):
-    _, _, _, chains, scalar = entry
+    _, texts, _, chains, scalar = entry
     roots = set(re.findall(r'root: "([^"]+)"', chains))
+    # A refused row records no chain: its roots are the names that begin a
+    # path of its text (`x .`, `x ->`, `x [`), the typed reader's roots.
+    tokens = texts.split()
+    for index, token in enumerate(tokens[:-1]):
+        if re.match(r"^[A-Za-z_]\w*$", token) and tokens[index + 1] in (".", "-", "[") and \
+                (index == 0 or tokens[index - 1] not in (".", ">")):
+            roots.add(token)
     for group in re.findall(r'\bbases: \[([^\]]*)\]', scalar):
         roots |= set(re.findall(r'"([^"]+)"', group))
     return roots
@@ -123,6 +130,12 @@ def main():
         raise SystemExit("unit denominator changed")
     typed_before, typed_after = typed_rows(before_rows), typed_rows(after_rows)
     facts = root_facts(after_rows)
+    moved = set()
+    for old_unit, new_unit in zip(before["units"], after["units"]):
+        old_status = {r["function"]: r["status"] for r in old_unit.get("functions", [])}
+        for r in new_unit.get("functions", []):
+            if old_status.get(r["function"]) != r["status"]:
+                moved.add(r["function"])
     status = {"before": collections.Counter(), "after": collections.Counter()}
     units = {"before": collections.Counter(), "after": collections.Counter()}
     families = {"before": collections.Counter(), "after": collections.Counter()}
@@ -179,6 +192,8 @@ def main():
                             kind = "alias-root:join"
                         elif root in fact["nested"]:
                             kind = "alias-root:nested"
+                    if kind == "unexplained" and any(f"`{m}`" in d["description"] for m in moved):
+                        kind = "summary-cascade"
                     if kind == "unexplained" and "formal" in d["description"]:
                         kind = "protected-formal-alias"
                     if kind == "unexplained" and fact["nested"]:
