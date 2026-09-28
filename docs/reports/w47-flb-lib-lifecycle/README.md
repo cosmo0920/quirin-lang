@@ -174,11 +174,41 @@ C1 path moves (the loop-owner census is untouched).
 | census releases and sites | unchanged, byte for byte | **held** at both revisions |
 | negative controls | double start refused, L4 refuted, L5 from the body, destroy before stop refused | **held**; the double start also shows the entry collapse the gate closes |
 | module counts | v1 251 → 252, pending review 9 → 10, clause rows 4 → 5 (+ `flb_destroy`) | **held** |
-| corpus / system / slice | 0 status moves; leaves reword at calls of `flb_destroy` | see §7 |
+| corpus / system / slice | 0 status moves; leaves reword at calls of `flb_destroy` | **held**: 0 status moves; 1 slice leaf (`flb_create`'s call of `flb_destroy`), none on system or corpus |
 
 ## 7. Corpus, system and slice
 
-MEASUREMENTS_PENDING
+[`scripts/measure.sh`](scripts/measure.sh) `PHASE TREE` runs the three
+arbiters (`--jobs 8`) into fresh directories: BEFORE with this worktree at its
+base `ec4c9d4a` (release binary `77bc3a13…`, built before any change), AFTER
+with the change (`artifacts/after/binary.sha256`). **BEFORE reproduces all
+three baselines** (`docs/reports/w47-loop-owner-instance-flow/integration/artifacts/`):
+the corpus `resource-diagnostics.json` is byte-identical, and system and
+slice have 0 moved functions, 0 moved units and equal diagnostic counts
+([artifacts/identity-before.json](artifacts/identity-before.json); the two
+differ from the archive only in run identity). AFTER against the baseline:
+[artifacts/identity-after.json](artifacts/identity-after.json). The moved
+routes are archived as the new baseline in
+[artifacts/after/](artifacts/after/) (system, slice).
+
+| Route | Units / functions | Moves |
+|---|---|---|
+| corpus (185 units, `66910c10`) | 526 / 10 / 4,298 | **none**: `resource-diagnostics.json` byte-identical to BEFORE |
+| system (`046accf6`) | 31 / 2 / 201 | **0 status, 0 leaf**; only the contract environment's identity (`resource_contract_sources` and the per-unit `inventory_sha256`) changes |
+| tail-pause slice (`90978ac6`) | 24 Safe / 1 provisional Unsafe / 244 Unknown / 1 Pending (`flb_input`) | **0 status**; 1 leaf rewords, plus the environment identity |
+
+**Attribution.** The one moving leaf is in `flb_create` (`src/flb_lib.c`,
+`Unknown` before and after): `call to uncontracted function flb_destroy` →
+``call to `flb_destroy` whose declared contract awaits human review
+(awaiting-human-review)``, category `unsupported` unchanged, from the new
+held `flb_destroy` declaration. No `Safe` function calls `flb_start`,
+`flb_stop` or `flb_destroy`, so there is **no Safe → non-Safe move and no
+correction**; the `Pending` row (`flb_input`) calls none of them and stays.
+The lifecycle clause itself moves no leaf: every declared call is held for
+review first, and no `Pending` row carries one, so rule 10i's second
+analysis (where the `lifecycle__` refusal would stand) is not reached for
+them. **Leaks and violations:** none added or removed on any route; no
+provisional `Unsafe` is added.
 
 ## 8. Lean
 
@@ -222,7 +252,42 @@ start), `W47-LIFECYCLE-CREATOR-CONTRACT` (the creator table).
 
 ## 10. Gate
 
-GATE_PENDING
+[`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in
+[gate/](gate/), figures in [gate.json](gate.json), logs under
+`private/ll/gate-1/` and `private/ll/gate-records/` of this worktree. The
+Rust, Lean and provider steps ran on the tree of `fbac2c12` (the records
+commit after it changes only documents): submodule (`--recursive`) 0; Rust
+suite **353 units / 366 summaries, 6,309 passed, 0 failed, 11 ignored**
+(exit 0); fmt and clippy 0; both probes 0; **224 Lean audits** passed
+(`AuditCondvarJoin.lean` 51 → 69 theorems); provider gate: contracts check,
+package build and verify (`qcore.libevent`) 0, **24** provider Python tests
+OK, **129** provider tests passed (0 failed, 1 ignored), provider fmt and
+clippy 0; `pin --verify-contracts` 0. `pin --check` of the Fluent Bit crate:
+0 at `66910c10` and `046accf6` (65 recorded each); **1 at the `90978ac6`
+export**: 14 recorded (the base's 13 plus `flb_destroy`), 0 not in force, 0
+stale, and 51 in force only through their `046accf6`/`66910c10` identity,
+exactly the base's pre-existing condition (`W47-FB-PIN-EXPORT-IDENTITIES`);
+this card pins only its own three declarations. The records phase ran the
+Python suite and the docs-index check after the matrix and index
+regeneration (see gate.json).
+
+**Composition with W47-REVIEW-HOLD-CONCRETE-REASON (landed on `main` at
+`c6ea2482` after this base).** In `lib_engine_thread.qv` this card only
+*adds* lines: the lifecycle comment block before `flb_start` (base line 50,
++36 lines), one `requires resource_lifecycle(ctx, start);` line after
+`flb_start`'s `requires resource_contract_v1;` (base :53), one `requires
+resource_lifecycle(ctx, stop);` after `flb_stop`'s (base :61), and the new
+`flb_destroy` declaration before `flb_input_thread_instance_exit` (base :66,
++9 lines). No existing marker or clause is replaced: every
+`resource_review_pending` marker, including the new
+`rewrite_before_acceptance` word on `flb_start`, should survive unchanged
+beside the lifecycle clause, and `flb_destroy`'s own marker may take whatever
+word C06.1 now requires. In `contracts.lock` it adds the `flb_destroy` entry
+(base after :103, +36 lines) and changes the `contract_sha256` of `flb_start`
+(base :1296) and `flb_stop` (base :1332) with their re-recorded identities;
+after composing, `flb_start`, `flb_stop` and `flb_destroy` must be re-pinned
+at the three trees, since the composed contract texts differ from both
+sides'.
 
 **Files likely to conflict with a parallel card:** `docs/agents/gateway.md`
 (an amendment appended to 10q), `docs/agents/README.md` (the 10q row),
