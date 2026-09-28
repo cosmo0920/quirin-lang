@@ -191,6 +191,9 @@ pub mod transfer;
 // Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q).
 pub mod condvar_join;
 
+// Card W47-FLB-LIB-LIFECYCLE (gateway rule 10q as amended, C04.11).
+pub mod paired_lifecycle;
+
 pub mod scalar_calls;
 
 pub mod scalar_calls_c_emit;

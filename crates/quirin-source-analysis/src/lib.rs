@@ -8,6 +8,8 @@ pub mod chunkio;
 // Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q).
 pub mod condvar_join_census;
 pub mod libevent;
+// Card W47-FLB-LIB-LIFECYCLE (gateway rule 10q as amended, C04.11).
+pub mod lifecycle_census;
 // Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
 pub mod loop_owner_census;
 pub mod source_profiles;

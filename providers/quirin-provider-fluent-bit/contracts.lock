@@ -102,6 +102,42 @@
       ]
     },
     {
+      "function": "flb_destroy",
+      "module": "fluent_bit/lib_engine_thread.qv",
+      "contract_sha256": "bf50e0053363be0f17ca87bda7e716d4f214ba41547c461140575c97ddde9f81",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_lib.h",
+              "kind": "declaration",
+              "declaration_sha256": "57a92ce53fef19969a2dfb9c4dcd5fdc3dd93f7ac64a1959dc70ca514280b1f8"
+            },
+            {
+              "path": "src/flb_lib.c",
+              "kind": "definition",
+              "declaration_sha256": "b72e028e9425e3897d54d7f5e4572713e7fa8221a6a1818ffec0bc09137cae6e",
+              "body_sha256": "d9ea36e1487ff8c2ef12f0305b9157f0171f5ada02f7eeb62cf3d593e7fb7694"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_downstream_worker_runtime_stop",
       "module": "fluent_bit/lib_engine_thread.qv",
       "contract_sha256": "3c4324b4bc3f610a5bfb8c8ed413329f05d796024a7da43b45473c45b0daa559",
@@ -1293,7 +1329,7 @@
     {
       "function": "flb_start",
       "module": "fluent_bit/lib_engine_thread.qv",
-      "contract_sha256": "c829baf88c4dda1d6cab8da90a7c19d91906cecd966ae8e6230eb9b65db4a0ee",
+      "contract_sha256": "2d36b84d796515cffed883b999094141d07f3b2d77399379e2d93d1e512ac37d",
       "identities": [
         {
           "reviewed_at": [
@@ -1329,7 +1365,7 @@
     {
       "function": "flb_stop",
       "module": "fluent_bit/lib_engine_thread.qv",
-      "contract_sha256": "97dbcc30d0daaff1ec57d23511af585e849c86c4f670ebf25b6460becf7efa3c",
+      "contract_sha256": "25bfbafddc354a038cc2578155c0d0d737e29b11fd4521905f7f6f521b51f9d2",
       "identities": [
         {
           "reviewed_at": [

@@ -19,9 +19,15 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use qcore_c_gateway::condvar_census::ReadTraceJoin;
 use qcore_c_gateway::thread_entry_census::CensusFile;
+use qcore_contract::contract_loader::lifecycle_obligations;
 use qcore_core::condvar_join::{DescendantEvidence, JoinEvidence, SyncVerdict, join_succeeds};
-use quirin_source_analysis::condvar_join_census::{FLUENT_BIT_SYNC, census};
+use qcore_core::paired_lifecycle::ClauseStatus;
+use quirin_source_analysis::condvar_join_census::{FLUENT_BIT_SYNC, census, census_with_lifecycle};
+use quirin_source_analysis::lifecycle_census::{
+    FLUENT_BIT_LIFECYCLE_CREATORS, LifecycleCensus, governing_at,
+};
 use quirin_source_analysis::loop_owner_census::FLUENT_BIT_HOPS;
 
 fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
@@ -59,9 +65,24 @@ fn verdict(verdict: &SyncVerdict) -> serde_json::Value {
 }
 
 fn main() {
-    let arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    let mut arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    // Card W47-FLB-LIB-LIFECYCLE: `--lifecycle-module=PATH` reads the declared
+    // lifecycle obligations from that contract module.
+    let mut lifecycle_module: Option<String> = None;
+    arguments.retain(
+        |argument| match argument.strip_prefix("--lifecycle-module=") {
+            Some(path) => {
+                lifecycle_module = Some(path.to_owned());
+                false
+            }
+            None => true,
+        },
+    );
     let [root, test, paths @ ..] = arguments.as_slice() else {
-        eprintln!("usage: condvar_join_census SOURCE_ROOT OVERRIDE_TEST|- PATH...");
+        eprintln!(
+            "usage: condvar_join_census [--lifecycle-module=MODULE] SOURCE_ROOT OVERRIDE_TEST|- \
+             PATH..."
+        );
         std::process::exit(2);
     };
     let root = PathBuf::from(root);
@@ -88,7 +109,21 @@ fn main() {
             CensusFile { path: name, text }
         })
         .collect::<Vec<_>>();
-    let result = census(&files, &FLUENT_BIT_HOPS, &FLUENT_BIT_SYNC);
+    let result = match &lifecycle_module {
+        Some(module) => {
+            let text = fs::read_to_string(module).expect("lifecycle contract module");
+            let declared = lifecycle_obligations(&BTreeMap::from([(module.clone(), text)]))
+                .expect("the module declares its lifecycle obligations");
+            census_with_lifecycle(
+                &files,
+                &FLUENT_BIT_HOPS,
+                &FLUENT_BIT_SYNC,
+                &declared,
+                FLUENT_BIT_LIFECYCLE_CREATORS,
+            )
+        }
+        None => census(&files, &FLUENT_BIT_HOPS, &FLUENT_BIT_SYNC),
+    };
     let sites = result
         .sites
         .iter()
@@ -122,7 +157,7 @@ fn main() {
                     )
                 })
                 .collect::<BTreeMap<_, _>>();
-            serde_json::json!({
+            let mut entry = serde_json::json!({
                 "root": release.reading.root,
                 "file": release.reading.file,
                 "line": release.reading.line,
@@ -156,7 +191,22 @@ fn main() {
                 })).collect::<Vec<_>>(),
                 "premises": release.premises,
                 "result": verdict(&release.verdict),
-            })
+            });
+            if lifecycle_module.is_some()
+                && let Some(object) = entry.as_object_mut()
+            {
+                object.insert(
+                    "lifecycle_violations".to_owned(),
+                    serde_json::json!(release.lifecycle_violations),
+                );
+                if let Some(lifecycle) = &result.lifecycle {
+                    object.insert(
+                        "lifecycle_stops".to_owned(),
+                        serde_json::json!(governing_at(&release.reading, lifecycle)),
+                    );
+                }
+            }
+            entry
         })
         .collect::<Vec<_>>();
     let mut tally: BTreeMap<String, BTreeMap<String, usize>> = BTreeMap::new();
@@ -212,5 +262,119 @@ fn main() {
         "sites": sites,
         "releases": releases,
     });
+    let mut report = report;
+    if let (Some(module), Some(lifecycle)) = (&lifecycle_module, &result.lifecycle)
+        && let Some(object) = report.as_object_mut()
+    {
+        object.insert("lifecycle".to_owned(), lifecycle_json(module, lifecycle));
+    }
     println!("{}", serde_json::to_string_pretty(&report).expect("json"));
+}
+
+fn status_json(status: &ClauseStatus) -> serde_json::Value {
+    match status {
+        ClauseStatus::InForce => serde_json::json!({"status": "in force"}),
+        ClauseStatus::Refuted { witness } => {
+            serde_json::json!({"status": "refuted by body", "witness": witness})
+        }
+        ClauseStatus::Held { reason } => serde_json::json!({"status": "held", "reason": reason}),
+    }
+}
+
+/// Card W47-FLB-LIB-LIFECYCLE: the clauses per body, the calls per root and
+/// the per-root conformance.
+fn lifecycle_json(module: &str, lifecycle: &LifecycleCensus) -> serde_json::Value {
+    let clauses = lifecycle
+        .clauses
+        .iter()
+        .map(|check| {
+            serde_json::json!({
+                "clause": check.clause.name(),
+                "function": check.function,
+                "after_start": check.start,
+                "result": status_json(&check.status),
+                "paths": check.paths.iter().map(|path| serde_json::json!({
+                    "joins": path.joins.iter().map(|(join, site)| format!("{} at {site}", join.label())).collect::<Vec<_>>(),
+                    "unresolved_count": path.unresolved.len(),
+                    "unresolved": path.unresolved.iter().take(4).collect::<Vec<_>>(),
+                })).collect::<Vec<_>>(),
+                "start_unresolved": check.start_unresolved,
+            })
+        })
+        .collect::<Vec<_>>();
+    let calls = lifecycle
+        .calls
+        .iter()
+        .map(|call| {
+            serde_json::json!({
+                "root": call.reading.root,
+                "file": call.reading.file,
+                "line": call.reading.line,
+                "caller": call.reading.caller,
+                "callee": call.reading.callee,
+                "operation": call.reading.operation.spelling(),
+                "key": call.reading.key,
+                "states": call.states,
+                "undetermined": call.undetermined,
+                "undetermined_reasons": call.undetermined_reasons,
+                "violations": call.violations,
+                "governed_by": call.governed.iter().map(|(clause, status)| format!("{} ({})", clause.name(), status.label())).collect::<Vec<_>>(),
+            })
+        })
+        .collect::<Vec<_>>();
+    let mut roots: BTreeMap<&str, (usize, usize, usize)> = BTreeMap::new();
+    for call in &lifecycle.calls {
+        let entry = roots.entry(call.reading.root.as_str()).or_default();
+        entry.0 += 1;
+        entry.1 += call.violations.len();
+        entry.2 += usize::from(call.undetermined);
+    }
+    let conformance = roots
+        .iter()
+        .map(|(root, (calls, violations, undetermined))| {
+            (
+                (*root).to_owned(),
+                serde_json::json!({
+                    "calls": calls,
+                    "violations": violations,
+                    "undetermined_calls": undetermined,
+                    "result": if *violations > 0 {
+                        "violates"
+                    } else if *undetermined > 0 {
+                        "conforms where derived"
+                    } else {
+                        "conforms"
+                    },
+                }),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let destroys = lifecycle
+        .destroy_bodies
+        .iter()
+        .map(|body| {
+            serde_json::json!({
+                "function": body.function,
+                "paths": body.paths.len(),
+                "joins": body.paths.iter().map(|p| p.joins.len()).sum::<usize>(),
+                "paths_joining_the_started_thread": body.paths.iter().filter(|p| p.joins.iter().any(|(j, _)| matches!(j, ReadTraceJoin::First | ReadTraceJoin::Repeated))).count(),
+                "join_sites": body.paths.iter().flat_map(|p| p.joins.iter().map(|(j, s)| format!("{j:?} at {s}"))).collect::<std::collections::BTreeSet<_>>(),
+                "unresolved": body.paths.iter().flat_map(|p| p.unresolved.iter().cloned()).collect::<std::collections::BTreeSet<_>>().len(),
+            })
+        })
+        .collect::<Vec<_>>();
+    serde_json::json!({
+        "module": module,
+        "roles": lifecycle.roles.functions.iter().map(|(name, (parameter, op))| (name.clone(), format!("{} (parameter {parameter})", op.spelling()))).collect::<BTreeMap<_, _>>(),
+        "creators": lifecycle.roles.creators,
+        "clauses": clauses,
+        "status": lifecycle.status.iter().map(|((clause, function), status)| serde_json::json!({
+            "clause": clause.name(),
+            "function": function,
+            "result": status_json(status),
+        })).collect::<Vec<_>>(),
+        "destroy_bodies": destroys,
+        "calls": calls,
+        "conformance": conformance,
+    })
 }

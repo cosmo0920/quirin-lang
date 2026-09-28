@@ -463,8 +463,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W47-CONDVAR-JOIN-STOP-PATHS: the marker, the contract-level review
     // marker carrying the observed join behaviour, one parameter mode and the
     // scalar result; every declaration is withheld awaiting review.
-    ("fluent_bit/lib_engine_thread.qv", "flb_start", 4),
-    ("fluent_bit/lib_engine_thread.qv", "flb_stop", 4),
+    // Card W47-FLB-LIB-LIFECYCLE: `flb_start` and `flb_stop` gain their
+    // lifecycle obligation (4 -> 5); `flb_destroy` is added with the marker,
+    // its lifecycle obligation, the review marker, one parameter mode and
+    // the unit result.
+    ("fluent_bit/lib_engine_thread.qv", "flb_start", 5),
+    ("fluent_bit/lib_engine_thread.qv", "flb_stop", 5),
+    ("fluent_bit/lib_engine_thread.qv", "flb_destroy", 5),
     (
         "fluent_bit/lib_engine_thread.qv",
         "flb_input_thread_instance_exit",

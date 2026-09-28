@@ -471,6 +471,50 @@ pub struct DeclaredThreadSync {
 /// The thread-synchronization precondition's name.
 pub const THREAD_SYNC_CLAUSE: &str = "resource_thread_sync";
 
+/// Which transition of a paired start/stop lifecycle a declared call is (card
+/// **W47-FLB-LIB-LIFECYCLE**, §C04.11).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LifecycleOperation {
+    /// Starts the context's worker: permitted only from created or stopped.
+    Start,
+    /// Stops it: the first stop after a start ends what the start began; a
+    /// later stop, a stop after a failed start and a stop of a never-started
+    /// context have no effect.
+    Stop,
+    /// Destroys the context: permitted only from created or stopped.
+    Destroy,
+}
+
+impl LifecycleOperation {
+    /// The clause's spelling of the operation.
+    #[must_use]
+    pub const fn spelling(self) -> &'static str {
+        match self {
+            Self::Start => "start",
+            Self::Stop => "stop",
+            Self::Destroy => "destroy",
+        }
+    }
+}
+
+/// `requires resource_lifecycle(ctx, start|stop|destroy);` (card
+/// **W47-FLB-LIB-LIFECYCLE**, §C04.11): the call is that transition of the
+/// paired lifecycle of the context at `parameter`. The clauses the state
+/// machine implies are *specifications to check*: the census checks each
+/// against the declared function's body and applies only those in force,
+/// withdrawing a refuted one from every caller. No per-unit resource route
+/// derives a context's lifecycle state, so there the declaration is never
+/// applied.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredLifecycle {
+    /// Index into the declaration's parameter list: the context pointer.
+    pub parameter: usize,
+    pub operation: LifecycleOperation,
+}
+
+/// The lifecycle obligation's name.
+pub const LIFECYCLE_CLAUSE: &str = "resource_lifecycle";
+
 /// The declared C ABI projection of one admitted declaration (card
 /// **LOADER-ABI**).
 ///
@@ -508,6 +552,8 @@ struct LoadedDeclaration {
     /// Card W47-CONDVAR-JOIN-PUBLICATION: the declared thread-synchronization
     /// obligation.
     thread_sync: Option<DeclaredThreadSync>,
+    /// Card W47-FLB-LIB-LIFECYCLE: the declared lifecycle obligation.
+    lifecycle: Option<DeclaredLifecycle>,
     abi: DeclaredAbiSignature,
     /// Card W45-CONTRACT-DEFERRED-REVIEW: every review marker, in clause
     /// order. Nonempty withholds the whole contract.
@@ -1099,6 +1145,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
+            || child_loaded.lifecycle != parent_loaded.lifecycle
             || child_loaded.abi != parent_loaded.abi
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
             || child_loaded.body_checked != parent_loaded.body_checked
@@ -1184,6 +1231,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
+    let mut lifecycle: Option<DeclaredLifecycle> = None;
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: which validity vocabulary each
@@ -1316,6 +1364,25 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     operation,
                     |name| index(name),
                 )?);
+                continue;
+            }
+            // Card W47-FLB-LIB-LIFECYCLE: the lifecycle obligation, at most
+            // once, naming the context pointer.
+            if let Some((parameter, operation)) = lifecycle_clause(expression)? {
+                if lifecycle.is_some() {
+                    return Err(format!("duplicate requirement `{expression}`"));
+                }
+                let parameter = index(&parameter)?;
+                if parameter_types[parameter] != "ptr<mut, u8>" {
+                    return Err(format!(
+                        "a lifecycle obligation names a context pointer, not `{}`",
+                        decl.parameters[parameter].name.value
+                    ));
+                }
+                lifecycle = Some(DeclaredLifecycle {
+                    parameter,
+                    operation,
+                });
                 continue;
             }
             // Card HASH-CLAUSE. The only other admitted precondition: the
@@ -1570,6 +1637,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         literal_arguments,
         loop_owner,
         thread_sync,
+        lifecycle,
         abi: DeclaredAbiSignature {
             parameters: parameter_types,
             result: return_type.to_owned(),
@@ -1996,6 +2064,77 @@ pub fn declared_thread_sync_obligations(
         return Ok(BTreeMap::new());
     }
     thread_sync_obligations(contracts.source_assumptions())
+}
+
+/// `resource_lifecycle(PARAM, start|stop|destroy)`, exactly (card
+/// W47-FLB-LIB-LIFECYCLE). `None` when the expression is not this clause at
+/// all; an expression that names it and is malformed rejects the module.
+fn lifecycle_clause(source: &str) -> Result<Option<(String, LifecycleOperation)>, String> {
+    let tokens = token_kinds(source)?;
+    let Some(TokenKind::Word(name)) = tokens.first() else {
+        return Ok(None);
+    };
+    if name != LIFECYCLE_CLAUSE {
+        return Ok(None);
+    }
+    let malformed = || format!("unsupported lifecycle requirement `{source}`");
+    let [
+        _,
+        TokenKind::Symbol(Symbol::LeftParen),
+        TokenKind::Word(parameter),
+        TokenKind::Symbol(Symbol::Comma),
+        TokenKind::Word(operation),
+        TokenKind::Symbol(Symbol::RightParen),
+    ] = tokens.as_slice()
+    else {
+        return Err(malformed());
+    };
+    let operation = match operation.as_str() {
+        "start" => LifecycleOperation::Start,
+        "stop" => LifecycleOperation::Stop,
+        "destroy" => LifecycleOperation::Destroy,
+        _ => return Err(malformed()),
+    };
+    Ok(Some((parameter.clone(), operation)))
+}
+
+/// The lifecycle obligations `sources` declares, keyed by function name (card
+/// W47-FLB-LIB-LIFECYCLE). Total-or-reject exactly as
+/// [`loop_owner_obligations`].
+pub fn lifecycle_obligations(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, DeclaredLifecycle>, String> {
+    let mut obligations = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if let Some(obligation) = loaded.lifecycle
+                && obligations.insert(decl.name.clone(), obligation).is_some()
+            {
+                return Err(format!("{context}: duplicate function contract"));
+            }
+        }
+    }
+    Ok(obligations)
+}
+
+/// The lifecycle obligations of an environment, rederived from its retained
+/// trusted sources (card W47-FLB-LIB-LIFECYCLE).
+pub fn declared_lifecycle_obligations(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, DeclaredLifecycle>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    lifecycle_obligations(contracts.source_assumptions())
 }
 
 /// `resource_literal_argument(PARAM, LITERAL)`, exactly (card HASH-CLAUSE).

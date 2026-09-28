@@ -1507,3 +1507,36 @@ which is not a second authority.
     Fluent Bit contracts awaiting review (`fluent_bit/lib_engine_thread.qv`,
     §C06.1: withheld, never `Safe`);
     [report](../reports/w47-condvar-join-stop-paths/README.md).
+    **Amendment (W47-FLB-LIB-LIFECYCLE): a declared lifecycle is checked
+    against its bodies, and only a precondition gates a release.**
+    `requires resource_lifecycle(ctx, start|stop|destroy)` (contract
+    specification C04.11, `qcore_core::paired_lifecycle`, the census's
+    `condvar_census/lifecycle.rs` read by
+    `quirin_source_analysis::lifecycle_census`) states a paired
+    start/stop contract; the census checks it, never trusts it. Each declared
+    stop is run by the path reader from each effect clause's state (never
+    started, after a start that returned 0, after a stop, after a start that
+    returned nonzero) recording every join it executes: a clause is in force
+    only where every followed path satisfies it with nothing unresolved,
+    refuted only where every followed path contradicts it, held otherwise.
+    A refuted clause is withdrawn from every caller (rule 10g's sense) and
+    the stop is read from its body; the preconditions (start and destroy only
+    from created or stopped) are in force as restrictions. On a test root's
+    paths each declared call records its context's history (keyed by a field
+    key or a frame-local name; created where a creator's result is assigned,
+    `flb_create` in `FLUENT_BIT_LIFECYCLE_CREATORS`), and a release that a
+    path violating a precondition reaches is refused first
+    (`lifecycle_gate`): the reader keys threads by entry, so a second start
+    would collapse two engine threads into one and one join would look like
+    it ended both. The per-unit route refuses every declared call
+    (`lifecycle__` mark under the reserved prefix, behind the review hold
+    that applies first). **Do not** apply a held or refuted clause, derive a
+    state from a history without its creation or after its instance's
+    destroy (P-LIFECYCLE-INSTANCE, stated: one key names one instance at a
+    time), refute on a contradiction some followed paths only show, or let
+    the lifecycle discharge a release: it can only refuse. At the three
+    trees `flb_stop`'s body satisfies L2 and refutes L3-L5 (every feasible
+    path joins `ctx->config->worker`), candidates only; the fixed test
+    conforms, and its C5 stays not discharged by the body's repeated join.
+    `QCore.CondvarJoin` (section `Lifecycle`);
+    [report](../reports/w47-flb-lib-lifecycle/README.md).
