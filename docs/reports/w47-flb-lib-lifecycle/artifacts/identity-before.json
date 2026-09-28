@@ -1,0 +1,139 @@
+{
+ "corpus": {
+  "diagnostic_counts": [
+   {
+    "leak": 36,
+    "summary_conflict": 1,
+    "unknown_alias": 7936,
+    "unsupported": 35737
+   },
+   {
+    "leak": 36,
+    "summary_conflict": 1,
+    "unknown_alias": 7936,
+    "unsupported": 35737
+   }
+  ],
+  "functions": [
+   {
+    "Safe": 526,
+    "Unknown": 4298,
+    "Unsafe": 10
+   },
+   {
+    "Safe": 526,
+    "Unknown": 4298,
+    "Unsafe": 10
+   }
+  ],
+  "identical": true,
+  "moved_functions": [],
+  "moved_units": [],
+  "sha256": [
+   "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8",
+   "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8"
+  ],
+  "units": [
+   {
+    "Safe": 6,
+    "Unknown": 167,
+    "Unsafe": 8,
+    "data_only": 4
+   },
+   {
+    "Safe": 6,
+    "Unknown": 167,
+    "Unsafe": 8,
+    "data_only": 4
+   }
+  ]
+ },
+ "slice": {
+  "diagnostic_counts": [
+   {
+    "counted_user": 1,
+    "unknown_alias": 1009,
+    "unsupported": 2857
+   },
+   {
+    "counted_user": 1,
+    "unknown_alias": 1009,
+    "unsupported": 2857
+   }
+  ],
+  "functions": [
+   {
+    "Pending": 1,
+    "Safe": 24,
+    "Unknown": 244,
+    "Unsafe": 1
+   },
+   {
+    "Pending": 1,
+    "Safe": 24,
+    "Unknown": 244,
+    "Unsafe": 1
+   }
+  ],
+  "identical": false,
+  "moved_functions": [],
+  "moved_units": [],
+  "sha256": [
+   "9ea3b936dcab760bc19ecb701c6d5ea398432883f665c2fab4b83d0b7cb60f6a",
+   "470d1a60d6c98dd95f21580bfeea263aaeefa747bf85667819f4a22bbe26af6a"
+  ],
+  "units": [
+   {
+    "Unknown": 12,
+    "Unsafe": 1
+   },
+   {
+    "Unknown": 12,
+    "Unsafe": 1
+   }
+  ]
+ },
+ "system": {
+  "diagnostic_counts": [
+   {
+    "counted_user": 4,
+    "unknown_alias": 1020,
+    "unsupported": 2888
+   },
+   {
+    "counted_user": 4,
+    "unknown_alias": 1020,
+    "unsupported": 2888
+   }
+  ],
+  "functions": [
+   {
+    "Safe": 31,
+    "Unknown": 201,
+    "Unsafe": 2
+   },
+   {
+    "Safe": 31,
+    "Unknown": 201,
+    "Unsafe": 2
+   }
+  ],
+  "identical": false,
+  "moved_functions": [],
+  "moved_units": [],
+  "sha256": [
+   "721a620eee38c7eb15a009d793cbad7b5f1a8172f274f3c703d15ef506f87b83",
+   "792eee0a9140948eb1c3f2a6859f3c44e58fb0025ec6756774ba485fc3aa8263"
+  ],
+  "units": [
+   {
+    "Unknown": 7,
+    "Unsafe": 1
+   },
+   {
+    "Unknown": 7,
+    "Unsafe": 1
+   }
+  ]
+ }
+}

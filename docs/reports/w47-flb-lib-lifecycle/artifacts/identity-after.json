@@ -1,0 +1,162 @@
+{
+ "corpus": {
+  "diagnostic_counts": [
+   {
+    "leak": 36,
+    "summary_conflict": 1,
+    "unknown_alias": 7936,
+    "unsupported": 35737
+   },
+   {
+    "leak": 36,
+    "summary_conflict": 1,
+    "unknown_alias": 7936,
+    "unsupported": 35737
+   }
+  ],
+  "functions": [
+   {
+    "Safe": 526,
+    "Unknown": 4298,
+    "Unsafe": 10
+   },
+   {
+    "Safe": 526,
+    "Unknown": 4298,
+    "Unsafe": 10
+   }
+  ],
+  "identical": true,
+  "moved_functions": [],
+  "moved_units": [],
+  "sha256": [
+   "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8",
+   "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8"
+  ],
+  "units": [
+   {
+    "Safe": 6,
+    "Unknown": 167,
+    "Unsafe": 8,
+    "data_only": 4
+   },
+   {
+    "Safe": 6,
+    "Unknown": 167,
+    "Unsafe": 8,
+    "data_only": 4
+   }
+  ]
+ },
+ "slice": {
+  "diagnostic_counts": [
+   {
+    "counted_user": 1,
+    "unknown_alias": 1009,
+    "unsupported": 2857
+   },
+   {
+    "counted_user": 1,
+    "unknown_alias": 1009,
+    "unsupported": 2857
+   }
+  ],
+  "functions": [
+   {
+    "Pending": 1,
+    "Safe": 24,
+    "Unknown": 244,
+    "Unsafe": 1
+   },
+   {
+    "Pending": 1,
+    "Safe": 24,
+    "Unknown": 244,
+    "Unsafe": 1
+   }
+  ],
+  "identical": false,
+  "moved_functions": [
+   {
+    "function": "flb_create",
+    "leaves_added": [
+     [
+      "unsupported",
+      "call to `flb_destroy` whose declared contract awaits human review (awaiting-human-review)",
+      18447
+     ]
+    ],
+    "leaves_removed": [
+     [
+      "unsupported",
+      "call to uncontracted function `flb_destroy`",
+      18447
+     ]
+    ],
+    "status": [
+     "Unknown",
+     "Unknown"
+    ],
+    "unit": "src/flb_lib.c"
+   }
+  ],
+  "moved_units": [],
+  "sha256": [
+   "9ea3b936dcab760bc19ecb701c6d5ea398432883f665c2fab4b83d0b7cb60f6a",
+   "cd5af018ba94e506885a9471202ec4202d6c4fea115acdfab7afc574dbc2d5d9"
+  ],
+  "units": [
+   {
+    "Unknown": 12,
+    "Unsafe": 1
+   },
+   {
+    "Unknown": 12,
+    "Unsafe": 1
+   }
+  ]
+ },
+ "system": {
+  "diagnostic_counts": [
+   {
+    "counted_user": 4,
+    "unknown_alias": 1020,
+    "unsupported": 2888
+   },
+   {
+    "counted_user": 4,
+    "unknown_alias": 1020,
+    "unsupported": 2888
+   }
+  ],
+  "functions": [
+   {
+    "Safe": 31,
+    "Unknown": 201,
+    "Unsafe": 2
+   },
+   {
+    "Safe": 31,
+    "Unknown": 201,
+    "Unsafe": 2
+   }
+  ],
+  "identical": false,
+  "moved_functions": [],
+  "moved_units": [],
+  "sha256": [
+   "721a620eee38c7eb15a009d793cbad7b5f1a8172f274f3c703d15ef506f87b83",
+   "ccd4696031ecf6099ac3fab5e92976d1006b607a4fdc59765165de9954a50639"
+  ],
+  "units": [
+   {
+    "Unknown": 7,
+    "Unsafe": 1
+   },
+   {
+    "Unknown": 7,
+    "Unsafe": 1
+   }
+  ]
+ }
+}

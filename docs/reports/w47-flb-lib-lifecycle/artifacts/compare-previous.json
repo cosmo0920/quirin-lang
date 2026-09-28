@@ -1,0 +1,221 @@
+{
+ "call_violations": [],
+ "calls": 280,
+ "clause_status": [
+  {
+   "clause": "L1 start-requires-unstarted",
+   "function": null,
+   "result": {
+    "status": "in force"
+   }
+  },
+  {
+   "clause": "L2 stop-ends-started",
+   "function": "flb_stop",
+   "result": {
+    "status": "in force"
+   }
+  },
+  {
+   "clause": "L3 stop-after-stop-no-effect",
+   "function": "flb_stop",
+   "result": {
+    "status": "refuted by body",
+    "witness": "second join of a joined thread at src/flb_lib.c:1058"
+   }
+  },
+  {
+   "clause": "L4 stop-after-failed-start-no-effect",
+   "function": "flb_stop",
+   "result": {
+    "status": "refuted by body",
+    "witness": "first join of the started thread at src/flb_lib.c:1058"
+   }
+  },
+  {
+   "clause": "L5 stop-unstarted-no-effect",
+   "function": "flb_stop",
+   "result": {
+    "status": "refuted by body",
+    "witness": "join of an identifier no start began at src/flb_lib.c:1058"
+   }
+  },
+  {
+   "clause": "L6 destroy-requires-unstarted",
+   "function": null,
+   "result": {
+    "status": "in force"
+   }
+  }
+ ],
+ "conformance": {
+  "conforms": [],
+  "conforms where derived": [
+   "flb_test_db",
+   "flb_test_db_compare_filename",
+   "flb_test_db_delete_stale_file",
+   "flb_test_exclude_path",
+   "flb_test_ignore_older",
+   "flb_test_in_tail_dockermode",
+   "flb_test_in_tail_dockermode_firstline_detection",
+   "flb_test_in_tail_dockermode_multiple_lines",
+   "flb_test_in_tail_dockermode_splitted_line",
+   "flb_test_in_tail_dockermode_splitted_multiple_lines",
+   "flb_test_in_tail_generic_enc_big5",
+   "flb_test_in_tail_generic_enc_gb18030",
+   "flb_test_in_tail_generic_enc_gbk",
+   "flb_test_in_tail_generic_enc_sjis",
+   "flb_test_in_tail_generic_enc_win1250",
+   "flb_test_in_tail_generic_enc_win1251",
+   "flb_test_in_tail_generic_enc_win1252",
+   "flb_test_in_tail_generic_enc_win1253",
+   "flb_test_in_tail_generic_enc_win1254",
+   "flb_test_in_tail_generic_enc_win1255",
+   "flb_test_in_tail_generic_enc_win1256",
+   "flb_test_in_tail_ignore_active_older_files",
+   "flb_test_in_tail_ignore_active_older_files_reread_on_update",
+   "flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head",
+   "flb_test_in_tail_issue_3943",
+   "flb_test_in_tail_multiline_json_and_regex",
+   "flb_test_in_tail_skip_long_lines",
+   "flb_test_in_tail_truncate_long_lines",
+   "flb_test_in_tail_truncate_long_lines_utf8",
+   "flb_test_in_tail_utf16be_c",
+   "flb_test_in_tail_utf16be_j",
+   "flb_test_in_tail_utf16be_subdivision_flags",
+   "flb_test_in_tail_utf16le_c",
+   "flb_test_in_tail_utf16le_j",
+   "flb_test_in_tail_utf16le_subdivision_flags",
+   "flb_test_inotify_pause_collectors",
+   "flb_test_inotify_threaded_pause_collectors",
+   "flb_test_inotify_watcher_false",
+   "flb_test_multiline_offset_key",
+   "flb_test_offset_key",
+   "flb_test_parser",
+   "flb_test_path_comma",
+   "flb_test_path_key",
+   "flb_test_skip_empty_lines",
+   "flb_test_skip_empty_lines_crlf",
+   "flb_test_tag_regex"
+  ],
+  "violates": []
+ },
+ "identical_without_lifecycle": true,
+ "moved": [],
+ "releases_with_violations": [],
+ "tally": [
+  {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  }
+ ],
+ "undetermined_calls": [
+  "src/flb_lib.c:215 flb_stop (flb_create)",
+  "src/flb_lib.c:216 flb_destroy (flb_create)",
+  "tests/runtime/in_tail.c:1506 flb_start (flb_test_path_comma)",
+  "tests/runtime/in_tail.c:1565 flb_start (flb_test_path_key)",
+  "tests/runtime/in_tail.c:1615 flb_start (flb_test_exclude_path)",
+  "tests/runtime/in_tail.c:1781 flb_start (flb_test_offset_key)",
+  "tests/runtime/in_tail.c:1866 flb_start (flb_test_multiline_offset_key)",
+  "tests/runtime/in_tail.c:1941 flb_start (flb_test_skip_empty_lines)",
+  "tests/runtime/in_tail.c:2010 flb_start (flb_test_skip_empty_lines_crlf)",
+  "tests/runtime/in_tail.c:2083 flb_start (tests/runtime/in_tail.c::ignore_older)",
+  "tests/runtime/in_tail.c:2155 flb_start (flb_test_in_tail_ignore_active_older_files)",
+  "tests/runtime/in_tail.c:2242 flb_start (flb_test_in_tail_ignore_active_older_files_reread_on_update)",
+  "tests/runtime/in_tail.c:2332 flb_start (flb_test_in_tail_ignore_active_older_files_reread_on_update_default_read_from_head)",
+  "tests/runtime/in_tail.c:2419 flb_start (flb_test_inotify_watcher_false)",
+  "tests/runtime/in_tail.c:2486 flb_start (flb_test_inotify_pause_collectors)",
+  "tests/runtime/in_tail.c:2537 flb_start (flb_test_inotify_threaded_pause_collectors)",
+  "tests/runtime/in_tail.c:2602 flb_start (flb_test_parser)",
+  "tests/runtime/in_tail.c:2664 flb_start (flb_test_tag_regex)",
+  "tests/runtime/in_tail.c:2724 flb_start (flb_test_db)",
+  "tests/runtime/in_tail.c:2748 flb_stop (flb_test_db)",
+  "tests/runtime/in_tail.c:2749 flb_destroy (flb_test_db)",
+  "tests/runtime/in_tail.c:2780 flb_start (flb_test_db)",
+  "tests/runtime/in_tail.c:2853 flb_start (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:2877 flb_stop (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:2878 flb_destroy (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:2919 flb_start (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:292 flb_stop (tests/runtime/in_tail.c::test_tail_ctx_destroy)",
+  "tests/runtime/in_tail.c:293 flb_destroy (tests/runtime/in_tail.c::test_tail_ctx_destroy)",
+  "tests/runtime/in_tail.c:2931 flb_stop (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:2932 flb_destroy (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:2965 flb_start (flb_test_db_delete_stale_file)",
+  "tests/runtime/in_tail.c:3039 flb_start (flb_test_db_compare_filename)",
+  "tests/runtime/in_tail.c:3063 flb_stop (flb_test_db_compare_filename)",
+  "tests/runtime/in_tail.c:3064 flb_destroy (flb_test_db_compare_filename)",
+  "tests/runtime/in_tail.c:3108 flb_start (flb_test_db_compare_filename)"
+ ]
+}
