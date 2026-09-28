@@ -548,10 +548,9 @@ fn a_held_rows_concrete_reasons_survive_checkpoints_and_composition() {
         }
     }
     assert!(holding > 0 && pending > 0, "{holding} {pending}");
-    let sidecar: serde_json::Value = serde_json::from_slice(
-        &fs::read(fixture.path("composed/report.contracts.json")).unwrap(),
-    )
-    .unwrap();
+    let sidecar: serde_json::Value =
+        serde_json::from_slice(&fs::read(fixture.path("composed/report.contracts.json")).unwrap())
+            .unwrap();
     let section = &sidecar["pending_human_review"];
     assert_eq!(section["rewrite_markers"], 1);
     assert_eq!(

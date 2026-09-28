@@ -503,7 +503,10 @@ fn a_trailing_rewrite_word_marks_the_marker_and_nothing_else() {
         );
     }
     // A plain marker serializes exactly as before the card.
-    let plain = load(&contract_deferred("requires resource_review_pending(\"why\");")).unwrap();
+    let plain = load(&contract_deferred(
+        "requires resource_review_pending(\"why\");",
+    ))
+    .unwrap();
     let json = serde_json::to_string(&plain).unwrap();
     assert!(!json.contains("disposition"), "{json}");
     assert_eq!(

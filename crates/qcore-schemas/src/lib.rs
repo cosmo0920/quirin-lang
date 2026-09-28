@@ -25,8 +25,7 @@ pub use contract::{
     ContainerEffect, ContractTrust, CountedUserClauses, DerivedExtent, PendingHumanReview,
     ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
     ResourceReturnMode, ResourceSummaryRecord, ReviewDeferral, ReviewDisposition, ReviewScope,
-    UserEffect,
-    UserExitClause, UserOperation,
+    UserEffect, UserExitClause, UserOperation,
 };
 pub use contract_revision::{
     DeclaredRevision, PinMismatch, PinMismatchReason, RevisionMarker, RevisionMode, RevisionScope,
