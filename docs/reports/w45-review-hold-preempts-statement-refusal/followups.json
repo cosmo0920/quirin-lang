@@ -1,0 +1,16 @@
+[
+ {
+  "id": "W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION",
+  "title": "Decide a held declaration against the other units' bodies before a row stays Pending",
+  "why": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL (gateway rule 10i as amended) keeps a row Pending only when its function carries no other reason in a second analysis of the same unit with every declaration held for a human act in force as written. That second analysis settles the unit's own refutations (checked_spec::settle, rule 10g in the defining unit), but the audit's cross-unit refutation table (rule 10g's first phase) is folded from the held rows only: a held declaration whose body another unit defines, and which that body would refute once accepted, is not in the table, so a caller in a third unit can stay Pending where the accepted declaration would be withdrawn (Unknown). Size: 0 Pending rows on the corpus, system and tail-pause slice at main fefb9199 (no review-held declaration; every pin in force); with W47-LOOP-OWNER-INSTANCE-FLOW's input_instance.qv the held flb_create, flb_input, flb_input_new and flb_service_set have bodies in src/flb_lib.c and src/flb_input.c, analysed units of the slice. DISCHARGE: a first-phase refutation table computed from the second analyses as well (or the held declarations' bodies decided against them in the table), with the table's digest in the run identity; measured on the three routes.",
+  "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+  "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
+ },
+ {
+  "id": "W45-HELD-UNIT-REASON-CODE-NAMES-HOLD-FIRST",
+  "title": "An Unknown unit with a held call publishes a human-resolvable reason code",
+  "why": "qcore_schemas::reason::ReasonCategory::classify names the held premise first: a unit summary with at least one held call classifies as awaiting-human-review (or contract-pin-mismatch), on the ground that what the projection leaves open downstream of a held call is not a statement about the source. Since W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL a row can be Unknown because of a reason that stands without the hold (a statement refusal, a body that refutes the accepted declaration), which is about the source; its unit is Unknown and still carries the human-resolvable reason_code (measured: crates/qcore-audit/tests/contract_revision_audit.rs, user_drop Unknown in a unit coded contract-pin-mismatch). The same combination already existed for a unit with one Pending and one Unknown function. The verdict is not affected (the unit status is the fold of its rows). Size: 0 units on the corpus, system and tail-pause slice at main fefb9199 (no held call). DISCHARGE: a unit summary that counts standing reasons (review_standing::is_standing_reason) apart and a classifier that names a human-resolvable category only for a Pending unit, with the reason-code totality tests updated.",
+  "source": "docs/reports/w45-review-hold-preempts-statement-refusal/README.md",
+  "recorded_by": "W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL"
+ }
+]
