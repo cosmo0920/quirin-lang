@@ -6738,8 +6738,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W47-LOOP-OWNER-CONTRACTS card gate at base 8eba46d1. Rust, Lean and provider steps ran on the tree of 9b3f9f88 (later commits change only docs, report artifacts, the ledger and the regenerated matrix and index): run_test_binaries.py 346 units, 359 summaries, 6,198 passed, 0 failed, 11 ignored (private/test-binaries/20260928T072337Z-3226062/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 222 audits passed. Provider gate: contracts.py check 0, package build 0 and verify 0 (qcore.libevent), provider Python 24 tests OK, provider cargo test 129 passed / 0 failed, provider fmt and clippy clean; quirin-audit pin --check at 66910c10, 046accf6 and the 90978ac6 export (the four loop-owner entries) and pin --verify-contracts exit 0. An earlier gate run (private/lo/gate-1) failed on the gateway's qcore-core dependency (workspace_layering), clippy's needless_range_loop and five module-count pins; each was repaired in 9b3f9f88 and gate-2 is the full rerun. The Python suite (365) and docs-index check ran after the matrix and index regeneration; a first records run failed on scripts/tests/test_contract_corpus.py's module-count pin (118 -> 119), updated before the recorded run. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/lo/gate-2/ and private/lo/gate-records/ of this worktree.",
-  "workspace_tests": 6198,
+  "note": "W47-LOOP-OWNER-COROUTINE-HOP card gate at base 51fb793c. Rust, Lean and provider-test steps ran on the tree of 92e160dd (later commits change only docs, report records, the regenerated matrix and index): run_test_binaries.py 347 units, 360 summaries, 6,213 passed, 0 failed, 11 ignored (private/test-binaries/20260928T084319Z-3482471/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 222 audits passed (AuditLoopOwner.lean 22 -> 34 theorems, no new audit module). No providers/ change, so the provider gate is not due; the provider cargo test ran once to measure this figure: 129 passed / 0 failed. The Python suite and docs-index check ran after the matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/hop/gate-1/ and private/hop/gate-records/ of this worktree.",
+  "workspace_tests": 6213,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 222,
@@ -6973,7 +6973,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-loop-owner-contracts/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-loop-owner-coroutine-hop/gate.json)"
  },
  "named_followups": [
   {

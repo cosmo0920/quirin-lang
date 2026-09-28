@@ -162,7 +162,20 @@ W47-LOOP-OWNER-CONTRACTS archive
 manifests are filename-keyed, which `baseline_identity.py` does not read) and
 composes it with compose3.
 
-GATE_ARBITERS
+| Measure | BEFORE (`51fb793c`, binary `bb8870de…`) | AFTER (`7d4e0999`, binary `45400e38…`) |
+|---|---|---|
+| corpus (185 units, `66910c10`) | `resource-diagnostics.json` byte-identical to the archive (`a843a690…`); 526 / 10 / 4,298 functions, units 6 / 8 / 167 / 4, leak 36, unknown_alias 7,936, unsupported 35,737 | **byte-identical to BEFORE** and to the archive |
+| system (`046accf6`) | compose3 0 mismatches (31 / 2 / 201 unique; unknown_alias 1,020, unsupported 2,888) | **byte-identical to BEFORE** |
+| tail-pause slice (`90978ac6` export) | compose3 0 mismatches (units 0 / 1 / 15; functions 24 / 1 / 245 / 1 not projected) | **byte-identical to BEFORE** |
+
+The system and slice reports differ from the archive only in provenance
+digests ([`scripts/provenance_diff.py`](scripts/provenance_diff.py): 30 + 15
+and 32 + 16 lines of `resource_contract_sources` / `inventory_sha256`). The
+digest hashes the loaded contracts' source assumptions, which carry absolute
+paths: the contracts sidecar is identical once this worktree's root is
+aliased to the baseline's. So no function, unit, leaf or count moves; no
+Safe → non-Safe correction; no leak or violation added or removed; no new
+baseline archive. Summary: [artifacts/arbiters.json](artifacts/arbiters.json).
 
 ## 7. Lean
 
@@ -207,7 +220,24 @@ path) and `W47-LOOP-OWNER-INSTANCE-FLOW` (the test callback's flag, 3 sites).
 
 ## 10. Gate
 
-GATE_RESULTS
+[`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in
+[gate/](gate/), figures in [gate.json](gate.json). All steps exit 0 on
+`92e160dd`: the Rust suite 347 units / 360 summaries, **6,213 passed, 0
+failed**, 11 ignored (+15: 10 census fixtures, 5 kernel tests); fmt and clippy
+clean; both probes 0; **222 Lean audits** (no new audit module; the matrix's
+module-count pins are unchanged). No `providers/` change, so the provider gate
+is not due; the provider cargo test ran once for the matrix figure (129 passed).
+The Python suite and the docs-index check ran after the matrix and index
+regeneration. No contract was added or changed, so no pin is due.
+
+**Files likely to conflict** with the parallel W47-CONDVAR-JOIN-PUBLICATION:
+`docs/agents/gateway.md` (10p amendment beside its new 10q),
+`docs/agents/README.md`, `docs/STATUS.md`,
+`docs/development/increments/wave-47.md`, `docs/reports/INDEX.md`,
+`docs/reviews/r0_3/acceptance_matrix.json` (gate block and follow-ups),
+and `crates/qcore-c-gateway/src/legacy_c.rs` (the `ConditionalMark` span
+field). Module counts: Lean audits 222, contract modules 119 (both unchanged
+by this card).
 
 ## Reproduce
 
