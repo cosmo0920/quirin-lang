@@ -1,0 +1,94 @@
+{
+ "functions": {
+  "after": {
+   "Safe": 521,
+   "Unknown": 4303,
+   "Unsafe": 10
+  },
+  "before": {
+   "Safe": 520,
+   "Unknown": 4304,
+   "Unsafe": 10
+  }
+ },
+ "interlock_violations": [],
+ "leaf_attribution": {
+  "added|unknown_alias|direct": 113,
+  "removed|COND|direct": 109,
+  "removed|IND|direct": 17,
+  "removed|UNC|callee-now-safe": 1
+ },
+ "leaf_families": {
+  "after": {
+   "COND": 6053,
+   "IND": 14893,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8845,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7623
+  },
+  "before": {
+   "COND": 6162,
+   "IND": 14910,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8846,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7510
+  }
+ },
+ "move_counts": {
+  "Unknown->Safe": 1
+ },
+ "moves": [
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_check_state",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 20761,
+     "position": "condition",
+     "roots": [
+      "mcgrp"
+     ],
+     "texts": "mcgrp - > state"
+    }
+   ],
+   "positions": [
+    "condition"
+   ],
+   "unit": 92
+  }
+ ],
+ "newly_admitted_rows": {
+  "call-argument": 2,
+  "condition": 148,
+  "statement": 25
+ },
+ "no_longer_admitted_rows": {},
+ "units": {
+  "after": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ }
+}

@@ -355,32 +355,31 @@ fn a_base_this_body_may_bind_is_never_admitted() {
     );
 }
 
-/// A name typedef'd twice with disagreeing readings retires to the absent
-/// reading, so the member keeps its refusal rather than being admitted
-/// silently. The declaration set is the shared one with a second, plain typedef
-/// of `a_packer` appended.
+/// A name typedef'd twice with disagreeing readings retires, in the lexical
+/// reader, to the absent reading, so this card's lexical route keeps its
+/// refusal. Re-pinned deliberately by W47-ACCESS-PATH-POSITION-RESIDUALS
+/// (gateway rule 10n): the typed address fallback, asked only after that
+/// refusal, reads Clang's one type for the member, `struct a_packer`, an
+/// object that is not a pointer, array or function pointer, which is exactly
+/// this card's disjointness premise; so the member's address now certifies.
+/// Every other refusal of this file (pointer, array, element, `volatile`,
+/// continued selection, parenthesized place, custody position, uncontracted
+/// callee, bound base) passes unchanged. The declaration set is the shared
+/// one with a second, plain typedef of `a_packer` appended.
 #[test]
-fn a_name_typedefd_twice_differently_keeps_its_refusal() {
+fn a_name_typedefd_twice_is_read_on_clangs_one_type() {
     if !clang_available() {
         return;
     }
     let declarations = format!("{DECLARATIONS} typedef struct a_packer a_packer;");
     let body = borrowing_body("&hold->packer");
     let result = analyze_with(&declarations, &body, "w");
-    assert!(
-        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
-        "a doubly-declared typedef must not certify"
-    );
-    let w = function(program(&result), "w");
-    assert_eq!(w.status, AnalysisStatus::Unknown);
-    assert!(
-        w.diagnostics.iter().any(|diagnostic| matches!(
-            &diagnostic.kind,
-            LegacyDiagnosticKind::Unsupported { description } if description == INDIRECT
-        )),
-        "{:?}",
-        w.diagnostics
-    );
+    match result {
+        UnrestrictedLegacyResult::Safe(certificate) => {
+            check_legacy_safety_certificate(&certificate).expect("certificate rechecks");
+        }
+        other => panic!("the typed address fallback reads Clang's one type: {other:?}"),
+    }
 }
 
 // --------------------------------------------------------------------------

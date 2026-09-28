@@ -245,8 +245,8 @@ pub(crate) struct StatementIndex {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct FieldFacts {
-    union_owner: bool,
-    bitfield: bool,
+    pub(crate) union_owner: bool,
+    pub(crate) bitfield: bool,
 }
 
 /// Card **W47-ACCESS-PATH-POSITIONS**, step B: positive enum evidence read
@@ -258,11 +258,18 @@ pub(crate) struct FieldFacts {
 pub(crate) struct EnumFacts {
     typedefs: BTreeMap<String, bool>,
     tags: BTreeSet<String>,
+    /// Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): `FieldDecl` ids of
+    /// members declared with an inline anonymous `enum { … }` type.
+    pub(crate) anonymous_members: BTreeSet<String>,
 }
 
 impl EnumFacts {
     fn collect(node: &Value, facts: &mut Self) {
         match kind(node) {
+            "RecordDecl" => crate::typed_position_shapes::collect_anonymous_enum_members(
+                node,
+                &mut facts.anonymous_members,
+            ),
             "EnumDecl" => {
                 if let Some(name) = node["name"].as_str() {
                     facts.tags.insert(name.to_owned());
@@ -614,6 +621,7 @@ impl StatementIndex {
     /// A fresh reader over this function's field and enum facts.
     pub(crate) fn reader<'a>(&'a self, never_bound: &'a dyn Fn(&str) -> bool) -> Reader<'a> {
         Reader {
+            address_target: false,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
@@ -824,6 +832,9 @@ fn is_control(node: &Value) -> bool {
 
 pub(crate) struct Reader<'a> {
     pub(crate) plan: StatementPlan,
+    /// Rule 10n: the next [`Reader::path`] computes the address of its place
+    /// (`&PATH`) instead of reading it, so the place's own type is not read.
+    pub(crate) address_target: bool,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
@@ -832,7 +843,9 @@ pub(crate) struct Reader<'a> {
 impl Reader<'_> {
     /// A proven builtin scalar, or (step B) a positively proven enumeration.
     pub(crate) fn scalar(&self, node: &Value) -> bool {
-        is_scalar(node) || (ENUM_ARM && self.enums.is_enum(node))
+        is_scalar(node)
+            || (ENUM_ARM && self.enums.is_enum(node))
+            || crate::typed_position_shapes::anonymous_enum_member(self.enums, node)
     }
 
     pub(crate) fn statement(&mut self, node: &Value) -> Option<()> {
@@ -988,7 +1001,8 @@ impl Reader<'_> {
     }
 
     pub(crate) fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
-        if !(self.scalar(node) || (pointer_read && !store && pointer_value(node))) {
+        let address = std::mem::take(&mut self.address_target) && !store;
+        if !(address || self.scalar(node) || (pointer_read && !store && pointer_value(node))) {
             return None;
         }
         let mut steps = Vec::new();
@@ -1007,6 +1021,9 @@ impl Reader<'_> {
                     let member = cursor["name"].as_str()?.to_owned();
                     let base = children(cursor).first()?;
                     let arrow = cursor["isArrow"].as_bool() == Some(true);
+                    // Rule 10n: `(&X)->f` is `X.f`.
+                    let (base, arrow) =
+                        crate::typed_position_shapes::arrow_through_address(base, arrow);
                     let base_type = qual(base)?;
                     if base_type.contains("union ")
                         || base_type.contains("volatile")

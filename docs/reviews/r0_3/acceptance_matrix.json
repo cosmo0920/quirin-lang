@@ -6742,7 +6742,7 @@
   "workspace_tests": 6163,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 219,
+  "lean_audits": 220,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6949,6 +6949,7 @@
    "AuditTimeoutTeardown.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
+   "AuditTypedAccessPathPositionResiduals.lean",
    "AuditTypedAccessPathPositions.lean",
    "AuditTypedAccessPathStatements.lean",
    "AuditTypedConstPointerValue.lean",
@@ -6970,7 +6971,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-lexical-closure-nested-assignment/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

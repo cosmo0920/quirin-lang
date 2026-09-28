@@ -1,0 +1,372 @@
+{
+ "functions": {
+  "after": {
+   "Safe": 520,
+   "Unknown": 4304,
+   "Unsafe": 10
+  },
+  "before": {
+   "Safe": 510,
+   "Unknown": 4314,
+   "Unsafe": 10
+  }
+ },
+ "interlock_violations": [],
+ "leaf_attribution": {
+  "added|OTHER|direct": 2,
+  "added|OTHER|exchanged": 3,
+  "added|unknown_alias|direct": 19,
+  "added|unknown_alias|later-obligation": 2,
+  "removed|COND|direct": 51,
+  "removed|COND|review": 2,
+  "removed|IND|direct": 127,
+  "removed|UNC|callee-now-safe": 29,
+  "removed|UNC|direct": 1,
+  "removed|UNC|review": 7
+ },
+ "leaf_families": {
+  "after": {
+   "COND": 6278,
+   "IND": 14910,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8846,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7464
+  },
+  "before": {
+   "COND": 6331,
+   "IND": 15037,
+   "OTHER": 5674,
+   "RET": 284,
+   "UNC": 8883,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7443
+  }
+ },
+ "move_counts": {
+  "Unknown->Safe": 10
+ },
+ "moves": [
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_brokers_get_state_version",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 21578,
+     "position": "call-argument",
+     "roots": [
+      "rk"
+     ],
+     "texts": "& rk - > rk_broker_state_change_lock"
+    },
+    {
+     "line": 21580,
+     "position": "call-argument",
+     "roots": [
+      "rk"
+     ],
+     "texts": "& rk - > rk_broker_state_change_lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 75
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_group_initial_rebalance_delay_ms",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 23302,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    },
+    {
+     "line": 23304,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 91
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_set_group_consumer_heartbeat_interval_ms",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 21783,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    },
+    {
+     "line": 21786,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 92
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_set_group_consumer_session_timeout_ms",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 21775,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    },
+    {
+     "line": 21778,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 92
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_set_heartbeat_interval",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 22296,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    },
+    {
+     "line": 22299,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 94
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_set_session_timeout",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 22289,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    },
+    {
+     "line": 22291,
+     "position": "call-argument",
+     "roots": [
+      "mcluster"
+     ],
+     "texts": "& mcluster - > lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 94
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_timer.c",
+   "function": "rd_kafka_timer_is_started",
+   "leaf_attributions": [
+    "callee-now-safe"
+   ],
+   "library": "librdkafka",
+   "new_rows": [],
+   "positions": [],
+   "unit": 120
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_timer.c",
+   "function": "rd_kafka_timers_lock",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 19565,
+     "position": "call-argument",
+     "roots": [
+      "rkts"
+     ],
+     "texts": "& rkts - > rkts_lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 120
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_timer.c",
+   "function": "rd_kafka_timers_unlock",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 19568,
+     "position": "call-argument",
+     "roots": [
+      "rkts"
+     ],
+     "texts": "& rkts - > rkts_lock"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 120
+  },
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_needs_query",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "librdkafka",
+   "new_rows": [
+    {
+     "line": 20770,
+     "position": "call-argument",
+     "roots": [
+      "rktp"
+     ],
+     "texts": "rktp - > rktp_broker"
+    }
+   ],
+   "positions": [
+    "call-argument"
+   ],
+   "unit": 121
+  }
+ ],
+ "newly_admitted_rows": {
+  "call-argument": 219,
+  "condition": 58,
+  "condition-assignment": 3,
+  "statement": 2
+ },
+ "no_longer_admitted_rows": {},
+ "units": {
+  "after": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ }
+}

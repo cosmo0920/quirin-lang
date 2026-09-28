@@ -1,0 +1,85 @@
+{
+ "forecast": {
+  "1-address-values": {
+   "strict": [
+    "rdkafka_broker.c::rd_kafka_broker_outbufs_space",
+    "rdkafka_broker.c::rd_kafka_brokers_get_state_version",
+    "rdkafka_mock.c::rd_kafka_mock_group_initial_rebalance_delay_ms",
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_set_group_consumer_heartbeat_interval_ms",
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_set_group_consumer_session_timeout_ms",
+    "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_set_heartbeat_interval",
+    "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_set_session_timeout",
+    "rdkafka_timer.c::rd_kafka_timers_lock",
+    "rdkafka_timer.c::rd_kafka_timers_unlock"
+   ],
+   "with-alias": [
+    "mk_server/mk_fifo.c::mk_fifo_queue_destroy",
+    "mk_server/mk_plugin.c::mk_plugin_exit_stages",
+    "mk_server/mk_scheduler.c::mk_sched_worker_cb_free",
+    "rdkafka_broker.c::rd_kafka_broker_outbufs_space",
+    "rdkafka_broker.c::rd_kafka_brokers_get_state_version",
+    "rdkafka_mock.c::rd_kafka_mock_group_initial_rebalance_delay_ms",
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_set_group_consumer_heartbeat_interval_ms",
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_set_group_consumer_session_timeout_ms",
+    "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_set_heartbeat_interval",
+    "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_set_session_timeout",
+    "rdkafka_timer.c::rd_kafka_timers_lock",
+    "rdkafka_timer.c::rd_kafka_timers_unlock"
+   ]
+  },
+  "2-controlling-scope-match": {
+   "strict": [
+    "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_destroy",
+    "rdkafka_request.c::rd_kafkap_Produce_reply_tags_destroy",
+    "rdkafka_telemetry_encode.c::calculate_consumer_fetch_latency_avg",
+    "rdkafka_telemetry_encode.c::calculate_queue_time_avg",
+    "rdkafka_telemetry_encode.c::calculate_share_fetch_latency_avg",
+    "rdkafka_telemetry_encode.c::calculate_share_fetch_size_avg",
+    "rdkafka_telemetry_encode.c::calculate_throttle_avg"
+   ],
+   "with-alias": [
+    "rdkafka_conf.c::rd_kafka_sw_str_is_safe",
+    "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_destroy",
+    "rdkafka_request.c::rd_kafka_ListOffsetRequest_parameters_destroy_free",
+    "rdkafka_request.c::rd_kafkap_Produce_reply_tags_destroy",
+    "rdkafka_telemetry_encode.c::calculate_consumer_fetch_latency_avg",
+    "rdkafka_telemetry_encode.c::calculate_queue_time_avg",
+    "rdkafka_telemetry_encode.c::calculate_share_fetch_latency_avg",
+    "rdkafka_telemetry_encode.c::calculate_share_fetch_size_avg",
+    "rdkafka_telemetry_encode.c::calculate_throttle_avg"
+   ]
+  },
+  "3-anonymous-enum-member": {
+   "strict": [
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_check_state"
+   ],
+   "with-alias": [
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_check_state"
+   ]
+  },
+  "4-return-connective": {
+   "strict": [
+    "cmt_decode_statsd.c::is_incremental"
+   ],
+   "with-alias": [
+    "cmt_decode_statsd.c::is_incremental",
+    "rdkafka_metadata.c::rd_kafka_metadata_broker_cmp",
+    "rdkafka_metadata.c::rd_kafka_metadata_broker_internal_cmp",
+    "rdkafka_metadata.c::rd_kafka_metadata_partition_internal_cmp"
+   ]
+  }
+ },
+ "rows_by_first_step": {
+  "1-address-values": 1832,
+  "2-controlling-scope-match": 1116,
+  "3-anonymous-enum-member": 116,
+  "4-return-connective": 8,
+  "none": 6156
+ },
+ "steps": [
+  "1-address-values",
+  "2-controlling-scope-match",
+  "3-anonymous-enum-member",
+  "4-return-connective"
+ ]
+}

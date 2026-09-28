@@ -162,6 +162,7 @@ import QCore.SizeofOperand
 import QCore.IndirectChainAccess
 import QCore.TypedAccessPathStatements
 import QCore.TypedAccessPathPositions
+import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedRootDeclarations
 import QCore.TypedConstPointerValue
 import QCore.LexicalClosureNestedAssignment

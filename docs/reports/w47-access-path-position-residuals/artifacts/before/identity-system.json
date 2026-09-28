@@ -1,0 +1,76 @@
+{
+ "archive": "docs/reports/w47-callee-closure-r2/integration/artifacts/system",
+ "files": {
+  "parity.jsonl (sorted rows)": {
+   "archive_rows": 23484,
+   "identical": true,
+   "run_rows": 23484
+  },
+  "parity.jsonl.contexts.jsonl (sorted rows)": {
+   "archive_rows": 15,
+   "identical": true,
+   "run_rows": 15
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "archive": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "identical": true,
+   "run": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "resource-diagnostics.json": {
+   "archive": "4ec3a1fb5aef5975a8c12b8e93ff8844c0817040f268e6471c4e49f770920ff1",
+   "differing_leaves": [
+    "/units/0/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/0/compile_configuration/dependencies/resource_contract_sources",
+    "/units/0/compile_configuration/inventory_sha256",
+    "/units/1/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/1/compile_configuration/dependencies/resource_contract_sources",
+    "/units/1/compile_configuration/inventory_sha256",
+    "/units/2/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/2/compile_configuration/dependencies/resource_contract_sources",
+    "/units/2/compile_configuration/inventory_sha256",
+    "/units/3/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/3/compile_configuration/dependencies/resource_contract_sources",
+    "/units/3/compile_configuration/inventory_sha256",
+    "/units/4/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/4/compile_configuration/dependencies/resource_contract_sources",
+    "/units/4/compile_configuration/inventory_sha256",
+    "/units/5/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/5/compile_configuration/dependencies/resource_contract_sources",
+    "/units/5/compile_configuration/inventory_sha256",
+    "/units/6/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/6/compile_configuration/dependencies/resource_contract_sources",
+    "/units/6/compile_configuration/inventory_sha256",
+    "/units/7/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/7/compile_configuration/dependencies/resource_contract_sources",
+    "/units/7/compile_configuration/inventory_sha256",
+    "/units/8/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/8/compile_configuration/dependencies/resource_contract_sources",
+    "/units/8/compile_configuration/inventory_sha256",
+    "/units/9/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/9/compile_configuration/dependencies/resource_contract_sources",
+    "/units/9/compile_configuration/inventory_sha256",
+    "/units/10/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/10/compile_configuration/dependencies/resource_contract_sources",
+    "/units/10/compile_configuration/inventory_sha256",
+    "/units/11/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/11/compile_configuration/dependencies/resource_contract_sources",
+    "/units/11/compile_configuration/inventory_sha256",
+    "/units/12/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/12/compile_configuration/dependencies/resource_contract_sources",
+    "/units/12/compile_configuration/inventory_sha256",
+    "/units/13/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/13/compile_configuration/dependencies/resource_contract_sources",
+    "/units/13/compile_configuration/inventory_sha256",
+    "/units/14/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+    "/units/14/compile_configuration/dependencies/resource_contract_sources",
+    "/units/14/compile_configuration/inventory_sha256"
+   ],
+   "digest_only": true,
+   "identical": true,
+   "identity": "equal after masking path-derived digests",
+   "run": "c8824e1db09656a70c84ae44a855913cfc260eb2773e78d94ed631d48002d544"
+  }
+ },
+ "identical": true,
+ "run": "private/pos/before/system"
+}

@@ -38,6 +38,7 @@ use super::{
 };
 use crate::neutral_position::ExpressionRole;
 use crate::typed_access_path::{StatementIndex, StatementPlan, record_position};
+use crate::typed_position_shapes::Residual;
 
 impl Parser<'_> {
     pub(super) fn typed_positions_index(&self) -> Option<&StatementIndex> {
@@ -101,6 +102,9 @@ impl Parser<'_> {
             "condition",
             plan.as_ref(),
         );
+        if plan.is_none() {
+            self.record_residual_shape(line, &texts, Residual::Condition);
+        }
         let plan = plan?;
         self.typed_position_uses
             .set(self.typed_position_uses.get() + 1);
@@ -177,6 +181,9 @@ impl Parser<'_> {
             "condition-assignment",
             plan.as_ref(),
         );
+        if plan.is_none() {
+            self.record_residual_shape(line, &statement_texts, Residual::Assignment);
+        }
         let plan = plan?;
         if plan.scalar.destination.as_deref() != Some(name) || plan.scalar.writes_through_pointer {
             return None;
@@ -258,6 +265,9 @@ impl Parser<'_> {
             "return",
             plan.as_ref(),
         );
+        if plan.is_none() {
+            self.record_residual_shape(line, &texts, Residual::Return);
+        }
         Some((self.typed_read(plan?), false))
     }
 
@@ -283,7 +293,30 @@ impl Parser<'_> {
             "call-argument",
             plan.as_ref().map(|plan| &plan.plan),
         );
+        if plan.is_none() {
+            self.record_residual_shape(
+                line,
+                argument,
+                Residual::Argument {
+                    callee,
+                    index,
+                    arity,
+                },
+            );
+        }
         plan
+    }
+
+    /// Card W47-ACCESS-PATH-POSITION-RESIDUALS: parity only, the shape of a
+    /// refused typed position. Changes nothing.
+    fn record_residual_shape(&self, line: usize, texts: &[&str], residual: Residual<'_>) {
+        crate::typed_position_shapes::record(
+            self.typed_positions_index(),
+            &self.typed_path_function,
+            line,
+            texts,
+            residual,
+        );
     }
 
     /// Parity only: the lexical call-argument recogniser admitted this

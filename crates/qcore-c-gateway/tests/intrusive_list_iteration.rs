@@ -35,6 +35,7 @@ const PLAIN_REFUSAL: &str = "the current element of an intrusive-list iteration 
                              save its successor is unlinked or released";
 const SAFE_REFUSAL: &str =
     "the saved successor of an intrusive-list iteration is unlinked or released";
+const INDIRECT_REFUSAL: &str = "indirect memory access is outside the resource projection";
 const FOR_REFUSAL: &str = "unmodeled call, aggregate or indirect access in for-loop condition";
 const BRACED_REFUSAL: &str = "braced initializer, expression, or declaration is not modeled";
 
@@ -272,7 +273,13 @@ fn a_body_that_writes_its_cursor_keeps_the_old_refusals() {
          mk_list_foreach(it, &q->items) { it = it->next; } }",
     );
     assert_eq!(status, AnalysisStatus::Unknown, "{diagnostics:?}");
-    assert!(has(&diagnostics, FOR_REFUSAL), "{diagnostics:?}");
+    // Re-pinned deliberately by W47-ACCESS-PATH-POSITION-RESIDUALS (rule
+    // 10n): the iteration route still declines, and the loop condition
+    // `it != (&q->items)` it leaves refused is now read by the typed
+    // fallback as a comparison with an address (a hop on `q`, no read of
+    // `items`); the body's own cursor write keeps the function `Unknown`.
+    assert!(!has(&diagnostics, FOR_REFUSAL), "{diagnostics:?}");
+    assert!(has(&diagnostics, INDIRECT_REFUSAL), "{diagnostics:?}");
 }
 
 #[test]
@@ -287,7 +294,16 @@ fn linking_a_tracked_object_into_the_iterated_list_declines_the_iteration() {
          mk_list_foreach(it, &q->items) { e = mk_list_entry(it, struct item, _head); q_use(e); } }",
     );
     assert_ne!(status, AnalysisStatus::Safe, "{diagnostics:?}");
-    assert!(has(&diagnostics, FOR_REFUSAL), "{diagnostics:?}");
+    // Re-pinned deliberately by W47-ACCESS-PATH-POSITION-RESIDUALS (rule
+    // 10n): the iteration is still declined; its loop condition, a
+    // comparison with `&q->items`, is now read by the typed fallback, and the
+    // element read in the body keeps its refusal, so the guard's outcome —
+    // never `Safe` — is unchanged.
+    assert!(!has(&diagnostics, FOR_REFUSAL), "{diagnostics:?}");
+    assert!(
+        has(&diagnostics, INDIRECT_REFUSAL) || has(&diagnostics, BRACED_REFUSAL),
+        "{diagnostics:?}"
+    );
 }
 
 #[test]

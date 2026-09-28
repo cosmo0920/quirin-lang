@@ -1,0 +1,61 @@
+{
+ "functions": {
+  "after": {
+   "Safe": 520,
+   "Unknown": 4304,
+   "Unsafe": 10
+  },
+  "before": {
+   "Safe": 520,
+   "Unknown": 4304,
+   "Unsafe": 10
+  }
+ },
+ "interlock_violations": [],
+ "leaf_attribution": {
+  "added|unknown_alias|direct": 46,
+  "removed|COND|direct": 116
+ },
+ "leaf_families": {
+  "after": {
+   "COND": 6162,
+   "IND": 14910,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8846,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7510
+  },
+  "before": {
+   "COND": 6278,
+   "IND": 14910,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8846,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7464
+  }
+ },
+ "move_counts": {},
+ "moves": [],
+ "newly_admitted_rows": {
+  "condition": 523
+ },
+ "no_longer_admitted_rows": {},
+ "units": {
+  "after": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ }
+}

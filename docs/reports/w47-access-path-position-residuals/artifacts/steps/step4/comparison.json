@@ -1,0 +1,90 @@
+{
+ "functions": {
+  "after": {
+   "Safe": 522,
+   "Unknown": 4302,
+   "Unsafe": 10
+  },
+  "before": {
+   "Safe": 521,
+   "Unknown": 4303,
+   "Unsafe": 10
+  }
+ },
+ "interlock_violations": [],
+ "leaf_attribution": {
+  "added|unknown_alias|direct": 4,
+  "removed|IND|review": 1,
+  "removed|RET|direct": 6
+ },
+ "leaf_families": {
+  "after": {
+   "COND": 6053,
+   "IND": 14892,
+   "OTHER": 5679,
+   "RET": 278,
+   "UNC": 8845,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7627
+  },
+  "before": {
+   "COND": 6053,
+   "IND": 14893,
+   "OTHER": 5679,
+   "RET": 284,
+   "UNC": 8845,
+   "leak": 36,
+   "summary_conflict": 1,
+   "unknown_alias": 7623
+  }
+ },
+ "move_counts": {
+  "Unknown->Safe": 1
+ },
+ "moves": [
+  {
+   "after": "Safe",
+   "before": "Unknown",
+   "disputed_names_in_function": [],
+   "disputed_roots_of_new_rows": [],
+   "file": "cmt_decode_statsd.c",
+   "function": "is_incremental",
+   "leaf_attributions": [
+    "direct"
+   ],
+   "library": "cmetrics",
+   "new_rows": [
+    {
+     "line": 5598,
+     "position": "return-connective",
+     "roots": [],
+     "texts": "( * str = = __qcore_literal__ | | * str = = __qcore_literal__ )"
+    }
+   ],
+   "positions": [
+    "return-connective"
+   ],
+   "unit": 7
+  }
+ ],
+ "newly_admitted_rows": {
+  "condition": 6,
+  "return-connective": 6
+ },
+ "no_longer_admitted_rows": {},
+ "units": {
+  "after": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 6,
+   "Unknown": 167,
+   "Unsafe": 8,
+   "data_only": 4
+  }
+ }
+}

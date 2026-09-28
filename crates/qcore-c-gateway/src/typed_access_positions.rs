@@ -162,8 +162,8 @@ impl Reader<'_> {
                 if self.scalar(&pair[0]) && self.scalar(&pair[1]) {
                     return self.expression(node);
                 }
-                self.pointer_operand(&pair[0])?;
-                self.pointer_operand(&pair[1])
+                self.compared_operand(&pair[0])?;
+                self.compared_operand(&pair[1])
             }
             _ if self.scalar(node) => self.expression(node),
             _ => self.pointer_operand(node),
@@ -192,6 +192,20 @@ impl Reader<'_> {
                 self.path(value, false, true)
             }
             _ => None,
+        }
+    }
+
+    /// A pointer operand of a comparison. Rule 10n: an address `&PATH`
+    /// compares as a pointer value (never as a truthiness operand, whose
+    /// answer C fixes).
+    fn compared_operand(&mut self, node: &Value) -> Option<()> {
+        match strip_pointer_value(node) {
+            Some(value)
+                if kind(value) == "UnaryOperator" && value["opcode"].as_str() == Some("&") =>
+            {
+                self.address(value, false)
+            }
+            _ => self.pointer_operand(node),
         }
     }
 
@@ -224,18 +238,26 @@ impl Reader<'_> {
 
 impl StatementIndex {
     /// The unique expression node on `line` whose tokens are exactly `texts`.
-    fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
+    pub(crate) fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
         let mut all = Vec::new();
         expressions(body, &mut all);
-        let mut matched = all.into_iter().filter(|node| {
-            self.node_line(node) == Some(line)
-                && self.node_tokens(node).is_some_and(|found| found == texts)
-        });
-        let node = matched.next()?;
-        matched.next().is_none().then_some(node)
+        let matched = all
+            .into_iter()
+            .filter(|node| {
+                self.node_line(node) == Some(line)
+                    && self.node_tokens(node).is_some_and(|found| found == texts)
+            })
+            .collect::<Vec<_>>();
+        match matched.as_slice() {
+            [node] => Some(node),
+            // Rule 10n: several nodes carry the tokens; only those inside a
+            // controlling expression or a returned value can be the operand.
+            [_, _, ..] => crate::typed_position_shapes::controlling_scope(body, &matched),
+            [] => None,
+        }
     }
 
     /// A controlling-expression operand read as a typed condition.
@@ -286,17 +308,16 @@ impl StatementIndex {
         Some(reader.plan)
     }
 
-    /// The actual at `index` of the one call of `callee` whose actual there is
-    /// exactly `texts` on `line`.
-    pub(crate) fn argument(
+    /// The unique actual at `index` of a call of `callee` with `arity`
+    /// actuals whose tokens there are exactly `texts` on `line`.
+    pub(crate) fn argument_node(
         &self,
         callee: &str,
         index: usize,
         arity: usize,
         texts: &[&str],
         line: usize,
-        never_bound: impl Fn(&str) -> bool,
-    ) -> Option<ArgumentPlan> {
+    ) -> Option<&Value> {
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
@@ -313,11 +334,32 @@ impl StatementIndex {
             .then_some(actual)
         });
         let actual = matched.next()?;
-        if matched.next().is_some() {
-            return None;
-        }
+        matched.next().is_none().then_some(actual)
+    }
+
+    /// The actual at `index` of the one call of `callee` whose actual there is
+    /// exactly `texts` on `line`.
+    pub(crate) fn argument(
+        &self,
+        callee: &str,
+        index: usize,
+        arity: usize,
+        texts: &[&str],
+        line: usize,
+        never_bound: impl Fn(&str) -> bool,
+    ) -> Option<ArgumentPlan> {
+        let actual = self.argument_node(callee, index, arity, texts, line)?;
         let mut reader = self.reader(&never_bound);
-        let pointer_valued = reader.value(actual)?;
+        // Rule 10n: an address `&PATH` is a pointer value, never a read.
+        let pointer_valued = match strip_pointer_value(actual) {
+            Some(value)
+                if kind(value) == "UnaryOperator" && value["opcode"].as_str() == Some("&") =>
+            {
+                reader.address(value, true)?;
+                true
+            }
+            _ => reader.value(actual)?,
+        };
         // A borrowed actual hands nothing out of the body: the never-bound
         // premise suffices, and W44's `ArgumentReads` decides what it names.
         if pointer_valued && !reader.roots_admit(&never_bound) {

@@ -200,28 +200,33 @@ fn a_bound_base_keeps_its_dereference_obligation() {
 }
 
 /// Counterexample: C reads `b->n` only when `f` is set, so an accusation on
-/// the other path would be one C does not have. The bound base in a skipped
-/// position keeps the refusal, and nothing is accused.
+/// the other path would be one C does not have. This family's route keeps
+/// the refusal for a bound base in a skipped position.
+///
+/// Re-pinned deliberately by W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n):
+/// the connective return asked after this route desugars `||` and `?:` as C
+/// evaluates them, so an operand is read only on the edges where C reads it.
+/// `*str == '-'` is read only where `*str == '+'` is false, each read a hop on
+/// the unbound formal: `Safe` (the corpus's `is_incremental`). `b->n` is read
+/// only on the edge where `f` is set, which is after `k_free(b)`: the
+/// use-after-release C has on that path, and no accusation on the other.
 #[test]
-fn a_bound_base_in_a_skipped_position_keeps_the_refusal() {
+fn a_bound_base_in_a_skipped_position_is_read_only_where_c_reads_it() {
     if !clang_available() {
         return;
     }
-    // `*str` makes `str` a protected formal, which the body may bind; its
-    // second dereference follows `||`, so the whole return keeps its refusal
-    // (the corpus's `is_incremental`).
     expect(
         "conditional dereference of a protected formal",
         "int w(const char *str) { return (*str == '+' || *str == '-'); }",
-        "Unknown",
-        &[RETURN],
+        "Safe",
+        &[],
     );
     expect(
         "conditional bound base",
         "long w(int f) { struct k_box *b = k_alloc(1); if (!b) return 0; k_free(b); \
          return f ? b->n : 0; }",
-        "Unknown",
-        &[RETURN],
+        "Unsafe",
+        &["UseAfterRelease", "unknown_alias:b"],
     );
 }
 

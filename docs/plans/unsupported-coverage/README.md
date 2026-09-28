@@ -95,7 +95,7 @@ bound: a modeled access can still fail its obligations.
 | P0 | W45-SR5-SOUNDNESS | Soundness repair | High (done, `85a35431`) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
 | P1 | ACCESS-PATH-CENSUS | Measurement | Medium (done: [W46-ACCESS-PATH-CENSUS](../../reports/w46-access-path-census/README.md), prediction frozen: P2 38 Safe / 7 Unknown, P3 83 Safe / 137 Unknown) | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
 | P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High (bounded fallback landed; replacement parity open) | P1 | [Typed statement fallback](../../reports/w46-access-path-statements/README.md) runs beside retained shape routes; archived disagreements must be resolved before any route is retired |
-| P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High (landed: [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md), +60 Safe with the enum arm; residuals registered) | P2 | The same layer in conditions, returns and call arguments |
+| P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High (landed: [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md), +60 Safe with the enum arm; residuals: [W47-ACCESS-PATH-POSITION-RESIDUALS](../../reports/w47-access-path-position-residuals/README.md), +12 Safe, four shapes) | P2 | The same layer in conditions, returns and call arguments |
 | P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
 | P5 | FIELD-CUSTODY | Candidate only | High | P0; the owned-field Lean model | Pointer-valued stores into fields; not scheduled |
 | P6 | ALIAS-RESIDUALS | Measurement, then semantic cards | Medium (measured: [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md)); High (the cards below) | P3 landed; P4 for yield | 7,440 corpus leaves classified, 0 unclassified; only 8 functions blocked by `unknown_alias` alone; four ranked cards, see P6 below |
@@ -193,6 +193,15 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   uncast read. That is +10 Safe (eight of the ten named, and two summary
   cascades); the bit-cast step moves nothing. Its summary-validation boundary
   is `W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`.
+  [W47-ACCESS-PATH-POSITION-RESIDUALS](../../reports/w47-access-path-position-residuals/README.md)
+  (gateway 10n) sized the refused rows by shape and ranked them by functions
+  freed alone (no shape frees more than 9), then admitted the top four as
+  separate measured steps: addresses (+10 Safe), ambiguous operands matched
+  in their controlling expression (0), the anonymous inline enum member (+1)
+  and scalar connective returns (+1): 510 → **522 Safe**. After it the
+  largest residual is the root premise (4,367 rows; the never-bound closure's
+  cards); `?:` actuals, nested-call actuals and pointer `?:` returns stay
+  refused and sized under the residual follow-up.
 - **Positions:** apply P2's layer in controlling expressions (`if`, `while`,
   `for`, `?:`, `&&`/`||` with their evaluation order), in return expressions,
   and in call arguments.
