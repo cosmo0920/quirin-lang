@@ -1,0 +1,58 @@
+{
+ "resource-diagnostics.contracts.json": {
+  "contract_modules": 54,
+  "contract_texts_equal_after_rename": true,
+  "differing_path_sample": [
+   "/contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qv/module/sha256",
+   "/contract_inclusion/modules/qcore-provider-librdkafka:librdkafka/memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_string.qv/module/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-chunkio/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-cmetrics/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-ctraces/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-cfl/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-libc/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-mpack/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-msgpack/contracts.lock/sha256",
+   "/contract_revision/pinned_in_force[105]/module_sha256",
+   "/contract_revision/pinned_in_force[106]/module_sha256",
+   "/contract_revision/pinned_in_force[107]/module_sha256"
+  ],
+  "differing_paths": 34,
+  "equal_after_root_alias_and_rename": false,
+  "structural_equal_with_digests_masked": true
+ },
+ "resource-diagnostics.source-effects.json": {
+  "differing_path_sample": [
+   "/results[16]/bounds/resource_contracts:17a65af9d703f4a35ec175a4",
+   "/results[16]/bounds/resource_contracts:4ac71eed0b35b81830cdb39a",
+   "/results[16]/evidence/coverage[0]",
+   "/results[16]/evidence/unit/build_digest",
+   "/results[16]/import_identity/configuration_digest",
+   "/results[16]/import_identity/helpers/cio_error_reset/configuration_digest",
+   "/results[16]/task/contract_sources/qcore:boolean-field-import:v1",
+   "/results[16]/task/obligations[0]/obligation_id",
+   "/results[16]/task/unit/build_digest",
+   "/results[16]/witness/task_digest",
+   "/results[24]/bounds/resource_contracts:00046a5949661ec0dc11a4e7",
+   "/results[24]/bounds/resource_contracts:adb286926c97899c5fcb077c",
+   "/results[24]/evidence/coverage[0]",
+   "/results[24]/evidence/unit/build_digest",
+   "/results[24]/import_identity/configuration_digest",
+   "/results[24]/import_identity/helpers/cio_error_reset/configuration_digest",
+   "/results[24]/task/contract_sources/qcore:boolean-field-import:v1",
+   "/results[24]/task/obligations[0]/obligation_id",
+   "/results[24]/task/unit/build_digest",
+   "/results[24]/witness/task_digest"
+  ],
+  "differing_paths": 29,
+  "equal_after_root_alias_and_rename": false,
+  "structural_equal_with_digests_masked": true
+ }
+}

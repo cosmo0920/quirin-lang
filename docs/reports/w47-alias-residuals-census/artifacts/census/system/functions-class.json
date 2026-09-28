@@ -1,0 +1,112 @@
+{
+ "key": "class",
+ "ranking": {
+  "formal-custody": {
+   "exclusive": 32,
+   "plus_one": 8,
+   "plus_IND": 7,
+   "alone": 4,
+   "plus_UNC": 1
+  },
+  "derived-statement-expression": {
+   "exclusive": 9,
+   "plus_one": 4,
+   "plus_IND": 2,
+   "plus_UNC": 2,
+   "alone": 1
+  },
+  "borrowed-path-read": {
+   "exclusive": 5,
+   "alone": 1
+  },
+  "call-result-contracted": {
+   "exclusive": 6,
+   "plus_one": 2,
+   "plus_IND": 2
+  },
+  "address-taken-pointer": {
+   "exclusive": 4,
+   "plus_one": 2,
+   "plus_IND": 1,
+   "plus_UNC": 1
+  },
+  "scalar-name": {
+   "exclusive": 2
+  },
+  "copy-of-name": {
+   "exclusive": 1
+  },
+  "derived-address": {
+   "exclusive": 1
+  },
+  "literal-actual": {
+   "exclusive": 1
+  }
+ },
+ "unknown_functions": 199,
+ "unknown_with_alias": 104,
+ "functions_per_class": {
+  "formal-custody": 56,
+  "derived-statement-expression": 18,
+  "borrowed-path-read": 16,
+  "call-result-contracted": 15,
+  "address-taken-pointer": 12,
+  "call-result-corpus": 9,
+  "copy-of-name": 8,
+  "call-result-external": 6,
+  "derived-address": 6,
+  "field-store-owner": 4,
+  "scalar-name": 4,
+  "mixed-origin": 3,
+  "literal-actual": 3,
+  "global-pointer": 3,
+  "peer-release-alias": 1,
+  "derived-constant": 1
+ },
+ "alone": {
+  "formal-custody": 4,
+  "copy-of-name+global-pointer": 2,
+  "borrowed-path-read": 1,
+  "derived-constant+literal-actual": 1,
+  "derived-statement-expression": 1
+ },
+ "alone_total": 9,
+ "alias_plus_one_family": {
+  "formal-custody + IND": 7,
+  "derived-statement-expression + IND": 2,
+  "call-result-contracted + IND": 2,
+  "derived-statement-expression + UNC": 2,
+  "address-taken-pointer + IND": 1,
+  "formal-custody + UNC": 1,
+  "borrowed-path-read+derived-statement-expression + UNC": 1,
+  "address-taken-pointer + UNC": 1,
+  "derived-address+formal-custody + IND": 1,
+  "call-result-external+formal-custody + UNC": 1,
+  "copy-of-name+formal-custody + IND": 1
+ },
+ "alias_plus_one_family_by_family": {
+  "IND": 14,
+  "UNC": 6
+ },
+ "alone_functions": {
+  "borrowed-path-read": [
+   "src/flb_input_chunk.c:flb_input_chunk_set_up_down"
+  ],
+  "copy-of-name+global-pointer": [
+   "src/flb_engine.c:flb_engine_evl_get",
+   "src/flb_scheduler.c:flb_sched_ctx_get"
+  ],
+  "derived-constant+literal-actual": [
+   "src/flb_storage.c:sanitize_name_component"
+  ],
+  "derived-statement-expression": [
+   "src/flb_output.c:flb_output_get_instance"
+  ],
+  "formal-custody": [
+   "src/flb_engine.c:flb_engine_evl_set",
+   "src/flb_output.c:flb_output_task_queue_enqueue",
+   "src/flb_scheduler.c:flb_sched_ctx_set",
+   "src/flb_task.c:flb_task_queue_destroy"
+  ]
+ }
+}

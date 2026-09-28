@@ -1,0 +1,126 @@
+{
+ "key": "group",
+ "ranking": {
+  "formal-copied": {
+   "exclusive": 4,
+   "plus_one": 2,
+   "plus_IND": 2,
+   "alone": 2
+  },
+  "formal-handed-contracted": {
+   "exclusive": 2,
+   "plus_one": 1,
+   "plus_IND": 1,
+   "alone": 1
+  },
+  "borrowed-path-unguarded": {
+   "exclusive": 3,
+   "alone": 1
+  },
+  "guarded-other": {
+   "exclusive": 1,
+   "alone": 1
+  },
+  "formal-handed-uncontracted": {
+   "exclusive": 20,
+   "plus_one": 4,
+   "plus_IND": 3,
+   "plus_UNC": 1
+  },
+  "statement-expression-unguarded": {
+   "exclusive": 8,
+   "plus_one": 4,
+   "plus_IND": 2,
+   "plus_UNC": 2
+  },
+  "poisoned-by-refusal": {
+   "exclusive": 13,
+   "plus_one": 3,
+   "plus_IND": 3
+  },
+  "address-taken": {
+   "exclusive": 4,
+   "plus_one": 2,
+   "plus_IND": 1,
+   "plus_UNC": 1
+  },
+  "non-pointer-name": {
+   "exclusive": 3
+  },
+  "derived-local-unguarded": {
+   "exclusive": 2
+  }
+ },
+ "unknown_functions": 199,
+ "unknown_with_alias": 104,
+ "functions_per_class": {
+  "formal-handed-uncontracted": 37,
+  "poisoned-by-refusal": 28,
+  "statement-expression-unguarded": 18,
+  "borrowed-path-unguarded": 15,
+  "guarded-other": 14,
+  "derived-local-unguarded": 13,
+  "address-taken": 12,
+  "non-pointer-name": 7,
+  "formal-copied": 6,
+  "formal-handed-contracted": 5,
+  "uncontracted-result-unguarded": 5,
+  "field-store-owner": 4,
+  "global-pointer": 3,
+  "peer-release": 1
+ },
+ "alone": {
+  "derived-local-unguarded+global-pointer": 2,
+  "formal-copied": 2,
+  "borrowed-path-unguarded": 1,
+  "derived-local-unguarded+non-pointer-name": 1,
+  "formal-handed-contracted": 1,
+  "guarded-other+statement-expression-unguarded": 1,
+  "guarded-other": 1
+ },
+ "alone_total": 9,
+ "alias_plus_one_family": {
+  "formal-handed-uncontracted + IND": 3,
+  "poisoned-by-refusal + IND": 3,
+  "formal-copied + IND": 2,
+  "statement-expression-unguarded + IND": 2,
+  "statement-expression-unguarded + UNC": 2,
+  "formal-handed-contracted + IND": 1,
+  "address-taken + IND": 1,
+  "formal-handed-uncontracted + UNC": 1,
+  "borrowed-path-unguarded+statement-expression-unguarded + UNC": 1,
+  "address-taken + UNC": 1,
+  "derived-local-unguarded+formal-handed-contracted + IND": 1,
+  "formal-handed-uncontracted+uncontracted-result-unguarded + UNC": 1,
+  "derived-local-unguarded+formal-copied + IND": 1
+ },
+ "alias_plus_one_family_by_family": {
+  "IND": 14,
+  "UNC": 6
+ },
+ "alone_functions": {
+  "borrowed-path-unguarded": [
+   "src/flb_input_chunk.c:flb_input_chunk_set_up_down"
+  ],
+  "derived-local-unguarded+global-pointer": [
+   "src/flb_engine.c:flb_engine_evl_get",
+   "src/flb_scheduler.c:flb_sched_ctx_get"
+  ],
+  "derived-local-unguarded+non-pointer-name": [
+   "src/flb_storage.c:sanitize_name_component"
+  ],
+  "formal-copied": [
+   "src/flb_engine.c:flb_engine_evl_set",
+   "src/flb_scheduler.c:flb_sched_ctx_set"
+  ],
+  "formal-handed-contracted": [
+   "src/flb_task.c:flb_task_queue_destroy"
+  ],
+  "guarded-other": [
+   "src/flb_output.c:flb_output_task_queue_enqueue"
+  ],
+  "guarded-other+statement-expression-unguarded": [
+   "src/flb_output.c:flb_output_get_instance"
+  ]
+ }
+}

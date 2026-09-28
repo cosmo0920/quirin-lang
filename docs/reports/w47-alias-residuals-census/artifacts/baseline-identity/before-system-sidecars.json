@@ -1,0 +1,35 @@
+{
+ "resource-diagnostics.contracts.json": {
+  "differing_path_sample": [
+   "/contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qv/module/sha256",
+   "/contract_inclusion/modules/qcore-provider-librdkafka:librdkafka/memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_memory.qv/module/sha256",
+   "/contract_inclusion/modules/quirin-provider-fluent-bit:fluent_bit/resource_string.qv/module/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-chunkio/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-cmetrics/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-ctraces/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-libevent/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/qcore-provider-librdkafka/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-cfl/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-fluent-bit/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-libc/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-mpack/contracts.lock/sha256",
+   "/contract_revision/locks//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a381f4497377f3776/providers/quirin-provider-msgpack/contracts.lock/sha256",
+   "/contract_revision/pinned_in_force[105]/module_sha256",
+   "/contract_revision/pinned_in_force[106]/module_sha256",
+   "/contract_revision/pinned_in_force[107]/module_sha256"
+  ],
+  "differing_paths": 34,
+  "equal_after_root_alias_and_rename": false,
+  "structural_equal_with_digests_masked": true
+ },
+ "resource-diagnostics.source-effects.json": {
+  "differing_path_sample": [],
+  "differing_paths": 0,
+  "equal_after_root_alias_and_rename": true,
+  "structural_equal_with_digests_masked": true
+ }
+}

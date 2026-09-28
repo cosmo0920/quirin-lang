@@ -1,0 +1,563 @@
+{
+ "key": "group",
+ "ranking": {
+  "non-pointer-name": {
+   "exclusive": 83,
+   "plus_one": 10,
+   "plus_UNC": 4,
+   "alone": 4,
+   "plus_COND": 1,
+   "plus_OTHER": 2,
+   "plus_IND": 3
+  },
+  "borrowed-path-unguarded": {
+   "exclusive": 78,
+   "plus_one": 14,
+   "plus_IND": 12,
+   "plus_OTHER": 2,
+   "alone": 1
+  },
+  "statement-expression-unguarded": {
+   "exclusive": 20,
+   "plus_one": 13,
+   "plus_IND": 11,
+   "plus_COND": 1,
+   "alone": 1,
+   "plus_UNC": 1
+  },
+  "formal-handed-uncontracted": {
+   "exclusive": 399,
+   "plus_one": 108,
+   "plus_IND": 74,
+   "plus_UNC": 32,
+   "plus_OTHER": 1,
+   "plus_COND": 1
+  },
+  "formal-copied": {
+   "exclusive": 85,
+   "plus_one": 56,
+   "plus_IND": 28,
+   "plus_OTHER": 3,
+   "plus_UNC": 18,
+   "plus_RET": 7
+  },
+  "poisoned-by-refusal": {
+   "exclusive": 130,
+   "plus_one": 39,
+   "plus_IND": 33,
+   "plus_UNC": 5,
+   "plus_OTHER": 1
+  },
+  "formal-handed-contracted": {
+   "exclusive": 30,
+   "plus_one": 18,
+   "plus_IND": 13,
+   "plus_UNC": 5
+  },
+  "derived-local-unguarded": {
+   "exclusive": 72,
+   "plus_one": 10,
+   "plus_OTHER": 4,
+   "plus_IND": 6
+  },
+  "guarded-other": {
+   "exclusive": 32,
+   "plus_one": 9,
+   "plus_IND": 7,
+   "plus_UNC": 2
+  },
+  "contracted-result-unguarded": {
+   "exclusive": 123,
+   "plus_one": 8,
+   "plus_OTHER": 4,
+   "plus_IND": 4
+  },
+  "uncontracted-result-unguarded": {
+   "exclusive": 147,
+   "plus_one": 6,
+   "plus_RET": 1,
+   "plus_IND": 3,
+   "plus_UNC": 2
+  },
+  "formal-not-handed": {
+   "exclusive": 11,
+   "plus_one": 3,
+   "plus_COND": 1,
+   "plus_RET": 1,
+   "plus_OTHER": 1
+  },
+  "address-taken": {
+   "exclusive": 11,
+   "plus_one": 2,
+   "plus_COND": 1,
+   "plus_IND": 1
+  },
+  "field-store-owner": {
+   "exclusive": 2,
+   "plus_one": 1,
+   "plus_IND": 1
+  },
+  "global-pointer": {
+   "exclusive": 2
+  }
+ },
+ "unknown_functions": 4318,
+ "unknown_with_alias": 1922,
+ "functions_per_class": {
+  "formal-handed-uncontracted": 732,
+  "poisoned-by-refusal": 365,
+  "uncontracted-result-unguarded": 360,
+  "non-pointer-name": 329,
+  "derived-local-unguarded": 298,
+  "borrowed-path-unguarded": 236,
+  "contracted-result-unguarded": 178,
+  "guarded-other": 167,
+  "formal-copied": 162,
+  "address-taken": 85,
+  "formal-handed-contracted": 47,
+  "statement-expression-unguarded": 35,
+  "formal-not-handed": 35,
+  "field-store-owner": 25,
+  "global-pointer": 5,
+  "peer-release": 1
+ },
+ "alone": {
+  "non-pointer-name": 4,
+  "global-pointer+non-pointer-name": 1,
+  "statement-expression-unguarded": 1,
+  "borrowed-path-unguarded+non-pointer-name": 1,
+  "borrowed-path-unguarded": 1
+ },
+ "alone_total": 8,
+ "alias_plus_one_family": {
+  "formal-handed-uncontracted + IND": 74,
+  "poisoned-by-refusal + IND": 33,
+  "formal-handed-uncontracted + UNC": 32,
+  "formal-copied + IND": 28,
+  "formal-copied + UNC": 18,
+  "formal-handed-contracted + IND": 13,
+  "borrowed-path-unguarded + IND": 12,
+  "statement-expression-unguarded + IND": 11,
+  "derived-local-unguarded+formal-copied + IND": 11,
+  "guarded-other + IND": 7,
+  "formal-copied + RET": 7,
+  "derived-local-unguarded + IND": 6,
+  "poisoned-by-refusal + UNC": 5,
+  "formal-handed-contracted + UNC": 5,
+  "derived-local-unguarded + OTHER": 4,
+  "non-pointer-name + UNC": 4,
+  "contracted-result-unguarded + OTHER": 4,
+  "contracted-result-unguarded + IND": 4,
+  "guarded-other+poisoned-by-refusal + IND": 3,
+  "formal-handed-contracted+statement-expression-unguarded + IND": 3,
+  "borrowed-path-unguarded+poisoned-by-refusal + IND": 3,
+  "formal-copied + OTHER": 3,
+  "derived-local-unguarded+formal-copied + COND": 3,
+  "uncontracted-result-unguarded + IND": 3,
+  "non-pointer-name + IND": 3,
+  "formal-handed-uncontracted+uncontracted-result-unguarded + UNC": 2,
+  "guarded-other + UNC": 2,
+  "field-store-owner+poisoned-by-refusal + IND": 2,
+  "non-pointer-name + OTHER": 2,
+  "guarded-other+non-pointer-name + UNC": 2,
+  "borrowed-path-unguarded+guarded-other + IND": 2,
+  "uncontracted-result-unguarded + UNC": 2,
+  "derived-local-unguarded+formal-handed-contracted + IND": 2,
+  "borrowed-path-unguarded + OTHER": 2,
+  "non-pointer-name+poisoned-by-refusal + IND": 1,
+  "guarded-other+poisoned-by-refusal + OTHER": 1,
+  "uncontracted-result-unguarded + RET": 1,
+  "statement-expression-unguarded + COND": 1,
+  "borrowed-path-unguarded+field-store-owner + IND": 1,
+  "borrowed-path-unguarded+formal-handed-uncontracted+poisoned-by-refusal + UNC": 1,
+  "field-store-owner + IND": 1,
+  "borrowed-path-unguarded+formal-handed-contracted + IND": 1,
+  "derived-local-unguarded+guarded-other+poisoned-by-refusal + IND": 1,
+  "guarded-other+uncontracted-result-unguarded + IND": 1,
+  "formal-not-handed + COND": 1,
+  "contracted-result-unguarded+guarded-other+non-pointer-name + OTHER": 1,
+  "address-taken + COND": 1,
+  "contracted-result-unguarded+non-pointer-name + OTHER": 1,
+  "formal-not-handed + RET": 1,
+  "non-pointer-name + COND": 1,
+  "contracted-result-unguarded+field-store-owner + OTHER": 1,
+  "derived-local-unguarded+guarded-other + COND": 1,
+  "formal-handed-uncontracted + OTHER": 1,
+  "formal-not-handed+uncontracted-result-unguarded + IND": 1,
+  "borrowed-path-unguarded+formal-handed-uncontracted+poisoned-by-refusal + IND": 1,
+  "guarded-other+uncontracted-result-unguarded + OTHER": 1,
+  "derived-local-unguarded+formal-copied+non-pointer-name + COND": 1,
+  "derived-local-unguarded+formal-copied + RET": 1,
+  "contracted-result-unguarded+formal-handed-contracted + IND": 1,
+  "formal-copied+non-pointer-name + UNC": 1,
+  "poisoned-by-refusal + OTHER": 1,
+  "address-taken + IND": 1,
+  "derived-local-unguarded+non-pointer-name + OTHER": 1,
+  "borrowed-path-unguarded+derived-local-unguarded + IND": 1,
+  "formal-not-handed + OTHER": 1,
+  "borrowed-path-unguarded+non-pointer-name + IND": 1,
+  "statement-expression-unguarded + UNC": 1,
+  "formal-handed-uncontracted + COND": 1,
+  "derived-local-unguarded+formal-handed-uncontracted + UNC": 1
+ },
+ "alias_plus_one_family_by_family": {
+  "IND": 232,
+  "UNC": 76,
+  "OTHER": 24,
+  "RET": 10,
+  "COND": 10
+ },
+ "alone_functions": {
+  "borrowed-path-unguarded": [
+   "flb_input_chunk.c:flb_input_chunk_set_up_down"
+  ],
+  "borrowed-path-unguarded+non-pointer-name": [
+   "cio_file.c:format_acl_error_message"
+  ],
+  "global-pointer+non-pointer-name": [
+   "lz4frame.c:LZ4F_getErrorName"
+  ],
+  "non-pointer-name": [
+   "cio_chunk.c:cio_chunk_is_file",
+   "lz4frame.c:LZ4F_optimalBSID",
+   "mk_server/mk_net.c:net_plain_close",
+   "rdkafka.c:rd_kafka_global_cnt_get"
+  ],
+  "statement-expression-unguarded": [
+   "cio_chunk.c:cio_chunk_close_stream"
+  ]
+ },
+ "closure_baseline": {
+  "same-unit": 0,
+  "cross-unit": 3
+ },
+ "closure": {
+  "address-taken": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "borrowed-path-unguarded": {
+   "same-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     1,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "contracted-result-unguarded": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-local-unguarded": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "field-store-owner": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "formal-copied": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "formal-handed-contracted": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "formal-handed-uncontracted": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "formal-not-handed": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "global-pointer": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "guarded-other": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "non-pointer-name": {
+   "same-unit": {
+    "freed": 4,
+    "direct": 4,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 4,
+    "direct": 4,
+    "closure_gain": 0,
+    "rounds": [
+     7,
+     0
+    ]
+   }
+  },
+  "peer-release": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "poisoned-by-refusal": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "statement-expression-unguarded": {
+   "same-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     1,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "uncontracted-result-unguarded": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "<every class>": {
+   "same-unit": {
+    "freed": 8,
+    "direct": 8,
+    "closure_gain": 0,
+    "rounds": [
+     8,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 10,
+    "direct": 10,
+    "closure_gain": 0,
+    "rounds": [
+     13,
+     0
+    ]
+   }
+  }
+ }
+}

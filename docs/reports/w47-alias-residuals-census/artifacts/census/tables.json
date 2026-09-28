@@ -1,0 +1,742 @@
+{
+ "corpus": {
+  "unknown_alias": 7440,
+  "unclassified": 0,
+  "classes": {
+   "formal-custody": 2797,
+   "call-result-corpus": 961,
+   "call-result-contracted": 782,
+   "borrowed-path-read": 622,
+   "scalar-name": 393,
+   "mixed-origin": 303,
+   "non-object-name": 267,
+   "copy-of-name": 229,
+   "address-taken-pointer": 202,
+   "derived-address": 200,
+   "literal-actual": 154,
+   "call-result-external": 117,
+   "array-name": 102,
+   "call-result-mixed": 68,
+   "derived-statement-expression": 59,
+   "derived-arithmetic": 59,
+   "field-store-owner": 40,
+   "local-unbound": 31,
+   "derived-conditional": 15,
+   "other-origin": 15,
+   "aggregate-name": 8,
+   "global-pointer": 6,
+   "other-type-name": 4,
+   "derived-constant": 3,
+   "place-spelled": 2,
+   "peer-release-alias": 1
+  },
+  "groups": {
+   "formal-handed-uncontracted": {
+    "leaves": 2350,
+    "first_leaves": 806,
+    "functions_any": 732,
+    "functions_exclusive": 399,
+    "alone": 0,
+    "plus_one_family": 108,
+    "plus_one_by_family": {
+     "IND": 74,
+     "UNC": 32,
+     "OTHER": 1,
+     "COND": 1
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      4,
+      0
+     ]
+    }
+   },
+   "non-pointer-name": {
+    "leaves": 930,
+    "first_leaves": 584,
+    "functions_any": 329,
+    "functions_exclusive": 83,
+    "alone": 4,
+    "plus_one_family": 10,
+    "plus_one_by_family": {
+     "UNC": 4,
+     "COND": 1,
+     "OTHER": 2,
+     "IND": 3
+    },
+    "closure_same_unit": {
+     "freed": 4,
+     "direct": 4,
+     "closure_gain": 0,
+     "rounds": [
+      4,
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 4,
+     "direct": 4,
+     "closure_gain": 0,
+     "rounds": [
+      7,
+      0
+     ]
+    }
+   },
+   "poisoned-by-refusal": {
+    "leaves": 900,
+    "first_leaves": 292,
+    "functions_any": 365,
+    "functions_exclusive": 130,
+    "alone": 0,
+    "plus_one_family": 39,
+    "plus_one_by_family": {
+     "IND": 33,
+     "UNC": 5,
+     "OTHER": 1
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "derived-local-unguarded": {
+    "leaves": 746,
+    "first_leaves": 342,
+    "functions_any": 298,
+    "functions_exclusive": 72,
+    "alone": 0,
+    "plus_one_family": 10,
+    "plus_one_by_family": {
+     "OTHER": 4,
+     "IND": 6
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "uncontracted-result-unguarded": {
+    "leaves": 705,
+    "first_leaves": 453,
+    "functions_any": 360,
+    "functions_exclusive": 147,
+    "alone": 0,
+    "plus_one_family": 6,
+    "plus_one_by_family": {
+     "RET": 1,
+     "IND": 3,
+     "UNC": 2
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "borrowed-path-unguarded": {
+    "leaves": 503,
+    "first_leaves": 267,
+    "functions_any": 236,
+    "functions_exclusive": 78,
+    "alone": 1,
+    "plus_one_family": 14,
+    "plus_one_by_family": {
+     "IND": 12,
+     "OTHER": 2
+    },
+    "closure_same_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      1,
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      4,
+      0
+     ]
+    }
+   },
+   "contracted-result-unguarded": {
+    "leaves": 442,
+    "first_leaves": 193,
+    "functions_any": 178,
+    "functions_exclusive": 123,
+    "alone": 0,
+    "plus_one_family": 8,
+    "plus_one_by_family": {
+     "OTHER": 4,
+     "IND": 4
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "guarded-other": {
+    "leaves": 262,
+    "first_leaves": 130,
+    "functions_any": 167,
+    "functions_exclusive": 32,
+    "alone": 0,
+    "plus_one_family": 9,
+    "plus_one_by_family": {
+     "IND": 7,
+     "UNC": 2
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "address-taken": {
+    "leaves": 202,
+    "first_leaves": 108,
+    "functions_any": 85,
+    "functions_exclusive": 11,
+    "alone": 0,
+    "plus_one_family": 2,
+    "plus_one_by_family": {
+     "COND": 1,
+     "IND": 1
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "formal-copied": {
+    "leaves": 176,
+    "first_leaves": 175,
+    "functions_any": 162,
+    "functions_exclusive": 85,
+    "alone": 0,
+    "plus_one_family": 56,
+    "plus_one_by_family": {
+     "IND": 28,
+     "OTHER": 3,
+     "UNC": 18,
+     "RET": 7
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      4,
+      0
+     ]
+    }
+   },
+   "formal-handed-contracted": {
+    "leaves": 74,
+    "first_leaves": 52,
+    "functions_any": 47,
+    "functions_exclusive": 30,
+    "alone": 0,
+    "plus_one_family": 18,
+    "plus_one_by_family": {
+     "IND": 13,
+     "UNC": 5
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "statement-expression-unguarded": {
+    "leaves": 54,
+    "first_leaves": 38,
+    "functions_any": 35,
+    "functions_exclusive": 20,
+    "alone": 1,
+    "plus_one_family": 13,
+    "plus_one_by_family": {
+     "IND": 11,
+     "COND": 1,
+     "UNC": 1
+    },
+    "closure_same_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      1,
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 1,
+     "direct": 1,
+     "closure_gain": 0,
+     "rounds": [
+      4,
+      0
+     ]
+    }
+   },
+   "formal-not-handed": {
+    "leaves": 49,
+    "first_leaves": 37,
+    "functions_any": 35,
+    "functions_exclusive": 11,
+    "alone": 0,
+    "plus_one_family": 3,
+    "plus_one_by_family": {
+     "COND": 1,
+     "RET": 1,
+     "OTHER": 1
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "field-store-owner": {
+    "leaves": 40,
+    "first_leaves": 13,
+    "functions_any": 25,
+    "functions_exclusive": 2,
+    "alone": 0,
+    "plus_one_family": 1,
+    "plus_one_by_family": {
+     "IND": 1
+    },
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "global-pointer": {
+    "leaves": 6,
+    "first_leaves": 6,
+    "functions_any": 5,
+    "functions_exclusive": 2,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   },
+   "peer-release": {
+    "leaves": 1,
+    "first_leaves": 1,
+    "functions_any": 1,
+    "functions_exclusive": 0,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      0
+     ]
+    },
+    "closure_cross_unit": {
+     "freed": 0,
+     "direct": 0,
+     "closure_gain": 0,
+     "rounds": [
+      3,
+      0
+     ]
+    }
+   }
+  },
+  "unknown_functions": 4318,
+  "unknown_with_alias": 1922,
+  "alone_total": 8,
+  "alias_plus_one_family_by_family": {
+   "IND": 232,
+   "UNC": 76,
+   "OTHER": 24,
+   "RET": 10,
+   "COND": 10
+  },
+  "every_class_closure": {
+   "same-unit": {
+    "freed": 8,
+    "direct": 8,
+    "closure_gain": 0,
+    "rounds": [
+     8,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 10,
+    "direct": 10,
+    "closure_gain": 0,
+    "rounds": [
+     13,
+     0
+    ]
+   }
+  },
+  "closure_baseline": {
+   "same-unit": 0,
+   "cross-unit": 3
+  }
+ },
+ "system": {
+  "unknown_alias": 985,
+  "unclassified": 0,
+  "classes": {
+   "call-result-contracted": 227,
+   "formal-custody": 218,
+   "address-taken-pointer": 106,
+   "call-result-external": 90,
+   "derived-statement-expression": 82,
+   "borrowed-path-read": 67,
+   "mixed-origin": 42,
+   "derived-address": 36,
+   "copy-of-name": 34,
+   "call-result-corpus": 31,
+   "literal-actual": 20,
+   "scalar-name": 10,
+   "field-store-owner": 8,
+   "global-pointer": 6,
+   "peer-release-alias": 4,
+   "derived-constant": 4
+  },
+  "groups": {
+   "poisoned-by-refusal": {
+    "leaves": 340,
+    "first_leaves": 47,
+    "functions_any": 28,
+    "functions_exclusive": 13,
+    "alone": 0,
+    "plus_one_family": 3,
+    "plus_one_by_family": {
+     "IND": 3
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "formal-handed-uncontracted": {
+    "leaves": 176,
+    "first_leaves": 76,
+    "functions_any": 37,
+    "functions_exclusive": 20,
+    "alone": 0,
+    "plus_one_family": 4,
+    "plus_one_by_family": {
+     "IND": 3,
+     "UNC": 1
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "address-taken": {
+    "leaves": 106,
+    "first_leaves": 28,
+    "functions_any": 12,
+    "functions_exclusive": 4,
+    "alone": 0,
+    "plus_one_family": 2,
+    "plus_one_by_family": {
+     "IND": 1,
+     "UNC": 1
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "derived-local-unguarded": {
+    "leaves": 96,
+    "first_leaves": 27,
+    "functions_any": 13,
+    "functions_exclusive": 2,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "statement-expression-unguarded": {
+    "leaves": 68,
+    "first_leaves": 37,
+    "functions_any": 18,
+    "functions_exclusive": 8,
+    "alone": 0,
+    "plus_one_family": 4,
+    "plus_one_by_family": {
+     "IND": 2,
+     "UNC": 2
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "borrowed-path-unguarded": {
+    "leaves": 63,
+    "first_leaves": 30,
+    "functions_any": 15,
+    "functions_exclusive": 3,
+    "alone": 1,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "guarded-other": {
+    "leaves": 52,
+    "first_leaves": 22,
+    "functions_any": 14,
+    "functions_exclusive": 1,
+    "alone": 1,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "non-pointer-name": {
+    "leaves": 30,
+    "first_leaves": 14,
+    "functions_any": 7,
+    "functions_exclusive": 3,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "uncontracted-result-unguarded": {
+    "leaves": 14,
+    "first_leaves": 8,
+    "functions_any": 5,
+    "functions_exclusive": 0,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "formal-handed-contracted": {
+    "leaves": 13,
+    "first_leaves": 9,
+    "functions_any": 5,
+    "functions_exclusive": 2,
+    "alone": 1,
+    "plus_one_family": 1,
+    "plus_one_by_family": {
+     "IND": 1
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "formal-copied": {
+    "leaves": 9,
+    "first_leaves": 9,
+    "functions_any": 6,
+    "functions_exclusive": 4,
+    "alone": 2,
+    "plus_one_family": 2,
+    "plus_one_by_family": {
+     "IND": 2
+    },
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "field-store-owner": {
+    "leaves": 8,
+    "first_leaves": 4,
+    "functions_any": 4,
+    "functions_exclusive": 0,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "global-pointer": {
+    "leaves": 6,
+    "first_leaves": 6,
+    "functions_any": 3,
+    "functions_exclusive": 0,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   },
+   "peer-release": {
+    "leaves": 4,
+    "first_leaves": 2,
+    "functions_any": 1,
+    "functions_exclusive": 0,
+    "alone": 0,
+    "plus_one_family": 0,
+    "plus_one_by_family": {},
+    "closure_same_unit": null,
+    "closure_cross_unit": null
+   }
+  },
+  "unknown_functions": 199,
+  "unknown_with_alias": 104,
+  "alone_total": 9,
+  "alias_plus_one_family_by_family": {
+   "IND": 14,
+   "UNC": 6
+  },
+  "every_class_closure": null,
+  "closure_baseline": null
+ }
+}

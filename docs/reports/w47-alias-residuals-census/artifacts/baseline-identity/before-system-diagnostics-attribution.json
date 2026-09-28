@@ -1,0 +1,29 @@
+{
+ "resource-diagnostics.json": {
+  "differing_path_sample": [
+   "/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+   "/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+   "/units[0]/compile_configuration/dependencies/resource_contract_manifest",
+   "/units[0]/compile_configuration/dependencies/resource_contract_sources",
+   "/units[0]/compile_configuration/inventory_sha256",
+   "/units[10]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+   "/units[10]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+   "/units[10]/compile_configuration/dependencies/resource_contract_manifest",
+   "/units[10]/compile_configuration/dependencies/resource_contract_sources",
+   "/units[10]/compile_configuration/inventory_sha256",
+   "/units[11]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+   "/units[11]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+   "/units[11]/compile_configuration/dependencies/resource_contract_manifest",
+   "/units[11]/compile_configuration/dependencies/resource_contract_sources",
+   "/units[11]/compile_configuration/inventory_sha256",
+   "/units[12]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+   "/units[12]/compile_configuration/compile_task_identity/dependencies/resource_contract_sources",
+   "/units[12]/compile_configuration/dependencies/resource_contract_manifest",
+   "/units[12]/compile_configuration/dependencies/resource_contract_sources",
+   "/units[12]/compile_configuration/inventory_sha256"
+  ],
+  "differing_paths": 75,
+  "equal_after_root_alias_and_rename": false,
+  "structural_equal_with_digests_masked": true
+ }
+}

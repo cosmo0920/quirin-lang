@@ -1,0 +1,775 @@
+{
+ "key": "class",
+ "ranking": {
+  "scalar-name": {
+   "exclusive": 33,
+   "plus_one": 4,
+   "plus_UNC": 3,
+   "alone": 3,
+   "plus_IND": 1
+  },
+  "borrowed-path-read": {
+   "exclusive": 108,
+   "plus_one": 20,
+   "plus_IND": 18,
+   "plus_OTHER": 2,
+   "alone": 1
+  },
+  "derived-statement-expression": {
+   "exclusive": 20,
+   "plus_one": 13,
+   "plus_IND": 11,
+   "plus_COND": 1,
+   "alone": 1,
+   "plus_UNC": 1
+  },
+  "formal-custody": {
+   "exclusive": 592,
+   "plus_one": 218,
+   "plus_IND": 144,
+   "plus_UNC": 57,
+   "plus_OTHER": 7,
+   "plus_COND": 2,
+   "plus_RET": 8
+  },
+  "call-result-contracted": {
+   "exclusive": 170,
+   "plus_one": 18,
+   "plus_IND": 14,
+   "plus_OTHER": 4
+  },
+  "call-result-corpus": {
+   "exclusive": 187,
+   "plus_one": 10,
+   "plus_RET": 1,
+   "plus_UNC": 4,
+   "plus_IND": 5
+  },
+  "derived-address": {
+   "exclusive": 31,
+   "plus_one": 6,
+   "plus_IND": 6
+  },
+  "copy-of-name": {
+   "exclusive": 24,
+   "plus_one": 4,
+   "plus_OTHER": 3,
+   "plus_IND": 1
+  },
+  "call-result-external": {
+   "exclusive": 22,
+   "plus_one": 4,
+   "plus_UNC": 3,
+   "plus_IND": 1
+  },
+  "non-object-name": {
+   "exclusive": 14,
+   "plus_one": 4,
+   "plus_COND": 1,
+   "plus_OTHER": 2,
+   "plus_IND": 1
+  },
+  "address-taken-pointer": {
+   "exclusive": 11,
+   "plus_one": 2,
+   "plus_COND": 1,
+   "plus_IND": 1
+  },
+  "literal-actual": {
+   "exclusive": 17,
+   "plus_one": 1,
+   "plus_IND": 1
+  },
+  "derived-arithmetic": {
+   "exclusive": 7,
+   "plus_one": 1,
+   "plus_OTHER": 1
+  },
+  "field-store-owner": {
+   "exclusive": 2,
+   "plus_one": 1,
+   "plus_IND": 1
+  },
+  "call-result-mixed": {
+   "exclusive": 12
+  },
+  "mixed-origin": {
+   "exclusive": 7
+  },
+  "array-name": {
+   "exclusive": 5
+  },
+  "derived-conditional": {
+   "exclusive": 2
+  },
+  "global-pointer": {
+   "exclusive": 2
+  },
+  "aggregate-name": {
+   "exclusive": 1
+  },
+  "derived-constant": {
+   "exclusive": 1
+  },
+  "other-origin": {
+   "exclusive": 1
+  },
+  "other-type-name": {
+   "exclusive": 1
+  },
+  "place-spelled": {
+   "exclusive": 1
+  }
+ },
+ "unknown_functions": 4318,
+ "unknown_with_alias": 1922,
+ "functions_per_class": {
+  "formal-custody": 1025,
+  "call-result-corpus": 409,
+  "borrowed-path-read": 272,
+  "call-result-contracted": 253,
+  "scalar-name": 205,
+  "non-object-name": 125,
+  "copy-of-name": 115,
+  "mixed-origin": 112,
+  "address-taken-pointer": 85,
+  "derived-address": 78,
+  "literal-actual": 59,
+  "call-result-external": 42,
+  "derived-statement-expression": 37,
+  "array-name": 33,
+  "call-result-mixed": 29,
+  "field-store-owner": 25,
+  "derived-arithmetic": 23,
+  "local-unbound": 20,
+  "other-origin": 12,
+  "derived-conditional": 9,
+  "aggregate-name": 8,
+  "global-pointer": 5,
+  "other-type-name": 4,
+  "derived-constant": 3,
+  "place-spelled": 1,
+  "peer-release-alias": 1
+ },
+ "alone": {
+  "scalar-name": 3,
+  "global-pointer+literal-actual": 1,
+  "non-object-name+scalar-name": 1,
+  "derived-statement-expression": 1,
+  "borrowed-path-read+literal-actual": 1,
+  "borrowed-path-read": 1
+ },
+ "alone_total": 8,
+ "alias_plus_one_family": {
+  "formal-custody + IND": 144,
+  "formal-custody + UNC": 57,
+  "borrowed-path-read + IND": 18,
+  "call-result-contracted + IND": 14,
+  "derived-statement-expression + IND": 11,
+  "copy-of-name+formal-custody + IND": 11,
+  "formal-custody + RET": 8,
+  "formal-custody + OTHER": 7,
+  "derived-address + IND": 6,
+  "call-result-corpus + IND": 5,
+  "call-result-corpus + UNC": 4,
+  "call-result-contracted + OTHER": 4,
+  "copy-of-name + OTHER": 3,
+  "call-result-external + UNC": 3,
+  "scalar-name + UNC": 3,
+  "derived-statement-expression+formal-custody + IND": 3,
+  "formal-custody+mixed-origin + COND": 3,
+  "call-result-corpus+formal-custody + UNC": 2,
+  "borrowed-path-read+formal-custody + IND": 2,
+  "call-result-contracted+field-store-owner + IND": 2,
+  "formal-custody + COND": 2,
+  "non-object-name + OTHER": 2,
+  "formal-custody+mixed-origin + IND": 2,
+  "borrowed-path-read + OTHER": 2,
+  "call-result-contracted+scalar-name + IND": 1,
+  "call-result-corpus + RET": 1,
+  "derived-statement-expression + COND": 1,
+  "borrowed-path-read+field-store-owner + IND": 1,
+  "borrowed-path-read+formal-custody + UNC": 1,
+  "field-store-owner + IND": 1,
+  "copy-of-name + IND": 1,
+  "call-result-external + IND": 1,
+  "derived-arithmetic + OTHER": 1,
+  "call-result-contracted+non-object-name+other-origin + OTHER": 1,
+  "address-taken-pointer + COND": 1,
+  "call-result-contracted+non-object-name+scalar-name + OTHER": 1,
+  "non-object-name + COND": 1,
+  "call-result-contracted+field-store-owner + OTHER": 1,
+  "copy-of-name+formal-custody + COND": 1,
+  "call-result-corpus+formal-custody + IND": 1,
+  "call-result-corpus+formal-custody + OTHER": 1,
+  "copy-of-name+formal-custody+literal-actual+mixed-origin + COND": 1,
+  "formal-custody+non-object-name+scalar-name + UNC": 1,
+  "borrowed-path-read+call-result-corpus + IND": 1,
+  "copy-of-name+formal-custody + RET": 1,
+  "non-object-name + IND": 1,
+  "call-result-contracted+formal-custody + IND": 1,
+  "call-result-corpus+non-object-name+scalar-name + UNC": 1,
+  "literal-actual + IND": 1,
+  "non-object-name+scalar-name + UNC": 1,
+  "formal-custody+other-type-name + UNC": 1,
+  "address-taken-pointer + IND": 1,
+  "derived-constant+literal-actual+non-object-name + OTHER": 1,
+  "borrowed-path-read+mixed-origin + IND": 1,
+  "scalar-name + IND": 1,
+  "borrowed-path-read+scalar-name + IND": 1,
+  "derived-statement-expression + UNC": 1,
+  "copy-of-name+formal-custody + UNC": 1
+ },
+ "alias_plus_one_family_by_family": {
+  "IND": 232,
+  "UNC": 76,
+  "OTHER": 24,
+  "RET": 10,
+  "COND": 10
+ },
+ "alone_functions": {
+  "borrowed-path-read": [
+   "flb_input_chunk.c:flb_input_chunk_set_up_down"
+  ],
+  "borrowed-path-read+literal-actual": [
+   "cio_file.c:format_acl_error_message"
+  ],
+  "derived-statement-expression": [
+   "cio_chunk.c:cio_chunk_close_stream"
+  ],
+  "global-pointer+literal-actual": [
+   "lz4frame.c:LZ4F_getErrorName"
+  ],
+  "non-object-name+scalar-name": [
+   "lz4frame.c:LZ4F_optimalBSID"
+  ],
+  "scalar-name": [
+   "cio_chunk.c:cio_chunk_is_file",
+   "mk_server/mk_net.c:net_plain_close",
+   "rdkafka.c:rd_kafka_global_cnt_get"
+  ]
+ },
+ "closure_baseline": {
+  "same-unit": 0,
+  "cross-unit": 3
+ },
+ "closure": {
+  "address-taken-pointer": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "aggregate-name": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "array-name": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "borrowed-path-read": {
+   "same-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     1,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "call-result-contracted": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "call-result-corpus": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "call-result-external": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "call-result-mixed": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "copy-of-name": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-address": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-arithmetic": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-conditional": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-constant": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "derived-statement-expression": {
+   "same-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     1,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 1,
+    "direct": 1,
+    "closure_gain": 0,
+    "rounds": [
+     4,
+     0
+    ]
+   }
+  },
+  "field-store-owner": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "formal-custody": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 2,
+    "direct": 2,
+    "closure_gain": 0,
+    "rounds": [
+     5,
+     0
+    ]
+   }
+  },
+  "global-pointer": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "literal-actual": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "local-unbound": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "mixed-origin": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "non-object-name": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "other-origin": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "other-type-name": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "peer-release-alias": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "place-spelled": {
+   "same-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 0,
+    "direct": 0,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   }
+  },
+  "scalar-name": {
+   "same-unit": {
+    "freed": 3,
+    "direct": 3,
+    "closure_gain": 0,
+    "rounds": [
+     3,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 3,
+    "direct": 3,
+    "closure_gain": 0,
+    "rounds": [
+     6,
+     0
+    ]
+   }
+  },
+  "<every class>": {
+   "same-unit": {
+    "freed": 8,
+    "direct": 8,
+    "closure_gain": 0,
+    "rounds": [
+     8,
+     0
+    ]
+   },
+   "cross-unit": {
+    "freed": 10,
+    "direct": 10,
+    "closure_gain": 0,
+    "rounds": [
+     13,
+     0
+    ]
+   }
+  }
+ }
+}
