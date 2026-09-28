@@ -968,6 +968,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w46-metric-trace-contract-gaps](w46-metric-trace-contract-gaps/README.md) | W46-METRIC-TRACE-CONTRACT-GAPS |
 
+| [w47-access-path-position-residuals](w47-access-path-position-residuals/README.md) | W47-ACCESS-PATH-POSITION-RESIDUALS |
+
 | [w47-access-path-positions](w47-access-path-positions/README.md) | W47-ACCESS-PATH-POSITIONS |
 
 | [w47-alias-residuals-census](w47-alias-residuals-census/README.md) | W47-ALIAS-RESIDUALS-CENSUS |

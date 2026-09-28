@@ -1,0 +1,54 @@
+{
+ "functions": {
+  "after": {
+   "Safe": 63,
+   "Unknown": 381,
+   "Unsafe": 4
+  },
+  "before": {
+   "Safe": 63,
+   "Unknown": 381,
+   "Unsafe": 4
+  }
+ },
+ "interlock_violations": [],
+ "leaf_attribution": {
+  "removed|COND|direct": 2
+ },
+ "leaf_families": {
+  "after": {
+   "COND": 416,
+   "IND": 1348,
+   "OTHER": 418,
+   "RET": 9,
+   "UNC": 715,
+   "counted_user": 4,
+   "unknown_alias": 985
+  },
+  "before": {
+   "COND": 418,
+   "IND": 1348,
+   "OTHER": 418,
+   "RET": 9,
+   "UNC": 715,
+   "counted_user": 4,
+   "unknown_alias": 985
+  }
+ },
+ "move_counts": {},
+ "moves": [],
+ "newly_admitted_rows": {
+  "condition": 1
+ },
+ "no_longer_admitted_rows": {},
+ "units": {
+  "after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  }
+ }
+}
