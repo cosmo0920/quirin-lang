@@ -996,6 +996,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-review-hold-concrete-reason](w47-review-hold-concrete-reason/README.md) | W47-REVIEW-HOLD-CONCRETE-REASON: a held row names the act it awaits |
 
+| [w47-service-property-keys](w47-service-property-keys/README.md) | W47-SERVICE-PROPERTY-KEYS: the keys a property setter carries |
+
 | [w47-summary-validation-protected-formals](w47-summary-validation-protected-formals/README.md) | W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated on the premises its reported row reads (wave 47) |
 
 | [w47-tail-pause-bindings](w47-tail-pause-bindings/README.md) | W47-TAIL-PAUSE-BINDINGS: in_tail pause/resume bindings, negative cases and slice baseline |

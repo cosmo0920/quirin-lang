@@ -1,0 +1,7 @@
+merged functions: {'Unknown': 244, 'Safe': 24, 'Pending': 1, 'Unsafe': 1}
+merged units: {'Unknown': 12, 'Unsafe': 1}
+merged diagnostic_counts: {'counted_user': 1, 'unknown_alias': 1009, 'unsupported': 2857}
+functions/leaves touched by both cards: 0 []
+mismatches: 1
+  ('leaves', ('src/flb_lib.c', 'flb_service_set'))
+DOES NOT COMPOSE

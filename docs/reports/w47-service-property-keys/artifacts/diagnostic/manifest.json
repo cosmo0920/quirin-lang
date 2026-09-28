@@ -1,0 +1,12 @@
+{
+ "census.json": {
+  "bytes": 941923,
+  "file": "census.json.gz",
+  "sha256": "b32ddd591ecf7ee53be8b0770728e26a9319e6e497b930db00fa6b0885355cce"
+ },
+ "summary.json": {
+  "bytes": 2041,
+  "file": "summary.json.gz",
+  "sha256": "5fe5c67d0d16458feaa9e04d882cf237144f891de0e531a6717139f44b35c382"
+ }
+}

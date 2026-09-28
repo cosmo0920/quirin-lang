@@ -285,7 +285,7 @@ fn reads_only(use_label: &str, readers: &[&str]) -> bool {
 
 /// The loop statements' token extents inside `range` (inclusive), and whether
 /// the range has a `goto` or a label-like `ident :`.
-fn loops(texts: &[&str], range: (usize, usize)) -> (Vec<(usize, usize)>, bool) {
+pub(super) fn loops(texts: &[&str], range: (usize, usize)) -> (Vec<(usize, usize)>, bool) {
     let mut extents = Vec::new();
     let mut jumps = false;
     let block_end = |from: usize| -> usize {
@@ -512,7 +512,7 @@ fn returns_on_null(texts: &[&str], range: (usize, usize), r: &str) -> bool {
     false
 }
 
-fn within(extents: &[(usize, usize)], position: usize) -> bool {
+pub(super) fn within(extents: &[(usize, usize)], position: usize) -> bool {
     extents
         .iter()
         .any(|(start, end)| *start <= position && position <= *end)
@@ -520,7 +520,7 @@ fn within(extents: &[(usize, usize)], position: usize) -> bool {
 
 /// The positions `name` is assigned at in `range` (`name = …`, not `==`, not
 /// a member).
-fn assignments(texts: &[&str], range: (usize, usize), name: &str) -> Vec<usize> {
+pub(super) fn assignments(texts: &[&str], range: (usize, usize), name: &str) -> Vec<usize> {
     (range.0..=range.1)
         .filter(|&k| {
             texts[k] == name
@@ -532,7 +532,7 @@ fn assignments(texts: &[&str], range: (usize, usize), name: &str) -> Vec<usize> 
 }
 
 /// Whether `&name` (not `&&`) occurs in `range`.
-fn address_taken(texts: &[&str], range: (usize, usize), name: &str) -> bool {
+pub(super) fn address_taken(texts: &[&str], range: (usize, usize), name: &str) -> bool {
     (range.0..=range.1).any(|k| {
         texts[k] == name
             && texts[k - 1] == "&"
@@ -543,7 +543,7 @@ fn address_taken(texts: &[&str], range: (usize, usize), name: &str) -> bool {
 
 /// Whether `name` is declared as a local in `definition`'s body (`T *name`,
 /// `T name`, followed by `;`, `=` or `,`).
-fn declared_local(texts: &[&str], definition: &Definition, name: &str) -> bool {
+pub(super) fn declared_local(texts: &[&str], definition: &Definition, name: &str) -> bool {
     (definition.body.0..=definition.body.1).any(|k| {
         texts[k] == name
             && matches!(texts.get(k + 1), Some(&";" | &"=" | &","))
@@ -553,7 +553,7 @@ fn declared_local(texts: &[&str], definition: &Definition, name: &str) -> bool {
 }
 
 /// The end of the statement starting at `from` (its `;`).
-fn semicolon(texts: &[&str], from: usize, limit: usize) -> usize {
+pub(super) fn semicolon(texts: &[&str], from: usize, limit: usize) -> usize {
     let mut depth = 0isize;
     for (index, text) in texts.iter().enumerate().take(limit + 1).skip(from) {
         match *text {
@@ -567,7 +567,7 @@ fn semicolon(texts: &[&str], from: usize, limit: usize) -> usize {
 }
 
 /// Top-level `,`-separated argument ranges of the call whose `(` is at `open`.
-fn call_arguments(texts: &[&str], open: usize) -> Option<(Vec<(usize, usize)>, usize)> {
+pub(super) fn call_arguments(texts: &[&str], open: usize) -> Option<(Vec<(usize, usize)>, usize)> {
     let mut depth = 0usize;
     let mut ranges = Vec::new();
     let mut start = open + 1;
@@ -595,7 +595,7 @@ fn call_arguments(texts: &[&str], open: usize) -> Option<(Vec<(usize, usize)>, u
 
 /// A definition's parameter names in order: the last identifier of each
 /// top-level `,`-separated part of the list after its name token.
-fn ordered_parameters(texts: &[&str], header: usize) -> Vec<String> {
+pub(super) fn ordered_parameters(texts: &[&str], header: usize) -> Vec<String> {
     let Some((ranges, _)) = call_arguments(texts, header + 1) else {
         return Vec::new();
     };
@@ -611,7 +611,7 @@ fn ordered_parameters(texts: &[&str], header: usize) -> Vec<String> {
         .collect()
 }
 
-const NOT_CALLS: &[&str] = &[
+pub(super) const NOT_CALLS: &[&str] = &[
     "if",
     "while",
     "for",
@@ -638,7 +638,7 @@ impl StepB<'_> {
 
     /// The census ids `name` resolves to from `file` (a static of the same
     /// file first, else the external or header definitions).
-    fn resolve_name(&self, file: usize, name: &str) -> Vec<usize> {
+    pub(super) fn resolve_name(&self, file: usize, name: &str) -> Vec<usize> {
         let candidates = self
             .definitions
             .iter()
@@ -1251,6 +1251,9 @@ impl StepB<'_> {
             (f.file, f.body, f_loops.clone(), None, f_pruned, false),
         ];
         let mut inlined = BTreeSet::new();
+        // Card W47-SERVICE-PROPERTY-KEYS: setters and property functions read
+        // in place for a keyed call.
+        let mut keyed_in_place = BTreeSet::new();
         let mut part = 0;
         while part < region.len() {
             let (file, range, extents, skip, pruned, propagate) = region[part].clone();
@@ -1278,6 +1281,51 @@ impl StepB<'_> {
                 }
                 if text == tables.list_entry_macro {
                     continue;
+                }
+                // Card W47-SERVICE-PROPERTY-KEYS: a setter call whose keys are
+                // read reaches only its keys' effects.
+                if call && let Some(reading) = self.keyed_setter_call(file, k) {
+                    let line = self.scans[file].tokens[k].line;
+                    let site = format!("{path}:{line} {text}");
+                    match reading {
+                        Ok(keyed) => {
+                            self.property_readings.borrow_mut().insert(
+                                site.clone(),
+                                keyed
+                                    .keys
+                                    .iter()
+                                    .map(|key| format!("key {key}"))
+                                    .chain(keyed.table.iter().map(|row| format!("table {row}")))
+                                    .collect(),
+                            );
+                            self.notes.borrow_mut().insert(format!(
+                                "property keys: `{text}` at {path}:{line} reaches only its keys' \
+                                 effects ({})",
+                                keyed.keys.join("; ")
+                            ));
+                            keyed_in_place.extend(keyed.in_place.iter().copied());
+                            for root in keyed.roots {
+                                roots.insert(root);
+                                if !reaching.contains(&root) {
+                                    continue;
+                                }
+                                if within(&extents, k) {
+                                    return not_tied(format!(
+                                        "`{text}`'s keys at {path}:{line} reach a hazard inside a \
+                                         loop ({})",
+                                        self.witness(root, &hazards)
+                                    ));
+                                }
+                                creations.push((root, file, k, line));
+                            }
+                            continue;
+                        }
+                        Err(why) => {
+                            self.property_readings
+                                .borrow_mut()
+                                .insert(site, vec![format!("keys not read: {why}")]);
+                        }
+                    }
                 }
                 let callees = self.resolve_name(file, text);
                 if callees.is_empty() {
@@ -1354,7 +1402,8 @@ impl StepB<'_> {
         let mut blockers = Vec::new();
         let own = [self.index[&g.census_name], self.index[&f.census_name]]
             .into_iter()
-            .chain(inlined.iter().copied());
+            .chain(inlined.iter().copied())
+            .chain(keyed_in_place.iter().copied());
         for id in own {
             if let Some(why) = hazards.get(&id) {
                 blockers.push(format!("`{}`, read in place, {why}", self.functions[id]));
@@ -1366,7 +1415,8 @@ impl StepB<'_> {
         // could not read. A definition the build does not compile (a `.c` file
         // no compile command names, or a definition Clang did not see in a
         // unit it read) is not part of the program.
-        let closure = self.reach.closure(roots.iter().copied());
+        let mut closure = self.reach.closure(roots.iter().copied());
+        closure.extend(keyed_in_place.iter().copied());
         let unmodelled = closure
             .iter()
             .copied()
@@ -1415,10 +1465,15 @@ impl StepB<'_> {
                 blockers.push(format!(
                     "`{}` ({why}) reaches a hazard ({}) and may be called through a pointer \
                      from the path: {} function(s) of its closure make an unmodelled call or \
-                     have no typed reading ({witness}, first)",
+                     have no typed reading ({witness}, first; all: {})",
                     self.functions[**id],
                     self.witness(**id, &hazards),
                     unmodelled.len(),
+                    unmodelled
+                        .iter()
+                        .map(|id| self.functions[*id].as_str())
+                        .collect::<Vec<_>>()
+                        .join(", "),
                 ));
             }
         }

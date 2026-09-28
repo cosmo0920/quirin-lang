@@ -1,0 +1,8 @@
+console.log: run 52a53b4034fae5df archive 75a7aad2d871685f DIFFERENT (1 of 104 lines differ, line count 104 vs 104)
+exit: run 9a271f2a916b0b6e archive 9a271f2a916b0b6e identical
+resource-diagnostics.chunk-contracts.json: run a97259087e4ad89a archive a97259087e4ad89a identical
+resource-diagnostics.contracts.json: run c2a6d6422f08a5ad archive 62f3c6d704da6680 DIFFERENT (557 of 5109 lines differ, line count 5109 vs 5109)
+resource-diagnostics.invocation.json: run b50d73abda32613f archive ef76428cf10c19f8 DIFFERENT (7 of 88 lines differ, line count 88 vs 88)
+resource-diagnostics.json: run 41a553ee36333121 archive 9ea3b936dcab760b DIFFERENT (48 of 34997 lines differ, line count 34997 vs 34997)
+resource-diagnostics.source-effects.json: run a97259087e4ad89a archive a97259087e4ad89a identical
+stderr.log: run e3b0c44298fc1c14 archive e3b0c44298fc1c14 identical

@@ -1,0 +1,63 @@
+## tests/runtime/in_tail.c:218 flb_service_set
+key "Flush" → `Flush` (FLB_CONF_TYPE_DOUBLE): scalar store into `struct flb_config::flush` (double)
+key "Grace" → `Grace` (FLB_CONF_TYPE_INT): scalar store into `struct flb_config::grace` (int)
+key "Log_Level" → `Log_Level` (FLB_CONF_TYPE_STR): keyed arm 1 (`Log_Level`, 256) at src/flb_config.c:869
+key "Parsers_File" → `Parsers_File` (FLB_CONF_TYPE_STR): keyed arm 2 (`Parsers_File`, 32) at src/flb_config.c:895
+table Flush | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush | scalar store into `struct flb_config::flush` (double)
+table flush.adaptive | FLB_CONF_TYPE_BOOL | struct flb_config::flush_adaptive | scalar store into `struct flb_config::flush_adaptive` (int)
+table flush.adaptive.min_interval | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush_adaptive_min_interval | scalar store into `struct flb_config::flush_adaptive_min_interval` (double)
+table flush.adaptive.max_interval | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush_adaptive_max_interval | scalar store into `struct flb_config::flush_adaptive_max_interval` (double)
+table flush.adaptive.low_pressure | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush_adaptive_low_pressure | scalar store into `struct flb_config::flush_adaptive_low_pressure` (double)
+table flush.adaptive.medium_pressure | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush_adaptive_medium_pressure | scalar store into `struct flb_config::flush_adaptive_medium_pressure` (double)
+table flush.adaptive.high_pressure | FLB_CONF_TYPE_DOUBLE | struct flb_config::flush_adaptive_high_pressure | scalar store into `struct flb_config::flush_adaptive_high_pressure` (double)
+table flush.adaptive.up_steps | FLB_CONF_TYPE_INT | struct flb_config::flush_adaptive_up_steps | scalar store into `struct flb_config::flush_adaptive_up_steps` (int)
+table flush.adaptive.down_steps | FLB_CONF_TYPE_INT | struct flb_config::flush_adaptive_down_steps | scalar store into `struct flb_config::flush_adaptive_down_steps` (int)
+table Grace | FLB_CONF_TYPE_INT | struct flb_config::grace | scalar store into `struct flb_config::grace` (int)
+table json.convert_nan_to_null | FLB_CONF_TYPE_BOOL | struct flb_config::convert_nan_to_null | scalar store into `struct flb_config::convert_nan_to_null` (int)
+table security.fips_mode | FLB_CONF_TYPE_BOOL | struct flb_config::fips_mode | scalar store into `struct flb_config::fips_mode` (int)
+table Daemon | FLB_CONF_TYPE_BOOL | struct flb_config::daemon | scalar store into `struct flb_config::daemon` (int)
+table Log_File | FLB_CONF_TYPE_STR | struct flb_config::log_file | scalar store into `struct flb_config::log_file` (char *)
+table Parsers_File | FLB_CONF_TYPE_STR | struct flb_config::parsers_file | keyed arm 2 (`Parsers_File`, 32) at src/flb_config.c:895
+table Plugins_File | FLB_CONF_TYPE_STR | struct flb_config::plugins_file | keyed arm 3 (`Plugins_File`, 32) at src/flb_config.c:903
+table Log_Level | FLB_CONF_TYPE_STR | struct flb_config::log | keyed arm 1 (`Log_Level`, 256) at src/flb_config.c:869
+table HTTP_Server | FLB_CONF_TYPE_BOOL | struct flb_config::http_server | scalar store into `struct flb_config::http_server` (int)
+table HTTP_Listen | FLB_CONF_TYPE_STR | struct flb_config::http_listen | scalar store into `struct flb_config::http_listen` (char *)
+table HTTP_Port | FLB_CONF_TYPE_STR | struct flb_config::http_port | scalar store into `struct flb_config::http_port` (char *)
+table Health_Check | FLB_CONF_TYPE_BOOL | struct flb_config::health_check | scalar store into `struct flb_config::health_check` (int)
+table HC_Errors_Count | FLB_CONF_TYPE_INT | struct flb_config::hc_errors_count | scalar store into `struct flb_config::hc_errors_count` (int)
+table HC_Retry_Failure_Count | FLB_CONF_TYPE_INT | struct flb_config::hc_retry_failure_count | scalar store into `struct flb_config::hc_retry_failure_count` (int)
+table HC_Period | FLB_CONF_TYPE_INT | struct flb_config::health_check_period | scalar store into `struct flb_config::health_check_period` (int)
+table dns.mode | FLB_CONF_TYPE_STR | struct flb_config::dns_mode | scalar store into `struct flb_config::dns_mode` (char *)
+table dns.resolver | FLB_CONF_TYPE_STR | struct flb_config::dns_resolver | scalar store into `struct flb_config::dns_resolver` (char *)
+table dns.prefer_ipv4 | FLB_CONF_TYPE_BOOL | struct flb_config::dns_prefer_ipv4 | scalar store into `struct flb_config::dns_prefer_ipv4` (int)
+table dns.prefer_ipv6 | FLB_CONF_TYPE_BOOL | struct flb_config::dns_prefer_ipv6 | scalar store into `struct flb_config::dns_prefer_ipv6` (int)
+table storage.path | FLB_CONF_TYPE_STR | struct flb_config::storage_path | scalar store into `struct flb_config::storage_path` (char *)
+table storage.sync | FLB_CONF_TYPE_STR | struct flb_config::storage_sync | scalar store into `struct flb_config::storage_sync` (char *)
+table storage.metrics | FLB_CONF_TYPE_BOOL | struct flb_config::storage_metrics | scalar store into `struct flb_config::storage_metrics` (int)
+table storage.checksum | FLB_CONF_TYPE_BOOL | struct flb_config::storage_checksum | scalar store into `struct flb_config::storage_checksum` (int)
+table storage.backlog.mem_limit | FLB_CONF_TYPE_STR | struct flb_config::storage_bl_mem_limit | scalar store into `struct flb_config::storage_bl_mem_limit` (char *)
+table storage.backlog.flush_on_shutdown | FLB_CONF_TYPE_BOOL | struct flb_config::storage_bl_flush_on_shutdown | scalar store into `struct flb_config::storage_bl_flush_on_shutdown` (int)
+table storage.max_chunks_up | FLB_CONF_TYPE_INT | struct flb_config::storage_max_chunks_up | scalar store into `struct flb_config::storage_max_chunks_up` (int)
+table storage.delete_irrecoverable_chunks | FLB_CONF_TYPE_BOOL | struct flb_config::storage_del_bad_chunks | scalar store into `struct flb_config::storage_del_bad_chunks` (int)
+table storage.trim_files | FLB_CONF_TYPE_BOOL | struct flb_config::storage_trim_files | scalar store into `struct flb_config::storage_trim_files` (int)
+table storage.type | FLB_CONF_TYPE_STR | struct flb_config::storage_type | scalar store into `struct flb_config::storage_type` (char *)
+table storage.inherit | FLB_CONF_TYPE_BOOL | struct flb_config::storage_inherit | scalar store into `struct flb_config::storage_inherit` (int)
+table storage.keep.rejected | FLB_CONF_TYPE_BOOL | struct flb_config::storage_keep_rejected | scalar store into `struct flb_config::storage_keep_rejected` (int)
+table storage.rejected.path | FLB_CONF_TYPE_STR | struct flb_config::storage_rejected_path | scalar store into `struct flb_config::storage_rejected_path` (char *)
+table storage.rejected.limit | FLB_CONF_TYPE_STR | struct flb_config::storage_rejected_limit | scalar store into `struct flb_config::storage_rejected_limit` (char *)
+table Coro_Stack_Size | FLB_CONF_TYPE_INT | struct flb_config::coro_stack_size | scalar store into `struct flb_config::coro_stack_size` (int)
+table multiline_buffer_limit | FLB_CONF_TYPE_STR | struct flb_config::multiline_buffer_limit | scalar store into `struct flb_config::multiline_buffer_limit` (char *)
+table scheduler.cap | FLB_CONF_TYPE_INT | struct flb_config::sched_cap | scalar store into `struct flb_config::sched_cap` (int)
+table scheduler.base | FLB_CONF_TYPE_INT | struct flb_config::sched_base | scalar store into `struct flb_config::sched_base` (int)
+table json.escape_unicode | FLB_CONF_TYPE_BOOL | struct flb_config::json_escape_unicode | scalar store into `struct flb_config::json_escape_unicode` (int)
+table Streams_File | FLB_CONF_TYPE_STR | struct flb_config::stream_processor_file | scalar store into `struct flb_config::stream_processor_file` (char *)
+table sp.convert_from_str_to_num | FLB_CONF_TYPE_BOOL | struct flb_config::stream_processor_str_conv | scalar store into `struct flb_config::stream_processor_str_conv` (int)
+table Enable_Chunk_Trace | FLB_CONF_TYPE_BOOL | struct flb_config::enable_chunk_trace | scalar store into `struct flb_config::enable_chunk_trace` (int)
+table Hot_Reload | FLB_CONF_TYPE_BOOL | struct flb_config::enable_hot_reload | scalar store into `struct flb_config::enable_hot_reload` (int)
+table Hot_Reload.Ensure_Thread_Safety | FLB_CONF_TYPE_BOOL | struct flb_config::ensure_thread_safety_on_hot_reloading | scalar store into `struct flb_config::ensure_thread_safety_on_hot_reloading` (int)
+table Hot_Reload.Timeout | FLB_CONF_TYPE_INT | struct flb_config::hot_reload_watchdog_timeout_seconds | scalar store into `struct flb_config::hot_reload_watchdog_timeout_seconds` (int)
+table NULL | FLB_CONF_TYPE_OTHER | - | the table's end
+
+## tests/runtime/in_tail.c:2546 flb_input_set
+keys not read: `flb_input_set` passes its keys to `flb_input_set_property`, whose keyed branches the typed reading does not record
+

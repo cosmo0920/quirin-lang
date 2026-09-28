@@ -1450,16 +1450,19 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 251 -> 252 by card W47-FLB-LIB-LIFECYCLE: `flb_destroy` joins
     // `fluent_bit/lib_engine_thread.qv` with its lifecycle obligation, loaded
     // and withheld for human review. Selection and rejected unchanged.
+    // 252 -> 253 by card W47-SERVICE-PROPERTY-KEYS: `flb_config_set_property`
+    // in `fluent_bit/input_instance.qv`, loaded and withheld for human
+    // review. Selected and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (58, 252, 216)
+        (58, 253, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
     // v1 declaration (5 from W47-CONDVAR-JOIN-STOP-PATHS, 4 from
-    // W47-LOOP-OWNER-INSTANCE-FLOW, 1 from W47-FLB-LIB-LIFECYCLE).
+    // W47-LOOP-OWNER-INSTANCE-FLOW, 1 from W47-FLB-LIB-LIFECYCLE, 1 from W47-SERVICE-PROPERTY-KEYS).
     let loaded = load_resource_contract_manifest(&manifest()).unwrap();
-    assert_eq!(loaded.pending_review().len(), 10);
+    assert_eq!(loaded.pending_review().len(), 11);
     assert_eq!(
         loaded.functions().len() + loaded.pending_review().len(),
         v1_declarations

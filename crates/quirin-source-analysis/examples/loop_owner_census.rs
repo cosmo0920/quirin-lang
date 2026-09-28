@@ -404,6 +404,11 @@ fn main() {
                 ))
                 .collect::<BTreeMap<_, _>>(),
         });
+        // Card W47-SERVICE-PROPERTY-KEYS: the keyed setter calls Step B read,
+        // printed only where there is one (the older readings are unchanged).
+        if !result.reading.property_keys.is_empty() {
+            report["typed"]["property_keys"] = serde_json::json!(result.reading.property_keys);
+        }
     }
     println!("{}", serde_json::to_string_pretty(&report).expect("json"));
 }

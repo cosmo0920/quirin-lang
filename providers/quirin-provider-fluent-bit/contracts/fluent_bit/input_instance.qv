@@ -91,21 +91,49 @@ contract {
     ensures normal resource_review_pending(resource_return_interior(config, nullable), "creation: one instance per registered input plugin whose name matches input ignoring ASCII case, each appended to config->inputs (src/flb_input.c:677) with p set to that plugin (:490) and runs_in_coroutine set from its FLB_INPUT_CORO flag (:501, :626) and written nowhere else; the last is returned; v1 states neither list membership nor the flag");
 };
 
-// The call that holds the fixed test's derivation at the 90978ac6 export.
-// `flb_service_set(ctx, key, value, …, NULL)` passes each pair to
-// `flb_config_set_property(ctx->config, key, value)` (src/flb_lib.c:674-700).
-// That function dispatches on the key's text (src/flb_config.c:855-): the
-// `Plugins_File` key loads shared-object and Go-proxy input plugins
-// (`flb_plugin_load_config_file` → `flb_plugin_load_router`), which register
-// into `config->in_plugins` (src/flb_plugin.c:251, src/flb_plugin_proxy.c:410)
-// and call a registration entry point through a function pointer; the other
-// keys the test passes (Flush, Grace, Log_Level, Parsers_File) do not. The
-// census reads calls, not the key values a variadic call carries, so it
-// cannot exclude the registration branch on the test's path.
+// The call that held the fixed test's derivation at the 90978ac6 export.
+// `flb_service_set(ctx, key, value, …, NULL)` reads its variadic list in
+// key-first pairs (`while ((key = va_arg(va, char *)))`, then `value =
+// va_arg(va, char *)`, src/flb_lib.c:683-684), stops at the first null key
+// or value or failing key, and passes each key to
+// `flb_config_set_property(ctx->config, key, value)` (:691), nothing else.
+// W47-SERVICE-PROPERTY-KEYS: the thread-entry census now derives, from these
+// bodies at the export, which keys a literal call reaches (rule 10p's
+// amendment); the observation is recorded here so it is pinned with the
+// bodies it rests on and reviewed, never trusted.
 extern fn flb_service_set(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ctx);
-    ensures normal resource_review_pending(resource_variadic_data_tail(), "key-dependent effects: only the Plugins_File key registers input plugins (src/flb_config.c:903-907, src/flb_plugin.c:251); a call whose keys are all literals other than Plugins_File registers none and creates no input instance; whether the value strings are copied on every key's branch was not read, and v1 cannot state a key-dependent effect");
+    ensures normal resource_review_pending(resource_variadic_data_tail(), "key-dependent effects: the tail is read as NULL-terminated key/value pairs, key first (src/flb_lib.c:683-684), each key passed to flb_config_set_property(ctx->config, key, value) in order until a null key or value or a failing key (:691); a key's effect is its flb_config_set_property branch (that declaration's reason); only Plugins_File registers input plugins; whether the value strings are copied on every key's branch is that function's; v1 cannot state a key-dependent effect");
+    ensures normal resource_return_none();
+};
+
+// W47-SERVICE-PROPERTY-KEYS. The property function the census reads a keyed
+// `flb_service_set` call through (src/flb_config.c:855-955, with its table
+// `service_configs[]` :56-278 and comparison `prop_key_check` :782-791,
+// byte-identical at the three trees). For every table entry whose key equals
+// `k` ignoring ASCII case over its whole length (`strncasecmp` bounded by
+// `strnlen(k, 256)`, and `strnlen(key, 256)` equal to it), it runs one arm,
+// chosen by the entry's own key: `Log_Level` → `set_log_level_from_env` /
+// `flb_env_var_translate` / `set_log_level` (:869-894); `Parsers_File` →
+// `flb_parser_conf_file` (:895-902, under FLB_HAVE_PARSER); `Plugins_File` →
+// `flb_plugin_load_config_file`, which registers shared-object and Go-proxy
+// input plugins into `config->in_plugins` (:903-908; src/flb_plugin.c:251,
+// src/flb_plugin_proxy.c:410); every other entry → one scalar store
+// `*(T *)((char *)config + offset)` into the entry's `struct flb_config`
+// field, T its declared type (int, double, or char * after freeing the old
+// string and duplicating the translated value; :909-940). An unknown key
+// warns and returns 0 (:953). `k` and `v` are read and not kept: `k` by the
+// comparisons and the warning, `v` through `flb_env_var_translate`'s copy and
+// `set_log_level`'s comparisons. What `config` retains through a loaded
+// plugin or parser was not read, and v1 cannot state a key-dependent effect,
+// so the declaration is held.
+extern fn flb_config_set_property(config: ptr<mut, u8>, k: ptr<const, u8>, v: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_review_pending(resource_borrowed(config), "key-dependent effects: for every service_configs entry whose key equals k ignoring ASCII case over its whole length (prop_key_check, src/flb_config.c:782-791), the entry's arm runs: Log_Level sets the log level (:869-894), Parsers_File loads a parsers file (:895-902), Plugins_File registers input plugins into config->in_plugins (:903-908, src/flb_plugin.c:251), every other entry stores one scalar into its own struct flb_config field of its declared type (:909-940); an unknown key only warns (:953); what config retains through a loaded plugin or parser was not read, and v1 cannot state a key-dependent effect");
+    ensures normal resource_borrowed(k);
+    ensures normal resource_borrowed(v);
     ensures normal resource_return_none();
 };

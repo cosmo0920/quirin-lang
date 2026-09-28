@@ -91,6 +91,24 @@ pub struct TypedOptions {
     /// address taken, passed to a call, or read through), and every access of
     /// a listed field name whose record is not matched.
     pub member_fields: Vec<(String, String)>,
+    /// Card W47-SERVICE-PROPERTY-KEYS: calls whose arguments, from a listed
+    /// index on, are recorded as [`argument_descriptor`]s (a variadic
+    /// setter's key/value tail, a keyed branch's comparison).
+    pub argument_calls: Vec<ArgumentCall>,
+    /// Card W47-SERVICE-PROPERTY-KEYS: file-scope arrays of records whose
+    /// initializer is recorded element by element (a property key table).
+    pub key_tables: Vec<String>,
+}
+
+/// A call whose arguments the typed reading records (card
+/// W47-SERVICE-PROPERTY-KEYS).
+#[derive(Clone, Debug)]
+pub struct ArgumentCall {
+    pub callee: String,
+    /// The first argument recorded.
+    pub first: usize,
+    /// Only calls made inside this function, when given.
+    pub caller: Option<String>,
 }
 
 /// How a member access is used, as [`TypedFacts::member_accesses`] records it.
@@ -171,6 +189,15 @@ pub struct TypedFacts {
     /// pointer the census does not model.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub indirect_calls: BTreeSet<String>,
+    /// Card W47-SERVICE-PROPERTY-KEYS: `FILE|LINE|CALLEE` → each argument
+    /// list a listed call passes there, from its listed index on, as
+    /// [`argument_descriptor`]s.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub argument_lists: BTreeMap<String, BTreeSet<Vec<String>>>,
+    /// Card W47-SERVICE-PROPERTY-KEYS: `FILE|NAME` of a listed key table →
+    /// each reading of its initializer: one descriptor list per element.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub key_tables: BTreeMap<String, BTreeSet<Vec<Vec<String>>>>,
 }
 
 /// The key of a member's accesses.
@@ -230,6 +257,12 @@ impl TypedFacts {
             self.field_values.entry(key).or_default().extend(records);
         }
         self.indirect_calls.extend(other.indirect_calls);
+        for (key, lists) in other.argument_lists {
+            self.argument_lists.entry(key).or_default().extend(lists);
+        }
+        for (key, readings) in other.key_tables {
+            self.key_tables.entry(key).or_default().extend(readings);
+        }
     }
 }
 
@@ -928,11 +961,12 @@ impl<'o> Reader<'o> {
         match node.kind.as_str() {
             "RecordDecl" => self.record(node),
             "TypedefDecl" => self.typedef(node),
-            "CallExpr" => self.call(node),
+            "CallExpr" => self.call(node, function),
             "BinaryOperator" if node.opcode.as_deref() == Some("=") => {
                 self.assignment(node, function);
             }
             "InitListExpr" => self.initializer(node, object),
+            "VarDecl" if function.is_none() => self.key_table(node),
             _ => {}
         }
         let object = if node.kind == "VarDecl" {
@@ -1019,7 +1053,44 @@ impl<'o> Reader<'o> {
         )
     }
 
-    fn call(&mut self, node: &Node) {
+    /// Card W47-SERVICE-PROPERTY-KEYS: a listed file-scope array's
+    /// initializer, one descriptor list per element (an element that is not
+    /// itself an initializer list is recorded as `["?"]`, and an array filler
+    /// as `["filler"]`, so the census refuses the table).
+    fn key_table(&mut self, node: &Node) {
+        let Some(name) = node.name.as_deref() else {
+            return;
+        };
+        if !self.options.key_tables.iter().any(|table| table == name) {
+            return;
+        }
+        let Some(list) = node.inner.iter().find(|child| child.kind == "InitListExpr") else {
+            return;
+        };
+        let Some((file, _)) = self.place(node.begin) else {
+            return;
+        };
+        let elements = list
+            .inner
+            .iter()
+            .map(|element| {
+                if element.kind == "InitListExpr" {
+                    element.inner.iter().map(argument_descriptor).collect()
+                } else if element.kind == "ImplicitValueInitExpr" {
+                    vec!["filler".to_owned()]
+                } else {
+                    vec!["?".to_owned()]
+                }
+            })
+            .collect::<Vec<Vec<String>>>();
+        self.facts
+            .key_tables
+            .entry(format!("{file}|{name}"))
+            .or_default()
+            .insert(elements);
+    }
+
+    fn call(&mut self, node: &Node, function: Option<&str>) {
         let Some(callee) = node.inner.first() else {
             return;
         };
@@ -1071,6 +1142,30 @@ impl<'o> Reader<'o> {
                         .entry(literal_call_key(&file, line, function))
                         .or_default()
                         .insert(literal);
+                }
+            }
+            // Card W47-SERVICE-PROPERTY-KEYS.
+            for listed in &self.options.argument_calls {
+                if listed.callee != decl.name
+                    || listed
+                        .caller
+                        .as_deref()
+                        .is_some_and(|caller| Some(caller) != function)
+                {
+                    continue;
+                }
+                let arguments = node
+                    .inner
+                    .iter()
+                    .skip(1 + listed.first)
+                    .map(argument_descriptor)
+                    .collect::<Vec<_>>();
+                if let Some((file, line)) = self.place(current.begin) {
+                    self.facts
+                        .argument_lists
+                        .entry(literal_call_key(&file, line, &listed.callee))
+                        .or_default()
+                        .insert(arguments);
                 }
             }
         }
@@ -1340,6 +1435,53 @@ fn stored_value(node: &Node) -> Stored {
         }
         let Some(next) = current.inner.first() else {
             return Stored::Other;
+        };
+        current = next;
+    }
+}
+
+/// Card W47-SERVICE-PROPERTY-KEYS: what one argument (or initializer slot)
+/// is, through parentheses and casts: `s:TEXT` a string literal (`TEXT` as
+/// Clang prints it, between its quotes, escapes kept), `null` the integer
+/// constant `0` converted to a pointer by a `NullToPointer` cast (`NULL`),
+/// `i:VALUE` any other integer literal, `v:NAME` a reference to a declaration
+/// (a variable, a parameter, an enumerator), `offsetof` an `offsetof`
+/// expression, `?` anything else.
+fn argument_descriptor(node: &Node) -> String {
+    let mut current = node;
+    let mut null_cast = false;
+    loop {
+        match current.kind.as_str() {
+            "ParenExpr" => {}
+            "ImplicitCastExpr" | "CStyleCastExpr" => {
+                null_cast |= current.cast_kind.as_deref() == Some("NullToPointer");
+            }
+            "StringLiteral" => {
+                return current
+                    .value
+                    .as_deref()
+                    .and_then(|value| value.strip_prefix('"'))
+                    .and_then(|value| value.strip_suffix('"'))
+                    .map_or_else(|| "?".to_owned(), |value| format!("s:{value}"));
+            }
+            "IntegerLiteral" => {
+                return match current.value.as_deref() {
+                    Some("0") if null_cast => "null".to_owned(),
+                    Some(value) if !null_cast => format!("i:{value}"),
+                    _ => "?".to_owned(),
+                };
+            }
+            "DeclRefExpr" => {
+                return current
+                    .referenced
+                    .as_ref()
+                    .map_or_else(|| "?".to_owned(), |decl| format!("v:{}", decl.name));
+            }
+            "OffsetOfExpr" => return "offsetof".to_owned(),
+            _ => return "?".to_owned(),
+        }
+        let Some(next) = current.inner.first() else {
+            return "?".to_owned();
         };
         current = next;
     }
