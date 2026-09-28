@@ -43,7 +43,7 @@ pub(crate) const CONST_VALUE_ARM: bool = true;
 
 /// Step 2: admit an implicit `void *` bit-cast at the top of a
 /// pointer-destination statement's value.
-pub(crate) const VOID_BIT_CAST_ARM: bool = false;
+pub(crate) const VOID_BIT_CAST_ARM: bool = true;
 
 /// Split Clang's printing of a pointer type into its unqualified type and
 /// its top-level qualifier words. Clang prints a pointer's own qualifiers
