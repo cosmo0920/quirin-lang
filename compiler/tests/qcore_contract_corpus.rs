@@ -464,6 +464,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/logging.qv", "flb_log_print", 7),
     // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
     // borrowed arguments, the neutral user clause and the scalar result.
+    // Card W47-LOOP-OWNER-INSTANCE-FLOW: the observations the census needed,
+    // each a marker plus its clauses (held clauses wrapped for review).
+    ("fluent_bit/input_instance.qv", "flb_create", 2),
+    ("fluent_bit/input_instance.qv", "flb_input", 5),
+    ("fluent_bit/input_instance.qv", "flb_input_new", 6),
+    ("fluent_bit/input_instance.qv", "flb_service_set", 4),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_pause", 6),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_resume", 6),

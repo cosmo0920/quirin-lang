@@ -86,7 +86,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 57);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -750,6 +751,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             .declarations
         {
             let name = declaration.value.name;
+            // Card W47-LOOP-OWNER-INSTANCE-FLOW: a declaration held for human
+            // review is withheld from the function map (contract spec C06.1).
+            if contracts.pending_review().contains_key(&name) {
+                assert!(contracts.contract(&name).is_none(), "{name}");
+                continue;
+            }
             assert_eq!(
                 canonical(contracts.contract(&name).unwrap().clone()),
                 canonical(old.contract(&name).unwrap().clone()),
@@ -1033,7 +1040,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 54 selected modules, 230 resource declarations, 118 corpus modules.
     // 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 56);
+    // 56 -> 57 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 57);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);

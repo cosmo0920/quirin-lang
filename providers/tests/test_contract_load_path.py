@@ -373,8 +373,9 @@ class LoadPathManifest(unittest.TestCase):
         # 54 -> 55 by card W47-LOOP-OWNER-CONTRACTS: `fluent_bit/loop_owner.qv`.
         # 55 -> 56 (libc 16 -> 17) by card W47-CONDVAR-JOIN-PUBLICATION:
         # `libc/pthread_sync.qv`.
+        # 56 -> 57 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 56)
+        self.assertEqual(sum(len(view) for view in views.values()), 57)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # The real inventories: exactly the two crates that inherit carry pins.
