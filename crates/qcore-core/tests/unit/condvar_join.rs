@@ -198,17 +198,26 @@ fn nc8_a_wakeup_before_publication_waits_again_and_claims_nothing() {
         WaiterStep::Rewait
     );
     assert_eq!(
-        run_waiter(&[(false, Wakeup::Spurious), (false, Wakeup::Signalled)], true),
+        run_waiter(
+            &[(false, Wakeup::Spurious), (false, Wakeup::Signalled)],
+            true
+        ),
         None
     );
     // Only an observed predicate claims.
     assert_eq!(
-        run_waiter(&[(false, Wakeup::Spurious), (true, Wakeup::Signalled)], true),
+        run_waiter(
+            &[(false, Wakeup::Spurious), (true, Wakeup::Signalled)],
+            true
+        ),
         Some(true)
     );
     // A timeout that breaks leaves without a claim.
     assert_eq!(
-        run_waiter(&[(false, Wakeup::Spurious), (false, Wakeup::TimedOut)], true),
+        run_waiter(
+            &[(false, Wakeup::Spurious), (false, Wakeup::TimedOut)],
+            true
+        ),
         Some(false)
     );
     // A loop that ignores the timeout rechecks instead.
@@ -276,7 +285,8 @@ fn nc4_nc5_nc9_publication_timeout_and_early_release_are_rejected() {
 #[test]
 fn an_unresolved_descendant_withholds_the_discharge() {
     let mut site = live(JoinEvidence::CheckedSuccess);
-    site.unresolved.insert("the children of `flb_lib_worker`".to_owned());
+    site.unresolved
+        .insert("the children of `flb_lib_worker`".to_owned());
     assert!(matches!(
         release_verdict(&site),
         SyncVerdict::Unresolved { .. }
@@ -298,10 +308,7 @@ fn verdicts_compose_by_severity() {
     let unresolved = SyncVerdict::unresolved("a");
     let not = SyncVerdict::not_discharged("b");
     let refused = SyncVerdict::Refused(KeptRefusal::Broadcast);
-    assert_eq!(
-        SyncVerdict::Discharged.join(unresolved.clone()),
-        unresolved
-    );
+    assert_eq!(SyncVerdict::Discharged.join(unresolved.clone()), unresolved);
     assert_eq!(unresolved.clone().join(not.clone()), not);
     assert_eq!(not.clone().join(refused.clone()), refused);
     assert_eq!(
@@ -319,7 +326,11 @@ fn the_condvar_edge_orders_the_snapshot_in_the_concurrent14_checker() {
         read_under_mutex: true,
         join_before_release: true,
     });
-    assert!(check_concurrent(&good).is_ok(), "{:?}", check_concurrent(&good));
+    assert!(
+        check_concurrent(&good).is_ok(),
+        "{:?}",
+        check_concurrent(&good)
+    );
     let unlocked = check_concurrent(&publication_trace(TraceShape {
         read_under_mutex: false,
         join_before_release: true,

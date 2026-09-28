@@ -127,7 +127,10 @@ fn program(tests: &[&str], table: &str, extra: &[(&str, &str)]) -> Census {
         },
         CensusFile {
             path: "tests/runtime/in_tail.c".into(),
-            text: format!("{COMMON}\n{}\nTEST_LIST = {{\n{table}\n    {{ NULL, NULL }}\n}};\n", tests.join("\n")),
+            text: format!(
+                "{COMMON}\n{}\nTEST_LIST = {{\n{table}\n    {{ NULL, NULL }}\n}};\n",
+                tests.join("\n")
+            ),
         },
     ];
     for (path, text) in extra {
@@ -145,7 +148,11 @@ fn sites<'a>(census: &'a Census, function: &str, kind: &str) -> Vec<&'a SiteVerd
         .iter()
         .filter(|s| s.function.ends_with(function) && s.kind == kind)
         .collect::<Vec<_>>();
-    assert!(!found.is_empty(), "no {kind} site in {function}: {:#?}", census.sites);
+    assert!(
+        !found.is_empty(),
+        "no {kind} site in {function}: {:#?}",
+        census.sites
+    );
     found
 }
 
@@ -155,7 +162,11 @@ fn releases<'a>(census: &'a Census, root: &str) -> Vec<&'a ReleaseVerdict> {
         .iter()
         .filter(|r| r.reading.root.ends_with(root))
         .collect::<Vec<_>>();
-    assert!(!found.is_empty(), "no release under {root}: {:#?}", census.releases);
+    assert!(
+        !found.is_empty(),
+        "no release under {root}: {:#?}",
+        census.releases
+    );
     found
 }
 
@@ -204,7 +215,10 @@ void test_nc4(void)
     // That admits the `destroy` as a condvar operation; it grants nothing to
     // the storage the worker may still touch, which C5 refuses above.
     let lifecycle = sites(&census, "test_nc4", "destroy");
-    assert!(lifecycle.iter().all(|s| s.verdict.admits()), "{lifecycle:#?}");
+    assert!(
+        lifecycle.iter().all(|s| s.verdict.admits()),
+        "{lifecycle:#?}"
+    );
 }
 
 #[test]
@@ -343,7 +357,11 @@ void test_nc8(void)
 #[test]
 fn nc2_the_publish_await_join_path_is_admitted() {
     let census = program(&[NC2], r#"    { "nc2", test_nc2 },"#, &[]);
-    assert!(sites(&census, "publish", "signal")[0].verdict.admits(), "{:#?}", census.sites);
+    assert!(
+        sites(&census, "publish", "signal")[0].verdict.admits(),
+        "{:#?}",
+        census.sites
+    );
     assert!(sites(&census, "test_nc2", "wait")[0].verdict.admits());
     assert!(sites(&census, "test_nc2", "init")[0].verdict.admits());
     for read in sites(&census, "test_nc2", "read") {
@@ -374,10 +392,16 @@ fn a_result_written_after_the_predicate_is_not_a_publication() {
         },
         CensusFile {
             path: "tests/runtime/in_tail.c".into(),
-            text: format!("{late}\n{NC2}\nTEST_LIST = {{ {{ \"nc2\", test_nc2 }}, {{ NULL, NULL }} }};\n"),
+            text: format!(
+                "{late}\n{NC2}\nTEST_LIST = {{ {{ \"nc2\", test_nc2 }}, {{ NULL, NULL }} }};\n"
+            ),
         },
     ];
-    let census = census(&std::mem::take(&mut census_files), &FLUENT_BIT_HOPS, &FLUENT_BIT_SYNC);
+    let census = census(
+        &std::mem::take(&mut census_files),
+        &FLUENT_BIT_HOPS,
+        &FLUENT_BIT_SYNC,
+    );
     // `done` is written first, so `result` is not a published result at all:
     // the section writes it after the predicate.
     let signal = sites(&census, "publish", "signal");
@@ -428,7 +452,11 @@ void c11_and_rwlock(cnd_t *c, mtx_t *m, pthread_rwlock_t *rw, pthread_mutex_t *m
     pthread_mutex_trylock(mu);
 }
 "#;
-    let census = program(&[NC2], r#"    { "nc2", test_nc2 },"#, &[("src/extra.c", extra)]);
+    let census = program(
+        &[NC2],
+        r#"    { "nc2", test_nc2 },"#,
+        &[("src/extra.c", extra)],
+    );
     assert_eq!(
         sites(&census, "broadcast_all", "broadcast")[0].verdict,
         SyncVerdict::Refused(KeptRefusal::Broadcast)
@@ -455,7 +483,10 @@ void c11_and_rwlock(cnd_t *c, mtx_t *m, pthread_rwlock_t *rw, pthread_mutex_t *m
         KeptRefusal::TryOrTimedLock,
         KeptRefusal::StaticInitializer,
     ] {
-        assert!(refused.contains(&SyncVerdict::Refused(kind)), "{kind:?}: {refused:?}");
+        assert!(
+            refused.contains(&SyncVerdict::Refused(kind)),
+            "{kind:?}: {refused:?}"
+        );
     }
 }
 
@@ -525,7 +556,11 @@ int instance_init(struct instance *thi)
 
 #[test]
 fn the_worker_status_handshake_is_admitted_under_the_derived_single_signal() {
-    let census = program(&[NC2], r#"    { "nc2", test_nc2 },"#, &[("src/instance.c", HANDSHAKE)]);
+    let census = program(
+        &[NC2],
+        r#"    { "nc2", test_nc2 },"#,
+        &[("src/instance.c", HANDSHAKE)],
+    );
     for kind in ["wait", "destroy", "init", "read"] {
         for site in sites(&census, "get_status", kind) {
             assert!(site.verdict.admits(), "{kind}: {site:#?}");
@@ -541,7 +576,11 @@ fn a_second_signal_on_a_path_withholds_the_reinit() {
         "        set_status(thi, 2);\n        return;\n",
         "        set_status(thi, 2);\n",
     );
-    let census = program(&[NC2], r#"    { "nc2", test_nc2 },"#, &[("src/instance.c", &twice)]);
+    let census = program(
+        &[NC2],
+        r#"    { "nc2", test_nc2 },"#,
+        &[("src/instance.c", &twice)],
+    );
     // The wait itself stays admitted; the re-initialisation after the unlock
     // and the unlocked read are not.
     assert!(sites(&census, "get_status", "wait")[0].verdict.admits());
@@ -566,9 +605,16 @@ again:
     goto again;
 }
 "#;
-    let census = program(&[NC2], r#"    { "nc2", test_nc2 },"#, &[("src/goto.c", goto)]);
+    let census = program(
+        &[NC2],
+        r#"    { "nc2", test_nc2 },"#,
+        &[("src/goto.c", goto)],
+    );
     for site in sites(&census, "jumpy", "wait") {
-        assert!(matches!(site.verdict, SyncVerdict::Unresolved { .. }), "{site:#?}");
+        assert!(
+            matches!(site.verdict, SyncVerdict::Unresolved { .. }),
+            "{site:#?}"
+        );
     }
 }
 
@@ -580,13 +626,19 @@ fn the_production_module_declares_six_obligations() {
     )]))
     .expect("the production module loads");
     assert_eq!(declared.len(), 6);
-    assert_eq!(declared["pthread_cond_wait"].operation, ThreadSyncOperation::CondWait);
+    assert_eq!(
+        declared["pthread_cond_wait"].operation,
+        ThreadSyncOperation::CondWait
+    );
     assert_eq!(declared["pthread_cond_wait"].mutex, Some(1));
     assert_eq!(
         declared["pthread_cond_timedwait"].operation,
         ThreadSyncOperation::CondTimedWait
     );
-    assert_eq!(declared["pthread_join"].operation, ThreadSyncOperation::Join);
+    assert_eq!(
+        declared["pthread_join"].operation,
+        ThreadSyncOperation::Join
+    );
     assert!(!declared.contains_key("pthread_create"));
     assert!(!declared.contains_key("pthread_cond_broadcast"));
 }
@@ -611,7 +663,10 @@ fn a_malformed_or_duplicate_obligation_rejects_the_module() {
         );
         let sources = BTreeMap::from([("m.qv".to_owned(), module)]);
         assert!(thread_sync_obligations(&sources).is_err(), "{clause}");
-        assert!(load_resource_contract_sources(&sources).is_err(), "{clause}");
+        assert!(
+            load_resource_contract_sources(&sources).is_err(),
+            "{clause}"
+        );
     }
 }
 

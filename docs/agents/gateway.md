@@ -1238,3 +1238,56 @@ which is not a second authority.
     flag is immutable after init. `QCore.LoopOwner` derives, for this route,
     the single-dispatcher premise `QCore.EventDriven` takes as supplied;
     [report](../reports/w47-loop-owner-contracts/README.md).
+
+<a id="constraint-10q"></a>
+
+10q. **A condition-variable call is admitted only where the census derives
+    the lifted shape, and storage another thread may retain is released only
+    after a checked join of every live thread; every route that derives
+    neither refuses.** Card W47-CONDVAR-JOIN-PUBLICATION
+    (`qcore_core::condvar_join`, `condvar_census.rs` read by
+    `quirin_source_analysis::condvar_join_census`, the hook in
+    `legacy_literal_premise.rs`; contract specification C04.10; constraint 27
+    as amended). `requires resource_thread_sync(...)` on
+    `pthread_cond_{wait,timedwait,signal,init,destroy}` and `pthread_join`
+    (`libc/pthread_sync.qv`, flexible, custody neutral; `pthread_join` only
+    at a null result slot) is never discharged on the per-unit resource
+    route, which rewrites every such call under the literal premise's
+    reserved prefix with a `thread_sync__` mark and refuses it (`outside its
+    declared thread-synchronization obligation`). The census reads one
+    program's bodies into statement trees and decides: (C4) a wait only as
+    the body of a `while`/`for` rechecking a predicate under the mutex it
+    releases (a timed wait may `break` on a nonzero return); a signal only
+    while the condvar's paired mutex is held; a publication only when the
+    signalling section writes every result before the predicate; a guarded
+    read only where the predicate was observed under the mutex since it was
+    acquired, or where its single publisher signals at most once per thread
+    (derived: one signal site, called only by one spawn entry, never twice on
+    a path); `init`/`destroy` only on a fresh object, after that single last
+    signal, or after a covering join. (C5) A path interpreter runs each test
+    root on the test thread, inlining every function whose direct calls reach
+    a spawn, a join or a release, and a release (`unlink`, `flb_destroy`, the
+    destroy or scope end of a local whose address the root stored into a
+    field) discharges only when every live retaining thread was joined on
+    every path with its zero result checked; publication, a timeout, an
+    unchecked or a failed join, a join identity the reader cannot derive and
+    a joined thread's own children leave it refused or unresolved. Kept
+    refusals (broadcast, a wait outside a predicate loop, a signal without
+    the mutex, one condvar with two mutexes, a static initialiser, `cnd_*`,
+    rwlocks, try/timed locks, recursive mutex shapes) refuse. **Do not** apply
+    a thread-sync declaration on a route that derives no predicate loop or
+    join, treat publication or a timeout as a join, admit an unchecked join,
+    or relax a refusal because another path discharges. `pthread_create`
+    stays undeclared (rule 10j: a retained `arg` and a callback). Premises
+    stated, not proved (trust boundary 28): the lexical reading and its
+    binding tables (spawn wrappers with their identifier out-arguments,
+    releases, allocators, acutest's `TEST_CHECK` as its argument's truth);
+    P-SYNC-INSTANCE (a field-keyed condvar, mutex or guarded field names one
+    object per instance, and a waiter and its signaller name the same one);
+    P-JOIN-IDENTITY (a thread identifier stored in a field is the one the
+    same context spawned); P-RETAIN (the test's published storage and the
+    fixture are retained only by threads that run the tail input's or the
+    test's code, derived from the loop-owner census's contexts; the engine
+    context by every live thread); and acutest's per-test fork. A refusal is
+    `Unknown`, never `Unsafe` or an upstream defect claim. `QCore.CondvarJoin`;
+    [report](../reports/w47-condvar-join-publication/README.md).

@@ -1841,9 +1841,7 @@ pub fn declared_loop_owner_obligations(
 /// `resource_thread_sync(OBJECT[, MUTEX], OPERATION)`, exactly (card
 /// W47-CONDVAR-JOIN-PUBLICATION). `None` when the expression is not this clause
 /// at all; an expression that names it and is malformed rejects the module.
-fn thread_sync_clause(
-    source: &str,
-) -> Result<Option<(Vec<String>, ThreadSyncOperation)>, String> {
+fn thread_sync_clause(source: &str) -> Result<Option<(Vec<String>, ThreadSyncOperation)>, String> {
     let tokens = token_kinds(source)?;
     let Some(TokenKind::Word(name)) = tokens.first() else {
         return Ok(None);

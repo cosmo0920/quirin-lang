@@ -1,3 +1,5 @@
+import QCore.Concurrency
+
 namespace QCore.CondvarJoin
 
 /-! Card **W47-CONDVAR-JOIN-PUBLICATION** (gateway rule 10q, contract
@@ -596,5 +598,60 @@ theorem publication_timeout_or_an_unchecked_join_refuses (paths : List Evidence)
     rw [List.all_eq_false]
     exact ⟨e, he, by simpa using hne⟩
   simp [this]
+
+/-! ## The condvar edge on the Cycle 14 lifetime model (`QCore.Concurrency`)
+
+A wait is the waiter's unlock and relock of its mutex. Lowered this way, the
+publish/await/join shape is an accepted `QCore.Concurrency.Lifetime` trace, and
+the release before the join is refused there too: the Rust checker's vector
+clocks supply `priorAccessesOrdered = false` for it (the publisher's accesses
+are not ordered before the waiter's release), which the projection refuses. -/
+
+section Lifetime
+open QCore.Concurrency.Lifetime
+
+/-- A wait on task `t`'s mutex: the unlock that starts it and the relock at
+its wakeup. Another task's critical section runs between the two. -/
+def waitEdge (t : Nat) (between : List QCore.Concurrency.Lifetime.Event) :
+    List QCore.Concurrency.Lifetime.Event :=
+  [QCore.Concurrency.Lifetime.Event.unlock t] ++ between ++
+    [QCore.Concurrency.Lifetime.Event.lock t]
+
+def lifetimeExec (s : QCore.Concurrency.Lifetime.State) :
+    List QCore.Concurrency.Lifetime.Event → Option QCore.Concurrency.Lifetime.State
+  | [] => some s
+  | e :: rest => (QCore.Concurrency.Lifetime.step s e).bind (fun s' => lifetimeExec s' rest)
+
+/-- The waiter (task 0) owns the storage (resource 7) and starts the publisher
+(task 1). -/
+def lifetimeStart : QCore.Concurrency.Lifetime.State := { custody := [(7, 0)] }
+
+open QCore.Concurrency.Lifetime.Event in
+/-- The publisher's critical section. -/
+def publisherSection : List QCore.Concurrency.Lifetime.Event :=
+  [lock 1, access 1 7, unlock 1]
+
+open QCore.Concurrency.Lifetime.Event in
+/-- Publish under the mutex, await through the condvar edge, join, release. -/
+def publishAwaitJoin : List QCore.Concurrency.Lifetime.Event :=
+  [spawn 0 1, lock 0] ++ waitEdge 0 publisherSection ++
+    [access 0 7, unlock 0, join 0 1, destroy 0 7 true]
+
+open QCore.Concurrency.Lifetime.Event in
+/-- The same shape releasing before the join: the publisher's accesses are not
+ordered before the release, so the vector clocks supply `false`. -/
+def releaseBeforeJoin : List QCore.Concurrency.Lifetime.Event :=
+  [spawn 0 1, lock 0] ++ waitEdge 0 publisherSection ++
+    [access 0 7, unlock 0, destroy 0 7 false, join 0 1]
+
+theorem the_condvar_edge_is_an_accepted_lifetime_trace :
+    (lifetimeExec lifetimeStart publishAwaitJoin).isSome = true := by
+  decide
+
+theorem a_release_before_the_join_is_refused_by_the_lifetime_model :
+    lifetimeExec lifetimeStart releaseBeforeJoin = none := by
+  decide
+
+end Lifetime
 
 end QCore.CondvarJoin

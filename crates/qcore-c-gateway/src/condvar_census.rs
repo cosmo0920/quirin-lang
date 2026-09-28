@@ -51,9 +51,14 @@
 //! and that a test's root thread is the only thread live before it starts
 //! one (acutest's per-test fork).
 
+// Token-range readers index several parallel slices by position.
+#![allow(clippy::needless_range_loop)]
+
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::legacy_c::{ConditionalDirective, Token, is_identifier, matching, tokenize_with_conditionals};
+use crate::legacy_c::{
+    ConditionalDirective, Token, is_identifier, matching, tokenize_with_conditionals,
+};
 use crate::thread_entry_census::{CensusFile, CensusReading, HopTables};
 
 /// The closed binding tables of one program family.
@@ -122,12 +127,21 @@ pub const FLUENT_BIT_SYNC: SyncTables = SyncTables {
         ("pthread_rwlock_trywrlock", ReadRefusal::Rwlock),
         ("pthread_mutex_trylock", ReadRefusal::TryOrTimedLock),
         ("pthread_mutex_timedlock", ReadRefusal::TryOrTimedLock),
-        ("pthread_mutexattr_settype", ReadRefusal::RecursiveOrDynamicMutex),
+        (
+            "pthread_mutexattr_settype",
+            ReadRefusal::RecursiveOrDynamicMutex,
+        ),
     ],
     refused_tokens: &[
         ("PTHREAD_COND_INITIALIZER", ReadRefusal::StaticInitializer),
-        ("PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP", ReadRefusal::RecursiveOrDynamicMutex),
-        ("PTHREAD_MUTEX_RECURSIVE", ReadRefusal::RecursiveOrDynamicMutex),
+        (
+            "PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP",
+            ReadRefusal::RecursiveOrDynamicMutex,
+        ),
+        (
+            "PTHREAD_MUTEX_RECURSIVE",
+            ReadRefusal::RecursiveOrDynamicMutex,
+        ),
     ],
 };
 
@@ -270,7 +284,10 @@ pub enum ReadJoin {
     Failed,
     /// No join; `true` when a timed wait timed out on the path, and the
     /// second flag when the path awaited a publication.
-    Absent { timed_out: bool, awaited: bool },
+    Absent {
+        timed_out: bool,
+        awaited: bool,
+    },
 }
 
 /// One release the C5 reader recorded, over every path of one root.
@@ -347,7 +364,8 @@ fn scan(files: &[CensusFile]) -> (Vec<FileScan>, Vec<Definition>) {
             let third = raw.get(index + 2).map_or("", |t| t.text.as_str());
             let merged = match (first, second, third) {
                 ("<", "<", "=") | (">", ">", "=") => Some(3),
-                ("-", ">", _) | ("=" | "!" | "<" | ">" | "+" | "-" | "*" | "/" | "|" | "&" | "^", "=", _) => {
+                ("-", ">", _)
+                | ("=" | "!" | "<" | ">" | "+" | "-" | "*" | "/" | "|" | "&" | "^", "=", _) => {
                     Some(2)
                 }
                 ("&", "&", _) | ("|", "|", _) | ("+", "+", _) | ("-", "-", _) => Some(2),
@@ -446,8 +464,22 @@ fn scan(files: &[CensusFile]) -> (Vec<FileScan>, Vec<Definition>) {
 }
 
 const KEYWORDS: &[&str] = &[
-    "if", "while", "for", "switch", "return", "sizeof", "do", "else", "case", "goto", "typeof",
-    "__typeof__", "_Alignof", "__attribute__", "__builtin_expect", "defined",
+    "if",
+    "while",
+    "for",
+    "switch",
+    "return",
+    "sizeof",
+    "do",
+    "else",
+    "case",
+    "goto",
+    "typeof",
+    "__typeof__",
+    "_Alignof",
+    "__attribute__",
+    "__builtin_expect",
+    "defined",
 ];
 
 fn parameters(tokens: &[Token], open: usize, close: usize) -> Vec<(String, Option<String>)> {
@@ -498,7 +530,9 @@ fn struct_types(tokens: &[Token], definition: &Definition) -> BTreeMap<String, S
                 while tokens.get(cursor).is_some_and(|t| t.text == "*") {
                     cursor += 1;
                 }
-                let Some(name) = tokens.get(cursor) else { break };
+                let Some(name) = tokens.get(cursor) else {
+                    break;
+                };
                 if !is_identifier(&name.text) || KEYWORDS.contains(&name.text.as_str()) {
                     break;
                 }
@@ -611,7 +645,11 @@ impl Parser<'_> {
                 self.fail(start, "a conditional group inside an expression");
             }
         }
-        if maybe { Stmt::Maybe(Box::new(stmt)) } else { stmt }
+        if maybe {
+            Stmt::Maybe(Box::new(stmt))
+        } else {
+            stmt
+        }
     }
 
     fn statement(&mut self, index: usize, limit: usize) -> (Stmt, usize) {
@@ -879,16 +917,25 @@ fn object_key(
 /// The plain identifier at the root of `[&] NAME …`.
 fn root_name(tokens: &[Token], range: (usize, usize)) -> Option<String> {
     let words = texts(tokens, range);
-    let first = words.iter().find(|word| !matches!(**word, "&" | "(" | "*"))?;
+    let first = words
+        .iter()
+        .find(|word| !matches!(**word, "&" | "(" | "*"))?;
     is_identifier(first).then(|| (*first).to_owned())
 }
 
 /// Strip truth macros and one negation: `(negated, inner range)`.
-fn condition_atom(tokens: &[Token], range: (usize, usize), tables: &SyncTables) -> (bool, (usize, usize)) {
+fn condition_atom(
+    tokens: &[Token],
+    range: (usize, usize),
+    tables: &SyncTables,
+) -> (bool, (usize, usize)) {
     let (mut start, mut end) = range;
     let mut negated = false;
     loop {
-        while start < end && tokens[start].text == "(" && matching(tokens, start, "(", ")") == Some(end - 1) {
+        while start < end
+            && tokens[start].text == "("
+            && matching(tokens, start, "(", ")") == Some(end - 1)
+        {
             start += 1;
             end -= 1;
         }
@@ -949,10 +996,7 @@ fn join_state(left: Option<LockState>, right: Option<LockState>) -> Option<LockS
             let mut observed = BTreeMap::new();
             for (mutex, facts) in &a.observed {
                 if let Some(other) = b.observed.get(mutex) {
-                    observed.insert(
-                        mutex.clone(),
-                        facts.intersection(other).cloned().collect(),
-                    );
+                    observed.insert(mutex.clone(), facts.intersection(other).cloned().collect());
                 }
             }
             Some(LockState {
@@ -1036,7 +1080,17 @@ impl C4<'_> {
             let write = tokens.get(after).is_some_and(|t| {
                 matches!(
                     t.text.as_str(),
-                    "=" | "+=" | "-=" | "*=" | "/=" | "|=" | "&=" | "^=" | "<<=" | ">>=" | "++" | "--"
+                    "=" | "+="
+                        | "-="
+                        | "*="
+                        | "/="
+                        | "|="
+                        | "&="
+                        | "^="
+                        | "<<="
+                        | ">>="
+                        | "++"
+                        | "--"
                 )
             });
             let in_wait_condition = self
@@ -1057,7 +1111,10 @@ impl C4<'_> {
         for (name_index, open, close) in calls {
             let name = tokens[name_index].text.clone();
             let args = arguments(tokens, open, close);
-            let key = |n: usize| args.get(n).and_then(|r| object_key(tokens, *r, &self.types));
+            let key = |n: usize| {
+                args.get(n)
+                    .and_then(|r| object_key(tokens, *r, &self.types))
+            };
             let t = self.tables;
             if name == t.lock {
                 let key = key(0);
@@ -1190,10 +1247,13 @@ impl C4<'_> {
         let Some(mut current) = state else {
             // Unreachable: still read the sites with an empty state so that
             // nothing is silently dropped.
-            let probe = self.statement(stmt, Some(LockState {
-                unknown_lock: true,
-                ..LockState::default()
-            }));
+            let probe = self.statement(
+                stmt,
+                Some(LockState {
+                    unknown_lock: true,
+                    ..LockState::default()
+                }),
+            );
             let _ = probe;
             return none(None);
         };
@@ -1307,7 +1367,10 @@ impl C4<'_> {
     /// assigned) and at most one `if (RET) break;`.
     fn wait_loop(&self, stmt: &Stmt) -> Option<(usize, ReadLoopBody)> {
         let Stmt::Loop {
-            body, plain: false, cond: Some(_), ..
+            body,
+            plain: false,
+            cond: Some(_),
+            ..
         } = stmt
         else {
             return None;
@@ -1318,10 +1381,12 @@ impl C4<'_> {
         };
         let tokens = self.tokens;
         let wait_in = |range: (usize, usize)| {
-            calls_in(tokens, range.0, range.1).into_iter().find(|(n, _, _)| {
-                let name = tokens[*n].text.as_str();
-                name == self.tables.wait || name == self.tables.timed_wait
-            })
+            calls_in(tokens, range.0, range.1)
+                .into_iter()
+                .find(|(n, _, _)| {
+                    let name = tokens[*n].text.as_str();
+                    name == self.tables.wait || name == self.tables.timed_wait
+                })
         };
         // Any wait inside the body at all?
         let mut any = false;
@@ -1337,7 +1402,14 @@ impl C4<'_> {
             [Stmt::Expr(s, e)] if wait_in((*s, *e)).is_some() => {
                 Some((wait_in((*s, *e))?.0, ReadLoopBody::WaitOnly))
             }
-            [Stmt::Expr(s, e), Stmt::If { cond, then, els: None }] => {
+            [
+                Stmt::Expr(s, e),
+                Stmt::If {
+                    cond,
+                    then,
+                    els: None,
+                },
+            ] => {
                 let wait = wait_in((*s, *e))?;
                 let words = texts(tokens, (*s, *e));
                 let result = match words.as_slice() {
@@ -1415,10 +1487,14 @@ impl C4<'_> {
         let flow = self.statement(body, Some(head.clone()));
         self.loop_depth -= 1;
         // The wait's mutex, from the recorded wait site.
-        let mutex = self.sites[sites_before..].iter().find_map(|site| match &site.site {
-            ReadSite::Wait(wait) if self.tokens[wait_index].line == site.line => wait.mutex.clone(),
-            _ => None,
-        });
+        let mutex = self.sites[sites_before..]
+            .iter()
+            .find_map(|site| match &site.site {
+                ReadSite::Wait(wait) if self.tokens[wait_index].line == site.line => {
+                    wait.mutex.clone()
+                }
+                _ => None,
+            });
         let under_mutex = mutex.as_ref().is_some_and(|m| {
             current.must.contains(m) && flow.normal.as_ref().is_some_and(|s| s.must.contains(m))
         });
@@ -1504,9 +1580,13 @@ fn sections(
         if tokens[lock_index].text != tables.lock || lock_index > signal {
             continue;
         }
-        let Some(mutex) = key_of(open, close) else { continue };
+        let Some(mutex) = key_of(open, close) else {
+            continue;
+        };
         let Some((unlock_index, _, _)) = calls.iter().copied().find(|(n, o, c)| {
-            *n > signal && tokens[*n].text == tables.unlock && key_of(*o, *c).as_ref() == Some(&mutex)
+            *n > signal
+                && tokens[*n].text == tables.unlock
+                && key_of(*o, *c).as_ref() == Some(&mutex)
         }) else {
             continue;
         };
@@ -1522,9 +1602,7 @@ fn sections(
         let mut events = Vec::new();
         for index in lock_index..unlock_index {
             let text = tokens[index].text.as_str();
-            if text == tables.signal
-                && tokens.get(index + 1).is_some_and(|t| t.text == "(")
-            {
+            if text == tables.signal && tokens.get(index + 1).is_some_and(|t| t.text == "(") {
                 events.push(ReadSectionEvent::Signal);
                 continue;
             }
@@ -1540,7 +1618,10 @@ fn sections(
                     after = matching(tokens, after, "[", "]").map_or(after + 1, |c| c + 1);
                 }
                 if tokens.get(after).is_some_and(|t| {
-                    matches!(t.text.as_str(), "=" | "+=" | "-=" | "|=" | "&=" | "++" | "--")
+                    matches!(
+                        t.text.as_str(),
+                        "=" | "+=" | "-=" | "|=" | "&=" | "++" | "--"
+                    )
                 }) {
                     events.push(ReadSectionEvent::Write(format!("{ty}.{}", field.text)));
                 }
@@ -1625,7 +1706,13 @@ impl C5<'_> {
             .copied()
     }
 
-    fn release(&mut self, definition: usize, index: usize, what: String, states: &BTreeSet<PState>) {
+    fn release(
+        &mut self,
+        definition: usize,
+        index: usize,
+        what: String,
+        states: &BTreeSet<PState>,
+    ) {
         let def = &self.definitions[definition];
         let scan = &self.scans[def.file];
         let key = (
@@ -1652,19 +1739,27 @@ impl C5<'_> {
                             timed_out: global.timed_out,
                             awaited: global.awaited,
                         },
-                        note.clone().unwrap_or_else(|| "no join on this path".to_owned()),
+                        note.clone()
+                            .unwrap_or_else(|| "no join on this path".to_owned()),
                     ),
                     Joined::Pending(site) => (ReadJoin::Unchecked, site.clone()),
                     Joined::Done(join, site) => (join.clone(), site.clone()),
                 };
-                entry.live.entry(thread.clone()).or_default().insert(evidence);
+                entry
+                    .live
+                    .entry(thread.clone())
+                    .or_default()
+                    .insert(evidence);
             }
         }
     }
 
     fn site(&self, definition: usize, index: usize) -> String {
         let def = &self.definitions[definition];
-        format!("{}:{}", self.scans[def.file].path, self.scans[def.file].tokens[index].line)
+        format!(
+            "{}:{}",
+            self.scans[def.file].path, self.scans[def.file].tokens[index].line
+        )
     }
 
     fn cap(&self, states: BTreeSet<PState>) -> BTreeSet<PState> {
@@ -1675,7 +1770,8 @@ impl C5<'_> {
             .into_iter()
             .take(PATH_BUDGET)
             .map(|(mut g, e)| {
-                g.unresolved.insert("the path budget was exceeded".to_owned());
+                g.unresolved
+                    .insert("the path budget was exceeded".to_owned());
                 (g, e)
             })
             .collect()
@@ -1692,7 +1788,11 @@ impl C5<'_> {
         let def = &self.definitions[root];
         self.types = struct_types(&self.scans[def.file].tokens, def);
         self.stack.push(root);
-        let flow = self.block(root, &tree, BTreeSet::from([(Global::default(), Env::new())]));
+        let flow = self.block(
+            root,
+            &tree,
+            BTreeSet::from([(Global::default(), Env::new())]),
+        );
         self.stack.pop();
         let close = self.definitions[root].body.1;
         for (global, _) in &flow.normal {
@@ -1700,7 +1800,11 @@ impl C5<'_> {
         }
     }
 
-    fn run_function(&mut self, definition: usize, global: Global) -> BTreeSet<(Global, Option<Val>)> {
+    fn run_function(
+        &mut self,
+        definition: usize,
+        global: Global,
+    ) -> BTreeSet<(Global, Option<Val>)> {
         let Some(Ok(tree)) = self.trees.get(&definition) else {
             let mut g = global;
             let reason = match self.trees.get(&definition) {
@@ -1807,11 +1911,8 @@ impl C5<'_> {
                 let mut out = PFlow::default();
                 for state in states {
                     for (next, _) in self.expression(definition, (*s, *e), state) {
-                        match next {
-                            Some(next) => {
-                                out.normal.insert(next);
-                            }
-                            None => {}
+                        if let Some(next) = next {
+                            out.normal.insert(next);
                         }
                     }
                 }
@@ -1856,7 +1957,11 @@ impl C5<'_> {
                 a
             }
             Stmt::Loop {
-                cond, init, body, step, ..
+                cond,
+                init,
+                body,
+                step,
+                ..
             } => {
                 let mut current = states;
                 if let Some(init) = init {
@@ -1989,7 +2094,11 @@ impl C5<'_> {
             return both();
         };
         // `[!] NAME` tests NAME != 0.
-        let (equal, value) = if words.len() == 1 { (false, 0) } else { (equal, value) };
+        let (equal, value) = if words.len() == 1 {
+            (false, 0)
+        } else {
+            (equal, value)
+        };
         let holds_when = |actual: i64| (actual == value) == equal;
         let flip = |taken: bool| taken != negated;
         match env.get(name) {
@@ -2005,9 +2114,10 @@ impl C5<'_> {
             Some(Val::JoinResult(thread, site)) if value == 0 => {
                 // Zero is success.
                 let mut success = global.clone();
-                success
-                    .threads
-                    .insert(thread.clone(), Joined::Done(ReadJoin::CheckedSuccess, site.clone()));
+                success.threads.insert(
+                    thread.clone(),
+                    Joined::Done(ReadJoin::CheckedSuccess, site.clone()),
+                );
                 let mut failure = global.clone();
                 failure
                     .threads
@@ -2126,7 +2236,9 @@ impl C5<'_> {
                             _ => None,
                         }
                     });
-                    let thread = thread.filter(|set| set.len() == 1).and_then(|set| set.into_iter().next());
+                    let thread = thread
+                        .filter(|set| set.len() == 1)
+                        .and_then(|set| set.into_iter().next());
                     match thread {
                         // A join of a thread this path never started changes
                         // nothing this reader tracks.
@@ -2135,13 +2247,17 @@ impl C5<'_> {
                         }
                         Some(thread) => {
                             let value = Val::JoinResult(thread.clone(), site.clone());
-                            if assigned.is_some() || words.first() == Some(&"return") || range_is_return(tokens, range) {
+                            if assigned.is_some()
+                                || words.first() == Some(&"return")
+                                || range_is_return(tokens, range)
+                            {
                                 global.threads.insert(thread, Joined::Pending(site.clone()));
                                 next.push(((global, env), Some(value)));
                             } else {
-                                global
-                                    .threads
-                                    .insert(thread, Joined::Done(ReadJoin::Unchecked, site.clone()));
+                                global.threads.insert(
+                                    thread,
+                                    Joined::Done(ReadJoin::Unchecked, site.clone()),
+                                );
                                 next.push(((global, env), None));
                             }
                         }
@@ -2335,7 +2451,8 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
     let joins: BTreeSet<usize> = (0..definitions.len())
         .filter(|id| {
             let tokens = &scans[definitions[*id].file].tokens;
-            (definitions[*id].body.0..definitions[*id].body.1).any(|i| tokens[i].text == tables.join)
+            (definitions[*id].body.0..definitions[*id].body.1)
+                .any(|i| tokens[i].text == tables.join)
         })
         .collect();
     // Functions whose direct calls reach a spawn, a join or a release.
@@ -2355,11 +2472,8 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
     // follows, but not through direct calls alone.
     let mut may_thread: BTreeMap<usize, String> = BTreeMap::new();
     {
-        let mut reach: BTreeSet<usize> = census
-            .spawns
-            .iter()
-            .map(|(spawner, _)| *spawner)
-            .collect();
+        let mut reach: BTreeSet<usize> =
+            census.spawns.iter().map(|(spawner, _)| *spawner).collect();
         loop {
             let before = reach.len();
             for edge in &census.edges {
@@ -2478,7 +2592,7 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
                 Ok(tree) => {
                     let mut initial = LockState::default();
                     // A local struct object is fresh until something receives it.
-                    for (name, _) in &types {
+                    for name in types.keys() {
                         if !definition.parameters.iter().any(|(p, _)| p == name) {
                             let declared_value = scan.tokens[definition.body.0..definition.body.1]
                                 .windows(3)
@@ -2516,7 +2630,8 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
                                     || scan.tokens[*i].text == tables.broadcast)
                         })
                         .unwrap_or(definition.body.0);
-                    signal.sections = sections(&scan.tokens, definition.body, index, &types, tables);
+                    signal.sections =
+                        sections(&scan.tokens, definition.body, index, &types, tables);
                 }
             }
             sites.extend(c4.sites);
@@ -2527,7 +2642,9 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
     let mut releases = Vec::new();
     for (root_id, _thread) in &census.roots {
         let root_name = &census.functions[*root_id];
-        let Some(&root) = by_census.get(root_name) else { continue };
+        let Some(&root) = by_census.get(root_name) else {
+            continue;
+        };
         if !relevant.contains(&root) {
             continue;
         }
@@ -2554,7 +2671,8 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
     // Kept-refusal tokens at file scope (a static initialiser).
     for (file, scan) in scans.iter().enumerate() {
         for (index, token) in scan.tokens.iter().enumerate() {
-            let Some((_, refusal)) = tables.refused_tokens.iter().find(|(n, _)| *n == token.text) else {
+            let Some((_, refusal)) = tables.refused_tokens.iter().find(|(n, _)| *n == token.text)
+            else {
                 continue;
             };
             let inside = definitions
@@ -2572,7 +2690,15 @@ pub fn read_program(files: &[CensusFile], hops: &HopTables, tables: &SyncTables)
             }
         }
     }
-    let signal_once = at_most_once(&sites, &census, &definitions, &scans, &trees, &by_census, tables);
+    let signal_once = at_most_once(
+        &sites,
+        &census,
+        &definitions,
+        &scans,
+        &trees,
+        &by_census,
+        tables,
+    );
     let defined_in = definitions
         .iter()
         .map(|d| (d.census.clone(), scans[d.file].path.clone()))
@@ -2619,13 +2745,19 @@ fn at_most_once(
                 return Err("the condvar is signalled from more than one function".to_owned());
             };
             if signals.len() != 1 || signals[0].in_loop {
-                return Err(format!("`{signaller}` does not signal exactly once, outside a loop"));
+                return Err(format!(
+                    "`{signaller}` does not signal exactly once, outside a loop"
+                ));
             }
-            let plain = signaller.rsplit_once("::").map_or(signaller.as_str(), |(_, n)| n);
+            let plain = signaller
+                .rsplit_once("::")
+                .map_or(signaller.as_str(), |(_, n)| n);
             let calls: Vec<_> = census.calls.iter().filter(|c| c.callee == plain).collect();
             let callers: BTreeSet<usize> = calls.iter().map(|c| c.caller).collect();
             let [caller] = callers.into_iter().collect::<Vec<_>>()[..] else {
-                return Err(format!("`{signaller}` is called from more than one function"));
+                return Err(format!(
+                    "`{signaller}` is called from more than one function"
+                ));
             };
             if !census.spawns.iter().any(|(_, entry)| *entry == caller)
                 || census.edges.iter().any(|e| e.callee == caller)
@@ -2644,8 +2776,11 @@ fn at_most_once(
                 Some(Ok(tree)) => tree,
                 Some(Err(why)) => return Err(format!("`{caller_name}`'s body is not read: {why}")),
                 None => {
-                    parsed = parse_body(&scans[definitions[definition].file], &definitions[definition])
-                        .map_err(|why| format!("`{caller_name}`'s body is not read: {why}"))?;
+                    parsed = parse_body(
+                        &scans[definitions[definition].file],
+                        &definitions[definition],
+                    )
+                    .map_err(|why| format!("`{caller_name}`'s body is not read: {why}"))?;
                     &parsed
                 }
             };
@@ -2661,7 +2796,8 @@ fn at_most_once(
                 found: &mut Vec<(usize, bool, bool)>,
             ) {
                 for (position, stmt) in list.iter().enumerate() {
-                    let followed_by_return = matches!(list.get(position + 1), Some(Stmt::Return(..)));
+                    let followed_by_return =
+                        matches!(list.get(position + 1), Some(Stmt::Return(..)));
                     match stmt {
                         Stmt::Expr(s, e) => {
                             for (n, _, _) in calls_in(tokens, *s, *e) {
@@ -2678,9 +2814,14 @@ fn at_most_once(
                             }
                         }
                         Stmt::Block(inner) => walk(inner, in_loop, tokens, plain, found),
-                        Stmt::Maybe(inner) => walk(std::slice::from_ref(inner), in_loop, tokens, plain, found),
+                        Stmt::Maybe(inner) => {
+                            walk(std::slice::from_ref(inner), in_loop, tokens, plain, found)
+                        }
                         Stmt::If { cond, then, els } => {
-                            if calls_in(tokens, cond.0, cond.1).iter().any(|(n, _, _)| tokens[*n].text == plain) {
+                            if calls_in(tokens, cond.0, cond.1)
+                                .iter()
+                                .any(|(n, _, _)| tokens[*n].text == plain)
+                            {
                                 found.push((cond.0, true, false));
                             }
                             walk(std::slice::from_ref(then), in_loop, tokens, plain, found);
@@ -2688,14 +2829,20 @@ fn at_most_once(
                                 walk(std::slice::from_ref(els), in_loop, tokens, plain, found);
                             }
                         }
-                        Stmt::Loop { body, .. } => walk(std::slice::from_ref(body), true, tokens, plain, found),
+                        Stmt::Loop { body, .. } => {
+                            walk(std::slice::from_ref(body), true, tokens, plain, found)
+                        }
                         _ => {}
                     }
                 }
             }
             walk(tree, false, tokens, plain, &mut found);
-            if found.len() != calls.iter().filter(|c| c.caller == caller).count() || found.is_empty() {
-                return Err(format!("a call of `{signaller}` in `{caller_name}` is not a statement"));
+            if found.len() != calls.iter().filter(|c| c.caller == caller).count()
+                || found.is_empty()
+            {
+                return Err(format!(
+                    "a call of `{signaller}` in `{caller_name}` is not a statement"
+                ));
             }
             let last = found.iter().map(|(n, _, _)| *n).max().unwrap_or(0);
             for (n, in_loop, followed) in &found {

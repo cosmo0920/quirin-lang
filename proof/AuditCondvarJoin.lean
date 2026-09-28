@@ -7,7 +7,11 @@ variable publication (C4) and join before release (C5).
 Five directions are audited.
 
 **Publication through the condvar edge.** A wait releases and reacquires its
-mutex; sections run atomically in the order the mutex serialises them. Before
+mutex; sections run atomically in the order the mutex serialises them. On the
+Cycle 14 lifetime model (`QCore.Concurrency.Lifetime`) the wait is the
+waiter's unlock and relock around the publisher's section: the
+publish/await/join shape is an accepted trace, and a release before the join
+is refused. Before
 the publication the predicate is unset, so no recheck claims; after it, every
 recheck that sees the predicate reads the published snapshot, provided the
 publisher alone writes the predicate and the results.
@@ -34,6 +38,8 @@ boundary 28's premises, pinned by `crates/qcore-core/tests/unit/condvar_join.rs`
 and `crates/quirin-source-analysis/tests/condvar_join_census.rs`. -/
 
 -- Publication through the condvar edge.
+#print axioms QCore.CondvarJoin.the_condvar_edge_is_an_accepted_lifetime_trace
+#print axioms QCore.CondvarJoin.a_release_before_the_join_is_refused_by_the_lifetime_model
 #print axioms QCore.CondvarJoin.no_claim_before_publication
 #print axioms QCore.CondvarJoin.after_publication_the_snapshot_holds
 #print axioms QCore.CondvarJoin.observed_done_reads_the_published_snapshot

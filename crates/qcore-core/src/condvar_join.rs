@@ -577,14 +577,12 @@ pub fn release_verdict(site: &ReleaseSite) -> SyncVerdict {
                 JoinEvidence::Failed => {
                     format!("the join of `{}` failed on a path ({witness})", live.thread)
                 }
-                JoinEvidence::Absent(Absence::Nothing) => format!(
-                    "released before any join of `{}` ({witness})",
-                    live.thread
-                ),
-                JoinEvidence::Absent(Absence::AfterPublication) => format!(
-                    "publication is not a join of `{}` ({witness})",
-                    live.thread
-                ),
+                JoinEvidence::Absent(Absence::Nothing) => {
+                    format!("released before any join of `{}` ({witness})", live.thread)
+                }
+                JoinEvidence::Absent(Absence::AfterPublication) => {
+                    format!("publication is not a join of `{}` ({witness})", live.thread)
+                }
                 JoinEvidence::Absent(Absence::AfterTimeout) => format!(
                     "a timeout is not cancellation of `{}` ({witness})",
                     live.thread

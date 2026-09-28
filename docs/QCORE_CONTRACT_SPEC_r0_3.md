@@ -80,7 +80,7 @@ The selected source set MUST be nonempty. Every selected source MUST parse as a 
 Every extern declaration MUST satisfy all of the following:
 
 1. Its entire signature belongs to the admitted ABI projection, with unique parameter names and no usage annotations, generics, effects, extra signature syntax, or ignored tail tokens.
-2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted preconditions are the literal-argument premise of C04.5, the checked-specification marker of C06.3 and the loop-owner obligation of C04.9; every other `requires` spelling is rejected.
+2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted preconditions are the literal-argument premise of C04.5, the checked-specification marker of C06.3, the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10; every other `requires` spelling is rejected.
 3. Every other clause is an admitted `ensures normal` predicate call. Each parameter receives exactly one mode and the result receives exactly one result mode.
 4. Parameter/result types, nullability arguments, ownership references and return references meet the compatibility rules below.
 
@@ -245,7 +245,7 @@ Each refused shape leaves the function without a summary, so its calls stay unco
 
 Only normal C returns are represented by v1 postconditions. A C routine returning null or a negative integer has still returned normally; it has not taken a QCore typed-error exit. Error-specific ownership behavior can be modeled only where a supported mode explicitly represents it, such as nullable acquisition or the specified reallocation relation.
 
-General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 is a call-site precondition, not a synchronization clause. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
+General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10 are call-site preconditions, not synchronization clauses. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
 **Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
@@ -412,6 +412,25 @@ requires resource_loop_owner(p, mutate);
 **Completion meanings and paired collectors.** The public pause/resume dispatches a plugin callback and stays undeclared (C04.4, rule 10j); its two completion meanings are the census kernel's: a non-threaded instance discharges "callback finished", a threaded one only "request enqueued", and no return code alone discharges "applied". Two collector operations of one callback (the tail backend's pair) state a joint state only at the callback boundary, only when both results are known to have succeeded on the owner, and a resume's running state only under an active-ingestion premise. Registration (`flb_input_set_collector_*`) and `mk_event_add`/`mk_event_timeout_create` retain a callback or the caller's event, which v1 cannot state, and stay undeclared.
 
 The Lean model is `QCore.LoopOwner`; it derives, for this route, the single-dispatcher premise `QCore.EventDriven` otherwise takes as supplied.
+
+### C04.10. The thread-synchronization obligation
+
+Card W47-CONDVAR-JOIN-PUBLICATION (gateway rule 10q; constraint 27 as amended). A condition-variable wait releases and reacquires its mutex, a signal is not itself a memory-publication mechanism, and a join ends a thread only when its result says so; none of that is a custody fact. A resource-v1 declaration MAY carry, beside the selector, at most one
+
+```qcore
+requires resource_thread_sync(cond, mutex, cond_wait);
+requires resource_thread_sync(cond, mutex, cond_timedwait);
+requires resource_thread_sync(cond, cond_signal);
+requires resource_thread_sync(cond, cond_init);
+requires resource_thread_sync(cond, cond_destroy);
+requires resource_thread_sync(thread, join);
+```
+
+A condvar and a mutex name `ptr<mut, u8>` parameters, distinct; a wait names both and every other condvar operation only the condvar; a joined thread names a `u64` or `usize` parameter (`pthread_t`). Any other spelling or operation, a second clause, a wrong parameter kind, or a review marker wrapping the clause rejects the **whole module**. An inherited declaration carries exactly its parent's obligation (C15). The clause adds no custody mode and nothing to the environment's serialized form; a consumer rederives it from the retained texts (`declared_thread_sync_obligations`).
+
+**Meaning.** The declaration applies at a call site only where the obligation is **discharged**: a wait only as the body of a loop that rechecks a predicate read under the mutex the wait releases, with that mutex held (a timed wait's nonzero return may leave the loop, with no result claim); a signal only while the condvar's paired mutex is held; an `init` or `destroy` only in a quiescent phase (before publication, after the last signal is ordered by the mutex, or after a checked join of every live thread); a join only where its zero result is checked. A consumer that derives none of these MUST treat the obligation as undischarged at every call and refuse the call as it refuses an uncontracted one; the gateway's per-unit resource route is such a consumer. The census of rule 10q is the consumer that can discharge it, and it also decides C5: storage another thread may retain is released only after a checked, successful join of every live thread that retains it; publication, a timeout, an unchecked or failed join and an underived join identity grant nothing. `pthread_cond_broadcast`, C11 `cnd_*` (whose custody declarations in `libc/threads.qv` are unchanged), rwlocks, try/timed locks and `pthread_create` (a retained argument and a callback, C04.4) stay undeclared. A refusal is `Unknown`, never a validated reachable violation and never an upstream defect claim.
+
+The Lean model is `QCore.CondvarJoin`.
 
 ## C05. Manifests and immutable assumptions
 

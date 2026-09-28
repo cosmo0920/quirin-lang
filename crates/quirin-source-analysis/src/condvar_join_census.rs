@@ -18,10 +18,10 @@ use qcore_c_gateway::condvar_census::{
 };
 use qcore_c_gateway::thread_entry_census::{CensusFile, HopTables};
 use qcore_core::condvar_join::{
-    Absence, Held, JoinEvidence, KeptRefusal, LiveThread, LoopBody, Pairing, Phase,
-    PredicateLoop, PublishSite, ReadLicence, ReleaseSite, SectionEvent, SignalSite, SyncVerdict,
-    WaitSite, publication_verdict, quiescence_verdict, read_verdict, release_verdict,
-    signal_verdict, wait_verdict,
+    Absence, Held, JoinEvidence, KeptRefusal, LiveThread, LoopBody, Pairing, Phase, PredicateLoop,
+    PublishSite, ReadLicence, ReleaseSite, SectionEvent, SignalSite, SyncVerdict, WaitSite,
+    publication_verdict, quiescence_verdict, read_verdict, release_verdict, signal_verdict,
+    wait_verdict,
 };
 use qcore_core::loop_owner::{Derived, ThreadProgram, derive};
 
@@ -108,7 +108,9 @@ fn evidence(join: &ReadJoin) -> JoinEvidence {
         ReadJoin::CheckedSuccess => JoinEvidence::CheckedSuccess,
         ReadJoin::Unchecked => JoinEvidence::Unchecked,
         ReadJoin::Failed => JoinEvidence::Failed,
-        ReadJoin::Absent { timed_out: true, .. } => JoinEvidence::Absent(Absence::AfterTimeout),
+        ReadJoin::Absent {
+            timed_out: true, ..
+        } => JoinEvidence::Absent(Absence::AfterTimeout),
         ReadJoin::Absent { awaited: true, .. } => JoinEvidence::Absent(Absence::AfterPublication),
         ReadJoin::Absent { .. } => JoinEvidence::Absent(Absence::Nothing),
     }
@@ -128,7 +130,11 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
     let unread: BTreeMap<&str, &str> = reading
         .functions
         .iter()
-        .filter_map(|f| f.unresolved.as_deref().map(|why| (f.function.as_str(), why)))
+        .filter_map(|f| {
+            f.unresolved
+                .as_deref()
+                .map(|why| (f.function.as_str(), why))
+        })
         .collect();
 
     // Pairing, predicates and waiter functions.
@@ -165,8 +171,13 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                 .entry(condvar.clone())
                 .or_default()
                 .insert(site.function.clone());
-            let Some(mutex) = pairing.mutex(condvar) else { continue };
-            let predicate = predicates.get(condvar).map(|p| p.0.clone()).unwrap_or_default();
+            let Some(mutex) = pairing.mutex(condvar) else {
+                continue;
+            };
+            let predicate = predicates
+                .get(condvar)
+                .map(|p| p.0.clone())
+                .unwrap_or_default();
             for event in signal.sections.get(mutex).into_iter().flatten() {
                 if let ReadSectionEvent::Write(key) = event
                     && struct_of(key) == struct_of(condvar)
@@ -174,7 +185,10 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                     && key != condvar
                     && key != mutex
                 {
-                    results.entry(condvar.clone()).or_default().insert(key.clone());
+                    results
+                        .entry(condvar.clone())
+                        .or_default()
+                        .insert(key.clone());
                 }
             }
         }
@@ -186,7 +200,10 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
         .collect();
     // Guarded writes outside the paired mutex (after the fresh phase).
     let guarded_of = |condvar: &str| -> BTreeSet<String> {
-        let mut keys = predicates.get(condvar).map(|p| p.0.clone()).unwrap_or_default();
+        let mut keys = predicates
+            .get(condvar)
+            .map(|p| p.0.clone())
+            .unwrap_or_default();
         keys.extend(results.get(condvar).cloned().unwrap_or_default());
         keys
     };
@@ -232,7 +249,9 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
             ReadSite::Refused(kind) => ("refused", None, SyncVerdict::Refused(refusal(*kind))),
             ReadSite::Wait(wait) => {
                 let verdict = match (&wait.condvar, &wait.mutex, unread_reason) {
-                    (_, _, Some(why)) => SyncVerdict::unresolved(format!("the body is not read: {why}")),
+                    (_, _, Some(why)) => {
+                        SyncVerdict::unresolved(format!("the body is not read: {why}"))
+                    }
                     (Some(condvar), Some(mutex), None) => wait_verdict(
                         &WaitSite {
                             condvar: condvar.clone(),
@@ -247,13 +266,17 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                         },
                         &pairing,
                     ),
-                    _ => SyncVerdict::unresolved("the wait's condvar or mutex is not a field-keyed object"),
+                    _ => SyncVerdict::unresolved(
+                        "the wait's condvar or mutex is not a field-keyed object",
+                    ),
                 };
                 ("wait", wait.condvar.clone(), verdict)
             }
             ReadSite::Signal(signal) => {
                 let verdict = match (&signal.condvar, unread_reason) {
-                    (_, Some(why)) => SyncVerdict::unresolved(format!("the body is not read: {why}")),
+                    (_, Some(why)) => {
+                        SyncVerdict::unresolved(format!("the body is not read: {why}"))
+                    }
                     (Some(condvar), None) => {
                         let signalled = signal_verdict(
                             &SignalSite {
@@ -271,7 +294,9 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                                     section: section
                                         .iter()
                                         .map(|event| match event {
-                                            ReadSectionEvent::Write(key) => SectionEvent::Write(key.clone()),
+                                            ReadSectionEvent::Write(key) => {
+                                                SectionEvent::Write(key.clone())
+                                            }
                                             ReadSectionEvent::Signal => SectionEvent::Signal,
                                         })
                                         .collect(),
@@ -289,11 +314,19 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
                             signalled
                         }
                     }
-                    (None, None) if signal.broadcast => SyncVerdict::Refused(KeptRefusal::Broadcast),
-                    (None, None) => SyncVerdict::unresolved("the signalled condvar is not a field-keyed object"),
+                    (None, None) if signal.broadcast => {
+                        SyncVerdict::Refused(KeptRefusal::Broadcast)
+                    }
+                    (None, None) => {
+                        SyncVerdict::unresolved("the signalled condvar is not a field-keyed object")
+                    }
                 };
                 (
-                    if signal.broadcast { "broadcast" } else { "signal" },
+                    if signal.broadcast {
+                        "broadcast"
+                    } else {
+                        "signal"
+                    },
                     signal.condvar.clone(),
                     verdict,
                 )
@@ -301,17 +334,22 @@ pub fn census(files: &[CensusFile], hops: &HopTables, tables: &SyncTables) -> Ce
             ReadSite::Lifecycle(lifecycle) => {
                 let phase = match (&lifecycle.condvar, unread_reason) {
                     (_, Some(why)) => Phase::Unknown(format!("the body is not read: {why}")),
-                    (None, None) => Phase::Unknown("the condvar is not a field-keyed object".to_owned()),
+                    (None, None) => {
+                        Phase::Unknown("the condvar is not a field-keyed object".to_owned())
+                    }
                     (Some(_), None) if lifecycle.fresh => Phase::BeforePublication,
                     (Some(condvar), None) => {
                         let exit_facts = predicates.get(condvar).map(|p| &p.1);
                         let observed = exit_facts.is_some_and(|facts| {
-                            !facts.is_empty() && facts.iter().all(|f| lifecycle.observed_ever.contains(f))
+                            !facts.is_empty()
+                                && facts.iter().all(|f| lifecycle.observed_ever.contains(f))
                         });
                         let single = once.get(condvar.as_str()).is_some_and(|d| d.is_ok());
                         if observed && single {
                             Phase::AfterLastSignal
-                        } else if let Some(found) = releases_by_site.get(&(site.file.clone(), site.line)) {
+                        } else if let Some(found) =
+                            releases_by_site.get(&(site.file.clone(), site.line))
+                        {
                             // After a join: every root's reading at this site.
                             let mut merged = ReleaseSite::default();
                             for release in found {
@@ -403,17 +441,26 @@ fn plain(label: &str) -> &str {
 
 /// The threads whose derived contexts reach a function defined under
 /// [`RETAINING_CODE`] (a test-table root excepted: it is the releasing thread).
-fn retainers(program: &ThreadProgram, derived: &[Derived], reading: &SyncReading) -> BTreeSet<String> {
+fn retainers(
+    program: &ThreadProgram,
+    derived: &[Derived],
+    reading: &SyncReading,
+) -> BTreeSet<String> {
     let roots: BTreeSet<usize> = reading.census.roots.iter().map(|(id, _)| *id).collect();
     let mut out = BTreeSet::new();
     for (id, label) in program.functions.iter().enumerate() {
-        let file = reading.defined_in.get(label).map_or(label.as_str(), String::as_str);
+        let file = reading
+            .defined_in
+            .get(label)
+            .map_or(label.as_str(), String::as_str);
         let in_code = RETAINING_CODE.iter().any(|prefix| file.starts_with(prefix));
         if !in_code || roots.contains(&id) {
             continue;
         }
         for context in &derived[id].contexts {
-            if !roots.iter().any(|root| program.functions[*root] == context.thread)
+            if !roots
+                .iter()
+                .any(|root| program.functions[*root] == context.thread)
                 && context.thread != "T"
             {
                 out.insert(plain(&context.thread).to_owned());
@@ -442,8 +489,12 @@ fn guarded_read(
         return None;
     }
     let condvar = waiters.iter().find_map(|(condvar, functions)| {
-        let guarded = predicates.get(condvar).is_some_and(|p| p.0.contains(&access.key))
-            || results.get(condvar).is_some_and(|r| r.contains(&access.key));
+        let guarded = predicates
+            .get(condvar)
+            .is_some_and(|p| p.0.contains(&access.key))
+            || results
+                .get(condvar)
+                .is_some_and(|r| r.contains(&access.key));
         (functions.contains(&site.function) && guarded).then(|| condvar.clone())
     })?;
     let Some(mutex) = pairing.mutex(&condvar) else {
@@ -452,7 +503,10 @@ fn guarded_read(
             ReadLicence::Unknown("the condvar is not paired with one mutex".to_owned()),
         ));
     };
-    let facts = predicates.get(&condvar).map(|p| p.1.clone()).unwrap_or_default();
+    let facts = predicates
+        .get(&condvar)
+        .map(|p| p.1.clone())
+        .unwrap_or_default();
     if facts.is_empty() {
         return Some((
             condvar,
@@ -535,7 +589,10 @@ fn release_site(
 /// The threads a thread starts, transitively, from the derivation.
 fn descendants(thread: &str, program: &ThreadProgram, derived: &[Derived]) -> BTreeSet<String> {
     let named = |label: &str| {
-        label == thread || label.rsplit_once("::").is_some_and(|(_, name)| name == thread)
+        label == thread
+            || label
+                .rsplit_once("::")
+                .is_some_and(|(_, name)| name == thread)
     };
     let mut threads: BTreeSet<String> = program
         .functions
