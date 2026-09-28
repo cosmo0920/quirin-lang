@@ -242,8 +242,8 @@ pub(crate) struct StatementIndex {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct FieldFacts {
-    union_owner: bool,
-    bitfield: bool,
+    pub(crate) union_owner: bool,
+    pub(crate) bitfield: bool,
 }
 
 /// Card **W47-ACCESS-PATH-POSITIONS**, step B: positive enum evidence read

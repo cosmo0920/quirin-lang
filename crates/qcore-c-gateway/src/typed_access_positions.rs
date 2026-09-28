@@ -223,7 +223,7 @@ impl Reader<'_> {
 
 impl StatementIndex {
     /// The unique expression node on `line` whose tokens are exactly `texts`.
-    fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
+    pub(crate) fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
@@ -285,17 +285,16 @@ impl StatementIndex {
         Some(reader.plan)
     }
 
-    /// The actual at `index` of the one call of `callee` whose actual there is
-    /// exactly `texts` on `line`.
-    pub(crate) fn argument(
+    /// The unique actual at `index` of a call of `callee` with `arity`
+    /// actuals whose tokens there are exactly `texts` on `line`.
+    pub(crate) fn argument_node(
         &self,
         callee: &str,
         index: usize,
         arity: usize,
         texts: &[&str],
         line: usize,
-        never_bound: impl Fn(&str) -> bool,
-    ) -> Option<ArgumentPlan> {
+    ) -> Option<&Value> {
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
@@ -312,9 +311,21 @@ impl StatementIndex {
             .then_some(actual)
         });
         let actual = matched.next()?;
-        if matched.next().is_some() {
-            return None;
-        }
+        matched.next().is_none().then_some(actual)
+    }
+
+    /// The actual at `index` of the one call of `callee` whose actual there is
+    /// exactly `texts` on `line`.
+    pub(crate) fn argument(
+        &self,
+        callee: &str,
+        index: usize,
+        arity: usize,
+        texts: &[&str],
+        line: usize,
+        never_bound: impl Fn(&str) -> bool,
+    ) -> Option<ArgumentPlan> {
+        let actual = self.argument_node(callee, index, arity, texts, line)?;
         let mut reader = self.reader(&never_bound);
         let pointer_valued = reader.value(actual)?;
         // A borrowed actual hands nothing out of the body: the never-bound

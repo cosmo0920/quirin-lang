@@ -54,6 +54,8 @@ mod typed_access_path;
 // Card W47-ACCESS-PATH-POSITIONS: the typed reader in condition operands,
 // returns and call actuals.
 mod typed_access_positions;
+// Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n).
+mod typed_position_shapes;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 mod typed_field_access;
