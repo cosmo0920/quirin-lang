@@ -175,6 +175,8 @@ pub mod epoch_credit_recovery;
 
 pub mod event_observation;
 pub mod event_reactor;
+// Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
+pub mod loop_owner;
 
 pub mod region_task_credit;
 
