@@ -1,0 +1,37 @@
+[
+ {
+  "id": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS",
+  "title": "Loop-owner obligation for collector registration and the Monkey event operations",
+  "why": "W47-LOOP-OWNER-CONTRACTS declared `requires resource_loop_owner` (contract spec C04.9, gateway rule 10p) only on the four collector operations whose custody v1 states exactly (flb_input_collector_running/pause/resume/delete). Eight operations the sketch's C1 names stay undeclared, so the census checks no call to them: the four registrations flb_input_set_collector_time/event/socket/server retain a callback, and mk_event_add, mk_event_timeout_create (retain the caller's event), mk_event_del and mk_event_timeout_destroy (Monkey facts owned by qcore-provider-libevent, bound on the epoll backend at mk_event_epoll.c:149/:180/:341) are not expressible without a callback/retention vocabulary (rule 10j). Size: 8 functions; at 90978ac6 the in_tail plugin has 11 registration call sites (tail.c in_tail_init x7, tail_fs_inotify.c x2, tail_fs_stat.c x2), all in Unknown functions, and the fixed test registers its callback once (cb_tail_pause_test_pre_run). DISCHARGE: an owner obligation that does not need a custody declaration (or a retention vocabulary), pinned in the owners' crates, checked by the census.",
+  "source": "docs/reports/w47-loop-owner-contracts/README.md",
+  "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
+ },
+ {
+  "id": "W47-LOOP-OWNER-COROUTINE-HOP",
+  "title": "Coroutine collector dispatch is an unresolved hop for the thread-entry census",
+  "why": "At the 90978ac6 export the census derives the fixed test's callback cb_tail_pause_test on the engine owner in the non-threaded mode (flb_lib_worker, via flb_engine_handle_event > flb_input_collector_fd) and on the worker owner in the threaded mode (input_thread, via input_collector_fd): each derived path discharges the owner obligation. The three sites (tests/runtime/in_tail.c:2483, :2492, :2494) stay unresolved only because the coroutine collector path dispatches cb_collect from input_pre_cb_collect, whose address is passed to the coroutine constructor (include/fluent-bit/flb_input.h:721), and because flb_input.h has a conditional group the census cannot structure. 13 other-plugin sites carry the same reason. DISCHARGE: a derived coroutine hop (a coroutine runs on the thread that resumes it; in_tail does not run in a coroutine, from its plugin flags) and a structured reading of flb_input.h, measured on the census.",
+  "source": "docs/reports/w47-loop-owner-contracts/README.md",
+  "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
+ },
+ {
+  "id": "W47-LOOP-OWNER-FIELD-KEYED-V-AND-F",
+  "title": "Instance-sensitive vtable dispatch and a configured threaded flag for the census",
+  "why": "The census resolves hops V/V* field-keyed (every registrant of a field is attributed every dispatcher of that field name) and forks the threaded flag F on both values without configuration flow. Both are sound for refusal and too coarse to discharge: at 90978ac6 the 16 in_tail plugin collector sites (tail.c x8, tail_fs_inotify.c x4, tail_fs_stat.c x4) are not discharged through the unchanged threaded test's T call of flb_input_pause/resume (tests/runtime/in_tail.c:2634, :2639) whose non-threaded fork the census cannot exclude, and 105 other-plugin sites (in_we, in_systemd, in_emitter, in_ne, ...) are refused through the same T call because every cb_pause/cb_resume registrant is attributed flb_input_plugin_pause. DISCHARGE: instance-sensitive V (the paused instance's plugin, from the test's flb_input(ctx, \"tail\") and the V* copy) and F from `flb_input_set(..., \"threaded\", \"true\")`, measured on the census.",
+  "source": "docs/reports/w47-loop-owner-contracts/README.md",
+  "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
+ },
+ {
+  "id": "W47-LOOP-OWNER-AUDIT-ROUTE",
+  "title": "Feed the thread-entry census into the audit routes",
+  "why": "The per-unit resource routes (quirin-audit pinned/current) derive no thread, so they refuse every call to a declared loop-owner operation (rule 10p (1)): 16 slice call sites and 3 system call sites (in_storage_backlog/sb.c cb_sb_pause, cb_sb_resume, cb_sb_exit) now carry `outside its declared loop-owner obligation`, and none can be discharged there. The census route (qcore_c_gateway::thread_entry_census) is a separate read of one program. DISCHARGE: a whole-program census phase whose per-site answers reach the per-unit routes (as rule 10g's refutation table does), with its inputs in the run identity; measured on the three routes.",
+  "source": "docs/reports/w47-loop-owner-contracts/README.md",
+  "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
+ },
+ {
+  "id": "W47-LOOP-OWNER-INSTANCE-FLOW",
+  "title": "Derive P-INSTANCE for the loop-owner census",
+  "why": "Rule 10p states, and does not prove, that along a derived path the instance a collector operation names is the instance whose mode the path fixed (in_tail's ctx->ins, set once in flb_tail_config_create from cb_init's instance), that the threaded flag is immutable after init, and that one engine-thread label stands for the engine of the path's instance's config (several flb contexts, e.g. a trace pipeline, spawn several flb_lib_worker threads). DISCHARGE: a data-flow derivation of the instance and config through ins->context / ctx->ins and the spawn argument, or a narrower premise with its reading pinned.",
+  "source": "docs/reports/w47-loop-owner-contracts/README.md",
+  "recorded_by": "W47-LOOP-OWNER-CONTRACTS"
+ }
+]
