@@ -1,0 +1,12 @@
+{
+ "note": "W47-ACCESS-PATH-POSITION-RESIDUALS, 2026-09-28. Standing gate by scripts/gate.sh in this card's worktree at 1cc4e643, CARGO_INCREMENTAL=0, PATH with ~/.elan/bin, every exit in its own file (copied to gate/), no pipe; logs private under private/pos/gate2/. submodule 0 (libevent d82464a2); run_test_binaries.py 0: 342 units, 355 summaries; 6149 passed; 0 failed; 11 ignored (private/test-binaries/20260928T040751Z-1878271/summary.json); cargo clean --profile dev 0; fmt 0; clippy 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py 0, Passed 218 (AuditTypedAccessPathPositionResiduals.lean added, 51 theorems); unittest discover -s scripts/tests 0 (365 OK); build_docs_index.py --check 0; cargo clean --profile dev 0; clang --version 0 in this worktree. Attempt 1 at 8d78f254 (gate/attempt1/, logs private/pos/gate1/) failed only clippy (collapsible_match in the parity-only shape walker), fixed by 1cc4e643 with the same answer; its other steps exited 0 with the same counts (6149 passed, 218 Lean, 365 Python). The measured step binaries were built at f9c3fead; 1cc4e643 changes only that parity-only arm. No providers/ path is touched, so the provider gate does not apply.",
+ "workspace_tests": 6149,
+ "python_evidence_validator_tests": 365,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 218,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

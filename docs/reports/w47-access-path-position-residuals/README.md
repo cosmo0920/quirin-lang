@@ -298,9 +298,27 @@ The Rust-to-Lean correspondence is a review premise (constraint 28).
 
 ## 6. Gate
 
-[gate.json](gate.json), exits in [gate/](gate/) (`scripts/gate.sh`, each exit
-in its own file, no pipe), at the records commit. See §9 of the reply for the
-figures; this section is filled from `gate/steps.txt`.
+[gate.json](gate.json), exits in [gate/](gate/) ([`scripts/gate.sh`](scripts/gate.sh),
+each exit in its own file, no pipe, logs under `private/pos/gate2/`), at
+`1cc4e643`:
+
+- submodule 0;
+- `run_test_binaries.py` 0: **342 units, 355 summaries; 6,149 passed, 0
+  failed, 11 ignored** (`private/test-binaries/20260928T040751Z-1878271/summary.json`);
+- `cargo clean --profile dev` 0, fmt 0, clippy 0;
+- `reevaluation_probe` 0 and `reevaluation_followup` 0;
+- `check_lean_audits.py` 0: **218** audits (+1);
+- `unittest discover -s scripts/tests` 0: **365** OK;
+- `build_docs_index.py --check` 0;
+- `clang --version` 0: 21.1.8, recorded in `gate/`.
+
+No `providers/` path is touched, so the provider gate does not apply.
+
+**Attempt 1** at `8d78f254` ([gate/attempt1/](gate/attempt1/)) failed only
+clippy: `collapsible_match` in the parity-only shape walker. `1cc4e643`
+rewrites that arm as a match guard, with the same answer. Every other step of
+attempt 1 exited 0 with the same counts. The measured step binaries were built
+at `f9c3fead`; `1cc4e643` changes only that parity-only arm.
 
 ## 7. Follow-ups
 
