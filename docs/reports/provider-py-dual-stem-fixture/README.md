@@ -99,13 +99,13 @@ changed. The core Rust gate was not run, because no non-test code outside
 
 | Command | Exit | Count |
 |---|---|---|
-| `python3 -m unittest discover -s providers/tests` | GATE_PU | GATE_PU_N |
-| `python3 providers/contracts.py check` | GATE_CC | — |
-| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | GATE_CT | GATE_CT_N |
-| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | GATE_FMT | — |
-| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | GATE_CLIPPY | — |
-| `python3 -m unittest discover -s scripts/tests` | GATE_SU | GATE_SU_N |
-| `python3 scripts/build_docs_index.py --check` | GATE_IDX | — |
+| `python3 -m unittest discover -s providers/tests` | 0 | 24 run, OK |
+| `python3 providers/contracts.py check` | 0 | — |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed, 0 failed, 1 ignored |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | — |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | — |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 run, OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | — |
 
 Base failure, for comparison: `providers/tests` ran 24 tests with 1 failure
 (exit 1).
