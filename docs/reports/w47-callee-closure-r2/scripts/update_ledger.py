@@ -7,7 +7,8 @@ Usage: update_ledger.py   (then regenerate with docs/reports/remaining-d02/build
   (W46-EXTERNAL-RESIDUAL-RANKING's 30 functions are measured again, unchanged);
 * amends four entries with this card's measured part, each by an appended
   sentence that starts with MARK (skipped when the marker is already present);
-* appends every entry of `followups.json` (refusing a duplicate id).
+* appends every entry of `followups.json` not yet registered by this card
+  (refusing an id another card registered).
 """
 import json
 import pathlib
@@ -53,9 +54,11 @@ def main() -> int:
     ids = [entry["id"] for entry in entries]
     before = len(entries)
     new = json.loads((REPORT / "followups.json").read_text(encoding="utf-8"))
+    mine = {entry["id"] for entry in entries if entry.get("recorded_by") == "W47-CALLEE-CLOSURE-R2"}
     for entry in new:
-        if entry["id"] in ids:
+        if entry["id"] in ids and entry["id"] not in mine:
             raise SystemExit(f"duplicate follow-up id {entry['id']}")
+    new = [entry for entry in new if entry["id"] not in mine]  # idempotent on this card's own entries
     missing = sorted(set(AMEND) - set(ids))
     if missing:
         raise SystemExit(f"not registered on this base: {missing}")

@@ -37,7 +37,7 @@ is amended; no new rule number is taken.
 - **Lean:** none, and no analyzer change. Both clauses are existing v1 modes
   (borrowed, derived interior result, owned nullable result).
 - **Slice:** off route (§5).
-- **Follow-ups 523 → 526:** three registered, four amended, none retired.
+- **Follow-ups 523 → 527:** four registered, four amended, none retired.
 
 ## 1. BEFORE and the post-merge identity
 
@@ -375,7 +375,9 @@ These are applied by [scripts/update_ledger.py](scripts/update_ledger.py) from
 - `W47-EXTERNAL-RESIDUAL-RANKING-R2`: 30 functions alone, 53 with one other
   blocker;
 - `W47-ARENA-INTERIOR-READING`;
-- `W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL`: 1 artifact leak.
+- `W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL`: 1 artifact leak;
+- `PROVIDER-PY-DUAL-STEM-FIXTURE-STALE`: a provider Python test that fails on
+  the base, found by this card's gate (§7).
 
 **Amended:**
 

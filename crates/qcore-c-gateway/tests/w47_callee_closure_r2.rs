@@ -55,7 +55,9 @@ char *rd_file_read(const char *file_path, size_t *size, size_t max_size);\n\
 
 fn section(text: &str, marker: &str) -> String {
     let text = normalize_newlines(text);
-    let start = text.find(marker).expect("the card's section is in the module");
+    let start = text
+        .find(marker)
+        .expect("the card's section is in the module");
     format!("module contract;\n{}", &text[start..])
 }
 
@@ -221,7 +223,10 @@ fn an_arena_allocation_dies_with_its_arena() {
         after.diagnostics
     );
     assert!(
-        count(&after, |kind| matches!(kind, LegacyDiagnosticKind::UseAfterRelease { .. })) >= 1,
+        count(&after, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UseAfterRelease { .. }
+        )) >= 1,
         "{:?}",
         after.diagnostics
     );
@@ -243,7 +248,12 @@ fn an_arena_allocation_dies_with_its_arena() {
         "void u(struct cfl_arena *arena) { char *p; p = cfl_arena_calloc(arena, 1, 8); free(p); }",
         "u",
     );
-    assert_ne!(freed.status, AnalysisStatus::Safe, "{:?}", freed.diagnostics);
+    assert_ne!(
+        freed.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        freed.diagnostics
+    );
 
     // Borrowing an owned arena releases nothing: the arena is still released
     // by its owner, here `free`, and without it the stand-in leaks.
@@ -251,9 +261,17 @@ fn an_arena_allocation_dies_with_its_arena() {
         "void u(void) { struct cfl_arena *m; m = malloc(64); if (!m) { return; } cfl_arena_calloc(m, 1, 8); }",
         "u",
     );
-    assert_eq!(leak.status, AnalysisStatus::Unsafe, "{:?}", leak.diagnostics);
     assert_eq!(
-        count(&leak, |kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        leak.status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        leak.diagnostics
+    );
+    assert_eq!(
+        count(&leak, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Leak { .. }
+        )),
         1,
         "{:?}",
         leak.diagnostics
@@ -277,7 +295,10 @@ fn a_file_buffer_is_owned_and_nullable() {
         dropped.diagnostics
     );
     assert_eq!(
-        count(&dropped, |kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        count(&dropped, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Leak { .. }
+        )),
         1,
         "{:?}",
         dropped.diagnostics
@@ -288,12 +309,22 @@ fn a_file_buffer_is_owned_and_nullable() {
         "void l(const char *p) { char *b; b = rd_file_read(p, NULL, 0); if (!b) { return; } free(b); free(b); }",
         "l",
     );
-    assert_ne!(twice.status, AnalysisStatus::Safe, "{:?}", twice.diagnostics);
+    assert_ne!(
+        twice.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        twice.diagnostics
+    );
 
     // The null path needs no release: an early return on NULL is Safe.
     let early = summary(
         "void l(const char *p) { char *b; b = rd_file_read(p, NULL, 0); if (!b) { return; } free(b); }",
         "l",
     );
-    assert_eq!(early.status, AnalysisStatus::Safe, "{:?}", early.diagnostics);
+    assert_eq!(
+        early.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        early.diagnostics
+    );
 }
