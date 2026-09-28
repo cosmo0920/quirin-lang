@@ -978,6 +978,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-lexical-closure-nested-assignment](w47-lexical-closure-nested-assignment/README.md) | W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT |
 
+| [w47-summary-validation-protected-formals](w47-summary-validation-protected-formals/README.md) | W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated on the premises its reported row reads (wave 47) |
+
 | [w47-typed-const-pointer-value](w47-typed-const-pointer-value/README.md) | W47-TYPED-CONST-POINTER-VALUE |
 
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |

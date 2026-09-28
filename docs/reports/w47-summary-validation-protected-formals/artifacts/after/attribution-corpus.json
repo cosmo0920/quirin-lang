@@ -1,0 +1,438 @@
+{
+ "causes": {
+  "caller": 7,
+  "withdrawn": 8
+ },
+ "changed_rows": [
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     3
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_cert.c",
+   "function": "rd_kafka_conf_ssl_passwd_cb",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     2
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_copy",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `prop`",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `src`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `confhdr`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_is_modified",
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_warn_deprecated",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_anyconf_is_modified`",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_is_modified",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_anyconf_is_modified`",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_topic_conf_is_modified",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_broker_cmp",
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_broker_internal_cmp",
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_partition_internal_cmp",
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `a`",
+     2
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `b`",
+     2
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_cmp",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_topic_partition_cmp`",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "correction": true,
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_cmp_opaque",
+   "removed": [],
+   "status": [
+    "Safe",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktpar`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_not_regex",
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `c`",
+     1
+    ]
+   ],
+   "cause": "withdrawn",
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "check_oauthbearer_extension_value",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  {
+   "added": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_set_token0",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `token_value`",
+     1
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  }
+ ],
+ "diagnostic_counts_after": {
+  "leak": 36,
+  "summary_conflict": 1,
+  "unknown_alias": 7936,
+  "unsupported": 35737
+ },
+ "diagnostic_counts_before": {
+  "leak": 36,
+  "summary_conflict": 1,
+  "unknown_alias": 7927,
+  "unsupported": 35741
+ },
+ "functions_after": {
+  "Safe": 526,
+  "Unknown": 4298,
+  "Unsafe": 10
+ },
+ "functions_before": {
+  "Safe": 527,
+  "Unknown": 4297,
+  "Unsafe": 10
+ },
+ "status_moves": [
+  {
+   "added": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_topic_partition_cmp`",
+     1
+    ]
+   ],
+   "cause": "caller",
+   "correction": true,
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_cmp_opaque",
+   "removed": [],
+   "status": [
+    "Safe",
+    "Unknown"
+   ]
+  }
+ ],
+ "unit_moves": {},
+ "units_after": {
+  "Safe": 6,
+  "Unknown": 167,
+  "Unsafe": 8,
+  "data_only": 4
+ },
+ "units_before": {
+  "Safe": 6,
+  "Unknown": 167,
+  "Unsafe": 8,
+  "data_only": 4
+ }
+}

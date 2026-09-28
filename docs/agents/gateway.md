@@ -74,6 +74,52 @@ which is not a second authority.
     unit, the refusing direction. `QCore.CalleeSummaryScope`;
     [the card report](../reports/w44-corpus-callee-summaries/README.md).
 
+<a id="constraint-4b"></a>
+
+4b. **A W4 summary is validated on the premises its function's reported row
+    reads.** Amends rule 4 (card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS,
+    `legacy_summary_premises.rs`, hooks in `legacy_summary.rs`,
+    `legacy_derived_summary.rs`, `legacy_recursion.rs` and `legacy_c.rs`).
+    Every W4 route infers on a CFG built in the environment of the moment,
+    which does not yet hold the candidate, while the reported run builds the
+    body with the candidate in force. The body's construction reads the
+    function's own contract in two places: the protected formals (every formal
+    it does not declare `Borrowed`) and the descriptor names. The protected set
+    seeds every typed-root premise, which are rule 10o's never-bound closure,
+    `may_bind`, the declared locals and rule 10l's AST closure. A copy
+    `const T *a = _a;` of a formal the candidate seeds was therefore a
+    never-bound root in validation and a bound one in the reported row, and a
+    caller certified on a summary whose own row refused
+    (`rd_kafka_topic_partition_cmp_opaque`).
+
+    A candidate the environment does not already govern is now re-checked by
+    the unchanged `observations_match_contract` gate. The check runs on the CFG
+    built with the candidate read as the function's own contract, and a
+    candidate that refuses there publishes nothing. This applies to the
+    live-entry, removed-wrapper and derived-result routes. The contextual route
+    rebuilds both context CFGs and stores the rebuilt combination, which is
+    what its reported run reads. Only those two readings change: a call to the
+    function inside its own body still resolves through the environment, so no
+    recursive assumption enters (rule 4). An all-`Borrowed` candidate reads
+    nothing new. A declared function was already validated under its
+    declaration's protection. Inferred contracts are heap-kinded, so the
+    descriptor reading adds no name. The counted-user check runs after the
+    reported analysis and reads declared clauses only. The re-check writes no
+    parity rows; its decisions are recorded as `position: "summary-premises"`
+    beside the call graph (`"summary-premises-graph"`).
+
+    **Do not** validate a candidate on premises its reported row does not read.
+    **Do not** answer the gap by weakening the reported run's protection.
+    **Do not** install the candidate in the environment for the re-check,
+    because that would resolve a recursive call through it.
+
+    Measured: 8 corpus summaries withdrawn, all Unknown rows, and one Safe
+    correction, `rd_kafka_topic_partition_cmp_opaque`. The system slice does
+    not move. Premises stated, not proved: that the Rust construction reads
+    the own contract nowhere else (trust boundary 28).
+    `QCore.SummaryValidationPremises`;
+    [report](../reports/w47-summary-validation-protected-formals/README.md).
+
 <a id="constraint-5"></a>
 
 <!-- preserved:constraint-5:start -->

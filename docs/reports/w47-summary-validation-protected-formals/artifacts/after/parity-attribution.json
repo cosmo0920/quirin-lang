@@ -1,0 +1,58 @@
+{
+ "added_by_function": {
+  "check_oauthbearer_extension_value": 6,
+  "rd_kafka_anyconf_copy": 4,
+  "rd_kafka_anyconf_dump": 3,
+  "rd_kafka_anyconf_is_modified": 5,
+  "rd_kafka_anyconf_warn_deprecated": 3,
+  "rd_kafka_conf_is_modified": 3,
+  "rd_kafka_conf_ssl_passwd_cb": 12,
+  "rd_kafka_metadata_broker_cmp": 4,
+  "rd_kafka_metadata_broker_internal_cmp": 4,
+  "rd_kafka_metadata_partition_internal_cmp": 4,
+  "rd_kafka_oauthbearer_set_token0": 3,
+  "rd_kafka_topic_conf_is_modified": 3,
+  "rd_kafka_topic_partition_cmp": 8,
+  "rd_kafka_topic_partition_cmp_opaque": 3,
+  "rd_kafka_topic_partition_not_regex": 4
+ },
+ "callers_differing": [
+  "rd_kafka_anyconf_copy",
+  "rd_kafka_anyconf_dump",
+  "rd_kafka_anyconf_warn_deprecated",
+  "rd_kafka_conf_is_modified",
+  "rd_kafka_oauthbearer_set_token0",
+  "rd_kafka_topic_conf_is_modified",
+  "rd_kafka_topic_partition_cmp_opaque"
+ ],
+ "outside_attribution": [],
+ "removed_by_function": {
+  "check_oauthbearer_extension_value": 1,
+  "rd_kafka_anyconf_copy": 8,
+  "rd_kafka_anyconf_dump": 3,
+  "rd_kafka_anyconf_is_modified": 3,
+  "rd_kafka_anyconf_warn_deprecated": 3,
+  "rd_kafka_conf_is_modified": 3,
+  "rd_kafka_conf_ssl_passwd_cb": 7,
+  "rd_kafka_metadata_broker_cmp": 3,
+  "rd_kafka_metadata_broker_internal_cmp": 3,
+  "rd_kafka_metadata_partition_internal_cmp": 3,
+  "rd_kafka_oauthbearer_set_token0": 3,
+  "rd_kafka_topic_conf_is_modified": 3,
+  "rd_kafka_topic_partition_cmp": 7,
+  "rd_kafka_topic_partition_cmp_opaque": 2,
+  "rd_kafka_topic_partition_not_regex": 3
+ },
+ "rows_added": 69,
+ "rows_removed": 55,
+ "withdrawn_functions_differing": [
+  "check_oauthbearer_extension_value",
+  "rd_kafka_anyconf_is_modified",
+  "rd_kafka_conf_ssl_passwd_cb",
+  "rd_kafka_metadata_broker_cmp",
+  "rd_kafka_metadata_broker_internal_cmp",
+  "rd_kafka_metadata_partition_internal_cmp",
+  "rd_kafka_topic_partition_cmp",
+  "rd_kafka_topic_partition_not_regex"
+ ]
+}

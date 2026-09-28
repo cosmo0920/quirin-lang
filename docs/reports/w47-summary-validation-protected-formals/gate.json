@@ -1,0 +1,13 @@
+{
+  "note": "W47-SUMMARY-VALIDATION-PROTECTED-FORMALS card gate. Rust and Lean steps ran on the code at 0664bede (later commits change docs, report artifacts, the ledger, the regenerated matrix and index only); the Python suite and docs-index check ran after the matrix and index regeneration at the recorded head. run_test_binaries.py: 345 units, 358 summaries, 6,177 passed, 0 failed, 11 ignored (private/test-binaries/20260928T052333Z-2481390/summary.json). check_lean_audits.py: 221 audits passed. No providers/ path is touched, so the provider gate is not run; provider_tests (129) is carried from the preceding matrix, not measured here. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/w47-sv/gate-1/ and gate-2/ of this worktree.",
+  "workspace_tests": 6177,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 221,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

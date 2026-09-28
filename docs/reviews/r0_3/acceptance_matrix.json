@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 538
+  "named_followups": 537
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6738,11 +6738,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for wave-47 round 2b (integrate/w47-r2b: main 2a0d37b0 + merge 2bf8b732 [W47-ACCESS-PATH-POSITION-RESIDUALS] + ledger 9135e7a1 + one re-pin), measured by the integrator in its own worktree; every exit captured to a file. Full gate at 9135e7a1 (private/w47-int-f/gate-9135e7a1): every step 0 except run_test_binaries.py, whose single failure was container_root_reach::a_member_of_a_static_record_now_reaches_the_container_rule (the card pinned Safe; the merged tree gives Unknown because rule 10o binds the address-taken root). The pin was restored to main's Unknown with nothing accused; full rerun on it: 344 units, 357 summaries, 6,172 passed / 0 failed / 11 ignored; fmt and clippy 0. Provider Rust 129 passed / 0 failed / 1 ignored; providers/tests 24 OK; 220 Lean audits; 365 root Python tests; contracts check, five package build/verify, reevaluation probe and followup, docs index: 0. Release build, corpus arbiter and system slice: 0 (the re-pin does not touch the analyzer). compose3.py (base = round-1 integration, A = round-2a integration = main, B = the card's AFTER): system COMPOSES; corpus 527 / 10 / 4,297 vs 528 additive: one of the card's gains (rd_kafka_toppar_needs_query) held back and 33 Unknown functions keep refusals the card alone removed, all in the stricter direction; no Safe of main lost, no Unsafe or leak added (integration-confirmation.md).",
-  "workspace_tests": 6172,
+  "note": "W47-SUMMARY-VALIDATION-PROTECTED-FORMALS card gate. Rust and Lean steps ran on the code at 0664bede (later commits change docs, report artifacts, the ledger, the regenerated matrix and index only); the Python suite and docs-index check ran after the matrix and index regeneration at the recorded head. run_test_binaries.py: 345 units, 358 summaries, 6,177 passed, 0 failed, 11 ignored (private/test-binaries/20260928T052333Z-2481390/summary.json). check_lean_audits.py: 221 audits passed. No providers/ path is touched, so the provider gate is not run; provider_tests (129) is carried from the preceding matrix, not measured here. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/w47-sv/gate-1/ and gate-2/ of this worktree.",
+  "workspace_tests": 6177,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 220,
+  "lean_audits": 221,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6941,6 +6941,7 @@
    "AuditStringSliceIo.lean",
    "AuditSubObjectStore.lean",
    "AuditSubcommandPlugins.lean",
+   "AuditSummaryValidationPremises.lean",
    "AuditSymbolicClassAdmission.lean",
    "AuditTaskExecution.lean",
    "AuditTaskTraceLeaseBoundary.lean",
@@ -6971,7 +6972,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w47-access-path-position-residuals/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w47-summary-validation-protected-formals/gate.json)"
  },
  "named_followups": [
   {
@@ -10651,13 +10652,6 @@
    "why": "User decision 2026-09-28. libcurl has no audited source in the checkout to pin (W46-EXTERNAL-RESIDUAL-RANKING: curl_global_init blocks a function alone). Build a quirin-audit-plugin-libcurl crate on the SDK (model: crates/quirin-audit-plugin-libevent) that prepares a pinned libcurl source revision, carries libcurl's own contracts and checks them with its own checker/proof system, answering per binding with a verdict, reasons and evidence. Composition: the plugin's per-binding verdict and reasons enter the host only through the plugin firewall (rule 10h) and the reasoned-verdict join (C11.1, QCore.VerdictSemigroup), never lowering a host verdict and never erasing a plugin verdict or reason; until a trusted checker for the plugin's certificates exists (W45-SUBCOMMAND-CERTIFICATE-ROUTE, W45-PLUGIN-CERTIFICATE-CHECKER) an uncertified plugin Safe or Unsafe is published as Pending, which is not Safe. Fail-closed: spawn failure, timeout, quota breach, version or pin mismatch make the binding Unknown. DISCHARGE: the plugin, its pinned preparation, contracts for the ranked callees (curl_global_init first), Rust tests and audited Lean for the plugin-specific premises, the provider/plugin gate, and a measured corpus/system arbiter attributing every move.",
    "source": "docs/reports/w47-callee-closure-r2/README.md",
    "recorded_by": "INTEGRATOR (user decision on W47-CALLEE-CLOSURE-R2)"
-  },
-  {
-   "id": "W47-SUMMARY-VALIDATION-PROTECTED-FORMALS",
-   "title": "A derived custody summary is validated under typed-root premises the function's reported row does not grant",
-   "why": "Measured by W47-TYPED-CONST-POINTER-VALUE (docs/reports/w47-typed-const-pointer-value/README.md, 'The two cascades'). W4 derives and validates a summary (legacy_summary::infer_cfg_summary) on a CFG built in an environment that does not yet hold the function's own contract, so protected_resource_formals protects none of its formals even though the validation run seeds the unresolved ones as entry-bound Owned resources. The typed reader's never-bound closure therefore treats a copy of such a formal (`const T *a = _a;`) as a root the body never binds, and the typed reads rooted there are admitted in the validation run. The reported run analyses the same body with the derived contract in force: the formals are protected, the copies are bound, and the same reads refuse. Instance: rd_kafka_topic_partition_cmp stays Unknown (IND at 21963, RET at 21967, unknown_alias _a/_b) while its summary (Owned, Owned, result none; reproduced in a fixture) validates, and rd_kafka_topic_partition_cmp_opaque moves Unknown -> Safe on it at this card's step 1. The summary is custody-correct for that body (it only reads), and every per-hop base obligation is still checked in the validation run; what differs is rule 5b's premise that a never-bound root reaches no tracked place, which is false there for a copy of an entry-seeded formal. The extent across the corpus (Safe functions whose same-unit callee has a validated summary but an Unknown row) is not measured. DISCHARGE: validation reads the typed-root premises with the same protected-formal set the reported run uses (or seeds a formal it binds as protected), with audited Lean and a measured corpus/system re-pin naming every Safe that moves; or a recorded decision, with the measured extent, that the validation run's premise is sufficient for the summary's claim.",
-   "source": "docs/reports/w47-typed-const-pointer-value/README.md",
-   "recorded_by": "W47-TYPED-CONST-POINTER-VALUE"
   },
   {
    "id": "W47-JOIN-AST-CONSERVATIVE-CLASSES",

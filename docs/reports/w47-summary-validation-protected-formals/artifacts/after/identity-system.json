@@ -1,0 +1,16 @@
+{
+  "verdict_bearing_identical": false,
+  "artifacts": {
+    "console.log": "differs",
+    "exit": "identical",
+    "parity.jsonl": "identical-sorted",
+    "parity.jsonl.contexts.jsonl": "identical-sorted",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.contracts.json": "differs",
+    "resource-diagnostics.invocation.json": "differs",
+    "resource-diagnostics.json": "differs",
+    "resource-diagnostics.source-effects.json": "identical",
+    "run.json": "differs",
+    "stderr.log": "identical"
+  }
+}
