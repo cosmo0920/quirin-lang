@@ -327,12 +327,14 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
     assert!(keys.contains(&GATE.to_owned()), "{keys:?}");
 }
 
-/// `W47-TYPED-ROOT-DECLARATION-READER`: the pointer-return premise reads the
-/// lexical declaration reader. A typedef redeclared as C11 permits (librdkafka
-/// declares `rd_kafka_Node_t` in `rdkafka.h` and again with its body in
-/// `rdkafka_aux.h`) leaves the reader without an answer, so the same getter
-/// certifies with one declaration and keeps its refusal with two. Recorded as
-/// a residual, never relaxed.
+/// A typedef redeclared as C11 permits (librdkafka declares `rd_kafka_Node_t`
+/// in `rdkafka.h` and again with its body in `rdkafka_aux.h`): with one
+/// declaration an older lexical route admits the getter; with two it falls
+/// to the typed reader, which refuses `node->host` because through a `const`
+/// pointee it is a `char *const` value, not because of a declaration premise
+/// (W47-TYPED-ROOT-DECLARATION-READER measured the premise granted; see
+/// `typed_root_declarations.rs`'s `the_redeclared_typedef_control_refuses_for_its_const_pointee`,
+/// and `W47-TYPED-CONST-POINTER-VALUE`). Never relaxed here.
 #[test]
 fn a_redeclared_typedef_formal_keeps_the_pointer_return_refusal() {
     if !clang_available() {

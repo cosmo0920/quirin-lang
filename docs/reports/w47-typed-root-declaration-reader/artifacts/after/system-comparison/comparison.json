@@ -1,0 +1,64 @@
+{
+ "after_parity_rows": 23484,
+ "after_position_rows": {
+  "call-argument|call-argument-access|False": 1458,
+  "call-argument|call-argument-access|True": 964,
+  "call-argument|old_refusal|False": 2578,
+  "call-argument|old_refusal|True": 630,
+  "condition|condition-access|False": 272,
+  "condition|condition-access|True": 4844,
+  "condition|old_refusal|False": 512,
+  "condition|old_refusal|True": 1422,
+  "return|old_refusal|False": 70,
+  "return|return-family|False": 18,
+  "return|return-family|True": 28,
+  "root-declarations|None|False": 4490
+ },
+ "before_parity_rows": 18994,
+ "changed_functions": 0,
+ "functions": {
+  "after": {
+   "Safe": 63,
+   "Unknown": 381,
+   "Unsafe": 4
+  },
+  "before": {
+   "Safe": 63,
+   "Unknown": 381,
+   "Unsafe": 4
+  }
+ },
+ "leaf_attribution": {},
+ "leaf_families": {
+  "after": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported:COND": 418,
+   "unsupported:IND": 1348,
+   "unsupported:OTHER": 418,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 715
+  },
+  "before": {
+   "counted_user": 4,
+   "unknown_alias": 985,
+   "unsupported:COND": 418,
+   "unsupported:IND": 1348,
+   "unsupported:OTHER": 418,
+   "unsupported:RET": 9,
+   "unsupported:UNC": 715
+  }
+ },
+ "move_counts": {},
+ "moves": [],
+ "units": {
+  "after": {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  "before": {
+   "Unknown": 13,
+   "Unsafe": 2
+  }
+ }
+}

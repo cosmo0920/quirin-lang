@@ -1,0 +1,769 @@
+{
+ "records": 7063,
+ "kinds": {
+  "ast-binds-lexical-never-bound": {
+   "not-answered": 111,
+   "custody-actual": 17,
+   "assignment:address:nested": 295,
+   "assignment:call:nested": 119,
+   "sub-object-store": 82,
+   "assignment:bound-name:statement": 8,
+   "assignment:bound-name:nested": 120,
+   "assignment:bound-name:initialiser": 177,
+   "assignment:undeclared-name:statement": 1,
+   "assignment:undeclared-name:initialiser": 4,
+   "assignment:statement-expression:statement": 178,
+   "address": 2,
+   "compound-assignment": 2,
+   "assignment:address:initialiser": 1,
+   "assignment:statement-expression:initialiser": 1
+  },
+  "ast-declared-only": {
+   "protected-formal": 210,
+   "custody-actual": 1553,
+   "assignment:call:statement": 303,
+   "assignment:bound-name:initialiser": 129,
+   "increment": 121,
+   "assignment:call:initialiser": 144,
+   "address": 69,
+   "assignment:address:statement": 34,
+   "none": 163,
+   "assignment:address:nested": 78,
+   "assignment:call:nested": 80,
+   "assignment:address:initialiser": 61,
+   "assignment:bound-name:nested": 51,
+   "assignment:bound-name:statement": 60,
+   "compound-assignment": 23,
+   "assignment:undeclared-name:initialiser": 3,
+   "assignment:statement-expression:statement": 5
+  },
+  "ast-may-bind-only": {
+   "not-answered": 48,
+   "sub-object-store": 47,
+   "assignment:bound-name:nested": 40,
+   "none": 15,
+   "assignment:address:nested": 23,
+   "custody-actual": 2,
+   "assignment:address:initialiser": 1
+  },
+  "lexical-binds-ast-never-bound": {
+   "none": 449
+  },
+  "lexical-declared-only": {
+   "custody-actual": 978,
+   "sub-object-store": 101,
+   "assignment:address:initialiser": 88,
+   "address": 124,
+   "none": 37,
+   "assignment:call:initialiser": 12,
+   "not-answered": 25,
+   "assignment:call:statement": 2,
+   "assignment:bound-name:initialiser": 12,
+   "increment": 18,
+   "assignment:call:nested": 2,
+   "protected-formal": 4,
+   "compound-assignment": 3,
+   "assignment:bound-name:statement": 4,
+   "assignment:bound-name:nested": 1
+  },
+  "lexical-may-bind-only": {
+   "none": 768
+  }
+ },
+ "ast_binds_lexical_never_bound_exposure": {
+  "address": {
+   "not a typed-row root": 1,
+   "root of an admitted typed row": 1
+  },
+  "assignment:address:initialiser": {
+   "root of an admitted typed row": 1
+  },
+  "assignment:address:nested": {
+   "root of an admitted typed row": 53,
+   "not a typed-row root": 242
+  },
+  "assignment:bound-name:initialiser": {
+   "not a typed-row root": 177
+  },
+  "assignment:bound-name:nested": {
+   "not a typed-row root": 119,
+   "root of an admitted typed row": 1
+  },
+  "assignment:bound-name:statement": {
+   "not a typed-row root": 7,
+   "root of an admitted typed row": 1
+  },
+  "assignment:call:nested": {
+   "root of an admitted typed row": 33,
+   "not a typed-row root": 86
+  },
+  "assignment:statement-expression:initialiser": {
+   "not a typed-row root": 1
+  },
+  "assignment:statement-expression:statement": {
+   "not a typed-row root": 134,
+   "root of an admitted typed row": 44
+  },
+  "assignment:undeclared-name:initialiser": {
+   "not a typed-row root": 4
+  },
+  "assignment:undeclared-name:statement": {
+   "not a typed-row root": 1
+  },
+  "compound-assignment": {
+   "root of an admitted typed row": 2
+  },
+  "custody-actual": {
+   "not a typed-row root": 16,
+   "root of an admitted typed row": 1
+  },
+  "not-answered": {
+   "root of an admitted typed row": 45,
+   "not a typed-row root": 66
+  },
+  "sub-object-store": {
+   "not a typed-row root": 78,
+   "root of an admitted typed row": 4
+  }
+ },
+ "examples": {
+  "ast-binds-lexical-never-bound": {
+   "not-answered": [
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:ret",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:ret",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:ret",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:ret",
+    "rd_kafka_AclOperation_name:names",
+    "rd_kafka_AclPermissionType_name:names",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:ret"
+   ],
+   "custody-actual": [
+    "rd_kafka_AddOffsetsToTxnRequest:pid",
+    "rd_kafka_AddPartitionsToTxnRequest:pid",
+    "rd_kafka_EndTxnRequest:pid",
+    "rd_kafka_handle_idempotent_Produce_error:last_err",
+    "rd_kafka_fetch_pos2str:fetchpos",
+    "rd_kafka_topic_partition_list_query_leaders_async:replyq",
+    "rd_kafka_topic_partition_set_from_fetch_pos:fetchpos",
+    "rd_kafka_toppar_offset_fetch:replyq",
+    "LZ4F_calloc:cmem",
+    "LZ4F_free:cmem",
+    "LZ4F_malloc:cmem",
+    "rd_kafka_offset_store0:pos"
+   ],
+   "assignment:address:nested": [
+    "rd_kafka_dump0:rkt",
+    "rd_kafka_q_enq0:_tmp",
+    "rd_kafka_q_concat0:_tmp",
+    "rd_kafka_q_concat0:rko",
+    "rd_kafka_q_concat0:_tmp",
+    "rd_kafka_q_concat0:rko",
+    "rd_kafka_q_enq0:_tmp",
+    "rd_kafka_q_enq0:_tmp",
+    "rd_kafka_broker_trigger_monitors:rkbmon",
+    "rd_kafka_q_enq0:_tmp",
+    "rd_kafka_broker_buf_enq0:prev",
+    "rd_kafka_q_enq0:_tmp"
+   ],
+   "assignment:call:nested": [
+    "rd_kafka_dump0:rktp",
+    "rd_kafka_q_len:fwdq",
+    "rd_kafka_AlterConfigsRequest:entry",
+    "rd_kafka_CreatePartitionsRequest:newp",
+    "rd_kafka_CreateTopicsRequest:entry",
+    "rd_kafka_CreateTopicsRequest:newt",
+    "rd_kafka_DeleteGroupsRequest:delt",
+    "rd_kafka_DeleteTopicsRequest:delt",
+    "rd_kafka_DescribeConfigsRequest:entry",
+    "rd_kafka_ConfigResource_get_single_broker_id:config",
+    "rd_kafka_IncrementalAlterConfigsRequest:entry",
+    "rd_kafka_cgrp_update_subscribed_topics:tinfo"
+   ],
+   "sub-object-store": [
+    "rd_kafka_replyq_make:replyq",
+    "rd_kafka_replyq_make:replyq",
+    "rd_kafka_replyq_make:replyq",
+    "rd_kafka_Uuid_base64str:input_uuid",
+    "rd_kafka_ListOffsetRequest_parameters_make:params",
+    "rd_kafka_replyq_make:replyq",
+    "rd_kafka_Uuid_random:ret",
+    "rd_kafka_Uuid_str:bytes",
+    "rd_kafka_replyq_make:replyq",
+    "rd_kafka_mock_handle_ShareAcknowledge:node_endpoints",
+    "rd_kafka_topic_partition_list_str:errstr",
+    "rd_kafka_topic_partition_list_str:offsetstr"
+   ],
+   "assignment:bound-name:statement": [
+    "rd_kafka_Uuid_base64str:uuid_bytes",
+    "rd_kafka_broker_buf_enq0:after",
+    "flb_task_get_route_status:result",
+    "mk_http_index_lookup:len",
+    "count_metrics:map",
+    "ctr_encode_msgpack_create:resource",
+    "format_attributes:v",
+    "cio_memfs_scan_dump:mf"
+   ],
+   "assignment:bound-name:nested": [
+    "rd_kafka_broker_bufq_purge_by_toppar:tmp",
+    "rd_kafka_broker_bufq_timeout_scan:tmp",
+    "rd_kafka_committed:err",
+    "rd_kafka_committed:rkcg",
+    "rd_kafka_broker_consumer_toppars_serve:rktp_tmp",
+    "rd_kafka_member_partitions_intersect:a_v",
+    "rd_kafka_member_partitions_subtract:a_v",
+    "rd_kafka_cooperative_protocol_adjust_assignment:pmi",
+    "rd_kafka_cooperative_protocol_adjust_assignment:toppar",
+    "rd_kafka_destroy_internal:rkt_tmp",
+    "balance:ignore",
+    "sortPartitions:consumers"
+   ],
+   "assignment:bound-name:initialiser": [
+    "rd_kafka_topic_partition_get_fetch_pos:fetchpos",
+    "rd_kafka_topic_partition_get_fetch_pos:fetchpos",
+    "rd_kafka_topic_partition_get_fetch_pos:fetchpos",
+    "toppar_sort_by_list_cnt:bl",
+    "rd_kafka_topic_partition_get_fetch_pos:fetchpos",
+    "cfl_variant_kvlist_to_otlp_any_value:__mptr",
+    "cfl_variant_kvlist_to_otlp_any_value:__mptr",
+    "flb_input_chunk_destroy:__mptr",
+    "cfl_kvlist_to_otlp_kvpair_list:__mptr",
+    "flb_input_chunk_update_output_instances:__mptr",
+    "flb_input_chunk_destroy_corrupted:__mptr",
+    "flb_task_get_route_data:__mptr"
+   ],
+   "assignment:undeclared-name:statement": [
+    "rd_kafka_global_cnt_get:r"
+   ],
+   "assignment:undeclared-name:initialiser": [
+    "rd_kafka_consumer_group_metadata_read:magic_len",
+    "rd_kafka_consumer_group_metadata_write:magic_len",
+    "ut_get_consumer_rack:cycle_size",
+    "LZ4F_compressFrameBound:headerSize"
+   ],
+   "assignment:statement-expression:statement": [
+    "cfl_variant_kvlist_to_otlp_any_value:kvpair",
+    "append_sample_to_metric:label_value",
+    "append_sample_to_metric:static_label",
+    "flb_task_get_route_data:route",
+    "flb_task_get_route_status:route",
+    "flb_task_set_route_status:route",
+    "flb_input_chunk_has_other_routes:candidate",
+    "flb_input_chunk_has_overlimit_routes:o_ins",
+    "get_metric_count:counter",
+    "get_metric_count:exp_histogram",
+    "get_metric_count:gauge",
+    "get_metric_count:histogram"
+   ],
+   "address": [
+    "rd_kafka_produce_batch:tmpq",
+    "rd_kafka_features2str:ret"
+   ],
+   "compound-assignment": [
+    "pb_decode_inner:fields_seen",
+    "pb_decode_inner:fields_seen"
+   ],
+   "assignment:address:initialiser": [
+    "rd_kafka_conf_set_ssl_cert:cert_map"
+   ],
+   "assignment:statement-expression:initialiser": [
+    "mk_mimetype_lookup:entry"
+   ]
+  },
+  "ast-declared-only": {
+   "protected-formal": [
+    "PartitionMemberInfo_free:pmi",
+    "rd_kafka_ConsumerGroupHeartbeatRequest:subscribed_topic_regex_to_send",
+    "rd_kafka_JoinGroupRequest:member_metadata",
+    "rd_kafka_ListGroups_resp_cb:grps",
+    "rd_kafka_ListOffsetRequest_parameters_destroy_free:parameters",
+    "rd_kafka_PushTelemetryRequest:metric_bytes",
+    "rd_kafka_cooperative_protocol_adjust_assignment:assigned",
+    "rd_kafka_cooperative_protocol_adjust_assignment:maybe_revoking",
+    "rd_kafka_cooperative_protocol_adjust_assignment:owned",
+    "rd_kafka_cooperative_protocol_adjust_assignment:ready_to_migrate",
+    "rd_kafka_cooperative_protocol_adjust_assignment:unknown_but_owned",
+    "rd_kafka_cgrp_handle_assignment_cooperative:new_assignment_set"
+   ],
+   "custody-actual": [
+    "rd_calloc:p",
+    "rd_calloc:p",
+    "rd_calloc:p",
+    "rd_calloc:p",
+    "rd_kafka_buf_write_uvarint:sz",
+    "rd_kafka_cgrp_metadata_refresh:err",
+    "rd_kafka_cgrp_owned_but_not_exist_partitions:result",
+    "rd_buf_write_pos:seg",
+    "rd_calloc:p",
+    "rd_kafka_buf_finalize_arraycnt:r",
+    "rd_kafka_buf_finalize_arraycnt:sz",
+    "rd_malloc:p"
+   ],
+   "assignment:call:statement": [
+    "PartitionMemberInfo_new:pmi",
+    "rd_kafkap_str_new:kstr",
+    "rd_kafkap_str_new:kstr",
+    "rd_kafka_ListOffsetsRequest_admin:err",
+    "rd_kafka_propagate_consumer_topic_errors:prev",
+    "rd_kafka_broker_bufq_timeout_scan:post_state",
+    "rd_kafka_broker_bufq_timeout_scan:pre_state",
+    "rd_kafkap_bytes_new:kbytes",
+    "rd_kafka_poll_cb:res",
+    "rd_kafka_consume0:rkmessage",
+    "rd_kafka_consume:rkmessage",
+    "rd_kafkap_bytes_new:kbytes"
+   ],
+   "assignment:bound-name:initialiser": [
+    "rd_kafka_dump0:rkcg",
+    "rd_kafka_collect_partitions:toppars",
+    "rd_kafka_member_partitions_intersect:b_v",
+    "rd_kafka_member_partitions_subtract:b_v",
+    "rd_kafka_share_log_fetch_stall:rkcg",
+    "rd_kafka_stats_emit_all:rkcg",
+    "rd_kafka_err_action:exp_err",
+    "rd_kafka_mock_Fetch_reply_tags_write:changed_leader",
+    "rd_kafka_mock_Produce_reply_tags_write:changed_leader",
+    "rd_kafka_anyconf_get0:kstr",
+    "rd_kafka_anyconf_copy:kstr",
+    "consumerCanParticipateInReassignment:currentPartitions"
+   ],
+   "increment": [
+    "rd_kafka_cgrp_owned_but_not_exist_partitions:curr",
+    "rd_kafka_cgrp_group_assignment_modify:rktpar",
+    "rd_kafka_cgrp_calculate_subscribe_revoking_partitions:assigned",
+    "rd_kafka_cgrp_calculate_subscribe_revoking_partitions:rktpar",
+    "rd_kafka_toppar_list_to_toppar_member_info_map:rktpar",
+    "rd_kafka_toppar_list_to_toppar_member_info_map_by_id:rktpar",
+    "rd_kafka_AuthorizedOperations_parse:i",
+    "rd_kafka_handle_OffsetCommit:partition",
+    "rd_kafka_get_offsets_for_times_resp_cb:rktpar",
+    "rd_kafka_brokers_add0:sinx",
+    "rd_kafka_handle_Produce_parse:i",
+    "rd_kafka_seek_partitions:rktpar"
+   ],
+   "assignment:call:initialiser": [
+    "rd_memdup:dst",
+    "rd_kafka_enq_once_new:eonce",
+    "rd_kafka_Uuid_new:uuid",
+    "rd_kafka_ListOffsetRequest_parameters_new:params",
+    "rd_kafka_Uuid_copy:copy_uuid",
+    "rd_kafka_collect_partitions:collected",
+    "rd_kafka_collect_partitions:pmi",
+    "rd_kafka_collect_partitions:rktpar",
+    "rd_kafka_member_partitions_intersect:intersection",
+    "rd_kafka_member_partitions_subtract:difference",
+    "rd_kafka_toppar_list_to_toppar_member_info_map:map",
+    "rd_kafka_toppar_list_to_toppar_member_info_map_by_id:map"
+   ],
+   "address": [
+    "rd_kafka_DescribeGroups_resp_cb:ErrorCode",
+    "rd_kafka_DescribeGroups_resp_cb:MemberCnt",
+    "rd_kafka_DescribeGroups_resp_cb:cnt",
+    "rd_kafka_handle_Produce_parse:BatchIndex",
+    "rd_kafka_handle_Produce_parse:PartitionArrayCnt",
+    "rd_kafka_handle_Produce_parse:RecordErrorsCnt",
+    "rd_kafka_handle_Produce_parse:Throttle_Time",
+    "rd_kafka_handle_Produce_parse:TopicArrayCnt",
+    "rd_kafka_handle_Produce_parse:_slen",
+    "rd_kafka_handle_Produce_parse:log_start_offset",
+    "setupRackAwareAssignment0:metadata_local",
+    "ut_testAddRemoveConsumerOneTopic:metadata"
+   ],
+   "assignment:address:statement": [
+    "rd_kafka_DescribeGroups_resp_cb:gi",
+    "rd_kafka_DescribeGroups_resp_cb:mi",
+    "rd_kafka_msgq_purge:next",
+    "rd_kafka_toppar_producer_serve:rkm",
+    "rd_kafka_handle_Produce_metadata_update:Partition",
+    "rd_kafka_handle_Produce_metadata_update:md",
+    "PartitionMovements_addPartitionMovementRecord:partitionMovementsForThisTopic",
+    "PartitionMovements_getTheActualPartitionToBeMoved:cpair",
+    "PartitionMovements_getTheActualPartitionToBeMoved:partitionMovementsForThisTopic",
+    "PartitionMovements_removeMovementRecordOfPartition:partitionMovementsForThisTopic",
+    "rd_kafka_ShareAcknowledgeRequest:topic_id_last",
+    "rd_kafka_ShareFetchRequest:topic_id_last"
+   ],
+   "none": [
+    "rd_kafka_DescribeGroups_resp_cb:state",
+    "rd_kafka_make_ListOffsetsRequest:parameters",
+    "rd_kafka_make_ListOffsetsRequest:partitions",
+    "rd_kafka_broker_get_state:state",
+    "rd_kafka_topic_get_error:err",
+    "rd_kafka_memberid:rkcg",
+    "rd_tmpabuf_alloc0:ptr",
+    "rd_kafka_poll_set_consumer:rkcg",
+    "rd_kafka_share_commit_sync_fanout_op:results",
+    "rd_kafka_consumer_group_metadata:rkcg",
+    "rd_kafka_DeleteRecords_leaders_queried_cb:partitions",
+    "rd_kafka_share_set_acknowledgement_commit_cb:now_set"
+   ],
+   "assignment:address:nested": [
+    "rd_kafka_broker_trigger_monitors:rkbmon",
+    "rd_kafka_mock_handle_EndTxn:mtxnp",
+    "rd_kafka_mock_handle_Metadata:mrkb",
+    "rd_kafka_mock_sgrp_partmeta_find:pmeta",
+    "rd_kafka_mock_sgrp_record_state_find:state",
+    "rd_kafka_mock_offset_is_aborted:mabort",
+    "rd_kafka_mock_sgrp_partmeta_get:state",
+    "rd_kafka_mock_handle_ShareFetch:s",
+    "rd_kafka_mock_handle_ShareFetch:sg",
+    "rd_kafka_mock_partition_assign_replicas:mrkb",
+    "rd_kafka_mock_cluster_reassign_partitions:mtopic",
+    "rd_kafka_mock_broker_find:mrkb"
+   ],
+   "assignment:call:nested": [
+    "rd_kafka_cgrp_update_subscribed_topics:tinfo",
+    "rd_kafka_metadata_refresh_cb:err",
+    "rd_kafka_new:err",
+    "rd_kafka_cgrp_handle_JoinGroup:rkas",
+    "rd_kafka_seek:err",
+    "rd_kafka_share_fetch_reply_op:batch",
+    "rd_kafkap_share_leader_changes_apply:lc",
+    "rd_kafka_broker_weighted:weight",
+    "rd_kafka_anyconf_set_prop0:res",
+    "partitionCanParticipateInReassignment:consumers",
+    "maybeAssignPartition:elem",
+    "isBalanced:elem"
+   ],
+   "assignment:address:initialiser": [
+    "rd_kafka_propagate_consumer_topic_errors:topic",
+    "rd_kafka_cooperative_protocol_adjust_assignment:rkgm",
+    "rd_kafka_ClusterDescription_new:md",
+    "rd_kafkap_leader_discovery_set_CurrentLeader:md",
+    "rd_kafkap_leader_discovery_set_CurrentLeader:mdp",
+    "rd_kafkap_leader_discovery_set_CurrentLeader:mdpi",
+    "rd_kafkap_leader_discovery_set_brokers:NodeEndpoint",
+    "rd_kafkap_leader_discovery_set_brokers:md",
+    "rd_kafkap_leader_discovery_set_brokers:mdb",
+    "rd_kafkap_leader_discovery_set_brokers:mdbi",
+    "rd_kafkap_leader_discovery_set_topic:md",
+    "rd_kafkap_leader_discovery_set_topic:mdt"
+   ],
+   "assignment:bound-name:nested": [
+    "rd_kafka_committed:err",
+    "rd_kafka_committed:rkcg",
+    "rd_kafka_member_partitions_intersect:a_v",
+    "rd_kafka_member_partitions_subtract:a_v",
+    "rd_kafka_cooperative_protocol_adjust_assignment:pmi",
+    "rd_kafka_cooperative_protocol_adjust_assignment:toppar",
+    "rd_kafka_parse_ListOffsets:all_err",
+    "rd_kafka_err_action:exp_act",
+    "balance:ignore",
+    "sortPartitions:consumers",
+    "sortPartitions:partition",
+    "rd_kafka_mock_sgrp_partmeta_get:tmp"
+   ],
+   "assignment:bound-name:statement": [
+    "rd_kafka_broker_thread_main:orig_state",
+    "rd_kafka_broker_fail:old_state",
+    "rd_kafka_share_commit_sync_timeout_cb:results",
+    "rd_kafka_broker_weighted:highest",
+    "rd_kafka_share_set_acknowledgement_commit_cb:was_set",
+    "rd_kafka_anyconf_clear:tconf",
+    "rd_kafka_anyconf_get0:plist",
+    "rd_kafka_anyconf_copy:plist",
+    "PartitionMovements_getTheActualPartitionToBeMoved:plist",
+    "isBalanced:potentialTopicPartitions",
+    "performReassignments:currAssignment",
+    "performReassignments:prevcgp"
+   ],
+   "compound-assignment": [
+    "rd_kafka_err_action:actions",
+    "rd_kafka_sticky_assignor_unittest:fails",
+    "rd_kafka_sticky_assignor_unittest:r",
+    "rd_kafka_ShareAcknowledgeRequest:rkbuf_size",
+    "rd_kafka_ShareFetchRequest:rkbuf_size",
+    "rd_kafka_topic_partition_list_sum:sum",
+    "LZ4_decompress_generic:length",
+    "rd_kafka_parse_Metadata0:cache_changes",
+    "rd_kafka_parse_Metadata0:compute_racks",
+    "rd_kafka_msgset_reader_msg_v0_1:hdrsize",
+    "rd_kafka_msgq_find_pos:bytes",
+    "rd_kafka_range_assignor_unittest:fails"
+   ],
+   "assignment:undeclared-name:initialiser": [
+    "LZ4F_compressBound_internal:blockCRCSize",
+    "LZ4F_compressBound_internal:frameEnd",
+    "LZ4F_compressFrameBound:headerSize"
+   ],
+   "assignment:statement-expression:statement": [
+    "compare_label_keys:label",
+    "mk_fifo_queue_create:q",
+    "qsort_stream:chunk",
+    "mk_server_info:l",
+    "mk_server_info:p"
+   ]
+  },
+  "ast-may-bind-only": {
+   "not-answered": [
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_AclOperation_name:names",
+    "rd_kafka_AclPermissionType_name:names",
+    "rd_kafka_ApiKey2str:names",
+    "rd_kafka_confsource2str:names",
+    "rd_kafka_op2event:map",
+    "rd_kafka_compression2str:names",
+    "rd_kafka_idemp_state2str:names",
+    "rd_kafka_type2str:types"
+   ],
+   "sub-object-store": [
+    "rd_kafka_Uuid_base64str:input_uuid",
+    "rd_kafka_mock_handle_ShareAcknowledge:node_endpoints",
+    "rd_kafka_mock_handle_ShareFetch:node_endpoints",
+    "cJSON_ParseWithLengthOpts:local_error",
+    "XXH_mult64to128:r128",
+    "cmt_math_d64_to_uint64:u",
+    "calculate_connection_creation_rate:total",
+    "calculate_connection_creation_total:total",
+    "calculate_consumer_assigned_partitions:assigned_partitions",
+    "calculate_consumer_commit_latency_avg:avg_commit_time",
+    "calculate_consumer_commit_latency_max:max_commit_time",
+    "calculate_consumer_fetch_latency_avg:avg_fetch_time"
+   ],
+   "assignment:bound-name:nested": [
+    "rd_kafka_broker_bufq_purge_by_toppar:tmp",
+    "rd_kafka_broker_bufq_timeout_scan:tmp",
+    "rd_kafka_broker_consumer_toppars_serve:rktp_tmp",
+    "rd_kafka_destroy_internal:rkt_tmp",
+    "balance:ignore",
+    "sortPartitions:consumers",
+    "rd_kafka_mock_sgrp_partmeta_get:tmp",
+    "rd_kafka_mock_sgrp_partmeta_prune_archived:tmp",
+    "rd_kafka_mock_handle_ShareFetch:tmp",
+    "rd_kafka_mock_broker_connections_write_out:tmp",
+    "rd_kafka_mock_coord_remove:tmp",
+    "rd_kafka_retry_msgq:tmp"
+   ],
+   "none": [
+    "unittest_consumer_group_metadata:ids",
+    "areSubscriptionsIdentical:ignore",
+    "getBalanceScore:consumer",
+    "getBalanceScore:partitions",
+    "ut_testRackAwareAssignmentWithNonEqualSubscription:topics0",
+    "rd_kafka_mock_error_stack_find:errstack",
+    "rd_kafka_txn_clear_partitions_flag:tmp",
+    "unittest_ssl:test_cases",
+    "ut_testRackAwareAssignmentWithCoPartitioning0:subscription12",
+    "ut_testRackAwareAssignmentWithCoPartitioning0:subscription34",
+    "ut_testRackAwareAssignmentWithNonEqualSubscription:subscription13",
+    "ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription:subscription13"
+   ],
+   "assignment:address:nested": [
+    "rd_kafka_mock_sgrp_record_state_find:state",
+    "rd_kafka_mock_offset_is_aborted:mabort",
+    "rd_kafka_mock_handle_ShareFetch:s",
+    "rd_kafka_mock_partition_assign_replicas:mrkb",
+    "rd_kafka_mock_broker_find:mrkb",
+    "rd_kafka_mock_cluster_get_coord:mrkb",
+    "rd_kafka_mock_msgset_find:mset",
+    "ut_mock_txn_offset_is_aborted:a",
+    "rd_kafka_q_last:rko",
+    "calculate_consumer_fetch_latency_max:_rkb_",
+    "calculate_produce_latency_max:_rkb_",
+    "calculate_queue_time_max:_rkb_"
+   ],
+   "custody-actual": [
+    "rd_kafka_msgset_writer_write_msg:Offset",
+    "rd_kafka_msgset_writer_write_msg:free_cb"
+   ],
+   "assignment:address:initialiser": [
+    "rd_kafka_conf_set_ssl_cert:cert_map"
+   ]
+  },
+  "lexical-binds-ast-never-bound": {
+   "none": [
+    "rd_avg_rollover:maxdiff",
+    "rd_avg_rollover:mindiff",
+    "rd_kafka_broker_supports:features",
+    "rd_kafka_broker_supports:r",
+    "rd_kafka_AclBinding_new0:host",
+    "rd_kafka_AclBinding_new0:name",
+    "rd_kafka_AclBinding_new0:principal",
+    "rd_kafka_cgrp_consumer_expedite_next_heartbeat:rk",
+    "rd_fd_set_nonblocking:fd",
+    "rd_kafkap_str_new:str",
+    "rd_kafka_DescribeGroups_resp_cb:err",
+    "rd_kafka_DescribeGroups_resp_cb:reply"
+   ]
+  },
+  "lexical-declared-only": {
+   "custody-actual": [
+    "rd_kafka_AdminOptions_copy_to:errstr",
+    "rd_kafka_ConsumerGroupHeartbeatRequest:_logname",
+    "rd_kafka_ConsumerGroupHeartbeatRequest:current_assignments_str",
+    "rd_kafka_ConsumerGroupHeartbeatRequest:subscribed_topics_str",
+    "rd_kafka_AdminOptions_set_include_authorized_operations:errstr",
+    "rd_kafka_broker_wakeup:_logname",
+    "rd_kafka_AdminOptions_set_isolation_level:errstr",
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:__len0",
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:__len2",
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:_logname",
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:_v",
+    "rd_kafka_AdminOptions_set_match_consumer_group_states:errstr"
+   ],
+   "sub-object-store": [
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:__tmpstr",
+    "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave:__tmpstr",
+    "rd_kafka_cgrp_handle_LeaveGroup:__tmpstr",
+    "rd_kafka_ListGroups_resp_cb:__tmpstr",
+    "rd_kafka_Uuid_base64str:input_uuid",
+    "rd_kafka_Uuid_str:bytes",
+    "rd_kafka_AlterConfigsResponse_parse:__tmpstr",
+    "rd_kafka_buf_read_CurrentLeader:__tmpstr",
+    "rd_kafka_buf_read_NodeEndpoints:__tmpstr",
+    "rd_kafka_buf_read_topic_partitions_nullable:__tmpstr",
+    "rd_kafka_handle_ApiVersion:__tmpstr",
+    "rd_kafka_handle_GetTelemetrySubscriptions:__tmpstr"
+   ],
+   "assignment:address:initialiser": [
+    "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave:_vp",
+    "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave:_vp",
+    "rd_kafka_cgrp_handle_LeaveGroup:_vp",
+    "rd_kafka_ListGroups_resp_cb:_vp",
+    "rd_kafka_AlterConfigsResponse_parse:__old",
+    "rd_kafka_AlterConfigsResponse_parse:_vp",
+    "rd_kafka_buf_read_CurrentLeader:_vp",
+    "rd_kafka_buf_read_NodeEndpoints:_vp",
+    "rd_kafka_buf_read_topic_partitions_nullable:_vp",
+    "rd_kafka_handle_ApiVersion:_vp",
+    "rd_kafka_handle_GetTelemetrySubscriptions:_vp",
+    "rd_kafka_handle_InitProducerId:_vp"
+   ],
+   "address": [
+    "rd_kafka_ListGroups_resp_cb:_uva",
+    "rd_kafka_Uuid_hash:bytes",
+    "rd_kafka_AlterConfigsResponse_parse:_uva",
+    "rd_kafka_buf_read_NodeEndpoints:_uva",
+    "rd_kafka_buf_read_topic_partitions_nullable:_tagcnt",
+    "rd_kafka_buf_read_topic_partitions_nullable:_taglen",
+    "rd_kafka_buf_read_topic_partitions_nullable:_tagtype",
+    "rd_kafka_buf_read_topic_partitions_nullable:_uva",
+    "rd_kafka_handle_ApiVersion:_tagcnt",
+    "rd_kafka_handle_ApiVersion:_taglen",
+    "rd_kafka_handle_ApiVersion:_tagtype",
+    "rd_kafka_handle_GetTelemetrySubscriptions:_uva"
+   ],
+   "none": [
+    "rd_kafka_admin_result_set_err0:buf",
+    "rd_kafka_broker_set_error:extra",
+    "rd_kafka_broker_find:nodename",
+    "rd_kafka_broker_update:nodename",
+    "rd_kafka_anyconf_get0:tmp",
+    "rd_kafka_anyconf_set:estmp",
+    "unittest_conf:tmp",
+    "ut_testLargeAssignmentWithMultipleConsumersLeaving:topic",
+    "rd_kafka_toppar_enq_error:buf",
+    "rd_kafka_mock_cluster_op_io:buf",
+    "flb_input_chunk_create:name",
+    "update_logs_tag_records_metrics:prefix"
+   ],
+   "assignment:call:initialiser": [
+    "rd_kafka_AlterConfigsResponse_parse:__new",
+    "rd_kafka_AlterUserScramCredentialsRequest:alteration",
+    "rd_kafka_cgrp_handle_FindCoordinator:__new",
+    "rd_kafka_cgrp_handle_JoinGroup:__new",
+    "rd_kafka_DeleteAclsResponse_parse:__new",
+    "rd_kafka_DescribeAclsResponse_parse:__new",
+    "rd_kafka_DescribeConfigsResponse_parse:__new",
+    "rd_kafka_ElectLeadersResponse_parse:__new",
+    "rd_kafka_IncrementalAlterConfigs:key",
+    "rd_kafka_IncrementalAlterConfigsResponse_parse:__new",
+    "LZ4F_compressUpdateImpl:realDictSize",
+    "LZ4HC_compress_optimal:cost"
+   ],
+   "not-answered": [
+    "rd_kafka_op2event:map",
+    "rd_kafka_stats_emit_broker_reqs:_rem",
+    "rd_kafka_desensitize_str:redacted",
+    "rd_kafka_fetch_pos2str:idx",
+    "LZ4_putIndexOnHash:hashTable",
+    "LZ4F_getBlockSize:blockSizes",
+    "LZ4F_updateDict:preserveSize",
+    "LZ4F_getErrorName:codeError",
+    "cJSON_Version:version",
+    "create_jws_compact_serialization:jose_header_encoded",
+    "rd_kafka_sasl_oauthbearer_build_client_first_message:gs2_header",
+    "rd_kafka_sasl_oauthbearer_build_client_first_message:kvsep"
+   ],
+   "assignment:call:statement": [
+    "rd_kafka_stats_emit_broker_reqs:_r",
+    "rd_kafka_stats_emit_all:_r"
+   ],
+   "assignment:bound-name:initialiser": [
+    "rd_kafka_stats_emit_all:_rem",
+    "rd_kafka_anyconf_set_prop0:val",
+    "rd_kafka_conf_kv_split:t",
+    "sortPartitions:consumer",
+    "rd_kafka_use_rack_aware_assignment:partition_cnt",
+    "LZ4HC_InsertAndGetWiderMatch:back",
+    "LZ4HC_compress_optimal:matchML",
+    "LZ4HC_compress_optimal:pos",
+    "LZ4HC_compress_optimal:price",
+    "decode_static_field:size",
+    "mk_server_worker_loop:__ctx",
+    "mk_string_itop:i"
+   ],
+   "increment": [
+    "rd_kafka_mock_handle_Fetch:i",
+    "ut_testRackAwareAssignmentWithUniformSubscription:init_members",
+    "rd_kafka_mock_handle_Produce:i",
+    "rd_kafka_mock_handle_ShareAcknowledge:k",
+    "rd_kafka_mock_handle_ShareFetch:k",
+    "LZ4_compress_generic_validated:searchMatchNb",
+    "rd_kafka_topic_info_new_with_rack:j",
+    "print_object:i",
+    "print_object:i",
+    "verifyNumPartitionsWithRackMismatch0:i",
+    "decode_metrics_entry:index",
+    "LZ4HC_compress_optimal:addLit"
+   ],
+   "assignment:call:nested": [
+    "rd_kafka_anyconf_set_prop:match",
+    "rd_kafka_conf_finalize_oauthbearer_oidc:errstr"
+   ],
+   "protected-formal": [
+    "update_logs_tag_records_metrics:stack_key",
+    "format_metrics:bucket_values",
+    "format_metrics:upper_bounds",
+    "rd_gz_decompress:buf"
+   ],
+   "compound-assignment": [
+    "LZ4_compress_generic_validated:forwardIp",
+    "LZ4_compress_generic_validated:matchIndex",
+    "rd_murmur2:k"
+   ],
+   "assignment:bound-name:statement": [
+    "LZ4_compress_generic_validated:step",
+    "unittest_msgq_insert_all_sort:this_cnt",
+    "unittest_msgq_insert_each_sort:this_cnt",
+    "LZ4HC_compress_hashChain:correction"
+   ],
+   "assignment:bound-name:nested": [
+    "pb_dec_varint:clamped"
+   ]
+  },
+  "lexical-may-bind-only": {
+   "none": [
+    "PartitionMemberInfo_new:member",
+    "PartitionMemberInfo_new:members_match",
+    "rd_kafka_broker_supports:features",
+    "rd_kafka_AclBinding_new0:operation",
+    "rd_kafka_AclBinding_new0:permission_type",
+    "rd_kafka_AclBinding_new0:resource_pattern_type",
+    "rd_kafka_AclBinding_new0:restype",
+    "rd_kafka_set_replyq:version",
+    "rd_kafka_q_enq0:rkq",
+    "rd_kafka_q_reset:rkq",
+    "rd_kafka_log_buf:conf",
+    "rd_kafka_log_buf:ctx"
+   ]
+  }
+ }
+}

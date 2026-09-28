@@ -1,0 +1,51 @@
+{
+ "monkey-source.json": {
+  "baseline_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "sorted_rows": false
+ },
+ "parity.jsonl": {
+  "baseline_sha256": "3824a63e54c8cd4fe69d9844c9e76b6ea8451755dcac71736e667687f66a3fec",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "3824a63e54c8cd4fe69d9844c9e76b6ea8451755dcac71736e667687f66a3fec",
+  "sorted_rows": true
+ },
+ "parity.jsonl.contexts.jsonl": {
+  "baseline_sha256": "1f0e3691731e450ba7b2a8b525f1af02813a7efc7ffdde29654e1d039bcc32c9",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "1f0e3691731e450ba7b2a8b525f1af02813a7efc7ffdde29654e1d039bcc32c9",
+  "sorted_rows": true
+ },
+ "resource-diagnostics.chunk-contracts.json": {
+  "baseline_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.contracts.json": {
+  "baseline_sha256": "3df69736f41d76a68beea5ef8811806c5434df9438c9214d0d1778dfa5b9ffe3",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "8592ab02783716580e959a2059a058510679ea9557afc05fe15217e86c918db7",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.json": {
+  "baseline_sha256": "caf7ed01c51a702c78aee6664f0f156cde2b26f24f353569c41494b0e67ed965",
+  "byte_identical": true,
+  "identical_after_root_alias": true,
+  "run_sha256": "caf7ed01c51a702c78aee6664f0f156cde2b26f24f353569c41494b0e67ed965",
+  "sorted_rows": false
+ },
+ "resource-diagnostics.source-effects.json": {
+  "baseline_sha256": "bb2f4da68acb3cd2633af5a0a8ee736e11c04fed2cefbe2a910f8833486fb378",
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "run_sha256": "89381c5e3dffedee5b73976b608b5d8b62cdb5041c0b8388db57c8bfd6f66137",
+  "sorted_rows": false
+ }
+}
