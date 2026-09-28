@@ -36,9 +36,11 @@ class CanonicalCorpus(unittest.TestCase):
         # quirin-provider-fluent-bit.
         # 119 -> 120: W47-CONDVAR-JOIN-PUBLICATION's libc/pthread_sync.qv in
         # quirin-provider-libc.
-        self.assertEqual(len(modules), 120)
+        # 120 -> 121: W47-LOOP-OWNER-INSTANCE-FLOW's fluent_bit/input_instance.qv
+        # in quirin-provider-fluent-bit.
+        self.assertEqual(len(modules), 121)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 73)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 47)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 48)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

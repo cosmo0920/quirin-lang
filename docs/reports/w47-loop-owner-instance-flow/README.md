@@ -409,9 +409,12 @@ A first run at `d2679795` (private `gate-2`) failed on three contract-corpus
 pins and two clippy lints. The pins were the corpus module count 120 → 121,
 the declaration counts 56 / 242 → 57 / 246 (with the withheld declarations
 counted beside the function map) and the structured-clause table's order.
-All were repaired in `a5e1c799`. The Python suite and docs-index check ran
-after the matrix and index regeneration (matrix: 554 follow-ups, 223 Lean
-audits, 121 contract modules).
+All were repaired in `a5e1c799`. The `records` phase ran after the matrix
+and index regeneration (matrix: 554 follow-ups, 223 Lean audits, 121 contract
+modules). Its first run failed `scripts/tests`'s corpus pins (module count
+120 → 121, quirin-provider modules 47 → 48), a test file only, repaired and
+rerun: **365 tests OK**, docs index 0, Clang 21.1.8 recorded (private
+`gate-records3`).
 
 **Files likely to conflict** with the parallel W47-CONDVAR-JOIN-STOP-PATHS:
 
