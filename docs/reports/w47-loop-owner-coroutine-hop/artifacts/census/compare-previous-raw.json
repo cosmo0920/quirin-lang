@@ -1,0 +1,358 @@
+{
+ "before": {
+  "not-discharged": 132,
+  "unresolved": 15
+ },
+ "after": {
+  "not-discharged": 132,
+  "unresolved": 15
+ },
+ "owners": {
+  "before": {
+   "engine_loop": "src/flb_lib.c::flb_lib_worker",
+   "worker_loop": "src/flb_input_thread.c::input_thread"
+  },
+  "after": {
+   "engine_loop": "src/flb_lib.c::flb_lib_worker",
+   "worker_loop": "src/flb_input_thread.c::input_thread"
+  }
+ },
+ "counts": {
+  "files": {
+   "before": 1685,
+   "after": 1685
+  },
+  "functions": {
+   "before": 11962,
+   "after": 11962
+  },
+  "edges": {
+   "before": 37088,
+   "after": 37017
+  },
+  "unresolved_seeds": {
+   "before": 3914,
+   "after": 2897
+  },
+  "coroutine_bodies": {
+   "before": null,
+   "after": 15
+  },
+  "yields": {
+   "before": null,
+   "after": 17
+  }
+ },
+ "moves": [
+  {
+   "site": [
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c",
+    2424,
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once",
+    "flb_input_collector_delete"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at src/flb_io.c:487): its resumer after the yield is not derived",
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 2
+   }
+  },
+  {
+   "site": [
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c",
+    2439,
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once",
+    "flb_input_collector_resume"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at src/flb_io.c:487): its resumer after the yield is not derived",
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 2
+   }
+  },
+  {
+   "site": [
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c",
+    2449,
+    "plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once",
+    "flb_input_collector_resume"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`plugins/in_calyptia_fleet/in_calyptia_fleet.c::in_calyptia_fleet_collect_once` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at src/flb_io.c:487): its resumer after the yield is not derived",
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 2
+   }
+  },
+  {
+   "site": [
+    "plugins/in_docker_events/docker_events.c",
+    87,
+    "plugins/in_docker_events/docker_events.c::reconnect_docker_sock",
+    "flb_input_collector_delete"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_docker_events/docker_events.c",
+    125,
+    "plugins/in_docker_events/docker_events.c::reconnect_docker_sock",
+    "flb_input_collector_delete"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_docker_events/docker_events.c",
+    159,
+    "plugins/in_docker_events/docker_events.c::cb_reconnect",
+    "flb_input_collector_delete"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_docker_events/docker_events.c",
+    197,
+    "plugins/in_docker_events/docker_events.c::create_reconnect_event",
+    "flb_input_collector_delete"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_event_test/event_test.c",
+    124,
+    "plugins/in_event_test/event_test.c::cb_collector_time",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_event_test/event_test.c",
+    163,
+    "plugins/in_event_test/event_test.c::cb_collector_fd",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_event_test/event_test.c",
+    188,
+    "plugins/in_event_test/event_test.c::cb_collector_server_socket",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`plugins/in_event_test/event_test.c::cb_collector_server_socket` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived",
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 2
+   }
+  },
+  {
+   "site": [
+    "plugins/in_event_test/event_test.c",
+    218,
+    "plugins/in_event_test/event_test.c::cb_collector_server_client",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`plugins/in_event_test/event_test.c::cb_collector_server_client` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived",
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 2
+   }
+  },
+  {
+   "site": [
+    "plugins/in_fluentbit_metrics/metrics.c",
+    82,
+    "plugins/in_fluentbit_metrics/metrics.c::cb_metrics_collect_start",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  },
+  {
+   "site": [
+    "plugins/in_stdin/in_stdin.c",
+    272,
+    "plugins/in_stdin/in_stdin.c::in_stdin_collect",
+    "flb_input_collector_pause"
+   ],
+   "before": {
+    "verdict": "unresolved",
+    "reasons": [
+     "address of `input_pre_cb_collect` taken at include/fluent-bit/flb_input.h:721",
+     "include/fluent-bit/flb_input.h: a conditional group this reader cannot structure"
+    ],
+    "reason_count": 2
+   },
+   "after": {
+    "verdict": "unresolved",
+    "reasons": [
+     "`src/flb_plugin_proxy.c::flb_proxy_input_cb_collect` runs in coroutine `include/fluent-bit/flb_input.h::input_pre_cb_collect` and may yield (`flb_coro_yield` at include/fluent-bit/flb_time_utils.h:68): its resumer after the yield is not derived"
+    ],
+    "reason_count": 1
+   }
+  }
+ ],
+ "witness_changes": 0,
+ "only_before": [],
+ "only_after": [],
+ "move_tally": {
+  "unresolved -> unresolved": 13
+ }
+}

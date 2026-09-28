@@ -1,0 +1,92 @@
+{
+ "binaries": {
+  "before (51fb793c)": "bb8870dec1f9d90cfc3fb94e7974c16bc93ecc1a4e65cf1aaa584f3816d7c140",
+  "after": "45400e38c7ebb98725dea126494730e2c855b02e39d84474e62553aaecc312bd"
+ },
+ "baseline": "docs/reports/w47-loop-owner-contracts/artifacts/after (9b3f9f88, worktree agent-a04a30eb19f1c410e)",
+ "before": {
+  "corpus": {
+   "sha256": "a843a690ab433b0c07be120cf62b0fed63b7b0b65554fc2854c0d04ccd331289",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 4298, 'Safe': 526, 'Unsafe': 10}",
+    "merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}",
+    "merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7936, 'unsupported': 35737}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{}",
+   "only_provenance_digests": true
+  },
+  "system": {
+   "sha256": "46e3ed67e0a24d75d0212fa74ba6512c346816a006fc98d29dcba2380a5cf632",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}",
+    "merged units: {'Unknown': 7, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 4, 'unknown_alias': 1020, 'unsupported': 2888}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{'resource_contract_sources': 30, 'inventory_sha256': 15}",
+   "only_provenance_digests": true
+  },
+  "slice": {
+   "sha256": "c4345ded75badfe3c70b0ac5aab7e5f23924f44f4b3e76c9a1cee6f897dcc876",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 245, 'Safe': 24, 'Unsafe': 1}",
+    "merged units: {'Unknown': 12, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 1, 'unknown_alias': 1009, 'unsupported': 2857}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{'resource_contract_sources': 32, 'inventory_sha256': 16}",
+   "only_provenance_digests": true
+  }
+ },
+ "after": {
+  "corpus": {
+   "sha256": "a843a690ab433b0c07be120cf62b0fed63b7b0b65554fc2854c0d04ccd331289",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 4298, 'Safe': 526, 'Unsafe': 10}",
+    "merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}",
+    "merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7936, 'unsupported': 35737}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{}",
+   "only_provenance_digests": true
+  },
+  "system": {
+   "sha256": "46e3ed67e0a24d75d0212fa74ba6512c346816a006fc98d29dcba2380a5cf632",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}",
+    "merged units: {'Unknown': 7, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 4, 'unknown_alias': 1020, 'unsupported': 2888}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{'resource_contract_sources': 30, 'inventory_sha256': 15}",
+   "only_provenance_digests": true
+  },
+  "slice": {
+   "sha256": "c4345ded75badfe3c70b0ac5aab7e5f23924f44f4b3e76c9a1cee6f897dcc876",
+   "compose3_vs_baseline": [
+    "merged functions: {'Unknown': 245, 'Safe': 24, 'Unsafe': 1}",
+    "merged units: {'Unknown': 12, 'Unsafe': 1}",
+    "merged diagnostic_counts: {'counted_user': 1, 'unknown_alias': 1009, 'unsupported': 2857}",
+    "functions/leaves touched by both cards: 0 []",
+    "mismatches: 0",
+    "COMPOSES"
+   ],
+   "lines_differing_from_baseline": "{'resource_contract_sources': 32, 'inventory_sha256': 16}",
+   "only_provenance_digests": true
+  }
+ },
+ "before_equals_after_corpus": true,
+ "before_equals_after_system": true,
+ "before_equals_after_slice": true
+}
