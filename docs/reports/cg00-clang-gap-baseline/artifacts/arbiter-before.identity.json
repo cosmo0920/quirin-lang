@@ -1,0 +1,45 @@
+{
+ "run": "private/cg00/before",
+ "baseline": "docs/reports/w47-flb-lib-lifecycle/integration/artifacts/corpus",
+ "artifacts": {
+  "resource-diagnostics.json": {
+   "run_sha256": "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8",
+   "baseline_sha256": "ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8",
+   "byte_identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "baseline_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "byte_identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "run_sha256": "92471012d19d29d339cb33eb07af3dc40155c70e790bc4750fcee6453f66667c",
+   "baseline_sha256": "ebdbea04139a580fd8a92b7704c65edbe2282e2465238b5e4e9ce9fef68d8d0a",
+   "byte_identical": false,
+   "identical_after_checkout_alias": false
+  },
+  "resource-diagnostics.source-effects.json": {
+   "run_sha256": "9565d5b4cfe187c43cd037efbcc217d89ccecf1eadeb57255c69aeb275761e6f",
+   "baseline_sha256": "519c8341dd6a1edc4d92aacecaf75f113bbd188d319d5d937891bebaaaf5f643",
+   "byte_identical": false,
+   "identical_after_checkout_alias": false
+  },
+  "monkey-source.json": {
+   "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "baseline_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "byte_identical": true
+  }
+ },
+ "functions": {
+  "Safe": 526,
+  "Unknown": 4298,
+  "Unsafe": 10
+ },
+ "diagnostic_counts": {
+  "leak": 36,
+  "summary_conflict": 1,
+  "unknown_alias": 7936,
+  "unsupported": 35737
+ },
+ "verdict_bearing_identical": true
+}

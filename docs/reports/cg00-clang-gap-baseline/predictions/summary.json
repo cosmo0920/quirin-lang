@@ -1,0 +1,100 @@
+{
+ "CG02": {
+  "freed_alone_strict": 10,
+  "freed_alone_with_alias": 12,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 10,
+  "predicted_unknown": 2
+ },
+ "CG03": {
+  "freed_alone_strict": 13,
+  "freed_alone_with_alias": 17,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 13,
+  "predicted_unknown": 4
+ },
+ "CG04": {
+  "freed_alone_strict": 25,
+  "freed_alone_with_alias": 31,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 25,
+  "predicted_unknown": 6
+ },
+ "CG05": {
+  "freed_alone_strict": 19,
+  "freed_alone_with_alias": 23,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 19,
+  "predicted_unknown": 4
+ },
+ "CG06": {
+  "freed_alone_strict": 39,
+  "freed_alone_with_alias": 40,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 39,
+  "predicted_unknown": 1
+ },
+ "CG07": {
+  "freed_alone_strict": 15,
+  "freed_alone_with_alias": 18,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 15,
+  "predicted_unknown": 3
+ },
+ "CG08": {
+  "freed_alone_strict": 22,
+  "freed_alone_with_alias": 34,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 22,
+  "predicted_unknown": 12
+ },
+ "CG09": {
+  "freed_alone_strict": 0,
+  "freed_alone_with_alias": 0,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 0,
+  "predicted_unknown": 0
+ },
+ "CG10": {
+  "freed_alone_strict": 293,
+  "freed_alone_with_alias": 491,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 293,
+  "predicted_unknown": 198
+ },
+ "CG11": {
+  "freed_alone_strict": 34,
+  "freed_alone_with_alias": 37,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 34,
+  "predicted_unknown": 3
+ },
+ "CG12": {
+  "freed_alone_strict": 1,
+  "freed_alone_with_alias": 1,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 1,
+  "predicted_unknown": 0
+ },
+ "CG13": {
+  "freed_alone_strict": 48,
+  "freed_alone_with_alias": 55,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 48,
+  "predicted_unknown": 7
+ },
+ "CG14": {
+  "freed_alone_strict": 11,
+  "freed_alone_with_alias": 17,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 11,
+  "predicted_unknown": 6
+ },
+ "CG15": {
+  "freed_alone_strict": 7,
+  "freed_alone_with_alias": 7,
+  "predicted_provisional_unsafe": 0,
+  "predicted_safe": 7,
+  "predicted_unknown": 0
+ }
+}

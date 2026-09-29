@@ -13,6 +13,7 @@ step() {
   echo $? > "$logs/$name.exit"
 }
 step 01-submodule git submodule update --init --recursive
+CARGO_INCREMENTAL=0 step 03-tests python3 scripts/run_test_binaries.py
 step 02-fmt cargo fmt --all -- --check
 step 05-clippy cargo clippy --all-targets -- -D warnings
 step 06-probe cargo run -p qcore-compiler --example reevaluation_probe

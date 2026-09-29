@@ -67,7 +67,7 @@ High for anything that could publish a wrong Safe, Medium for measurement.
 
 | Card | Entries | Effort | Prerequisite |
 |---|---|---|---|
-| CG00-CLANG-GAP-BASELINE | all 98 carded entries | Medium | none |
+| CG00-CLANG-GAP-BASELINE | all 98 carded entries | Medium | none (landed, wave 48 round 1) |
 
 - **BEFORE tests.** Turn each cited refusal into an executed BEFORE test at
   the gateway-helper level. The §8 axes (position, effect, evaluation order,
@@ -427,10 +427,19 @@ Unsafe presented as an upstream defect. In addition:
 
 ## 5. Dispatch
 
-- **Ready now:** CG00 (Medium) and CG01 (High, T only), both independent of
-  the running `.qr` cards.
+- **Measured ranking** (CG00-CLANG-GAP-BASELINE, corpus `ae17152b…`; Unknown
+  functions freed alone, alias leaves allowed / none, upper bounds;
+  [report](../../reports/cg00-clang-gap-baseline/README.md#33-ranking-phase-13-by-functions-freed),
+  function lists in its `predictions/`):
+  CG10 491/293, CG13 55/48, CG06 40/39, CG11 37/34, CG08 34/22, CG04 31/25,
+  CG05 23/19, CG07 18/15, CG03 17/13, CG14 17/11, CG02 12/10, CG15 7/7,
+  CG19 2/2, CG16 2/1, CG12 1/1, CG17 0; CG01 and CG09 (route T) and CG18 free
+  none in the corpus arbiter. The largest pair is CG10 + CG11 (80 functions).
+  2,765 Unknown functions stay blocked by uncontracted calls or other
+  unattributed leaves whatever phase 1–3 card lands.
+- **Landed:** CG00 (Medium) and CG01 (High, T only).
 - **Critical path:** CG02 → CG03, then CG04, CG05 and CG06 in parallel, each
-  consuming CG00's function lists. CG10 can start after CG00, in parallel with
-  phase 1.
+  consuming CG00's function lists. CG10 can start now, in parallel with
+  phase 1, and has the largest measured yield.
 - **Delegated briefs.** A brief must carry the card's entries, the absorbed
   follow-ups with their current sizes, and the evidence IDs.
