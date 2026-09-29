@@ -312,6 +312,7 @@ impl SubstitutionRefusal {
         }
     }
 
+    #[cfg(test)]
     pub(crate) fn code(&self) -> String {
         match self {
             Self::Form(form, _) => format!("form:{form}"),

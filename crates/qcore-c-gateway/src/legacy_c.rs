@@ -6327,7 +6327,12 @@ impl Parser<'_> {
         // for a call whose lexical substitution was refused or incomplete.
         if let Some(substituted) = self.substituted_call(tokens, line, &instruction) {
             self.element_origins.clear();
-            return Statement::Instruction(substituted, line);
+            return Statement::Block(
+                substituted
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect(),
+            );
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {

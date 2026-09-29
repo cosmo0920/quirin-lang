@@ -118,13 +118,42 @@ impl Parser<'_> {
         statement: &[Token],
         destination: Option<&str>,
         use_: ResultUse,
-    ) -> Result<LegacyInstruction, CallRefusal> {
+    ) -> Result<Vec<LegacyInstruction>, CallRefusal> {
         let standing = self.call_standing(callee);
         if standing == Standing::Recursive {
             return Err(CallRefusal::Declined(Decline::RecursiveLocal));
         }
         let instruction = self.classify_simple(statement);
-        match &instruction {
+        // The statement position's typed argument reads (card
+        // W44-INDIRECT-CALL-ARGUMENT-ACCESS) are part of the one application:
+        // a call whose actuals the lexical gate refused is its actuals' typed
+        // reads, then the call, in every position that asks.
+        let sequence = match &instruction {
+            LegacyInstruction::Unknown { description, .. }
+                if description == super::call_argument_access::GATE_REFUSAL =>
+            {
+                match self.call_argument_access(statement, &instruction) {
+                    Some(sequence)
+                        if matches!(
+                            sequence.last(),
+                            Some(LegacyInstruction::ContractCall { .. })
+                        ) && sequence[..sequence.len() - 1].iter().all(|read| {
+                            matches!(
+                                read,
+                                LegacyInstruction::IndirectScalarAccess { .. }
+                                    | LegacyInstruction::ArgumentReads { .. }
+                            )
+                        }) =>
+                    {
+                        sequence
+                    }
+                    _ => return Err(CallRefusal::Unapplied(description.clone())),
+                }
+            }
+            _ => vec![instruction],
+        };
+        let call = sequence.last().expect("a sequence ends with its call");
+        match call {
             LegacyInstruction::ContractCall {
                 destination: written,
                 contract,
@@ -136,16 +165,16 @@ impl Parser<'_> {
                 call_instantiation::accept(
                     standing,
                     ResultClass::of(contract.result),
-                    is_identity(&instruction),
+                    is_identity(call),
                     use_,
                 )
                 .map_err(CallRefusal::Declined)?;
-                Ok(instruction)
+                Ok(sequence)
             }
             LegacyInstruction::Unknown { description, .. } => {
                 Err(CallRefusal::Unapplied(description.clone()))
             }
-            _ => Err(CallRefusal::Lowered(instruction)),
+            _ => Err(CallRefusal::Lowered(call.clone())),
         }
     }
 
@@ -245,10 +274,18 @@ impl Parser<'_> {
         expression: &[Token],
         line: usize,
     ) -> Option<Statement> {
+        // The reserved return place spelled by the body keeps every return
+        // route's refusal, this one's included (it binds no such place, but
+        // a body that spells an implementation-reserved name is not read).
         if !self.return_facts.scalar_result
             || expression.is_empty()
             || !super::contains_call(expression)
+            || !super::return_call::place_is_unspelled(
+                self.tokens,
+                super::return_call::RETURN_RESULT_PLACE,
+            )
             || self.opaque_callee(expression)
+            || residual_takes_an_address(expression)
             || (!self.list_frames.is_empty()
                 && self
                     .list_iteration_refusal(
@@ -400,8 +437,8 @@ impl Parser<'_> {
         }
         let saved = (self.next_site, self.element_lowerings);
         match self.instantiate_call(&callee, &tokens, None, ResultUse::Discarded) {
-            Ok(call) => {
-                instructions.push(call);
+            Ok(sequence) => {
+                instructions.extend(sequence);
                 Ok(Some(instructions))
             }
             Err(refusal) => {
@@ -418,7 +455,7 @@ impl Parser<'_> {
         tokens: &[Token],
         line: usize,
         instruction: &LegacyInstruction,
-    ) -> Option<LegacyInstruction> {
+    ) -> Option<Vec<LegacyInstruction>> {
         let incomplete = match instruction {
             LegacyInstruction::Unknown { description, .. } => description == K03_REFUSAL,
             LegacyInstruction::ContractCall {
@@ -477,7 +514,7 @@ impl Parser<'_> {
         call_index: usize,
         callee: &str,
         contract: &qcore_schemas::contract::ResourceFunctionContract,
-    ) -> Result<LegacyInstruction, String> {
+    ) -> Result<Vec<LegacyInstruction>, String> {
         let texts = tokens.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
         let wanted = &texts[call_index..];
         let node = Self::elaboration_node(index, tokens[call_index].line, wanted, &|node| {
@@ -485,7 +522,7 @@ impl Parser<'_> {
         })
         .ok_or_else(|| "no unique Clang call node".to_owned())?;
         let substituted = call_instantiation::substitute(node, &contract.parameters, &index.fields)
-            .map_err(|(formal, refusal)| format!("formal {formal}: {}", refusal.code()))?;
+            .map_err(|(formal, refusal)| format!("formal {formal}: {}", refusal.reason()))?;
         let spans = call_argument_spans(&texts, call_index)
             .ok_or_else(|| "unreadable argument list".to_owned())?;
         if spans.len() != substituted.len() {
@@ -530,8 +567,8 @@ impl Parser<'_> {
         } else {
             ResultUse::Discarded
         };
-        let instruction = match self.instantiate_call(callee, &rewritten, destination, use_) {
-            Ok(instruction) => instruction,
+        let sequence = match self.instantiate_call(callee, &rewritten, destination, use_) {
+            Ok(sequence) => sequence,
             Err(refusal) => {
                 (self.next_site, self.element_lowerings) = saved;
                 return Err(format!("reclassified: {}", refusal.code()));
@@ -539,8 +576,8 @@ impl Parser<'_> {
         };
         // Every custody formal is substituted by exactly the identity the
         // AST names.
-        let LegacyInstruction::ContractCall { arguments, .. } = &instruction else {
-            unreachable!("instantiate_call answers a ContractCall");
+        let Some(LegacyInstruction::ContractCall { arguments, .. }) = sequence.last() else {
+            unreachable!("instantiate_call answers a sequence ending with a ContractCall");
         };
         for substitution in &substituted {
             if !call_instantiation::custody_taking(substitution.mode) {
@@ -572,7 +609,7 @@ impl Parser<'_> {
                 ));
             }
         }
-        Ok(instruction)
+        Ok(sequence)
     }
 }
 
@@ -711,6 +748,73 @@ fn parity_standing(tokens: &[Token], function: &str, callee: &str) -> Standing {
             (None, _) => Standing::Declared,
         }
     })
+}
+
+/// Whether a `return` expression takes an address outside its calls' actuals:
+/// rule 5j's scalar-result return premise (no unary `&`) for the value the
+/// function hands back. An actual's `&` is the call's own substitution.
+fn residual_takes_an_address(expression: &[Token]) -> bool {
+    let mut index = 0;
+    while index < expression.len() {
+        let text = expression[index].text.as_str();
+        if is_identifier(text)
+            && expression
+                .get(index + 1)
+                .is_some_and(|next| next.text == "(")
+            && let Some(close) = super::matching(expression, index + 1, "(", ")")
+        {
+            index = close + 1;
+            continue;
+        }
+        if text == "&" {
+            let unary = index == 0
+                || matches!(
+                    expression[index - 1].text.as_str(),
+                    "(" | ","
+                        | "="
+                        | "+"
+                        | "-"
+                        | "*"
+                        | "/"
+                        | "%"
+                        | "&"
+                        | "|"
+                        | "^"
+                        | "!"
+                        | "~"
+                        | "<"
+                        | ">"
+                        | "?"
+                        | ":"
+                )
+                || (expression[index - 1].text == ")"
+                    && index >= 2
+                    && is_cast_close(expression, index - 1));
+            if unary {
+                return true;
+            }
+        }
+        index += 1;
+    }
+    false
+}
+
+/// Whether the `)` at `close` ends a cast `( TYPE )` rather than a group:
+/// read conservatively, any parenthesised run of identifiers and `*` is a
+/// type name.
+fn is_cast_close(tokens: &[Token], close: usize) -> bool {
+    let mut at = close;
+    while at > 0 {
+        at -= 1;
+        match tokens[at].text.as_str() {
+            // A call's own parentheses are no cast.
+            "(" => return at + 1 < close && (at == 0 || !is_identifier(&tokens[at - 1].text)),
+            "*" => {}
+            text if is_identifier(text) => {}
+            _ => return false,
+        }
+    }
+    false
 }
 
 /// The classifier's K03 refusal.

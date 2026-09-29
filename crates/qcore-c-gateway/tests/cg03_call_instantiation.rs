@@ -52,6 +52,34 @@ fn k12_a_local_callee_is_accepted_in_a_return_operand_as_in_a_condition() {
     }
 }
 
+/// The statement position's typed argument reads (W44) are part of the one
+/// application: a call whose actual is a typed sub-object address or a
+/// member read is taken in a condition leaf and a return operand exactly as
+/// in a statement (BEFORE: both refused as the gate's indirect access).
+#[test]
+fn k12_argument_reads_are_part_of_the_one_application() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void subject(struct S *s) { r_borrow_code(&s->a); }",
+        "int subject(struct S *s) { int r = 0; if (r_borrow_code(&s->a) > 0) { r = 1; } return r; }",
+        "int subject(struct S *s) { return r_borrow_code(&s->a) > 0; }",
+        "int subject(struct S *s) { return cg_sink2(s->a, 1), 0; }",
+    ] {
+        let run = gs(body);
+        assert!(run.safe(), "{body}: {run:?}");
+    }
+    // The reads keep their obligation: a released base is accused.
+    let run = gs(
+        "int subject(void) { struct S *s = q_alloc(); q_free(s); return r_borrow_code(&s->a) > 0; }",
+    );
+    assert!(!run.safe(), "{run:?}");
+    // A custody-taking formal still refuses a place (by design).
+    let run = gs("int subject(struct S *s) { return r_release_code(s->p) > 0; }");
+    assert!(!run.safe(), "{run:?}");
+}
+
 #[test]
 fn k12_the_return_operand_applies_the_call_once_and_escapes_nothing() {
     if !clang_available() {
@@ -111,6 +139,16 @@ fn k12_the_return_operand_keeps_every_refusal_of_the_condition_leaf() {
     // A pointer-result function's return is not a scalar operand.
     let run = gs("char *subject(char *s) { return s + r_borrow_code(s); }");
     assert!(!run.safe(), "{run:?}");
+    // Rule 5j's return premise: the returned value takes no address.
+    let run =
+        gs("long subject(void *p) { long local = 0; return r_borrow_code(p) + (long) &local; }");
+    assert!(run.refused(RETURN), "{run:?}");
+    // The reserved return place spelled by the body keeps the refusal.
+    let run = gs(
+        "int subject(void) { void *__qcore_returned_value = q_alloc(); \
+         return r_release_code(__qcore_returned_value) + 1; }",
+    );
+    assert!(run.refused(RETURN), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

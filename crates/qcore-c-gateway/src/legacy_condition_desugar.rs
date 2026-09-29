@@ -711,13 +711,16 @@ impl Parser<'_> {
             // tracks it). A callee in the caller's recursive component
             // refuses before the classifier runs. The refusals below are the
             // desugaring's own, unchanged.
-            let instruction = match self.instantiate_call(
+            // A call whose actuals the lexical gate refused arrives with its
+            // actuals' typed reads before it (card W44-INDIRECT-CALL-
+            // ARGUMENT-ACCESS, the statement position's own lowering).
+            let sequence = match self.instantiate_call(
                 callee,
                 statement,
                 destination,
                 crate::call_instantiation::ResultUse::Tested,
             ) {
-                Ok(instruction) => instruction,
+                Ok(sequence) => sequence,
                 Err(CallRefusal::Declined(Decline::RecursiveLocal)) => {
                     return Err(Refusal::RecursiveLocalCallee(callee.to_owned()));
                 }
@@ -743,16 +746,22 @@ impl Parser<'_> {
                     ));
                 }
             };
-            lowered.push(instruction);
+            lowered.push(sequence);
         }
         if lowered.len() > 1 {
             // C does not sequence two calls of one operand. Only calls that
             // are the identity on the abstract state commute; with one of
-            // them written through, neither order may be chosen.
-            if assigned.is_some() || !lowered.iter().all(is_identity_call) {
+            // them written through, neither order may be chosen. A call's
+            // actual reads change no map, so they commute with an identity.
+            if assigned.is_some()
+                || !lowered
+                    .iter()
+                    .all(|sequence| sequence.last().is_some_and(is_identity_call))
+            {
                 return Err(Refusal::UnsequencedEffects);
             }
         }
+        let lowered = lowered.into_iter().flatten().collect::<Vec<_>>();
         // The residual: every call replaced by a neutral literal, the one
         // assignment group by its destination.
         let mut residual = Vec::with_capacity(tokens.len());
