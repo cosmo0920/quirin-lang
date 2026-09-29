@@ -221,11 +221,16 @@ fn an_untracked_local_pointer_stored_into_a_member_is_custody_neutral() {
 /// So the store keeps its refusal.
 #[test]
 fn a_formal_pointer_stored_into_a_member_keeps_its_refusal() {
+    // CG11 flip (rule 10v, CG11-POINTER-VALUED-STORES): `r->next = r` stores
+    // the destination's own object into it, which moves no custody; the body
+    // is admitted and publishes no summary, so no caller reads `r` as
+    // borrowed (the `mk_list_init` hazard this pin guarded). BEFORE: Unknown
+    // with the gate's refusal.
     expect(
-        "`r->next = r` stores the caller's own object",
+        "`r->next = r` stores the caller's own object into itself",
         "void w(struct x_rec *r) { r->next = r; }",
-        "Unknown",
-        &[GATE],
+        "Safe",
+        &[],
     );
     expect(
         "`h->name = (char *) s` stores the caller's string",
@@ -438,10 +443,14 @@ fn a_cast_base_keeps_its_refusal() {
 
 #[test]
 fn a_member_chain_keeps_its_refusal() {
+    // CG11 flip (rule 10v): a null store into a chain's member through a
+    // never-bound root is read on the typed statement route, the chain's
+    // owner untracked. BEFORE: Unknown with the gate's refusal. This rule's
+    // own reader still refuses the chain (`read_destination`).
     expect(
         "`h->rec->name = 0` is a chain",
         "void w(struct x_holder *h) { h->rec->name = 0; }",
-        "Unknown",
-        &[GATE],
+        "Safe",
+        &[],
     );
 }

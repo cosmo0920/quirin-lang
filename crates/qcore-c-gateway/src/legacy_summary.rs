@@ -1082,6 +1082,11 @@ pub(crate) fn observations_match_contract(
     if crate::legacy_c::container_publication::has_foreign_unlink(&summary.cfg) {
         return false;
     }
+    // Card CG11-POINTER-VALUED-STORES (rule 10v): a body that overwrote a slot
+    // of an untracked object tells no caller its formal was borrowed.
+    if crate::pointer_store::has_pointer_store(&summary.cfg) {
+        return false;
+    }
     // (2) A function with no reachable exit describes no call behavior.
     if observations.is_empty() {
         return false;

@@ -160,6 +160,9 @@ pub(crate) mod return_family;
 // hooks marked with the card's name.
 #[path = "legacy_sub_object_store.rs"]
 pub(crate) mod sub_object_store;
+// Card CG11-POINTER-VALUED-STORES (rule 10v): the flow of a pointer store.
+#[path = "legacy_pointer_store.rs"]
+mod pointer_store_flow;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -543,6 +546,17 @@ pub enum LegacyInstruction {
         value_bases: Vec<String>,
         /// The C02-P-ALIAS obligation of the dereferenced base.
         alias_read: Option<AliasPeers>,
+        fallback: Box<LegacyInstruction>,
+    },
+    /// Card **CG11-POINTER-VALUED-STORES** (rule 10v): a pointer-valued store
+    /// into a typed place whose value carries no identity; see
+    /// [`crate::pointer_store`]. `access` is the destination's (and an
+    /// address value's) typed access with its per-hop obligations; every flow
+    /// premise that fails makes the node exactly `fallback`, the gate's
+    /// refusal.
+    PointerStore {
+        store: crate::pointer_store::PointerStore,
+        access: Box<LegacyInstruction>,
         fallback: Box<LegacyInstruction>,
     },
     NoOp,
@@ -4649,10 +4663,17 @@ impl Parser<'_> {
             |name| self.joined_never_bound(name),
         );
         crate::typed_place::record_decisions(function, line, &texts, "statement", plan.is_some());
+        crate::pointer_store::record_decisions(function, line, &texts);
         plan
     }
 
-    fn typed_path_statement(&self, tokens: &[Token]) -> Option<LegacyInstruction> {
+    /// `fallback` is the refusal the statement had: card CG11 (rule 10v)
+    /// carries it on a pointer store, whose flow premises may fail.
+    fn typed_path_statement(
+        &self,
+        tokens: &[Token],
+        fallback: &LegacyInstruction,
+    ) -> Option<LegacyInstruction> {
         let plan = self.typed_path_plan(tokens)?;
         if crate::typed_access_path::parity_enabled() {
             let texts = tokens
@@ -4669,12 +4690,15 @@ impl Parser<'_> {
             );
         }
         if plan.accesses == 0 {
+            if plan.pointer_store.is_some() {
+                return None;
+            }
             return Some(match plan.scalar.destination {
                 Some(destination) => LegacyInstruction::ForgetScalar { destination },
                 None => LegacyInstruction::NoOp,
             });
         }
-        Some(LegacyInstruction::IndirectScalarAccess {
+        let access = LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .scalar
                 .record_bases
@@ -4689,6 +4713,15 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: plan.chains,
             borrowed_destination: plan.borrowed_destination,
+        };
+        // Card CG11-POINTER-VALUED-STORES (rule 10v).
+        Some(match plan.pointer_store {
+            Some(store) => LegacyInstruction::PointerStore {
+                store,
+                access: Box::new(access),
+                fallback: Box::new(fallback.clone()),
+            },
+            None => access,
         })
     }
 
@@ -6757,7 +6790,7 @@ impl Parser<'_> {
             // remains authoritative until its pinned parity is measured.
             if matches!(&instruction, LegacyInstruction::Unknown { description, .. }
                 if TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
-                && let Some(typed) = self.typed_path_statement(tokens)
+                && let Some(typed) = self.typed_path_statement(tokens, &instruction)
             {
                 return typed;
             }
@@ -12017,6 +12050,10 @@ fn transfer(
         LegacyInstruction::SubObjectStore { .. } => {
             sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
         }
+        // Card CG11-POINTER-VALUED-STORES (rule 10v).
+        LegacyInstruction::PointerStore { .. } => {
+            pointer_store_flow::transfer(function, node, state, diagnostics, &base)
+        }
         LegacyInstruction::ElementStore {
             base: array,
             index,
@@ -12345,6 +12382,10 @@ fn step_collections(state: &mut AbstractState, name: &str) {
 fn writes_scalar(instruction: &LegacyInstruction, name: &str) -> bool {
     if rebound_names(instruction).contains(&name) {
         return true;
+    }
+    // Card CG11 (rule 10v): either reading of a pointer store may run.
+    if let Some(readings) = pointer_store_flow::readings(instruction) {
+        return readings.iter().any(|reading| writes_scalar(reading, name));
     }
     match instruction {
         LegacyInstruction::Unknown { writes, .. } => writes.poisons(name),
@@ -13444,6 +13485,10 @@ fn transfer_base(
         // Card W45-SUB-OBJECT-STORES: decided by [`transfer`].
         LegacyInstruction::SubObjectStore { .. } => {
             unreachable!("sub-object stores are transferred by `transfer`")
+        }
+        // Card CG11-POINTER-VALUED-STORES: decided by [`transfer`].
+        LegacyInstruction::PointerStore { .. } => {
+            unreachable!("pointer stores are transferred by `transfer`")
         }
     }
     // O04-B09B10: a custody-taking member read handed the linked child to the

@@ -1,0 +1,90 @@
+{
+ "classifications": [
+  {
+   "value": "formal-pointer",
+   "admitted": false,
+   "statements": 44,
+   "functions": 14
+  },
+  {
+   "value": "null",
+   "admitted": true,
+   "statements": 42,
+   "functions": 15
+  },
+  {
+   "value": "local-pointer",
+   "admitted": false,
+   "statements": 15,
+   "functions": 10
+  },
+  {
+   "value": "other",
+   "admitted": false,
+   "statements": 9,
+   "functions": 8
+  },
+  {
+   "value": "self-address",
+   "admitted": true,
+   "statements": 8,
+   "functions": 2
+  },
+  {
+   "value": "pointer-read",
+   "admitted": false,
+   "statements": 7,
+   "functions": 6
+  },
+  {
+   "value": "function-pointer-name",
+   "admitted": true,
+   "statements": 5,
+   "functions": 4
+  },
+  {
+   "value": "arithmetic",
+   "admitted": false,
+   "statements": 2,
+   "functions": 2
+  },
+  {
+   "value": "other-address",
+   "admitted": false,
+   "statements": 1,
+   "functions": 1
+  }
+ ],
+ "flow": [
+  {
+   "value": "null",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 23,
+   "functions": 4
+  },
+  {
+   "value": "self-address",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 8,
+   "functions": 2
+  },
+  {
+   "value": "function-pointer-name",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 5,
+   "functions": 4
+  },
+  {
+   "value": "null",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 4,
+   "functions": 3
+  }
+ ],
+ "statements_admitted_in_every_analysis": 11,
+ "statements_admitted_in_some_analysis": 12
+}

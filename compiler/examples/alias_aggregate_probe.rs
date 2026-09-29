@@ -308,6 +308,10 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),
         LegacyInstruction::NoOp => "NoOp".to_owned(),
+        // Card CG11-POINTER-VALUED-STORES (gateway rule 10v).
+        LegacyInstruction::PointerStore { store, .. } => {
+            format!("PointerStore {} = {}", store.place, store.value)
+        }
     }
 }
 

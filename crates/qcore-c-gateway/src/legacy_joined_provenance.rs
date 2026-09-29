@@ -192,6 +192,15 @@ impl Facts {
                     names.retain(|name| preserved.contains(name));
                 }
             }
+            // Card CG11-POINTER-VALUED-STORES (rule 10v): forget what either
+            // reading could have written, the access's frame or the
+            // fallback refusal's.
+            LegacyInstruction::PointerStore {
+                access, fallback, ..
+            } => {
+                self.step(access, preserved);
+                self.step(fallback, preserved);
+            }
             _ => {}
         }
     }
