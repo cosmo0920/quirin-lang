@@ -177,6 +177,14 @@ fn value(value: &SourceValue) -> Result<CleanupReplayValueRecord, String> {
         SourceExpression::Function { .. } => {
             return Err("cleanup replay projection does not represent callee designators".into());
         }
+        // CG01 literals (rule 10r): this consumer imports through the legacy
+        // admission, so they cannot reach it; were they to, they are refused.
+        SourceExpression::Floating { .. } | SourceExpression::Character { .. } => {
+            return Err(
+                "cleanup replay projection does not classify CG01 floating/character literals"
+                    .into(),
+            );
+        }
     };
     Ok(CleanupReplayValueRecord {
         c_type: value.c_type.clone(),

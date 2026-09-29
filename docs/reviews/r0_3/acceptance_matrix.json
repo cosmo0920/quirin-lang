@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 620
+  "named_followups": 621
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-SCALAR-TYPES-R2 card gate at base 7e723a96, logs private/w48-r2/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 361 units, 374 summaries, 6,445 passed, 0 failed, 11 ignored (private/test-binaries/20260929T084824Z-191140/summary.json); clippy first exit 101 (type_complexity on one test-local tuple type in compiler/tests/scalar_typed_errors.rs), fixed with a type alias and rerun 0, that test binary rerun 8 passed, fmt rerun 0; both reevaluation probes exit 0; check_lean_audits.py 226 audits passed (new AuditScalarTypedErrors.lean, 20 theorems). providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from the W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase ran after the ledger (588 -> 589), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
-  "workspace_tests": 6445,
+  "note": "CG01-T-OPERATOR-CLOSURE card gate at base d3508e10 (tip 950c5744 for the Rust, Lean and probe steps), logs private/cg01/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 361 units, 374 summaries, 6,455 passed, 0 failed, 11 ignored (private/test-binaries/20260929T110141Z-526157/summary.json); fmt 0; clippy 0 (a pre-gate clippy run flagged too_many_arguments on typed_source::derive, fixed by bundling the profile and admission before the gate); both reevaluation probes exit 0; check_lean_audits.py 227 audits passed (new AuditTypedSourceOperators.lean, 22 theorems); python tests after the matrix edit (see 10-python.exit); docs index and clean-dev (see 11/12). providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter BEFORE and AFTER (--jobs 8): every verdict-bearing artifact byte-identical, resource-diagnostics.json ae17152b. Exits in gate/.",
+  "workspace_tests": 6455,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 226,
+  "lean_audits": 227,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6976,6 +6976,7 @@
    "AuditTypedConstPointerValue.lean",
    "AuditTypedContractFacts.lean",
    "AuditTypedRootDeclarations.lean",
+   "AuditTypedSourceOperators.lean",
    "AuditTypedefProjection.lean",
    "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
@@ -6992,7 +6993,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r2/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg01-t-operator-closure/gate.json)"
  },
  "named_followups": [
   {
@@ -11076,11 +11077,18 @@
    "recorded_by": "CLANG-GAP-CARD-QUEUE"
   },
   {
-   "id": "CG01-T-OPERATOR-CLOSURE",
-   "title": "Candidate implementation card: Add the missing operators and literals to typed_source",
-   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E01 E02 E03(T) E14; route T. Effort: High. Prerequisite: none. Scope: Binary - <= >= ^ << >>, unary + ~, the nine missing compound assignments and float/char literals in Importer::expression (Q11 Q12 Q16), each classified by every consumer as custody-neutral, numerically evaluated or obligation-bearing; unclassified nodes stay refused. No numeric guarantee (CG20). DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
-   "source": "docs/plans/clang-gap-cards/README.md",
-   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+   "id": "CG01-T-CONSUMER-ADMISSIONS",
+   "title": "19 production typed-source (route T) import sites refuse every CG01 operator/literal node by name",
+   "why": "Found by CG01-T-OPERATOR-CLOSURE (gateway rule 10r): route T now reads binary - <= >= ^ << >>, unary + ~, the ten compound assignments as statements and floating/character literals, but admits a node only through the importing consumer's validated NodeAdmission. Only import_monkey_wrappers (a projection that certifies nothing) admits them; the other 19 production import sites pass NodeAdmission::LEGACY and refuse each node by name. Measured by a read-only census of every SourceExpression/SourceOperation reader: readers that would accept an unknown operator undecided block an admission, namely source_call_use::symbols into call_use_contract (any operator in a guard over a call result counts as checked; call_use_source.rs:314, chunkio/file_attempts.rs:44,74), cycle18_callback_obligations::timeout_steps (ignores guards and writes while discharging AllPathExecutionCoverage) and event_payload::identity/allocation_shape (import_monkey_callbacks, observed_wait_inputs.rs:223, qcore-audit callback_task_handoff.rs:372), counter_contract (a += 1 / -= 1 shaped like ++/--; counter_source.rs:178, chunkio/teardown_source.rs:51), field_destructor replay (any non-== binary read as !=, guarded only by validate_value; teardown_source.rs:320,424, chunkio/teardown_source.rs:19,91), and the close compositions' i32 literal parsers (composition_source.rs:628,992,1332, memory_close_composition.rs:331, filesystem_chunk_close_composition.rs:359, cleanup_replay_source.rs:370). No function in the pinned corpus contains a CG01 node today (every pinned Monkey wrapper and callback imported at base), so the size in functions is 0 on the arbiter and grows only with new profile functions. DISCHARGE: per import site, an admission whose rows are justified by reading every reader of its summaries, with each silently accepting reader made to refuse or decide the node, tests per admitted node and position, and no verdict move without attribution.",
+   "source": "docs/reports/cg01-t-operator-closure/README.md",
+   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
+  },
+  {
+   "id": "CG01-CYCLE18-EVALUATOR-WIDTH",
+   "title": "cycle18_callback_obligations::evaluate_integer ignores C integer width and signedness",
+   "why": "Seen in passing by CG01-T-OPERATOR-CLOSURE's consumer census and re-read (crates/qcore-verification/src/cycle18_callback_obligations.rs:291-313): evaluate_integer strips every cast through strip(), IntegralCast included, and evaluates |, & and checked + in i128 regardless of the operands' C type; its unary - is an unchecked negation. It evaluates closed integer constants in guards only (initialization-result comparisons, activation-flag single-bit tests), so no Safe is known to rest on a width-dependent value, but a constant whose C value wraps or narrows would be evaluated as its mathematical value. Size: one evaluator, its three callers. Owned by the numeric-domain card CG20 (N04) unless decided earlier. DISCHARGE: the evaluator reads each node's C type and refuses (or evaluates through a checked C-width kernel such as typed_source_nodes::checked_binary) any operation whose value depends on width or signedness, with a test per cast and operator.",
+   "source": "docs/reports/cg01-t-operator-closure/README.md",
+   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
   },
   {
    "id": "CG02-ELABORATION-CORE",

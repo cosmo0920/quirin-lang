@@ -1845,3 +1845,41 @@ which is not a second authority.
     descendants); the old test stays not discharged. `QCore.CondvarJoin`
     (section `Lifecycle`, rewritten);
     [report](../reports/w47-flb-lib-strict-pairing/README.md).
+
+<a id="constraint-10r"></a>
+
+10r. **Route T reads a node only where the consumer that imports through it
+    classifies that node; every other consumer refuses it by name.** Card
+    CG01-T-OPERATOR-CLOSURE (`crates/qcore-c-gateway/src/typed_source_nodes.rs`,
+    the hook in `typed_source.rs`). The bounded typed-source importer reads
+    binary `-` `<=` `>=` `^` `<<` `>>`, unary `+` `~`, the ten compound
+    assignments `+= -= *= /= %= <<= >>= &= ^= |=` **as statements**, and
+    floating and character literals (`SourceExpression::Floating` /
+    `Character`, Clang's spelling or code with its Clang type). Operators need
+    promoted integer operands and results (pointer arithmetic and comparison
+    are gap entries M15/M16). A compound assignment's place is one of T's local
+    scalar types. Its computation types are the ones Clang records. It projects
+    one place evaluation, one read, the operation with explicit `IntegralCast`s,
+    and one writeback. An RHS call or an effectful address is refused, and so is
+    a compound assignment used as a value (CG02).
+    **Reading is not admission.** Every importer call passes a
+    `NodeAdmission`, the consumer's own classification, validated against
+    `NODE_TABLE` before any function is read:
+    - *custody-neutral* only for a node with no C fault case and no store;
+    - *numerically evaluated* only through `checked_binary`, which refuses
+      signed overflow, `/` `%` by zero, `MIN / -1`, an out-of-range or negative
+      shift count, a left shift of a negative value, and the
+      implementation-defined right shift of one;
+    - *obligation-bearing* otherwise, never discharged.
+
+    The legacy entry points
+    `import_source_functions` / `_from_profile` pass `NodeAdmission::LEGACY`,
+    which admits nothing and refuses each node by name. Only the Monkey wrapper
+    projection (`import_monkey_wrappers`) admits the closure; it certifies
+    nothing. **Do not** give a consumer an admission without reading every
+    reader of its summaries: the census found readers that would accept an
+    unknown operator without deciding it (call-use guards, Cycle 18 timeout
+    steps, event-payload identities). Do not call a fault-bearing or storing
+    node custody-neutral, and do not evaluate one outside `checked_binary`.
+    `QCore.TypedSourceOperators`, bound to the Rust tables by a shared-vector
+    test; [report](../reports/cg01-t-operator-closure/README.md).
