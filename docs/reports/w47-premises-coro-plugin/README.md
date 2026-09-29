@@ -340,7 +340,22 @@ integrator step with its arbiters); amending
 `W47-LOOP-OWNER-COROUTINE-POST-YIELD` and `W47-LOOP-OWNER-INSTANCE-FLOW`.
 Retires nothing (no entry tracked these premises by name).
 
-GATE_RESULT
+**Gate.** [`scripts/gate.py`](scripts/gate.py) runs `rust`, then `records`;
+exits in [gate/](gate/), figures in [gate.json](gate.json). Every step exited
+0, on the first run (private logs `private/cp/gate`, `private/cp/gate-records`):
+
+- submodule; fmt clean; the Rust suite: 356 units / 369 summaries, **6,368
+  passed, 0 failed**, 11 ignored (+13); clippy clean; both probes 0;
+- **224 Lean audits** (`AuditLoopOwner.lean` 81 → 95 theorems, no new audit
+  module);
+- `providers/` is unchanged, so the provider gate is not due; provider
+  `cargo test` was run for the gate record: 129 passed / 0 failed / 1 ignored;
+- the `records` phase, after the ledger, matrix and index regeneration: 365
+  Python tests OK, docs index 0, Clang 21.1.8 recorded.
+
+The rust phase ran on `4d1ff236` plus a one-word doc-comment correction in
+`loop_owner_coro_plugin.rs` (`flb_resume` → `flb_coro_resume`), committed
+after it; no code changed.
 
 **Files likely to conflict** (the other premise cards amend 10p and extend
 `QCore.LoopOwner` too):

@@ -16,7 +16,7 @@
 //!    listed parameter of a listed function; `input_coro_list` is only
 //!    initialised and appended to (never read through). What is left is the
 //!    running coroutine's handle of itself (the thread-local current
-//!    coroutine `flb_resume` sets, read by `flb_coro_get()`, and `co_active()`),
+//!    coroutine `flb_coro_resume` sets, read by `flb_coro_get()`, and `co_active()`),
 //!    named **P-CURRENT-HANDLE**: no thread resumes a coroutine while it runs.
 //! 2. **P-PLUGIN-DIR.** (a) A `struct flb_input_plugin`'s `flags` is written
 //!    at run time only into a fresh allocation, before the allocation is

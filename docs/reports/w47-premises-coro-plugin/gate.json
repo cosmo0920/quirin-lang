@@ -1,0 +1,13 @@
+{
+  "note": "W47-PREMISES-CORO-PLUGIN card gate at base fe603d49. The rust phase ran on the tree of 4d1ff236 plus a one-word doc-comment correction in loop_owner_coro_plugin.rs (committed after; no code change), logs private/cp/gate of this worktree: run_test_binaries.py 356 units, 369 summaries, 6,368 passed, 0 failed, 11 ignored (private/test-binaries/20260929T052154Z-3088718/summary.json; +13, the new loop_owner_coro_plugin tests); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditLoopOwner.lean 81 -> 95 theorems through the new QCore.LoopOwnerCoroPlugin module, no new audit module). providers/ is unchanged, so the provider gate is not due; provider cargo test was run for this record: 129 passed / 0 failed / 1 ignored across 43 result lines, then provider clean-dev 0. The records phase (private/cp/gate-records) ran after the ledger (568 -> 572), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Exits in gate/.",
+  "workspace_tests": 6368,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
