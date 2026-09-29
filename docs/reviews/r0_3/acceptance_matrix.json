@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 620
+  "named_followups": 621
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-SCALAR-TYPES-R2 card gate at base 7e723a96, logs private/w48-r2/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 361 units, 374 summaries, 6,445 passed, 0 failed, 11 ignored (private/test-binaries/20260929T084824Z-191140/summary.json); clippy first exit 101 (type_complexity on one test-local tuple type in compiler/tests/scalar_typed_errors.rs), fixed with a type alias and rerun 0, that test binary rerun 8 passed, fmt rerun 0; both reevaluation probes exit 0; check_lean_audits.py 226 audits passed (new AuditScalarTypedErrors.lean, 20 theorems). providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from the W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase ran after the ledger (588 -> 589), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
-  "workspace_tests": 6445,
+  "note": "W48-QR-SCALAR-TYPES-R3 card gate at base d3508e10, logs private/w48-r3/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py first run 363 units, 376 summaries, 6,464 passed, 1 failed (std_io_compose::rendering_a_wider_scalar_refuses_at_q043, which pinned the i32-only composed rendering this card deliberately widened; corrected and renamed), exit 101 (gate/03-tests.first.exit); rerun after the correction 363 units, 376 summaries, 6,465 passed, 0 failed, 11 ignored (private/test-binaries/20260929T120147Z-1393506/summary.json), fmt and clippy rerun clean; both reevaluation probes exit 0; check_lean_audits.py 227 audits passed (new AuditScalarPositions.lean, 22 theorems); python and docs index after the ledger (620 -> 621) and matrix regeneration. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
+  "workspace_tests": 6465,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 226,
+  "lean_audits": 227,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6932,6 +6932,7 @@
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
+   "AuditScalarPositions.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
@@ -6992,7 +6993,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r2/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r3/gate.json)"
  },
  "named_followups": [
   {

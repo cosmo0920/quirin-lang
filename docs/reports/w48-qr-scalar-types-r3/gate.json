@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES-R3 card gate at base d3508e10, logs private/w48-r3/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py first run 363 units, 376 summaries, 6,464 passed, 1 failed (std_io_compose::rendering_a_wider_scalar_refuses_at_q043, which pinned the i32-only composed rendering this card deliberately widened; corrected and renamed), exit 101 (gate/03-tests.first.exit); rerun after the correction 363 units, 376 summaries, 6,465 passed, 0 failed, 11 ignored (private/test-binaries/20260929T120147Z-1393506/summary.json), fmt and clippy rerun clean; both reevaluation probes exit 0; check_lean_audits.py 227 audits passed (new AuditScalarPositions.lean, 22 theorems); python and docs index after the ledger (620 -> 621) and matrix regeneration. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
+  "workspace_tests": 6465,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 227,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

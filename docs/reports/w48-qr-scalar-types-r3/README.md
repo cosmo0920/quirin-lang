@@ -137,6 +137,7 @@ read or a conversion stays the lowering's existing `BOUND-FROM-FIELD` refusal
 | `compiler/tests/std_string.rs::the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable` | admitted an unbraced clause list parsed into the result annotation | asserts no `Q013` and the one `Q020`; the braced `contract { … }` form is admitted on the sequential route | the unread annotation is now read |
 | `compiler/tests/unsafe_linkage.rs::every_admitted_scalar_crosses_…` | passed `2` at a `bool` parameter | passes `1` | a literal at a declared parameter is range-checked (an implicit integer-to-`bool` conversion before) |
 | `compiler/tests/scalar_types.rs::a_conversion_on_another_route_stays_refused` | listed two buffer-route conversions as refused | they moved to `a_conversion_statement_is_admitted_on_the_buffer_route` | the deliberate widening of item 1 |
+| `compiler/tests/std_io_compose.rs::rendering_a_wider_scalar_refuses_at_q043` | a declared `i64` rendered refused at `Q043` | renamed `…_renders_it_at_its_own_type`: `out: 21`, `out: 0x0000000000000015` | the deliberate widening of item 2's composed rendering |
 | `source_record.rs`/`owned_field_route_reach.rs` field-type tests | used `u8`/`i64` as unmodelled field types | use `f64`, `f32`, `char` | the deliberate widening of item 1 |
 
 Test constructions of `BufferEvent::Construct` and `ExternProgram` were
@@ -217,23 +218,51 @@ boundary tables, not an extraction theorem.
 | item 1 existing tests changed | only the conversion-route test, 70% | that test **and** two field-type tests that used `u8`/`i64` as unmodelled types |
 | the declaration read moves exactly P08 and P10 | 65% | **exactly P08 and P10** among `.qr` files — after exempting contract modules, whose first measurement moved 41 `.qv` files |
 | native tables under UBSan | agree, 0 reports, 80% | **all agree, 0 reports** (table above) |
-| Lean | 85% | **227 audits** (22 new theorems) — see the gate |
-| corpus arbiter | byte-identical `ae17152b…`, 97% | see [Corpus arbiter](#corpus-arbiter) |
-| standing gate | green, new tests only, 80% | see [Gate](#gate) |
+| Lean | 85% | **227 audits** (22 new theorems) |
+| corpus arbiter | byte-identical `ae17152b…`, 97% | **byte-identical** (`ae17152b…`) |
+| standing gate | green, new tests only, 80% | **green** after one test correction; 6,445 → 6,465 |
 | items completed | 1 (85%), 2 (45%), 3 (25%), 4 (20%), 5 (10%) | **1 and 2**; 3–5 not attempted |
 
 Not predicted: four more tests pinned the unread-declaration shape
-(`quant_index_contracts.rs` ×2, `logical_connectives.rs`, `std_string.rs`), and
+(`quant_index_contracts.rs` ×2, `logical_connectives.rs`, `std_string.rs`),
 the extern route passed a literal at a declared parameter unchecked
-(`unsafe_linkage.rs`'s `2` at `bool`), now refused.
+(`unsafe_linkage.rs`'s `2` at `bool`), now refused, and one composed test
+pinned the `i32`-only rendering (`std_io_compose.rs`), found by the gate's
+first run.
 
 ## Gate
 
-GATE_TABLE
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | (rerun after the test correction) |
+| tests | `python3 scripts/run_test_binaries.py` | first 101, rerun 0 | first run 363 units, 6,464 passed, **1 failed**: `std_io_compose::rendering_a_wider_scalar_refuses_at_q043` pinned the `i32`-only composed rendering this card widened (corrected above); rerun 363 units, 376 summaries, **6,465 passed, 0 failed, 11 ignored** (`private/test-binaries/20260929T120147Z-1393506/summary.json`) |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | (rerun after the test correction) |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **227 audits** (226 + `AuditScalarPositions.lean`) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/) (the first test run's as `03-tests.first.exit`),
+record in [gate.json](gate.json); logs under `private/w48-r3/gate/`. The test
+count rose 6,445 → 6,465 (+20: the two new test files' 19 tests and the moved
+buffer-route conversion test). `providers/` is unchanged, so the provider gate
+is not due. Clang 21.1.8 recorded in this worktree
+([gate/clang-version.txt](gate/clang-version.txt)). The AFTER fixture freeze
+was taken with the tip's debug `quirin` (`00689550…`).
 
 ## Corpus arbiter
 
-ARBITER_TEXT
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+card's release `quirin-audit` (`c940ff49…`, built at `28ffe82f`; later
+commits touch tests and records only): exit 0. `resource-diagnostics.json`
+sha256 `ae17152b05516be7…` is **byte-identical** to the archived baseline, and
+so are `resource-diagnostics.chunk-contracts.json` (`cbbcfd9c…`) and
+`monkey-source.json` (`57acfc58…`) ([identity](artifacts/arbiter-corpus.identity)).
+No C-audit path was touched, as predicted.
 
 ## Positions and follow-ups
 

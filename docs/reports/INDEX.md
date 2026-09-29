@@ -1026,6 +1026,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-scalar-types-r2](w48-qr-scalar-types-r2/README.md) | W48-QR-SCALAR-TYPES-R2: unread annotations and the typed arithmetic error |
 
+| [w48-qr-scalar-types-r3](w48-qr-scalar-types-r3/README.md) | W48-QR-SCALAR-TYPES-R3: typed record fields and extern values |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
