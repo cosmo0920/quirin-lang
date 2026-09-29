@@ -98,6 +98,11 @@ chain on it. Rule 10t turns 1,454 refusals into flow obligations that fail
 | system (`046accf6`) | 31 / 2 / 201 | 31 / 2 / 201 |
 | slice (`90978ac6`) | 24 / 1 / 244 / 1 Pending | 24 / 1 / 244 / 1 Pending |
 
+The tip binary (rebuilt at `dd043322`; its hash differs from the AFTER build,
+whose source differs only in test code) reproduces the AFTER corpus
+`resource-diagnostics.json` byte for byte, `b63c1b57…`
+([tip-corpus.sha256](artifacts/tip-corpus.sha256)).
+
 **Attribution** ([attribution](artifacts/after-corpus.attribution.json.gz)): 800
 corpus functions move, every one attributed:
 
