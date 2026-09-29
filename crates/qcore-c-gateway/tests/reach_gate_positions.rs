@@ -398,8 +398,25 @@ fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
         "a chain one selection past the bound refuses",
         "a link this reader will not type refuses",
     ];
+    // Card CG10-COMMON-TYPED-PLACE (rule 10t) re-pins one row deliberately:
+    // the typed condition fallback now reads `*view->count` on the root this
+    // body may bind as a tracked-root place, and the flow refuses the root
+    // (`UnknownAlias` of `view`), in place of the refusal. Still Unknown.
+    const TRACKED: [&str; 1] = ["an explicit dereference has no model here"];
     for (reason, body) in cases {
         let measured = run(body);
+        if TRACKED.contains(&reason) {
+            assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
+            assert!(
+                measured.diagnostics.iter().any(|diagnostic| matches!(
+                    diagnostic,
+                    LegacyDiagnosticKind::UnknownAlias { variable } if variable == "view"
+                )),
+                "{reason}: {:?}",
+                measured.diagnostics
+            );
+            continue;
+        }
         if TYPED.contains(&reason) {
             assert_eq!(
                 measured.status,

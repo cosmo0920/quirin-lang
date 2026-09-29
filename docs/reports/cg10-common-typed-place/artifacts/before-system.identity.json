@@ -1,0 +1,46 @@
+{
+ "base": "docs/reports/w47-flb-lib-strict-pairing/artifacts/after/system",
+ "diagnostic_counts": [
+  {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  },
+  {
+   "counted_user": 4,
+   "unknown_alias": 1020,
+   "unsupported": 2888
+  }
+ ],
+ "functions": [
+  {
+   "Safe": 31,
+   "Unknown": 201,
+   "Unsafe": 2
+  },
+  {
+   "Safe": 31,
+   "Unknown": 201,
+   "Unsafe": 2
+  }
+ ],
+ "identical": false,
+ "moved_functions": [],
+ "moved_units": [],
+ "route": "system",
+ "run": "private/cg10/before/system",
+ "sha256": [
+  "a0803f985e5445e2e7e7b546832fb5a9805504ad45f421ae31fdd13f0ddb4119",
+  "879147c88a445e8546c0cd0589ec7f8e392ff8fd092b93217edc2f9515e276c3"
+ ],
+ "units": [
+  {
+   "Unknown": 7,
+   "Unsafe": 1
+  },
+  {
+   "Unknown": 7,
+   "Unsafe": 1
+  }
+ ]
+}

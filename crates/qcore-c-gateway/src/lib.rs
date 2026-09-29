@@ -66,6 +66,8 @@ mod typed_access_path;
 mod typed_access_positions;
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n).
 mod typed_position_shapes;
+// Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.
+mod typed_place;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type

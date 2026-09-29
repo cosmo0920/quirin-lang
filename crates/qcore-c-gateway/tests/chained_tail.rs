@@ -305,7 +305,9 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
     let rows: [(&str, &str); 6] = [
         // The chain is not the whole actual.
         ("&storage->leaf->label", INDIRECT),
-        ("*storage->leaf->label", INDIRECT),
+        // Card CG10 (rule 10t): the tracked-root place reads it; the flow
+        // refuses the root, which the body may bind and does not track.
+        ("*storage->leaf->label", "UnknownAlias:storage"),
         ("storage->flag = 1", INDIRECT),
         // A link the reader did not fully type: a union stays refused.
         ("uh->view->leaf", INDIRECT),

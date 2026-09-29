@@ -1,0 +1,13 @@
+{
+  "note": "CG10-COMMON-TYPED-PLACE card gate at b246b5b8 (base e182d403), logs private/cg10/gate of this worktree (scripts/gate.sh, every exit to a file, no step piped): submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 367 units, 380 summaries, 6,569 passed, 1 failed, 11 ignored (private/test-binaries/20260929T124042Z-1764668/summary.json). The one failure is qcore-compiler cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets, a wall-clock assertion (elapsed < 500 ms) under a machine load average of 28-36 (three cards running); it failed once more at load 28 (03b, exit 101) and passed 20/20 at load 20 (03c, exit 0). It touches no gateway code. clippy 0; both reevaluation probes exit 0; check_lean_audits.py 228 audits passed (+AuditTypedPlace, 25 theorems); python tests 365 OK; docs index check 0; clean-dev 0. providers/ is unchanged, so the provider gate is not due: provider_tests 129 is carried. Clang 21.1.8.",
+  "workspace_tests": 6570,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 228,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

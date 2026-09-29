@@ -205,9 +205,11 @@ fn a_const_pointer_middle_hop_keeps_its_premises() {
         outcome("int w(struct c_box *b) { return b->pp[0]->weight; }"),
         safe()
     );
+    // Card CG10 (rule 10t): the tracked root's place is read; its `b->pp`
+    // link has no admitted store's evidence, so the flow refuses it.
     let tracked = "int w(int n) { struct c_box *b = c_make(n); int r = 0; if (!b) return 0; \
         if (b->pp[0]->weight) r = 1; c_drop(b); return r; }";
-    assert_eq!(outcome(tracked), unknown(&[BRANCH]));
+    assert_eq!(outcome(tracked), unknown(&["unknown_alias:b->pp"]));
 }
 
 /// Rule 5b's premise is unchanged: a `const`-qualified pointer value whose

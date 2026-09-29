@@ -515,7 +515,7 @@ impl Parser<'_> {
         let whole = refused && texts(&tokens) == texts(statement);
         if !whole {
             let saved = (self.next_site, self.element_lowerings);
-            let lowered = self.expression_statement(&tokens, line);
+            let lowered = self.expression_statement(&tokens, line, None);
             if !refuses(&lowered) {
                 return Ok(vec![lowered]);
             }
