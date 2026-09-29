@@ -464,7 +464,10 @@ fn computation_helper(
                 Some(Helper::Convert(ty, to))
             }
         }
-        ValueOperation::Compare(..) => None,
+        // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-INLINE-COMPARISON-WERROR`): a
+        // comparison is a two-parameter function, so `x == x` compiles under
+        // `-Werror`.
+        ValueOperation::Compare(cmp, ..) => Some(Helper::Compare(cmp, ty)),
     }
 }
 
@@ -595,15 +598,6 @@ fn value_statement_text(
                 "    {result} {name} = {}({});",
                 helper.name(),
                 operands.join(", ")
-            );
-        }
-        (None, ValueOperation::Compare(cmp, ..)) => {
-            let _ = writeln!(
-                source,
-                "    {result} {name} = ({} {} {});",
-                operands[0],
-                cmp.c_operator(),
-                operands[1]
             );
         }
         (None, ValueOperation::Convert(_, to)) => {

@@ -45,6 +45,15 @@ pub enum Helper {
     TryOp(Op, ScalarType),
     TryNeg(ScalarType),
     TryConvert(ScalarType, ScalarType),
+    /// A comparison as a function of two parameters (card
+    /// `W48-QR-SCALAR-TYPES-R6`, `W48-QR-INLINE-COMPARISON-WERROR`): written
+    /// inline, a comparison of a value with itself (`x == x`) is a
+    /// `-Wtautological-compare` error under `-Werror` for a statement the
+    /// source legitimately writes; through parameters the compiler sees two
+    /// values of the type and nothing else, and the result is the same
+    /// `bool`. Card R5's buffer-route form, shared by the scalar, extern and
+    /// task routes.
+    Compare(st::Cmp, ScalarType),
 }
 struct Emitter<'a> {
     checked: &'a Checked,
@@ -130,9 +139,14 @@ impl Emitter<'_> {
                 }
             }
             TKind::Compare(cmp, a, b) => {
+                let Type::Scalar(ty) = a.ty else {
+                    unreachable!("a checked comparison is between scalars")
+                };
                 let a = self.expr(a);
                 let b = self.expr(b);
-                format!("({a} {} {b})", cmp.c_operator())
+                let helper = Helper::Compare(*cmp, ty);
+                self.helpers.insert(helper);
+                format!("{}({a}, {b})", helper.name())
             }
             TKind::Convert(x) => {
                 let v = self.expr(x);
@@ -345,7 +359,20 @@ impl Helper {
             Self::TryOp(op, ty) => format!("q_scalar_try_{}_{ty}", op_name(op)),
             Self::TryNeg(ty) => format!("q_scalar_try_neg_{ty}"),
             Self::TryConvert(from, to) => format!("q_scalar_try_as_{from}_{to}"),
+            Self::Compare(cmp, ty) => format!("q_scalar_{}_{ty}", cmp_name(cmp)),
         }
+    }
+}
+
+/// The name of a comparison in its helper's name.
+fn cmp_name(cmp: st::Cmp) -> &'static str {
+    match cmp {
+        st::Cmp::Eq => "eq",
+        st::Cmp::Ne => "ne",
+        st::Cmp::Lt => "lt",
+        st::Cmp::Le => "le",
+        st::Cmp::Gt => "gt",
+        st::Cmp::Ge => "ge",
     }
 }
 
@@ -356,6 +383,14 @@ impl Helper {
 pub fn scalar_helper_definition(helper: Helper, target: Option<&st::RecordedTarget>) -> String {
     let fault = "{ exit(86); }";
     match helper {
+        Helper::Compare(cmp, ty) => {
+            let c = st::c_type(ty);
+            format!(
+                "static bool {}({c} a, {c} b) {{\n    return a {} b;\n}}\n",
+                helper.name(),
+                cmp.c_operator()
+            )
+        }
         Helper::Op(op, ty) => {
             let c = st::c_type(ty);
             let name = format!("q_scalar_{}_{ty}", op_name(op));

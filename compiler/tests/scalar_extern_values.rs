@@ -365,6 +365,40 @@ fn known_programs_run_natively_as_the_reference_under_three_builds() {
     native::publish("extern-known", &rows);
 }
 
+/// Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-INLINE-COMPARISON-WERROR`): a value
+/// compared with itself builds under `-Werror` — the comparison is the shared
+/// two-parameter function, not an inline `a == a` — and prints the reference.
+#[cfg(unix)]
+#[test]
+fn a_self_comparison_builds_under_werror_and_runs() {
+    let source = format!(
+        "{COMPOSED_HEADER}{}fn main() -> unit effects {{ io }} {{\n    let a = q_seq_u8() succeeds 7;\n    let c = a == a;\n    let d = a < a;\n    print dec c;\n    print dec d;\n    flush;\n    return;\n}}\n",
+        declarations(&[ScalarType::U8])
+    );
+    let m = admitted(&source, SourceExecutionProfile::ComposedStdIoExternV1);
+    assert_eq!(lines(&m), ["out: true", "out: false"]);
+    let c = m.c_source.clone().unwrap();
+    assert!(
+        c.contains("q_scalar_eq_u8(") && c.contains("q_scalar_lt_u8("),
+        "{c}"
+    );
+    for (label, flags) in native::BUILDS {
+        let built =
+            native::build(&c, &callees_c(), flags).unwrap_or_else(|e| panic!("{label}: {e}"));
+        let out = std::process::Command::new(&built.binary)
+            .env("QSEQ", "7")
+            .output()
+            .unwrap();
+        assert_eq!(out.status.code(), Some(0), "{label}");
+        assert_eq!(
+            String::from_utf8_lossy(&out.stdout),
+            "true\nfalse\n",
+            "{label}"
+        );
+        assert_eq!(String::from_utf8_lossy(&out.stderr), "", "{label}");
+    }
+}
+
 // --- Dynamic path: undeclared results through the typed error ----------------
 
 /// One dynamic-path binary: its label, its source, and each run as the `QSEQ`

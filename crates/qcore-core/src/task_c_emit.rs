@@ -96,7 +96,10 @@ fn operation_helper(
                 Some(Helper::Convert(ty, *to))
             }
         }
-        TaskValueOperation::Compare(..) => None,
+        // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-INLINE-COMPARISON-WERROR`): a
+        // comparison is a two-parameter function, so `x == x` compiles under
+        // `-Werror`.
+        TaskValueOperation::Compare(cmp, ..) => Some(Helper::Compare(*cmp, ty)),
     }
 }
 
@@ -113,9 +116,6 @@ fn value_expression(
         .collect::<Vec<_>>();
     match (operation_helper(operation, types, false, target), operation) {
         (Some(helper), _) => format!("{}({})", helper.name(), operands.join(", ")),
-        (None, TaskValueOperation::Compare(cmp, ..)) => {
-            format!("({} {} {})", operands[0], cmp.c_operator(), operands[1])
-        }
         (None, TaskValueOperation::Convert(_, to)) => {
             format!("({})({})", st::c_type(*to), operands[0])
         }

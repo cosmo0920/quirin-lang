@@ -692,6 +692,7 @@ pub fn emit_buffer_c11(
         helpers: BTreeSet::new(),
         comparisons: BTreeSet::new(),
         target: certificate.target_assumption.clone(),
+        discard_unused: true,
     };
 
     let lends: BTreeMap<usize, &std_buffer::LendRecord> = certificate
@@ -805,6 +806,7 @@ impl EmbeddedTyped {
                 helpers: BTreeSet::new(),
                 comparisons: BTreeSet::new(),
                 target,
+                discard_unused: true,
             },
         }
     }
@@ -837,7 +839,12 @@ impl EmbeddedTyped {
         ) {
             return Err(BufferEmissionRefusal::UnemittableConversion { event: index });
         }
-        self.events(index, event, scalars, extents)
+        // The composing route decides whether a later statement of its own
+        // reads the binding, and discards it itself when none does.
+        self.records.discard_unused = false;
+        let text = self.events(index, event, scalars, extents);
+        self.records.discard_unused = true;
+        text
     }
 
     fn events(
@@ -949,6 +956,10 @@ struct RecordEnvironment {
     comparisons: BTreeSet<(st::Cmp, ScalarType)>,
     /// The recorded target, when the certificate depends on one.
     target: Option<st::RecordedTarget>,
+    /// Whether [`emit_events`] discards a scalar its sequence never reads
+    /// (card `W48-QR-SCALAR-TYPES-R6`). Off only for a composing route's single
+    /// top-level statement, whose reads that route's own discard decides.
+    discard_unused: bool,
 }
 
 impl RecordEnvironment {
@@ -995,8 +1006,90 @@ impl RecordEnvironment {
     }
 }
 
+/// The C scalar a binding event declares, if it declares one.
+fn declared_scalar(event: &BufferEvent) -> Option<String> {
+    match event {
+        BufferEvent::Bind { binding, .. }
+        | BufferEvent::Load { binding, .. }
+        | BufferEvent::Extent { binding, .. }
+        | BufferEvent::Convert { binding, .. }
+        | BufferEvent::Compute { binding, .. }
+        | BufferEvent::CopyBind { binding, .. } => Some(scalar_name(binding)),
+        _ => None,
+    }
+}
+
+/// Whether `name` occurs in `text` as a whole C identifier.
+fn names_identifier(text: &str, name: &str) -> bool {
+    let is_identifier = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    text.match_indices(name).any(|(at, _)| {
+        let before = text[..at].chars().next_back();
+        let after = text[at + name.len()..].chars().next();
+        !before.is_some_and(is_identifier) && !after.is_some_and(is_identifier)
+    })
+}
+
+/// Emit one sequence of events at `indent`, then discard every scalar the
+/// sequence declares and nothing after it in the sequence reads (card
+/// `W48-QR-SCALAR-TYPES-R6`, `W48-QR-LOOP-BOUND-NAME-UNUSED-C`).
+///
+/// The emitted C is built with `-Wall -Wextra -Werror`, where an unused local
+/// is an error; before the card a binding the program never read — a loop
+/// bound whose loop is written against its literal count, a body binding
+/// nothing in the body reads — emitted C that did not compile. The decision is
+/// made on the **emitted text itself**: a declared `s_NAME` that no later text
+/// of its own sequence (its C block) names as an identifier is followed by
+/// `(void) s_NAME;`, exactly the string route's discard. A program whose every
+/// binding is read gets no discard, so its bytes are unchanged.
 #[allow(clippy::too_many_arguments)]
 fn emit_events(
+    events: &[BufferEvent],
+    indent: &str,
+    attributed: usize,
+    top_level: bool,
+    scalars: &mut BTreeMap<String, String>,
+    extents: &mut BTreeMap<String, u32>,
+    loans: &mut BTreeMap<String, (u32, u32)>,
+    lends: &BTreeMap<usize, &std_buffer::LendRecord>,
+    records: &mut RecordEnvironment,
+    source: &mut String,
+) -> Result<(), BufferEmissionRefusal> {
+    let mut declared: Vec<(usize, String)> = Vec::new();
+    for (position, event) in events.iter().enumerate() {
+        let index = if top_level { position } else { attributed };
+        let start = source.len();
+        emit_event_sequence(
+            std::slice::from_ref(event),
+            indent,
+            index,
+            false,
+            scalars,
+            extents,
+            loans,
+            lends,
+            records,
+            source,
+        )?;
+        // Only a scalar this event's own text declares: a copy of a record,
+        // say, binds another C object and is never discarded here.
+        if let Some(name) = declared_scalar(event)
+            && names_identifier(&source[start..], &name)
+        {
+            declared.push((source.len(), name));
+        }
+    }
+    if records.discard_unused {
+        for (offset, name) in declared.into_iter().rev() {
+            if !names_identifier(&source[offset..], &name) {
+                source.insert_str(offset, &format!("{indent}(void) {name};\n"));
+            }
+        }
+    }
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn emit_event_sequence(
     events: &[BufferEvent],
     indent: &str,
     attributed: usize,
