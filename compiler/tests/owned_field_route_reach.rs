@@ -391,10 +391,12 @@ fn a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders() {
 
 /// Every **other** unknown field type keeps the generic message and the
 /// residual it always named. The split is a refinement of one condition, not a
-/// replacement of it.
+/// replacement of it. Card `W48-QR-SCALAR-TYPES-R3` admits the §G02t scalars,
+/// so `u8` and `i64` — unknown before it — are replaced by spellings outside
+/// that table.
 #[test]
 fn every_other_unknown_field_type_keeps_the_message_it_had() {
-    for spelling in ["u8", "Buffer", "i64"] {
+    for spelling in ["f32", "Buffer", "char"] {
         let source = module(
             &format!("type Frame {{ x: {spelling} }}"),
             "    let n = 1;\n    n |> print dec;\n",

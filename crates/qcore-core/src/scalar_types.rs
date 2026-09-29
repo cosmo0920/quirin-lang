@@ -618,3 +618,48 @@ pub fn c_rendering(
         ),
     })
 }
+
+/// The `_Static_assert`s that bind an emitted program to the recorded
+/// target's width: a C compiler whose `size_t`/`ptrdiff_t` differ refuses to
+/// build it. Shared by every route that emits `isize`/`usize` (cards
+/// `W48-QR-SCALAR-TYPES` and `W48-QR-SCALAR-TYPES-R3`), so the discharge of the
+/// assumption is spelled once.
+#[must_use]
+pub fn c_target_assertions(target: &RecordedTarget) -> String {
+    let bits = target.pointer_width.bits();
+    format!(
+        "_Static_assert(SIZE_MAX == UINT{bits}_MAX, \"usize is the recorded target's {bits}-bit size_t\");\n_Static_assert(PTRDIFF_MAX == INT{bits}_MAX && PTRDIFF_MIN == INT{bits}_MIN, \"isize is the recorded target's {bits}-bit ptrdiff_t\");\n"
+    )
+}
+
+/// The C test, over an operand named `v` of type `from`, that is true exactly
+/// when `v as to` does not fit — the empty string when the conversion is
+/// total. Only the comparisons the two ranges need are written, so no test is
+/// tautological at `-Wextra`. Shared by every route that emits a checked
+/// conversion. `None` when either width is unknown.
+#[must_use]
+pub fn c_conversion_test(
+    from: ScalarType,
+    to: ScalarType,
+    target: Option<&RecordedTarget>,
+) -> Option<String> {
+    let (to_min, to_max) = c_limits(to);
+    let (from_low, from_high) = from.range(target).ok()?;
+    let (to_low, to_high) = to.range(target).ok()?;
+    let mut tests = Vec::new();
+    if from_low < to_low {
+        tests.push(if to.is_signed() {
+            format!("v < {to_min}")
+        } else {
+            "v < 0".into()
+        });
+    }
+    if from_high > to_high {
+        tests.push(if from.is_signed() == to.is_signed() {
+            format!("v > {to_max}")
+        } else {
+            format!("(uintmax_t)v > (uintmax_t){to_max}")
+        });
+    }
+    Some(tests.join(" || "))
+}

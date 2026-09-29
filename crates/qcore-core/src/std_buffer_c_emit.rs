@@ -45,11 +45,12 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
+use crate::scalar_types::{self as st, ScalarType};
 use crate::source_record::{FieldType, RecordType};
 use crate::std_buffer::{
-    self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT,
+    self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, FieldOperand, MAX_EXTENT,
 };
-use crate::std_io::StdIoEvent;
+use crate::std_io::{Rendering, StdIoEvent, StdIoOperand};
 use crate::std_io_c_emit;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -92,6 +93,12 @@ pub enum BufferEmissionRefusal {
     /// declared. The composed string/buffer route is such a caller, and this is
     /// the refusal it receives (`AGGREGATE-STRING-COMPOSE`).
     UnemittableRecord { event: usize },
+    /// A conversion reached a caller that cannot emit one (card
+    /// `W48-QR-SCALAR-TYPES-R3`): the [`Self::UnemittableRecord`] shape, for
+    /// its reason — a conversion's source may be a name of any §G02t type,
+    /// which only [`emit_events`]'s typed environment knows. The one caller
+    /// without it is the composed string/buffer route, which lowers none.
+    UnemittableConversion { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -311,13 +318,20 @@ pub fn record_types_text(records: &[RecordType]) -> String {
     if records.iter().any(RecordType::has_owned_field) {
         text.push_str(RECORD_PRELUDE_OWNED);
     }
+    // Card `W48-QR-SCALAR-TYPES-R3`: likewise the paragraph about members of
+    // the other fixed-width types, written only for a module declaring one.
+    if records.iter().any(declares_typed_field) {
+        text.push_str(RECORD_PRELUDE_TYPED);
+    }
     for record in records {
         let _ = writeln!(text, "struct {} {{", record_type_tag(&record.name));
         for field in &record.fields {
             let member = record_field_name(&field.name);
             match field.field_type {
-                FieldType::I32 => {
-                    let _ = writeln!(text, "    int32_t {member};");
+                // `int32_t` for an `i32`, exactly as before the card, and each
+                // other type's `<stdint.h>`/`<stdbool.h>`/`<stddef.h>` spelling.
+                FieldType::Scalar(ty) => {
+                    let _ = writeln!(text, "    {} {member};", st::c_type(ty));
                 }
                 FieldType::Bytes => {
                     let _ = writeln!(text, "    unsigned char *{member};");
@@ -328,6 +342,41 @@ pub fn record_types_text(records: &[RecordType]) -> String {
     }
     text
 }
+
+/// Whether a record declares a scalar field of a type other than `i32` (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+fn declares_typed_field(record: &RecordType) -> bool {
+    record
+        .fields
+        .iter()
+        .any(|field| matches!(field.field_type, FieldType::Scalar(ty) if ty != ScalarType::I32))
+}
+
+/// Whether a program names a §G02t type other than `i32` anywhere — a field
+/// type or a conversion target — and so needs `<stdbool.h>`/`<stddef.h>`
+/// (card `W48-QR-SCALAR-TYPES-R3`). False for every program before the card,
+/// which is what keeps their includes byte-identical.
+#[must_use]
+pub fn uses_typed_scalars(program: &BufferProgram) -> bool {
+    program.records.iter().any(declares_typed_field)
+        || std_buffer::any_event(
+            &program.events,
+            |event| matches!(event, BufferEvent::Convert { to, .. } if *to != ScalarType::I32),
+        )
+}
+
+/// The paragraph a module declaring a field of another fixed-width type adds
+/// to [`RECORD_PRELUDE_HEADER`] (card `W48-QR-SCALAR-TYPES-R3`), appended
+/// rather than edited in so the header's bytes are unchanged for every module
+/// of `i32` records.
+pub const RECORD_PRELUDE_TYPED: &str = r#"
+/* W48-QR-SCALAR-TYPES-R3: a member may be any fixed-width scalar of the
+   source's table, declared at its own C11 type (`int8_t` ... `uint64_t`,
+   `bool`, and `ptrdiff_t`/`size_t` for isize/usize at the recorded target's
+   width). The paragraph above about `i32` members holds for every member of
+   each type: a distinct scalar object, owning nothing, initialized from a
+   value the checker already proved to be a value of that type. */
+"#;
 
 /// What the emitted struct is, and what it is not.
 pub const RECORD_PRELUDE_HEADER: &str = r#"
@@ -398,6 +447,57 @@ pub fn interpret_buffer_program(
         .iter()
         .map(|line| format!("{}: {}", line.stream.label(), line.text))
         .collect())
+}
+
+/// The C expression for a value a construction supplies at a scalar field of
+/// type `ty` (card `W48-QR-SCALAR-TYPES-R3`). An `i32` field is written exactly
+/// as before the card; a literal of another type is that type's C constant,
+/// and a name is its C object, whose type the checker proved to be `ty`.
+fn field_expression(
+    scalars: &BTreeMap<String, String>,
+    typed: &BTreeMap<String, (String, ScalarType)>,
+    event: usize,
+    ty: ScalarType,
+    operand: &FieldOperand,
+) -> Result<String, BufferEmissionRefusal> {
+    match (ty, operand) {
+        (ScalarType::I32, FieldOperand::Literal(value)) => Ok(format!("INT32_C({value})")),
+        (_, FieldOperand::Literal(value)) => Ok(st::c_literal(ty, *value)),
+        (_, FieldOperand::Bool(value)) => Ok(st::c_literal(ty, i128::from(*value))),
+        (_, FieldOperand::Name(name)) => scalars
+            .get(name)
+            .cloned()
+            .or_else(|| typed.get(name).map(|(emitted, _)| emitted.clone()))
+            .ok_or_else(|| BufferEmissionRefusal::Unbound {
+                event,
+                name: name.clone(),
+            }),
+    }
+}
+
+/// The C name of the checked conversion helper from `from` to `to` (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+fn conversion_helper_name(from: ScalarType, to: ScalarType) -> String {
+    format!("qcore_buffer_as_{from}_{to}")
+}
+
+/// The definition of one checked conversion helper. Its test is §G02t's shared
+/// one (`scalar_types::c_conversion_test`), decided on the operand before the
+/// cast, and it **aborts** — this route's witness discipline: every conversion
+/// in an admitted program is one the checker already proved to fit, so the
+/// test is provably never taken, and if it ever fired that would be a defect
+/// in the checker.
+fn conversion_helper(
+    from: ScalarType,
+    to: ScalarType,
+    target: Option<&st::RecordedTarget>,
+) -> Option<String> {
+    let test = st::c_conversion_test(from, to, target)?;
+    let (from_c, to_c) = (st::c_type(from), st::c_type(to));
+    Some(format!(
+        "\nstatic {to_c} {}({from_c} v)\n{{\n    if ({test}) {{\n        abort();\n    }}\n    return ({to_c}) v;\n}}\n",
+        conversion_helper_name(from, to)
+    ))
 }
 
 /// The C expression for one index or stored byte.
@@ -512,6 +612,11 @@ pub fn buffer_event_statement(
             format!("qcore_bytes_drop({});", buffer_name(name))
         }
         BufferEvent::Line(_) | BufferEvent::Return => return Ok(None),
+        // **Refused, not skipped** — see
+        // [`BufferEmissionRefusal::UnemittableConversion`].
+        BufferEvent::Convert { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableConversion { event: index });
+        }
         // **Refused, not skipped.** A loop is a block, not a statement, and
         // this function returns one statement's text. `emit_events` handles a
         // `Repeat` in its own arm and never reaches here; a caller that cannot
@@ -548,7 +653,7 @@ pub fn emit_buffer_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_buffer_program(program, certificate)?;
 
-    let fragments = preamble(program);
+    let mut fragments = preamble(program);
     let mut source = String::new();
 
     // Every binding is declared at its own statement, in program order: unlike
@@ -566,6 +671,9 @@ pub fn emit_buffer_c11(
         bound: BTreeMap::new(),
         field_extents: BTreeMap::new(),
         live_fields: BTreeMap::new(),
+        typed: BTreeMap::new(),
+        conversions: BTreeSet::new(),
+        target: certificate.target_assumption.clone(),
     };
 
     let lends: BTreeMap<usize, &std_buffer::LendRecord> = certificate
@@ -586,6 +694,28 @@ pub fn emit_buffer_c11(
         &mut records,
         &mut source,
     )?;
+
+    // Card `W48-QR-SCALAR-TYPES-R3`: the recorded target's width assertions
+    // and the conversion helpers this program used — both empty, and so no
+    // fragment at all, for every program written before the card.
+    let mut typed_prelude = String::new();
+    if let Some(target) = &certificate.target_assumption {
+        typed_prelude.push('\n');
+        typed_prelude.push_str(&st::c_target_assertions(target));
+    }
+    for (from, to) in &records.conversions {
+        match conversion_helper(*from, *to, certificate.target_assumption.as_ref()) {
+            Some(helper) => typed_prelude.push_str(&helper),
+            None => return Err(BufferEmissionRefusal::UnemittableConversion { event: 0 }),
+        }
+    }
+    if !typed_prelude.is_empty() {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "buffer.scalar-types",
+            typed_prelude,
+        ));
+    }
 
     Ok(BufferCEmission {
         source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
@@ -617,6 +747,9 @@ pub fn buffer_loop_block(
         bound: BTreeMap::new(),
         field_extents: BTreeMap::new(),
         live_fields: BTreeMap::new(),
+        typed: BTreeMap::new(),
+        conversions: BTreeSet::new(),
+        target: None,
     };
     let mut source = String::new();
     emit_events(
@@ -669,6 +802,35 @@ struct RecordEnvironment {
     /// emitter's mirror of what the checker decided and the certificate
     /// published.
     live_fields: BTreeMap<String, BTreeSet<String>>,
+    /// Card `W48-QR-SCALAR-TYPES-R3`: every scalar binding of a type other
+    /// than `i32`, with its C object — the emitter's half of the typed
+    /// environment (`i32` names stay in `scalars`, as before the card).
+    typed: BTreeMap<String, (String, ScalarType)>,
+    /// The checked conversions the program uses, each emitted as one helper.
+    conversions: BTreeSet<(ScalarType, ScalarType)>,
+    /// The recorded target, when the certificate depends on one.
+    target: Option<st::RecordedTarget>,
+}
+
+impl RecordEnvironment {
+    /// The C object and type of a scalar name of any type.
+    fn scalar(
+        &self,
+        scalars: &BTreeMap<String, String>,
+        event: usize,
+        name: &str,
+    ) -> Result<(String, ScalarType), BufferEmissionRefusal> {
+        if let Some(emitted) = scalars.get(name) {
+            return Ok((emitted.clone(), ScalarType::I32));
+        }
+        self.typed
+            .get(name)
+            .cloned()
+            .ok_or_else(|| BufferEmissionRefusal::Unbound {
+                event,
+                name: name.to_owned(),
+            })
+    }
 }
 
 impl RecordEnvironment {
@@ -843,6 +1005,51 @@ fn emit_events(
                     record_binding_name(from)
                 );
             }
+            // Card `W48-QR-SCALAR-TYPES-R3`: a copy of a name of another type
+            // keeps its type — the scalar copy of the arm below, at that type.
+            BufferEvent::CopyBind {
+                binding,
+                source: from,
+            } if records.typed.contains_key(from) => {
+                let (from_c, ty) = records.typed[from].clone();
+                let emitted = scalar_name(binding);
+                records.typed.insert(binding.clone(), (emitted.clone(), ty));
+                let _ = writeln!(source, "{indent}{} {emitted} = {from_c};", st::c_type(ty));
+            }
+            // Card `W48-QR-SCALAR-TYPES-R3`: the conversion. Total, it is a
+            // plain cast; checked, it calls the helper whose test the checker
+            // proved never taken.
+            BufferEvent::Convert {
+                binding,
+                operand,
+                to,
+            } => {
+                let (value, from) = match operand {
+                    BufferOperand::Literal(value) => (format!("INT32_C({value})"), ScalarType::I32),
+                    BufferOperand::Scalar(name) => records.scalar(scalars, index, name)?,
+                };
+                let total = st::conversion_is_total(from, *to, records.target.as_ref())
+                    .map_err(|_| BufferEmissionRefusal::UnemittableConversion { event: index })?;
+                let expression = if total {
+                    format!("({})({value})", st::c_type(*to))
+                } else {
+                    records.conversions.insert((from, *to));
+                    format!("{}({value})", conversion_helper_name(from, *to))
+                };
+                let emitted = scalar_name(binding);
+                if *to == ScalarType::I32 {
+                    scalars.insert(binding.clone(), emitted.clone());
+                } else {
+                    records
+                        .typed
+                        .insert(binding.clone(), (emitted.clone(), *to));
+                }
+                let _ = writeln!(
+                    source,
+                    "{indent}{} {emitted} = {expression};",
+                    st::c_type(*to)
+                );
+            }
             BufferEvent::Bind { .. }
             | BufferEvent::CopyBind { .. }
             | BufferEvent::Acquire { .. }
@@ -942,13 +1149,15 @@ fn emit_events(
                         });
                     };
                     let value = match field.field_type {
-                        FieldType::I32 => operand_expression(scalars, index, operand)?,
+                        FieldType::Scalar(ty) => {
+                            field_expression(scalars, &records.typed, index, ty, operand)?
+                        }
                         // Card `AGGREGATE-OWNED-FIELD`: the owned member takes
                         // the buffer's pointer — the move, in C, is the
                         // initializer naming the old binding — and the struct
                         // owes it from here on.
                         FieldType::Bytes => {
-                            let BufferOperand::Scalar(from) = operand else {
+                            let FieldOperand::Name(from) = operand else {
                                 return Err(BufferEmissionRefusal::UnplaceableAccess {
                                     event: index,
                                 });
@@ -1001,12 +1210,25 @@ fn emit_events(
                     return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
                 };
                 match field_type {
-                    FieldType::I32 => {
+                    FieldType::Scalar(ScalarType::I32) => {
                         let emitted = scalar_name(binding);
                         scalars.insert(binding.clone(), emitted.clone());
                         let _ = writeln!(
                             source,
                             "{indent}int32_t {emitted} = {}.{};",
+                            record_binding_name(record),
+                            record_field_name(field)
+                        );
+                    }
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a field of another type
+                    // binds a scalar of exactly that type.
+                    FieldType::Scalar(ty) => {
+                        let emitted = scalar_name(binding);
+                        records.typed.insert(binding.clone(), (emitted.clone(), ty));
+                        let _ = writeln!(
+                            source,
+                            "{indent}{} {emitted} = {}.{};",
+                            st::c_type(ty),
                             record_binding_name(record),
                             record_field_name(field)
                         );
@@ -1048,6 +1270,7 @@ fn emit_events(
                 let outer_scalars: Vec<String> = scalars.keys().cloned().collect();
                 let outer_extents: Vec<String> = extents.keys().cloned().collect();
                 let outer_records: Vec<String> = records.bound.keys().cloned().collect();
+                let outer_typed: Vec<String> = records.typed.keys().cloned().collect();
                 scalars.insert(variable.clone(), name);
                 let inner = format!("{indent}    ");
                 emit_events(
@@ -1058,11 +1281,51 @@ fn emit_events(
                 scalars.retain(|key, _| outer_scalars.contains(key));
                 extents.retain(|key, _| outer_extents.contains(key));
                 records.bound.retain(|key, _| outer_records.contains(key));
+                records.typed.retain(|key, _| outer_typed.contains(key));
                 let _ = writeln!(source, "{indent}}}");
             }
             // Handled — or refused — by the loan environment's own match
             // above, which never falls through for a lend.
             BufferEvent::Lend { .. } => {}
+            // Card `W48-QR-SCALAR-TYPES-R3`: a line rendering a name of another
+            // type renders it at that type — §G02t's conversion and operand
+            // for the type, framed by the one line framing every route shares.
+            // An `i32` operand never takes this arm, so its bytes are the ones
+            // the standard-IO emitter below has always written.
+            BufferEvent::Line(
+                StdIoEvent::Print {
+                    rendering,
+                    operand: StdIoOperand::Scalar(name),
+                }
+                | StdIoEvent::Log {
+                    rendering,
+                    operand: StdIoOperand::Scalar(name),
+                    ..
+                },
+            ) if records.typed.contains_key(name) => {
+                let level = match event {
+                    BufferEvent::Line(StdIoEvent::Log { level, .. }) => Some(*level),
+                    _ => None,
+                };
+                let (emitted, ty) = records.typed[name].clone();
+                let (stream, prefix) = crate::std_io::line_framing(level);
+                let Some((conversion, operand)) = st::c_rendering(
+                    *rendering == Rendering::Hex,
+                    ty,
+                    &emitted,
+                    records.target.as_ref(),
+                ) else {
+                    return Err(BufferEmissionRefusal::Unbound {
+                        event: index,
+                        name: name.clone(),
+                    });
+                };
+                let _ = writeln!(
+                    source,
+                    "{indent}{}",
+                    io_emit::write_line(stream, &format!("{prefix}{conversion}"), &[&operand])
+                );
+            }
             BufferEvent::Line(line) => {
                 // The rendering itself — the conversion, the level tag, the
                 // stream, the `fflush` — is decided by `source.std-io.v1`'s own
@@ -1092,8 +1355,22 @@ fn emit_events(
 /// program's events reach — so it is built here rather than being a constant.
 #[must_use]
 pub fn preamble(program: &BufferProgram) -> Vec<Fragment> {
-    vec![
-        Fragment::new(Section::Includes, "buffer.includes", INCLUDES),
+    let mut fragments = vec![Fragment::new(
+        Section::Includes,
+        "buffer.includes",
+        INCLUDES,
+    )];
+    // Card `W48-QR-SCALAR-TYPES-R3`: `bool` and `ptrdiff_t`/`size_t` need
+    // their headers, under the scalar route's own fragment key so a merged
+    // program includes them once. Absent for every program before the card.
+    if uses_typed_scalars(program) {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-types.includes",
+            "#include <stdbool.h>\n#include <stddef.h>\n",
+        ));
+    }
+    fragments.extend([
         io_emit::io_prelude_fragment(),
         // Card `AGGREGATES-V1`, and **before** the buffer prelude: a record
         // type is a type definition and nothing in the buffer prelude reads it,
@@ -1107,7 +1384,8 @@ pub fn preamble(program: &BufferProgram) -> Vec<Fragment> {
             record_types_text(&program.records),
         ),
         Fragment::new(Section::Prelude, "buffer.prelude", buffer_prelude(program)),
-    ]
+    ]);
+    fragments
 }
 
 /// The single-emission-route check, applied to this backend: an emitted program

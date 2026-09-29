@@ -131,6 +131,7 @@ use std::fmt;
 
 use crate::ResourceId;
 use crate::native_library;
+use crate::scalar_types::{self as st, ArithmeticError, Cmp, Op, RecordedTarget, ScalarType};
 use crate::typed_errors::{Effect, EffectRow};
 
 /// Identity of a bound scalar value (card `PIPE-SCALAR-RESULT`).
@@ -213,6 +214,27 @@ impl AbiType {
     #[must_use]
     pub const fn is_mutable_pointer(self) -> bool {
         matches!(self, Self::PtrMutU8 | Self::PtrMutPtrMutU8)
+    }
+
+    /// The §G02t type a value of this ABI spelling has (card
+    /// `W48-QR-SCALAR-TYPES-R3`): the eleven scalar spellings are exactly the
+    /// §G02t table, and a pointer or `unit` is no value at all.
+    #[must_use]
+    pub const fn scalar(self) -> Option<ScalarType> {
+        Some(match self {
+            Self::Bool => ScalarType::Bool,
+            Self::I8 => ScalarType::I8,
+            Self::I16 => ScalarType::I16,
+            Self::I32 => ScalarType::I32,
+            Self::I64 => ScalarType::I64,
+            Self::Isize => ScalarType::Isize,
+            Self::U8 => ScalarType::U8,
+            Self::U16 => ScalarType::U16,
+            Self::U32 => ScalarType::U32,
+            Self::U64 => ScalarType::U64,
+            Self::Usize => ScalarType::Usize,
+            Self::PtrMutU8 | Self::PtrConstU8 | Self::PtrMutPtrMutU8 | Self::Unit => return None,
+        })
     }
 
     /// The stdint spelling the backend prints. Linkage and layout equality with
@@ -1262,7 +1284,9 @@ pub struct ExternCall {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ScalarBinding {
     pub value: ValueId,
-    pub outcome: Option<i32>,
+    /// Card `W48-QR-SCALAR-TYPES-R3`: a number of the result's own type, of
+    /// any width (before it, an `i32` literal whatever the result's type).
+    pub outcome: Option<i128>,
 }
 
 /// One scalar literal binding, `let NAME = INTEGER;` (card
@@ -1278,11 +1302,50 @@ pub struct ScalarLiteral {
     pub literal: i32,
 }
 
+/// One operand of a value statement (card `W48-QR-SCALAR-TYPES-R3`): a bound
+/// value of the namespace, an integer literal — typed by its context, `i32`
+/// when nothing gives it one — or `true`/`false`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ValueOperand {
+    Value(ValueId),
+    Integer(i128),
+    Bool(bool),
+}
+
+/// The one §G02t operation a value statement performs (card
+/// `W48-QR-SCALAR-TYPES-R3`). One operation per statement: a longer
+/// computation is a sequence of bindings, each checked on its own.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ValueOperation {
+    /// `a OP b`, checked at the operands' one type.
+    Binary(Op, ValueOperand, ValueOperand),
+    /// `a CMP b`, producing a `bool`.
+    Compare(Cmp, ValueOperand, ValueOperand),
+    /// `-a`, checked.
+    Negate(ValueOperand),
+    /// `a as TYPE`, total or checked.
+    Convert(ValueOperand, ScalarType),
+}
+
+/// `let NAME = VALUE_EXPRESSION;` — a value statement (card
+/// `W48-QR-SCALAR-TYPES-R3`): a new value of the namespace computed from bound
+/// values and literals. It calls nothing and carries no custody. Whether its
+/// number is known at check time — every operand known — or only at run time
+/// is the checker's to decide, and so is whether it can fault.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ValueStatement {
+    pub value: ValueId,
+    pub operation: ValueOperation,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ExternEvent {
     Call(ExternCall),
     /// `let NAME = INTEGER;` — see [`ScalarLiteral`].
     Bind(ScalarLiteral),
+    /// A value statement — see [`ValueStatement`] (card
+    /// `W48-QR-SCALAR-TYPES-R3`).
+    Compute(ValueStatement),
     Return,
 }
 
@@ -1309,6 +1372,112 @@ pub struct ExternProgram {
     /// rederivable — [`recheck_extern_certificate`] re-derives from the program
     /// alone.
     pub libraries: Vec<native_library::SourceLibraryBinding>,
+    /// Whether the entry's row declares `throws<ArithmeticError>` (card
+    /// `W48-QR-SCALAR-TYPES-R3`): the permission a value statement needs when
+    /// its operands are not all known and its operation can fault. Never
+    /// inferred; `false` for every program before the card.
+    pub raises: bool,
+    /// The builder's recorded target, which alone gives `isize`/`usize` values
+    /// a range (card `W48-QR-SCALAR-TYPES-R3`).
+    pub target: Option<RecordedTarget>,
+}
+
+/// Why a value of the namespace is refused at a position (card
+/// `W48-QR-SCALAR-TYPES-R3`). Each is a condition of `Q024`, the value
+/// namespace's existing code, widened; none allocates a code.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ValueRefusal {
+    /// Two operands of different types: there is no implicit conversion.
+    MixedTypes { left: ScalarType, right: ScalarType },
+    /// Arithmetic, negation or an ordering on `bool`.
+    NotAnInteger { operation: &'static str },
+    /// A literal that is not a value of the type its context gives it.
+    LiteralOutOfRange { literal: i128, ty: ScalarType },
+    /// A declared `succeeds INTEGER` that is not a value of the declared result.
+    OutcomeOutOfRange {
+        callee: String,
+        outcome: i128,
+        ty: ScalarType,
+    },
+    /// A conversion to or from `bool`.
+    NoConversion { from: ScalarType, to: ScalarType },
+    /// `isize`/`usize` in a value statement with no recorded target.
+    NoRecordedTarget { ty: ScalarType },
+    /// An operation on known operands that faults: decided — and refused — at
+    /// check time, whatever the row permits.
+    StaticFault {
+        error: ArithmeticError,
+        ty: ScalarType,
+    },
+    /// An operation on an operand not known until run time that can fault, in
+    /// an entry whose row does not permit `throws<ArithmeticError>`.
+    NeedsPermission { ty: ScalarType },
+    /// A value of one type at a declared parameter of another.
+    ArgumentType {
+        parameter: usize,
+        declared: ScalarType,
+        supplied: ScalarType,
+    },
+}
+
+impl fmt::Display for ValueRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::MixedTypes { left, right } => write!(
+                f,
+                "the operands are a `{left}` and a `{right}`; there is no implicit conversion, so \
+                 convert one with `as` first"
+            ),
+            Self::NotAnInteger { operation } => {
+                write!(f, "`bool` is not an integer and has no {operation}")
+            }
+            Self::LiteralOutOfRange { literal, ty } => write!(
+                f,
+                "`{literal}` is not a value of `{ty}`; a literal is range-checked against the type \
+                 its context gives it, the minimum included"
+            ),
+            Self::OutcomeOutOfRange {
+                callee,
+                outcome,
+                ty,
+            } => write!(
+                f,
+                "`{callee}` declares a `{ty}` result and `succeeds {outcome}` is not a value of \
+                 `{ty}`, so no run could return it"
+            ),
+            Self::NoConversion { from, to } => write!(
+                f,
+                "`{from} as {to}` is not a conversion: `bool` is not an integer, so nothing \
+                 converts to or from it"
+            ),
+            Self::NoRecordedTarget { ty } => write!(
+                f,
+                "`{ty}` takes its width from a recorded target, none of which was supplied; the \
+                 width is never guessed (supply one with `--recorded-target FILE`)"
+            ),
+            Self::StaticFault { error, ty } => write!(
+                f,
+                "this `{ty}` operation on values known at check time raises `{error}`, so it is \
+                 refused now rather than run"
+            ),
+            Self::NeedsPermission { ty } => write!(
+                f,
+                "this `{ty}` operation reads a value known only at run time and can fault; the \
+                 entry's row must declare `throws<ArithmeticError>` for the fault to take the \
+                 typed error path (the program then exits `80 + tag`), and without it the \
+                 operation is refused"
+            ),
+            Self::ArgumentType {
+                parameter,
+                declared,
+                supplied,
+            } => write!(
+                f,
+                "argument {parameter} is a `{supplied}` and the parameter is declared `{declared}`; \
+                 there is no implicit conversion, so bind `let v = NAME as {declared};` first"
+            ),
+        }
+    }
 }
 
 /// Refusals this checker owns. Custody liveness, leaks, resource flow and the
@@ -1423,6 +1592,9 @@ pub enum ExternDiagnostic {
         parameter: usize,
         value: ValueId,
     },
+    /// Q024: the §G02t typing of the value namespace refuses (card
+    /// `W48-QR-SCALAR-TYPES-R3`) — see [`ValueRefusal`].
+    Value { event: usize, refusal: ValueRefusal },
 }
 
 impl ExternDiagnostic {
@@ -1438,7 +1610,8 @@ impl ExternDiagnostic {
             | Self::ReleaseArgumentForm { .. }
             | Self::ResultNotScalar { .. }
             | Self::DuplicateValueBinding { .. }
-            | Self::ValueNotBound { .. } => "Q024",
+            | Self::ValueNotBound { .. }
+            | Self::Value { .. } => "Q024",
             Self::ResultBindingOnAcquisition { .. } => "Q025",
             Self::AdapterMissing { .. }
             | Self::AdapterUnexpected { .. }
@@ -1478,7 +1651,8 @@ impl ExternDiagnostic {
             | Self::ResultNotScalar { event, .. }
             | Self::ResultBindingOnAcquisition { event, .. }
             | Self::DuplicateValueBinding { event, .. }
-            | Self::ValueNotBound { event, .. } => *event,
+            | Self::ValueNotBound { event, .. }
+            | Self::Value { event, .. } => *event,
         }
     }
 }
@@ -1588,6 +1762,7 @@ impl fmt::Display for ExternDiagnostic {
                 f,
                 "argument {parameter} reads scalar value {value}, which no earlier call in this trace bound"
             ),
+            Self::Value { refusal, .. } => refusal.fmt(f),
         }
     }
 }
@@ -1778,7 +1953,18 @@ pub struct ExternCallCertificate {
     /// call returns (card `STD-IO-COMPOSE`), in trace order. A binding absent
     /// here carries no modeled number, which is what makes it unreadable as
     /// data.
-    pub declared_outcomes: Vec<(ValueId, i32)>,
+    pub declared_outcomes: Vec<(ValueId, i128)>,
+    /// The §G02t type of every bound value, by identity (card
+    /// `W48-QR-SCALAR-TYPES-R3`): a call's result type, `i32` for a literal
+    /// binding, and a value statement's result type.
+    pub value_types: BTreeMap<ValueId, ScalarType>,
+    /// Every value statement, in trace order (card `W48-QR-SCALAR-TYPES-R3`),
+    /// with what the checker decided about it.
+    pub computations: Vec<ValueComputation>,
+    /// The recorded target this certificate depends on: present exactly when a
+    /// value statement or a declared outcome is checked at `isize`/`usize`,
+    /// whose range only the builder's record supplies. A named assumption.
+    pub target_assumption: Option<RecordedTarget>,
     /// Union of the derived rows of every call site, error-arm dispositions
     /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
@@ -1798,6 +1984,210 @@ pub struct ExternCallCertificate {
     /// It says nothing about an error arm: a raise leaves this trace, and the
     /// identities an arm disposes of are `error_dispositions`.
     pub live_after: Vec<Vec<ResourceId>>,
+}
+
+/// What the checker decided about one value statement (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ValueComputation {
+    pub value: ValueId,
+    /// The result's type (`bool` for a comparison).
+    pub ty: ScalarType,
+    /// The operation's own type — its operands' — which is the result's for
+    /// everything but a comparison and a conversion.
+    pub operand_ty: ScalarType,
+    /// The number, when every operand is known at check time.
+    pub known: Option<i128>,
+    /// Whether a run can raise `ArithmeticError` here: an operand is known only
+    /// at run time and the operation can fault. Admitted only under the row's
+    /// `throws<ArithmeticError>`.
+    pub raises: bool,
+}
+
+/// The §G02t checking of the value namespace (card `W48-QR-SCALAR-TYPES-R3`).
+#[derive(Default)]
+struct ValueTyping {
+    types: BTreeMap<ValueId, ScalarType>,
+    known: BTreeMap<ValueId, i128>,
+    /// Whether any check read the width of `isize`/`usize`.
+    used_target: bool,
+}
+
+impl ValueTyping {
+    /// The width-bearing range check of `ty`, recording that the target was
+    /// read, or the refusal when it is needed and absent.
+    fn range(
+        &mut self,
+        ty: ScalarType,
+        target: Option<&RecordedTarget>,
+    ) -> Result<(i128, i128), ValueRefusal> {
+        if ty.is_target_width() {
+            if target.is_none() {
+                return Err(ValueRefusal::NoRecordedTarget { ty });
+            }
+            self.used_target = true;
+        }
+        Ok(ty.range(target).expect("a width is known here"))
+    }
+
+    fn literal_at(
+        &mut self,
+        literal: i128,
+        ty: ScalarType,
+        target: Option<&RecordedTarget>,
+    ) -> Result<i128, ValueRefusal> {
+        if ty == ScalarType::Bool {
+            return Err(ValueRefusal::LiteralOutOfRange { literal, ty });
+        }
+        let (low, high) = self.range(ty, target)?;
+        if low <= literal && literal <= high {
+            Ok(literal)
+        } else {
+            Err(ValueRefusal::LiteralOutOfRange { literal, ty })
+        }
+    }
+
+    /// The type and known number of one operand, a literal typed by `context`
+    /// (`i32` when there is none).
+    fn operand(
+        &mut self,
+        operand: ValueOperand,
+        context: Option<ScalarType>,
+        target: Option<&RecordedTarget>,
+    ) -> Result<(ScalarType, Option<i128>), Option<ValueRefusal>> {
+        match operand {
+            ValueOperand::Value(value) => {
+                let ty = *self.types.get(&value).ok_or(None)?;
+                Ok((ty, self.known.get(&value).copied()))
+            }
+            ValueOperand::Bool(value) => Ok((ScalarType::Bool, Some(i128::from(value)))),
+            ValueOperand::Integer(literal) => {
+                let ty = context.unwrap_or(ScalarType::I32);
+                Ok((
+                    ty,
+                    Some(self.literal_at(literal, ty, target).map_err(Some)?),
+                ))
+            }
+        }
+    }
+
+    /// The type of a binary operation's operands: a value's type decides a
+    /// literal's; two values must agree; two literals are `i32`.
+    fn pair(
+        &mut self,
+        left: ValueOperand,
+        right: ValueOperand,
+        target: Option<&RecordedTarget>,
+    ) -> Result<(ScalarType, Option<i128>, Option<i128>), Option<ValueRefusal>> {
+        let declared = |operand: ValueOperand, typing: &Self| match operand {
+            ValueOperand::Value(value) => typing.types.get(&value).copied(),
+            ValueOperand::Bool(_) => Some(ScalarType::Bool),
+            ValueOperand::Integer(_) => None,
+        };
+        let context = declared(left, self).or(declared(right, self));
+        let (lt, lk) = self.operand(left, context, target)?;
+        let (rt, rk) = self.operand(right, context, target)?;
+        if lt != rt {
+            return Err(Some(ValueRefusal::MixedTypes {
+                left: lt,
+                right: rt,
+            }));
+        }
+        Ok((lt, lk, rk))
+    }
+
+    /// Check one value statement against the row's permission.
+    fn compute(
+        &mut self,
+        statement: &ValueStatement,
+        raises_permitted: bool,
+        target: Option<&RecordedTarget>,
+    ) -> Result<ValueComputation, Option<ValueRefusal>> {
+        let (ty, operand_ty, known, can_fault) = match statement.operation {
+            ValueOperation::Binary(op, left, right) => {
+                let (ty, a, b) = self.pair(left, right, target)?;
+                if ty == ScalarType::Bool {
+                    return Err(Some(ValueRefusal::NotAnInteger {
+                        operation: "arithmetic",
+                    }));
+                }
+                self.range(ty, target)?;
+                let known = match (a, b) {
+                    (Some(a), Some(b)) => Some(
+                        st::checked_error(op, ty, a, b, target)
+                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty }))?,
+                    ),
+                    _ => None,
+                };
+                (ty, ty, known, true)
+            }
+            ValueOperation::Compare(cmp, left, right) => {
+                let (ty, a, b) = self.pair(left, right, target)?;
+                if ty == ScalarType::Bool && cmp.is_ordering() {
+                    return Err(Some(ValueRefusal::NotAnInteger {
+                        operation: "ordering",
+                    }));
+                }
+                if ty.is_integer() {
+                    self.range(ty, target)?;
+                }
+                let known = match (a, b) {
+                    (Some(a), Some(b)) => st::compare(cmp, ty, a, b).map(i128::from),
+                    _ => None,
+                };
+                (ScalarType::Bool, ty, known, false)
+            }
+            ValueOperation::Negate(operand) => {
+                let (ty, a) = self.operand(operand, None, target)?;
+                if ty == ScalarType::Bool {
+                    return Err(Some(ValueRefusal::NotAnInteger {
+                        operation: "negation",
+                    }));
+                }
+                self.range(ty, target)?;
+                let known = match a {
+                    Some(a) => Some(
+                        st::negate_error(ty, a, target)
+                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty }))?,
+                    ),
+                    None => None,
+                };
+                (ty, ty, known, true)
+            }
+            ValueOperation::Convert(operand, to) => {
+                let (from, a) = self.operand(operand, None, target)?;
+                if from == ScalarType::Bool || to == ScalarType::Bool {
+                    return Err(Some(ValueRefusal::NoConversion { from, to }));
+                }
+                self.range(from, target)?;
+                self.range(to, target)?;
+                let known = match a {
+                    Some(a) => Some(
+                        st::convert_error(from, to, a, target)
+                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty: to }))?,
+                    ),
+                    None => None,
+                };
+                let total = st::conversion_is_total(from, to, target).unwrap_or(false);
+                (to, from, known, !total)
+            }
+        };
+        let raises = known.is_none() && can_fault;
+        if raises && !raises_permitted {
+            return Err(Some(ValueRefusal::NeedsPermission { ty: operand_ty }));
+        }
+        self.types.insert(statement.value, ty);
+        if let Some(known) = known {
+            self.known.insert(statement.value, known);
+        }
+        Ok(ValueComputation {
+            value: statement.value,
+            ty,
+            operand_ty,
+            known,
+            raises,
+        })
+    }
 }
 
 /// Remove one identity from the acquisition-ordered live list, if present.
@@ -1995,6 +2385,11 @@ pub fn check_extern_program(
     // released, because binding one imposes no obligation. It exists only so
     // that reading a value that was never bound is a refusal.
     let mut values = BTreeSet::<ValueId>::new();
+    // Card `W48-QR-SCALAR-TYPES-R3`: the namespace's §G02t typing — each
+    // value's type and, where the source determined it, its number.
+    let mut typing = ValueTyping::default();
+    let mut computations = Vec::new();
+    let target = program.target.as_ref();
     let mut effects = BTreeSet::new();
     // One ledger snapshot per event, taken after it (card `STD-FMT-BORROW`).
     // The per-event body is a labelled block rather than the loop body itself so
@@ -2017,6 +2412,52 @@ pub fn check_extern_program(
                         });
                     }
                     literal_bindings.push((literal.value, literal.literal));
+                    typing.types.insert(literal.value, ScalarType::I32);
+                    typing
+                        .known
+                        .insert(literal.value, i128::from(literal.literal));
+                    break 'event;
+                }
+                // Card `W48-QR-SCALAR-TYPES-R3`: a value statement. Like a
+                // literal binding it names no callee and touches no ledger;
+                // what it can do wrong is §G02t's, decided by `ValueTyping`.
+                ExternEvent::Compute(statement) => {
+                    if !values.insert(statement.value) {
+                        diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                            event: index,
+                            value: statement.value,
+                        });
+                        break 'event;
+                    }
+                    match typing.compute(statement, program.raises, target) {
+                        Ok(computation) => computations.push(computation),
+                        Err(Some(refusal)) => {
+                            diagnostics.push(ExternDiagnostic::Value {
+                                event: index,
+                                refusal,
+                            });
+                        }
+                        Err(None) => {
+                            let operands = match statement.operation {
+                                ValueOperation::Binary(_, a, b)
+                                | ValueOperation::Compare(_, a, b) => vec![a, b],
+                                ValueOperation::Negate(a) | ValueOperation::Convert(a, _) => {
+                                    vec![a]
+                                }
+                            };
+                            for (parameter, operand) in operands.into_iter().enumerate() {
+                                if let ValueOperand::Value(value) = operand
+                                    && !typing.types.contains_key(&value)
+                                {
+                                    diagnostics.push(ExternDiagnostic::ValueNotBound {
+                                        event: index,
+                                        parameter,
+                                        value,
+                                    });
+                                }
+                            }
+                        }
+                    }
                     break 'event;
                 }
                 ExternEvent::Return => break 'event,
@@ -2068,6 +2509,55 @@ pub fn check_extern_program(
                     continue;
                 }
                 match (argument, declared) {
+                    (ExternArgument::Value(value), CallParameter::Data(abi)) => {
+                        if !values.contains(value) {
+                            diagnostics.push(ExternDiagnostic::ValueNotBound {
+                                event: index,
+                                parameter,
+                                value: *value,
+                            });
+                        } else if let (Some(declared), Some(supplied)) =
+                            (abi.scalar(), typing.types.get(value).copied())
+                            && declared != supplied
+                        {
+                            // Card `W48-QR-SCALAR-TYPES-R3`: no implicit
+                            // conversion at a declared parameter either.
+                            diagnostics.push(ExternDiagnostic::Value {
+                                event: index,
+                                refusal: ValueRefusal::ArgumentType {
+                                    parameter,
+                                    declared,
+                                    supplied,
+                                },
+                            });
+                        }
+                    }
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a literal at a declared
+                    // scalar parameter is range-checked against that
+                    // parameter's type — never truncated by the C call. The
+                    // width of `isize`/`usize` is the recorded target's; with
+                    // none, the literal is passed as it always was.
+                    (ExternArgument::Data(literal), CallParameter::Data(abi)) => {
+                        if let Some(ty) = abi.scalar()
+                            && !(ty.is_target_width() && target.is_none())
+                        {
+                            let literal = i128::from(*literal);
+                            if let Err(refusal) =
+                                typing.range(ty, target).and_then(|(low, high)| {
+                                    if low <= literal && literal <= high {
+                                        Ok(())
+                                    } else {
+                                        Err(ValueRefusal::LiteralOutOfRange { literal, ty })
+                                    }
+                                })
+                            {
+                                diagnostics.push(ExternDiagnostic::Value {
+                                    event: index,
+                                    refusal,
+                                });
+                            }
+                        }
+                    }
                     (ExternArgument::Value(value), _) => {
                         if !values.contains(value) {
                             diagnostics.push(ExternDiagnostic::ValueNotBound {
@@ -2193,8 +2683,44 @@ pub fn check_extern_program(
                         });
                     }
                     scalar_bindings.push((callee.name.clone(), value));
+                    // Card `W48-QR-SCALAR-TYPES-R3`: the value has the declared
+                    // result's type, and a declared outcome is a value of it —
+                    // range-checked, the width of `isize`/`usize` read from the
+                    // recorded target. With no target the outcome of a
+                    // target-width result is carried unchecked, as before the
+                    // card, and any statement that would compute with it
+                    // refuses for want of the width.
+                    let ty = callee
+                        .result_abi
+                        .scalar()
+                        .expect("a scalar binding has a scalar result");
+                    typing.types.insert(value, ty);
                     if let Some(outcome) = binding.outcome {
                         declared_outcomes.push((value, outcome));
+                        let checked = if ty.is_target_width() && target.is_none() {
+                            Ok(outcome)
+                        } else {
+                            typing.range(ty, target).and_then(|(low, high)| {
+                                if low <= outcome && outcome <= high {
+                                    Ok(outcome)
+                                } else {
+                                    Err(ValueRefusal::OutcomeOutOfRange {
+                                        callee: callee.name.clone(),
+                                        outcome,
+                                        ty,
+                                    })
+                                }
+                            })
+                        };
+                        match checked {
+                            Ok(outcome) => {
+                                typing.known.insert(value, outcome);
+                            }
+                            Err(refusal) => diagnostics.push(ExternDiagnostic::Value {
+                                event: index,
+                                refusal,
+                            }),
+                        }
                     }
                 } else {
                     diagnostics.push(ExternDiagnostic::ResultNotScalar {
@@ -2324,6 +2850,13 @@ pub fn check_extern_program(
         scalar_bindings,
         literal_bindings,
         declared_outcomes,
+        value_types: typing.types,
+        computations,
+        target_assumption: if typing.used_target {
+            program.target.clone()
+        } else {
+            None
+        },
         effects: EffectRow::new(effects),
         assumptions,
         live_after,

@@ -104,9 +104,12 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ownership::{self, FieldPath, Footprint, OwnershipError, OwnershipOp, ResourceId};
+use crate::scalar_types::{self as st, RecordedTarget, ScalarType};
 use crate::source_loop::{self, BoundRefusal, LoopRefusal, MAX_ITERATIONS, MAX_UNROLLED_EVENTS};
 use crate::source_record::{self, FieldType, FieldValue, RecordRefusal, RecordType, RecordValue};
-use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
+use crate::std_io::{
+    ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
+};
 use crate::typed_errors::{Effect, EffectRow};
 
 /// The largest extent this route admits, in bytes.
@@ -143,10 +146,51 @@ pub enum BufferOperand {
     Scalar(String),
 }
 
+/// What a record construction supplies at one field (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+///
+/// A field value is either a literal, read at the field's own type, or a name
+/// this entry bound — a scalar of some §G02t type, or (at a field declared
+/// `bytes`) an acquired buffer moved in. Which of those the name denotes, and
+/// whether its type is the field's, is the checker's to decide: there is no
+/// implicit conversion, so a name of another type is refused.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum FieldOperand {
+    /// An integer literal. At an `i32` field the lowering reads it with this
+    /// route's own `i32` reader, exactly as before the card; at a field of
+    /// another type it is read at that type and range-checked by the checker.
+    Literal(i128),
+    /// `true` or `false`, written at a field declared `bool`.
+    Bool(bool),
+    /// A name this entry bound.
+    Name(String),
+}
+
+impl From<BufferOperand> for FieldOperand {
+    fn from(operand: BufferOperand) -> Self {
+        match operand {
+            BufferOperand::Literal(value) => Self::Literal(i128::from(value)),
+            BufferOperand::Scalar(name) => Self::Name(name),
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BufferEvent {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
     Bind { binding: String, value: i32 },
+    /// `let BINDING = OPERAND as TYPE;` — the one explicit conversion of
+    /// §G02t (card `W48-QR-SCALAR-TYPES-R3`). The operand is an `i32` literal
+    /// or a name of any §G02t type; the result is the same number at `to`, or
+    /// the program is refused. Every value on this route is a check-time
+    /// constant, so a conversion that does not fit is decided — and refused —
+    /// at check time, never at run time. It is **not** a `buffer_use`, so it
+    /// selects no route: it is read by `lower_let` alone.
+    Convert {
+        binding: String,
+        operand: BufferOperand,
+        to: ScalarType,
+    },
     /// `let NAME = bytes(INTEGER);` — acquire an owned buffer of `extent`
     /// zero-initialised bytes. The custody obligation opens here.
     ///
@@ -243,7 +287,7 @@ pub enum BufferEvent {
     Construct {
         binding: String,
         type_name: String,
-        fields: Vec<(String, BufferOperand)>,
+        fields: Vec<(String, FieldOperand)>,
     },
     /// `let BINDING = RECORD.FIELD;` — read one field into an integer, or —
     /// since card `AGGREGATE-OWNED-FIELD`, when the field is declared `bytes`
@@ -394,8 +438,12 @@ pub struct RecordConstruction {
     pub event: usize,
     pub binding: String,
     pub type_name: String,
-    /// The scalar fields, in declared order.
+    /// The `i32` fields, in declared order.
     pub fields: Vec<(String, i32)>,
+    /// The scalar fields of every other §G02t type, in declared order, each
+    /// with its type (card `W48-QR-SCALAR-TYPES-R3`). Empty for every record
+    /// declared before it.
+    pub typed: Vec<(String, ScalarType, i128)>,
     /// The owned fields, in declared order, each with the name of the buffer
     /// binding the construction moved into it (card `AGGREGATE-OWNED-FIELD`).
     /// Empty for every record of scalars.
@@ -423,6 +471,21 @@ pub struct RecordProjection {
     pub type_name: String,
     pub field: String,
     pub value: i32,
+}
+
+/// One checked read of a field of a §G02t type other than `i32` (card
+/// `W48-QR-SCALAR-TYPES-R3`): the [`RecordProjection`] of a typed field, with
+/// the type the binding now has. Published beside the `i32` reads rather than
+/// folded into them, so every certificate written before the card is
+/// value-identical.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TypedProjection {
+    pub event: usize,
+    pub record: String,
+    pub type_name: String,
+    pub field: String,
+    pub ty: ScalarType,
+    pub value: i128,
 }
 
 /// One admitted write lend, published with the **window** over which the
@@ -481,9 +544,22 @@ pub struct BufferCertificate {
     /// distinctness evidence, published**: a reader sees which field each read
     /// answered to and what it produced, without re-deriving anything.
     pub projections: Vec<RecordProjection>,
+    /// Every read of a field of a type other than `i32`, in program order
+    /// (card `W48-QR-SCALAR-TYPES-R3`).
+    pub typed_projections: Vec<TypedProjection>,
     /// The final scalar environment, so a reader can see what each rendered
     /// name denoted.
     pub scalars: BTreeMap<String, i32>,
+    /// The final environment of every name of a §G02t type other than `i32`,
+    /// with its type (card `W48-QR-SCALAR-TYPES-R3`). A name is in exactly one
+    /// of the two maps: the typing function of this route is
+    /// `scalars ↦ i32, typed_scalars ↦ its type`.
+    pub typed_scalars: BTreeMap<String, (ScalarType, i128)>,
+    /// The recorded target this certificate depends on: present exactly when
+    /// the program names `isize` or `usize`, whose width only the builder's
+    /// record supplies (card `W48-QR-SCALAR-TYPES-R3`). A named assumption of
+    /// the result, never a guess.
+    pub target_assumption: Option<RecordedTarget>,
     /// Every line this program produces, in program order across both streams.
     pub lines: Vec<ObservedLine>,
     /// How many `flush` barriers the program performs.
@@ -638,6 +714,10 @@ pub enum BufferError {
     /// [`Self::Custody`] at `Q054`, which is what "the authority is genuinely
     /// transferred" means operationally.
     Lend { event: usize, refusal: LendRefusal },
+    /// A refusal of the §G02t typing rules on this route (card
+    /// `W48-QR-SCALAR-TYPES-R3`), reported at this pass's own codes through
+    /// [`TypedRefusal::code`] — no code is allocated.
+    Typed { event: usize, refusal: TypedRefusal },
     /// A refusal the **record type** owns (card `AGGREGATES-V1`). Carried as
     /// [`RecordRefusal`]'s own value rather than a re-worded copy.
     ///
@@ -659,6 +739,7 @@ impl BufferError {
             Self::Loop { refusal, .. } => refusal.code(),
             Self::Record { refusal, .. } => refusal.code(),
             Self::Lend { refusal, .. } => refusal.code(),
+            Self::Typed { refusal, .. } => refusal.code(),
             Self::Shape { .. } => "Q051",
             Self::NotAScalar { .. } | Self::NotABuffer { .. } => "Q052",
             Self::OutOfBounds { .. }
@@ -683,6 +764,7 @@ impl BufferError {
             | Self::Loop { event, .. }
             | Self::Record { event, .. }
             | Self::Lend { event, .. }
+            | Self::Typed { event, .. }
             | Self::EffectNotDeclared { event, .. } => *event,
         }
     }
@@ -753,6 +835,83 @@ impl fmt::Display for BufferError {
             Self::Loop { refusal, .. } => refusal.fmt(f),
             Self::Record { refusal, .. } => refusal.fmt(f),
             Self::Lend { refusal, .. } => refusal.fmt(f),
+            Self::Typed { refusal, .. } => refusal.fmt(f),
+        }
+    }
+}
+
+/// The §G02t typing refusals of this route (card `W48-QR-SCALAR-TYPES-R3`).
+///
+/// Every value of this route is a check-time constant, so each rule is decided
+/// at check time: a position that takes an `i32` refuses a name of another
+/// type, a conversion that does not fit refuses, and a target-width type with
+/// no recorded target refuses. None allocates a code; each widens a condition
+/// of the band this route already owns (`Q051` shape, `Q052` "a name that is
+/// not what this position takes", `Q053` range).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TypedRefusal {
+    /// `Q052`: a name of a type other than `i32` at a position that takes an
+    /// `i32` — an index, a stored byte, a lend bound.
+    NotAnI32 { name: String, found: ScalarType },
+    /// `Q052`: a conversion to or from `bool`, which §G02t does not define.
+    NoConversion { from: ScalarType, to: ScalarType },
+    /// `Q053`: a conversion whose value is not a value of its target type.
+    ConversionOutOfRange {
+        from: ScalarType,
+        to: ScalarType,
+        value: i128,
+    },
+    /// `Q051`: `isize` or `usize` named in a module checked with no recorded
+    /// target; the width is never guessed.
+    NoRecordedTarget { ty: ScalarType },
+    /// `Q052`: `hex` of a `bool`, which has no bit pattern to render.
+    NoHexRendering { name: String },
+}
+
+impl TypedRefusal {
+    #[must_use]
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::NoRecordedTarget { .. } => "Q051",
+            Self::NotAnI32 { .. } | Self::NoConversion { .. } | Self::NoHexRendering { .. } => {
+                "Q052"
+            }
+            Self::ConversionOutOfRange { .. } => "Q053",
+        }
+    }
+}
+
+impl fmt::Display for TypedRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotAnI32 { name, found } => write!(
+                f,
+                "`{name}` is a `{found}` and this position takes an `i32`; there is no implicit \
+                 conversion, so bind `let v = {name} as i32;` first where the number is meant as \
+                 an `i32`"
+            ),
+            Self::NoConversion { from, to } => write!(
+                f,
+                "`{from} as {to}` is not a conversion: `bool` is not an integer, so nothing \
+                 converts to or from it"
+            ),
+            Self::ConversionOutOfRange { from, to, value } => write!(
+                f,
+                "`{value}` (a `{from}`) is not a value of `{to}`; `as` is the same number at the \
+                 new type or no value at all, and on `source.buffer.v1` every value is a \
+                 check-time constant, so a conversion that does not fit is refused here rather \
+                 than truncated"
+            ),
+            Self::NoRecordedTarget { ty } => write!(
+                f,
+                "`{ty}` takes its width from a recorded target, none of which was supplied; the \
+                 width is never guessed (supply one with `--recorded-target FILE`)"
+            ),
+            Self::NoHexRendering { name } => write!(
+                f,
+                "`{name}` is a `bool`, which renders `true`/`false` under `dec` and has no `hex` \
+                 rendering"
+            ),
         }
     }
 }
@@ -819,11 +978,15 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 // object of the program, exactly as `let n = 5;` does. A copy
                 // of anything the ledger holds is refused before this row is
                 // read, so no arm of this walk can be reached by one.
+                // **A conversion derives nothing** (card
+                // `W48-QR-SCALAR-TYPES-R3`): it binds a number that already
+                // exists at another type, exactly as `let n = 5;` binds one.
                 BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
                 | BufferEvent::FieldLoad { .. }
                 | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Bind { .. }
+                | BufferEvent::Convert { .. }
                 | BufferEvent::CopyBind { .. }
                 | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
@@ -1025,11 +1188,12 @@ pub fn custody_operations_with_gates(
                                 .filter_map(|owned| {
                                     fields.iter().find(|(name, _)| name == owned).and_then(
                                         |(_, operand)| match operand {
-                                            BufferOperand::Scalar(from) if self.names(from) => {
+                                            FieldOperand::Name(from) if self.names(from) => {
                                                 Some((owned.to_owned(), Self::owner(renames, from)))
                                             }
-                                            BufferOperand::Scalar(_)
-                                            | BufferOperand::Literal(_) => None,
+                                            FieldOperand::Name(_)
+                                            | FieldOperand::Literal(_)
+                                            | FieldOperand::Bool(_) => None,
                                         },
                                     )
                                 })
@@ -1179,7 +1343,11 @@ pub fn custody_operations_with_gates(
                     // the ledger holds nothing for is in exactly that class —
                     // the guarded arm above did not claim it, so it contributes
                     // no operation and the value half decides what it binds.
+                    //
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a conversion names a
+                    // scalar and binds one, so it is in that class too.
                     BufferEvent::Bind { .. }
+                    | BufferEvent::Convert { .. }
                     | BufferEvent::CopyBind { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
@@ -1289,6 +1457,19 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<WindowN
         // bind names a plain binding, never a field path, so it is a
         // `WindowName::Binding` and the two cards' rules compose unchanged.
         BufferEvent::CopyBind { source, .. } => into.push(WindowName::Binding(source.as_str())),
+        // Card `W48-QR-SCALAR-TYPES-R3`: a conversion of a name **names its
+        // source**, so it is a use of that name, pushed in the refusing
+        // direction for the copy bind's reason: a conversion of a loan is
+        // refused at `Q055` by the value half, and a window ending before the
+        // statement naming the loan would be the one mistake to avoid.
+        BufferEvent::Convert {
+            operand: BufferOperand::Scalar(source),
+            ..
+        } => into.push(WindowName::Binding(source.as_str())),
+        BufferEvent::Convert {
+            operand: BufferOperand::Literal(_),
+            ..
+        } => {}
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 custody_names_at_any_depth(event, into);
@@ -1687,6 +1868,11 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     | BufferEvent::FieldRelease { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a conversion contributes
+                    // no operation and **no constant to this tier**: a bound or
+                    // an index spelled through one stays rangeless here, the
+                    // refusing direction, as a copy of a byte read does.
+                    BufferEvent::Convert { .. } => {}
                     // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind reaches
                     // this projection too, because an entry may both lend and
                     // copy. The question is the same one the flat walk asks —
@@ -1878,6 +2064,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         | BufferEvent::Release { .. }
                         | BufferEvent::Lend { .. }
                         | BufferEvent::Construct { .. }
+                        | BufferEvent::Convert { .. }
                         | BufferEvent::Field { .. }
                         | BufferEvent::FieldStore { .. }
                         | BufferEvent::FieldLoad { .. }
@@ -1924,7 +2111,23 @@ pub struct BufferEvaluation {
     /// The check-time-constant integer environment. A composed route shares
     /// **this** map rather than keeping a second one, so a name bound by a byte
     /// read and a name bound by a string's `len` live in one environment.
+    ///
+    /// Card `W48-QR-SCALAR-TYPES-R3`: every name here is an **`i32`**. The
+    /// environment is typed — each name has exactly one §G02t type — and this
+    /// map is its `i32` part, the only part a composed route can ever fill
+    /// (their own values are `i32`s and they refuse the record and conversion
+    /// statements that are the only sources of another type).
     pub scalars: BTreeMap<String, i32>,
+    /// The environment's part of every other §G02t type: the name's type and
+    /// its number (`bool` `0`/`1`), bound by a read of a field of that type,
+    /// by a conversion to it, or by a copy of such a name (card
+    /// `W48-QR-SCALAR-TYPES-R3`). A name is in at most one of the two maps —
+    /// a duplicate `let` is `Q012` before any route runs.
+    pub typed: BTreeMap<String, (ScalarType, i128)>,
+    /// The builder's recorded target, which alone gives `isize`/`usize` a
+    /// range (card `W48-QR-SCALAR-TYPES-R3`). `None` refuses every value of
+    /// either type.
+    pub target: Option<RecordedTarget>,
     /// The record types the module declared, by name (card `AGGREGATES-V1`).
     ///
     /// Installed **before** the run and never written by it, because a record
@@ -2011,6 +2214,9 @@ pub struct BufferStep {
     pub construction: Option<RecordConstruction>,
     /// The field this event read.
     pub projection: Option<RecordProjection>,
+    /// The field of a type other than `i32` this event read (card
+    /// `W48-QR-SCALAR-TYPES-R3`).
+    pub typed_projection: Option<TypedProjection>,
     /// The owned field this event moved out (card `AGGREGATE-OWNED-FIELD`).
     pub field_move: Option<FieldMove>,
     /// The owned fields this event released, by path, in declaration order:
@@ -2075,6 +2281,9 @@ impl BufferEvaluation {
             BufferEvent::CopyBind { binding, source } => {
                 if let Some(value) = self.scalars.get(source).copied() {
                     self.scalars.insert(binding.clone(), value);
+                } else if let Some(value) = self.typed.get(source).copied() {
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a copy keeps its type.
+                    self.typed.insert(binding.clone(), value);
                 } else if let Some(value) = self.records.get(source).cloned() {
                     let owns = self
                         .record_types
@@ -2092,6 +2301,25 @@ impl BufferEvaluation {
                         event: index,
                         name: source.clone(),
                     });
+                }
+            }
+            // Card `W48-QR-SCALAR-TYPES-R3`: the one explicit conversion. The
+            // source is an `i32` literal or a name of any type; the result is
+            // §G02t's `convert` — the same number at the target, or no value —
+            // and since every operand here is a check-time constant, "no
+            // value" is a refusal now, never a run-time event.
+            BufferEvent::Convert {
+                binding,
+                operand,
+                to,
+            } => {
+                let source = match operand {
+                    BufferOperand::Literal(value) => Ok((ScalarType::I32, i128::from(*value))),
+                    BufferOperand::Scalar(name) => self.scalar_value(index, name),
+                };
+                match source.and_then(|(from, value)| self.convert(index, from, *to, value)) {
+                    Ok(value) => self.bind(binding, *to, value),
+                    Err(error) => step.errors.push(error),
                 }
             }
             BufferEvent::Acquire { name, extent } => {
@@ -2286,6 +2514,7 @@ impl BufferEvaluation {
                 high,
             } => {
                 if self.scalars.contains_key(binding)
+                    || self.typed.contains_key(binding)
                     || self.extents.contains_key(binding)
                     || self.loans.contains_key(binding)
                     || self.records.contains_key(binding)
@@ -2397,14 +2626,14 @@ impl BufferEvaluation {
                     // the crossing rule (`Q055`), unchanged, and only the
                     // declared owned field is the lift.
                     let value = match (declared.field(field), operand) {
-                        (Some(FieldType::Bytes), BufferOperand::Scalar(name))
+                        (Some(FieldType::Bytes), FieldOperand::Name(name))
                             if self.extents.contains_key(name) =>
                         {
                             Ok(FieldValue::Bytes {
                                 moved_from: name.clone(),
                             })
                         }
-                        (Some(FieldType::Bytes), BufferOperand::Scalar(name))
+                        (Some(FieldType::Bytes), FieldOperand::Name(name))
                             if self.loans.contains_key(name) =>
                         {
                             // A loan cannot cross into a record: the existing
@@ -2421,7 +2650,21 @@ impl BufferEvaluation {
                                 field: field.clone(),
                             },
                         }),
-                        _ => self.operand(index, operand).map(FieldValue::Scalar),
+                        // Card `W48-QR-SCALAR-TYPES-R3`: a scalar field takes a
+                        // value of exactly its declared type.
+                        (Some(FieldType::Scalar(ty)), operand) => {
+                            self.field_value(index, type_name, field, ty, operand)
+                        }
+                        // A field the type does not declare: the operand is
+                        // read as this route's `i32` operand was before the
+                        // card, so the construction's own refusal
+                        // (`UndeclaredField`) is the one reported for it.
+                        (None, FieldOperand::Name(name)) => self
+                            .operand(index, &BufferOperand::Scalar(name.clone()))
+                            .map(FieldValue::Scalar),
+                        (None, FieldOperand::Literal(_) | FieldOperand::Bool(_)) => {
+                            Ok(FieldValue::Scalar(0))
+                        }
                     };
                     match value {
                         Ok(value) => supplied.push((field.clone(), value)),
@@ -2443,6 +2686,15 @@ impl BufferEvaluation {
                                 value
                                     .scalar(&field.name)
                                     .map(|value| (field.name.clone(), value))
+                            })
+                            .collect();
+                        let typed = declared
+                            .fields
+                            .iter()
+                            .filter_map(|field| {
+                                value
+                                    .typed(&field.name)
+                                    .map(|(ty, value)| (field.name.clone(), ty, value))
                             })
                             .collect();
                         // The owned fields, in declared order, each taking the
@@ -2479,6 +2731,7 @@ impl BufferEvaluation {
                             binding: binding.clone(),
                             type_name: type_name.clone(),
                             fields: published,
+                            typed,
                             owned,
                         });
                     }
@@ -2513,6 +2766,20 @@ impl BufferEvaluation {
                             value: read,
                         });
                         self.scalars.insert(binding.clone(), read);
+                    }
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a field of another type
+                    // binds a value of exactly that type.
+                    Some(FieldValue::Typed { ty, value: read }) => {
+                        let (ty, read) = (*ty, *read);
+                        step.typed_projection = Some(TypedProjection {
+                            event: index,
+                            record: record.clone(),
+                            type_name: value.type_name.clone(),
+                            field: field.clone(),
+                            ty,
+                            value: read,
+                        });
+                        self.typed.insert(binding.clone(), (ty, read));
                     }
                     // Card `AGGREGATE-OWNED-FIELD`: the partial move. The
                     // binding owns the field's buffer from here on — its
@@ -2674,6 +2941,174 @@ impl BufferEvaluation {
         step
     }
 
+    /// Bind `binding` to `value` at `ty`, in the environment's part for that
+    /// type (card `W48-QR-SCALAR-TYPES-R3`).
+    fn bind(&mut self, binding: &str, ty: ScalarType, value: i128) {
+        if ty == ScalarType::I32 {
+            let value = i32::try_from(value).expect("a checked i32 value fits i32");
+            self.scalars.insert(binding.to_owned(), value);
+        } else {
+            self.typed.insert(binding.to_owned(), (ty, value));
+        }
+    }
+
+    /// `value as to`, from `from`, decided now (card `W48-QR-SCALAR-TYPES-R3`):
+    /// §G02t's one conversion, refused when the target width is unrecorded,
+    /// when either side is `bool`, and when the number does not fit.
+    fn convert(
+        &self,
+        event: usize,
+        from: ScalarType,
+        to: ScalarType,
+        value: i128,
+    ) -> Result<i128, BufferError> {
+        for ty in [from, to] {
+            if ty.is_target_width() && self.target.is_none() {
+                return Err(BufferError::Typed {
+                    event,
+                    refusal: TypedRefusal::NoRecordedTarget { ty },
+                });
+            }
+        }
+        if !from.is_integer() || !to.is_integer() {
+            return Err(BufferError::Typed {
+                event,
+                refusal: TypedRefusal::NoConversion { from, to },
+            });
+        }
+        st::convert(from, to, value, self.target.as_ref()).ok_or(BufferError::Typed {
+            event,
+            refusal: TypedRefusal::ConversionOutOfRange { from, to, value },
+        })
+    }
+
+    /// The value a construction supplies at a field declared the scalar type
+    /// `ty` (card `W48-QR-SCALAR-TYPES-R3`): a literal that is a value of `ty`,
+    /// `true`/`false` at a `bool` field, or a name of exactly type `ty`.
+    fn field_value(
+        &self,
+        event: usize,
+        type_name: &str,
+        field: &str,
+        ty: ScalarType,
+        operand: &FieldOperand,
+    ) -> Result<FieldValue, BufferError> {
+        let at = |value: i128| {
+            if ty == ScalarType::I32 {
+                FieldValue::Scalar(i32::try_from(value).expect("a checked i32 value fits i32"))
+            } else {
+                FieldValue::Typed { ty, value }
+            }
+        };
+        let out_of_range = |literal: String| BufferError::Record {
+            event,
+            refusal: RecordRefusal::FieldLiteralOutOfRange {
+                type_name: type_name.to_owned(),
+                field: field.to_owned(),
+                declared: ty,
+                literal,
+            },
+        };
+        if ty.is_target_width() && self.target.is_none() {
+            return Err(BufferError::Record {
+                event,
+                refusal: RecordRefusal::FieldNeedsRecordedTarget {
+                    type_name: type_name.to_owned(),
+                    field: field.to_owned(),
+                    declared: ty,
+                },
+            });
+        }
+        match operand {
+            FieldOperand::Literal(value) => {
+                if ty.is_integer() && ty.contains(*value, self.target.as_ref()) {
+                    Ok(at(*value))
+                } else {
+                    Err(out_of_range(value.to_string()))
+                }
+            }
+            FieldOperand::Bool(value) => {
+                if ty == ScalarType::Bool {
+                    Ok(at(i128::from(*value)))
+                } else {
+                    Err(out_of_range(value.to_string()))
+                }
+            }
+            FieldOperand::Name(name) => {
+                let (found, value) = self.scalar_value(event, name)?;
+                if found == ty {
+                    Ok(at(value))
+                } else {
+                    Err(BufferError::Record {
+                        event,
+                        refusal: RecordRefusal::FieldTakesAType {
+                            type_name: type_name.to_owned(),
+                            field: field.to_owned(),
+                            declared: ty,
+                            supplied: found,
+                        },
+                    })
+                }
+            }
+        }
+    }
+
+    /// The type and number a scalar name denotes (card
+    /// `W48-QR-SCALAR-TYPES-R3`): the environment's typing function. A loan, a
+    /// buffer and a record are refused here by name, in the order and with the
+    /// refusals [`Self::operand`] has always given them.
+    pub fn scalar_value(
+        &self,
+        event: usize,
+        name: &str,
+    ) -> Result<(ScalarType, i128), BufferError> {
+        if self.loans.contains_key(name) {
+            // A lend at a scalar position (card
+            // `SLICE-PERMISSIONS-WRITE-LEND`), refused for the reason
+            // a buffer is and at the same code: neither is a number,
+            // and the reader needs to be told which they wrote.
+            return Err(BufferError::Lend {
+                event,
+                refusal: LendRefusal::CrossesBoundary {
+                    name: name.to_owned(),
+                },
+            });
+        }
+        if self.extents.contains_key(name) {
+            // A buffer at a scalar position. Reported as the boundary
+            // refusal rather than the generic one, because the reader
+            // needs to know *why* a name they bound is not usable here.
+            return Err(BufferError::CrossesBoundary {
+                event,
+                name: name.to_owned(),
+            });
+        }
+        if self.records.contains_key(name) {
+            // A record at a position that takes an integer. Reported as
+            // the aggregate's own refusal rather than the generic one,
+            // for the reason the buffer arm above states: the reader
+            // needs to know *why* a name they bound is not usable here,
+            // and the answer — read the field you mean first — is one
+            // this revision can actually give them.
+            return Err(BufferError::Record {
+                event,
+                refusal: RecordRefusal::RecordAtScalarPosition {
+                    name: name.to_owned(),
+                },
+            });
+        }
+        if let Some(value) = self.scalars.get(name) {
+            return Ok((ScalarType::I32, i128::from(*value)));
+        }
+        self.typed
+            .get(name)
+            .copied()
+            .ok_or_else(|| BufferError::NotAScalar {
+                event,
+                name: name.to_owned(),
+            })
+    }
+
     /// Resolve `RECORD.FIELD` to the owned field it names, or refuse by name:
     /// not a record this entry constructed, a field the type does not declare,
     /// or a field declared `i32` (card `AGGREGATE-OWNED-FIELD`). Whether the
@@ -2699,13 +3134,14 @@ impl BufferEvaluation {
             .and_then(|declared| declared.field(field))
         {
             Some(FieldType::Bytes) => {}
-            Some(FieldType::I32) => {
+            Some(FieldType::Scalar(declared)) => {
                 return Err(BufferError::Record {
                     event,
                     refusal: RecordRefusal::FieldIsNotABuffer {
                         name: record.to_owned(),
                         type_name: value.type_name.clone(),
                         field: field.to_owned(),
+                        declared,
                     },
                 });
             }
@@ -2758,49 +3194,24 @@ impl BufferEvaluation {
         Ok(index as usize)
     }
 
+    /// An operand at a position that takes an **`i32`** — an index, a stored
+    /// byte, a lend bound. Card `W48-QR-SCALAR-TYPES-R3`: a name of another
+    /// type is refused by name (`NotAnI32`), never converted.
     pub fn operand(&self, event: usize, operand: &BufferOperand) -> Result<i32, BufferError> {
         match operand {
             BufferOperand::Literal(value) => Ok(*value),
-            BufferOperand::Scalar(name) => {
-                if self.loans.contains_key(name) {
-                    // A lend at a scalar position (card
-                    // `SLICE-PERMISSIONS-WRITE-LEND`), refused for the reason
-                    // a buffer is and at the same code: neither is a number,
-                    // and the reader needs to be told which they wrote.
-                    return Err(BufferError::Lend {
-                        event,
-                        refusal: LendRefusal::CrossesBoundary { name: name.clone() },
-                    });
+            BufferOperand::Scalar(name) => match self.scalar_value(event, name)? {
+                (ScalarType::I32, value) => {
+                    Ok(i32::try_from(value).expect("an i32 binding holds an i32"))
                 }
-                if self.extents.contains_key(name) {
-                    // A buffer at a scalar position. Reported as the boundary
-                    // refusal rather than the generic one, because the reader
-                    // needs to know *why* a name they bound is not usable here.
-                    return Err(BufferError::CrossesBoundary {
-                        event,
+                (found, _) => Err(BufferError::Typed {
+                    event,
+                    refusal: TypedRefusal::NotAnI32 {
                         name: name.clone(),
-                    });
-                }
-                if self.records.contains_key(name) {
-                    // A record at a position that takes an integer. Reported as
-                    // the aggregate's own refusal rather than the generic one,
-                    // for the reason the buffer arm above states: the reader
-                    // needs to know *why* a name they bound is not usable here,
-                    // and the answer — read the field you mean first — is one
-                    // this revision can actually give them.
-                    return Err(BufferError::Record {
-                        event,
-                        refusal: RecordRefusal::RecordAtScalarPosition { name: name.clone() },
-                    });
-                }
-                self.scalars
-                    .get(name)
-                    .copied()
-                    .ok_or_else(|| BufferError::NotAScalar {
-                        event,
-                        name: name.clone(),
-                    })
-            }
+                        found,
+                    },
+                }),
+            },
         }
     }
 
@@ -2884,7 +3295,41 @@ fn owned_field_event(event: &BufferEvent, types: &BTreeMap<String, RecordType>) 
 pub fn check_buffer_program(
     program: &BufferProgram,
 ) -> Result<BufferCertificate, Vec<BufferError>> {
+    check_buffer_program_for_target(program, None)
+}
+
+/// Whether this program names `isize` or `usize` anywhere — a field type or a
+/// conversion target (card `W48-QR-SCALAR-TYPES-R3`). Exactly such a program's
+/// result depends on the recorded target.
+#[must_use]
+pub fn names_target_width(program: &BufferProgram) -> bool {
+    program.records.iter().any(|record| {
+        record.fields.iter().any(|field| {
+            field
+                .field_type
+                .scalar()
+                .is_some_and(ScalarType::is_target_width)
+        })
+    }) || any_event(
+        &program.events,
+        |event| matches!(event, BufferEvent::Convert { to, .. } if to.is_target_width()),
+    )
+}
+
+/// [`check_buffer_program`] for the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R3`), which gives `isize`/`usize` their width. A
+/// program naming neither is checked exactly as without one and carries no
+/// target assumption; a program naming either with no target is refused.
+pub fn check_buffer_program_for_target(
+    program: &BufferProgram,
+    target: Option<&RecordedTarget>,
+) -> Result<BufferCertificate, Vec<BufferError>> {
     let mut errors = Vec::new();
+    let target_assumption = if names_target_width(program) {
+        target.cloned()
+    } else {
+        None
+    };
 
     // --- Half minus one: the module's record types, total or reject. ---
     //
@@ -2909,6 +3354,27 @@ pub fn check_buffer_program(
             }]);
         }
     };
+    // Card `W48-QR-SCALAR-TYPES-R3`: a field declared `isize` or `usize` is
+    // a declaration this module can state only for a recorded target. Refused
+    // at the declaration, whether or not any value of it is constructed.
+    if target_assumption.is_none() {
+        for record in &program.records {
+            for field in &record.fields {
+                if let Some(declared) = field.field_type.scalar()
+                    && declared.is_target_width()
+                {
+                    return Err(vec![BufferError::Record {
+                        event: program.events.len(),
+                        refusal: RecordRefusal::FieldNeedsRecordedTarget {
+                            type_name: record.name.clone(),
+                            field: field.name.clone(),
+                            declared,
+                        },
+                    }]);
+                }
+            }
+        }
+    }
 
     // --- Half zero: the checking route's own cost, bounded before it is paid. ---
     //
@@ -3165,6 +3631,7 @@ pub fn check_buffer_program(
     // --- Half two: the values. ---
     let mut run = BufferRun::new(BufferEvaluation {
         record_types,
+        target: target_assumption.clone(),
         ..BufferEvaluation::new()
     });
     run.lend_windows = lend_window_by_event;
@@ -3178,6 +3645,7 @@ pub fn check_buffer_program(
         accesses,
         constructions,
         projections,
+        typed_projections,
         lines,
         flushes,
         renderings,
@@ -3217,7 +3685,10 @@ pub fn check_buffer_program(
             accesses,
             constructions,
             projections,
+            typed_projections,
             scalars: evaluation.scalars,
+            typed_scalars: evaluation.typed,
+            target_assumption,
             lines,
             flushes,
             renderings,
@@ -3258,6 +3729,8 @@ pub struct BufferRun {
     pub accesses: Vec<BufferAccess>,
     pub constructions: Vec<RecordConstruction>,
     pub projections: Vec<RecordProjection>,
+    /// Card `W48-QR-SCALAR-TYPES-R3`: reads of fields of other types.
+    pub typed_projections: Vec<TypedProjection>,
     pub lines: Vec<ObservedLine>,
     pub flushes: usize,
     pub renderings: BTreeSet<Rendering>,
@@ -3279,6 +3752,7 @@ impl BufferRun {
             accesses: Vec::new(),
             constructions: Vec::new(),
             projections: Vec::new(),
+            typed_projections: Vec::new(),
             lines: Vec::new(),
             flushes: 0,
             renderings: BTreeSet::new(),
@@ -3334,6 +3808,7 @@ impl BufferRun {
             accesses,
             constructions,
             projections,
+            typed_projections,
             lines,
             flushes,
             renderings,
@@ -3384,7 +3859,10 @@ impl BufferRun {
             // it binds a scalar or a record value — and reaches the same
             // stepper, so a copy inside a `for` body is decided by the one
             // implementation a top-level one is.
-            | BufferEvent::CopyBind { .. } => {
+            | BufferEvent::CopyBind { .. }
+            // Card `W48-QR-SCALAR-TYPES-R3`: a conversion binds a value and
+            // reaches the same stepper.
+            | BufferEvent::Convert { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
@@ -3394,6 +3872,7 @@ impl BufferRun {
                 accesses.extend(step.access);
                 constructions.extend(step.construction);
                 projections.extend(step.projection);
+                typed_projections.extend(step.typed_projection);
                 if let Some((binding, shape)) = step.lend {
                     lends.push(LendRecord {
                         event: index,
@@ -3412,11 +3891,43 @@ impl BufferRun {
                     rendering, operand, ..
                 } => {
                     renderings.insert(*rendering);
-                    match evaluation.line_operand(index, operand) {
-                        Ok(value) => lines.push(
-                            rendered_line(line, value)
-                                .expect("a print and a log each produce exactly one line"),
+                    // Card `W48-QR-SCALAR-TYPES-R3`: the operand is rendered
+                    // at its own type. An `i32` takes the path every program
+                    // before the card took, byte for byte; every other type
+                    // is §G02t's `std.fmt` rendering, framed by the one line
+                    // framing every route shares.
+                    match evaluation.typed_line_operand(index, operand) {
+                        Ok((ScalarType::I32, value)) => lines.push(
+                            rendered_line(
+                                line,
+                                i32::try_from(value).expect("an i32 binding holds an i32"),
+                            )
+                            .expect("a print and a log each produce exactly one line"),
                         ),
+                        Ok((ty, value)) => {
+                            let level = match line {
+                                StdIoEvent::Log { level, .. } => Some(*level),
+                                _ => None,
+                            };
+                            match st::render(
+                                *rendering == Rendering::Hex,
+                                ty,
+                                value,
+                                evaluation.target.as_ref(),
+                            ) {
+                                Some(body) => lines.push(rendered_text_line(level, &body)),
+                                None => errors.push(BufferError::Typed {
+                                    event: index,
+                                    refusal: TypedRefusal::NoHexRendering {
+                                        name: match operand {
+                                            StdIoOperand::Scalar(name) => name.clone(),
+                                            StdIoOperand::Literal(value) => value.to_string(),
+                                            StdIoOperand::Borrowed(name) => name.clone(),
+                                        },
+                                    },
+                                }),
+                            }
+                        }
                         Err(error) => errors.push(error),
                     }
                 }
@@ -3448,7 +3959,16 @@ impl BufferRun {
     ///    emitted C to agree by coincidence about which of two values survives
     ///    the loop, and a refusal is the fail-closed answer.
     pub fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
-        let outer_scalars: BTreeSet<String> = self.evaluation.scalars.keys().cloned().collect();
+        // Card `W48-QR-SCALAR-TYPES-R3`: the environment is typed, and both of
+        // its parts are scoped and shadow-checked by the one rule — a scalar
+        // name is a scalar name whatever its type.
+        let outer_scalars: BTreeSet<String> = self
+            .evaluation
+            .scalars
+            .keys()
+            .chain(self.evaluation.typed.keys())
+            .cloned()
+            .collect();
         let outer_buffers: BTreeSet<String> = self.evaluation.extents.keys().cloned().collect();
         // Card `AGGREGATES-V1`: a record binding is body-local exactly as a
         // scalar and a buffer binding are, and it shadows exactly as they do.
@@ -3534,6 +4054,9 @@ impl BufferRun {
             .scalars
             .retain(|name, _| outer_scalars.contains(name));
         self.evaluation
+            .typed
+            .retain(|name, _| outer_scalars.contains(name));
+        self.evaluation
             .extents
             .retain(|name, _| outer_buffers.contains(name));
         self.evaluation
@@ -3566,7 +4089,9 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 | BufferEvent::FieldExtent { binding, .. }
                 // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind binds a name,
                 // and it is body-local exactly as every other binding is.
-                | BufferEvent::CopyBind { binding, .. } => {
+                | BufferEvent::CopyBind { binding, .. }
+                // Card `W48-QR-SCALAR-TYPES-R3`: so does a conversion.
+                | BufferEvent::Convert { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {
@@ -3614,6 +4139,24 @@ impl BufferEvaluation {
             }),
         }
     }
+
+    /// [`Self::line_operand`] at the operand's own type (card
+    /// `W48-QR-SCALAR-TYPES-R3`): a rendering takes a scalar of **any** §G02t
+    /// type and renders it at that type. A literal is an `i32`.
+    pub fn typed_line_operand(
+        &self,
+        event: usize,
+        operand: &StdIoOperand,
+    ) -> Result<(ScalarType, i128), BufferError> {
+        match operand {
+            StdIoOperand::Literal(value) => Ok((ScalarType::I32, i128::from(*value))),
+            StdIoOperand::Scalar(name) => self.scalar_value(event, name),
+            StdIoOperand::Borrowed(name) => Err(BufferError::CrossesBoundary {
+                event,
+                name: name.clone(),
+            }),
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -3628,7 +4171,10 @@ pub enum BufferRecheckFailure {
     Accesses,
     Constructions,
     Projections,
+    TypedProjections,
     Scalars,
+    TypedScalars,
+    TargetAssumption,
     Lines,
     Flushes,
     Renderings,
@@ -3648,7 +4194,10 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Accesses => "the checked byte accesses",
             Self::Constructions => "the constructed record values and the fields they supply",
             Self::Projections => "the checked field reads",
+            Self::TypedProjections => "the checked reads of fields of other scalar types",
             Self::Scalars => "the scalar environment",
+            Self::TypedScalars => "the environment of every other scalar type",
+            Self::TargetAssumption => "the recorded-target assumption",
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
             Self::Renderings => "the used renderings",
@@ -3664,7 +4213,19 @@ pub fn recheck_buffer_certificate(
     program: &BufferProgram,
     certificate: &BufferCertificate,
 ) -> Result<(), BufferRecheckFailure> {
-    let rederived = check_buffer_program(program).map_err(|_| BufferRecheckFailure::Refused)?;
+    recheck_buffer_certificate_for_target(program, certificate, None)
+}
+
+/// [`recheck_buffer_certificate`] against the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R3`). The target is the builder's, passed in — never
+/// read back out of the certificate being rechecked.
+pub fn recheck_buffer_certificate_for_target(
+    program: &BufferProgram,
+    certificate: &BufferCertificate,
+    target: Option<&RecordedTarget>,
+) -> Result<(), BufferRecheckFailure> {
+    let rederived = check_buffer_program_for_target(program, target)
+        .map_err(|_| BufferRecheckFailure::Refused)?;
     if rederived.entry != certificate.entry {
         return Err(BufferRecheckFailure::Entry);
     }
@@ -3695,8 +4256,17 @@ pub fn recheck_buffer_certificate(
     if rederived.projections != certificate.projections {
         return Err(BufferRecheckFailure::Projections);
     }
+    if rederived.typed_projections != certificate.typed_projections {
+        return Err(BufferRecheckFailure::TypedProjections);
+    }
     if rederived.scalars != certificate.scalars {
         return Err(BufferRecheckFailure::Scalars);
+    }
+    if rederived.typed_scalars != certificate.typed_scalars {
+        return Err(BufferRecheckFailure::TypedScalars);
+    }
+    if rederived.target_assumption != certificate.target_assumption {
+        return Err(BufferRecheckFailure::TargetAssumption);
     }
     if rederived.lines != certificate.lines {
         return Err(BufferRecheckFailure::Lines);

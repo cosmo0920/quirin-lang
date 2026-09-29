@@ -207,6 +207,29 @@ spellings their own by-name refusals changes no program's verdict.
 
 Add `owned-field-route-reach` to the rule's closing evidence list.
 
+### 14 — census entry, card `W48-QR-SCALAR-TYPES-R3` (wave 48)
+
+Reserves **+0 words and +0 tokens**, and claims four **positions** of words
+already there. On `source.buffer.v1`, `let NAME = OPERAND as TYPE;` is
+card 0's `as` rule (a scalar type name after the already-reserved `as` is not
+a reference) reached by a second route, and — like the copy bind — it is **not**
+a `buffer_use`, so it selects no route and the composed string route never
+lowers one; `true`/`false` are read as a field value only at a field declared
+`bool`. On the extern route, a value statement is four token shapes the lexer
+already produced (`let NAME = A OP B;`, `A CMP B`, `- NAME`, `A as TYPE`),
+tried after both call shapes and before the literal binding so no call or
+literal loses its reading; `throws<ArithmeticError>` in an extern or composed
+entry's row is the scalar route's contextual spelling. The census is the one
+card 0 shipped (`docs/reports/w48-qr-scalar-types/census_spelling.py`): `as`
+before a scalar type name occurs in the tracked `.qr`/`.qv`/`.qrlib` files only
+in the three card examples, and the whole-tree fixture freeze
+(`docs/reports/w48-qr-scalar-types-r3/artifacts/fixtures-compare.txt`) is the
+census of the value-statement and typed-field shapes: no tracked file changes
+its reading, and the only admissions that move are `remaining-v04`'s P08 and
+P10, refused by the extern-declaration read — a declaration check, not a word.
+
+Add `w48-qr-scalar-types-r3` to the rule's closing evidence list.
+
 ### 14 — CT implementation source forms
 
 CT24 reuses the parsed error-region and spawn-success-arm forms. CT10 uses

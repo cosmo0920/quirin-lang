@@ -132,6 +132,12 @@ target) and every other annotation (`Widget`, `fn() -> i32`, `own<T>`,
 `borrow<T>`, …) refuses at Q020. Before the card no parameter annotation was
 read at all (the named boundary B-1 of `docs/reports/remaining-v03`).
 
+An `extern fn` declaration no body calls is read too (card
+`W48-QR-SCALAR-TYPES-R3`, on every route of an executable or library module):
+its parameters and result must be in the §C04.1 ABI vocabulary, and anything
+else — `Widget`, `own<T>`, a `quant<…>` parameter — refuses at Q020 (§G02t,
+"Every extern declaration is read").
+
 `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
 
 `qcore_acquire` and `qcore_check` take literal Boolean controls in this profile. They are model operations, not general malloc calls or arbitrary runtime conditions. General expressions, argument-taking calls, indirect calls, calls through a shadowing local, calls to extern declarations, nested source control flow, source lambdas and source threading are not accepted by this driver body path. Local `use` annotations are explicitly rejected here rather than ignored. A bounded extern call is accepted by the separate `source.extern-call.v1` path of §G02d, which is selected before this one and does not widen it: this body path still refuses every call whose target is not a zero-parameter source function.
@@ -380,24 +386,90 @@ its own existing "models the entry only" code (`Q030`, `Q051`, `Q068`, `Q080`,
 `Q090`, `Q058`). A module with `std.io` lines, scalar-call syntax and a helper
 reaches this route instead, which checks every function.
 
-**Positions.** Widened by this card: parameters, results, annotated and
-inferred locals, literals, arithmetic, comparisons and conversions on
-`source.scalar-calls.v1`, its line statements, and the `|>` sinks that
-desugar to them. Every other position that takes `i32` keeps its existing
-refusal and is a named follow-up (card `W48-QR-SCALAR-TYPES-R2` widened none of
-them; its items 2–6 stayed open): record fields (§G07.13,
-`W48-QR-TYPES-RECORD-FIELDS`), loop bounds and indices (§G07.12,
-`W48-QR-TYPES-LOOP-BOUNDS`), extern results as values and the composed
-extern + io route (§G02d, §G02i, `W48-QR-TYPES-EXTERN-VALUES`), task
-workers, `copy` captures and the composed tasks + io route (§G02a, §G02j,
+**Positions.** Widened by card `W48-QR-SCALAR-TYPES`: parameters, results,
+annotated and inferred locals, literals, arithmetic, comparisons and
+conversions on `source.scalar-calls.v1`, its line statements, and the `|>`
+sinks that desugar to them. Widened by card `W48-QR-SCALAR-TYPES-R3` (below):
+the record fields of `source.buffer.v1` and that route's whole value
+environment (§G07.13, §G02k), and extern results as values on the extern and
+composed extern + io routes (§G02d, §G02i). Every other position that takes
+`i32` keeps its existing refusal and is a named follow-up: loop bounds and
+indices (§G07.12, `W48-QR-TYPES-LOOP-BOUNDS`), task workers, `copy` captures
+and the composed tasks + io route (§G02a, §G02j,
 `W48-QR-TYPES-TASK-CAPTURES`), the `Buffer` and `protected N` payloads
-(§G02b, §G02c, `W48-QR-TYPES-PAYLOADS`), and an executable entry result
-other than `i32`/`unit` (C's `main` returns `int`; the entry's value is
-published, never returned). A typed `let` beside an `std.io` line is
+(§G02b, §G02c, `W48-QR-TYPES-PAYLOADS`), and an executable entry result other
+than `i32`/`unit` (C's `main` returns `int`; the entry's value is published,
+never returned). A typed `let` beside an `std.io` line is
 scalar-call syntax, so such a module reaches this route and needs no change
 to `source.std-io.v1`. A conversion written on one of those routes was
 refused at `Q013` before this card (name resolution collected the type name);
 it now reaches that route's own reader and is refused at that route's own code.
+
+**The buffer route's typed environment** (card `W48-QR-SCALAR-TYPES-R3`,
+§G07.13, §G02k). Every name `source.buffer.v1` binds to a scalar has exactly
+one §G02t type: a literal `let`, a byte read, an `extent` and a loop index are
+`i32`, as before; a read of a record field has the field's declared type; a
+conversion has its target type; a copy bind keeps its source's type. Every
+position checks the type it takes — an index, a stored byte, a lend bound and
+a loop bound take an `i32` and refuse a name of any other type (`Q052`, "`x`
+is a `u8` and this position takes an `i32`"); a field value takes exactly its
+field's type; a rendering operand takes any type and renders it at that type.
+The route has **no arithmetic** — it never had an expression — so the one
+operation it gains is the conversion statement `let NAME = OPERAND as TYPE;`
+(one operand: an `i32` literal or a bound name). Every value on this route is a
+check-time constant, so a conversion that does not fit is refused at check
+time (`Q053`, the range condition) and the emitted C calls a helper whose
+operand test — §G02t's own, shared with `source.scalar-calls.v1` — is a
+witness that aborts, the route's discipline. Nothing converts to or from
+`bool` (`Q052`), and `isize`/`usize` in a field or a conversion need the
+recorded target (`Q051`), which the route receives and publishes as the named
+assumption.
+
+**Extern results as values** (card `W48-QR-SCALAR-TYPES-R3`, §G02d, §G02i).
+A bound extern scalar result has its declared result's §G02t type, a literal
+binding is an `i32`, and the extern route gains the **value statement**, one
+§G02t operation per statement over bound values and literals:
+
+```ebnf
+value_statement = "let", NAME, "=", value_expr, ";" ;
+value_expr = operand, ("+" | "-" | "*" | "/" | "%"), operand
+           | operand, ("==" | "!=" | "<" | "<=" | ">" | ">="), operand
+           | "-", NAME
+           | operand, "as", SCALAR ;
+operand    = NAME | ["-"], INTEGER | "true" | "false" ;
+```
+
+A literal operand takes the other operand's type (`i32` when both are
+literals). A value is **known** when its number is a literal, a declared
+`succeeds INTEGER` outcome, or a statement over known values; a statement over
+known values is folded at check time — a fault refuses (`Q024`), naming the
+variant the typed path would raise. A statement reading a value known only at
+run time (an undeclared result) that can fault — arithmetic, negation, a
+conversion that is not total — is admitted only when the entry's row declares
+`throws<ArithmeticError>`, and then takes the typed path: the emitted program
+calls §G02t's `q_scalar_try_*` helper and, on a nonzero tag, logs the raise and
+exits `80 + tag`. A comparison and a total conversion never fault. A declared
+outcome is now read at any width and range-checked against the declared
+result (`Q024`); with no recorded target, an `isize`/`usize` outcome is carried
+unchecked as before and any statement computing with it refuses. At a
+declared scalar parameter an argument is a value of exactly the parameter's
+type, and a literal argument is range-checked against it (`Q024`): there is no
+implicit conversion at the extern boundary either. A value statement calls
+nothing and is observed as nothing in the call trace. On the composed
+extern + io route a rendering reads a known value of **every** §G02t type at
+that type (before the card, an `i32` only); a value known only at run time
+still refuses (`Q043`, "no model computed"), and `isize`/`usize` render only
+with a recorded target (`Q043`).
+
+**Every extern declaration is read** (card `W48-QR-SCALAR-TYPES-R3`,
+`W48-INERT-EXTERN-DECLARATION-TYPES`). An executable or library module's
+`extern fn` declarations are read whether or not a body calls them: each
+parameter must be a §G02t scalar or one of the three custody pointers of
+§C04.1, and the result that or `unit`; anything else refuses at `Q020`,
+naming the parameter or the result. The check runs after the admitting route's
+own passes, so every refusal given before keeps its bytes. A contract module is
+exempt: its declarations are the contract surface itself, in the resource
+contract language's wider vocabulary, read by the contract loader.
 
 **Diagnostics.** No code is allocated. Every new refusal on this route is a
 widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
@@ -1096,6 +1168,7 @@ entry         = "fn", NAME, "(", ")", "->", "unit",
                 [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
                 "{", { extern_stmt }, "}" ;
 extern_stmt   = acquisition | scalar_binding | scalar_literal | plain_call
+              | value_statement                      (* §G02t, card W48-QR-SCALAR-TYPES-R3 *)
               | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", { disposition },
@@ -1106,8 +1179,18 @@ scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
 scalar_literal = "let", NAME, "=", [ "-" ], NAT, ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
-EFFECT        = "io" | "alloc" | "mut" ;
+EFFECT        = "io" | "alloc" | "mut"
+              | "throws", "<", "ArithmeticError", ">" ;  (* card W48-QR-SCALAR-TYPES-R3 *)
 ```
+
+Card `W48-QR-SCALAR-TYPES-R3` makes the value namespace **typed** (§G02t,
+"Extern results as values"): a bound result has its declared result's type, a
+`value_statement` computes one §G02t operation over bound values and literals,
+a declared `succeeds INTEGER` is a value of the result's type at any width, and
+an argument at a declared scalar parameter is a value — or a literal in range —
+of exactly that parameter's type. `throws<ArithmeticError>` in the row is the
+permission a statement over a run-time value needs to raise; it derives no
+effect.
 
 Two of those forms are card `STD-IO-COMPOSE`'s and both stay inside the value
 namespace card `PIPE-SCALAR-RESULT` opened. `scalar_literal` binds a number
@@ -1876,11 +1959,18 @@ stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
           | "flush", ";"
           | "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}"
+          | "let", NAME, "=", OPERAND, "as", SCALAR, ";"     (* card W48-QR-SCALAR-TYPES-R3 *)
           | "return", ";" ;
 OPERAND   = [ "-" ], INTEGER | NAME ;
 BOUND     = INTEGER | NAME ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
+
+**The conversion row and the typed environment are card
+`W48-QR-SCALAR-TYPES-R3`'s** (§G02t, "The buffer route's typed environment"):
+every scalar name this route binds has one §G02t type, `i32` for every source
+this section lists, and every position below that takes an integer takes an
+`i32`. The conversion is not a buffer construct, so it selects no route.
 
 **The `for` row is `source.loop.v1`'s** (card `LOOP-V1`, §G07.12), admitted here
 and on no other route in v1. It is the **only** nested block this profile reads:
@@ -2003,7 +2093,8 @@ reads**. The extern model owns the value namespace, so the operand names of
 `print`/`log` resolve against its bindings — a bound scalar, never a resource
 identity, which has no operand form at all (§G02g's effect discipline is
 structural and is unchanged here). The operand must be bound by an earlier
-composed step, must be of the one ABI width the two renderings are total on, and
+composed step, must be of a §G02t type (card `W48-QR-SCALAR-TYPES-R3`; before
+it, the one ABI width `int32_t` the two renderings were total on), and
 must be a value whose number the source **determined**: a `scalar_literal`, or a
 `scalar_binding` carrying its declared `succeeds INTEGER` outcome. A bound call
 result with no declared outcome is refused at `Q043`, because rendering it would
@@ -3276,11 +3367,12 @@ other route keeps the refusal it already had (`AGGREGATE-ROUTE-WIDENING`).
 
 ```ebnf
 decl    = "type", NAME, "{", field, { ",", field }, [ "," ], "}" ;
-field   = NAME, ":", "i32" ;
+field   = NAME, ":", ( SCALAR | "bytes" ) ;        (* SCALAR: §G02t, card W48-QR-SCALAR-TYPES-R3 *)
 stmt    = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
         | "let", NAME, "=", NAME, ".", NAME, ";" ;
 assign  = NAME, ":", OPERAND ;
-OPERAND = [ "-" ], INTEGER | NAME ;                (* `source.buffer.v1`'s own *)
+OPERAND = [ "-" ], INTEGER | NAME                  (* `source.buffer.v1`'s own *)
+        | "true" | "false" ;                       (* at a `bool` field *)
 ```
 
 * **The declaration head is the already-reserved `type`**, claimed at the one
@@ -3289,7 +3381,19 @@ OPERAND = [ "-" ], INTEGER | NAME ;                (* `source.buffer.v1`'s own *
   it. The constraint-14 census found **zero** bare `type NAME {` occurrences in
   the tree and **rejected `record`** as a spelling: an archived probe fixture is
   the single line `record R { }`, pinned to `Q000` by two archived reports.
-* **Every field is an `i32`, and a record is therefore a plain copyable value.**
+* **Card `W48-QR-SCALAR-TYPES-R3`: a scalar field is any §G02t type.** Its
+  value is a literal range-checked against the field's type (the minimum
+  included; `Q053`), `true`/`false` at a `bool` field, or a bound name of
+  **exactly** that type — no implicit conversion (`Q052`); a field read binds a
+  value of that type into the route's typed environment (§G02t), which every
+  position then checks. `isize`/`usize` fields need the recorded target
+  (`Q051`). An `i32` field reads its literal with the route's own `i32` reader,
+  so every record declared before the card checks and emits byte-identically.
+  Each member is emitted at its type's `<stdint.h>`/`<stdbool.h>`/`<stddef.h>`
+  spelling.
+* **Every scalar field is a plain value, and a record of scalars is therefore
+  a plain copyable value.** (Before card `W48-QR-SCALAR-TYPES-R3`, every such
+  field was an `i32`.)
   It contributes no ownership operation, opens no obligation, derives no effect,
   and is refused at every custody position by the admitting route's existing
   "this is not a buffer" rule. An owned or view field is a new custody shape and

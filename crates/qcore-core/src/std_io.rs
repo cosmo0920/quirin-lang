@@ -309,6 +309,16 @@ pub struct StdIoProgram {
     /// custody model — which is what makes the borrowed render refuse there
     /// structurally rather than by a rule.
     pub identities: BTreeMap<String, i32>,
+    /// The values of every §G02t type other than `i32` a composing model bound
+    /// for the names this entry renders (card `W48-QR-SCALAR-TYPES-R3`): the
+    /// type and the number, rendered at that type by the §G02t `std.fmt` rules.
+    /// A third map, disjoint from `scalars` — an `i32` keeps the rendering this
+    /// route always gave it — and empty on `source.std-io.v1` itself, whose own
+    /// `let` binds an `i32` literal only.
+    pub typed_scalars: BTreeMap<String, (crate::scalar_types::ScalarType, i128)>,
+    /// The builder's recorded target, which gives `isize`/`usize` their `hex`
+    /// width (card `W48-QR-SCALAR-TYPES-R3`).
+    pub target: Option<crate::scalar_types::RecordedTarget>,
     /// The entry's declared `effects { … }` row, verbatim from source.
     pub declared_effects: EffectRow,
     pub events: Vec<StdIoEvent>,
@@ -571,6 +581,32 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
                 rendering, operand, ..
             } => {
                 renderings.insert(*rendering);
+                // Card `W48-QR-SCALAR-TYPES-R3`: a name a composing model bound
+                // at another §G02t type renders at that type, framed by the one
+                // line framing every route shares.
+                if let StdIoOperand::Scalar(name) = operand
+                    && let Some((ty, value)) = program.typed_scalars.get(name)
+                {
+                    let level = match event {
+                        StdIoEvent::Log { level, .. } => Some(*level),
+                        _ => None,
+                    };
+                    match crate::scalar_types::render(
+                        *rendering == Rendering::Hex,
+                        *ty,
+                        *value,
+                        program.target.as_ref(),
+                    ) {
+                        Some(body) => lines.push(rendered_text_line(level, &body)),
+                        None => errors.push(StdIoError::Shape {
+                            event: index,
+                            reason: "this operand has no rendering here: a `bool` renders \
+                                     `true`/`false` under `dec` and has no `hex`, and \
+                                     `isize`/`usize` render only for a recorded target",
+                        }),
+                    }
+                    continue;
+                }
                 match operand_value(program, index, operand) {
                     Ok(value) => {
                         record_borrow(operand, value, &mut borrowed_renders);

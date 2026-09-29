@@ -367,6 +367,36 @@ future route that reaches the IR without such a gate
 
 `aggregates-v1`, `aggregate-owned-field`, `owned-field-route-reach`.
 
+### 15k — appended, card `W48-QR-SCALAR-TYPES-R3` (wave 48)
+
+It supersedes nothing above; it widens the scalar half. A scalar field may be
+declared any §G02t type, not only `i32` — "a record whose every field is an
+`i32`" above now reads "a record whose every field is a scalar" — and such a
+record is still a plain copyable value: it contributes no
+`qcore_core::ownership` operation, opens no obligation and derives no effect,
+and a copy bind copies it. Two things must survive refactors.
+
+* **The route's environment is typed, and the `i32` part is the shared one.**
+  `BufferEvaluation::scalars` stays the `i32` map every composed route reads
+  (they bind only `i32`s and refuse the record and conversion statements that
+  are the only sources of another type); every other type lives in
+  `BufferEvaluation::typed`, a name is in at most one of the two, and
+  `scalar_value` is the one typing function. An index, a stored byte, a lend
+  bound and a loop bound take an `i32`, and a name of another type is refused
+  by name there (`Q052`), never widened — the lend projection's
+  lowering-visible tier and the loop's `LoweringConstants` hold `i32`
+  constants only, so a typed name at a bound stays their existing
+  `BOUND-FROM-FIELD` refusal.
+* **An `i32` keeps its representation.** `FieldValue::Scalar(i32)`,
+  `RecordConstruction::fields` and `RecordProjection` carry `i32`s exactly as
+  before; every other type is `FieldValue::Typed`, published beside them
+  (`RecordConstruction::typed`, `TypedProjection`), and an `i32` field reads its
+  literal with the route's own `i32` reader. That is what keeps every program
+  written before the card checking and emitting byte-identically, measured over
+  the whole tree.
+
+`w48-qr-scalar-types-r3`.
+
 ### 15h — card `COMPOSED-WINDOW-REACH` (wave 41)
 
 It **narrows a clause** the `LOOPS-ON-COMPOSED-ROUTES` amendment carries and

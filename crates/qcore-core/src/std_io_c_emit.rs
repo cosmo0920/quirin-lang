@@ -71,6 +71,34 @@ pub fn interpret_std_io_program(
 ) -> Result<Vec<String>, StdIoEmissionRefusal> {
     let mut observation = Vec::new();
     for (index, event) in program.events.iter().enumerate() {
+        // Card `W48-QR-SCALAR-TYPES-R3`: an operand of another §G02t type,
+        // rendered at its type by §G02t's rendering and this route's framing.
+        if let StdIoEvent::Print {
+            rendering,
+            operand: StdIoOperand::Scalar(name),
+        }
+        | StdIoEvent::Log {
+            rendering,
+            operand: StdIoOperand::Scalar(name),
+            ..
+        } = event
+            && let Some((ty, value)) = program.typed_scalars.get(name)
+        {
+            let level = match event {
+                StdIoEvent::Log { level, .. } => Some(*level),
+                _ => None,
+            };
+            let body = crate::scalar_types::render(
+                *rendering == crate::std_io::Rendering::Hex,
+                *ty,
+                *value,
+                program.target.as_ref(),
+            )
+            .ok_or(StdIoEmissionRefusal::CertificateDisagrees)?;
+            let line = crate::std_io::rendered_text_line(level, &body);
+            observation.push(format!("{}: {}", line.stream.label(), line.text));
+            continue;
+        }
         match event {
             StdIoEvent::LogLevel { .. } => {}
             StdIoEvent::Print { rendering, operand } => {

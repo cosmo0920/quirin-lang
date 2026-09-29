@@ -106,7 +106,9 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
-use qcore_core::std_buffer::{BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT};
+use qcore_core::scalar_types::ScalarType;
+use qcore_core::source_record::{FieldType, RecordType};
+use qcore_core::std_buffer::{BufferEvent, BufferOperand, BufferProgram, FieldOperand, MAX_EXTENT};
 use qcore_core::typed_errors::{Effect, EffectRow};
 
 /// The acquisition keyword. Spelled `bytes` and not `buffer` — see the module
@@ -395,6 +397,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
 fn lower_let(
     window: &[&Token],
     span: Span,
+    constants: &LoweringConstants,
     diagnostics: &mut Vec<SourceDiagnostic>,
 ) -> Option<BufferEvent> {
     let Some(binding) = word(window, 1) else {
@@ -417,7 +420,7 @@ fn lower_let(
     // a digit or a `-`. Trying them first is therefore free of ambiguity, and it
     // is what makes `type extent { … }` constructible rather than swallowed by
     // the `extent(NAME)` branch below.
-    if let Some(event) = lower_record(window, span, diagnostics) {
+    if let Some(event) = lower_record(window, span, constants, diagnostics) {
         return event;
     }
     // `let NAME = bytes ( INTEGER ) ;`
@@ -585,6 +588,39 @@ fn lower_let(
             index,
         });
     }
+    // `let NAME = OPERAND as TYPE ;` — **the conversion** (card
+    // `W48-QR-SCALAR-TYPES-R3`), §G02t's one spelling. Told apart by the
+    // already-reserved `as` after one operand and a scalar type name after it;
+    // name resolution already skips a type name after `as`, and the census of
+    // `w48-qr-scalar-types` found the shape in no tracked source. Like the copy
+    // bind it is **not** a `buffer_use`, so it selects no route.
+    if let Some((operand, next)) = operand(window, 3)
+        && word(window, next) == Some("as")
+    {
+        let Some(to) = word(window, next + 1).and_then(ScalarType::parse) else {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`as` converts to one fixed-width scalar type (bool, i8, i16, i32, i64, isize, \
+                 u8, u16, u32, u64, usize)",
+            ));
+            return None;
+        };
+        if !ends_with_semicolon(window, next + 2) {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`source.buffer.v1` converts one operand per statement, \
+                 `let NAME = OPERAND as TYPE;`, and carries no arithmetic",
+            ));
+            return None;
+        }
+        return Some(BufferEvent::Convert {
+            binding: binding.to_owned(),
+            operand,
+            to,
+        });
+    }
     // `let NAME = NAME ;` — **the copy bind** (card `OWNED-FIELD-ROUTE-REACH`,
     // wave 41).
     //
@@ -638,6 +674,7 @@ fn lower_let(
 fn lower_record(
     window: &[&Token],
     span: Span,
+    constants: &LoweringConstants,
     diagnostics: &mut Vec<SourceDiagnostic>,
 ) -> Option<Option<BufferEvent>> {
     let read = crate::source_record::read_record_statement(window)?;
@@ -700,6 +737,31 @@ fn lower_record(
         } => {
             let mut lowered = Vec::new();
             for (field, (start, end)) in fields {
+                // Card `W48-QR-SCALAR-TYPES-R3`: a field declared a scalar type
+                // other than `i32` reads its value at that type — a literal of
+                // any magnitude (the checker range-checks it), `true`/`false`,
+                // or a name. Every other field (an `i32`, a `bytes`, one the
+                // type does not declare) is read exactly as before the card.
+                if let Some(ty) = constants
+                    .field_type(&type_name, &field)
+                    .and_then(FieldType::scalar)
+                    .filter(|ty| *ty != ScalarType::I32)
+                {
+                    match typed_field_operand(window, start, end) {
+                        Ok(value) => {
+                            lowered.push((field, value));
+                            continue;
+                        }
+                        Err(message) => {
+                            diagnostics.push(diagnostic(
+                                "Q051",
+                                span,
+                                format!("`{type_name}.{field}` is declared `{ty}`: {message}"),
+                            ));
+                            return Some(None);
+                        }
+                    }
+                }
                 let Some((value, next)) = operand(window, start) else {
                     diagnostics.push(diagnostic(
                         "Q051",
@@ -725,7 +787,7 @@ fn lower_record(
                     ));
                     return Some(None);
                 }
-                lowered.push((field, value));
+                lowered.push((field, FieldOperand::from(value)));
             }
             Some(Some(BufferEvent::Construct {
                 binding,
@@ -733,6 +795,55 @@ fn lower_record(
                 fields: lowered,
             }))
         }
+    }
+}
+
+/// Read the value supplied at a field of a scalar type other than `i32` (card
+/// `W48-QR-SCALAR-TYPES-R3`): `["-"] INTEGER` read as an exact integer — the
+/// checker decides whether it is a value of the field's type — `true`,
+/// `false`, or one name. The window range is `[start, end)`.
+fn typed_field_operand(
+    window: &[&Token],
+    start: usize,
+    end: usize,
+) -> Result<FieldOperand, String> {
+    let exactly = |width: usize, value: FieldOperand| {
+        if start + width == end {
+            Ok(value)
+        } else {
+            Err(
+                "a field value is exactly one literal or one bound name; this revision \
+                 carries no arithmetic"
+                    .to_owned(),
+            )
+        }
+    };
+    let (negative, at) = match window.get(start).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Minus)) => (true, start + 1),
+        _ => (false, start),
+    };
+    match window.get(at).map(|token| &token.kind) {
+        Some(TokenKind::Integer(text)) => {
+            let Ok(magnitude) = text.parse::<i128>() else {
+                return Err(format!(
+                    "`{text}` is not an integer any fixed-width type holds"
+                ));
+            };
+            let value = if negative { -magnitude } else { magnitude };
+            exactly(at + 1 - start, FieldOperand::Literal(value))
+        }
+        Some(TokenKind::Word(word)) if !negative && word == "true" => {
+            exactly(1, FieldOperand::Bool(true))
+        }
+        Some(TokenKind::Word(word)) if !negative && word == "false" => {
+            exactly(1, FieldOperand::Bool(false))
+        }
+        Some(TokenKind::Word(name)) if !negative => exactly(1, FieldOperand::Name(name.clone())),
+        _ => Err(
+            "a field takes one integer literal, `true` or `false`, or one bound name, so that \
+             every field of a constructed record is known before emission"
+                .to_owned(),
+        ),
     }
 }
 
@@ -859,7 +970,12 @@ pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<Buf
     let event = match word(&window, 0) {
         Some("let") => {
             buffer_use(&window)?;
-            lower_let(&window, span, &mut diagnostics)
+            lower_let(
+                &window,
+                span,
+                &LoweringConstants::default(),
+                &mut diagnostics,
+            )
         }
         Some(DROP_KEYWORD) if ends_with_semicolon(&window, 2) => {
             let name = word(&window, 1)?;
@@ -1007,6 +1123,9 @@ pub fn lower_source_buffer(
     let mut events = Vec::new();
     let mut event_spans = Vec::new();
     let mut constants = LoweringConstants::default();
+    // Card `W48-QR-SCALAR-TYPES-R3`: the declared field types, so a
+    // construction reads each field's value at its declared type.
+    constants.declare_records(&records);
 
     lower_statements(
         parsed,
@@ -1052,12 +1171,30 @@ pub fn lower_source_buffer(
 pub struct LoweringConstants {
     scalars: BTreeMap<String, i32>,
     extents: BTreeMap<String, u32>,
+    /// The module's declared record types (card `W48-QR-SCALAR-TYPES-R3`):
+    /// read-only, so a construction reads each field value at its declared
+    /// type. Contributes no constant.
+    records: BTreeMap<String, RecordType>,
 }
 
 impl LoweringConstants {
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Install the module's record declarations (card `W48-QR-SCALAR-TYPES-R3`).
+    pub fn declare_records(&mut self, records: &[RecordType]) {
+        self.records = records
+            .iter()
+            .map(|record| (record.name.clone(), record.clone()))
+            .collect();
+    }
+
+    /// The declared type of `type_name.field`, if the module declares one.
+    #[must_use]
+    pub fn field_type(&self, type_name: &str, field: &str) -> Option<FieldType> {
+        self.records.get(type_name)?.field(field)
     }
 
     /// Record a constant a **composing route's own** `let` bound — the
@@ -1119,6 +1256,13 @@ impl LoweringConstants {
             // is refused by name, in the same direction as a bound read out of
             // a byte (`AGGREGATE-BOUND-FROM-FIELD`'s shape at a copy).
             | BufferEvent::CopyBind { .. } => {}
+            // Card `W48-QR-SCALAR-TYPES-R3`: **a conversion contributes no
+            // bound either**, for the copy bind's reason: this tier is a
+            // literal, a literal `let` and an `extent` binding, decided in one
+            // place, and following a conversion would widen it by a second
+            // rule. A bound spelled through one is refused by name, in the
+            // `LOOP-BOUND-FROM-BYTE` direction (`W48-QR-TYPES-LOOP-BOUNDS`).
+            BufferEvent::Convert { .. } => {}
         }
     }
 }
@@ -1219,7 +1363,7 @@ fn lower_statements(
         let window = window(tokens, span);
         let head = word(&window, 0).unwrap_or_default();
         let event = match head {
-            "let" => lower_let(&window, span, diagnostics),
+            "let" => lower_let(&window, span, constants, diagnostics),
             DROP_KEYWORD => {
                 let Some(name) = word(&window, 1) else {
                     diagnostics.push(diagnostic("Q051", span, "`drop NAME;` names one buffer"));
