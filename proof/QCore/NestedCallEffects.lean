@@ -71,7 +71,7 @@ def overlap (u : Nat → Bool) : Cell → Cell → Bool
 
 theorem overlap_symm (u : Nat → Bool) (a b : Cell) : overlap u a b = overlap u b a := by
   cases a <;> cases b <;> simp only [overlap] <;>
-    first | rfl | (apply Bool.eq_iff_iff.mpr; simp [eq_comm])
+    first | rfl | (apply Bool.eq_iff_iff.mpr; simp only [beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩)
 
 /-- Declaration `0` is unaliased, declaration `1` has its address taken. -/
 def u0 (d : Nat) : Bool := d == 0
