@@ -1,0 +1,17 @@
+{
+ "nested": {
+  "leaves": 177,
+  "functions": 96,
+  "sole_blocked": 7
+ },
+ "formal-embedded": {
+  "leaves": 18,
+  "functions": 13,
+  "sole_blocked": 0
+ },
+ "return": {
+  "leaves": 253,
+  "functions": 201,
+  "sole_blocked": 66
+ }
+}

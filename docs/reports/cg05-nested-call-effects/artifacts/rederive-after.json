@@ -1,0 +1,6311 @@
+{
+ "functions": [
+  {
+   "file": "cJSON.c",
+   "function": "cJSON_DeleteItemFromArray",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     3059
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "cJSON.c",
+   "function": "cJSON_DeleteItemFromObject",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     3073
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "cJSON.c",
+   "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     3077
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "cJSON.c",
+   "function": "cJSON_Minify",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     3600
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "call to uncontracted function `skip_oneline_comment`": 1,
+    "call to uncontracted function `skip_multiline_comment`": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "chunkio.c",
+   "function": "cio_set_realloc_size_hint",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     2458
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `cio_log_print`": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_chunk.c",
+   "function": "cio_chunk_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2031
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cio_log_print`": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 8,
+    "publication by `mk_list_add` of `ch`, which owns linked objects": 1,
+    "call to uncontracted function `cio_error_reset`": 1,
+    "call to uncontracted function `cio_file_open`": 1,
+    "call to uncontracted function `cio_memfs_open`": 1,
+    "nullable resource `ch` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "cio_file_content_copy",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3183
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "store through `*out_buf` without an out-parameter contract": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "cio_file_down",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3420
+    ],
+    [
+     "E11",
+     "path:call",
+     3424
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 5,
+    "unknown_alias": 1,
+    "call to uncontracted function `cio_file_update_size`": 1,
+    "call to uncontracted function `cio_file_native_close`": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "cio_file_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3266
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 12,
+    "call to uncontracted function `cio_log_print`": 3,
+    "unknown_alias": 5,
+    "call to uncontracted function `cio_file_update_size`": 2,
+    "call to uncontracted function `cio_file_native_open`": 1,
+    "call to uncontracted function `cio_file_native_close`": 3,
+    "call to uncontracted function `cio_file_native_apply_acl_and_settings`": 1,
+    "call to uncontracted function `format_acl_error_message`": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "cio_file_resize",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3611
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `cio_file_native_resize`": 1,
+    "call to uncontracted function `cio_file_native_remap`": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "cio_file_sync",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3563
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `cio_file_native_get_size`": 1,
+    "call to uncontracted function `cio_file_resize`": 1,
+    "call to uncontracted function `finalize_checksum`": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `cio_file_update_size`": 1
+   }
+  },
+  {
+   "file": "cio_file.c",
+   "function": "mmap_file",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3072
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 13,
+    "unknown_alias": 13,
+    "call to uncontracted function `cio_file_native_get_size`": 1,
+    "call to uncontracted function `cio_error_set`": 2,
+    "call to uncontracted function `cio_file_resize`": 1,
+    "call to uncontracted function `cio_file_native_unmap`": 2,
+    "call to uncontracted function `cio_chunk_counter_total_up_add`": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_apply_acl_and_settings",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3150
+    ],
+    [
+     "E11",
+     "path:call",
+     3158
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 8,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_close",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3248
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_compose_path",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     3190
+    ],
+    [
+     "E11",
+     "path:call",
+     3196
+    ],
+    [
+     "E11",
+     "path:call",
+     3202
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_delete",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3274
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_delete_by_path",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3260
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_lookup_group",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3102
+    ],
+    [
+     "E11",
+     "path:call",
+     3119
+    ],
+    [
+     "E11",
+     "path:call",
+     3125
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "local declaration may shadow a formal resource identity": 2,
+    "discarded owned result of resource API `calloc`": 2,
+    "unknown_alias": 4,
+    "indirect memory access is outside the resource projection": 4,
+    "unrecognized assignment destination": 1,
+    "call to uncontracted function `getgrnam_r`": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_lookup_user",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3061
+    ],
+    [
+     "E11",
+     "path:call",
+     3078
+    ],
+    [
+     "E11",
+     "path:call",
+     3084
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "discarded owned result of resource API `calloc`": 2,
+    "unknown_alias": 4,
+    "indirect memory access is outside the resource projection": 4,
+    "unrecognized assignment destination": 1,
+    "call to uncontracted function `getpwnam_r`": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_map",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3030
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3234
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_remap",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3044
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_resize",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3306
+    ],
+    [
+     "E11",
+     "path:call",
+     3320
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_sync",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3290
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "file": "cio_file_unix.c",
+   "function": "cio_file_native_unmap",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2999
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "cio_memfs.c",
+   "function": "cio_memfs_content_copy",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2211
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 1,
+    "store through `*out_buf` without an out-parameter contract": 1
+   }
+  },
+  {
+   "file": "cio_memfs.c",
+   "function": "cio_memfs_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2146
+    ],
+    [
+     "E11",
+     "path:call",
+     2152
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "cio_memfs.c",
+   "function": "cio_memfs_write",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2194
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 6,
+    "indirect memory access is outside the resource projection": 4
+   }
+  },
+  {
+   "file": "cio_meta.c",
+   "function": "cio_meta_write",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2384
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cio_file_write_metadata`": 1
+   }
+  },
+  {
+   "file": "cio_scan.c",
+   "function": "cio_scan_stream_files",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2263
+    ],
+    [
+     "E11",
+     "path:call",
+     2268
+    ],
+    [
+     "E11",
+     "path:call",
+     2274
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 9,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 2,
+    "call to uncontracted function `cio_log_print`": 1
+   }
+  },
+  {
+   "file": "cio_scan.c",
+   "function": "cio_scan_streams",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2324
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `cio_scan_stream_files`": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cio_stream.c",
+   "function": "check_stream_path",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2131
+    ],
+    [
+     "E11",
+     "path:call",
+     2136
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cio_os_isdir`": 1,
+    "call to uncontracted function `cio_os_mkpath`": 1,
+    "call to uncontracted function `cio_log_print`": 2
+   }
+  },
+  {
+   "file": "cio_stream.c",
+   "function": "cio_stream_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2200
+    ],
+    [
+     "E11",
+     "path:call",
+     2206
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cio_log_print`": 5,
+    "call to uncontracted function `check_stream_path`": 1,
+    "indirect memory access is outside the resource projection": 7,
+    "unknown_alias": 4,
+    "publication by `mk_list_add` of `st`, which this function does not hold as one live object": 1,
+    "nullable resource `st` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cio_stream.c",
+   "function": "get_stream_path",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2112
+    ],
+    [
+     "E11",
+     "path:call",
+     2117
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "cio_utils.c",
+   "function": "cio_utils_recursive_delete",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2221
+    ],
+    [
+     "E11",
+     "path:call",
+     2245
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `fts_open`": 1,
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `fts_close`": 1
+   }
+  },
+  {
+   "file": "cmetrics.c",
+   "function": "cmt_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5590
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 14,
+    "unknown_alias": 8
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_copy_label_keys",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5596
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "store through `*out` without an out-parameter contract": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_copy_map",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     5981
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `cat_histogram_values`": 2,
+    "call to uncontracted function `cat_summary_values`": 2,
+    "call to uncontracted function `cat_exp_histogram_values`": 2,
+    "call to uncontracted function `cmt_map_metric_get`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_counter",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6138
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `counter_lookup`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_exp_histogram",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6370
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `exp_histogram_lookup`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_gauge",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6177
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `gauge_lookup`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_histogram",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6257
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `histogram_lookup`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_summary",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6302
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 7,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `summary_lookup`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_untyped",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     6216
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `untyped_lookup`": 1
+   }
+  },
+  {
+   "file": "cmt_cat.c",
+   "function": "copy_label_values",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5624
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "store through `*out` without an out-parameter contract": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "file": "cmt_counter.c",
+   "function": "cmt_counter_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5468
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 6,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cmt_counter_destroy`": 2,
+    "unknown_alias": 4
+   }
+  },
+  {
+   "file": "cmt_decode_msgpack.c",
+   "function": "unpack_metric",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     7972
+    ],
+    [
+     "E11",
+     "path:call",
+     7977
+    ],
+    [
+     "E11",
+     "path:call",
+     7986
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unknown_alias": 17,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 12,
+    "call to uncontracted function `cmt_mpack_unpack_map`": 1,
+    "store through `*out_metric` without an out-parameter contract": 1
+   }
+  },
+  {
+   "file": "cmt_decode_opentelemetry.c",
+   "function": "create_label",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     7227
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1,
+    "nullable resource `instance` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_decode_prometheus_remote_write.c",
+   "function": "create_map_label",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6489
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1,
+    "nullable resource `map_label` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_decode_statsd.c",
+   "function": "create_map_label",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5567
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1,
+    "nullable resource `map_label` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_encode_cloudwatch_emf.c",
+   "function": "pack_histogram_metric",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     7135
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 7,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "call to uncontracted function `mpack_start_map`": 1
+   }
+  },
+  {
+   "file": "cmt_encode_influx.c",
+   "function": "append_string",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5797
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `line_protocol_escape`": 1,
+    "call to uncontracted function `cfl_sds_cat_safe`": 1
+   }
+  },
+  {
+   "file": "cmt_encode_influx.c",
+   "function": "line_protocol_escape",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5779
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_sample_to_metric",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     9186
+    ],
+    [
+     "E10",
+     "nested-call",
+     9235
+    ],
+    [
+     "E10",
+     "nested-call",
+     9257
+    ],
+    [
+     "E10",
+     "nested-call",
+     9282
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 10,
+    "indirect memory access is outside the resource projection": 28,
+    "nested call `get_context_arena` inside a modeled call is outside the resource projection": 4,
+    "call to uncontracted function `initialize_numerical_data_point`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `cmt_metric_exp_hist_snapshot_destroy`": 6,
+    "call to uncontracted function `opentelemetry__proto__metrics__v1__exponential_histogram_data_point__init`": 1,
+    "call to uncontracted function `opentelemetry__proto__metrics__v1__exponential_histogram_data_point__buckets__init`": 2,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "unmodeled increment or decrement expression": 2,
+    "call to uncontracted function `append_data_point_to_metric`": 1
+   }
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "initialize_histogram_data_point",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8549
+    ],
+    [
+     "E11",
+     "path:call",
+     8563
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `opentelemetry__proto__metrics__v1__histogram_data_point__init`": 1,
+    "unknown_alias": 11,
+    "indirect memory access is outside the resource projection": 5
+   }
+  },
+  {
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "initialize_summary_data_point",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8496
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `opentelemetry__proto__metrics__v1__summary_data_point__init`": 1,
+    "unknown_alias": 8,
+    "indirect memory access is outside the resource projection": 4
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_entry_to_prometheus_label_list",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6676
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 7,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_metric_to_timeseries",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6957
+    ],
+    [
+     "E11",
+     "path:call",
+     6968
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 6,
+    "unknown_alias": 2,
+    "call to uncontracted function `prometheus__sample__init`": 1,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "create_label",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6544
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1,
+    "nullable resource `instance` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6893
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 9,
+    "unknown_alias": 8
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "render_remote_write_context_to_sds",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6566
+    ],
+    [
+     "E11",
+     "path:call",
+     6572
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 11,
+    "unmodeled increment or decrement expression": 2,
+    "call to uncontracted function `cfl_sds_create_size`": 1,
+    "call to uncontracted function `cfl_sds_set_len`": 1
+   }
+  },
+  {
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6785
+    ],
+    [
+     "E11",
+     "path:call",
+     6790
+    ],
+    [
+     "E11",
+     "path:call",
+     6796
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 18,
+    "unknown_alias": 18,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "store through `*time_series` without an out-parameter contract": 2,
+    "call to uncontracted function `destroy_prometheus_label_list`": 1
+   }
+  },
+  {
+   "file": "cmt_encode_splunk_hec.c",
+   "function": "format_context_common",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     5724
+    ],
+    [
+     "E11",
+     "path:call",
+     5727
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     5737
+    ],
+    [
+     "E11",
+     "path:call",
+     5740
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     5750
+    ],
+    [
+     "E11",
+     "path:call",
+     5753
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cfl_sds_cat_safe`": 7,
+    "call to uncontracted function `cmt_time_from_ns`": 1,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5786
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 6,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cmt_exp_histogram_destroy`": 2,
+    "unknown_alias": 3
+   }
+  },
+  {
+   "file": "cmt_gauge.c",
+   "function": "cmt_gauge_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5466
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 6,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cmt_gauge_destroy`": 2,
+    "unknown_alias": 3
+   }
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_buckets_create_size",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5469
+    ],
+    [
+     "E11",
+     "path:call",
+     5474
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_buckets_exponential_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5560
+    ],
+    [
+     "E11",
+     "path:call",
+     5565
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_buckets_linear_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5525
+    ],
+    [
+     "E11",
+     "path:call",
+     5530
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5623
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 6,
+    "indirect memory access is outside the resource projection": 4,
+    "unknown_alias": 5,
+    "call to uncontracted function `cmt_histogram_buckets_default_create`": 1,
+    "call to uncontracted function `cmt_histogram_destroy`": 4,
+    "nullable resource `h` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_histogram.c",
+   "function": "histogram_get_metric",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5685
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "cmt_label.c",
+   "function": "cmt_labels_add_kv",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5308
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 5,
+    "unknown_alias": 4
+   }
+  },
+  {
+   "file": "cmt_label.c",
+   "function": "cmt_labels_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5279
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cmt_map.c",
+   "function": "cmt_map_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5565
+    ],
+    [
+     "E11",
+     "path:call",
+     5577
+    ],
+    [
+     "E11",
+     "path:call",
+     5587
+    ],
+    [
+     "E11",
+     "path:call",
+     5593
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 10,
+    "unknown_alias": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `cmt_map_destroy`": 2,
+    "nullable resource `map` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_map.c",
+   "function": "map_metric_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5704
+    ],
+    [
+     "E11",
+     "path:call",
+     5715
+    ],
+    [
+     "E11",
+     "path:call",
+     5725
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 9,
+    "unknown_alias": 7,
+    "nullable resource `metric` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_map.c",
+   "function": "metric_prepare_storage",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5642
+    ],
+    [
+     "E11",
+     "path:call",
+     5655
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "indirect memory access is outside the resource projection": 4,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "cmt_summary.c",
+   "function": "cmt_summary_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5485
+    ],
+    [
+     "E11",
+     "path:call",
+     5506
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 6,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `cmt_summary_destroy`": 3,
+    "unknown_alias": 7,
+    "nullable resource `s` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "cmt_summary.c",
+   "function": "cmt_summary_set_default",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5658
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `cmt_summary_sum_set`": 1,
+    "call to uncontracted function `cmt_summary_count_set`": 1
+   }
+  },
+  {
+   "file": "cmt_untyped.c",
+   "function": "cmt_untyped_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5465
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `cmt_log_print`": 7,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `cmt_untyped_destroy`": 2,
+    "unknown_alias": 3
+   }
+  },
+  {
+   "file": "ctr_attributes.c",
+   "function": "ctr_attributes_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6766
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `cfl_kvlist_create`": 1
+   }
+  },
+  {
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "convert_array_value",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8606
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 6,
+    "call to uncontracted function `convert_any_value`": 1
+   }
+  },
+  {
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "convert_kvlist_value",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8650
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 7
+   }
+  },
+  {
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "convert_otel_attrs",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8757
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 4,
+    "call to uncontracted function `convert_any_value`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "ctr_variant_kvpair_to_otlp_kvpair",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8693
+    ],
+    [
+     "E11",
+     "path:call",
+     8698
+    ],
+    [
+     "E11",
+     "path:call",
+     8704
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `otlp_kvpair_value_initialize`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "unknown_alias": 4
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_export_service_request",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9318
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__collector__trace__v1__export_trace_service_request__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_instrumentation_scope",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9178
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__common__v1__instrumentation_scope__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_resource",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8897
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__resource__v1__resource__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_resource_span",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9279
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__trace__v1__resource_spans__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_resource_spans",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9269
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_scope_span",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9223
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__trace__v1__scope_spans__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_scope_spans",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9213
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_span",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9139
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `opentelemetry__proto__trace__v1__span__init`": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "initialize_spans",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     9129
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_list_initialize",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     8586
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "ctr_id.c",
+   "function": "ctr_id_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6796
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `ctr_id_set`": 1
+   }
+  },
+  {
+   "file": "ctr_id.c",
+   "function": "ctr_id_create_random",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6770
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `ctr_random_get`": 1,
+    "call to uncontracted function `ctr_id_create`": 1
+   }
+  },
+  {
+   "file": "ctr_link.c",
+   "function": "ctr_link_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6768
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `ctr_id_create`": 2,
+    "unknown_alias": 5,
+    "nullable resource `link` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "ctr_resource.c",
+   "function": "ctr_resource_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6766
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `ctr_attributes_create`": 1,
+    "call to uncontracted function `ctr_resource_destroy`": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "ctr_resource.c",
+   "function": "ctr_resource_span_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6815
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `ctr_resource_create`": 1,
+    "unknown_alias": 3
+   }
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_instrumentation_scope_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6818
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "ctr_scope.c",
+   "function": "ctr_scope_span_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6766
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6769
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 8,
+    "unknown_alias": 7,
+    "call to uncontracted function `ctr_attributes_create`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nullable resource `span` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_add_ts",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     7048
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 6,
+    "call to uncontracted function `ctr_attributes_create`": 1,
+    "nullable resource `ev` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "ctraces.c",
+   "function": "ctr_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6782
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 3,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20078
+    ],
+    [
+     "E10",
+     "nested-call",
+     20168
+    ],
+    [
+     "E10",
+     "nested-call",
+     20222
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `memrb_input_chunk_release_space`": 1,
+    "call to uncontracted function `flb_input_name`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "nested call `flb_input_name` inside a modeled call is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 8,
+    "indirect memory access is outside the resource projection": 13,
+    "call to uncontracted function `input_chunk_get`": 1,
+    "call to uncontracted function `flb_mp_count_log_records`": 1,
+    "call to uncontracted function `flb_chunk_trace_do_input`": 1,
+    "unsupported assignment expression": 2,
+    "call to uncontracted function `flb_input_chunk_write`": 1,
+    "call to uncontracted function `flb_input_chunk_set_limits`": 2,
+    "call to uncontracted function `flb_input_chunk_update_output_instances`": 1,
+    "call to uncontracted function `flb_input_chunk_protect`": 1
+   }
+  },
+  {
+   "file": "lz4.c",
+   "function": "LZ4_count",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     468
+    ],
+    [
+     "E10",
+     "nested-call",
+     475
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "nested call `LZ4_read_ARCH` inside a modeled call is outside the resource projection": 2,
+    "C operator `sizeof` requires type/operand analysis": 2,
+    "call to uncontracted function `LZ4_NbCommonBytes`": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled expression may mutate a formal resource identity": 1
+   }
+  },
+  {
+   "file": "lz4hc.c",
+   "function": "LZ4HC_InsertAndGetWiderMatch",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     706
+    ],
+    [
+     "E11",
+     "path:call",
+     840
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 11,
+    "unknown_alias": 16,
+    "unsupported assignment expression": 19,
+    "call to uncontracted function `LZ4HC_Insert`": 1,
+    "call to uncontracted function `LZ4HC_countBack`": 2,
+    "call to uncontracted function `LZ4_count`": 4,
+    "call to uncontracted function `LZ4HC_countPattern`": 3,
+    "call to uncontracted function `LZ4HC_rotatePattern`": 2,
+    "call to uncontracted function `LZ4HC_reverseCountPattern`": 2,
+    "store through `*startpos` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "file": "lz4hc.c",
+   "function": "LZ4HC_countPattern",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     633
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 2,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "C operator `sizeof` requires type/operand analysis": 1,
+    "call to uncontracted function `LZ4_NbCommonBytes`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled expression may mutate a formal resource identity": 2
+   }
+  },
+  {
+   "file": "mk_core/mk_file.c",
+   "function": "mk_file_get_info",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     4182
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "mk_core/mk_rconf.c",
+   "function": "check_indent",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     1899
+    ],
+    [
+     "E11",
+     "path:call",
+     1907
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled expression may mutate a formal resource identity": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "file": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     1934
+    ],
+    [
+     "E11",
+     "path:call",
+     2044
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "indirect memory access is outside the resource projection": 1,
+    "arguments beyond the declared parameters of `mk_print` are outside the resource projection": 2,
+    "unknown_alias": 44,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "call to uncontracted function `mk_rconf_read_glob`": 1,
+    "call to uncontracted function `mk_rconf_read`": 1,
+    "call to uncontracted function `mk_rconf_meta_add`": 1,
+    "call to uncontracted function `mk_string_copy_substr`": 4,
+    "call to uncontracted function `mk_rconf_section_add`": 1,
+    "unmodeled call, aggregate or indirect access in do-while condition": 1,
+    "call has an unmodeled formal address or borrowed expression": 1,
+    "call to uncontracted function `mk_string_trim`": 2,
+    "call to uncontracted function `mk_rconf_section_entry_add`": 1,
+    "call to uncontracted function `mk_string_dup`": 1
+   }
+  },
+  {
+   "file": "mk_core/mk_string.c",
+   "function": "mk_string_trim",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     2356
+    ],
+    [
+     "E11",
+     "path:call",
+     2369
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "unknown_alias": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "file": "mk_core/mk_utils.c",
+   "function": "mk_utils_register_pid",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     2658
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `exit`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 3,
+    "nested call `getpid` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_exit",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     5619
+    ],
+    [
+     "E10",
+     "nested-call",
+     5621
+    ],
+    [
+     "E10",
+     "nested-call",
+     5622
+    ],
+    [
+     "E10",
+     "nested-call",
+     5623
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_ptr_free`": 2,
+    "nested call `pthread_getspecific` inside a modeled call is outside the resource projection": 4,
+    "call to uncontracted function `pthread_getspecific`": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_clock.c",
+   "function": "mk_clock_log_set_time",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     3747
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `localtime_r` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_listen_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6091
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_string_split_line`": 1,
+    "unknown_alias": 8,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `mk_string_dup`": 2,
+    "call to uncontracted function `strtol`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `mk_config_listener_add`": 1,
+    "call to uncontracted function `mk_string_split_free`": 2
+   }
+  },
+  {
+   "file": "mk_server/mk_fifo.c",
+   "function": "msg_write",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5289
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_http_parser.c",
+   "function": "header_lookup",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5638
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 18,
+    "unmodeled call, aggregate or indirect access in branch condition": 8,
+    "unknown_alias": 20,
+    "unlink by `mk_list_del` of `header`, which this function has not published": 1,
+    "call to uncontracted function `strtol`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_http_parser.c",
+   "function": "http_parser_transfer_encoding_chunked",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5841
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 6,
+    "indirect memory access is outside the resource projection": 10,
+    "unmodeled increment or decrement expression": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `strtol`": 1,
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `cb_chunk_complete`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_kernel.c",
+   "function": "mk_kernel_version",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5814
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `mk_string_copy_substr`": 2,
+    "unknown_alias": 2,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in do-while condition": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_net.c",
+   "function": "mk_net_conn_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5989
+    ]
+   ],
+   "status": "Unsafe",
+   "leaves": {
+    "call to uncontracted function `mk_socket_create`": 1,
+    "unknown_alias": 18,
+    "call to uncontracted function `mk_socket_set_nonblocking`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `mk_sched_get_thread_conf`": 1,
+    "live obligation acquired at mk_server/mk_net.c:247": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_net.c",
+   "function": "mk_net_conn_write",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6056
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `pthread_getspecific`": 1,
+    "call to uncontracted function `mk_sched_get_thread_conf`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `mk_thread_yield`": 2,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_net.c",
+   "function": "net_plain_send_file",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5919
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load_all",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     6352
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_plugin_load_static`": 1,
+    "indirect memory access is outside the resource projection": 6,
+    "call to uncontracted function `mk_plugin_unregister`": 3,
+    "call to uncontracted function `mk_file_get_info`": 1,
+    "call to uncontracted function `mk_rconf_open`": 1,
+    "call to uncontracted function `mk_rconf_section_get`": 1,
+    "call to uncontracted function `exit`": 1,
+    "call to uncontracted function `mk_plugin_preworker_calls`": 1,
+    "call to uncontracted function `mk_vhost_map_handlers`": 1,
+    "call to uncontracted function `mk_rconf_free`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_event_read",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6857
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `mk_sched_event_write`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_free",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     6536
+    ],
+    [
+     "E10",
+     "nested-call",
+     6537
+    ],
+    [
+     "E10",
+     "nested-call",
+     6538
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "call to uncontracted function `mk_plugin_exit_worker`": 1,
+    "call to uncontracted function `mk_vhost_fdt_worker_exit`": 1,
+    "call to uncontracted function `mk_cache_worker_exit`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `abort`": 1,
+    "nested call `pthread_getspecific` inside a modeled call is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_fifo_worker_setup",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6348
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `pthread_getspecific`": 1,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_handler",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6221
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `mk_sched_add_connection`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6413
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_server_listen_init`": 1,
+    "call to uncontracted function `mk_event_loop_create`": 1,
+    "call to uncontracted function `exit`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `mk_event_wait`": 1,
+    "unknown_alias": 7,
+    "unmodeled increment or decrement expression": 1,
+    "call to uncontracted function `mk_sched_next_target`": 1,
+    "call to uncontracted function `mk_server_listen_handler`": 1,
+    "call to uncontracted function `mk_event_loop_destroy`": 1,
+    "call to uncontracted function `mk_server_listen_exit`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     6527
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_sched_get_thread_conf`": 1,
+    "unknown_alias": 21,
+    "call to uncontracted function `mk_event_wait`": 2,
+    "indirect memory access is outside the resource projection": 6,
+    "unmodeled increment or decrement expression": 2,
+    "call to uncontracted function `pthread_getspecific`": 1,
+    "call to uncontracted function `mk_server_fifo_worker_setup`": 1,
+    "call to uncontracted function `pthread_setspecific`": 1,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `mk_sched_event_read`": 2,
+    "call to uncontracted function `mk_sched_event_write`": 1,
+    "call to uncontracted function `mk_sched_event_close`": 1,
+    "call to uncontracted function `mk_server_listen_handler`": 1,
+    "call to uncontracted function `mk_event_timeout_destroy`": 1,
+    "call to uncontracted function `mk_sched_threads_destroy_all`": 1,
+    "call to uncontracted function `mk_sched_event_free_all`": 2,
+    "nested call `pthread_getspecific` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `mk_event_loop_destroy`": 1,
+    "call to uncontracted function `mk_sched_worker_free`": 1,
+    "call to uncontracted function `mk_sched_check_timeouts`": 1,
+    "call to uncontracted function `mk_http_thread_event`": 1,
+    "call to uncontracted function `mk_fifo_worker_read`": 1,
+    "call to uncontracted function `mk_sched_threads_purge`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_socket.c",
+   "function": "mk_socket_connect",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5882
+    ],
+    [
+     "E11",
+     "path:call",
+     5886
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_string_build`": 1,
+    "call to uncontracted function `getaddrinfo`": 1,
+    "unknown_alias": 4,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `mk_socket_set_nonblocking`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `exit`": 1,
+    "call to uncontracted function `freeaddrinfo`": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_socket.c",
+   "function": "mk_socket_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5841
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mk_socket_create`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `mk_socket_set_nonblocking`": 1,
+    "call to uncontracted function `connect`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "mk_server/mk_stream.c",
+   "function": "mk_channel_write",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     5970
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "unknown_alias": 6,
+    "call to uncontracted function `channel_write_in_file`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `mk_iov_consume`": 1,
+    "call to uncontracted function `mk_stream_in_release`": 3
+   }
+  },
+  {
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_init",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     6437
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `mk_file_get_info`": 1,
+    "unknown_alias": 7,
+    "call to uncontracted function `mk_string_build`": 1,
+    "call to uncontracted function `mk_vhost_read`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1,
+    "call to uncontracted function `exit`": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "file": "mk_server/monkey.c",
+   "function": "mk_server_info",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     6010
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `getpid` inside a modeled call is outside the resource projection": 1,
+    "unknown_alias": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdbuf.c",
+   "function": "do_unittest_erase",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     4296
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 8,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 4,
+    "unmodeled increment or decrement expression": 4,
+    "indirect memory access is outside the resource projection": 8,
+    "call to uncontracted function `rd_buf_init`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "nested call `rd_buf_len` inside a modeled call is outside the resource projection": 2,
+    "call to uncontracted function `rd_slice_init`": 1,
+    "call to uncontracted function `rd_slice_read`": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_buf_destroy`": 1
+   }
+  },
+  {
+   "file": "rdbuf.c",
+   "function": "do_unittest_write_read_payload_correctness",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     4144
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_crc32_init`": 2,
+    "call to uncontracted function `rd_crc32_update`": 4,
+    "call to uncontracted function `rd_buf_init`": 1,
+    "call to uncontracted function `rd_buf_write`": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_slice_init_full`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `rd_buf_len` inside a modeled call is outside the resource projection": 1,
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `rd_slice_peek`": 1,
+    "call to uncontracted function `rd_slice_read`": 1,
+    "call to uncontracted function `rd_buf_destroy`": 1
+   }
+  },
+  {
+   "file": "rddl.c",
+   "function": "rd_dl_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     2990
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "call to uncontracted function `rd_dl_open0`": 2,
+    "call to uncontracted function `__builtin_alloca`": 1,
+    "nested call `strlen` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_getCountAtIndex",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     4091
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "file": "rdhdrhistogram.c",
+   "function": "rd_hdr_histogram_new",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     4041
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `log2` inside a modeled call is outside the resource projection": 2,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "rdhttp.c",
+   "function": "unittest_http_get",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21758
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_getenv`": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "nested call `strlen` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `__builtin_alloca`": 1,
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_http_get_json`": 2,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3,
+    "unknown_alias": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_destroy_app",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     21766
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 12,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "call to uncontracted function `rd_flags2str`": 1,
+    "indirect memory access is outside the resource projection": 17,
+    "arguments do not match resource contract for `rd_kafka_curr_msgs_get`": 1,
+    "call to uncontracted function `rd_kafka_crash`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 1,
+    "call to uncontracted function `rd_kafka_consumer_close`": 1,
+    "call to uncontracted function `rd_kafka_telemetry_await_termination`": 1,
+    "call to uncontracted function `rd_kafka_destroy_final`": 1
+   }
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_errno",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     25111
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_new",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22613
+    ],
+    [
+     "E11",
+     "path:call",
+     22615
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 61,
+    "call to uncontracted function `rd_kafka_global_init`": 1,
+    "call to uncontracted function `rd_kafka_conf_new`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 21,
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_conf_destroy`": 1,
+    "call to uncontracted function `rd_kafka_set_last_error`": 4,
+    "call to uncontracted function `rd_kafka_global_cnt_incr`": 1,
+    "indirect memory access is outside the resource projection": 97,
+    "call to uncontracted function `rd_kafka_thread_srand`": 1,
+    "call to uncontracted function `rd_kafka_metadata_cache_init`": 1,
+    "call to uncontracted function `rd_kafka_coord_reqs_init`": 1,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "call to uncontracted function `rd_kafka_assignment_init`": 1,
+    "call to uncontracted function `rd_kafka_background_thread_create`": 1,
+    "C operator `sizeof` requires type/operand analysis": 1,
+    "call to uncontracted function `rd_kafka_conf_warn`": 1,
+    "nullable resource `rk` used by a non-null contract": 1,
+    "call to uncontracted function `rd_kafka_sasl_term`": 1,
+    "call to uncontracted function `rd_kafka_interceptors_on_destroy`": 1,
+    "call to uncontracted function `rd_kafka_assignors_term`": 1,
+    "call to uncontracted function `rd_kafka_destroy_internal`": 1,
+    "call to uncontracted function `rd_kafka_destroy_final`": 1
+   }
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_srand",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21134
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `rd_seed` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka.c",
+   "function": "rd_kafka_stats_emit_all",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     22099
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported assignment expression": 2,
+    "indirect memory access is outside the resource projection": 42,
+    "arguments do not match resource contract for `rd_kafka_curr_msgs_get`": 1,
+    "call to uncontracted function `rd_clock`": 1,
+    "unknown_alias": 8,
+    "call to uncontracted function `rd_kafka_stats_emit_broker_reqs`": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled increment or decrement expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_kafka_op_new0`": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_CreateAclsResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     23496
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 9,
+    "C operator `sizeof` requires type/operand analysis": 3,
+    "indirect memory access is outside the resource projection": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported assignment expression": 5,
+    "unrecognized assignment destination": 1,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "local declaration may shadow a formal resource identity": 1,
+    "call to uncontracted function `rd_kafka_err2str`": 1,
+    "call to uncontracted function `rd_kafka_acl_result_new`": 1,
+    "store through `*rko_resultp` without an out-parameter contract": 1,
+    "call to uncontracted function `rd_kafka_op_destroy`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAclsResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     24422
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 21,
+    "C operator `sizeof` requires type/operand analysis": 5,
+    "indirect memory access is outside the resource projection": 23,
+    "unmodeled call, aggregate or indirect access in branch condition": 18,
+    "unsupported assignment expression": 12,
+    "unrecognized assignment destination": 2,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "braced initializer, expression, or declaration is not modeled": 7,
+    "local declaration may shadow a formal resource identity": 1,
+    "call to uncontracted function `rd_kafka_err2str`": 2,
+    "call to uncontracted function `rd_kafka_DeleteAcls_result_response_new`": 1,
+    "call to uncontracted function `rd_kafka_AclBinding_new0`": 1,
+    "store through `*rko_resultp` without an out-parameter contract": 1,
+    "call to uncontracted function `rd_kafka_op_destroy`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeAclsResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     23622
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 19,
+    "C operator `sizeof` requires type/operand analysis": 4,
+    "indirect memory access is outside the resource projection": 20,
+    "unmodeled call, aggregate or indirect access in branch condition": 15,
+    "unsupported assignment expression": 10,
+    "call to uncontracted function `rd_kafka_err2str`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "unrecognized assignment destination": 2,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "call to uncontracted function `rd_kafka_AclBinding_new0`": 1,
+    "store through `*rko_resultp` without an out-parameter contract": 1,
+    "call to uncontracted function `rd_kafka_op_destroy`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeCluster_result_cluster_id",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     26315
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeCluster_result_controller",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     26319
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     25508
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 53,
+    "indirect memory access is outside the resource projection": 29,
+    "C operator `sizeof` requires type/operand analysis": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 21,
+    "unsupported assignment expression": 18,
+    "unrecognized assignment destination": 2,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "call to uncontracted function `rd_kafka_Node_new`": 1,
+    "unmodeled expression may mutate a formal resource identity": 8,
+    "call to uncontracted function `rd_kafka_error_new`": 2,
+    "call to uncontracted function `rd_list_init`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "call to uncontracted function `rd_kafka_buf_read_topic_partitions`": 1,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_MemberDescription_new`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_destroy`": 1,
+    "call to uncontracted function `rd_list_add`": 1,
+    "call to uncontracted function `rd_kafka_AuthorizedOperations_parse`": 1,
+    "call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`": 1,
+    "call to uncontracted function `rd_kafka_ConsumerGroupDescription_new_error`": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 2,
+    "call to uncontracted function `rd_kafka_Node_destroy`": 2,
+    "store through `*rko_resultp` without an out-parameter contract": 1,
+    "call to uncontracted function `rd_kafka_op_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     24966
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 29,
+    "indirect memory access is outside the resource projection": 12,
+    "C operator `sizeof` requires type/operand analysis": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unsupported assignment expression": 9,
+    "call to uncontracted function `rd_kafka_error_new`": 2,
+    "unrecognized assignment destination": 1,
+    "call to uncontracted function `rd_list_init`": 2,
+    "call to uncontracted function `rd_list_add`": 3,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled expression may mutate a formal resource identity": 4,
+    "call to uncontracted function `rd_kafka_consumer_group_state_code`": 1,
+    "call to uncontracted function `rd_kafka_consumer_group_type_code`": 1,
+    "call to uncontracted function `rd_kafka_ConsumerGroupListing_new`": 1,
+    "call to uncontracted function `rd_kafka_ListConsumerGroupsResult_new`": 1,
+    "store through `*rko_resultp` without an out-parameter contract": 1,
+    "call to uncontracted function `rd_list_destroy`": 2
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_OffsetDeleteResponse_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     23174
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "C operator `sizeof` requires type/operand analysis": 2,
+    "indirect memory access is outside the resource projection": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unsupported assignment expression": 2,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `rd_kafka_buf_read_topic_partitions`": 1,
+    "call to uncontracted function `rd_kafka_admin_result_new`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_destroy`": 1,
+    "store through `*rko_resultp` without an out-parameter contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_ConsumerGroupDescribeRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     25444
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unknown_alias": 1,
+    "nested call `rd_kafka_error_string` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_error_code`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeClusterRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     26379
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_admin_MetadataRequest`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     25418
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_DescribeGroupsRequest`": 1,
+    "unknown_alias": 1,
+    "nested call `rd_kafka_error_string` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_error_code`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeTopicsRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     26146
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_admin_MetadataRequest`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     24892
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `rd_kafka_consumer_group_state_name`": 1,
+    "call to uncontracted function `rd_kafka_consumer_group_type_name`": 1,
+    "call to uncontracted function `rd_kafka_ListGroupsRequest`": 1,
+    "nested call `rd_kafka_error_string` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_error_code`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "rtrim",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20522
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_background.c",
+   "function": "rd_kafka_background_thread_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20201
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 4,
+    "indirect memory access is outside the resource projection": 8,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_buf_retry",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     22436
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 10,
+    "indirect memory access is outside the resource projection": 10,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_kafka_op_new0`": 1
+   }
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_thread_main",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     23342
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 15,
+    "indirect memory access is outside the resource projection": 29,
+    "call to uncontracted function `rd_kafka_thread_srand`": 1,
+    "call to uncontracted function `rd_kafka_interceptors_on_thread_start`": 1,
+    "call to uncontracted function `rd_atomic32_add`": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "call to uncontracted function `rd_kafka_broker_serve`": 8,
+    "call to uncontracted function `rd_kafka_broker_set_state`": 4,
+    "nested call `rd_clock` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_broker_connect`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `rd_kafka_broker_connect_auth`": 1,
+    "call to uncontracted function `rd_kafka_broker_fail`": 1,
+    "call to uncontracted function `rd_kafka_interceptors_on_thread_exit`": 1,
+    "call to uncontracted function `rd_atomic32_sub`": 1,
+    "call to uncontracted function `rd_kafka_op_new0`": 1,
+    "call to uncontracted function `rd_kafka_broker_destroy_final`": 1
+   }
+  },
+  {
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_socket_cb_generic",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22038
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_assignor_run",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21395
+    ],
+    [
+     "E10",
+     "nested-call",
+     21403
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "store through `*errstr` without an out-parameter contract": 1,
+    "indirect memory access is outside the resource projection": 5,
+    "unknown_alias": 3,
+    "call to uncontracted function `rd_kafka_cooperative_protocol_adjust_assignment`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_join_state`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_wait_resp`": 1
+   }
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     24229
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_rebalance_op_incr",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     21032
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 6,
+    "indirect memory access is outside the resource projection": 13,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `rd_kafka_cgrp_unassign`": 1,
+    "call to uncontracted function `rd_kafka_op_new0`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_incremental_assign`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_incremental_unassign`": 1,
+    "call to uncontracted function `rd_kafka_error_destroy`": 1,
+    "call to uncontracted function `rd_kafka_cgrp_set_join_state`": 1
+   }
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "str_is_printable",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     24672
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "unittest_consumer_group_metadata_iteration",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     24738
+    ],
+    [
+     "E10",
+     "nested-call",
+     24742
+    ],
+    [
+     "E10",
+     "nested-call",
+     24744
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_consumer_group_metadata_new_with_genid`": 1,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "call to uncontracted function `rd_kafka_consumer_group_metadata_write`": 2,
+    "nested call `rd_kafka_error_string` inside a modeled call is outside the resource projection": 3,
+    "unknown_alias": 4,
+    "call to uncontracted function `rd_kafka_consumer_group_metadata_read`": 1
+   }
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_set_prop",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     24455
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     24569
+    ],
+    [
+     "E11",
+     "path:call",
+     24572
+    ],
+    [
+     "E11",
+     "path:call",
+     24574
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 23,
+    "indirect memory access is outside the resource projection": 20,
+    "unmodeled call, aggregate or indirect access in loop condition": 3,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "call to uncontracted function `rd_kafka_anyconf_set_prop0`": 6,
+    "call to uncontracted function `rd_kafka_conf_s2i_find`": 1,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "call to uncontracted function `rd_kafka_crash`": 1
+   }
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_kv_get",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     25649
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_string_split`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unknown_alias": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nullable resource `ret` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_validate_str",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22781
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_error.c",
+   "function": "rd_kafka_error_new_v",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     19575
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `__builtin_va_copy`": 1,
+    "call to uncontracted function `__builtin_va_end`": 1,
+    "unknown_alias": 6,
+    "indirect memory access is outside the resource projection": 2,
+    "nullable resource `error` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_error.c",
+   "function": "rd_kafka_error_to_legacy",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19687
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "nested call `rd_kafka_error_string` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_ShareAcknowledgeRequest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21914
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 19,
+    "unknown_alias": 12,
+    "unrecognized assignment destination": 3,
+    "call to uncontracted function `rd_kafka_share_ack_details_totals`": 1,
+    "call to uncontracted function `rd_kafka_buf_new_request0`": 1,
+    "nested call `rd_kafka_broker_ApiVersion_supported` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_buf_write_kstr`": 2,
+    "call to uncontracted function `rd_kafka_buf_write_i32`": 3,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unmodeled increment or decrement expression": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_kafka_buf_finalize_arraycnt`": 3,
+    "call to uncontracted function `rd_kafka_buf_write_i8`": 4,
+    "call to uncontracted function `rd_kafka_buf_write_arraycnt`": 2,
+    "call to uncontracted function `rd_kafka_broker_buf_enq1`": 1
+   }
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_fetch_reply",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21623
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `rd_kafka_fetch_reply_handle`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_broker_fetch_backoff`": 1
+   }
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_share_fetch_reply",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21583
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 5,
+    "call to uncontracted function `rd_kafka_share_fetch_reply_handle`": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "call to uncontracted function `rd_kafka_broker_session_update`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_broker_session_reset`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_share_fetch_op_reply_and_update_ack_details_with_err`": 1
+   }
+  },
+  {
+   "file": "rdkafka_lz4.c",
+   "function": "rd_kafka_lz4_compress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19867
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 13,
+    "indirect memory access is outside the resource projection": 7,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "store through `*outbuf` without an out-parameter contract": 2,
+    "call to uncontracted function `LZ4F_compressBound`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "call to uncontracted function `LZ4F_createCompressionContext`": 1,
+    "call to uncontracted function `LZ4F_compressBegin`": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "call to uncontracted function `LZ4F_compressUpdate`": 1,
+    "call to uncontracted function `LZ4F_compressEnd`": 1,
+    "call to uncontracted function `LZ4F_freeCompressionContext`": 1
+   }
+  },
+  {
+   "file": "rdkafka_lz4.c",
+   "function": "rd_kafka_lz4_decompress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19789
+    ],
+    [
+     "E11",
+     "path:call",
+     19816
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 14,
+    "store through `*outbuf` without an out-parameter contract": 2,
+    "call to uncontracted function `LZ4F_createDecompressionContext`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `LZ4F_getFrameInfo`": 1,
+    "call to uncontracted function `LZ4F_decompress`": 1,
+    "call to uncontracted function `rd_kafka_crash`": 1,
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `LZ4F_freeDecompressionContext`": 1
+   }
+  },
+  {
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_topic_filter",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20931
+    ],
+    [
+     "E11",
+     "path:call",
+     20935
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_kafka_metadata_cache_find`": 1,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_topic_match",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20890
+    ],
+    [
+     "E11",
+     "path:call",
+     20905
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 12,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_copy`": 1,
+    "unknown_alias": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "call to uncontracted function `rd_kafka_topic_partition_list_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_listen_io",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22429
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "C operator `sizeof` requires type/operand analysis": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `rd_kafka_mock_connection_new`": 1
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_new_listener",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22514
+    ],
+    [
+     "E11",
+     "path:call",
+     22519
+    ],
+    [
+     "E11",
+     "path:call",
+     22525
+    ],
+    [
+     "E11",
+     "path:call",
+     22531
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 6,
+    "C operator `sizeof` requires type/operand analysis": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "call to uncontracted function `rd_kafka_socket_cb_linux`": 1,
+    "unknown_alias": 3,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "store through `*sinp` without an out-parameter contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_start_listener",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22496
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unknown_alias": 1,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_poll",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     22371
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "unknown_alias": 2
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     23448
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 28,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "call to uncontracted function `rd_kafka_mock_cluster_destroy`": 2,
+    "unknown_alias": 8,
+    "call to uncontracted function `rd_kafka_mock_sharegrps_init`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nullable resource `mcluster` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_assign_replicas",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     21765
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 9,
+    "indirect memory access is outside the resource projection": 6,
+    "call to uncontracted function `rd_kafka_mock_partition_set_leader0`": 1,
+    "unmodeled expression may mutate a formal resource identity": 2
+   }
+  },
+  {
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     24021
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 31,
+    "call to uncontracted function `rd_kafka_mock_buf_new_response`": 1,
+    "indirect memory access is outside the resource projection": 22,
+    "unmodeled call, aggregate or indirect access in branch condition": 12,
+    "unsupported assignment expression": 10,
+    "braced initializer, expression, or declaration is not modeled": 7,
+    "C operator `sizeof` requires type/operand analysis": 3,
+    "unrecognized assignment destination": 1,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "call to uncontracted function `rd_kafka_buf_read_topic_partitions_nullable`": 1,
+    "unmodeled increment or decrement expression": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_get_topic_id`": 1,
+    "call to uncontracted function `rd_kafka_mock_topic_find_by_id`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_set_topic_id`": 1,
+    "call to uncontracted function `rd_kafka_mock_next_request_error`": 1,
+    "call to uncontracted function `rd_kafka_mock_cluster_get_coord`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_get`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_add`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_next_assignment`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_find`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_find`": 1,
+    "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_fenced`": 1,
+    "call to uncontracted function `rd_kafka_buf_write_i32`": 3,
+    "call to uncontracted function `rd_kafka_buf_write_i16`": 1,
+    "call to uncontracted function `rd_kafka_buf_write_str`": 2,
+    "call to uncontracted function `rd_kafka_buf_write_i8`": 3,
+    "call to uncontracted function `rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions`": 1,
+    "call to uncontracted function `rd_kafka_mock_connection_send_response0`": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_list_destroy`": 6,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1
+   }
+  },
+  {
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_assign_topic_partitions",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     22137
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "unmodeled increment or decrement expression": 3,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "indirect memory access is outside the resource projection": 4,
+    "nested call `ceil` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "function": "unittest_msgq_insert_all_sort",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21200
+    ],
+    [
+     "E10",
+     "nested-call",
+     21206
+    ],
+    [
+     "E10",
+     "nested-call",
+     21207
+    ],
+    [
+     "E10",
+     "nested-call",
+     21210
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `rd_kafka_msgq_init`": 2,
+    "unknown_alias": 12,
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection": 3,
+    "call to uncontracted function `rd_clock`": 2,
+    "call to uncontracted function `rd_kafka_msgq_insert_msgq`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nested call `rd_kafka_msgq_size` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `ut_rd_kafka_msgq_purge`": 2
+   }
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "function": "unittest_msgq_insert_each_sort",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21265
+    ],
+    [
+     "E10",
+     "nested-call",
+     21272
+    ],
+    [
+     "E10",
+     "nested-call",
+     21273
+    ],
+    [
+     "E10",
+     "nested-call",
+     21276
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `rd_kafka_msgq_init`": 2,
+    "unknown_alias": 12,
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection": 3,
+    "call to uncontracted function `rd_clock`": 2,
+    "call to uncontracted function `rd_kafka_msgq_insert_msgq`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nested call `rd_kafka_msgq_size` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `ut_rd_kafka_msgq_purge`": 2
+   }
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "function": "unittest_msgq_order",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21045
+    ],
+    [
+     "E10",
+     "nested-call",
+     21103
+    ],
+    [
+     "E10",
+     "nested-call",
+     21104
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1,
+    "unmodeled increment or decrement expression": 1,
+    "call to uncontracted function `ut_rd_kafka_msg_new`": 2,
+    "unknown_alias": 2,
+    "call to uncontracted function `rd_kafka_msgq_enq_sorted0`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 18,
+    "call to uncontracted function `rd_kafka_msgq_init`": 4,
+    "call to uncontracted function `rd_kafka_msgq_enq`": 4,
+    "call to uncontracted function `rd_kafka_retry_msgq`": 5,
+    "nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection": 3,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `ut_rd_kafka_msgq_purge`": 3
+   }
+  },
+  {
+   "file": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_decompress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19790
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "unknown_alias": 24,
+    "indirect memory access is outside the resource projection": 29,
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "call to uncontracted function `rd_kafka_msgset_reader_run`": 1,
+    "call to uncontracted function `rd_kafka_msgset_reader_msgs_v2`": 1,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1
+   }
+  },
+  {
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_commit",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20292
+    ],
+    [
+     "E11",
+     "path:call",
+     20299
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 12,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_offset_file_close`": 2,
+    "call to uncontracted function `rd_kafka_offset_file_sync`": 1
+   }
+  },
+  {
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_open",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20240
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_read",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20253
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 4,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `rd_kafka_offset_file_close`": 1,
+    "call to uncontracted function `strtoull`": 1
+   }
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_share_toppar_enq_error",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     21514
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_cmp_topic_id",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21990
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 2,
+    "nested call `rd_kafka_topic_partition_get_topic_id` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_query_leaders",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     22478
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_timeout_init`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `rd_list_destroy`": 2,
+    "call to uncontracted function `rd_clock`": 1,
+    "call to uncontracted function `rd_kafka_metadata_refresh_topics`": 1,
+    "call to uncontracted function `rd_timeout_remains_limit`": 1,
+    "call to uncontracted function `rd_kafka_metadata_cache_wait_change`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_get2",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20455
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 7,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_kafka_topic_new0`": 1,
+    "call to uncontracted function `rd_kafka_toppar_desired_add`": 1,
+    "call to uncontracted function `rd_kafka_topic_destroy0`": 1
+   }
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_get_by_id2",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20485
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `rd_kafka_topic_find_by_topic_id`": 1,
+    "call to uncontracted function `rd_kafka_topic_new_with_id`": 1,
+    "call to uncontracted function `rd_kafka_toppar_desired_add`": 1,
+    "call to uncontracted function `rd_kafka_topic_destroy0`": 1
+   }
+  },
+  {
+   "file": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19628
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unknown_alias": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "nested call `strlen` inside a modeled call is outside the resource projection": 1,
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_pattern_list_clear`": 1
+   }
+  },
+  {
+   "file": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_range_assignor_unittest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20526
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_conf_new`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "call to uncontracted function `rd_kafka_conf_set`": 1,
+    "call to uncontracted function `rd_kafka_new`": 1,
+    "call to uncontracted function `rd_kafka_assignor_find`": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 3,
+    "unmodeled increment or decrement expression": 4,
+    "call to uncontracted function `rd_kafkap_str_new`": 1,
+    "unrecognized assignment destination": 2,
+    "call to uncontracted function `rd_clock`": 1,
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `rd_clock` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_MetadataRequest0",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     22104
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 19,
+    "call to uncontracted function `rd_kafka_broker_ApiVersion_supported`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "indirect memory access is outside the resource projection": 19,
+    "call to uncontracted function `rd_kafka_buf_write_i32`": 1,
+    "call to uncontracted function `rd_kafka_buf_finalize_arraycnt`": 2,
+    "call to uncontracted function `rd_kafka_buf_update_i32`": 1,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "call to uncontracted function `rd_kafka_buf_write_uuid`": 2,
+    "call to uncontracted function `rd_kafka_buf_write_str`": 2,
+    "call to uncontracted function `rd_kafka_buf_write_i8`": 2,
+    "call to uncontracted function `rd_kafka_buf_write_bool`": 3,
+    "call to uncontracted function `rd_kafka_broker_buf_enq_replyq`": 1
+   }
+  },
+  {
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_handle_ListOffsets",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21019
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_parse_ListOffsets`": 1,
+    "call to uncontracted function `rd_kafka_err_action`": 1,
+    "unknown_alias": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_metadata_refresh_known_topics`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_handle_SaslAuthenticate",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     22370
+    ],
+    [
+     "E10",
+     "nested-call",
+     22400
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unknown_alias": 9,
+    "C operator `sizeof` requires type/operand analysis": 2,
+    "indirect memory access is outside the resource projection": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "unsupported assignment expression": 4,
+    "call to uncontracted function `rd_kafka_broker_start_reauth_timer`": 1,
+    "call to uncontracted function `rd_kafka_broker_fail`": 1
+   }
+  },
+  {
+   "file": "rdkafka_request.c",
+   "function": "unittest_idempotent_producer",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     24361
+    ],
+    [
+     "E10",
+     "nested-call",
+     24401
+    ],
+    [
+     "E10",
+     "nested-call",
+     24407
+    ],
+    [
+     "E10",
+     "nested-call",
+     24421
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 20,
+    "call to uncontracted function `rd_kafka_Produce_result_new`": 1,
+    "indirect memory access is outside the resource projection": 28,
+    "call to uncontracted function `rd_kafka_conf_new`": 1,
+    "call to uncontracted function `rd_kafka_conf_set`": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 16,
+    "call to uncontracted function `rd_kafka_conf_set_events`": 1,
+    "call to uncontracted function `rd_kafka_new`": 1,
+    "call to uncontracted function `rd_kafka_queue_get_main`": 1,
+    "call to uncontracted function `rd_kafka_broker_add_logical`": 1,
+    "unknown_alias": 4,
+    "call to uncontracted function `rd_kafka_toppar_get2`": 1,
+    "call to uncontracted function `ut_create_msgs`": 1,
+    "call to uncontracted function `rd_kafka_idemp_set_state`": 1,
+    "call to uncontracted function `rd_kafka_idemp_pid_update`": 1,
+    "call to uncontracted function `rd_kafka_idemp_get_pid0`": 1,
+    "call to uncontracted function `rd_kafka_toppar_pid_change`": 1,
+    "call to uncontracted function `rd_kafka_msgset_create_ProduceRequest`": 2,
+    "nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection": 3,
+    "call to uncontracted function `rd_usleep`": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 2,
+    "nested call `rd_kafka_event_name` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_event_destroy`": 1,
+    "call to uncontracted function `rd_kafka_outq_len`": 1,
+    "call to uncontracted function `rd_kafka_Produce_result_destroy`": 1,
+    "call to uncontracted function `rd_kafka_queue_destroy`": 1,
+    "call to uncontracted function `rd_kafka_toppar_destroy0`": 1,
+    "call to uncontracted function `rd_kafka_broker_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20693
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 5,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "indirect memory access is outside the resource projection": 15,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "nested call `sasl_errstring` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_global_init",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20779
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `mtx_init`": 1,
+    "call to uncontracted function `sasl_client_init`": 1,
+    "nested call `sasl_errstring` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_kinit_refresh",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20506
+    ],
+    [
+     "E11",
+     "path:call",
+     20509
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 8,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `rd_clock`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `rd_kafka_all_brokers_wakeup`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "create_jws_compact_serialization",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20549
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     20577
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     20579
+    ],
+    [
+     "E10",
+     "nested-call",
+     20580
+    ],
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     20583
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     20588
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 13,
+    "call to uncontracted function `rd_list_init`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_list_add`": 1,
+    "unsupported assignment expression": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "resource call with a formal embedded in an unmodeled expression": 3,
+    "nested call `rd_list_elem` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `EVP_EncodeBlock`": 1,
+    "unmodeled increment or decrement expression": 1,
+    "unrecognized assignment destination": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "nullable resource `retval_jws` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "do_unittest_odd_extension_size_should_fail",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21137
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_oauthbearer_set_token0`": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1,
+    "nested call `rd_kafka_err2name` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "parse_ujws_config_value_for_prefix",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     20389
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 1,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled expression may mutate a formal resource identity": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unrecognized assignment destination": 1,
+    "discarded owned result of resource API `rd_strdup`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21518
+    ],
+    [
+     "E10",
+     "nested-call",
+     21579
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_uclock`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "indirect memory access is outside the resource projection": 15,
+    "call to uncontracted function `cJSON_CreateObject`": 2,
+    "call to uncontracted function `cJSON_DeleteItemFromObjectCaseSensitive`": 9,
+    "call to uncontracted function `cJSON_AddStringToObject`": 6,
+    "call to uncontracted function `cJSON_AddNumberToObject`": 3,
+    "call to uncontracted function `rd_kafka_Uuid_random`": 1,
+    "call to uncontracted function `rd_kafka_Uuid_str`": 1,
+    "unknown_alias": 26,
+    "call to uncontracted function `cJSON_PrintUnformatted`": 2,
+    "call to uncontracted function `rd_base64_encode_str_urlsafe`": 3,
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2,
+    "call to uncontracted function `BIO_new_mem_buf`": 1,
+    "call to uncontracted function `BIO_new_file`": 1,
+    "call to uncontracted function `PEM_read_bio_PrivateKey`": 2,
+    "call to uncontracted function `BIO_free`": 1,
+    "call to uncontracted function `EVP_MD_CTX_new`": 1,
+    "call to uncontracted function `EVP_sha256`": 1,
+    "call to uncontracted function `EVP_PKEY_free`": 1,
+    "call to uncontracted function `EVP_MD_CTX_free`": 1,
+    "nullable resource `result` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_client_credentials_build_post_fields",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     21354
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "discarded owned result of resource API `rd_strdup`": 1,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "discarded owned result of resource API `rd_malloc`": 1,
+    "local declaration may shadow a formal resource identity": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_jwt_bearer_build_request_body",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21622
+    ],
+    [
+     "E10",
+     "nested-call",
+     21627
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `curl_easy_escape`": 1,
+    "nested call `strlen` inside a modeled call is outside the resource projection": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unknown_alias": 2,
+    "nullable resource `body` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     21859
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "indirect memory access is outside the resource projection": 7,
+    "unknown_alias": 8,
+    "call to uncontracted function `rd_http_post_expect_json`": 1,
+    "call to uncontracted function `rd_http_error_destroy`": 1,
+    "call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`": 2,
+    "call to uncontracted function `curl_slist_free_all`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     21789
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 14,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`": 4,
+    "call to uncontracted function `curl_slist_append`": 2,
+    "call to uncontracted function `rd_http_error_destroy`": 1,
+    "call to uncontracted function `curl_slist_free_all`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     21941
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 13,
+    "indirect memory access is outside the resource projection": 8,
+    "call to uncontracted function `rd_http_get_params_append`": 1,
+    "call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`": 3,
+    "call to uncontracted function `rd_http_get_json`": 1,
+    "call to uncontracted function `rd_http_error_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21994
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "call to uncontracted function `rd_http_req_init`": 1,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "indirect memory access is outside the resource projection": 3,
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_http_parse_json`": 1,
+    "unknown_alias": 3,
+    "call to uncontracted function `cJSON_GetObjectItem`": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1,
+    "call to uncontracted function `rd_http_error_destroy`": 1,
+    "call to uncontracted function `rd_http_req_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_handle_server_first_message",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20428
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 11,
+    "unmodeled call, aggregate or indirect access in branch condition": 8,
+    "indirect memory access is outside the resource projection": 8
+   }
+  },
+  {
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_io_update",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20310
+    ],
+    [
+     "E11",
+     "path:call",
+     20312
+    ],
+    [
+     "E11",
+     "path:call",
+     20315
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_transport_poll_set`": 2,
+    "call to uncontracted function `ERR_peek_error`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_unittest",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     23929
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "call to uncontracted function `rd_kafka_conf_new`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_conf_set`": 1,
+    "call to uncontracted function `rd_kafka_new`": 1,
+    "call to uncontracted function `rd_kafka_assignor_find`": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 3,
+    "unmodeled increment or decrement expression": 4,
+    "call to uncontracted function `rd_kafkap_str_new`": 1,
+    "unrecognized assignment destination": 2,
+    "call to uncontracted function `rd_clock`": 1,
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 2,
+    "nested call `rd_clock` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_destroy`": 1
+   }
+  },
+  {
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "toppar_sort_by_list_cnt",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     22090
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `rd_kafka_topic_partition_cmp`": 1
+   }
+  },
+  {
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "rd_kafka_snappy_decompress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     21635
+    ],
+    [
+     "E11",
+     "path:call",
+     21639
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unknown_alias": 5,
+    "indirect memory access is outside the resource projection": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 4
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_connect",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20703
+    ],
+    [
+     "E11",
+     "path:call",
+     20723
+    ],
+    [
+     "E10",
+     "nested-call",
+     20729
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `rd_kafka_transport_new`": 1,
+    "unknown_alias": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "nested call `rd_sockaddr2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_transport_close`": 1,
+    "unmodeled increment or decrement expression": 2
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_get_socket_error",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20527
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_io_event",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20552
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 3,
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "call to uncontracted function `rd_kafka_transport_connect_done`": 1,
+    "call to uncontracted function `rd_kafka_transport_connected`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `rd_kafka_transport_ssl_handshake`": 1,
+    "call to uncontracted function `rd_kafka_broker_conn_closed`": 2,
+    "call to uncontracted function `rd_kafka_broker_fail`": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 2
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_new",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20658
+    ],
+    [
+     "E11",
+     "path:call",
+     20664
+    ],
+    [
+     "E11",
+     "path:call",
+     20672
+    ],
+    [
+     "E11",
+     "path:call",
+     20680
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 7,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "indirect memory access is outside the resource projection": 5,
+    "nullable resource `rktrans` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_post_connect_setup",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20487
+    ],
+    [
+     "E11",
+     "path:call",
+     20496
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_recv0",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20359
+    ],
+    [
+     "E11",
+     "path:call",
+     20363
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_buf_write`": 1
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_recvmsg",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20330
+    ],
+    [
+     "E11",
+     "path:call",
+     20335
+    ],
+    [
+     "E11",
+     "path:call",
+     20339
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `rd_buf_write`": 1
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_send0",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20295
+    ],
+    [
+     "E11",
+     "path:call",
+     20297
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_slice_read`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_sendmsg",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20272
+    ],
+    [
+     "E11",
+     "path:call",
+     20274
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `rd_slice_read`": 1
+   }
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_coord_query",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     21853
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unknown_alias": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `rd_kafka_idemp_broker_any`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "call to uncontracted function `rd_kafka_txn_coord_timer_start`": 2,
+    "nested call `rd_kafka_broker_name` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_broker_destroy_final`": 2
+   }
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_state_transition_is_valid",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20350
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nested call `rd_kafka_txn_state2str` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "file": "rdkafka_zstd.c",
+   "function": "rd_kafka_zstd_compress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19862
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 15,
+    "indirect memory access is outside the resource projection": 12,
+    "store through `*outbuf` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "call to uncontracted function `ZSTD_createCStream`": 1,
+    "call to uncontracted function `ZSTD_initCStream`": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "call to uncontracted function `ZSTD_compressStream`": 1,
+    "call to uncontracted function `ZSTD_endStream`": 1,
+    "call to uncontracted function `ZSTD_freeCStream`": 1
+   }
+  },
+  {
+   "file": "rdkafka_zstd.c",
+   "function": "rd_kafka_zstd_decompress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19824
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ZSTD_getFrameContentSize`": 1,
+    "unknown_alias": 5,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `ZSTD_decompress`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "store through `*outbuf` without an out-parameter contract": 1,
+    "unrecognized assignment destination": 1
+   }
+  },
+  {
+   "file": "rdlog.c",
+   "function": "rd_hexdump",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     19635
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 2,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "rdstring.c",
+   "function": "rd_string_split",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     3207
+    ],
+    [
+     "E11",
+     "path:call",
+     3231
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 13,
+    "unsupported assignment expression": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unrecognized assignment destination": 1,
+    "nullable resource `arr` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_acknowledge_accept",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19701
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "call to uncontracted function `rd_kafka_share_acknowledge`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_acknowledge_type_reject",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19716
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_type`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_acknowledge_type_release",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19729
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_type`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_boundary_offsets",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20024
+    ],
+    [
+     "E10",
+     "nested-call",
+     20027
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 10,
+    "braced initializer, expression, or declaration is not modeled": 14,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_empty_entries",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19985
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "indirect memory access is outside the resource projection": 6,
+    "call to uncontracted function `rd_kafka_topic_partition_private_new`": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `rd_kafka_topic_partition_new`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_first_entry",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19893
+    ],
+    [
+     "E10",
+     "nested-call",
+     19897
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 2,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_last_entry",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19908
+    ],
+    [
+     "E10",
+     "nested-call",
+     19912
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 2,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_middle_entries",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19923
+    ],
+    [
+     "E10",
+     "nested-call",
+     19926
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 2,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_not_found_after",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19948
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_not_found_before",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19938
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_not_found_gap",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19958
+    ],
+    [
+     "E10",
+     "nested-call",
+     19961
+    ],
+    [
+     "E10",
+     "nested-call",
+     19964
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition_multiple_entries`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 3,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 3,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_error_gap_record",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19763
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_set_gap`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge`": 1,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_error_invalid_type",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19789
+    ],
+    [
+     "E10",
+     "nested-call",
+     19792
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_type`": 2,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_error_null_parameters",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19773
+    ],
+    [
+     "E10",
+     "nested-call",
+     19775
+    ],
+    [
+     "E10",
+     "nested-call",
+     19778
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge`": 2,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 3,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 1,
+    "unknown_alias": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_reacknowledge_delivered",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19742
+    ],
+    [
+     "E10",
+     "nested-call",
+     19746
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `ut_ack_create_message`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_type`": 3,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unknown_alias": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_acknowledge.c",
+   "function": "ut_case_unacked_count",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20040
+    ],
+    [
+     "E10",
+     "nested-call",
+     20044
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `rd_kafka_topic_name`": 1,
+    "braced initializer, expression, or declaration is not modeled": 13,
+    "call to uncontracted function `ut_ack_add_partition`": 1,
+    "call to uncontracted function `rd_kafka_share_acknowledge_offset`": 6,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 2,
+    "call to uncontracted function `ut_ack_set_gap`": 1,
+    "call to uncontracted function `ut_ack_clear_inflight_map`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_all_acquired",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19682
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `ut_create_fetch_op_with_offset`": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unknown_alias": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_disjoint_ranges",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19734
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `ut_create_fetch_op_with_offset`": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "call to uncontracted function `rd_kafka_op_get_offset`": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_empty_queue",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19754
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_no_ranges",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19770
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `ut_create_fetch_op_with_offset`": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_partial_range",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19708
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `ut_create_fetch_op_with_offset`": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "call to uncontracted function `rd_kafka_op_get_offset`": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_range_beyond_messages",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19818
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "call to uncontracted function `rd_list_init`": 1,
+    "call to uncontracted function `ut_create_fetch_op_with_offset`": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "function": "unittest_filter_sparse_offsets",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19793
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `ut_create_mock_queue`": 1,
+    "braced initializer, expression, or declaration is not modeled": 7,
+    "call to uncontracted function `rd_list_init`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_q_enq`": 1,
+    "call to uncontracted function `rd_kafka_share_filter_acquired_records_and_update_ack_type`": 1,
+    "nested call `rd_list_cnt` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_list_elem`": 1,
+    "call to uncontracted function `rd_kafka_op_get_offset`": 1,
+    "call to uncontracted function `rd_list_destroy`": 1,
+    "call to uncontracted function `ut_destroy_mock_queue`": 1
+   }
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20301
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 13,
+    "call to uncontracted function `ut_create_test_share_consumer`": 1,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `ut_write_msgset_v2_header`": 3,
+    "call to uncontracted function `rd_kafka_buf_new_shadow`": 1,
+    "call to uncontracted function `rd_kafka_share_msgset_parse`": 1,
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `rd_kafka_q_pop`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "call to uncontracted function `rd_kafka_op_destroy`": 3,
+    "call to uncontracted function `rd_kafka_buf_destroy_final`": 1,
+    "call to uncontracted function `rd_kafka_q_destroy_owner`": 1,
+    "call to uncontracted function `rd_kafka_toppar_destroy0`": 1,
+    "call to uncontracted function `ut_destroy_share_consumer`": 1
+   }
+  },
+  {
+   "file": "rdxxhash.c",
+   "function": "XXH32_finalize",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     831
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     832
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     833
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     835
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     836
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     837
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     840
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     841
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     842
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     846
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     847
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     848
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "indirect memory access is outside the resource projection": 12,
+    "unmodeled increment or decrement expression": 6,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "file": "rdxxhash.c",
+   "function": "XXH64_finalize",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "call-in-statement",
+     1087
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     1097
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     1109
+    ],
+    [
+     "E11",
+     "call-in-statement",
+     1123
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unsupported assignment expression": 1,
+    "nested call `XXH_readLE64_align` inside a modeled call is outside the resource projection": 24,
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled increment or decrement expression": 12,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "file": "snappy.c",
+   "function": "compress_fragment",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20109
+    ],
+    [
+     "E10",
+     "nested-call",
+     20113
+    ],
+    [
+     "E10",
+     "nested-call",
+     20121
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unknown_alias": 1,
+    "braced initializer, expression, or declaration is not modeled": 9,
+    "call to uncontracted function `log2_floor`": 1,
+    "unsupported assignment expression": 3,
+    "unmodeled increment or decrement expression": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "unrecognized assignment destination": 3,
+    "call to uncontracted function `emit_literal`": 2,
+    "unmodeled call, aggregate or indirect access in do-while condition": 1,
+    "call to uncontracted function `find_match_length`": 1,
+    "call to uncontracted function `emit_copy`": 1,
+    "nested call `get_u32_at_offset` inside a modeled call is outside the resource projection": 3
+   }
+  },
+  {
+   "file": "snappy.c",
+   "function": "emit_copy_less_than64",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "formal-in-unmodeled-expression",
+     19970
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "unmodeled expression may mutate a formal resource identity": 3,
+    "resource call with a formal embedded in an unmodeled expression": 1
+   }
+  },
+  {
+   "file": "snappy.c",
+   "function": "find_match_length",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     20025
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nested call `get_unaligned64` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `find_lsb_set_non_zero64`": 1,
+    "unmodeled expression may mutate a formal resource identity": 1
+   }
+  },
+  {
+   "file": "snappy.c",
+   "function": "hash",
+   "cg00_freed_alone": true,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19915
+    ]
+   ],
+   "status": "Safe",
+   "leaves": {}
+  },
+  {
+   "file": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E11",
+     "path:call",
+     20508
+    ]
+   ],
+   "status": "Unsafe",
+   "leaves": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "live obligation acquired at snappy.c:1705": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "indirect memory access is outside the resource projection": 1,
+    "unknown_alias": 1,
+    "nullable resource `outbuf` used by a non-null contract": 1
+   }
+  },
+  {
+   "file": "snappy.c",
+   "function": "unaligned_copy64",
+   "cg00_freed_alone": false,
+   "cg00_leaves": [
+    [
+     "E10",
+     "nested-call",
+     19660
+    ],
+    [
+     "E10",
+     "nested-call",
+     19664
+    ],
+    [
+     "E10",
+     "nested-call",
+     19665
+    ]
+   ],
+   "status": "Unknown",
+   "leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported assignment expression": 2
+   }
+  }
+ ]
+}

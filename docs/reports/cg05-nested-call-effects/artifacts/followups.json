@@ -1,0 +1,37 @@
+{
+ "statement_consultations": 197,
+ "statement_by_outcome": {
+  "uncontracted inner callee": 128,
+  "footprints do not commute": 25,
+  "admitted": 17,
+  "no unique Clang node for the statement": 7,
+  "not a call or a scalar value holding calls": 6,
+  "a store to an object the gateway does not read as a scalar local": 6,
+  "data actual refused (place, pointer, cast, conditional, effect)": 4,
+  "instantiation declined (the contract applied is not the one read)": 2,
+  "no nested call": 1,
+  "instantiation declined (Unapplied)": 1
+ },
+ "statement_functions": 108,
+ "printf_family_nested": 87,
+ "printf_family_functions": 60,
+ "printf_family_by_outcome": {
+  "uncontracted inner callee": 61,
+  "footprints do not commute": 24,
+  "no unique Clang node for the statement": 1,
+  "data actual refused (place, pointer, cast, conditional, effect)": 1
+ },
+ "return_consultations": 337,
+ "return_with_calls": 113,
+ "return_with_calls_functions": 85,
+ "return_with_calls_by_outcome": {
+  "data actual refused (place, pointer, cast, conditional, effect)": 35,
+  "uncontracted inner callee": 35,
+  "no nested call": 15,
+  "a value holding calls outside a scalar-result function": 11,
+  "indirect call (CG22)": 8,
+  "instantiation declined (Unapplied)": 5,
+  "admitted": 3,
+  "no unique Clang node for the return value": 1
+ }
+}

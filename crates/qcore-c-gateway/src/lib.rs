@@ -46,6 +46,7 @@ pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;
+mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
 mod lexical_nested_assignment;

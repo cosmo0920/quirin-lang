@@ -83,6 +83,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg04-condition-acquisition](cg04-condition-acquisition/README.md) | CG04-CONDITION-ACQUISITION: acquisitions in conditions and complex condition leaves |
 
+| [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |

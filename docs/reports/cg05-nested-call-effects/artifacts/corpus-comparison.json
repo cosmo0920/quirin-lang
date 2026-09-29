@@ -1,0 +1,49 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4260,
+   "Safe": 564,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4258,
+   "Safe": 566,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4HC_hashPtr",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "snappy.c",
+   "function": "hash",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: nested call `get_unaligned32` inside a modeled call is outside the resource projection": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 2
+ },
+ "same_status_functions_with_changed_diagnostics": 15,
+ "leaf_delta": {
+  "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -7,
+  "unsupported: resource call with a formal embedded in an unmodeled expression": -6,
+  "unsupported: nested call `get_unaligned32` inside a modeled call is outside the resource projection": -3,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -2,
+  "unsupported: call to uncontracted function `LZ4HC_hashPtr`": -1,
+  "unknown_alias: unresolved resource identity": -1,
+  "unsupported: nested call `rd_list_cnt` inside a modeled call is outside the resource projection": -1,
+  "unsupported: call to uncontracted function `hash`": -1,
+  "unsupported: nested call `get_unaligned64` inside a modeled call is outside the resource projection": -1
+ }
+}

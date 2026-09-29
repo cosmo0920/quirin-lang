@@ -9,7 +9,8 @@ import QCore.CallInstantiation
 #print axioms QCore.CallInstantiation.the_widening_is_a_validated_callee_or_a_derived_result
 #print axioms QCore.CallInstantiation.a_recursive_callee_is_refused_in_every_use
 #print axioms QCore.CallInstantiation.a_custody_result_is_refused_where_it_is_tested
-#print axioms QCore.CallInstantiation.a_passed_value_is_the_identity
+#print axioms QCore.CallInstantiation.a_passed_value_is_not_a_reallocation
+#print axioms QCore.CallInstantiation.every_b04_admission_stands
 #print axioms QCore.CallInstantiation.instantiation_is_one_summary_and_one_substitution
 #print axioms QCore.CallInstantiation.instantiation_is_deterministic
 #print axioms QCore.CallInstantiation.an_admitted_substitution_refuses_no_formal

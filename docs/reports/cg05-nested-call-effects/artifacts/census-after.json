@@ -1,0 +1,741 @@
+{
+ "totals": {
+  "Unknown": 4258,
+  "Safe": 566,
+  "Unsafe": 10
+ },
+ "nested_leaves": 165,
+ "nested_functions": 89,
+ "nested_functions_by_status": {
+  "Unknown": 89
+ },
+ "sole_blocked_functions": 7,
+ "by_inner_callee": {
+  "rd_kafka_err2str": 42,
+  "XXH_readLE64_align": 28,
+  "rd_kafka_msgq_len": 12,
+  "pthread_getspecific": 8,
+  "rd_kafka_error_string": 7,
+  "rd_list_cnt": 7,
+  "strlen": 5,
+  "get_context_arena": 4,
+  "XXH_readLE32_align": 4,
+  "XXH_readLE32": 4,
+  "XXH_readLE64": 4,
+  "rd_buf_len": 3,
+  "rd_clock": 3,
+  "get_u32_at_offset": 3,
+  "flb_input_name": 3,
+  "LZ4_read_ARCH": 2,
+  "log2": 2,
+  "rd_kafka_broker_name": 2,
+  "rd_kafka_msgq_size": 2,
+  "rd_kafka_topic_partition_get_topic_id": 2,
+  "sasl_errstring": 2,
+  "getpid": 2,
+  "cJSON_DetachItemFromArray": 1,
+  "cJSON_DetachItemFromObject": 1,
+  "cJSON_DetachItemFromObjectCaseSensitive": 1,
+  "fabs": 1,
+  "rd_seed": 1,
+  "rd_kafka_broker_ApiVersion_supported": 1,
+  "ceil": 1,
+  "rd_kafka_event_name": 1,
+  "rd_list_elem": 1,
+  "rd_kafka_err2name": 1,
+  "rd_sockaddr2str": 1,
+  "rd_kafka_txn_state2str": 1,
+  "get_unaligned64": 1,
+  "localtime_r": 1
+ },
+ "functions": {
+  "cmt_encode_opentelemetry.c::append_sample_to_metric": {
+   "status": "Unknown",
+   "inner": [
+    "get_context_arena",
+    "get_context_arena",
+    "get_context_arena",
+    "get_context_arena"
+   ]
+  },
+  "cJSON.c::cJSON_DeleteItemFromArray": {
+   "status": "Unknown",
+   "inner": [
+    "cJSON_DetachItemFromArray"
+   ]
+  },
+  "cJSON.c::cJSON_DeleteItemFromObject": {
+   "status": "Unknown",
+   "inner": [
+    "cJSON_DetachItemFromObject"
+   ]
+  },
+  "cJSON.c::cJSON_DeleteItemFromObjectCaseSensitive": {
+   "status": "Unknown",
+   "inner": [
+    "cJSON_DetachItemFromObjectCaseSensitive"
+   ]
+  },
+  "cJSON.c::compare_double": {
+   "status": "Unknown",
+   "inner": [
+    "fabs"
+   ]
+  },
+  "lz4.c::LZ4_count": {
+   "status": "Unknown",
+   "inner": [
+    "LZ4_read_ARCH",
+    "LZ4_read_ARCH"
+   ]
+  },
+  "rdbuf.c::do_unittest_erase": {
+   "status": "Unknown",
+   "inner": [
+    "rd_buf_len",
+    "rd_buf_len"
+   ]
+  },
+  "rdbuf.c::do_unittest_write_read_payload_correctness": {
+   "status": "Unknown",
+   "inner": [
+    "rd_buf_len"
+   ]
+  },
+  "rddl.c::rd_dl_open": {
+   "status": "Unknown",
+   "inner": [
+    "strlen"
+   ]
+  },
+  "rdhdrhistogram.c::rd_hdr_histogram_new": {
+   "status": "Unknown",
+   "inner": [
+    "log2",
+    "log2"
+   ]
+  },
+  "rdhttp.c::unittest_http_get": {
+   "status": "Unknown",
+   "inner": [
+    "strlen"
+   ]
+  },
+  "rdkafka.c::rd_kafka_srand": {
+   "status": "Unknown",
+   "inner": [
+    "rd_seed"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_CreateAclsResponse_parse": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_DeleteAclsResponse_parse": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_DescribeAclsResponse_parse": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_OffsetDeleteResponse_parse": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_admin_ConsumerGroupDescribeRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_error_string"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_admin_DescribeClusterRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_admin_DescribeConsumerGroupsRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_error_string"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_admin_DescribeTopicsRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_admin.c::rd_kafka_admin_ListConsumerGroupsRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_error_string"
+   ]
+  },
+  "rdkafka_broker.c::rd_kafka_broker_thread_main": {
+   "status": "Unknown",
+   "inner": [
+    "rd_clock"
+   ]
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_assignor_run": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_cgrp.c::unittest_consumer_group_metadata_iteration": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_error_string",
+    "rd_kafka_error_string",
+    "rd_kafka_error_string"
+   ]
+  },
+  "rdkafka_error.c::rd_kafka_error_to_legacy": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_error_string"
+   ]
+  },
+  "rdkafka_fetcher.c::rd_kafka_ShareAcknowledgeRequest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_broker_ApiVersion_supported"
+   ]
+  },
+  "rdkafka_fetcher.c::rd_kafka_broker_fetch_reply": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_fetcher.c::rd_kafka_broker_share_fetch_reply": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_idempotence.c::rd_kafka_idemp_request_pid_failed": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_broker_name"
+   ]
+  },
+  "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_assign_topic_partitions": {
+   "status": "Unknown",
+   "inner": [
+    "ceil"
+   ]
+  },
+  "rdkafka_msg.c::unittest_msgq_insert_all_sort": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_size"
+   ]
+  },
+  "rdkafka_msg.c::unittest_msgq_insert_each_sort": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_size"
+   ]
+  },
+  "rdkafka_msg.c::unittest_msgq_order": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len"
+   ]
+  },
+  "rdkafka_offset.c::rd_kafka_offset_file_init": {
+   "status": "Unknown",
+   "inner": [
+    "strlen"
+   ]
+  },
+  "rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic_id": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_topic_partition_get_topic_id"
+   ]
+  },
+  "rdkafka_pattern.c::rd_kafka_pattern_list_parse": {
+   "status": "Unknown",
+   "inner": [
+    "strlen"
+   ]
+  },
+  "rdkafka_range_assignor.c::rd_kafka_range_assignor_unittest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_clock"
+   ]
+  },
+  "rdkafka_request.c::rd_kafka_buf_write_topic_partitions": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_topic_partition_get_topic_id"
+   ]
+  },
+  "rdkafka_request.c::rd_kafka_handle_ListOffsets": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_request.c::rd_kafka_handle_SaslAuthenticate": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdkafka_request.c::unittest_idempotent_producer": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_msgq_len",
+    "rd_kafka_event_name"
+   ]
+  },
+  "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_client_new": {
+   "status": "Unknown",
+   "inner": [
+    "sasl_errstring"
+   ]
+  },
+  "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_global_init": {
+   "status": "Unknown",
+   "inner": [
+    "sasl_errstring"
+   ]
+  },
+  "rdkafka_sasl_oauthbearer.c::create_jws_compact_serialization": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_elem"
+   ]
+  },
+  "rdkafka_sasl_oauthbearer.c::do_unittest_odd_extension_size_should_fail": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2name"
+   ]
+  },
+  "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_jwt_bearer_build_request_body": {
+   "status": "Unknown",
+   "inner": [
+    "strlen"
+   ]
+  },
+  "rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_unittest": {
+   "status": "Unknown",
+   "inner": [
+    "rd_clock"
+   ]
+  },
+  "rdkafka_transport.c::rd_kafka_transport_connect": {
+   "status": "Unknown",
+   "inner": [
+    "rd_sockaddr2str"
+   ]
+  },
+  "rdkafka_txnmgr.c::rd_kafka_txn_coord_query": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_broker_name"
+   ]
+  },
+  "rdkafka_txnmgr.c::rd_kafka_txn_state_transition_is_valid": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_txn_state2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_acknowledge_accept": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_acknowledge_type_reject": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_acknowledge_type_release": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_boundary_offsets": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_empty_entries": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_first_entry": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_last_entry": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_middle_entries": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_not_found_after": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_not_found_before": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_bsearch_not_found_gap": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_error_gap_record": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_error_invalid_type": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_error_null_parameters": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_reacknowledge_delivered": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_acknowledge.c::ut_case_unacked_count": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str",
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_all_acquired": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_disjoint_ranges": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_empty_queue": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_no_ranges": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_partial_range": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_range_beyond_messages": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_fetcher.c::unittest_filter_sparse_offsets": {
+   "status": "Unknown",
+   "inner": [
+    "rd_list_cnt"
+   ]
+  },
+  "rdunittest_msgset_errors.c::unittest_msgset_all_errors": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdunittest_msgset_errors.c::unittest_msgset_crc_error_share_consumer": {
+   "status": "Unknown",
+   "inner": [
+    "rd_kafka_err2str"
+   ]
+  },
+  "rdxxhash.c::XXH32_endian_align": {
+   "status": "Unknown",
+   "inner": [
+    "XXH_readLE32_align",
+    "XXH_readLE32_align",
+    "XXH_readLE32_align",
+    "XXH_readLE32_align"
+   ]
+  },
+  "rdxxhash.c::XXH32_update_endian": {
+   "status": "Unknown",
+   "inner": [
+    "XXH_readLE32",
+    "XXH_readLE32",
+    "XXH_readLE32",
+    "XXH_readLE32"
+   ]
+  },
+  "rdxxhash.c::XXH64_endian_align": {
+   "status": "Unknown",
+   "inner": [
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align"
+   ]
+  },
+  "rdxxhash.c::XXH64_finalize": {
+   "status": "Unknown",
+   "inner": [
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align",
+    "XXH_readLE64_align"
+   ]
+  },
+  "rdxxhash.c::XXH64_update_endian": {
+   "status": "Unknown",
+   "inner": [
+    "XXH_readLE64",
+    "XXH_readLE64",
+    "XXH_readLE64",
+    "XXH_readLE64"
+   ]
+  },
+  "snappy.c::compress_fragment": {
+   "status": "Unknown",
+   "inner": [
+    "get_u32_at_offset",
+    "get_u32_at_offset",
+    "get_u32_at_offset"
+   ]
+  },
+  "snappy.c::find_match_length": {
+   "status": "Unknown",
+   "inner": [
+    "get_unaligned64"
+   ]
+  },
+  "flb_input_chunk.c::input_chunk_append_raw": {
+   "status": "Unknown",
+   "inner": [
+    "flb_input_name",
+    "flb_input_name",
+    "flb_input_name"
+   ]
+  },
+  "mk_core/mk_utils.c::mk_utils_register_pid": {
+   "status": "Unknown",
+   "inner": [
+    "getpid"
+   ]
+  },
+  "mk_server/mk_cache.c::mk_cache_worker_exit": {
+   "status": "Unknown",
+   "inner": [
+    "pthread_getspecific",
+    "pthread_getspecific",
+    "pthread_getspecific",
+    "pthread_getspecific"
+   ]
+  },
+  "mk_server/mk_clock.c::mk_clock_log_set_time": {
+   "status": "Unknown",
+   "inner": [
+    "localtime_r"
+   ]
+  },
+  "mk_server/mk_scheduler.c::mk_sched_worker_free": {
+   "status": "Unknown",
+   "inner": [
+    "pthread_getspecific",
+    "pthread_getspecific",
+    "pthread_getspecific"
+   ]
+  },
+  "mk_server/mk_server.c::mk_server_worker_loop": {
+   "status": "Unknown",
+   "inner": [
+    "pthread_getspecific"
+   ]
+  },
+  "mk_server/monkey.c::mk_server_info": {
+   "status": "Unknown",
+   "inner": [
+    "getpid"
+   ]
+  }
+ },
+ "sole_blocked": [
+  "cJSON.c::cJSON_DeleteItemFromArray",
+  "cJSON.c::cJSON_DeleteItemFromObject",
+  "cJSON.c::cJSON_DeleteItemFromObjectCaseSensitive",
+  "cJSON.c::compare_double",
+  "rdkafka.c::rd_kafka_srand",
+  "rdkafka_error.c::rd_kafka_error_to_legacy",
+  "rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic_id"
+ ],
+ "parity": {
+  "consultations": 534,
+  "admitted": 20,
+  "by_outcome": {
+   "a value holding calls outside a scalar-result function": 144,
+   "no nested call": 107,
+   "nested call `rd_kafka_err2str` has no contract in force": 42,
+   "data actual": 39,
+   "nested call `XXH_readLE64_align` has no contract in force": 28,
+   "admitted": 20,
+   "unsequenced read of `stderr` and call `rd_kafka_msgq_len` whose contract footprints do not commute (CG05)": 12,
+   "nested call `rd_clock` has no contract in force": 10,
+   "indirect call (CG22)": 8,
+   "nested call `pthread_getspecific` has no contract in force": 8,
+   "nested call `rd_kafka_error_string` has no contract in force": 7,
+   "no unique Clang node for the statement": 7,
+   "unsequenced read of `stderr` and call `rd_list_cnt` whose contract footprints do not commute (CG05)": 7,
+   "not a call or a scalar value holding calls": 6,
+   "a store to an object the gateway does not read as a scalar local": 6,
+   "nested call `rd_timeout_remains_us` has no contract in force": 5,
+   "nested call `XXH_readLE64` has no contract in force": 5,
+   "call `memcmp`": 4,
+   "nested call `get_context_arena` has no contract in force": 4,
+   "nested call `XXH_readLE32_align` has no contract in force": 4,
+   "nested call `XXH_readLE32` has no contract in force": 4,
+   "nested call `flb_input_name` has no contract in force": 3,
+   "unsequenced read of `stderr` and call `rd_buf_len` whose contract footprints do not commute (CG05)": 3,
+   "nested call `get_u32_at_offset` has no contract in force": 3,
+   "nested call `rd_kafka_broker_ApiVersion_supported0` has no contract in force": 2,
+   "nested call `rd_timeout_remains` has no contract in force": 2,
+   "nested call `rd_crc32_update` has no contract in force": 2,
+   "nested call `rd_kafka_broker_name` has no contract in force": 2,
+   "nested call `rd_fnv1a` has no contract in force": 2,
+   "nested call `rd_murmur2` has no contract in force": 2,
+   "unsequenced read of `stderr` and call `rd_kafka_msgq_size` whose contract footprints do not commute (CG05)": 2,
+   "nested call `sasl_errstring` has no contract in force": 2,
+   "nested call `getpid` has no contract in force": 2,
+   "no unique Clang node for the return value": 1,
+   "nested call `rd_kafka_broker_ApiVersion_supported` has no contract in force": 1,
+   "nested call `rd_kafka_topic_partition_get_topic_id` has no contract in force": 1,
+   "nested call `rd_seed` has no contract in force": 1,
+   "nested call `rd_string_hash` has no contract in force": 1,
+   "nested call `rd_kafka_Uuid_hash` has no contract in force": 1,
+   "nested call `rd_kafka_event_name` has no contract in force": 1,
+   "nested call `rd_kafka_txn_state2str` has no contract in force": 1,
+   "call `flb_routes_mask_is_empty`": 1,
+   "nested call `LZ4F_compressBound_internal` has no contract in force": 1,
+   "nested call `rd_crc32` has no contract in force": 1,
+   "nested call `tolower` has no contract in force": 1,
+   "nested call `cJSON_DetachItemFromArray` has no contract in force": 1,
+   "nested call `rd_kafka_topic_assignment_state_rack_search` has no contract in force": 1,
+   "nested call `cJSON_DetachItemFromObject` has no contract in force": 1,
+   "nested call `cJSON_DetachItemFromObjectCaseSensitive` has no contract in force": 1,
+   "nested call `XXH3_mul128_fold64` has no contract in force": 1,
+   "nested call `rd_kafka_err2name` has no contract in force": 1,
+   "call `get_unaligned64`": 1,
+   "nested call `rd_sockaddr2str` has no contract in force": 1,
+   "nested call `safe_read_bool` has no contract in force": 1,
+   "nested call `log2` has no contract in force": 1,
+   "nested call `rd_map_str_hash` has no contract in force": 1,
+   "nested call `digits10` has no contract in force": 1,
+   "nested call `rd_kafka_cgrp_assignment_is_lost` has no contract in force": 1,
+   "nested call `cmt_atomic_load` has no contract in force": 1,
+   "call `memmove`": 1,
+   "call `memcpy`": 1,
+   "unsequenced read of `time_string` and call `localtime_r` whose contract footprints do not commute (CG05)": 1,
+   "nested call `dirname` has no contract in force": 1
+  }
+ }
+}

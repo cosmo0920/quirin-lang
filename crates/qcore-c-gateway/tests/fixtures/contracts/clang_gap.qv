@@ -30,3 +30,13 @@ contract {
     ensures normal resource_borrowed(right);
     ensures normal resource_return_none();
 };
+
+// Card CG05-NESTED-CALL-EFFECTS: a pointer and a scalar, both observed, for
+// the refusal control `h(p, g(p))` with `g` releasing `p`.
+extern fn cg_pair(p: ptr<mut, u8>, value: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
